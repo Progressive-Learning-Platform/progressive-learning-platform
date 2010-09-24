@@ -52,6 +52,8 @@ public class PLPAsm {
 
         // Begin our preprocess cases
         while(i < asmTokens.length) {
+
+            // Include statement
             if(asmTokens[i].equals(".include")) {
                 i++;
                 PLPAsmSource childAsm = new PLPAsmSource
@@ -61,6 +63,15 @@ public class PLPAsm {
 
                 if(recursionRetVal != 0)
                     return recursionRetVal;
+            }
+            
+            // Label handler
+            else if(asmTokens[i].substring(
+                    asmTokens[i].length() - 1,
+                    asmTokens[i].length() - 1).equals(":"))
+            {
+                
+
             }
         }
 
@@ -75,7 +86,7 @@ public class PLPAsm {
      */
     public int assemble() {
 
-        return 5;
+        return 0;
     }
 }
 
