@@ -75,7 +75,7 @@ public class PLPAsm {
      */
     public int assemble() {
 
-        return 1;
+        return 0;
     }
 }
 
