@@ -18,20 +18,59 @@ public class PLPAsm {
     LinkedList  SourceList = new LinkedList();
 
     int[]       addrTable;
-    String[]    symTable;
     int[]       symSizeTable;
+    int         curAddr;
     String      preprocessedAsm;
     String      objCode;
     String      curActiveFile;
 
-    int         startAddr;
+    HashMap     instrMap;
+    HashMap     symTable;
 
     public PLPAsm (String strAsm, String strFilePath, int intStartAddr) {
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
         SourceList.add(plpAsmObj);
         preprocessedAsm = new String();
         objCode = new String();
-        startAddr = intStartAddr;
+        curAddr = intStartAddr;
+        instrMap = new HashMap();
+        symTable = new HashMap();
+
+        // R-type Arithmetic and Logical instructions
+        instrMap.put(new String("addu"), new Integer(0));
+        instrMap.put(new String("subu"), new Integer(0));
+        instrMap.put(new String("and"),  new Integer(0));
+        instrMap.put(new String("or"),   new Integer(0));
+        instrMap.put(new String("nor"),  new Integer(0));
+        instrMap.put(new String("slt"),  new Integer(0));
+        instrMap.put(new String("sltu"), new Integer(0));
+
+        // R-type Shift instructions
+        instrMap.put(new String("sll"),  new Integer(1));
+        instrMap.put(new String("srl"),  new Integer(1));
+
+        // R-type Jump instructions
+        instrMap.put(new String("jr"),   new Integer(2));
+        instrMap.put(new String("jalr"), new Integer(2));
+
+        // I-type Branch instructions
+        instrMap.put(new String("beq"),  new Integer(3));
+        instrMap.put(new String("bne"),  new Integer(3));
+
+        // I-type Arithmetic and Logical instructions
+        instrMap.put(new String("addiu"), new Integer(4));
+        instrMap.put(new String("andi"),  new Integer(4));
+        instrMap.put(new String("ori"),   new Integer(4));
+        instrMap.put(new String("slti"),  new Integer(4));
+        instrMap.put(new String("sltiu"), new Integer(4));
+
+        // I-type Load Upper Immediate instruction
+        instrMap.put(new String("lui"),  new Integer(5));
+
+        // I-type Load and Store word instructions
+        instrMap.put(new String("lw"),   new Integer(6));
+        instrMap.put(new String("sw"),  new Integer(6));
+
     }
 
     /**
@@ -41,23 +80,30 @@ public class PLPAsm {
      * @return
      */
     public int preprocess(int recLevel) {
-        int i = 0;
+        int i = 0, j = 0;
         int recursionRetVal;
 
         PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(recLevel);
         curActiveFile = topLevelAsm.asmFilePath;
 
         String delimiters = "[ ]+";
-        String[] asmTokens = topLevelAsm.asmString.split(delimiters);
+        String lineDelim  = "\n";
+        String[] asmLines  = topLevelAsm.asmString.split(lineDelim);
+        String[] asmTokens;
 
         // Begin our preprocess cases
-        while(i < asmTokens.length) {
+        while(i < asmLines.length) {
+            i++;
+            j = 0;
+            asmTokens = asmLines[i].split(delimiters);
 
             // Include statement
-            if(asmTokens[i].equals(".include")) {
-                i++;
+            if(asmTokens[j].equals(".include")) {
+                if(asmTokens.length < 2) {
+                   return PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX;
+                }
                 PLPAsmSource childAsm = new PLPAsmSource
-                                            (null, asmTokens[i], recLevel + 1);
+                                            (null, asmTokens[j+1], recLevel + 1);
                 SourceList.add(childAsm);
                 recursionRetVal = this.preprocess(recLevel + 1);
 
@@ -66,11 +112,12 @@ public class PLPAsm {
             }
             
             // Label handler
-            else if(asmTokens[i].substring(
-                    asmTokens[i].length() - 1,
-                    asmTokens[i].length() - 1).equals(":"))
+            else if(asmTokens[j].charAt(asmTokens[j].length() - 1) == ':')
             {
-                
+                j++;
+                symTable.put(new String(asmTokens[j].substring(0, asmTokens[j].length() - 2)),
+                             new Integer(curAddr));
+
 
             }
         }
@@ -103,7 +150,7 @@ class PLPAsmSource {
     PLPAsmSource    refSource;
     String          asmString;
     String          asmFilePath;
-
+    
     int             recursionLevel;
     
     public PLPAsmSource(String strAsm, String strFilePath, int intLevel) {

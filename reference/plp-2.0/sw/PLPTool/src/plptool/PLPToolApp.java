@@ -39,6 +39,14 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
-        launch(PLPToolApp.class, args);
+        
+        if(args.length > 0 && args[0].equals("-cl")) {
+
+        } else {
+            System.out.println("\nPLP Java Tool");
+            System.out.println("Authors: David Fritz, Brian Gordon, Wira Mulia");
+            System.out.println("\nProvide -cl option for command line assembler");
+            launch(PLPToolApp.class, args);
+        }
     }
 }
