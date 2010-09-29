@@ -69,7 +69,18 @@ public class PLPAsm {
 
         // I-type Load and Store word instructions
         instrMap.put(new String("lw"),   new Integer(6));
-        instrMap.put(new String("sw"),  new Integer(6));
+        instrMap.put(new String("sw"),   new Integer(6));
+
+        // J-type Instructions
+        instrMap.put(new String("j"),    new Integer(7));
+        instrMap.put(new String("jal"),  new Integer(7));
+
+        // Multiply instructions
+        instrMap.put(new String("multu"), new Integer(8));
+        instrMap.put(new String("mfhi"),  new Integer(8));
+        instrMap.put(new String("mflo"),  new Integer(8));
+
+        // Pseudo-ops
 
     }
 
@@ -86,22 +97,26 @@ public class PLPAsm {
         PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(recLevel);
         curActiveFile = topLevelAsm.asmFilePath;
 
-        String delimiters = "[ ]+";
-        String lineDelim  = "\n";
+        String delimiters = "[,]|[ ]+";
+        String lineDelim  = "\\r?\\n";
         String[] asmLines  = topLevelAsm.asmString.split(lineDelim);
         String[] asmTokens;
 
         // Begin our preprocess cases
         while(i < asmLines.length) {
-            i++;
             j = 0;
             asmTokens = asmLines[i].split(delimiters);
+            i++;
 
             // Include statement
             if(asmTokens[j].equals(".include")) {
                 if(asmTokens.length < 2) {
+                   PLPMsg.PLPInfo(topLevelAsm.asmFilePath + "(" + i + "):");
                    return PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX;
                 }
+
+                preprocessedAsm += "ASM__DIRECTIVE__\n";
+
                 PLPAsmSource childAsm = new PLPAsmSource
                                             (null, asmTokens[j+1], recLevel + 1);
                 SourceList.add(childAsm);
@@ -110,15 +125,28 @@ public class PLPAsm {
                 if(recursionRetVal != 0)
                     return recursionRetVal;
             }
+
+            // .word directive:
+            //   Initialize current memory address to a value
+            else if(asmTokens[j].equals(".word")) {
+
+            }
             
             // Label handler
+            //   Everything after the label is IGNORED, it has to be on its own
+            //   line
             else if(asmTokens[j].charAt(asmTokens[j].length() - 1) == ':')
             {
-                j++;
                 symTable.put(new String(asmTokens[j].substring(0, asmTokens[j].length() - 2)),
                              new Integer(curAddr));
-
-
+                preprocessedAsm += "ASM__LABEL__\n";
+            } else {
+                if(instrMap.containsKey(asmTokens[j]) == false) {
+                    PLPMsg.PLPInfo(topLevelAsm.asmFilePath + "(" + i + "): Unable to process token " + asmTokens[j]);
+                    return PLPMsg.PLP_ASM_ERROR_INVALID_TOKEN;
+                }
+                curAddr += 4;
+                preprocessedAsm += asmLines[i - 1] + "\n";
             }
         }
 
