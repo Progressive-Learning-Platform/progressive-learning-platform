@@ -11,6 +11,8 @@ package plptool;
  */
 public class PLPMsg {
 
+    static int debugLevel = 0;
+
     // Assembler 1st Pass Errors
     static int PLP_ASM_ERROR_INVALID_TOKEN          = 1;
     static int PLP_ASM_ERROR_INVALID_REFSOURCE      = 2;
@@ -36,5 +38,14 @@ public class PLPMsg {
     public static int PLPError(int errorCode) {
         //PLPToolView.appendStdOut("Error " + errorCode);
         return errorCode;
+    }
+
+    public static void PLPInfo(String infoStr) {
+        System.out.println(infoStr);
+    }
+
+    public static void PLPDebug(String debugStr, int requestedDebugLevel) {
+        if(requestedDebugLevel == debugLevel)
+            System.out.println(debugStr);
     }
 }
