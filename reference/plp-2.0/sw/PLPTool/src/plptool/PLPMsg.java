@@ -11,41 +11,50 @@ package plptool;
  */
 public class PLPMsg {
 
-    static int debugLevel = 0;
+    static int debugLevel = 5;
 
     // Assembler 1st Pass Errors
-    static int PLP_ASM_ERROR_INVALID_TOKEN          = 1;
-    static int PLP_ASM_ERROR_INVALID_REFSOURCE      = 2;
-    static int PLP_ASM_ERROR_CYCLIC_REFERENCE       = 3;
-    static int PLP_ASM_ERROR_SOURCE_NOT_FOUND       = 4;
-    static int PLP_ASM_ERROR_DIRECTIVE_SYNTAX       = 5;
+    static int PLP_ASM_ERROR_INVALID_TOKEN          = 16;
+    static int PLP_ASM_ERROR_INVALID_REFSOURCE      = 17;
+    static int PLP_ASM_ERROR_CYCLIC_REFERENCE       = 18;
+    static int PLP_ASM_ERROR_SOURCE_NOT_FOUND       = 19;
+    static int PLP_ASM_ERROR_DIRECTIVE_SYNTAX       = 20;
 
     // Assembler 2nd Pass Errors
-    static int PLP_ASM_ERROR_GENERAL_SYNTAX         = 6;
-    static int PLP_ASM_ERROR_INVALID_IDENTIFIER     = 7;
-    static int PLP_ASM_ERROR_INVALID_OPCODE         = 8;
-    static int PLP_ASM_ERROR_WRONG_INSTR_TYPE       = 9;
-    static int PLP_ASM_ERROR_INVALID_REGISTER       = 10;
-    static int PLP_ASM_ERROR_INVALID_OPERAND        = 11;
-    static int PLP_ASM_ERROR_NUMBER_OF_OPERANDS     = 12;
-    static int PLP_ASM_ERROR_INVALID_BRANCH_TARGET  = 13;
+    static int PLP_ASM_ERROR_GENERAL_SYNTAX         = 64;
+    static int PLP_ASM_ERROR_INVALID_IDENTIFIER     = 65;
+    static int PLP_ASM_ERROR_INVALID_OPCODE         = 66;
+    static int PLP_ASM_ERROR_WRONG_INSTR_TYPE       = 67;
+    static int PLP_ASM_ERROR_INVALID_REGISTER       = 68;
+    static int PLP_ASM_ERROR_INVALID_OPERAND        = 69;
+    static int PLP_ASM_ERROR_NUMBER_OF_OPERANDS     = 70;
+    static int PLP_ASM_ERROR_INVALID_BRANCH_TARGET  = 71;
+    static int PLP_ASM_ERROR_INVALID_JUMP_TARGET    = 72;
 
-    static int PLP_ERROR_GENERIC = -1;
+    static int PLP_ERROR_GENERIC                    = 1;
+    static int PLP_OOPS                             = 2;
+
+    static int PLP_NUMBER_ERROR                     = 3;
 
     static String[] errorStr;
     static int[]    errorCodes;
 
-    public static int PLPError(int errorCode) {
-        //PLPToolView.appendStdOut("Error " + errorCode);
-        return errorCode;
+    static int lastError = 0;
+
+    public static void PLPError(String infoStr, int errorCode, Object objIdentifier) {
+        System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + infoStr);
+        lastError = errorCode;
     }
 
-    public static void PLPInfo(String infoStr) {
-        System.out.println(infoStr);
+    public static void PLPInfo(String infoStr, Object objIdentifier) {
+        if(objIdentifier != null)
+            System.out.println("[I] " + objIdentifier.toString() + ": " + infoStr);
+        else
+            System.out.println("[I] " + infoStr);
     }
 
-    public static void PLPDebug(String debugStr, int requestedDebugLevel) {
-        if(requestedDebugLevel == debugLevel)
-            System.out.println(debugStr);
+    public static void PLPDebug(String debugStr, int requestedDebugLevel, Object objIdentifier) {
+        if(requestedDebugLevel <= debugLevel)
+            System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
     }
 }
