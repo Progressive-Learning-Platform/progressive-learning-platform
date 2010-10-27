@@ -94,6 +94,7 @@ public class PLPAsm {
         // Assembler directives
         instrMap.put(new String("ASM__WORD__"), new Integer(9));
         instrMap.put(new String("ASM__ORG__"),  new Integer(9));
+        instrMap.put(new String("ASM__SKIP__"), new Integer(9));
 
         // Instruction opcodes
         opcode.put(new String("add")   , new Byte((byte) 0x20));
@@ -234,7 +235,7 @@ public class PLPAsm {
                    return PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX;
                 }
 
-                preprocessedAsm += "ASM__DIRECTIVE__\n";
+                preprocessedAsm += "ASM__SKIP__\n";
 
                 PLPAsmSource childAsm = new PLPAsmSource
                                             (null, asmTokens[j+1], recLevel + 1);
@@ -296,14 +297,14 @@ public class PLPAsm {
             {
                 tempLabel = asmTokens[0].substring(0, asmTokens[0].length() - 1);
                 symTable.put(tempLabel, new Integer(curAddr));
-                labelCount++;
+                preprocessedAsm += "ASM__SKIP__";
             }
 
             // Pseudo-ops
 
             // Comments
             else if(asmTokens[0].charAt(0) == '#') {
-
+                preprocessedAsm += "ASM__SKIP__";
             }
 
             // Instructions
@@ -338,6 +339,7 @@ public class PLPAsm {
     public int assemble() {
         int i = 0, j = 0;
         int asmPC = 0;
+        int lineNumOffset = 1;
         
         String delimiters = "[(), +]";
         String lineDelim  = "\\r?\\n";
@@ -363,7 +365,7 @@ public class PLPAsm {
             org = false;
             rd = rs = rt = shamt = -1;
 
-            PLPMsg.PLPDebug("assemble(line " + (i + 1) + "): " + asmLines[i], 5, this);
+            PLPMsg.PLPDebug("assemble(line " + (i + lineNumOffset) + "): " + asmLines[i], 5, this);
 
             switch((Integer) instrMap.get(asmTokens[0])) {
 
@@ -375,7 +377,7 @@ public class PLPAsm {
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -394,7 +396,7 @@ public class PLPAsm {
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -411,7 +413,7 @@ public class PLPAsm {
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -426,12 +428,12 @@ public class PLPAsm {
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
                     if(!symTable.containsKey(asmTokens[3])) {
-                        PLPMsg.PLPError("assemble(): Invalid branch target in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid branch target in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_BRANCH_TARGET, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_BRANCH_TARGET;
                     }
@@ -451,7 +453,7 @@ public class PLPAsm {
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -468,7 +470,7 @@ public class PLPAsm {
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -485,7 +487,7 @@ public class PLPAsm {
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -502,7 +504,7 @@ public class PLPAsm {
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!symTable.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid jump target in line " + (i + 1),
+                        PLPMsg.PLPError("assemble(): Invalid jump target in line " + (lineNumOffset + 1),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_JUMP_TARGET, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_JUMP_TARGET;
                     }
@@ -531,7 +533,10 @@ public class PLPAsm {
                         asmPC = sanitize32bits(asmTokens[1]);
                         org = true;
                         i--;
-                    }
+                        lineNumOffset++;
+			asmLines[i] = "ASM__SKIP__";
+                    } else {
+	            }
 
                     break;
                 default:
@@ -540,9 +545,10 @@ public class PLPAsm {
                     return PLPMsg.PLP_OOPS;
             }
 
-            if(!org)
+            if(!org) {
                 addrTable[i] = asmPC;
-            asmPC += 4;
+                asmPC += 4;
+            }
             i++;
         }
 
