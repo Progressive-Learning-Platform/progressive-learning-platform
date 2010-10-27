@@ -20,7 +20,7 @@ public class PLPAsm {
     private int[]       addrTable;
     private int[]       objectCode;
     private int         curAddr;
-    private int         labelCount;
+    private int         directiveOffset;
     private String      preprocessedAsm;
     private String      curActiveFile;
     private String      topLevelFile;
@@ -42,7 +42,7 @@ public class PLPAsm {
         opcode = new HashMap();
         regs = new HashMap();
 
-        labelCount = 0;
+        directiveOffset = 0;
         topLevelFile = strFilePath;
 
         assembled = false;
@@ -95,6 +95,7 @@ public class PLPAsm {
         instrMap.put(new String("ASM__WORD__"), new Integer(9));
         instrMap.put(new String("ASM__ORG__"),  new Integer(9));
         instrMap.put(new String("ASM__SKIP__"), new Integer(9));
+        instrMap.put(new String("ASM__LINE__"), new Integer(9));
 
         // Instruction opcodes
         opcode.put(new String("add")   , new Byte((byte) 0x20));
@@ -243,6 +244,7 @@ public class PLPAsm {
                 savedActiveFile = curActiveFile;
                 recursionRetVal = this.preprocess(recLevel + 1);
                 curActiveFile = savedActiveFile;
+                directiveOffset++;
 
                 if(recursionRetVal != 0)
                     return recursionRetVal;
@@ -257,7 +259,7 @@ public class PLPAsm {
                 }
 
                 preprocessedAsm += "ASM__ORG__ " + asmTokens[1] + "\n";
-
+                directiveOffset++;
                 curAddr = sanitize32bits(asmTokens[1]);
             }
 
@@ -297,14 +299,16 @@ public class PLPAsm {
             {
                 tempLabel = asmTokens[0].substring(0, asmTokens[0].length() - 1);
                 symTable.put(tempLabel, new Integer(curAddr));
-                preprocessedAsm += "ASM__SKIP__";
+                preprocessedAsm += "ASM__SKIP__\n";
+                directiveOffset++;
             }
 
             // Pseudo-ops
 
             // Comments
             else if(asmTokens[0].charAt(0) == '#') {
-                preprocessedAsm += "ASM__SKIP__";
+                preprocessedAsm += "ASM__SKIP__\n";
+                directiveOffset++;
             }
 
             // Instructions
@@ -330,7 +334,7 @@ public class PLPAsm {
         return 0;
     }
 
-    /**
+    /**cd PLP
      * Assemble all assembly sources attached to this assembler and generate
      * object codes
      *
@@ -340,6 +344,7 @@ public class PLPAsm {
         int i = 0, j = 0;
         int asmPC = 0;
         int lineNumOffset = 1;
+        int s = 0;
         
         String delimiters = "[(), +]";
         String lineDelim  = "\\r?\\n";
@@ -350,19 +355,19 @@ public class PLPAsm {
         byte rd, rs, rt, shamt;
         int imm;
         int branchTarget;
+        boolean skip;
 
-        boolean org;
-
-        objectCode = new int[asmLines.length];
-        addrTable = new int[asmLines.length];
+        objectCode = new int[asmLines.length - directiveOffset];
+        addrTable = new int[asmLines.length - directiveOffset];
         curActiveFile = this.topLevelFile;
 
         try {
 
         while(i < asmLines.length) {
             asmTokens = asmLines[i].split(delimiters);
-            objectCode[i] = 0;
-            org = false;
+
+            objectCode[i - s] = 0;
+            skip = false;
             rd = rs = rt = shamt = -1;
 
             PLPMsg.PLPDebug("assemble(line " + (i + lineNumOffset) + "): " + asmLines[i], 5, this);
@@ -382,10 +387,10 @@ public class PLPAsm {
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
 
-                    objectCode[i] |= (rs = (Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i] |= (rt = (Byte) regs.get(asmTokens[3])) << 16;
-                    objectCode[i] |= (rd = (Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]);
+                    objectCode[i - s] |= (rs = (Byte) regs.get(asmTokens[2])) << 21;
+                    objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[3])) << 16;
+                    objectCode[i - s] |= (rd = (Byte) regs.get(asmTokens[1])) << 11;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
 
                     break;
 
@@ -400,10 +405,10 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
-                    objectCode[i] |= (rt = (Byte) regs.get(asmTokens[2])) << 16;
-                    objectCode[i] |= (rd = (Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i] |= (shamt = (byte) ((Byte) regs.get(asmTokens[3]) & 0x1F)) << 6;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]);
+                    objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[2])) << 16;
+                    objectCode[i - s] |= (rd = (Byte) regs.get(asmTokens[1])) << 11;
+                    objectCode[i - s] |= (shamt = (byte) ((Byte) regs.get(asmTokens[3]) & 0x1F)) << 6;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
 
                     break;
 
@@ -417,8 +422,8 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
-                    objectCode[i] |= (rs = (Byte) regs.get(asmTokens[1])) << 21;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]);
+                    objectCode[i - s] |= (rs = (Byte) regs.get(asmTokens[1])) << 21;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
 
                     break;
 
@@ -439,10 +444,10 @@ public class PLPAsm {
                     }
                     branchTarget = (Integer) symTable.get(asmTokens[3]);
                     branchTarget -= (asmPC + 4) / 4;
-                    objectCode[i] |= branchTarget & 0xFFFF;
-                    objectCode[i] |= (rt = (Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i] |= (rs = (Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= branchTarget & 0xFFFF;
+                    objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[2])) << 21;
+                    objectCode[i - s] |= (rs = (Byte) regs.get(asmTokens[1])) << 16;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -457,10 +462,10 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
-                    objectCode[i] |= sanitize16bits(asmTokens[3]);
-                    objectCode[i] |= (rt = (Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i] |= (rs = (Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= sanitize16bits(asmTokens[3]);
+                    objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[1])) << 16;
+                    objectCode[i - s] |= (rs = (Byte) regs.get(asmTokens[2])) << 21;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -474,9 +479,9 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
-                    objectCode[i] |= sanitize16bits(asmTokens[2]);
-                    objectCode[i] |= (rt = (Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= sanitize16bits(asmTokens[2]);
+                    objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[1])) << 16;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -491,10 +496,10 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
-                    objectCode[i] |= sanitize16bits(asmTokens[3]);
-                    objectCode[i] |= (rt = (Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i] |= (rs = (Byte) regs.get(asmTokens[3])) << 21;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= sanitize16bits(asmTokens[3]);
+                    objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[1])) << 16;
+                    objectCode[i - s] |= (rs = (Byte) regs.get(asmTokens[3])) << 21;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -509,8 +514,8 @@ public class PLPAsm {
                         return PLPMsg.PLP_ASM_ERROR_INVALID_JUMP_TARGET;
                     }
 
-                    objectCode[i] |= ((Integer) symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
-                    objectCode[i] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= ((Integer) symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -524,18 +529,18 @@ public class PLPAsm {
                         if(!checkNumberOfOperands(asmTokens, 2, i))
                             return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
-                        objectCode[i] = sanitize32bits(asmTokens[1]);
+                        objectCode[i - s] = sanitize32bits(asmTokens[1]);
                     }
                     else if(asmTokens[0].equals("ASM__ORG__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, i))
                             return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                         asmPC = sanitize32bits(asmTokens[1]);
-                        org = true;
-                        i--;
-                        lineNumOffset++;
-			asmLines[i] = "ASM__SKIP__";
+                        s++;
+                        skip = true;
                     } else {
+                        s++;
+                        skip = true;
 	            }
 
                     break;
@@ -545,8 +550,8 @@ public class PLPAsm {
                     return PLPMsg.PLP_OOPS;
             }
 
-            if(!org) {
-                addrTable[i] = asmPC;
+            if(!skip) {
+                addrTable[i - s] = asmPC;
                 asmPC += 4;
             }
             i++;
