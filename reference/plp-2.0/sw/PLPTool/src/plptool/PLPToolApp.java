@@ -49,12 +49,12 @@ public class PLPToolApp extends SingleFrameApplication {
         String key, value;
         
         if(args.length > 0 && args[0].equals("-cl")) {
-            if(args.length != 3) {
-                System.out.println("Usage: PLPTool -cl <ASM> <Start Address>");
+            if(args.length != 4) {
+                System.out.println("Usage: PLPTool -cl <ASM> <Start Address> <BIN output>");
                 System.exit(-1);
             } else {
                 plpAssembler = new PLPAsm(null, args[1], Integer.parseInt(args[2]));
-                if(plpAssembler.preprocess(0) == 0)
+                if(plpAssembler.preprocess(0) == PLPMsg.PLP_OK)
                     plpAssembler.assemble();
 
                 if(plpAssembler.isAssembled()) {
@@ -62,27 +62,14 @@ public class PLPToolApp extends SingleFrameApplication {
                     addrTable = plpAssembler.getAddrTable();
                     symTable = plpAssembler.getSymTable();
 
+                    PLPAsmFormatter.symTablePrettyPrint(plpAssembler);
                     System.out.println();
-
-                    for(int i = 0; i < objCode.length; i++)
-                        System.out.println(Long.toHexString(addrTable[i]) +
-                                "\t0x" + Integer.toHexString((int) objCode[i]));
-
-                    System.out.println("\nSymbol Table\n============");
-                    iterator = symTable.keySet().iterator();
-
-                    while(iterator.hasNext()) {
-                        key = iterator.next().toString();
-                        value = symTable.get(key).toString();
-
-                        System.out.println(key + "\t\t:\t" + value);
-                    }
-
-                    System.out.println();
-
                     PLPAsmFormatter.prettyPrint(plpAssembler);
+                    PLPAsmFormatter.writeBin(plpAssembler, args[3]);
+                    PLPAsmFormatter.writeCOE(plpAssembler, args[3]);
                 } else {
-                    PLPMsg.I("Assembly of " + args[1] + " failed.", null);
+                    PLPMsg.E("Assembly of " + args[1] + " failed.",
+                             PLPMsg.PLP_ERROR_RETURN, null);
                 }
             }
         } else {
