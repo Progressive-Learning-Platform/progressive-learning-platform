@@ -19,6 +19,7 @@ public class PLPMsg {
     static int PLP_ASM_ERROR_CYCLIC_REFERENCE       = 18;
     static int PLP_ASM_ERROR_SOURCE_NOT_FOUND       = 19;
     static int PLP_ASM_ERROR_DIRECTIVE_SYNTAX       = 20;
+    static int PLP_ASM_ERROR_DUPLICATE_LABEL        = 21;
 
     // Assembler 2nd Pass Errors
     static int PLP_ASM_ERROR_GENERAL_SYNTAX         = 64;
@@ -31,7 +32,13 @@ public class PLPMsg {
     static int PLP_ASM_ERROR_INVALID_BRANCH_TARGET  = 71;
     static int PLP_ASM_ERROR_INVALID_JUMP_TARGET    = 72;
 
+    // Formatter Errors
+    static int PLP_OUT_UNHANDLED_ERROR              = 128;
+    static int PLP_OUT_CAN_NOT_WRITE_TO_FILE        = 129;
+
+    static int PLP_OK                               = 0;
     static int PLP_ERROR_GENERIC                    = 1;
+    static int PLP_ERROR_RETURN                     = -1;
     static int PLP_OOPS                             = 9001;
 
     static int PLP_NUMBER_ERROR                     = 8;
@@ -43,9 +50,13 @@ public class PLPMsg {
     static int markCounter = 0;
 
     // Error message
-    public static void E(String infoStr, int errorCode, Object objIdentifier) {
-        System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + infoStr);
+    public static int E(String infoStr, int errorCode, Object objIdentifier) {
+        if(objIdentifier != null)
+            System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + infoStr);
+        else
+            System.out.println("[E] #" + errorCode + " " + infoStr);
         lastError = errorCode;
+        return errorCode;
     }
 
     // Information message
@@ -59,7 +70,10 @@ public class PLPMsg {
     // Debug message
     public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
         if(requestedDebugLevel <= debugLevel)
-            System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
+            if(objIdentifier != null)
+                System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
+            else
+                System.out.println("[D] " + debugStr);
     }
 
     // Mark
