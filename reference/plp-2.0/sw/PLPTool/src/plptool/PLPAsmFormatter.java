@@ -46,14 +46,7 @@ public class PLPAsmFormatter {
     }
 
     // Output packed binary file
-    public static int writeBin(PLPAsm assembler, String outputFileName) {
-        long[] objectCode;
-
-        if(assembler.isAssembled())
-            objectCode = assembler.getObjectCode();
-        else
-            return -1;
-
+    public static int writeBin(long[] objectCode, String outputFileName) {
         try {
             DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(outputFileName + ".bin")));
 
@@ -71,14 +64,8 @@ public class PLPAsmFormatter {
     }
 
     // Output COE
-    public static int writeCOE(PLPAsm assembler, String outputFileName) {
-        long[] objectCode;
+    public static int writeCOE(long[] objectCode, String outputFileName) {
         String binString;
-
-        if(assembler.isAssembled())
-            objectCode = assembler.getObjectCode();
-        else
-            return -1;
 
         try {
             DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(outputFileName + ".coe")));
@@ -148,8 +135,7 @@ public class PLPAsmFormatter {
     }
 
     // Symbol table pretty print
-    public static int symTablePrettyPrint(PLPAsm assembler) {
-        HashMap symTable = assembler.getSymTable();
+    public static int symTablePrettyPrint(HashMap symTable) {
         String key, value;
 
         System.out.println("\nSymbol Table" +
