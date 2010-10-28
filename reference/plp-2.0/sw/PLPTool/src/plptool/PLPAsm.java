@@ -17,9 +17,9 @@ public class PLPAsm {
 
     private LinkedList  SourceList = new LinkedList();
 
-    private int[]       addrTable;
-    private int[]       objectCode;
-    private int         curAddr;
+    private long[]      addrTable;
+    private long[]      objectCode;      // Java needs unsigned types!
+    private long        curAddr;
     private int         directiveOffset;
     private String      preprocessedAsm;
     private String      curActiveFile;
@@ -48,155 +48,155 @@ public class PLPAsm {
         assembled = false;
 
         // R-type Arithmetic and Logical instructions
-        instrMap.put(new String("addu"), new Integer(0));
-        instrMap.put(new String("subu"), new Integer(0));
-        instrMap.put(new String("and"),  new Integer(0));
-        instrMap.put(new String("or"),   new Integer(0));
-        instrMap.put(new String("nor"),  new Integer(0));
-        instrMap.put(new String("slt"),  new Integer(0));
-        instrMap.put(new String("sltu"), new Integer(0));
+        instrMap.put("addu", new Integer(0));
+        instrMap.put("subu", new Integer(0));
+        instrMap.put("and",  new Integer(0));
+        instrMap.put("or",   new Integer(0));
+        instrMap.put("nor",  new Integer(0));
+        instrMap.put("slt",  new Integer(0));
+        instrMap.put("sltu", new Integer(0));
 
         // R-type Shift instructions
-        instrMap.put(new String("sll"),  new Integer(1));
-        instrMap.put(new String("srl"),  new Integer(1));
+        instrMap.put("sll",  new Integer(1));
+        instrMap.put("srl",  new Integer(1));
 
         // R-type Jump instructions
-        instrMap.put(new String("jr"),   new Integer(2));
-        instrMap.put(new String("jalr"), new Integer(2));
+        instrMap.put("jr",   new Integer(2));
+        instrMap.put("jalr", new Integer(2));
 
         // I-type Branch instructions
-        instrMap.put(new String("beq"),  new Integer(3));
-        instrMap.put(new String("bne"),  new Integer(3));
+        instrMap.put("beq",  new Integer(3));
+        instrMap.put("bne",  new Integer(3));
 
         // I-type Arithmetic and Logical instructions
-        instrMap.put(new String("addiu"), new Integer(4));
-        instrMap.put(new String("andi"),  new Integer(4));
-        instrMap.put(new String("ori"),   new Integer(4));
-        instrMap.put(new String("slti"),  new Integer(4));
-        instrMap.put(new String("sltiu"), new Integer(4));
+        instrMap.put("addiu", new Integer(4));
+        instrMap.put("andi",  new Integer(4));
+        instrMap.put("ori",   new Integer(4));
+        instrMap.put("slti",  new Integer(4));
+        instrMap.put("sltiu", new Integer(4));
 
         // I-type Load Upper Immediate instruction
-        instrMap.put(new String("lui"),  new Integer(5));
+        instrMap.put("lui",  new Integer(5));
 
         // I-type Load and Store word instructions
-        instrMap.put(new String("lw"),   new Integer(6));
-        instrMap.put(new String("sw"),   new Integer(6));
+        instrMap.put("lw",   new Integer(6));
+        instrMap.put("sw",   new Integer(6));
 
         // J-type Instructions
-        instrMap.put(new String("j"),    new Integer(7));
-        instrMap.put(new String("jal"),  new Integer(7));
+        instrMap.put("j",    new Integer(7));
+        instrMap.put("jal",  new Integer(7));
 
         // Multiply instructions
-        instrMap.put(new String("multu"), new Integer(8));
-        instrMap.put(new String("mfhi"),  new Integer(8));
-        instrMap.put(new String("mflo"),  new Integer(8));
+        instrMap.put("multu", new Integer(8));
+        instrMap.put("mfhi",  new Integer(8));
+        instrMap.put("mflo",  new Integer(8));
 
         // Assembler directives
-        instrMap.put(new String("ASM__WORD__"), new Integer(9));
-        instrMap.put(new String("ASM__ORG__"),  new Integer(9));
-        instrMap.put(new String("ASM__SKIP__"), new Integer(9));
-        instrMap.put(new String("ASM__LINE__"), new Integer(9));
+        instrMap.put("ASM__WORD__", new Integer(9));
+        instrMap.put("ASM__ORG__",  new Integer(9));
+        instrMap.put("ASM__SKIP__", new Integer(9));
+        instrMap.put("ASM__LINE__", new Integer(9));
 
         // Instruction opcodes
-        opcode.put(new String("add")   , new Byte((byte) 0x20));
-        opcode.put(new String("addu")  , new Byte((byte) 0x21));
-        opcode.put(new String("and")   , new Byte((byte) 0x24));
-        opcode.put(new String("jr")    , new Byte((byte) 0x08));
-        opcode.put(new String("nor")   , new Byte((byte) 0x27));
-        opcode.put(new String("or")    , new Byte((byte) 0x25));
-        opcode.put(new String("slt")   , new Byte((byte) 0x2A));
-        opcode.put(new String("sltu")  , new Byte((byte) 0x2B));
-        opcode.put(new String("sll")   , new Byte((byte) 0x00));
-        opcode.put(new String("srl")   , new Byte((byte) 0x02));
-        opcode.put(new String("sub")   , new Byte((byte) 0x22));
-        opcode.put(new String("subu")  , new Byte((byte) 0x23));
+        opcode.put("add"   , new Byte((byte) 0x20));
+        opcode.put("addu"  , new Byte((byte) 0x21));
+        opcode.put("and"   , new Byte((byte) 0x24));
+        opcode.put("jr"    , new Byte((byte) 0x08));
+        opcode.put("nor"   , new Byte((byte) 0x27));
+        opcode.put("or"    , new Byte((byte) 0x25));
+        opcode.put("slt"   , new Byte((byte) 0x2A));
+        opcode.put("sltu"  , new Byte((byte) 0x2B));
+        opcode.put("sll"   , new Byte((byte) 0x00));
+        opcode.put("srl"   , new Byte((byte) 0x02));
+        opcode.put("sub"   , new Byte((byte) 0x22));
+        opcode.put("subu"  , new Byte((byte) 0x23));
 
-        opcode.put(new String("addi")  , new Byte((byte) 0x08));
-        opcode.put(new String("addiu") , new Byte((byte) 0x09));
-        opcode.put(new String("andi")  , new Byte((byte) 0x0C));
-        opcode.put(new String("beq")   , new Byte((byte) 0x04));
-        opcode.put(new String("bne")   , new Byte((byte) 0x05));
-        opcode.put(new String("lui")   , new Byte((byte) 0x0F));
-        opcode.put(new String("ori")   , new Byte((byte) 0x0D));
-        opcode.put(new String("slti")  , new Byte((byte) 0x0A));
-        opcode.put(new String("sltiu") , new Byte((byte) 0x0B));
-        opcode.put(new String("lw")    , new Byte((byte) 0x23));
-        opcode.put(new String("sw")    , new Byte((byte) 0x2B));
+        opcode.put("addi"  , new Byte((byte) 0x08));
+        opcode.put("addiu" , new Byte((byte) 0x09));
+        opcode.put("andi"  , new Byte((byte) 0x0C));
+        opcode.put("beq"   , new Byte((byte) 0x04));
+        opcode.put("bne"   , new Byte((byte) 0x05));
+        opcode.put("lui"   , new Byte((byte) 0x0F));
+        opcode.put("ori"   , new Byte((byte) 0x0D));
+        opcode.put("slti"  , new Byte((byte) 0x0A));
+        opcode.put("sltiu" , new Byte((byte) 0x0B));
+        opcode.put("lw"    , new Byte((byte) 0x23));
+        opcode.put("sw"    , new Byte((byte) 0x2B));
 
-        opcode.put(new String("j")     , new Byte((byte) 0x02));
-        opcode.put(new String("jal")   , new Byte((byte) 0x03));
+        opcode.put("j"     , new Byte((byte) 0x02));
+        opcode.put("jal"   , new Byte((byte) 0x03));
 
-        opcode.put(new String("ASM__ORG__")           , new Byte((byte) 0xff));
-        opcode.put(new String("ASM__WORD__")          , new Byte((byte) 0xff));
-        opcode.put(new String("ASM__LABEL__")         , new Byte((byte) 0xff));
-        opcode.put(new String("ASM__DIRECTIVE__")     , new Byte((byte) 0xff));
+        opcode.put("ASM__ORG__"           , new Byte((byte) 0xff));
+        opcode.put("ASM__WORD__"          , new Byte((byte) 0xff));
+        opcode.put("ASM__LABEL__"         , new Byte((byte) 0xff));
+        opcode.put("ASM__DIRECTIVE__"     , new Byte((byte) 0xff));
 
         // Registers
-        regs.put(new String("$0")  , new Byte((byte) 1));
-        regs.put(new String("$1")  , new Byte((byte) 1));
-        regs.put(new String("$2")  , new Byte((byte) 2));
-        regs.put(new String("$3")  , new Byte((byte) 3));
-        regs.put(new String("$4")  , new Byte((byte) 4));
-        regs.put(new String("$5")  , new Byte((byte) 5));
-        regs.put(new String("$6")  , new Byte((byte) 6));
-        regs.put(new String("$7")  , new Byte((byte) 7));
-        regs.put(new String("$8")  , new Byte((byte) 8));
-        regs.put(new String("$9")  , new Byte((byte) 9));
-        regs.put(new String("$10") , new Byte((byte) 10));
-        regs.put(new String("$11") , new Byte((byte) 11));
-        regs.put(new String("$12") , new Byte((byte) 12));
-        regs.put(new String("$13") , new Byte((byte) 13));
-        regs.put(new String("$14") , new Byte((byte) 14));
-        regs.put(new String("$15") , new Byte((byte) 15));
-        regs.put(new String("$16") , new Byte((byte) 16));
-        regs.put(new String("$17") , new Byte((byte) 17));
-        regs.put(new String("$18") , new Byte((byte) 18));
-        regs.put(new String("$19") , new Byte((byte) 19));
-        regs.put(new String("$20") , new Byte((byte) 20));
-        regs.put(new String("$21") , new Byte((byte) 21));
-        regs.put(new String("$22") , new Byte((byte) 22));
-        regs.put(new String("$23") , new Byte((byte) 23));
-        regs.put(new String("$24") , new Byte((byte) 24));
-        regs.put(new String("$25") , new Byte((byte) 25));
-        regs.put(new String("$26") , new Byte((byte) 26));
-        regs.put(new String("$27") , new Byte((byte) 27));
-        regs.put(new String("$28") , new Byte((byte) 28));
-        regs.put(new String("$29") , new Byte((byte) 29));
-        regs.put(new String("$30") , new Byte((byte) 30));
-        regs.put(new String("$31") , new Byte((byte) 31));
+        regs.put("$0"  , new Byte((byte) 1));
+        regs.put("$1"  , new Byte((byte) 1));
+        regs.put("$2"  , new Byte((byte) 2));
+        regs.put("$3"  , new Byte((byte) 3));
+        regs.put("$4"  , new Byte((byte) 4));
+        regs.put("$5"  , new Byte((byte) 5));
+        regs.put("$6"  , new Byte((byte) 6));
+        regs.put("$7"  , new Byte((byte) 7));
+        regs.put("$8"  , new Byte((byte) 8));
+        regs.put("$9"  , new Byte((byte) 9));
+        regs.put("$10" , new Byte((byte) 10));
+        regs.put("$11" , new Byte((byte) 11));
+        regs.put("$12" , new Byte((byte) 12));
+        regs.put("$13" , new Byte((byte) 13));
+        regs.put("$14" , new Byte((byte) 14));
+        regs.put("$15" , new Byte((byte) 15));
+        regs.put("$16" , new Byte((byte) 16));
+        regs.put("$17" , new Byte((byte) 17));
+        regs.put("$18" , new Byte((byte) 18));
+        regs.put("$19" , new Byte((byte) 19));
+        regs.put("$20" , new Byte((byte) 20));
+        regs.put("$21" , new Byte((byte) 21));
+        regs.put("$22" , new Byte((byte) 22));
+        regs.put("$23" , new Byte((byte) 23));
+        regs.put("$24" , new Byte((byte) 24));
+        regs.put("$25" , new Byte((byte) 25));
+        regs.put("$26" , new Byte((byte) 26));
+        regs.put("$27" , new Byte((byte) 27));
+        regs.put("$28" , new Byte((byte) 28));
+        regs.put("$29" , new Byte((byte) 29));
+        regs.put("$30" , new Byte((byte) 30));
+        regs.put("$31" , new Byte((byte) 31));
 
-        regs.put(new String("$zero") , new Byte((byte) 0));
-        regs.put(new String("$at")   , new Byte((byte) 1));
-        regs.put(new String("$v0")   , new Byte((byte) 2));
-        regs.put(new String("$v1")   , new Byte((byte) 3));
-        regs.put(new String("$a0")   , new Byte((byte) 4));
-        regs.put(new String("$a1")   , new Byte((byte) 5));
-        regs.put(new String("$a2")   , new Byte((byte) 6));
-        regs.put(new String("$a3")   , new Byte((byte) 7));
-        regs.put(new String("$t0")   , new Byte((byte) 8));
-        regs.put(new String("$t1")   , new Byte((byte) 9));
-        regs.put(new String("$t2")   , new Byte((byte) 10));
-        regs.put(new String("$t3")   , new Byte((byte) 11));
-        regs.put(new String("$t4")   , new Byte((byte) 12));
-        regs.put(new String("$t5")   , new Byte((byte) 13));
-        regs.put(new String("$t6")   , new Byte((byte) 14));
-        regs.put(new String("$t7")   , new Byte((byte) 15));
-        regs.put(new String("$s0")   , new Byte((byte) 16));
-        regs.put(new String("$s1")   , new Byte((byte) 17));
-        regs.put(new String("$s2")   , new Byte((byte) 18));
-        regs.put(new String("$s3")   , new Byte((byte) 19));
-        regs.put(new String("$s4")   , new Byte((byte) 20));
-        regs.put(new String("$s5")   , new Byte((byte) 21));
-        regs.put(new String("$s6")   , new Byte((byte) 22));
-        regs.put(new String("$s7")   , new Byte((byte) 23));
-        regs.put(new String("$t8")   , new Byte((byte) 24));
-        regs.put(new String("$t9")   , new Byte((byte) 25));
-        regs.put(new String("$k0")   , new Byte((byte) 26));
-        regs.put(new String("$k1")   , new Byte((byte) 27));
-        regs.put(new String("$gp")   , new Byte((byte) 28));
-        regs.put(new String("$sp")   , new Byte((byte) 29));
-        regs.put(new String("$fp")   , new Byte((byte) 30));
-        regs.put(new String("$ra")   , new Byte((byte) 31));
+        regs.put("$zero" , new Byte((byte) 0));
+        regs.put("$at"   , new Byte((byte) 1));
+        regs.put("$v0"   , new Byte((byte) 2));
+        regs.put("$v1"   , new Byte((byte) 3));
+        regs.put("$a0"   , new Byte((byte) 4));
+        regs.put("$a1"   , new Byte((byte) 5));
+        regs.put("$a2"   , new Byte((byte) 6));
+        regs.put("$a3"   , new Byte((byte) 7));
+        regs.put("$t0"   , new Byte((byte) 8));
+        regs.put("$t1"   , new Byte((byte) 9));
+        regs.put("$t2"   , new Byte((byte) 10));
+        regs.put("$t3"   , new Byte((byte) 11));
+        regs.put("$t4"   , new Byte((byte) 12));
+        regs.put("$t5"   , new Byte((byte) 13));
+        regs.put("$t6"   , new Byte((byte) 14));
+        regs.put("$t7"   , new Byte((byte) 15));
+        regs.put("$s0"   , new Byte((byte) 16));
+        regs.put("$s1"   , new Byte((byte) 17));
+        regs.put("$s2"   , new Byte((byte) 18));
+        regs.put("$s3"   , new Byte((byte) 19));
+        regs.put("$s4"   , new Byte((byte) 20));
+        regs.put("$s5"   , new Byte((byte) 21));
+        regs.put("$s6"   , new Byte((byte) 22));
+        regs.put("$s7"   , new Byte((byte) 23));
+        regs.put("$t8"   , new Byte((byte) 24));
+        regs.put("$t9"   , new Byte((byte) 25));
+        regs.put("$k0"   , new Byte((byte) 26));
+        regs.put("$k1"   , new Byte((byte) 27));
+        regs.put("$gp"   , new Byte((byte) 28));
+        regs.put("$sp"   , new Byte((byte) 29));
+        regs.put("$fp"   , new Byte((byte) 30));
+        regs.put("$ra"   , new Byte((byte) 31));
 
     }
 
@@ -222,16 +222,24 @@ public class PLPAsm {
 
         try {
 
+        PLPMsg.D("lines: " + asmLines.length, 5, this);
+
         // Begin our preprocess cases
         while(i < asmLines.length) {
             j = 0;
+            asmLines[i] = asmLines[i].trim();
             asmTokens = asmLines[i].split(delimiters);
+
+            PLPMsg.D(i + ": " + asmLines[i] + " tl: " +
+                     asmTokens.length, 5, this);
+            PLPMsg.D("<<<" + asmTokens[0] + ">>>", 5, this);
+
             i++;
 
             // Include statement
             if(asmTokens[0].equals(".include")) {
                 if(asmTokens.length < 2) {
-                   PLPMsg.PLPError("Directive syntax error in line " + i,
+                   PLPMsg.E("Directive syntax error in line " + i,
                                   PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX, this);
                    return PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX;
                 }
@@ -253,7 +261,7 @@ public class PLPAsm {
             // .org directive
             else if(asmTokens[0].equals(".org")) {
                 if(asmTokens.length < 2) {
-                   PLPMsg.PLPError("Directive syntax error in line " + i,
+                   PLPMsg.E("Directive syntax error in line " + i,
                                   PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX, this);
                    return PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX;
                 }
@@ -267,7 +275,7 @@ public class PLPAsm {
             //   Initialize current memory address to a value
             else if(asmTokens[0].equals(".word")) {
                 if(asmTokens.length < 2) {
-                   PLPMsg.PLPError("Directive syntax error in line " + i,
+                   PLPMsg.E("Directive syntax error in line " + i,
                                   PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX, this);
                    return PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX;
                 }
@@ -281,7 +289,7 @@ public class PLPAsm {
             //   argument
             else if(asmTokens[0].equals(".space")) {
                 if(asmTokens.length < 2) {
-                   PLPMsg.PLPError("Directive syntax error in line " + i,
+                   PLPMsg.E("Directive syntax error in line " + i,
                                   PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX, this);
                    return PLPMsg.PLP_ASM_ERROR_DIRECTIVE_SYNTAX;
                 }
@@ -291,45 +299,52 @@ public class PLPAsm {
                     curAddr += 4;
                 }
             }
+
+            // Comments
+            else if(asmLines[i - 1].equals("") || asmTokens[0].charAt(0) == '#') {
+                preprocessedAsm += "ASM__SKIP__\n";
+                directiveOffset++;
+            }
             
             // Label handler
             //   Everything after the label is IGNORED, it has to be on its own
             //   line
-            else if(asmTokens[0].charAt(asmTokens[0].length() - 1) == ':')
-            {
+            else if(asmTokens[0].charAt(asmTokens[0].length() - 1) == ':') {
                 tempLabel = asmTokens[0].substring(0, asmTokens[0].length() - 1);
-                symTable.put(tempLabel, new Integer(curAddr));
+                symTable.put(tempLabel, new Long(curAddr & 0xFFFFFFFF));
                 preprocessedAsm += "ASM__SKIP__\n";
                 directiveOffset++;
             }
 
             // Pseudo-ops
-
-            // Comments
-            else if(asmTokens[0].charAt(0) == '#') {
-                preprocessedAsm += "ASM__SKIP__\n";
-                directiveOffset++;
+            else if(asmTokens[0].equals("nop")) {
+                preprocessedAsm += "sll $0,$0,0\n";
+                curAddr += 4;
             }
 
             // Instructions
             else {
                 if(instrMap.containsKey(asmTokens[0]) == false) {
-                    PLPMsg.PLPError("Unable to process token " + asmTokens[0],
+                    PLPMsg.E("Unable to process token " + asmTokens[0],
                                     PLPMsg.PLP_ASM_ERROR_INVALID_TOKEN, this);
                     return PLPMsg.PLP_ASM_ERROR_INVALID_TOKEN;
                 }
+                PLPMsg.D("exit i: " + i, 5, this);
                 curAddr += 4;
                 preprocessedAsm += asmLines[i - 1] + "\n";
             }
+
+            PLPMsg.D("pr:\n" + preprocessedAsm + ">>>", 5, this);
+
         }
 
         } catch(Exception e) {
-            PLPMsg.PLPError("preprocess(): Uncaught exception in line " + i + "\n" + e,
+            PLPMsg.E("preprocess(): Uncaught exception in line " + i + "\n" + e,
                             PLPMsg.PLP_ERROR_GENERIC, this);
             return PLPMsg.PLP_ERROR_GENERIC;
         }
 
-        PLPMsg.PLPDebug("First pass completed.", 1, this);
+        PLPMsg.D("First pass completed.", 1, this);
 
         return 0;
     }
@@ -342,47 +357,53 @@ public class PLPAsm {
      */
     public int assemble() {
         int i = 0, j = 0;
-        int asmPC = 0;
+        long asmPC = 0;
         int lineNumOffset = 1;
-        int s = 0;
+        int s = 0;              // assembler directive line offsets
         
-        String delimiters = "[(), +]";
+        String delimiters = ",[ ]+|,|[ ]+|[()]";
         String lineDelim  = "\\r?\\n";
 
         String[] asmLines  = this.preprocessedAsm.split(lineDelim);
         String[] asmTokens;
+        String[] stripComments;
 
         byte rd, rs, rt, shamt;
         int imm;
         int branchTarget;
         boolean skip;
 
-        objectCode = new int[asmLines.length - directiveOffset];
-        addrTable = new int[asmLines.length - directiveOffset];
+        objectCode = new long[asmLines.length - directiveOffset];
+        addrTable = new long[asmLines.length - directiveOffset];
         curActiveFile = this.topLevelFile;
 
         try {
 
         while(i < asmLines.length) {
-            asmTokens = asmLines[i].split(delimiters);
+            stripComments = asmLines[i].split("#");
+            asmTokens = stripComments[0].split(delimiters);
 
             objectCode[i - s] = 0;
             skip = false;
             rd = rs = rt = shamt = -1;
 
-            PLPMsg.PLPDebug("assemble(line " + (i + lineNumOffset) + "): " + asmLines[i], 5, this);
+            PLPMsg.D("assemble(line " + (i + lineNumOffset) + "): " + asmLines[i], 3, this);
+
+            if(PLPMsg.debugLevel == 5)
+                for(j = 0; j < asmTokens.length; j++)
+                    PLPMsg.D(asmTokens[j], 5, this);
 
             switch((Integer) instrMap.get(asmTokens[0])) {
 
                 // 3-op R-type
                 case 0:
-                    if(!checkNumberOfOperands(asmTokens, 4, i))
+                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -396,29 +417,30 @@ public class PLPAsm {
 
                 // Shift R-type
                 case 1:
-                    if(!checkNumberOfOperands(asmTokens, 3, i))
+                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
+
                     objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[2])) << 16;
                     objectCode[i - s] |= (rd = (Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i - s] |= (shamt = (byte) ((Byte) regs.get(asmTokens[3]) & 0x1F)) << 6;
+                    objectCode[i - s] |= (shamt = (byte) (Byte.parseByte(asmTokens[3]) & 0x1F)) << 6;
                     objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
 
                     break;
 
                 // Jump R-type
                 case 2:
-                    if(!checkNumberOfOperands(asmTokens, 2, i))
+                    if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -429,16 +451,16 @@ public class PLPAsm {
 
                 // Branch I-type
                 case 3:
-                    if(!checkNumberOfOperands(asmTokens, 4, i))
+                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
                     if(!symTable.containsKey(asmTokens[3])) {
-                        PLPMsg.PLPError("assemble(): Invalid branch target in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid branch target in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_BRANCH_TARGET, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_BRANCH_TARGET;
                     }
@@ -453,12 +475,12 @@ public class PLPAsm {
 
                 // Arithmetic and Logic I-type
                 case 4:
-                    if(!checkNumberOfOperands(asmTokens, 4, i))
+                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -471,11 +493,11 @@ public class PLPAsm {
 
                 // Load upper immediate I-type
                 case 5:
-                    if(!checkNumberOfOperands(asmTokens, 3, i))
+                    if(!checkNumberOfOperands(asmTokens, 3, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -487,12 +509,12 @@ public class PLPAsm {
 
                 // Load/Store Word I-type
                 case 6:
-                    if(!checkNumberOfOperands(asmTokens, 4, i))
+                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        PLPMsg.PLPError("assemble(): Invalid register in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
@@ -505,11 +527,11 @@ public class PLPAsm {
 
                 // J-type
                 case 7:
-                    if(!checkNumberOfOperands(asmTokens, 2, i))
+                    if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
                         return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                     if(!symTable.containsKey(asmTokens[1])) {
-                        PLPMsg.PLPError("assemble(): Invalid jump target in line " + (lineNumOffset + 1),
+                        PLPMsg.E("assemble(): Invalid jump target in line " + (i + lineNumOffset),
                                         PLPMsg.PLP_ASM_ERROR_INVALID_JUMP_TARGET, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_JUMP_TARGET;
                     }
@@ -526,13 +548,13 @@ public class PLPAsm {
                 // Others
                 case 9:
                     if(asmTokens[0].equals("ASM__WORD__")) {
-                        if(!checkNumberOfOperands(asmTokens, 2, i))
+                        if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
                             return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                         objectCode[i - s] = sanitize32bits(asmTokens[1]);
                     }
                     else if(asmTokens[0].equals("ASM__ORG__")) {
-                        if(!checkNumberOfOperands(asmTokens, 2, i))
+                        if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
                             return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
 
                         asmPC = sanitize32bits(asmTokens[1]);
@@ -545,11 +567,13 @@ public class PLPAsm {
 
                     break;
                 default:
-                    PLPMsg.PLPError("assemble(): This should not happen. Report bug.",
+                    PLPMsg.E("assemble(): This should not happen. Report bug.",
                                      PLPMsg.PLP_OOPS, this);
                     return PLPMsg.PLP_OOPS;
             }
 
+            // Update address table and assembler PC if this line is a valid
+            // instruction / .word directive
             if(!skip) {
                 addrTable[i - s] = asmPC;
                 asmPC += 4;
@@ -558,13 +582,14 @@ public class PLPAsm {
         }
 
         if(PLPMsg.lastError > 0)
-            PLPMsg.PLPInfo("assemble(): WARNING: Unhandled error(s) encountered.", this);
+            PLPMsg.I("assemble(): WARNING: Unhandled error(s) encountered.", this);
         
-        PLPMsg.PLPDebug("Assembly completed.", 1, this);
+        PLPMsg.D("Assembly completed.", 1, this);
         assembled = true;
 
         } catch(Exception e) {
-            PLPMsg.PLPError("assemble(): Uncaught exception in line " + (i + 1) + "\n" + e,
+            PLPMsg.E("assemble(): Uncaught exception in line " +
+                            (i + lineNumOffset) + "\n" + e,
                             PLPMsg.PLP_ERROR_GENERIC, this);
             return PLPMsg.PLP_ERROR_GENERIC;
         }
@@ -572,11 +597,11 @@ public class PLPAsm {
         return 0;
     }
 
-    public int[] getObjectCode() {
+    public long[] getObjectCode() {
         return objectCode;
     }
 
-    public int[] getAddrTable() {
+    public long[] getAddrTable() {
         return addrTable;
     }
     
@@ -588,43 +613,43 @@ public class PLPAsm {
         return assembled;
     }
 
-    private short sanitize16bits(String number) {
+    private int sanitize16bits(String number) {
         try {
 
         if(number.startsWith("0x") || number.startsWith("0h")) {
             number = number.substring(2);
-            return Short.parseShort(number, 16);
+            return Integer.parseInt(number, 16) & 0xFFFF;
         }
         else if(number.startsWith("0b")) {
             number = number.substring(2);
-            return Short.parseShort(number, 2);
+            return Integer.parseInt(number, 2) & 0xFFFF;
         }
         else
-            return Short.parseShort(number);
+            return Integer.parseInt(number) & 0xFFFF;
 
         } catch(Exception e) {
-            PLPMsg.PLPError("Argument is not a valid number\n" + e,
+            PLPMsg.E("sanitize16bits(): Argument is not a valid number\n" + e,
                             PLPMsg.PLP_NUMBER_ERROR, this);
             return 0;
         }
     }
 
-    private int sanitize32bits(String number) {
+    private long sanitize32bits(String number) {
         try {
 
         if(number.startsWith("0x") || number.startsWith("0h")) {
             number = number.substring(2);
-            return Integer.parseInt(number, 16);
+            return Long.parseLong(number, 16) & 0xFFFFFFFF;
         }
         else if(number.startsWith("0b")) {
             number = number.substring(2);
-            return Integer.parseInt(number, 2);
+            return Long.parseLong(number, 2) & 0xFFFFFFFF;
         }
         else
-            return Integer.parseInt(number);
+            return Long.parseLong(number) & 0xFFFFFFFF;
 
         } catch(Exception e) {
-            PLPMsg.PLPError("Argument is not a valid number\n" + e,
+            PLPMsg.E("sanitize32bits(): Argument is not a valid number\n" + e,
                             PLPMsg.PLP_NUMBER_ERROR, this);
             return 0;
         }
@@ -632,7 +657,7 @@ public class PLPAsm {
 
     private boolean checkNumberOfOperands(Object iObj[], int length, int lineNum) {
         if(iObj.length != length) {
-            PLPMsg.PLPError("assemble(): Invalid number of operands in line " + (lineNum + 1),
+            PLPMsg.E("assemble(): Invalid number of operands in line " + lineNum,
                             PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS, this);
             return false;
         }
@@ -676,7 +701,7 @@ class PLPAsmSource {
         recursionLevel = intLevel;
 
         } catch(Exception e) {
-            PLPMsg.PLPError("Error reading file",
+            PLPMsg.E("Error reading file",
                             PLPMsg.PLP_ERROR_GENERIC, this);
         }
     }

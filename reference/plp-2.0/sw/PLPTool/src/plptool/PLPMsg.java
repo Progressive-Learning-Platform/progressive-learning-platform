@@ -11,7 +11,7 @@ package plptool;
  */
 public class PLPMsg {
 
-    static int debugLevel = 5;
+    static int debugLevel = 0;
 
     // Assembler 1st Pass Errors
     static int PLP_ASM_ERROR_INVALID_TOKEN          = 16;
@@ -40,21 +40,31 @@ public class PLPMsg {
     static int[]    errorCodes;
 
     static int lastError = 0;
+    static int markCounter = 0;
 
-    public static void PLPError(String infoStr, int errorCode, Object objIdentifier) {
+    // Error message
+    public static void E(String infoStr, int errorCode, Object objIdentifier) {
         System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + infoStr);
         lastError = errorCode;
     }
 
-    public static void PLPInfo(String infoStr, Object objIdentifier) {
+    // Information message
+    public static void I(String infoStr, Object objIdentifier) {
         if(objIdentifier != null)
             System.out.println("[I] " + objIdentifier.toString() + ": " + infoStr);
         else
             System.out.println("[I] " + infoStr);
     }
 
-    public static void PLPDebug(String debugStr, int requestedDebugLevel, Object objIdentifier) {
+    // Debug message
+    public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
         if(requestedDebugLevel <= debugLevel)
             System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
+    }
+
+    // Mark
+    public static void mark() {
+        System.out.println("[D] " + markCounter + " We're here!");
+        markCounter++;
     }
 }

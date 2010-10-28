@@ -42,8 +42,8 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {
         PLPAsm plpAssembler = null;
-        int objCode[];
-        int addrTable[];
+        long objCode[];
+        long addrTable[];
         HashMap symTable;
         Iterator iterator;
         String key, value;
@@ -54,30 +54,33 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.exit(-1);
             } else {
                 plpAssembler = new PLPAsm(null, args[1], Integer.parseInt(args[2]));
-                plpAssembler.preprocess(0);
-                plpAssembler.assemble();
+                if(plpAssembler.preprocess(0) == 0)
+                    plpAssembler.assemble();
 
                 if(plpAssembler.isAssembled()) {
                     objCode = plpAssembler.getObjectCode();
                     addrTable = plpAssembler.getAddrTable();
                     symTable = plpAssembler.getSymTable();
 
-                    for(int i = 0; i < objCode.length; i++)
-                        System.out.println(Integer.toHexString(addrTable[i]) +
-                                "\t" + Integer.toBinaryString(objCode[i]));
+                    System.out.println();
 
+                    for(int i = 0; i < objCode.length; i++)
+                        System.out.println(Long.toHexString(addrTable[i]) +
+                                "\t" + Long.toBinaryString(objCode[i]));
+
+                    System.out.println("\nSymbol Table\n============");
                     iterator = symTable.keySet().iterator();
 
                     while(iterator.hasNext()) {
                         key = iterator.next().toString();
                         value = symTable.get(key).toString();
 
-                        System.out.println(key + "\t:\t" + value);
+                        System.out.println(key + "\t\t:\t" + value);
                     }
 
 
                 } else {
-                    PLPMsg.PLPInfo("Assembly of " + args[1] + " failed.", null);
+                    PLPMsg.I("Assembly of " + args[1] + " failed.", null);
                 }
             }
         } else {
