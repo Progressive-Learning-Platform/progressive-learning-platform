@@ -66,7 +66,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
                     for(int i = 0; i < objCode.length; i++)
                         System.out.println(Long.toHexString(addrTable[i]) +
-                                "\t" + Long.toBinaryString(objCode[i]));
+                                "\t0x" + Integer.toHexString((int) objCode[i]));
 
                     System.out.println("\nSymbol Table\n============");
                     iterator = symTable.keySet().iterator();
@@ -78,7 +78,9 @@ public class PLPToolApp extends SingleFrameApplication {
                         System.out.println(key + "\t\t:\t" + value);
                     }
 
+                    System.out.println();
 
+                    PLPAsmFormatter.prettyPrint(plpAssembler);
                 } else {
                     PLPMsg.I("Assembly of " + args[1] + " failed.", null);
                 }
