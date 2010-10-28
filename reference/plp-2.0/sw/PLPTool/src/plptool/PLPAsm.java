@@ -15,20 +15,23 @@ import java.io.*;
  */
 public class PLPAsm {
 
-    private LinkedList  SourceList = new LinkedList();
+    private LinkedList<PLPAsmSource>  SourceList = new LinkedList<PLPAsmSource>();
 
     private long[]      addrTable;
     private long[]      objectCode;      // Java needs unsigned types!
+                                         // higher 4 bytes are useless, cast
+                                         // to int before using.
+    private HashMap<String, Long> symTable;
+
     private long        curAddr;
     private int         directiveOffset;
     private String      preprocessedAsm;
     private String      curActiveFile;
     private String      topLevelFile;
 
-    private HashMap     instrMap;
-    private HashMap     symTable;
-    private HashMap     opcode;
-    private HashMap     regs;
+    private static HashMap<String, Integer>     instrMap;
+    private static HashMap<String, Byte>        opcode;
+    private static HashMap<String, Byte>        regs;
 
     private boolean     assembled;
 
@@ -37,10 +40,10 @@ public class PLPAsm {
         SourceList.add(plpAsmObj);
         preprocessedAsm = new String();
         curAddr = intStartAddr;
-        instrMap = new HashMap();
-        symTable = new HashMap();
-        opcode = new HashMap();
-        regs = new HashMap();
+        instrMap = new HashMap<String, Integer>();
+        symTable = new HashMap<String, Long>();
+        opcode = new HashMap<String, Byte>();
+        regs = new HashMap<String, Byte>();
 
         directiveOffset = 0;
         topLevelFile = strFilePath;
@@ -132,7 +135,7 @@ public class PLPAsm {
         opcode.put("ASM__DIRECTIVE__"     , new Byte((byte) 0xff));
 
         // Registers
-        regs.put("$0"  , new Byte((byte) 1));
+        regs.put("$0"  , new Byte((byte) 0));
         regs.put("$1"  , new Byte((byte) 1));
         regs.put("$2"  , new Byte((byte) 2));
         regs.put("$3"  , new Byte((byte) 3));
@@ -311,7 +314,7 @@ public class PLPAsm {
             //   line
             else if(asmTokens[0].charAt(asmTokens[0].length() - 1) == ':') {
                 tempLabel = asmTokens[0].substring(0, asmTokens[0].length() - 1);
-                symTable.put(tempLabel, new Long(curAddr & 0xFFFFFFFF));
+                symTable.put(tempLabel, new Long((int) curAddr));
                 preprocessedAsm += "ASM__SKIP__\n";
                 directiveOffset++;
             }
@@ -349,7 +352,7 @@ public class PLPAsm {
         return 0;
     }
 
-    /**cd PLP
+    /**
      * Assemble all assembly sources attached to this assembler and generate
      * object codes
      *
@@ -370,7 +373,7 @@ public class PLPAsm {
 
         byte rd, rs, rt, shamt;
         int imm;
-        int branchTarget;
+        long branchTarget;
         boolean skip;
 
         objectCode = new long[asmLines.length - directiveOffset];
@@ -429,7 +432,7 @@ public class PLPAsm {
 
                     objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[2])) << 16;
                     objectCode[i - s] |= (rd = (Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i - s] |= (shamt = (byte) (Byte.parseByte(asmTokens[3]) & 0x1F)) << 6;
+                    objectCode[i - s] |= (shamt = (byte) (sanitize16bits(asmTokens[3]) & 0x1F)) << 6;
                     objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
 
                     break;
@@ -464,7 +467,7 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_ERROR_INVALID_BRANCH_TARGET, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_BRANCH_TARGET;
                     }
-                    branchTarget = (Integer) symTable.get(asmTokens[3]);
+                    branchTarget = symTable.get(asmTokens[3]);
                     branchTarget -= (asmPC + 4) / 4;
                     objectCode[i - s] |= branchTarget & 0xFFFF;
                     objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[2])) << 21;
@@ -518,7 +521,7 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER, this);
                         return PLPMsg.PLP_ASM_ERROR_INVALID_REGISTER;
                     }
-                    objectCode[i - s] |= sanitize16bits(asmTokens[3]);
+                    objectCode[i - s] |= sanitize16bits(asmTokens[2]);
                     objectCode[i - s] |= (rt = (Byte) regs.get(asmTokens[1])) << 16;
                     objectCode[i - s] |= (rs = (Byte) regs.get(asmTokens[3])) << 21;
                     objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
@@ -536,7 +539,7 @@ public class PLPAsm {
                         return PLPMsg.PLP_ASM_ERROR_INVALID_JUMP_TARGET;
                     }
 
-                    objectCode[i - s] |= ((Integer) symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
+                    objectCode[i - s] |= (int) (symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
                     objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
 
                     break;
@@ -581,11 +584,15 @@ public class PLPAsm {
             i++;
         }
 
-        if(PLPMsg.lastError > 0)
-            PLPMsg.I("assemble(): WARNING: Unhandled error(s) encountered.", this);
-        
-        PLPMsg.D("Assembly completed.", 1, this);
-        assembled = true;
+        if(PLPMsg.lastError > 0) {
+            PLPMsg.E("assemble(): Unhandled error(s) encountered. Assembly failed.",
+                    PLPMsg.PLP_ERROR_GENERIC, this);
+            return PLPMsg.PLP_ERROR_GENERIC;
+        }
+        else {
+            PLPMsg.D("Assembly completed.", 1, this);
+            assembled = true;
+        }
 
         } catch(Exception e) {
             PLPMsg.E("assemble(): Uncaught exception in line " +
@@ -611,6 +618,43 @@ public class PLPAsm {
 
     public boolean isAssembled() {
         return assembled;
+    }
+
+    public static String lookupInstr(byte instrOpCode) {
+        String key;
+
+        if(opcode.containsValue(instrOpCode)) {
+            Iterator iterator = opcode.keySet().iterator();
+            while(iterator.hasNext()) {
+                key = (String) iterator.next();
+                if(opcode.get(key).equals(instrOpCode)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
+    public String lookupLabel(long address) {
+        String key;
+
+        if(symTable.containsValue(address)) {
+            Iterator iterator = symTable.keySet().iterator();
+            while(iterator.hasNext()) {
+                key = (String) iterator.next();
+                if(symTable.get(key).equals(address)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Integer lookupInstrType(String instrOpCode) {
+        if(instrMap.containsKey(instrOpCode)) {
+            return (Integer) instrMap.get(instrOpCode);
+        }
+        return null;
     }
 
     private int sanitize16bits(String number) {

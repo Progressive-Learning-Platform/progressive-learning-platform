@@ -32,9 +32,9 @@ public class PLPMsg {
     static int PLP_ASM_ERROR_INVALID_JUMP_TARGET    = 72;
 
     static int PLP_ERROR_GENERIC                    = 1;
-    static int PLP_OOPS                             = 2;
+    static int PLP_OOPS                             = 9001;
 
-    static int PLP_NUMBER_ERROR                     = 3;
+    static int PLP_NUMBER_ERROR                     = 8;
 
     static String[] errorStr;
     static int[]    errorCodes;
