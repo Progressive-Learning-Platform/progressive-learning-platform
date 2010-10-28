@@ -720,6 +720,7 @@ class PLPAsmSource {
     
     public PLPAsmSource(String strAsm, String strFilePath, int intLevel) {
         asmString = new String();
+        asmFilePath = new String(strFilePath);
         
         try {
         if(strAsm == null) {
@@ -730,7 +731,6 @@ class PLPAsmSource {
         } else
             asmString = strAsm;
 
-        asmFilePath = new String(strFilePath);
         recursionLevel = intLevel;
 
         } catch(Exception e) {

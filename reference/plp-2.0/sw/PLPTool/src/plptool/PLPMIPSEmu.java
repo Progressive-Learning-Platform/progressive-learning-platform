@@ -9,7 +9,12 @@ package plptool;
  * @author wira
  */
 public class PLPMIPSEmu {
-    
+
+    long pc;
+
+    public int step () {
+        return 0;
+    }    
 }
 
 class fd {
@@ -21,9 +26,7 @@ class rf {
 }
 
 class ex {
-    public void step() {
 
-    }
 }
 
 class mem {

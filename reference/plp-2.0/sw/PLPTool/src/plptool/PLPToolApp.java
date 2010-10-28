@@ -62,11 +62,11 @@ public class PLPToolApp extends SingleFrameApplication {
                     addrTable = plpAssembler.getAddrTable();
                     symTable = plpAssembler.getSymTable();
 
-                    PLPAsmFormatter.symTablePrettyPrint(plpAssembler);
+                    PLPAsmFormatter.symTablePrettyPrint(symTable);
                     System.out.println();
                     PLPAsmFormatter.prettyPrint(plpAssembler);
-                    PLPAsmFormatter.writeBin(plpAssembler, args[3]);
-                    PLPAsmFormatter.writeCOE(plpAssembler, args[3]);
+                    PLPAsmFormatter.writeBin(objCode, args[3]);
+                    PLPAsmFormatter.writeCOE(objCode, args[3]);
                 } else {
                     PLPMsg.E("Assembly of " + args[1] + " failed.",
                              PLPMsg.PLP_ERROR_RETURN, null);
