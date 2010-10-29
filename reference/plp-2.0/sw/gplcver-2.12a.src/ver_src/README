@@ -1,0 +1,13 @@
+Contents:
+
+hello.v    - A Verilog version of the hello world program. 
+
+helpgen.inp, helpgen2.inp, helpgen3.inp  - '-i' input scripts to generate all
+       help screens onto the screen and into the verilog.log file. To run it
+       type "cver -s -i helpgen.inp [some Verilog source file]".
+
+gatenots.v - 14k heirarchical inverter circuit with monitoring so that during
+       simulation every wire is observed.  It requires the simb.mem memory
+       file in this directory.  The circuit consists of chains of inverters
+       with an even number so all outputs settle to the input value after
+       each pattern is applied.
