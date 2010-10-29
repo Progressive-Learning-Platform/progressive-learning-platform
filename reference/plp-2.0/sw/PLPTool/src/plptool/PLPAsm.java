@@ -746,7 +746,7 @@ class PLPAsmSource {
     
     public PLPAsmSource(String strAsm, String strFilePath, int intLevel) {
         asmString = new String();
-        asmFilePath = new String(strFilePath);
+        asmFilePath = strFilePath;
         
         try {
         if(strAsm == null) {
