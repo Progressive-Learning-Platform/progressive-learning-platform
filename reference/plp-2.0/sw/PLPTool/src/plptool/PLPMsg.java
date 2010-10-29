@@ -11,6 +11,8 @@ package plptool;
  */
 public class PLPMsg {
 
+    static String versionString = "Beta 1";
+
     static int debugLevel = 0;
 
     // Assembler 1st Pass Errors
@@ -50,11 +52,11 @@ public class PLPMsg {
     static int markCounter = 0;
 
     // Error message
-    public static int E(String infoStr, int errorCode, Object objIdentifier) {
+    public static int E(String errStr, int errorCode, Object objIdentifier) {
         if(objIdentifier != null)
-            System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + infoStr);
+            System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
         else
-            System.out.println("[E] #" + errorCode + " " + infoStr);
+            System.out.println("[E] #" + errorCode + " " + errStr);
         lastError = errorCode;
         return errorCode;
     }

@@ -1,13 +1,14 @@
           
 # Test assembly
-.include df.asm
+
 	.org 0x0
+        j loop
 init:
 	.word 0xBEEFCAFE
 	.word 0xAA
 	addu $2, $1, $3  #  sdfsdfsdf
 
-
+.include df.asm
 
 
 somevar:
