@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import java.awt.Color;
 
 /**
  * The application's main frame.
@@ -70,6 +71,26 @@ public class PLPToolView extends FrameView {
         IDECommander = new javax.swing.JTextField();
         IDELabel_Command = new javax.swing.JLabel();
         EmuPane = new javax.swing.JPanel();
+        ViewSelector = new javax.swing.JTabbedPane();
+        ExternalView = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        CodeTable = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        RegisterTable = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        MemoryTable = new javax.swing.JTable();
+        RunButton = new javax.swing.JToggleButton();
+        StepButton = new javax.swing.JButton();
+        InternalView = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        InstrTable = new javax.swing.JTable();
+        ClockButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         PrgPane = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -105,6 +126,7 @@ public class PLPToolView extends FrameView {
 
         menuBar.add(helpMenu);
 
+        PLPMainPane.setMinimumSize(new java.awt.Dimension(56, 55));
         PLPMainPane.setName("PLPMainPane"); // NOI18N
 
         IDEPane.setName("IDETab"); // NOI18N
@@ -193,20 +215,20 @@ public class PLPToolView extends FrameView {
         IDEPane.setLayout(IDEPaneLayout);
         IDEPaneLayout.setHorizontalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(IDEBar, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
-            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+            .addComponent(IDEBar, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
+            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDELabel_Command, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE))
-            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE))
+            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
         );
         IDEPaneLayout.setVerticalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDEBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(IDEScroller, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -219,15 +241,449 @@ public class PLPToolView extends FrameView {
 
         EmuPane.setName("EmulatorTab"); // NOI18N
 
+        ViewSelector.setName("ViewSelector"); // NOI18N
+
+        ExternalView.setName("ExternalView"); // NOI18N
+
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(320, 28));
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        CodeTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "S", "PC", "Address", "BP", "Assembly"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        CodeTable.setMaximumSize(new java.awt.Dimension(10000, 64));
+        CodeTable.setMinimumSize(new java.awt.Dimension(1320, 64));
+        CodeTable.setName("CodeTable"); // NOI18N
+        CodeTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(CodeTable);
+        CodeTable.getColumnModel().getColumn(0).setResizable(false);
+        CodeTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+        CodeTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title2")); // NOI18N
+        CodeTable.getColumnModel().getColumn(1).setResizable(false);
+        CodeTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+        CodeTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title3")); // NOI18N
+        CodeTable.getColumnModel().getColumn(2).setResizable(false);
+        CodeTable.getColumnModel().getColumn(2).setPreferredWidth(200);
+        CodeTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title0")); // NOI18N
+        CodeTable.getColumnModel().getColumn(3).setResizable(false);
+        CodeTable.getColumnModel().getColumn(3).setPreferredWidth(40);
+        CodeTable.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title1")); // NOI18N
+        CodeTable.getColumnModel().getColumn(4).setResizable(false);
+        CodeTable.getColumnModel().getColumn(4).setPreferredWidth(1000);
+        CodeTable.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title4")); // NOI18N
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        RegisterTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Register", "Value"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        RegisterTable.setName("RegisterTable"); // NOI18N
+        jScrollPane2.setViewportView(RegisterTable);
+        RegisterTable.getColumnModel().getColumn(0).setResizable(false);
+        RegisterTable.getColumnModel().getColumn(0).setPreferredWidth(300);
+        RegisterTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title0")); // NOI18N
+        RegisterTable.getColumnModel().getColumn(1).setResizable(false);
+        RegisterTable.getColumnModel().getColumn(1).setPreferredWidth(700);
+        RegisterTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title1")); // NOI18N
+
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        MemoryTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Address", "Value"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        MemoryTable.setName("MemoryTable"); // NOI18N
+        jScrollPane3.setViewportView(MemoryTable);
+        MemoryTable.getColumnModel().getColumn(0).setResizable(false);
+        MemoryTable.getColumnModel().getColumn(0).setPreferredWidth(300);
+        MemoryTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title0")); // NOI18N
+        MemoryTable.getColumnModel().getColumn(1).setResizable(false);
+        MemoryTable.getColumnModel().getColumn(1).setPreferredWidth(700);
+        MemoryTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title1")); // NOI18N
+
+        RunButton.setText(resourceMap.getString("RunButton.text")); // NOI18N
+        RunButton.setName("RunButton"); // NOI18N
+
+        StepButton.setText(resourceMap.getString("StepButton.text")); // NOI18N
+        StepButton.setName("StepButton"); // NOI18N
+
+        javax.swing.GroupLayout ExternalViewLayout = new javax.swing.GroupLayout(ExternalView);
+        ExternalView.setLayout(ExternalViewLayout);
+        ExternalViewLayout.setHorizontalGroup(
+            ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ExternalViewLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(ExternalViewLayout.createSequentialGroup()
+                        .addComponent(RunButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(StepButton)))
+                .addContainerGap())
+        );
+        ExternalViewLayout.setVerticalGroup(
+            ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ExternalViewLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(ExternalViewLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(RunButton)
+                            .addComponent(StepButton)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
+        );
+
+        ViewSelector.addTab(resourceMap.getString("ExternalView.TabConstraints.tabTitle"), ExternalView); // NOI18N
+
+        InternalView.setName("InternalView"); // NOI18N
+
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        InstrTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Stage", "Instruction", "Type", "Opcode", "Rs", "Rt", "Rd", "shamt", "Funct", "Immed/Addr"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        InstrTable.setName("InstrTable"); // NOI18N
+        InstrTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane4.setViewportView(InstrTable);
+        InstrTable.getColumnModel().getColumn(0).setResizable(false);
+        InstrTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        InstrTable.getColumnModel().getColumn(1).setResizable(false);
+        InstrTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+        InstrTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title1")); // NOI18N
+        InstrTable.getColumnModel().getColumn(2).setResizable(false);
+        InstrTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        InstrTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title2")); // NOI18N
+        InstrTable.getColumnModel().getColumn(3).setResizable(false);
+        InstrTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+        InstrTable.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title7")); // NOI18N
+        InstrTable.getColumnModel().getColumn(4).setResizable(false);
+        InstrTable.getColumnModel().getColumn(4).setPreferredWidth(100);
+        InstrTable.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title3")); // NOI18N
+        InstrTable.getColumnModel().getColumn(5).setResizable(false);
+        InstrTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+        InstrTable.getColumnModel().getColumn(5).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title4")); // NOI18N
+        InstrTable.getColumnModel().getColumn(6).setResizable(false);
+        InstrTable.getColumnModel().getColumn(6).setPreferredWidth(100);
+        InstrTable.getColumnModel().getColumn(6).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title5")); // NOI18N
+        InstrTable.getColumnModel().getColumn(7).setResizable(false);
+        InstrTable.getColumnModel().getColumn(7).setPreferredWidth(200);
+        InstrTable.getColumnModel().getColumn(7).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title8")); // NOI18N
+        InstrTable.getColumnModel().getColumn(8).setResizable(false);
+        InstrTable.getColumnModel().getColumn(8).setPreferredWidth(400);
+        InstrTable.getColumnModel().getColumn(8).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title9")); // NOI18N
+        InstrTable.getColumnModel().getColumn(9).setResizable(false);
+        InstrTable.getColumnModel().getColumn(9).setPreferredWidth(700);
+        InstrTable.getColumnModel().getColumn(9).setHeaderValue(resourceMap.getString("InstrTable.columnModel.title6")); // NOI18N
+
+        ClockButton.setText(resourceMap.getString("ClockButton.text")); // NOI18N
+        ClockButton.setName("ClockButton"); // NOI18N
+
+        jPanel1.setBackground(resourceMap.getColor("jPanel1.background")); // NOI18N
+        jPanel1.setName("jPanel1"); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 14, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 341, Short.MAX_VALUE)
+        );
+
+        jPanel2.setBackground(resourceMap.getColor("jPanel2.background")); // NOI18N
+        jPanel2.setName("jPanel2"); // NOI18N
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 14, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 341, Short.MAX_VALUE)
+        );
+
+        jPanel3.setBackground(resourceMap.getColor("jPanel3.background")); // NOI18N
+        jPanel3.setName("jPanel3"); // NOI18N
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 14, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 341, Short.MAX_VALUE)
+        );
+
+        jPanel4.setBackground(resourceMap.getColor("jPanel4.background")); // NOI18N
+        jPanel4.setName("jPanel4"); // NOI18N
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 14, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 341, Short.MAX_VALUE)
+        );
+
+        jPanel5.setBackground(resourceMap.getColor("jPanel5.background")); // NOI18N
+        jPanel5.setName("jPanel5"); // NOI18N
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 56, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 254, Short.MAX_VALUE)
+        );
+
+        jPanel6.setBackground(resourceMap.getColor("jPanel6.background")); // NOI18N
+        jPanel6.setName("jPanel6"); // NOI18N
+        jPanel6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jPanel6MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jPanel6MouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 77, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 68, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout InternalViewLayout = new javax.swing.GroupLayout(InternalView);
+        InternalView.setLayout(InternalViewLayout);
+        InternalViewLayout.setHorizontalGroup(
+            InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(InternalViewLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ClockButton)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43)
+                .addGroup(InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(InternalViewLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(53, 53, 53)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(57, 57, 57)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(146, 146, 146)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(136, 136, 136)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(54, Short.MAX_VALUE))
+        );
+        InternalViewLayout.setVerticalGroup(
+            InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InternalViewLayout.createSequentialGroup()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addGroup(InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InternalViewLayout.createSequentialGroup()
+                        .addGroup(InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(19, 19, 19))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InternalViewLayout.createSequentialGroup()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(73, 73, 73))))
+            .addGroup(InternalViewLayout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addComponent(ClockButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 280, Short.MAX_VALUE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(154, 154, 154))
+        );
+
+        ViewSelector.addTab(resourceMap.getString("InternalView.TabConstraints.tabTitle"), InternalView); // NOI18N
+
         javax.swing.GroupLayout EmuPaneLayout = new javax.swing.GroupLayout(EmuPane);
         EmuPane.setLayout(EmuPaneLayout);
         EmuPaneLayout.setHorizontalGroup(
             EmuPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 693, Short.MAX_VALUE)
+            .addComponent(ViewSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
         );
         EmuPaneLayout.setVerticalGroup(
             EmuPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 490, Short.MAX_VALUE)
+            .addComponent(ViewSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
         );
 
         PLPMainPane.addTab(resourceMap.getString("EmulatorTab.TabConstraints.tabTitle"), EmuPane); // NOI18N
@@ -265,9 +721,9 @@ public class PLPToolView extends FrameView {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 516, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 516, Short.MAX_VALUE)
-                    .addComponent(jComboBox3, 0, 516, Short.MAX_VALUE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 630, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 630, Short.MAX_VALUE)
+                    .addComponent(jComboBox3, 0, 630, Short.MAX_VALUE))
                 .addContainerGap())
         );
         PrgPaneLayout.setVerticalGroup(
@@ -285,7 +741,7 @@ public class PLPToolView extends FrameView {
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(379, Short.MAX_VALUE))
+                .addContainerGap(493, Short.MAX_VALUE))
         );
 
         PLPMainPane.addTab(resourceMap.getString("PrgPane.TabConstraints.tabTitle"), PrgPane); // NOI18N
@@ -300,8 +756,19 @@ public class PLPToolView extends FrameView {
         // TODO add your handling code here:
     }//GEN-LAST:event_exitMenuItemMouseReleased
 
+    private void jPanel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseEntered
+        jPanel6.setBackground(new Color(158,158,158));
+    }//GEN-LAST:event_jPanel6MouseEntered
+
+    private void jPanel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseExited
+        jPanel6.setBackground(new Color(102,102,102));
+    }//GEN-LAST:event_jPanel6MouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ClockButton;
+    private javax.swing.JTable CodeTable;
     private javax.swing.JPanel EmuPane;
+    private javax.swing.JPanel ExternalView;
     private javax.swing.JButton IDEAssembleBtn;
     private javax.swing.JToolBar IDEBar;
     private javax.swing.JTextField IDECommander;
@@ -319,14 +786,31 @@ public class PLPToolView extends FrameView {
     private javax.swing.JTextArea IDEStdOut;
     private javax.swing.JScrollPane IDETextPane;
     private javax.swing.JScrollPane IDETreePane;
+    private javax.swing.JTable InstrTable;
+    private javax.swing.JPanel InternalView;
+    private javax.swing.JTable MemoryTable;
     private javax.swing.JTabbedPane PLPMainPane;
     private javax.swing.JPanel PrgPane;
+    private javax.swing.JTable RegisterTable;
+    private javax.swing.JToggleButton RunButton;
+    private javax.swing.JButton StepButton;
+    private javax.swing.JTabbedPane ViewSelector;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JMenuBar menuBar;
     // End of variables declaration//GEN-END:variables
 
