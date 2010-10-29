@@ -41,18 +41,21 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
+        System.out.println("\nPLP Java Tool");
+        System.out.println("Authors: David Fritz, Brian Gordon, Wira Mulia");
+        System.out.println(PLPMsg.versionString + "\n");
+
         PLPAsm plpAssembler = null;
         long objCode[];
         long addrTable[];
         HashMap symTable;
-        Iterator iterator;
-        String key, value;
         
-        if(args.length > 0 && args[0].equals("-cl")) {
+        if(args.length > 0 && args[0].equals("-a")) {
             if(args.length != 4) {
-                System.out.println("Usage: PLPTool -cl <ASM> <Start Address> <BIN output>");
+                System.out.println("Usage: PLPTool -a <asm> <addr> <out>");
                 System.exit(-1);
             } else {
+                PLPMsg.I("Assembling " + args[1] + ".", null);
                 plpAssembler = new PLPAsm(null, args[1], Integer.parseInt(args[2]));
                 if(plpAssembler.preprocess(0) == PLPMsg.PLP_OK)
                     plpAssembler.assemble();
@@ -67,16 +70,31 @@ public class PLPToolApp extends SingleFrameApplication {
                     PLPAsmFormatter.prettyPrint(plpAssembler);
                     PLPAsmFormatter.writeBin(objCode, args[3]);
                     PLPAsmFormatter.writeCOE(objCode, args[3]);
+                    System.out.println();
+                    PLPMsg.I("Assembly completed.", null);
                 } else {
                     PLPMsg.E("Assembly of " + args[1] + " failed.",
                              PLPMsg.PLP_ERROR_RETURN, null);
                 }
             }
-        } else {
-            System.out.println("\nPLP Java Tool");
-            System.out.println("Authors: David Fritz, Brian Gordon, Wira Mulia");
-            System.out.println("\nProvide -cl option for command line assembler");
+        }
+        else if(args.length == 0)
             launch(PLPToolApp.class, args);
+        
+        else {
+            System.out.println("Invalid arguments.\n");
+            System.out.println("Run PLPTool with no command line arguments to launch GUI tool.");
+            System.out.println();
+            System.out.println("Non-GUI options:\n");
+            System.out.println("  -a  <asm> <addr> <out>");
+            System.out.println("      Assemble <asm> with initial address <addr> and write binary");
+            System.out.println("      output to <out>.bin");
+            System.out.println();
+            System.out.println("  -p  <bin> <port> <baud>");
+            System.out.println("      Program PLP target board with <bin> using serial port <port>");
+            System.out.println("      and baud rate of <baud>.");
+
+
         }
     }
 }

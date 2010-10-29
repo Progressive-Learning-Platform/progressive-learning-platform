@@ -4,8 +4,6 @@ import java.util.*;
 import java.io.*;
 
 /**
- * PLPAsm Class
- *
  * This class implements the modular PLP assembler object. The default
  * constructor will initialize required symbols for the assembler.
  * The assembler class can handle multiple assembly sources and
@@ -17,7 +15,20 @@ public class PLPAsm {
 
     private LinkedList<PLPAsmSource>  SourceList = new LinkedList<PLPAsmSource>();
 
+    /**
+     * The address table attached to this assembler.
+     *
+     * @see objectCode[]
+     */
     private long[]      addrTable;
+
+    /**
+     * The object code attached to this assembler.
+     *
+     * @see preprocess(int)
+     * @see assemble()
+     * @see getObjectCode()
+     */
     private long[]      objectCode;      // Java needs unsigned types!
                                          // higher 4 bytes are useless, cast
                                          // to int before using.
@@ -205,9 +216,10 @@ public class PLPAsm {
 
     /**
      * Pre-process / perform 1st pass assembly on all assembly sources
-     * attached to this assembler
+     * attached to this assembler. Resolves assembler directives, pseudo-ops and
+     * populates the symbol table.
      *
-     * @return
+     * @return Returns 0 on completion, error code otherwise
      */
     public int preprocess(int recLevel) {
         int i = 0, j = 0;
@@ -352,9 +364,10 @@ public class PLPAsm {
 
     /**
      * Assemble all assembly sources attached to this assembler and generate
-     * object codes
+     * object codes. Populates objectCodes[] and addrTable[] and sets
+     * the boolean assembled on successful execution.
      *
-     * @return
+     * @return Returns 0 on completion, error code otherwise
      */
     public int assemble() {
         int i = 0, j = 0;
@@ -592,15 +605,30 @@ public class PLPAsm {
 
         return PLPMsg.PLP_OK;
     }
-
+    
+    /**
+     * Returns the object code array attached to this assembler object.
+     * 
+     * @return Returns the object code as array of longs.
+     */
     public long[] getObjectCode() {
         return objectCode;
     }
 
+    /**
+     * Returns the instruction addresses array attached to this assembler object.
+     *
+     * @return Returns the address table as array of longs.
+     */
     public long[] getAddrTable() {
         return addrTable;
     }
-    
+
+    /**
+     * Returns the symbol table attached to this assembler object.
+     *
+     * @return Returns the symbol table as a HashMap.
+     */
     public HashMap getSymTable() {
         return symTable;
     }
@@ -703,8 +731,6 @@ public class PLPAsm {
 }
 
 /**
- * PLPAsmSource Class
- * 
  * This class implements an assembly source and its data structures used by
  * PLPAssembler.
  * 

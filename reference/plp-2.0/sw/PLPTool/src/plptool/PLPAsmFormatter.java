@@ -74,10 +74,6 @@ public class PLPAsmFormatter {
 
             for(int i = 0; i < objectCode.length; i++) {
                 binString = intBinPadder((int) objectCode[i], 32);
-
-                PLPMsg.D("after: " + binString, 5, null);
-               
-
                 out.writeChars(binString);
 
                 if(i == (objectCode.length - 1))
