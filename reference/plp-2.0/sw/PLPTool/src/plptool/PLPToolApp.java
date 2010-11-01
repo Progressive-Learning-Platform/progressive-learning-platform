@@ -7,7 +7,6 @@ package plptool;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * The main class of the application.
@@ -45,56 +44,43 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("Authors: David Fritz, Brian Gordon, Wira Mulia");
         System.out.println(PLPMsg.versionString + "\n");
 
-        PLPAsm plpAssembler = null;
-        long objCode[];
-        long addrTable[];
-        HashMap symTable;
-        
         if(args.length > 0 && args[0].equals("-a")) {
             if(args.length != 4) {
                 System.out.println("Usage: PLPTool -a <asm> <addr> <out>");
                 System.exit(-1);
             } else {
-                PLPMsg.I("Assembling " + args[1] + ".", null);
-                plpAssembler = new PLPAsm(null, args[1], Integer.parseInt(args[2]));
-                if(plpAssembler.preprocess(0) == PLPMsg.PLP_OK)
-                    plpAssembler.assemble();
-
-                if(plpAssembler.isAssembled()) {
-                    objCode = plpAssembler.getObjectCode();
-                    addrTable = plpAssembler.getAddrTable();
-                    symTable = plpAssembler.getSymTable();
-
-                    PLPAsmFormatter.symTablePrettyPrint(symTable);
-                    System.out.println();
-                    PLPAsmFormatter.prettyPrint(plpAssembler);
-                    PLPAsmFormatter.writeBin(objCode, args[3]);
-                    PLPAsmFormatter.writeCOE(objCode, args[3]);
-                    System.out.println();
-                    PLPMsg.I("Assembly completed.", null);
-                } else {
-                    PLPMsg.E("Assembly of " + args[1] + " failed.",
-                             PLPMsg.PLP_ERROR_RETURN, null);
-                }
+                PLPAsmFormatter.genPLP(args[1], args[3], false);
             }
         }
+        else if(args.length > 0 && args[0].equals("-af")) {
+            if(args.length != 4) {
+                System.out.println("Usage: PLPTool -af <asm> <addr> <out>");
+                System.exit(-1);
+            } else {
+                PLPAsmFormatter.genPLP(args[1], args[3], true);
+            }
+        }
+
         else if(args.length == 0)
             launch(PLPToolApp.class, args);
         
         else {
-            System.out.println("Invalid arguments.\n");
+            PLPMsg.E("Invalid argument(s).", PLPMsg.PLP_ERROR_GENERIC, null);
+            System.out.println();
             System.out.println("Run PLPTool with no command line arguments to launch GUI tool.");
             System.out.println();
             System.out.println("Non-GUI options:\n");
             System.out.println("  -a  <asm> <addr> <out>");
-            System.out.println("      Assemble <asm> with initial address <addr> and write binary");
-            System.out.println("      output to <out>.bin");
+            System.out.println("      Assemble <asm> with initial address <addr> and write plp");
+            System.out.println("      output to <out>.plp.");
             System.out.println();
-            System.out.println("  -p  <bin> <port> <baud>");
-            System.out.println("      Program PLP target board with <bin> using serial port <port>");
+            System.out.println("  -af <asm> <addr> <out>");
+            System.out.println("      Like -a, but overwrite existing output file without prompting.");
+            System.out.println();
+            System.out.println("  -p  <plpfile> <port> <baud>");
+            System.out.println("      Program PLP target board with <plpfile> using serial port <port>");
             System.out.println("      and baud rate of <baud>.");
-
-
+            System.out.println();
         }
     }
 }

@@ -4,66 +4,99 @@
 
 package plptool;
 
-import java.util.HashMap;
-
 /**
  *
  * @author wira
  */
 public class PLPMIPSEmu {
 
-    static int cycle;
+    private memory coreMem;
+
+    public int instructionCount;
+
+    public rf   rf_stage;
+    public ex   ex_stage;
+    public mem  mem_stage;
+    public wb   wb_stage;
 
     // Initialize core
-    public static int coreInit(long[] objCode, long[] addrTable) {
+    public PLPMIPSEmu(long[] objCode, long[] addrTable, int RAMsize) {
         int i;
-        cycle = 0;
-        memory.instr = new HashMap<Long, Long> ();
-        memory.data = new HashMap<Long, Long> ();
-        memory.regFile = new long[32];
-        
-        for(i = 0; i < objCode.length; i++)
-            memory.instr.put(addrTable[i], objCode[i]);
+        coreMem = new memory(new long[RAMsize],
+                             new long[32],
+                             0);                // pc=0 on reset
 
-        memory.pc = addrTable[0];
-        rf.instruction = memory.instr.get(memory.pc);
-        rf.instrAddr = memory.pc;
-        rf.fwd_ctl_pcplus4 = memory.pc + 4;
-        rf.hot = true;
-        ex.hot = false;
-        mem.hot = false;
-        wb.hot = false;
+        // load program to RAM
+        for(i = 0; i < objCode.length; i++)
+            coreMem.mainMem[(int) addrTable[i]] =  objCode[i];
+
+        // Instantiate stages
+        wb_stage = new wb(coreMem);
+        mem_stage = new mem(wb_stage, coreMem);
+        ex_stage = new ex(mem_stage, new alu());
+        rf_stage = new rf(ex_stage, coreMem);
+
+        this.reset();
+    }
+
+    public int reset() {
+        coreMem.pc = 0;
+        instructionCount = 0;
+
+        // load up first instruction to core's frontend (rf_stage.i_*)
+        rf_stage.i_instruction = coreMem.mainMem[(int) coreMem.pc];
+        rf_stage.i_instrAddr = coreMem.pc;
+        rf_stage.i_fwd_ctl_pcplus4 = coreMem.pc + 4;
+        rf_stage.hot = true;
+        ex_stage.hot = false;
+        mem_stage.hot = false;
+        wb_stage.hot = false;
 
         return PLPMsg.PLP_OK;
     }
 
-    public static int step () {
-        cycle++;
+    public int step () {
+        instructionCount++;
 
-        // Evaluate from last stage first. Evaluating the stages in order
-        // will make a single cycle machine.
-        if(wb.hot)  wb.eval();
-        if(mem.hot) mem.eval();
-        if(ex.hot)  ex.eval();
-        if(rf.hot)  rf.eval();
+        rf_stage.clock();
+        if(ex_stage.hot) ex_stage.clock();
+        if(mem_stage.hot) mem_stage.clock();
+        if(wb_stage.hot) wb_stage.clock();
+
+        if(wb_stage.hot) wb_stage.eval();
+        if(mem_stage.hot) mem_stage.eval();
+        if(ex_stage.hot) ex_stage.eval();
+        rf_stage.eval();
+
 
         // update pc for next instruction
-        if(mem.hot && mem.ctl_pcsrc == 1)
-            memory.pc = mem.ctl_branchTarget;
+        if(mem_stage.hot && mem_stage.ctl_pcsrc == 1)
+            coreMem.pc = mem_stage.ctl_branchTarget;
         else
-            memory.pc += 4;
+            coreMem.pc += 4;
 
-         // fetch instruction
-        rf.instruction = memory.instr.get(memory.pc);
-        rf.fwd_ctl_pcplus4 = memory.pc + 4;
+        if(coreMem.pc >= coreMem.mainMem.length) {
+            return PLPMsg.E("step(): Instruction memory out-of-bounds: addr=" +
+                            coreMem.pc,
+                            PLPMsg.PLP_EMU_INSTRMEM_OUT_OF_BOUNDS, this);
+        }
 
-        return 0;
+         // fetch instruction / frontend stage
+        rf_stage.i_instruction = coreMem.mainMem[(int) coreMem.pc];
+        rf_stage.i_instrAddr = coreMem.pc;
+        rf_stage.i_fwd_ctl_pcplus4 = coreMem.pc + 4;
+
+        return PLPMsg.PLP_OK;
     }
 
-    public int run () {
-        return 0;
+    public int run (int instructions) {
+
+        return PLPMsg.PLP_OK;
     }
 
+    public void pause() {
+
+    }
 
     class consts {
         final static  int   R_MASK = 0x1F;
@@ -71,175 +104,200 @@ public class PLPMIPSEmu {
         final static  int   C_MASK = 0xFFFF;
     }
 
-    static class memory {
-        static        long                    pc;
-        static        HashMap<Long, Long>     instr;
-        static        HashMap<Long, Long>     data;
-        static        long[]                  regFile;
+    public class memory {
+        long                    pc;
+        long[]                  mainMem;
+        long[]                  regFile;
+
+        public memory(long[] mainMem, long[] regFile, long pc) {
+            this.pc = pc;
+            this.mainMem = mainMem;
+            this.regFile = regFile;
+        }
     }
 
     // Register file stage / control decode
-    static class rf {
-        static boolean hot = false;
-        static long instruction;
-        static long instrAddr;
+    public class rf {
+        boolean hot = false;
+        long instruction;
+        long instrAddr;
 
         // RF stage pipeline registers
-        static long i_instruction;
-        static long i_fwd_ctl_pcplus4;
+        long i_instruction;
+        long i_instrAddr;
+        long i_fwd_ctl_pcplus4;
 
-        static long fwd_ctl_pcplus4;
+        long fwd_ctl_pcplus4;
+        
+        private ex   ex_reg;
+        private memory coreMem;
 
-        static void eval() {
-            ex.hot = true;
-            ex.i_instruction = instruction;
-            ex.i_instrAddr = instrAddr;
+        public rf(ex ex_reg, memory coreMem) {
+            this.ex_reg = ex_reg;
+            this.coreMem = coreMem;
+        }
 
-            ex.i_ctl_pcplus4 = fwd_ctl_pcplus4;
+        private void eval() {
+            ex_reg.i_instruction = instruction;
+            ex_reg.i_instrAddr = instrAddr;
+
+            ex_reg.i_ctl_pcplus4 = fwd_ctl_pcplus4;
 
             byte opcode      = (byte) ((instruction >> 26) & consts.V_MASK);
             long addr_read_0 = (instruction >> 16) & consts.R_MASK;
             long addr_read_1 = (instruction >> 21) & consts.R_MASK;
 
-            ex.i_data_rt     = (addr_read_0 == 0) ? 0 : memory.regFile[(int) addr_read_0];
-            ex.i_data_alu_in = (addr_read_1 == 0) ? 0 : memory.regFile[(int) addr_read_1];
+            ex_reg.i_data_rt     = (addr_read_0 == 0) ? 0 : coreMem.regFile[(int) addr_read_0];
+            ex_reg.i_data_alu_in = (addr_read_1 == 0) ? 0 : coreMem.regFile[(int) addr_read_1];
 
             // careful here, we actually need the sign
             // sign extension, java style, pffft
             long imm_field = (short) (instruction & consts.C_MASK);
-            ex.i_data_imm_signExtended = imm_field;
+            ex_reg.i_data_imm_signExtended = imm_field;
 
-            ex.i_ctl_rd_addr = (instruction >> 11) & consts.R_MASK;
-            ex.i_ctl_rt_addr = addr_read_1;
+            ex_reg.i_ctl_rd_addr = (instruction >> 11) & consts.R_MASK;
+            ex_reg.i_ctl_rt_addr = addr_read_1;
 
-            ex.i_ctl_aluOp = instruction;
+            ex_reg.i_ctl_aluOp = instruction;
 
             // control logic
-            ex.i_fwd_ctl_memtoreg = 0;
-            ex.i_fwd_ctl_regwrite = 0;
-            ex.i_fwd_ctl_branch = 0;
-            ex.i_fwd_ctl_memwrite = 0;
-            ex.i_fwd_ctl_memread = 0;
-            ex.i_ctl_aluSrc = 0;
-            ex.i_ctl_regDst = 0;
+            ex_reg.i_fwd_ctl_memtoreg = 0;
+            ex_reg.i_fwd_ctl_regwrite = 0;
+            ex_reg.i_fwd_ctl_branch = 0;
+            ex_reg.i_fwd_ctl_memwrite = 0;
+            ex_reg.i_fwd_ctl_memread = 0;
+            ex_reg.i_ctl_aluSrc = 0;
+            ex_reg.i_ctl_regDst = 0;
 
             switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstr(opcode))) {
                 case 0:
                 case 1:
                 case 2:
-                    ex.i_fwd_ctl_regwrite = 1;
-                    ex.i_ctl_regDst = 1;
+                    ex_reg.i_fwd_ctl_regwrite = 1;
+                    ex_reg.i_ctl_regDst = 1;
 
                     break;
 
                 case 3:
-                    ex.i_fwd_ctl_branch = 1;
+                    ex_reg.i_fwd_ctl_branch = 1;
 
                     break;
 
                 case 4:
                 case 5:
-                    ex.i_fwd_ctl_regwrite = 1;
-                    ex.i_ctl_aluSrc = 1;
+                    ex_reg.i_fwd_ctl_regwrite = 1;
+                    ex_reg.i_ctl_aluSrc = 1;
 
                     break;
 
                 case 6:
                     if(PLPAsm.lookupInstr(opcode).equals("lw")) {
-                        ex.i_fwd_ctl_memtoreg = 1;
-                        ex.i_fwd_ctl_regwrite = 1;
-                        ex.i_fwd_ctl_memread = 1;
-                        ex.i_ctl_aluSrc = 1;
+                        ex_reg.i_fwd_ctl_memtoreg = 1;
+                        ex_reg.i_fwd_ctl_regwrite = 1;
+                        ex_reg.i_fwd_ctl_memread = 1;
+                        ex_reg.i_ctl_aluSrc = 1;
                     } else if(PLPAsm.lookupInstr(opcode).equals("sw")) {
-                        ex.i_fwd_ctl_memwrite = 1;
-                        ex.i_ctl_aluSrc = 1;
+                        ex_reg.i_fwd_ctl_memwrite = 1;
+                        ex_reg.i_ctl_aluSrc = 1;
                     }
 
                     break;
             }
+            ex_reg.hot = true;
         }
 
-        static void clock() {
+        private void clock() {
             fwd_ctl_pcplus4 = i_fwd_ctl_pcplus4;
             instruction = i_instruction;
         }
     }
 
     // Execute stage
-    static class ex {
-        static boolean hot = false;
-        static long instruction;
-        static long instrAddr;
+    public class ex {
+        boolean hot = false;
+        long instruction;
+        long instrAddr;
 
         // EX stage pipeline registers
-        static long fwd_ctl_memtoreg;
-        static long fwd_ctl_regwrite;
+        long fwd_ctl_memtoreg;
+        long fwd_ctl_regwrite;
 
-        static long fwd_ctl_branch;
-        static long fwd_ctl_memwrite;
-        static long fwd_ctl_memread;
+        long fwd_ctl_branch;
+        long fwd_ctl_memwrite;
+        long fwd_ctl_memread;
 
-        static long ctl_aluSrc;
-        static long ctl_aluOp;
-        static long ctl_regDst;
+        long ctl_aluSrc;
+        long ctl_aluOp;
+        long ctl_regDst;
 
-        static long ctl_pcplus4;
+        long ctl_pcplus4;
 
-        static long data_alu_in;
-        static long data_rt;
+        long data_alu_in;
+        long data_rt;
 
-        static long data_imm_signExtended;
-        static long ctl_rt_addr;
-        static long ctl_rd_addr;
+        long data_imm_signExtended;
+        long ctl_rt_addr;
+        long ctl_rd_addr;
 
-        static long i_instruction;
-        static long i_instrAddr;
+        long i_instruction;
+        long i_instrAddr;
 
-        // EX stage pipeline registers
-        static long i_fwd_ctl_memtoreg;
-        static long i_fwd_ctl_regwrite;
+        long i_fwd_ctl_memtoreg;
+        long i_fwd_ctl_regwrite;
 
-        static long i_fwd_ctl_branch;
-        static long i_fwd_ctl_memwrite;
-        static long i_fwd_ctl_memread;
+        long i_fwd_ctl_branch;
+        long i_fwd_ctl_memwrite;
+        long i_fwd_ctl_memread;
 
-        static long i_ctl_aluSrc;
-        static long i_ctl_aluOp;
-        static long i_ctl_regDst;
+        long i_ctl_aluSrc;
+        long i_ctl_aluOp;
+        long i_ctl_regDst;
 
-        static long i_ctl_pcplus4;
+        long i_ctl_pcplus4;
 
-        static long i_data_alu_in;
-        static long i_data_rt;
+        long i_data_alu_in;
+        long i_data_rt;
 
-        static long i_data_imm_signExtended;
-        static long i_ctl_rt_addr;
-        static long i_ctl_rd_addr;
+        long i_data_imm_signExtended;
+        long i_ctl_rt_addr;
+        long i_ctl_rd_addr;
 
-        static void eval() {
-            mem.hot = true;
-            mem.instruction = instruction;
-            mem.instrAddr = instrAddr;
+        private mem  mem_reg;
+        private alu  exAlu;
 
-            mem.fwd_ctl_memtoreg = fwd_ctl_memtoreg;
-            mem.fwd_ctl_regwrite = fwd_ctl_regwrite;
-            mem.fwd_ctl_dest_reg_addr = (ctl_regDst == 1) ? ctl_rd_addr : ctl_rt_addr;
-
-            mem.ctl_memwrite = fwd_ctl_memwrite;
-            mem.ctl_memread = fwd_ctl_memread;
-
-            mem.ctl_branch = fwd_ctl_branch;
-            mem.ctl_branchTarget = ctl_pcplus4 + (data_imm_signExtended << 2);
-
-            mem.data_memwritedata = data_rt;
-
-            mem.fwd_data_alu_result =
-                alu.eval(data_alu_in,
-                         ((ctl_aluSrc == 1) ? data_imm_signExtended : data_rt),
-                         ctl_aluOp);
+        public ex(mem mem_reg, alu exAlu) {
+            this.mem_reg = mem_reg;
+            this.exAlu = exAlu;
         }
 
-        static void clock() {
+        private void eval() {
+            mem_reg.i_instruction = instruction;
+            mem_reg.i_instrAddr = instrAddr;
+
+            mem_reg.i_fwd_ctl_memtoreg = fwd_ctl_memtoreg;
+            mem_reg.fwd_ctl_regwrite = fwd_ctl_regwrite;
+            mem_reg.i_fwd_ctl_dest_reg_addr = (ctl_regDst == 1) ? ctl_rd_addr : ctl_rt_addr;
+
+            mem_reg.i_ctl_memwrite = fwd_ctl_memwrite;
+            mem_reg.i_ctl_memread = fwd_ctl_memread;
+
+            mem_reg.i_ctl_branch = fwd_ctl_branch;
+            mem_reg.i_ctl_branchTarget = ctl_pcplus4 + (data_imm_signExtended << 2);
+
+            mem_reg.i_data_memwritedata = data_rt;
+
+            mem_reg.i_fwd_data_alu_result =
+                exAlu.eval(data_alu_in,
+                           ((ctl_aluSrc == 1) ? data_imm_signExtended : data_rt),
+                           ctl_aluOp);
+            
+            mem_reg.hot = true;
+        }
+
+        private void clock() {
+            instruction = i_instruction;
+            instrAddr = i_instrAddr;
+            
             fwd_ctl_memtoreg = i_fwd_ctl_memtoreg;
             fwd_ctl_regwrite = i_fwd_ctl_regwrite;
 
@@ -263,103 +321,152 @@ public class PLPMIPSEmu {
     }
 
     // Memory stage
-    static class mem {
-        static boolean hot = false;
-        static long instruction;
-        static long instrAddr;
+    public class mem {
+        boolean hot = false;
+        long instruction;
+        long instrAddr;
 
         // MEM stage pipeline registers
-        static long fwd_ctl_memtoreg;
-        static long fwd_ctl_regwrite;
-        static long fwd_ctl_dest_reg_addr;
-        static long fwd_data_alu_result;
+        long fwd_ctl_memtoreg;
+        long fwd_ctl_regwrite;
+        long fwd_ctl_dest_reg_addr;
+        long fwd_data_alu_result;
 
-        static long ctl_branch;
-        static long ctl_memwrite;
-        static long ctl_memread;
-        static long ctl_branchTarget;
+        long ctl_branch;
+        long ctl_memwrite;
+        long ctl_memread;
+        long ctl_branchTarget;
 
-        static long data_memwritedata;
+        long data_memwritedata;
 
-        static long ctl_pcsrc;
-        static long ctl_regwrite;
+        long ctl_pcsrc;
+        long ctl_regwrite;
 
-        static long i_instruction;
-        static long i_instrAddr;
+        long i_instruction;
+        long i_instrAddr;
 
-        // MEM stage pipeline registers
-        static long i_fwd_ctl_memtoreg;
-        static long i_fwd_ctl_regwrite;
-        static long i_fwd_ctl_dest_reg_addr;
-        static long i_fwd_data_alu_result;
+        long i_fwd_ctl_memtoreg;
+        long i_fwd_ctl_regwrite;
+        long i_fwd_ctl_dest_reg_addr;
+        long i_fwd_data_alu_result;
 
-        static long i_ctl_branch;
-        static long i_ctl_memwrite;
-        static long i_ctl_memread;
-        static long i_ctl_branchTarget;
+        long i_ctl_branch;
+        long i_ctl_memwrite;
+        long i_ctl_memread;
+        long i_ctl_branchTarget;
 
-        static long i_data_memwritedata;
+        long i_data_memwritedata;
 
-        static long i_ctl_pcsrc;
-        static long i_ctl_regwrite;
+        long i_ctl_pcsrc;
+        long i_ctl_regwrite;
 
-        static void eval() {
-            wb.hot = true;
-            wb.instruction = instruction;
-            wb.instrAddr = instrAddr;
+        private wb   wb_reg;
+        private memory coreMem;
 
-            wb.ctl_memtoreg = fwd_ctl_memtoreg;
-            wb.ctl_regwrite = fwd_ctl_regwrite;
-            wb.ctl_dest_reg_addr = fwd_ctl_dest_reg_addr;
+        public mem(wb wb_reg, memory coreMem) {
+            this.wb_reg = wb_reg;
+            this.coreMem = coreMem;
+        }
+
+        private void eval() {
+            wb_reg.i_instruction = instruction;
+            wb_reg.i_instrAddr = instrAddr;
+
+            wb_reg.i_ctl_memtoreg = fwd_ctl_memtoreg;
+            wb_reg.i_ctl_regwrite = fwd_ctl_regwrite;
+            wb_reg.i_ctl_dest_reg_addr = fwd_ctl_dest_reg_addr;
         
-            wb.data_alu_result = fwd_data_alu_result;
+            wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1)
-                wb.data_memreaddata = memory.data.get(fwd_data_alu_result);
+                wb_reg.i_data_memreaddata = coreMem.mainMem[(int) fwd_data_alu_result];
 
             if(ctl_memwrite == 1)
-                memory.data.put(fwd_data_alu_result, data_memwritedata);
+                coreMem.mainMem[(int) fwd_data_alu_result] = data_memwritedata;
 
             ctl_pcsrc = (fwd_data_alu_result == 0) ? 0 : 1;
             ctl_pcsrc &= ctl_branch;
+            wb_reg.hot = true;
+        }
+
+        private void clock() {
+            wb_reg.hot = true;
+            instruction = i_instruction;
+            instrAddr = i_instrAddr;
+            
+            fwd_ctl_memtoreg = i_fwd_ctl_memtoreg;
+            fwd_ctl_regwrite = i_fwd_ctl_regwrite;
+            fwd_ctl_dest_reg_addr = i_fwd_ctl_dest_reg_addr;
+            fwd_data_alu_result = i_fwd_data_alu_result;
+
+            ctl_branch = i_ctl_branch;
+            ctl_memwrite = i_ctl_memwrite;
+            ctl_memread = i_ctl_memread;
+            ctl_branchTarget = i_ctl_branchTarget;
+
+            data_memwritedata = i_data_memwritedata;
+
+            ctl_pcsrc = i_ctl_pcsrc;
+            ctl_regwrite = i_ctl_regwrite;
         }
     }
 
     // Writeback stage
-    static class wb {
-        static boolean hot = false;
-        static long instruction;
-        static long instrAddr;
+    public class wb {
+        boolean hot = false;
+        long instruction;
+        long instrAddr;
 
         // WB stage pipeline registers
-        static long ctl_memtoreg;
-        static long ctl_regwrite;
-        static long ctl_dest_reg_addr;
+        long ctl_memtoreg;
+        long ctl_regwrite;
+        long ctl_dest_reg_addr;
 
-        static long data_memreaddata;
-        static long data_alu_result;
+        long data_memreaddata;
+        long data_alu_result;
 
-        static long i_instruction;
-        static long i_instrAddr;
+        long i_instruction;
+        long i_instrAddr;
+        
+        long i_ctl_memtoreg;
+        long i_ctl_regwrite;
+        long i_ctl_dest_reg_addr;
 
-        // WB stage pipeline registers
-        static long i_ctl_memtoreg;
-        static long i_ctl_regwrite;
-        static long i_ctl_dest_reg_addr;
+        long i_data_memreaddata;
+        long i_data_alu_result;
 
-        static long i_data_memreaddata;
-        static long i_data_alu_result;
+        private memory coreMem;
+
+        public wb(memory coreMem) {
+            this.coreMem = coreMem;
+        }
     
-        static void eval() {
+        private void eval() {
             if(ctl_regwrite == 1)
-                memory.regFile[(int) ctl_dest_reg_addr] =
+                coreMem.regFile[(int) ctl_dest_reg_addr] =
                     (ctl_memtoreg == 1) ? data_alu_result : data_memreaddata;
+        }
 
+        private void clock() {
+            instruction = i_instruction;
+            instrAddr = i_instrAddr;
+            
+            ctl_memtoreg = i_ctl_memtoreg;
+            ctl_regwrite = i_ctl_regwrite;
+            ctl_dest_reg_addr = i_ctl_dest_reg_addr;
+
+            data_memreaddata = i_data_memreaddata;
+            data_alu_result = i_data_alu_result;
         }
     }
 
-    static class alu {
-        static long eval(long a, long b, long instr) {
+    public class alu {
+
+        public alu() {
+            
+        }
+
+        private long eval(long a, long b, long instr) {
 
             return 0;
         }

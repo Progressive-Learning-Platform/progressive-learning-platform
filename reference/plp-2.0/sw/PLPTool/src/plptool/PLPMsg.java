@@ -37,6 +37,10 @@ public class PLPMsg {
     // Formatter Errors
     static int PLP_OUT_UNHANDLED_ERROR              = 128;
     static int PLP_OUT_CAN_NOT_WRITE_TO_FILE        = 129;
+    static int PLP_OUT_FILE_EXISTS                  = 130;
+
+    // Emulator errors
+    static int PLP_EMU_INSTRMEM_OUT_OF_BOUNDS       = 256;
 
     static int PLP_OK                               = 0;
     static int PLP_ERROR_GENERIC                    = 1;
