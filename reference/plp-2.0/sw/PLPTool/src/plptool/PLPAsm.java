@@ -725,6 +725,10 @@ public class PLPAsm {
         return true;
     }
 
+    public LinkedList getAsmList() {
+        return SourceList;
+    }
+
     @Override public String toString() {
         return "PLPAsm(" + this.curActiveFile + ")";
     }
@@ -778,5 +782,57 @@ class PLPAsmSource {
     @Override public String toString() {
         return "PLPAsmSource(" + this.asmFilePath + ")";
     }
+}
 
+class MIPSInstruction {
+
+    int     imm;
+    int     sa;
+    int     rs;
+    int     rd;
+    int     rt;
+    int     funct;
+    int     opcode;
+    String  strOpCode;
+    char    type;
+    int     plptype;
+    long    instr;
+
+    public MIPSInstruction(long instr) {
+        this.instr = instr;
+        imm     = (int) (instr & PLPMIPSEmu.consts.C_MASK);
+        funct   = (int) (instr & PLPMIPSEmu.consts.V_MASK);
+        sa      = (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
+        rd      = (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
+        rt      = (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
+        rs      = (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
+        opcode  = (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
+        strOpCode = PLPAsm.lookupInstr((byte) opcode);
+    }
+
+    public static int imm(long instr) {
+        return (int) (instr & PLPMIPSEmu.consts.C_MASK); }
+
+    public static int funct(long instr) {
+        return (int) (instr & PLPMIPSEmu.consts.V_MASK); }
+
+    public static int sa(long instr) {
+        return (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int rd(long instr) {
+        return (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int rt(long instr) {
+        return (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int rs(long instr) {
+        return (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int opcode(long instr) {
+        return (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
+    }
 }

@@ -9,6 +9,10 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
 /**
  *
@@ -42,13 +46,13 @@ public class PLPAsmFormatter {
             System.out.println();
         }
 
-        return 0;
+        return PLPMsg.PLP_OK;
     }
 
     // Output packed binary file
     public static int writeBin(long[] objectCode, String outputFileName) {
         try {
-            DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(outputFileName + ".bin")));
+            DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(outputFileName)));
 
             for(int i = 0; i < objectCode.length; i++)
                 out.writeInt((int) objectCode[i]);
@@ -56,39 +60,44 @@ public class PLPAsmFormatter {
             out.close();
 
         } catch(Exception e) {
-            return PLPMsg.E("writeBin(): Unable to write to " + outputFileName + ".bin",
+            return PLPMsg.E("writeBin(): Unable to write to " + outputFileName,
                      PLPMsg.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
         }
 
-        return 0;
+        return PLPMsg.PLP_OK;
     }
 
     // Output COE
-    public static int writeCOE(long[] objectCode, String outputFileName) {
+    public static String writeCOE(long[] objectCode) {
+        String out = "";
         String binString;
 
-        try {
-            DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(outputFileName + ".coe")));
-            out.writeChars("memory_initialization_radix=2;\n");
-            out.writeChars("memory_initialization_vector=\n");
 
-            for(int i = 0; i < objectCode.length; i++) {
-                binString = intBinPadder((int) objectCode[i], 32);
-                out.writeChars(binString);
+        out += "memory_initialization_radix=2;\n";
+        out += "memory_initialization_vector=\n";
 
-                if(i == (objectCode.length - 1))
-                    out.writeChars(";\n");
-                else
-                    out.writeChars(",\n");
+        for(int i = 0; i < objectCode.length; i++) {
+            binString = intBinPadder((int) objectCode[i], 32);
+            out += binString;
+
+            if(i == (objectCode.length - 1))
+                out += ";\n";
+            else
+                out += ",\n";
             }
-            out.close();
 
-        } catch(Exception e) {
-            return PLPMsg.E("writeCOE(): Unable to write to " + outputFileName + ".coe",
-                     PLPMsg.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
+        return out;
+    }
+
+    // Output hex to be imported to verilog
+    public static String writeVerilogHex(long[] objectCode) {
+        String out = "";
+
+        for(int i = 0; i < objectCode.length; i++) {
+            out += "32'h" + String.format("%08x", (int) objectCode[i]) + "\n";
         }
-
-        return 0;
+        
+        return out;
     }
 
     // 32-bit binary string padder
@@ -128,6 +137,118 @@ public class PLPAsmFormatter {
         }
 
         return null;
+    }
+
+    // MIPS instruction string formatter {
+    public static String mipsInstrStr(long instr) {
+        String ret = "";
+
+        ret += PLPAsm.lookupInstr((byte) MIPSInstruction.opcode(instr)) + " ";
+        ret += MIPSInstruction.rs(instr) + " ";
+        ret += MIPSInstruction.rt(instr) + " ";
+        ret += MIPSInstruction.rd(instr) + " ";
+        ret += MIPSInstruction.sa(instr) + " ";
+        ret += MIPSInstruction.imm(instr);
+
+        return ret;
+    }
+
+    // Generate PLP file
+    public static int genPLP(String input, String output, boolean forceWrite) {
+        LinkedList sourceList;
+        PLPAsm assembler = new PLPAsm(null, input, 0);
+        String metafileStr = "";
+        String verilogHex = "";
+        long[] objCode = null;
+        PLPAsmSource temp;
+        int i;
+
+        try {
+
+        File outFile = new File(output + ".plp");
+
+        if(outFile.exists() && !forceWrite) {
+            return PLPMsg.E("genPLP(): " + output + ".plp already exists. Use -af to overwrite.",
+                            PLPMsg.PLP_OUT_FILE_EXISTS, null);
+        }
+
+        metafileStr += "PLP-2.0\n";
+
+        PLPMsg.I("genPLP(): Assembling " + input + ".", null);
+        if(assembler.preprocess(0) == PLPMsg.PLP_OK)
+            assembler.assemble();
+
+        if(assembler.isAssembled()) {
+            objCode = assembler.getObjectCode();
+            verilogHex = writeVerilogHex(objCode);
+            metafileStr += "DIRTY=0\n\n";
+            PLPMsg.I("genPLP(): Assembly completed.", null);
+        }
+        else {
+            metafileStr += "DIRTY=1\n\n";
+            PLPMsg.I("genPLP(): Assembly failed.", null);
+        }
+
+        sourceList = assembler.getAsmList();
+
+        for(i = 0; i < sourceList.size(); i++) {
+            temp = (PLPAsmSource) sourceList.get(i);
+            metafileStr += temp.asmFilePath + "\n";
+        }
+
+
+        // Create <output>.plp (a tar archive)
+        TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
+        TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
+        entry.setSize(metafileStr.length() * 2);
+        tOut.putArchiveEntry(entry);
+        byte[] data = new byte[metafileStr.length() * 2];
+        for(i = 0; i < metafileStr.length(); i++) {
+            data[2*i] = (byte) (metafileStr.charAt(i) >> 8);
+            data[2*i+1] = (byte) metafileStr.charAt(i);
+        }
+        tOut.write(data);
+        tOut.flush();
+        tOut.closeArchiveEntry();
+
+        if(assembler.isAssembled()) {
+            entry = new TarArchiveEntry("plp.hex");
+            entry.setSize(verilogHex.length() * 2);
+            tOut.putArchiveEntry(entry);
+            data = new byte[verilogHex.length() * 2];
+            for(i = 0; i < verilogHex.length(); i++) {
+                data[2*i] = (byte) (verilogHex.charAt(i) >> 8);
+                data[2*i+1] = (byte) verilogHex.charAt(i);
+            }
+            tOut.write(data);
+            tOut.flush();
+            tOut.closeArchiveEntry();
+
+            entry = new TarArchiveEntry("plp.image");
+            entry.setSize(objCode.length * 4);
+            tOut.putArchiveEntry(entry);
+            data = new byte[objCode.length * 4];
+            for(i = 0; i < objCode.length; i++) {
+                data[4*i] = (byte) (objCode[i] >> 24);
+                data[4*i+1] = (byte) (objCode[i] >> 16);
+                data[4*i+2] = (byte) (objCode[i] >> 8);
+                data[4*i+3] = (byte) (objCode[i]);
+            }
+            tOut.write(data);
+            tOut.flush();
+            tOut.closeArchiveEntry();
+        }
+
+        tOut.close();
+
+        PLPMsg.I("genPLP(): " + output + ".plp written", null);
+
+        } catch(Exception e) {
+            return PLPMsg.E("genPLP(): Unable to write to <" + output + ">\n" +
+                     e, PLPMsg.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
+        }
+
+        return PLPMsg.PLP_OK;
     }
 
     // Symbol table pretty print
