@@ -6,7 +6,6 @@ package plptool;
 
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import java.util.HashMap;
 
 /**
  * The main class of the application.
@@ -45,19 +44,19 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println(PLPMsg.versionString + "\n");
 
         if(args.length > 0 && args[0].equals("-a")) {
-            if(args.length != 4) {
-                System.out.println("Usage: PLPTool -a <asm> <addr> <out>");
+            if(args.length != 3) {
+                System.out.println("Usage: PLPTool -a <asm> <out>");
                 System.exit(-1);
             } else {
-                PLPAsmFormatter.genPLP(args[1], args[3], false);
+                PLPAsmFormatter.genPLP(args[1], args[2], false);
             }
         }
         else if(args.length > 0 && args[0].equals("-af")) {
-            if(args.length != 4) {
-                System.out.println("Usage: PLPTool -af <asm> <addr> <out>");
+            if(args.length != 3) {
+                System.out.println("Usage: PLPTool -af <asm> <out>");
                 System.exit(-1);
             } else {
-                PLPAsmFormatter.genPLP(args[1], args[3], true);
+                PLPAsmFormatter.genPLP(args[1], args[2], true);
             }
         }
 
@@ -70,11 +69,10 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("Run PLPTool with no command line arguments to launch GUI tool.");
             System.out.println();
             System.out.println("Non-GUI options:\n");
-            System.out.println("  -a  <asm> <addr> <out>");
-            System.out.println("      Assemble <asm> with initial address <addr> and write plp");
-            System.out.println("      output to <out>.plp.");
+            System.out.println("  -a  <asm> <out>");
+            System.out.println("      Assemble <asm> and write plp output to <out>.plp.");
             System.out.println();
-            System.out.println("  -af <asm> <addr> <out>");
+            System.out.println("  -af <asm> <out>");
             System.out.println("      Like -a, but overwrite existing output file without prompting.");
             System.out.println();
             System.out.println("  -p  <plpfile> <port> <baud>");
