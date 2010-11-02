@@ -199,31 +199,34 @@ public class PLPAsmFormatter {
 
         // Create <output>.plp (a tar archive)
         TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
+        
         TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
         entry.setSize(metafileStr.length() * 2);
         tOut.putArchiveEntry(entry);
         byte[] data = new byte[metafileStr.length() * 2];
         for(i = 0; i < metafileStr.length(); i++) {
-            data[2*i] = (byte) (metafileStr.charAt(i) >> 8);
-            data[2*i+1] = (byte) metafileStr.charAt(i);
+            data[2*i] = (byte) (metafileStr.charAt(i) >> 8); // char is 16-bit unicode
+            data[2*i+1] = (byte) metafileStr.charAt(i);      // big-endian
         }
         tOut.write(data);
         tOut.flush();
         tOut.closeArchiveEntry();
 
         if(assembler.isAssembled()) {
+            // Write hex image
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(verilogHex.length() * 2);
             tOut.putArchiveEntry(entry);
             data = new byte[verilogHex.length() * 2];
             for(i = 0; i < verilogHex.length(); i++) {
-                data[2*i] = (byte) (verilogHex.charAt(i) >> 8);
-                data[2*i+1] = (byte) verilogHex.charAt(i);
+                data[2*i] = (byte) (verilogHex.charAt(i) >> 8); // char is 16-bit unicode
+                data[2*i+1] = (byte) verilogHex.charAt(i);      // big-endian
             }
             tOut.write(data);
             tOut.flush();
             tOut.closeArchiveEntry();
 
+            // Write binary image, 4-byte big-endian packs
             entry = new TarArchiveEntry("plp.image");
             entry.setSize(objCode.length * 4);
             tOut.putArchiveEntry(entry);
