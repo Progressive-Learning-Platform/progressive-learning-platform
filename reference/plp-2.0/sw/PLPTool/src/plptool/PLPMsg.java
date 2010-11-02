@@ -33,6 +33,7 @@ public class PLPMsg {
     static int PLP_ASM_ERROR_NUMBER_OF_OPERANDS     = 70;
     static int PLP_ASM_ERROR_INVALID_BRANCH_TARGET  = 71;
     static int PLP_ASM_ERROR_INVALID_JUMP_TARGET    = 72;
+    static int PLP_ASM_ERROR_INVALID_POINTER        = 73;
 
     // Formatter Errors
     static int PLP_OUT_UNHANDLED_ERROR              = 128;

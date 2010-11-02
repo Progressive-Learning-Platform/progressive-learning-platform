@@ -110,7 +110,8 @@ public class PLPAsm {
         instrMap.put("ASM__ORG__",  new Integer(9));
         instrMap.put("ASM__SKIP__", new Integer(9));
         instrMap.put("ASM__LINE__", new Integer(9));
-
+        instrMap.put("ASM__POINTER__", new Integer(9));
+        
         // Instruction opcodes
         opcode.put("add"   , new Byte((byte) 0x20));
         opcode.put("addu"  , new Byte((byte) 0x21));
@@ -142,6 +143,7 @@ public class PLPAsm {
 
         opcode.put("ASM__ORG__"           , new Byte((byte) 0xff));
         opcode.put("ASM__WORD__"          , new Byte((byte) 0xff));
+        opcode.put("ASM__POINTER__"       , new Byte((byte) 0xff));
         opcode.put("ASM__LABEL__"         , new Byte((byte) 0xff));
         opcode.put("ASM__DIRECTIVE__"     , new Byte((byte) 0xff));
 
@@ -329,6 +331,11 @@ public class PLPAsm {
                 symTable.put(tempLabel, new Long((int) curAddr));
                 preprocessedAsm += "ASM__SKIP__\n";
                 directiveOffset++;
+            }
+
+            // Text handler
+            else if(asmTokens[0].equals(".ascii")) {
+
             }
 
             // Pseudo-ops
@@ -569,12 +576,29 @@ public class PLPAsm {
                         s++;
                         skip = true;
                     }
+                    else if(asmTokens[0].equals("ASM__POINTER))")) {
+                        if(!checkNumberOfOperands(asmTokens, 3, i + lineNumOffset))
+                            return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
+
+                        if(!symTable.containsKey(asmTokens[2]))
+                            return PLPMsg.E("Invalid pointer " + asmTokens[2] + " in line " + i + lineNumOffset,
+                                            PLPMsg.PLP_ASM_ERROR_INVALID_POINTER, this);
+
+                        long addr = symTable.get(asmTokens[2]);
+
+                    }
                     else {
                         s++;
                         skip = true;
 	            }
 
                     break;
+
+                // Pass-2 pseudo ops
+                case 10:
+
+                    break;
+                    
                 default:
                     return PLPMsg.E("assemble(): This should not happen. Report bug.",
                                      PLPMsg.PLP_OOPS, this);
