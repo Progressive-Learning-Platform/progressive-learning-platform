@@ -256,6 +256,9 @@ public class PLPAsmFormatter {
         System.out.println();
         prettyPrint(assembler);
 
+        if(PLPMsg.debugLevel >= 10)
+            System.out.println(writeCOE(assembler.getObjectCode()));
+
         } catch(Exception e) {
             return PLPMsg.E("genPLP(): Unable to write to <" + output + ">\n" +
                      e, PLPMsg.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
@@ -276,7 +279,7 @@ public class PLPAsmFormatter {
             key = iterator.next().toString();
             value = String.format("0x%08x", symTable.get(key));
 
-            System.out.println(key + "\t\t:\t" + value);
+            System.out.println(value + "\t:\t" + key);
         }
 
         return 0;
