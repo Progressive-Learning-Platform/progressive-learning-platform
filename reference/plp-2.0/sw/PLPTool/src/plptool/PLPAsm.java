@@ -83,6 +83,7 @@ public class PLPAsm {
         instrMap.put("bne",  new Integer(3));
 
         // I-type Arithmetic and Logical instructions
+        instrMap.put("addi",  new Integer(4));
         instrMap.put("addiu", new Integer(4));
         instrMap.put("andi",  new Integer(4));
         instrMap.put("ori",   new Integer(4));
@@ -113,7 +114,7 @@ public class PLPAsm {
         instrMap.put("ASM__POINTER__", new Integer(9));
         
         // Instruction opcodes
-        opcode.put("add"   , new Byte((byte) 0x20));
+        //opcode.put("add"   , new Byte((byte) 0x20));
         opcode.put("addu"  , new Byte((byte) 0x21));
         opcode.put("and"   , new Byte((byte) 0x24));
         opcode.put("jr"    , new Byte((byte) 0x08));
@@ -123,7 +124,7 @@ public class PLPAsm {
         opcode.put("sltu"  , new Byte((byte) 0x2B));
         opcode.put("sll"   , new Byte((byte) 0x00));
         opcode.put("srl"   , new Byte((byte) 0x02));
-        opcode.put("sub"   , new Byte((byte) 0x22));
+        //opcode.put("sub"   , new Byte((byte) 0x22));
         opcode.put("subu"  , new Byte((byte) 0x23));
 
         opcode.put("addi"  , new Byte((byte) 0x08));
@@ -224,7 +225,7 @@ public class PLPAsm {
         PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(recLevel);
         curActiveFile = topLevelAsm.asmFilePath;
 
-        String delimiters = ",[ ]+|,|[ ]+|[()]";
+        String delimiters = ",[ ]+|,|[ ]+|[()]|\t";
         String lineDelim  = "\\r?\\n";
         String[] asmLines  = topLevelAsm.asmString.split(lineDelim);
         String[] asmTokens;
@@ -233,7 +234,7 @@ public class PLPAsm {
 
         try {
 
-        PLPMsg.D("lines: " + asmLines.length, 5, this);
+        PLPMsg.D("recLevel: " + recLevel + " lines: " + asmLines.length, 5, this);
 
         // Begin our preprocess cases
         while(i < asmLines.length) {
@@ -255,12 +256,12 @@ public class PLPAsm {
                 }
 
                 preprocessedAsm += "ASM__SKIP__\n";
-
+                recLevel++;
                 PLPAsmSource childAsm = new PLPAsmSource
-                                            (null, asmTokens[j+1], recLevel + 1);
+                                            (null, asmTokens[1], recLevel);
                 SourceList.add(childAsm);
                 savedActiveFile = curActiveFile;
-                recursionRetVal = this.preprocess(recLevel + 1);
+                recursionRetVal = this.preprocess(recLevel);
                 curActiveFile = savedActiveFile;
                 directiveOffset++;
 
@@ -369,8 +370,10 @@ public class PLPAsm {
 
                     preprocessedAsm += String.format("%02x", (int) tString[1].charAt(j));
 
-                    if((j + 1) % 4 == 0 && j > 0)
+                    if((j + 1) % 4 == 0 && j > 0) {
+                        curAddr += 4;
                         preprocessedAsm += "\n";
+                    }
                 }
 
                 PLPMsg.D("pr: " + tString[1], 5, this);
@@ -383,11 +386,13 @@ public class PLPAsm {
                 curAddr += 4;
             }
 
+            else if(asmTokens[0].equals("move")) {
+                preprocessedAsm += "or " + asmTokens[1] + ",$0," + asmTokens[2] + "\n";
+                curAddr += 4;
+            }
+
             // load-immediate
             else if(asmTokens[0].equals("li")) {
-                if(!checkNumberOfOperands(asmTokens, 3, i))
-                    return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
-                
                 preprocessedAsm += "lui " + asmTokens[1] + ",$_hi:" + asmTokens[2] + "\n";
                 preprocessedAsm += "ori " + asmTokens[1] + "," + asmTokens[1] + ",$_lo:" + asmTokens[2] + "\n";
                 curAddr += 8;
@@ -404,7 +409,7 @@ public class PLPAsm {
                 preprocessedAsm += asmLines[i - 1] + "\n";
             }
 
-            PLPMsg.D("pr:\n" + preprocessedAsm + ">>>", 10, this);
+            PLPMsg.D("pr:\n" + preprocessedAsm + ">>>", 30, this);
 
         }
 
@@ -454,6 +459,7 @@ public class PLPAsm {
 
         while(i < asmLines.length) {
             stripComments = asmLines[i].split("#");
+            stripComments[0] = stripComments[0].trim();
             asmTokens = stripComments[0].split(delimiters);
 
             objectCode[i - s] = 0;
@@ -475,31 +481,22 @@ public class PLPAsm {
                     PLPMsg.D(asmTokens[j].substring(0, 5), 15, this);
 
                     if(asmTokens[j].substring(0, 5).equals("$_hi:")) {
-
                         tSymbol = asmTokens[j].substring(5, asmTokens[j].length());
-
                         if(symTable.containsKey(tSymbol)) 
                             tValue = (int) (symTable.get(tSymbol) >> 16);
                         else
                             tValue = (int) (sanitize32bits(tSymbol) >> 16);
-
                         asmTokens[j] = new Integer(tValue).toString();
 
                     }
                     else if(asmTokens[j].substring(0, 5).equals("$_lo:")) {
-
-
                         tSymbol = asmTokens[j].substring(5, asmTokens[j].length());
-                    
                         if(symTable.containsKey(tSymbol))
                             tValue = (int) (symTable.get(tSymbol) & 0xFFFF);
                         else
                             tValue = (int) (sanitize32bits(tSymbol) & 0xFFFF);
-
                         asmTokens[j] = new Integer(tValue).toString();
-
                     }
-
                     PLPMsg.D("pr: " + Integer.toHexString(tValue), 15, this);
                 }
             }
