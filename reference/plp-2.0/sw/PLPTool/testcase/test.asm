@@ -25,6 +25,8 @@ loop:
 	addiu $2,  $3,   0b100100   
         lw $3,   40($2)
 	bne $0,$0,loop
+        li $6,somevar
+        li $7,0xFEFEDADA
 
         nop
         nop

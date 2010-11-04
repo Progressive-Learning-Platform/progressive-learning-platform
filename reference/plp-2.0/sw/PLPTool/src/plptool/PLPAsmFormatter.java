@@ -25,12 +25,13 @@ public class PLPAsmFormatter {
         String label;
         long addrTable[] = assembler.getAddrTable();
         long objectCode[] = assembler.getObjectCode();
+        long tVal;
 
         if(addrTable.length != objectCode.length)
             return PLPMsg.PLP_ERROR_GENERIC;
 
-        System.out.println("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct");
-        System.out.println("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----");
+        System.out.println("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII");
+        System.out.println("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----");
 
         for(int i = 0; i < addrTable.length; i++) {
             if((label = assembler.lookupLabel(addrTable[i])) != null) {
@@ -41,7 +42,13 @@ public class PLPAsmFormatter {
 
             System.out.print("0x" + String.format("%07x", addrTable[i]) + "\t");
             System.out.print(String.format("%08x", (int) objectCode[i]) + "\t");
-            System.out.print(mipsBinFormat(intBinPadder((int) objectCode[i], 32)));
+            System.out.print(mipsBinFormat(intBinPadder((int) objectCode[i], 32)) + "\t");
+
+            for(int j = 3; j >= 0; j--) {
+                tVal = objectCode[i] >> (8 * j);
+                tVal &= 0xFF;
+                System.out.print((char) tVal + " ");
+            }
 
             System.out.println();
         }
@@ -243,6 +250,11 @@ public class PLPAsmFormatter {
         tOut.close();
 
         PLPMsg.I("genPLP(): " + output + ".plp written", null);
+
+       
+        symTablePrettyPrint(assembler.getSymTable());
+        System.out.println();
+        prettyPrint(assembler);
 
         } catch(Exception e) {
             return PLPMsg.E("genPLP(): Unable to write to <" + output + ">\n" +
