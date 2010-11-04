@@ -11,7 +11,7 @@ package plptool;
  */
 public class PLPMsg {
 
-    static String versionString = "Beta 1";
+    static String versionString = "Beta 2";
 
     static int debugLevel = 0;
 
@@ -22,6 +22,7 @@ public class PLPMsg {
     static int PLP_ASM_ERROR_SOURCE_NOT_FOUND       = 19;
     static int PLP_ASM_ERROR_DIRECTIVE_SYNTAX       = 20;
     static int PLP_ASM_ERROR_DUPLICATE_LABEL        = 21;
+    static int PLP_ASM_ERROR_INVALID_STRING         = 22;
 
     // Assembler 2nd Pass Errors
     static int PLP_ASM_ERROR_GENERAL_SYNTAX         = 64;
@@ -48,7 +49,7 @@ public class PLPMsg {
     static int PLP_ERROR_RETURN                     = -1;
     static int PLP_OOPS                             = 9001;
 
-    static int PLP_NUMBER_ERROR                     = 8;
+    static int PLP_NUMBER_ERROR                     = -1;
 
     static String[] errorStr;
     static int[]    errorCodes;
