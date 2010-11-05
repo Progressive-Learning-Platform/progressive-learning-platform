@@ -19,5 +19,5 @@ module mod_rom(clk, ie, de, iaddr, daddr, drw, din, iout, dout);
 	assign iout = ie ? idata : 32'h00000000;
 	assign dout = de ? ddata : 32'h00000000;
 
-	inferred_rom (clk,clk,1'b1,1'b1,iaddr[10:2],daddr[10:2],idata,ddata);
+        inferred_rom rom(clk,clk,1'b1,1'b1,iaddr[10:2],daddr[10:2],idata,ddata);
 endmodule
