@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package plptool;
 
 /**
+ * PLPTool constant definitions and messaging utility class.
  *
  * @author wira
  */
@@ -14,6 +10,7 @@ public class PLPMsg {
     static String versionString = "Beta 2";
 
     static int debugLevel = 0;
+    static int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
 
     // Assembler 1st Pass Errors
     static int PLP_ASM_ERROR_INVALID_TOKEN          = 16;
@@ -43,6 +40,7 @@ public class PLPMsg {
 
     // Emulator errors
     static int PLP_EMU_INSTRMEM_OUT_OF_BOUNDS       = 256;
+    static int PLP_EMU_UNINITIALIZED_MEMORY         = 257;
 
     static int PLP_OK                               = 0;
     static int PLP_ERROR_GENERIC                    = 1;

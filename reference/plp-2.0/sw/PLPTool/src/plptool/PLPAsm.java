@@ -32,7 +32,17 @@ public class PLPAsm {
     private long[]      objectCode;      // Java needs unsigned types!
                                          // higher 4 bytes are useless, cast
                                          // to int before using.
+
+    /**
+     * Assembler's symbol table.
+     *
+     * @see objectCode[]
+     */
     private HashMap<String, Long> symTable;
+
+    private int[]       lineNumMap;
+    private int[]       asmFileMap;
+    private int[]       entryType;
 
     private long        curAddr;
     private int         directiveOffset;
@@ -44,8 +54,24 @@ public class PLPAsm {
     private static HashMap<String, Byte>        opcode;
     private static HashMap<String, Byte>        regs;
 
+    /**
+     * This variable describes the state of the asm sources attached to this
+     * assembler. This variable is set true when all assembly sources were
+     * successfully assembled and objectCode[], addrtable[] and symTable are
+     * populated.
+     */
     private boolean     assembled;
 
+    /**
+     * PLPAsm constructor. Reads file described by strFilePath if strAsm is
+     * null, will attach strAsm to be assembled otherwise.
+     *
+     * @see preprocess(int)
+     * @see assemble()
+     * @param strAsm       String to assemble, null to load file instead
+     * @param strFilePath  Top level assembly source to attach
+     * @param intStartAddr Default starting address
+     */
     public PLPAsm (String strAsm, String strFilePath, int intStartAddr) {
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
         SourceList.add(plpAsmObj);
@@ -217,12 +243,13 @@ public class PLPAsm {
      * populates the symbol table.
      *
      * @return Returns 0 on completion, error code otherwise
+     * @param asmIndex asm source index to preprocess
      */
-    public int preprocess(int recLevel) {
+    public int preprocess(int asmIndex) {
         int i = 0, j = 0;
         int recursionRetVal;
 
-        PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(recLevel);
+        PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(asmIndex);
         curActiveFile = topLevelAsm.asmFilePath;
 
         String delimiters = ",[ ]+|,|[ ]+|[()]|\t";
@@ -234,7 +261,7 @@ public class PLPAsm {
 
         try {
 
-        PLPMsg.D("recLevel: " + recLevel + " lines: " + asmLines.length, 5, this);
+        PLPMsg.D("asmIndex: " + asmIndex + " lines: " + asmLines.length, 5, this);
 
         // Begin our preprocess cases
         while(i < asmLines.length) {
@@ -256,12 +283,12 @@ public class PLPAsm {
                 }
 
                 preprocessedAsm += "ASM__SKIP__\n";
-                recLevel++;
+                asmIndex++;
                 PLPAsmSource childAsm = new PLPAsmSource
-                                            (null, asmTokens[1], recLevel);
+                                            (null, asmTokens[1], asmIndex);
                 SourceList.add(childAsm);
                 savedActiveFile = curActiveFile;
-                recursionRetVal = this.preprocess(recLevel);
+                recursionRetVal = this.preprocess(asmIndex);
                 curActiveFile = savedActiveFile;
                 directiveOffset++;
 
@@ -443,13 +470,12 @@ public class PLPAsm {
         String[] asmTokens;
         String[] stripComments;
 
-        byte rd, rs, rt, shamt;
-        int imm;
         long branchTarget;
         boolean skip;
 
         objectCode = new long[asmLines.length - directiveOffset];
         addrTable = new long[asmLines.length - directiveOffset];
+        entryType = new int[asmLines.length - directiveOffset];
         curActiveFile = this.topLevelFile;
 
         // clear error
@@ -463,8 +489,8 @@ public class PLPAsm {
             asmTokens = stripComments[0].split(delimiters);
 
             objectCode[i - s] = 0;
+            entryType[i - s] = 0;
             skip = false;
-            rd = rs = rt = shamt = -1;
 
             PLPMsg.D("assemble(line " + (i + lineNumOffset) + "): " + asmLines[i], 3, this);
 
@@ -646,6 +672,7 @@ public class PLPAsm {
 
                 // Others
                 case 9:
+                    entryType[i - s] = 1;
                     if(asmTokens[0].equals("ASM__WORD__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
                             return PLPMsg.PLP_ASM_ERROR_NUMBER_OF_OPERANDS;
@@ -722,6 +749,17 @@ public class PLPAsm {
     }
 
     /**
+     * Returns whether the object code entry in the given index is an instruction
+     * (zero) or not (non-zero)
+     *
+     * @return Returns the entry type ID
+     * @param index Index of the entry in the object code array
+     */
+    public int isInstruction(int index) {
+        return entryType[index];
+    }
+
+    /**
      * Returns the symbol table attached to this assembler object.
      *
      * @return Returns the symbol table as a HashMap.
@@ -730,10 +768,23 @@ public class PLPAsm {
         return symTable;
     }
 
+    /**
+     * Returns whether the source files attached to this assembler have
+     * been successfully assembled.
+     *
+     * @return Returns boolean true if all sources are assembled, false
+     * otherwise
+     */
     public boolean isAssembled() {
         return assembled;
     }
 
+    /**
+     * Returns the string representation of an opcode / function
+     *
+     * @return Returns instruction opcode in String
+     * @param instrOpCode the opcode of the instruction in (byte)
+     */
     public static String lookupInstr(byte instrOpCode) {
         String key;
 
@@ -749,6 +800,13 @@ public class PLPAsm {
         return null;
     }
 
+    /**
+     * Lookup if the provided memory address has a label attached to it in the
+     * symbol table.
+     *
+     * @return Returns the label in String if found, null otherwise
+     * @param address memory address to look up
+     */
     public String lookupLabel(long address) {
         String key;
 
@@ -764,6 +822,14 @@ public class PLPAsm {
         return null;
     }
 
+    /**
+     * Lookup instruction type of the provided opcode as defined by
+     * the PLPAsm class.
+     *
+     * @return Returns instruction type
+     * @param instrOpCode Instruction opcode in String
+     * @see lookupInstr(byte)
+     */
     public static Integer lookupInstrType(String instrOpCode) {
         if(instrMap.containsKey(instrOpCode)) {
             return (Integer) instrMap.get(instrOpCode);
@@ -771,7 +837,18 @@ public class PLPAsm {
         return null;
     }
 
-    private int sanitize16bits(String number) {
+    /**
+     * Takes in a string and attempts to parse it as a 16 bit number. This
+     * 16-bit number is stored in int primitive (32-bit data type) to
+     * preserve all 16-bits of data since Java doesn't have unsigned data
+     * types. Higher 2-bytes of the number are masked.
+     *
+     * @return Returns 16-bit number in int with higher 2-bytes masked
+     * , returns PLP_NUMBER_ERROR if parseInt failed.
+     * @param Number to be sanitized in String
+     * @see sanitize32bits(String)
+     */
+    public static int sanitize16bits(String number) {
         try {
 
         if(number.startsWith("0x") || number.startsWith("0h")) {
@@ -787,11 +864,22 @@ public class PLPAsm {
 
         } catch(Exception e) {
             return PLPMsg.E("sanitize16bits(): Argument is not a valid number\n" + e,
-                            PLPMsg.PLP_NUMBER_ERROR, this);
+                            PLPMsg.PLP_NUMBER_ERROR, null);
         }
     }
 
-    private long sanitize32bits(String number) {
+    /**
+     * Takes in a string and attempts to parse it as a 32 bit number. This
+     * 32-bit number is stored in long primitive (64-bit data type) to
+     * preserve all 32-bits of data since Java doesn't have unsigned data
+     * types. Higher 4-bytes of the number are masked.
+     *
+     * @return Returns 32-bit number in long with higher 4-bytes masked
+     * , returns PLP_NUMBER_ERROR if parseLong failed.
+     * @param Number to be sanitized in String
+     * @see sanitize16bits(String)
+     */
+    public static long sanitize32bits(String number) {
         try {
 
         if(number.startsWith("0x") || number.startsWith("0h")) {
@@ -807,10 +895,18 @@ public class PLPAsm {
 
         } catch(Exception e) {
             return PLPMsg.E("sanitize32bits(): Argument is not a valid number\n" + e,
-                            PLPMsg.PLP_NUMBER_ERROR, this);
+                            PLPMsg.PLP_NUMBER_ERROR, null);
         }
     }
 
+    /**
+     * Utility function to check for number of operands agreement.
+     *
+     * @return Returns true if number of operands is correct, false otherwise
+     * @param iObj[] array of operands
+     * @param length assertion
+     * @param lineNum line number in asm source where this function is called
+     */
     private boolean checkNumberOfOperands(Object iObj[], int length, int lineNum) {
         if(iObj.length != length) {
             PLPMsg.E("checkNumberOfOperands(): Invalid number of operands in line " + lineNum,
@@ -820,10 +916,20 @@ public class PLPAsm {
         return true;
     }
 
+    /**
+     * Returns the SourceList attached to this assembly.
+     *
+     * @return Returns SourceList as LinkedList
+     */
     public LinkedList getAsmList() {
         return SourceList;
     }
 
+    /**
+     * Casting PLPAsm as String will return PLPAsm(assembly file)
+     *
+     * @return Returns informative string
+     */
     @Override public String toString() {
         return "PLPAsm(" + this.curActiveFile + ")";
     }
@@ -876,58 +982,5 @@ class PLPAsmSource {
 
     @Override public String toString() {
         return "PLPAsmSource(" + this.asmFilePath + ")";
-    }
-}
-
-class MIPSInstruction {
-
-    int     imm;
-    int     sa;
-    int     rs;
-    int     rd;
-    int     rt;
-    int     funct;
-    int     opcode;
-    String  strOpCode;
-    char    type;
-    int     plptype;
-    long    instr;
-
-    public MIPSInstruction(long instr) {
-        this.instr = instr;
-        imm     = (int) (instr & PLPMIPSEmu.consts.C_MASK);
-        funct   = (int) (instr & PLPMIPSEmu.consts.V_MASK);
-        sa      = (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
-        rd      = (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
-        rt      = (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
-        rs      = (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
-        opcode  = (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
-        strOpCode = PLPAsm.lookupInstr((byte) opcode);
-    }
-
-    public static int imm(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.C_MASK); }
-
-    public static int funct(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.V_MASK); }
-
-    public static int sa(long instr) {
-        return (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int rd(long instr) {
-        return (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int rt(long instr) {
-        return (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int rs(long instr) {
-        return (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int opcode(long instr) {
-        return (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
     }
 }

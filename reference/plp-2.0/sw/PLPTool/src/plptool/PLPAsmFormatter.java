@@ -1,7 +1,3 @@
-/*
- * Utility class to package / display object codes produces by PLPAsm
- */
-
 package plptool;
 
 import java.io.FileOutputStream;
@@ -15,6 +11,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
 /**
+ * Utility class to package / display object codes produces by PLPAsm
  *
  * @author wira
  */
@@ -150,12 +147,12 @@ public class PLPAsmFormatter {
     public static String mipsInstrStr(long instr) {
         String ret = "";
 
-        ret += PLPAsm.lookupInstr((byte) MIPSInstruction.opcode(instr)) + " ";
-        ret += MIPSInstruction.rs(instr) + " ";
-        ret += MIPSInstruction.rt(instr) + " ";
-        ret += MIPSInstruction.rd(instr) + " ";
-        ret += MIPSInstruction.sa(instr) + " ";
-        ret += MIPSInstruction.imm(instr);
+        ret += PLPAsm.lookupInstr((byte) MIPSInstr.opcode(instr)) + " ";
+        ret += MIPSInstr.rs(instr) + " ";
+        ret += MIPSInstr.rt(instr) + " ";
+        ret += MIPSInstr.rd(instr) + " ";
+        ret += MIPSInstr.sa(instr) + " ";
+        ret += MIPSInstr.imm(instr);
 
         return ret;
     }
