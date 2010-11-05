@@ -2,8 +2,6 @@
 David Fritz
 
 ROM module, which uses an inferred ram
-
-10.31.2010
 */
 
 module mod_rom(clk, ie, de, iaddr, daddr, drw, din, iout, dout);
