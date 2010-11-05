@@ -54,6 +54,9 @@ for line in infile:
 	outfile.write('\t\tRAM[' + str(count) + '] = ' + line.rstrip() + ';\n')
 	count = count + 1
 
+for x in range(count,512):
+	outfile.write('\t\tRAM[' + str(x) + '] = 32\'h00000000;\n');
+
 outfile.write(post)
 
 infile.close()
