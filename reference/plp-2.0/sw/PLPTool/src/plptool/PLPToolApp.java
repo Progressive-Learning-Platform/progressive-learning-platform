@@ -59,6 +59,12 @@ public class PLPToolApp extends SingleFrameApplication {
                 PLPAsmFormatter.genPLP(args[1], args[2], true);
             }
         }
+        else if(args.length > 0 && args[0].equals("-e")) {
+            if(args.length != 2) {
+                System.out.println("Usage: PLPTool -e <asm>");
+            } else
+                PLPEmuCL.emuCL(args[1]);
+        }
 
         else if(args.length == 0)
             launch(PLPToolApp.class, args);
@@ -78,6 +84,9 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("  -p  <plpfile> <port> <baud>");
             System.out.println("      Program PLP target board with <plpfile> using serial port <port>");
             System.out.println("      and baud rate of <baud>.");
+            System.out.println();
+            System.out.println("  -e  <asm>");
+            System.out.println("      Launches the command line emulator to simulate <asm>.");
             System.out.println();
         }
     }
