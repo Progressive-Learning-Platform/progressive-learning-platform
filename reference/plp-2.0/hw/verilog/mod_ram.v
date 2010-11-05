@@ -3,7 +3,6 @@ David Fritz
 
 RAM module, which uses an inferred block ram
 
-10.31.2010
 */
 
 module mod_ram(clk, ie, de, iaddr, daddr, drw, din, iout, dout);
@@ -21,5 +20,5 @@ module mod_ram(clk, ie, de, iaddr, daddr, drw, din, iout, dout);
 	assign iout = ie ? idata : 32'h00000000;
 	assign dout = de ? ddata : 32'h00000000;
 
-	inferred_ram #(8192) (clk,~clk,1,1,(drw & de),iaddr[12:2],daddr[12:2],din,idata,ddata);
+	inferred_ram (clk,~clk,1,1,(drw & de),iaddr[12:2],daddr[12:2],din,idata,ddata);
 endmodule
