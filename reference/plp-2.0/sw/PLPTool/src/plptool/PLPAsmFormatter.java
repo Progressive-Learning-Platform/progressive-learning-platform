@@ -300,3 +300,86 @@ public class PLPAsmFormatter {
         return 0;
     }
 }
+
+class MIPSInstr {
+
+    public static int imm(long instr) {
+        return (int) (instr & PLPMIPSEmu.consts.C_MASK); }
+
+    public static int funct(long instr) {
+        return (int) (instr & PLPMIPSEmu.consts.V_MASK); }
+
+    public static int sa(long instr) {
+        return (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int rd(long instr) {
+        return (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int rt(long instr) {
+        return (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int rs(long instr) {
+        return (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
+    }
+
+    public static int opcode(long instr) {
+        return (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
+    }
+
+    public static int jaddr(long instr) {
+        return (int) (instr & PLPMIPSEmu.consts.J_MASK);
+    }
+
+    public static String format(long instr) {
+        String ret = "";
+        int instrType;
+
+        if(opcode(instr) != 0) {
+            instrType = PLPAsm.lookupInstrType((byte) opcode(instr));
+            ret = PLPAsm.lookupInstr((byte) opcode(instr)) + " ";
+        }
+        else {
+            instrType = PLPAsm.lookupInstrType((byte) funct(instr));
+            ret = PLPAsm.lookupInstr((byte) funct(instr)) + " ";
+        }
+
+        switch(instrType) {
+            case 0:
+                ret += "$" + rd(instr) + ",$" + rs(instr) + ",$" + rt(instr);
+                break;
+            case 1:
+                ret += "$" + rd(instr) + ",$" + rt(instr) + "," + sa(instr);
+                break;
+            case 2:
+                if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jr"))
+                    ret += "$" + rs(instr);
+                else if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jalr"))
+                    ret += "$" + rd(instr) + ",$" + rs(instr);
+                break;
+            case 3:
+                ret += "$" + rs(instr) + ",$" + rt(instr) + ",0x" + String.format("%x", imm(instr));
+                break;
+            case 4:
+                ret += "$" + rt(instr) + ",$" + rs(instr) + ",0x" + String.format("%x", imm(instr));
+                break;
+            case 5:
+                ret += "$" + rt(instr) + ",0x" + String.format("%x", imm(instr));
+                break;
+            case 6:
+                ret += "$" + rt(instr) + "," + imm(instr) + "($" + rs(instr) + ")";
+                break;
+            case 7:
+                ret += String.format("%08x", jaddr(instr));
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+        }
+
+        return ret;
+    }
+}
