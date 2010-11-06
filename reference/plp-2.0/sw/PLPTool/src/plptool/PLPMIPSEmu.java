@@ -1,3 +1,21 @@
+/*
+    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
 package plptool;
 
 /**
@@ -43,7 +61,7 @@ public class PLPMIPSEmu {
         // load program to RAM
         for(i = 0; i < objCode.length; i++) {
             if((int) (addrTable[i] / 4) >= RAMsize)
-                System.out.println("Warning: Program doesn't fit in the ram.");
+                System.out.println("Warning: Program doesn't fit in memory.");
             else
                 coreMem.mainMem[(int) addrTable[i] / 4] =  objCode[i];
         }
@@ -63,6 +81,8 @@ public class PLPMIPSEmu {
 
         flushpipeline();
         fetch();
+
+        System.out.println("core: reset");
 
         return PLPMsg.PLP_OK;
     }
@@ -126,7 +146,8 @@ public class PLPMIPSEmu {
 
     public void printfrontend() {
         System.out.println("pc: " + String.format("%08x", coreMem.pc) +
-                " instr: " + String.format("%08x", rf_stage.i_instruction));
+                " instr: " + String.format("%08x", rf_stage.i_instruction) +
+                " " + MIPSInstr.format(rf_stage.i_instruction));
     }
 
     public int run (int instructions) {
@@ -163,6 +184,7 @@ public class PLPMIPSEmu {
         final static  int   R_MASK = 0x1F;
         final static  int   V_MASK = 0x3F;
         final static  int   C_MASK = 0xFFFF;
+        final static  int   J_MASK = 0x3FFFFFF;
     }
 
     public class memory {
@@ -220,6 +242,13 @@ public class PLPMIPSEmu {
             System.out.println("\tinstruction: " + String.format("%08x", instruction));
             System.out.println("\tinstrAddr: " + String.format("%08x", instrAddr));
             System.out.println("\tfwd_ctl_pcplus4: " + fwd_ctl_pcplus4);
+        }
+
+        public void printnextvars() {
+            System.out.println("RF next vars");
+            System.out.println("\ti_instruction: " + String.format("%08x", i_instruction));
+            System.out.println("\ti_instrAddr: " + String.format("%08x", i_instrAddr));
+            System.out.println("\ti_fwd_ctl_pcplus4: " + i_fwd_ctl_pcplus4);
         }
 
         private void eval() {
@@ -371,8 +400,6 @@ public class PLPMIPSEmu {
             // EX stage pipeline registers
             System.out.println("\tfwd_ctl_memtoreg: " + fwd_ctl_memtoreg);
             System.out.println("\tfwd_ctl_regwrite: " + fwd_ctl_regwrite);
-
-            System.out.println("\tctl_branch: " + ctl_branch);
             System.out.println("\tfwd_ctl_memwrite: " + fwd_ctl_memwrite);
             System.out.println("\tfwd_ctl_memread: " + fwd_ctl_memread);
 
@@ -380,13 +407,33 @@ public class PLPMIPSEmu {
             System.out.println("\tctl_aluOp: " + String.format("%08x",ctl_aluOp));
             System.out.println("\tctl_regDst: " + ctl_regDst);
             System.out.println("\tctl_pcsrc: " + ctl_pcsrc);
-
+            System.out.println("\tctl_branch: " + ctl_branch);
+            System.out.println("\tctl_branchTarget: " + String.format("%08x",ctl_branchTarget));
             System.out.println("\tctl_pcplus4: " + ctl_pcplus4);
+
             System.out.println("\tdata_imm_signExtended: " + String.format("%08x",data_imm_signExtended));
             System.out.println("\tdata_alu_in: " + String.format("%08x",data_alu_in));
-            System.out.println("\tdata_rt: " + String.format("%08x",data_rt));
+        }
 
-            System.out.println("\tctl_branchTarget: " + String.format("%08x",ctl_branchTarget));
+        public void printnextvars() {
+            System.out.println("EX next vars");
+            System.out.println("\ti_instruction: " + String.format("%08x",i_instruction));
+            System.out.println("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
+
+            // EX stage pipeline registers
+            System.out.println("\ti_fwd_ctl_memtoreg: " + i_fwd_ctl_memtoreg);
+            System.out.println("\ti_fwd_ctl_regwrite: " + i_fwd_ctl_regwrite);
+            System.out.println("\ti_fwd_ctl_memwrite: " + i_fwd_ctl_memwrite);
+            System.out.println("\ti_fwd_ctl_memread: " + i_fwd_ctl_memread);
+
+            System.out.println("\ti_ctl_aluSrc: " + i_ctl_aluSrc);
+            System.out.println("\ti_ctl_aluOp: " + String.format("%08x",i_ctl_aluOp));
+            System.out.println("\ti_ctl_regDst: " + i_ctl_regDst);
+            System.out.println("\ti_ctl_branch: " + i_ctl_branch);
+            System.out.println("\ti_ctl_pcplus4: " + i_ctl_pcplus4);
+
+            System.out.println("\ti_data_imm_signExtended: " + String.format("%08x",i_data_imm_signExtended));
+            System.out.println("\ti_data_alu_in: " + String.format("%08x",i_data_alu_in));
         }
 
         private void eval() {
@@ -495,12 +542,29 @@ public class PLPMIPSEmu {
             System.out.println("\tfwd_ctl_dest_reg_addr: " + fwd_ctl_dest_reg_addr);
             System.out.println("\tfwd_data_alu_result: " + String.format("%08x",fwd_data_alu_result));
 
+            System.out.println("\tctl_regwrite: " + ctl_regwrite);
             System.out.println("\tctl_memwrite: " + ctl_memwrite);
             System.out.println("\tctl_memread: " + ctl_memread);
 
             System.out.println("\tdata_memwritedata: " + String.format("%08x",data_memwritedata));
+        }
 
-            System.out.println("\tctl_regwrite: " + ctl_regwrite);
+        public void printnextvars() {
+            System.out.println("MEM next vars");
+            System.out.println("\ti_instruction: " + String.format("%08x",i_instruction));
+            System.out.println("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
+
+            // MEM stage pipeline registers
+            System.out.println("\ti_fwd_ctl_memtoreg: " + i_fwd_ctl_memtoreg);
+            System.out.println("\ti_fwd_ctl_regwrite: " + i_fwd_ctl_regwrite);
+            System.out.println("\ti_fwd_ctl_dest_reg_addr: " + i_fwd_ctl_dest_reg_addr);
+            System.out.println("\ti_fwd_data_alu_result: " + String.format("%08x",i_fwd_data_alu_result));
+
+            System.out.println("\ti_ctl_regwrite: " + i_ctl_regwrite);
+            System.out.println("\ti_ctl_memwrite: " + i_ctl_memwrite);
+            System.out.println("\ti_ctl_memread: " + i_ctl_memread);
+
+            System.out.println("\ti_data_memwritedata: " + String.format("%08x",i_data_memwritedata));
         }
 
         private void eval() {
@@ -583,6 +647,20 @@ public class PLPMIPSEmu {
 
             System.out.println("\tdata_memreaddata: " + String.format("%08x",data_memreaddata));
             System.out.println("\tdata_alu_result: " + String.format("%08x",data_alu_result));
+        }
+
+        public void printnextvars() {
+            System.out.println("WB next vars");
+            System.out.println("\ti_instruction: " + String.format("%08x",i_instruction));
+            System.out.println("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
+
+            // WB stage pipeline registers
+            System.out.println("\ti_ctl_memtoreg: " + i_ctl_memtoreg);
+            System.out.println("\ti_ctl_regwrite: " + i_ctl_regwrite);
+            System.out.println("\ti_ctl_dest_reg_addr: " + i_ctl_dest_reg_addr);
+
+            System.out.println("\ti_data_memreaddata: " + String.format("%08x",i_data_memreaddata));
+            System.out.println("\ti_data_alu_result: " + String.format("%08x",i_data_alu_result));
         }
     
         private void eval() {
@@ -701,10 +779,50 @@ class MIPSInstr {
         return (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
     }
 
+    public static int jaddr(long instr) {
+        return (int) (instr & PLPMIPSEmu.consts.J_MASK);
+    }
+
     public static String format(long instr) {
         String ret = "";
 
+        int instrType = PLPAsm.lookupInstrType((byte) opcode(instr));
+
         ret += PLPAsm.lookupInstr((byte) opcode(instr)) + " ";
+        
+        switch(instrType) {
+            case 0:
+                ret += "$" + rd(instr) + ",$" + rs(instr) + ",$" + rt(instr);
+                break;
+            case 1:
+                ret += "$" + rd(instr) + ",$" + rt(instr) + "," + sa(instr);
+                break;
+            case 2:
+                if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jr"))
+                    ret += "$" + rs(instr);
+                else if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jalr"))
+                    ret += "$" + rd(instr) + ",$" + rs(instr);
+                break;
+            case 3:
+                ret += "$" + rs(instr) + ",$" + rt(instr) + ",0x" + String.format("%x", imm(instr));
+                break;
+            case 4:
+                ret += "$" + rt(instr) + ",$" + rs(instr) + ",0x" + String.format("%x", imm(instr));
+                break;
+            case 5:
+                ret += "$" + rt(instr) + ",0x" + String.format("%x", imm(instr));
+                break;
+            case 6:
+                ret += "$" + rt(instr) + "," + imm(instr) + "($" + rs(instr) + ")";
+                break;
+            case 7:
+                ret += jaddr(instr);
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+        }
 
         return ret;
     }
