@@ -44,6 +44,7 @@ public class PLPMIPSEmu {
         int i;
         coreMem = new memory(new long[RAMsize],
                              new long[32],
+                             new boolean[RAMsize],
                              0);                // pc=0 on reset
 
         this.asm = asm;
@@ -62,8 +63,14 @@ public class PLPMIPSEmu {
         for(i = 0; i < objCode.length; i++) {
             if((int) (addrTable[i] / 4) >= RAMsize)
                 System.out.println("Warning: Program doesn't fit in memory.");
-            else
-                coreMem.mainMem[(int) addrTable[i] / 4] =  objCode[i];
+            else {
+                if (asm.isInstruction(i) == 0)
+                    coreMem.isInstr[(int) addrTable[i] / 4] = true;
+                else
+                    coreMem.isInstr[(int) addrTable[i] / 4] = false;
+                
+                coreMem.mainMem[(int) addrTable[i] / 4] = objCode[i];
+            }
         }
 
         // Instantiate stages
@@ -71,8 +78,6 @@ public class PLPMIPSEmu {
         mem_stage = new mem(wb_stage, coreMem);
         ex_stage = new ex(mem_stage, new alu());
         rf_stage = new rf(ex_stage, coreMem);
-
-        this.reset();
     }
 
     public int reset() {
@@ -103,13 +108,16 @@ public class PLPMIPSEmu {
         // update pc for next instruction
         if(ex_stage.hot && ex_stage.ctl_pcsrc == 1)
             coreMem.pc = ex_stage.ctl_branchTarget;
+        else if(ex_stage.hot && ex_stage.ctl_jump == 1)
+            coreMem.pc = ex_stage.ctl_jumpTarget;
         else
             coreMem.pc += 4;
 
         return fetch();
     }
 
-    public int fetch() {
+    public int fetch()  {
+
         if(coreMem.pc / 4 >= coreMem.mainMem.length)
             return PLPMsg.E("step(): Instruction memory out-of-bounds: addr=" +
                             String.format("%08x", coreMem.pc),
@@ -120,8 +128,8 @@ public class PLPMIPSEmu {
                             String.format("%08x", coreMem.pc),
                             PLPMsg.PLP_EMU_UNINITIALIZED_MEMORY, this);
 
-        if(asm.isInstruction((int) coreMem.pc / 4) != 0)
-            return PLPMsg.E("step(): Instruction memory out-of-bounds: addr=" +
+        if(!coreMem.isInstr[(int) (coreMem.pc / 4)])
+            return PLPMsg.E("step(): Unprogrammed memory: addr=" +
                             String.format("%08x", coreMem.pc),
                             PLPMsg.PLP_EMU_INSTRMEM_OUT_OF_BOUNDS, this);
 
@@ -191,11 +199,13 @@ public class PLPMIPSEmu {
         long                    pc;
         long[]                  mainMem;
         long[]                  regFile;
+        boolean[]               isInstr;
 
-        public memory(long[] mainMem, long[] regFile, long pc) {
+        public memory(long[] mainMem, long[] regFile, boolean[] isInstr, long pc) {
             this.pc = pc;
             this.mainMem = mainMem;
             this.regFile = regFile;
+            this.isInstr = isInstr;
         }
 
         public void printMainMem() {
@@ -284,6 +294,7 @@ public class PLPMIPSEmu {
             ex_reg.i_ctl_branch = 0;
             ex_reg.i_ctl_aluSrc = 0;
             ex_reg.i_ctl_regDst = 0;
+            ex_reg.i_ctl_jump = 0;
 
             switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstr(opcode))) {
                 case 0:
@@ -318,6 +329,15 @@ public class PLPMIPSEmu {
                     }
 
                     break;
+                case 7:
+                    ex_reg.i_ctl_jump = 1;
+                    if(PLPAsm.lookupInstr(opcode).equals("jal")) {
+                        ex_reg.i_fwd_ctl_regwrite = 1;
+                        ex_reg.i_ctl_regDst = 1;
+                        ex_reg.i_ctl_rd_addr = 31;
+                    }
+
+                    break;
             }
             ex_reg.hot = true;
         }
@@ -340,6 +360,7 @@ public class PLPMIPSEmu {
         long fwd_ctl_regwrite;
 
         long ctl_branch;
+        long ctl_jump;
         long fwd_ctl_memwrite;
         long fwd_ctl_memread;
 
@@ -347,6 +368,7 @@ public class PLPMIPSEmu {
         long ctl_aluOp;
         long ctl_regDst;
         long ctl_pcsrc;
+        long ctl_pcjump;
 
         long ctl_pcplus4;
 
@@ -354,12 +376,11 @@ public class PLPMIPSEmu {
         long data_rt;
 
         long ctl_branchTarget;
-
+        long ctl_jumpTarget;
 
         long data_imm_signExtended;
         long ctl_rt_addr;
         long ctl_rd_addr;
-
 
         long i_instruction;
         long i_instrAddr;
@@ -368,6 +389,7 @@ public class PLPMIPSEmu {
         long i_fwd_ctl_regwrite;
 
         long i_ctl_branch;
+        long i_ctl_jump;
         long i_fwd_ctl_memwrite;
         long i_fwd_ctl_memread;
 
@@ -407,8 +429,10 @@ public class PLPMIPSEmu {
             System.out.println("\tctl_aluOp: " + String.format("%08x",ctl_aluOp));
             System.out.println("\tctl_regDst: " + ctl_regDst);
             System.out.println("\tctl_pcsrc: " + ctl_pcsrc);
+            System.out.println("\tctl_jump: " + ctl_jump);
             System.out.println("\tctl_branch: " + ctl_branch);
             System.out.println("\tctl_branchTarget: " + String.format("%08x",ctl_branchTarget));
+            System.out.println("\tctl_jumpTarget: " + String.format("%08x",ctl_jumpTarget));
             System.out.println("\tctl_pcplus4: " + ctl_pcplus4);
 
             System.out.println("\tdata_imm_signExtended: " + String.format("%08x",data_imm_signExtended));
@@ -417,6 +441,7 @@ public class PLPMIPSEmu {
 
         public void printnextvars() {
             System.out.println("EX next vars");
+            System.out.println("\thot: " + hot);
             System.out.println("\ti_instruction: " + String.format("%08x",i_instruction));
             System.out.println("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
 
@@ -429,6 +454,7 @@ public class PLPMIPSEmu {
             System.out.println("\ti_ctl_aluSrc: " + i_ctl_aluSrc);
             System.out.println("\ti_ctl_aluOp: " + String.format("%08x",i_ctl_aluOp));
             System.out.println("\ti_ctl_regDst: " + i_ctl_regDst);
+            System.out.println("\ti_ctl_jump: " + i_ctl_jump);
             System.out.println("\ti_ctl_branch: " + i_ctl_branch);
             System.out.println("\ti_ctl_pcplus4: " + i_ctl_pcplus4);
 
@@ -459,7 +485,8 @@ public class PLPMIPSEmu {
             ctl_pcsrc = (mem_reg.i_fwd_data_alu_result == 0) ? 0 : 1;
             ctl_pcsrc &= ctl_branch;
             ctl_branchTarget = ctl_pcplus4 + (data_imm_signExtended << 2);
-            
+            ctl_jumpTarget = MIPSInstr.jaddr(instruction) << 2;
+           
             mem_reg.hot = true;
         }
 
@@ -473,6 +500,7 @@ public class PLPMIPSEmu {
             fwd_ctl_memwrite = i_fwd_ctl_memwrite;
             fwd_ctl_memread = i_fwd_ctl_memread;
 
+            ctl_jump = i_ctl_jump;
             ctl_branch = i_ctl_branch;
             ctl_aluSrc = i_ctl_aluSrc;
             ctl_aluOp = i_ctl_aluOp;
@@ -551,6 +579,7 @@ public class PLPMIPSEmu {
 
         public void printnextvars() {
             System.out.println("MEM next vars");
+            System.out.println("\thot: " + hot);
             System.out.println("\ti_instruction: " + String.format("%08x",i_instruction));
             System.out.println("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
 
@@ -569,7 +598,6 @@ public class PLPMIPSEmu {
 
         private void eval() {
             System.out.println("mem eval: " + String.format("%08x", instrAddr));
-
             wb_reg.i_instruction = instruction;
             wb_reg.i_instrAddr = instrAddr;
 
@@ -589,7 +617,6 @@ public class PLPMIPSEmu {
         }
 
         private void clock() {
-            wb_reg.hot = true;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
             
@@ -651,6 +678,7 @@ public class PLPMIPSEmu {
 
         public void printnextvars() {
             System.out.println("WB next vars");
+            System.out.println("\thot: " + hot);
             System.out.println("\ti_instruction: " + String.format("%08x",i_instruction));
             System.out.println("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
 
@@ -666,7 +694,7 @@ public class PLPMIPSEmu {
         private void eval() {
             System.out.println("wb eval: " + String.format("%08x", instrAddr));
 
-            if(ctl_regwrite == 1)
+            if(ctl_regwrite == 1 && ctl_dest_reg_addr != 0)
                 coreMem.regFile[(int) ctl_dest_reg_addr] =
                     (ctl_memtoreg == 0) ? data_alu_result : data_memreaddata;
         }
@@ -694,7 +722,6 @@ public class PLPMIPSEmu {
 
             switch(MIPSInstr.opcode(instr)) {
 
-
                 // R-types
                 case 0:
                     switch(MIPSInstr.funct(instr)) {
@@ -718,112 +745,10 @@ public class PLPMIPSEmu {
 
                 case 0x0f:
                     return b << 16;
-
             }
 
             return 0;
         }
     }
-
 }
 
-class MIPSInstr {
-
-    int     imm;
-    int     sa;
-    int     rs;
-    int     rd;
-    int     rt;
-    int     funct;
-    int     opcode;
-    String  strOpCode;
-    char    type;
-    int     plptype;
-    long    instr;
-
-    public MIPSInstr(long instr) {
-        this.instr = instr;
-        imm     = (int) (instr & PLPMIPSEmu.consts.C_MASK);
-        funct   = (int) (instr & PLPMIPSEmu.consts.V_MASK);
-        sa      = (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
-        rd      = (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
-        rt      = (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
-        rs      = (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
-        opcode  = (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
-        strOpCode = PLPAsm.lookupInstr((byte) opcode);
-    }
-
-    public static int imm(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.C_MASK); }
-
-    public static int funct(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.V_MASK); }
-
-    public static int sa(long instr) {
-        return (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int rd(long instr) {
-        return (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int rt(long instr) {
-        return (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int rs(long instr) {
-        return (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
-    }
-
-    public static int opcode(long instr) {
-        return (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
-    }
-
-    public static int jaddr(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.J_MASK);
-    }
-
-    public static String format(long instr) {
-        String ret = "";
-
-        int instrType = PLPAsm.lookupInstrType((byte) opcode(instr));
-
-        ret += PLPAsm.lookupInstr((byte) opcode(instr)) + " ";
-        
-        switch(instrType) {
-            case 0:
-                ret += "$" + rd(instr) + ",$" + rs(instr) + ",$" + rt(instr);
-                break;
-            case 1:
-                ret += "$" + rd(instr) + ",$" + rt(instr) + "," + sa(instr);
-                break;
-            case 2:
-                if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jr"))
-                    ret += "$" + rs(instr);
-                else if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jalr"))
-                    ret += "$" + rd(instr) + ",$" + rs(instr);
-                break;
-            case 3:
-                ret += "$" + rs(instr) + ",$" + rt(instr) + ",0x" + String.format("%x", imm(instr));
-                break;
-            case 4:
-                ret += "$" + rt(instr) + ",$" + rs(instr) + ",0x" + String.format("%x", imm(instr));
-                break;
-            case 5:
-                ret += "$" + rt(instr) + ",0x" + String.format("%x", imm(instr));
-                break;
-            case 6:
-                ret += "$" + rt(instr) + "," + imm(instr) + "($" + rs(instr) + ")";
-                break;
-            case 7:
-                ret += jaddr(instr);
-                break;
-            case 8:
-                break;
-            case 9:
-                break;
-        }
-
-        return ret;
-    }
-}

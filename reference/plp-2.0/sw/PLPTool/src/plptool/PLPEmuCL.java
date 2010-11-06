@@ -63,15 +63,21 @@ public class PLPEmuCL {
                     System.out.println("Usage: i <ram size in bytes>");
                 }
                 else {
+                    try {
                     ram_size = Integer.parseInt(tokens[1]);
+                   
                     if(ram_size % 4 != 0)
                         System.out.println("RAM size has to be in multiples of 4");
                     else {
                         ram_size /= 4;
                         core = new PLPMIPSEmu(asm, ram_size);
+                        core.reset();
                         init_core = true;
                         core.printfrontend();
                         System.out.println("Simulation core initialized.");
+                    }
+                    } catch(Exception e) {
+                        System.out.println("Usage: i <ram size in bytes>");
                     }
                 }
             }
@@ -152,8 +158,8 @@ public class PLPEmuCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
-                    System.out.println("\nOutput side values of pipeline registers");
-                    System.out.println("========================================");
+                    System.out.println("\nOutput side values of pipeline stages");
+                    System.out.println("=====================================");
                     core.wb_stage.printvars();
                     core.mem_stage.printvars();
                     core.ex_stage.printvars();
