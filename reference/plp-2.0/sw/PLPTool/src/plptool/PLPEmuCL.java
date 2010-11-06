@@ -1,3 +1,21 @@
+/*
+    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
 package plptool;
 
 import java.io.InputStreamReader;
@@ -22,17 +40,18 @@ public class PLPEmuCL {
         try {
 
         System.out.println("PLPTool Command Line Emulator");
-        System.out.println("Assembling " + asmFile);
+        System.out.print("Assembling " + asmFile + " ...");
         asm = new PLPAsm(null, asmFile, 0);
         if(asm.preprocess(0) == PLPMsg.PLP_OK)
             asm.assemble();
 
         if(!asm.isAssembled()) {
+            System.out.println();
             PLPMsg.E("Assembly failed.", PLPMsg.PLP_ERROR_RETURN, asm);
             System.exit(PLPMsg.PLP_ERROR_RETURN);
         }
 
-
+        System.out.println(" OK");
         System.out.print("emu > ");
         while(!(input = stdIn.readLine()).equals("q")) {
             tokens = input.split(" ");
@@ -41,7 +60,7 @@ public class PLPEmuCL {
             }
             else if(tokens[0].equals("i")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: initcore <ram size in bytes>");
+                    System.out.println("Usage: i <ram size in bytes>");
                 }
                 else {
                     ram_size = Integer.parseInt(tokens[1]);
@@ -51,8 +70,8 @@ public class PLPEmuCL {
                         ram_size /= 4;
                         core = new PLPMIPSEmu(asm, ram_size);
                         init_core = true;
-                        core.coreMem.printMainMem();
                         core.printfrontend();
+                        System.out.println("Simulation core initialized.");
                     }
                 }
             }
@@ -60,6 +79,16 @@ public class PLPEmuCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
+                    core.step();
+                    core.printfrontend();
+                }
+            }
+            else if(tokens[0].equals("s")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: s <number of instructions>");
+                }
+            else
+                for(int i = 0; i < Integer.parseInt(tokens[1]); i++) {
                     core.step();
                     core.printfrontend();
                 }
@@ -76,6 +105,8 @@ public class PLPEmuCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
+                    System.out.println("\nMain memory listing");
+                    System.out.println("===================");
                     core.coreMem.printMainMem();
                 }
             }
@@ -83,6 +114,8 @@ public class PLPEmuCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
+                    System.out.println("\nRegisters listing");
+                    System.out.println("=================");
                     core.coreMem.printRegFile();
                 }
             }
@@ -90,6 +123,8 @@ public class PLPEmuCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
+                    System.out.println("\nFrontend / fetch stage state");
+                    System.out.println("============================");
                     core.printfrontend();
                 }
             }
@@ -97,6 +132,8 @@ public class PLPEmuCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
+                    System.out.println("\nProgram Listing");
+                    System.out.println("===============");
                     core.printprogram();
                 }
             }
@@ -115,19 +152,36 @@ public class PLPEmuCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
+                    System.out.println("\nOutput side values of pipeline registers");
+                    System.out.println("========================================");
                     core.wb_stage.printvars();
                     core.mem_stage.printvars();
                     core.ex_stage.printvars();
                     core.rf_stage.printvars();
                 }
             }
-
+            else if(input.equals("pnextvars")) {
+                if(!init_core)
+                    System.out.println("Core is not initialized.");
+                else {
+                    System.out.println("\nInput side values of pipeline registers");
+                    System.out.println("=======================================");
+                    core.wb_stage.printnextvars();
+                    core.mem_stage.printnextvars();
+                    core.ex_stage.printnextvars();
+                    core.rf_stage.printnextvars();
+                }
+            }
+            else if(input.toLowerCase().equals("wira sucks")) {
+                System.out.println("No, he doesn't.\n");
+            }
             else {
-                System.out.println("Unknown command");
+                System.out.println("Unknown command\n");
             }
 
             System.out.print("emu > ");
         }
+        System.out.println("See ya!");
 
         } catch(Exception e) {
             System.err.println(e);

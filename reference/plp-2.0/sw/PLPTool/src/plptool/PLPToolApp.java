@@ -1,5 +1,19 @@
 /*
- * PLPToolApp.java
+    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 package plptool;
@@ -40,8 +54,10 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {
         System.out.println("\nPLP Java Tool");
-        System.out.println("Authors: David Fritz, Brian Gordon, Wira Mulia");
+        System.out.println("Copyright 2010 David Fritz, Brian Gordon, Wira Mulia");
         System.out.println(PLPMsg.versionString + "\n");
+        System.out.println("This software is licensed under GPLv3.");
+        System.out.println();
 
         if(args.length > 0 && args[0].equals("-a")) {
             if(args.length != 3) {
