@@ -26,12 +26,12 @@ import java.io.BufferedReader;
  *
  * @author wira
  */
-public class PLPEmuCL {
+public class PLPSimCL {
 
-    public static void emuCL(String asmFile) {
+    public static void simCL(String asmFile) {
         BufferedReader stdIn = new BufferedReader(new InputStreamReader((System.in)));
         PLPAsm asm;
-        PLPMIPSEmu core = null;
+        PLPMIPSSim core = null;
         String input = "";
         String tokens[];
         int ram_size;
@@ -70,7 +70,7 @@ public class PLPEmuCL {
                         System.out.println("RAM size has to be in multiples of 4");
                     else {
                         ram_size /= 4;
-                        core = new PLPMIPSEmu(asm, ram_size);
+                        core = new PLPMIPSSim(asm, ram_size);
                         core.reset();
                         init_core = true;
                         core.printfrontend();

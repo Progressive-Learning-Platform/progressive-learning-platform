@@ -304,33 +304,33 @@ public class PLPAsmFormatter {
 class MIPSInstr {
 
     public static int imm(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.C_MASK); }
+        return (int) (instr & PLPMIPSSim.consts.C_MASK); }
 
     public static int funct(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.V_MASK); }
+        return (int) (instr & PLPMIPSSim.consts.V_MASK); }
 
     public static int sa(long instr) {
-        return (int) ((instr >> 5) & PLPMIPSEmu.consts.R_MASK);
+        return (int) ((instr >> 5) & PLPMIPSSim.consts.R_MASK);
     }
 
     public static int rd(long instr) {
-        return (int) ((instr >> 11) & PLPMIPSEmu.consts.R_MASK);
+        return (int) ((instr >> 11) & PLPMIPSSim.consts.R_MASK);
     }
 
     public static int rt(long instr) {
-        return (int) ((instr >> 16) & PLPMIPSEmu.consts.R_MASK);
+        return (int) ((instr >> 16) & PLPMIPSSim.consts.R_MASK);
     }
 
     public static int rs(long instr) {
-        return (int) ((instr >> 21) & PLPMIPSEmu.consts.R_MASK);
+        return (int) ((instr >> 21) & PLPMIPSSim.consts.R_MASK);
     }
 
     public static int opcode(long instr) {
-        return (int) ((instr >> 26) & PLPMIPSEmu.consts.V_MASK);
+        return (int) ((instr >> 26) & PLPMIPSSim.consts.V_MASK);
     }
 
     public static int jaddr(long instr) {
-        return (int) (instr & PLPMIPSEmu.consts.J_MASK);
+        return (int) (instr & PLPMIPSSim.consts.J_MASK);
     }
 
     public static String format(long instr) {
