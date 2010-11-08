@@ -23,7 +23,7 @@ package plptool;
  *
  * @author wira
  */
-public class PLPMIPSEmu {
+public class PLPMIPSSim {
 
     public memory coreMem;
 
@@ -40,7 +40,7 @@ public class PLPMIPSEmu {
     PLPAsm asm;
 
     // Initialize core
-    public PLPMIPSEmu(PLPAsm asm, int RAMsize) {
+    public PLPMIPSSim(PLPAsm asm, int RAMsize) {
         int i;
         coreMem = new memory(new long[RAMsize],
                              new long[32],

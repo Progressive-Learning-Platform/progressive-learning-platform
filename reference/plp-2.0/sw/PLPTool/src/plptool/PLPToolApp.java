@@ -79,7 +79,7 @@ public class PLPToolApp extends SingleFrameApplication {
             if(args.length != 2) {
                 System.out.println("Usage: PLPTool -e <asm>");
             } else
-                PLPEmuCL.emuCL(args[1]);
+                PLPSimCL.simCL(args[1]);
         }
 
         else if(args.length == 0)
