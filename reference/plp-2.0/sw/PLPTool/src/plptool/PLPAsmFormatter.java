@@ -18,12 +18,13 @@
 
 package plptool;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -36,20 +37,17 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 public class PLPAsmFormatter {
 
     // Print to stdout, prettily.
-    public static int prettyPrint(PLPAsm assembler) {
+    public static int prettyPrint(PLPAsm asm) {
         String label;
-        long addrTable[] = assembler.getAddrTable();
-        long objectCode[] = assembler.getObjectCode();
+        long addrTable[] = asm.getAddrTable();
+        long objectCode[] = asm.getObjectCode();
         long tVal;
-
-        if(addrTable.length != objectCode.length)
-            return PLPMsg.PLP_ERROR_GENERIC;
 
         System.out.println("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII");
         System.out.println("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----");
 
         for(int i = 0; i < addrTable.length; i++) {
-            if((label = assembler.lookupLabel(addrTable[i])) != null) {
+            if((label = asm.lookupLabel(addrTable[i])) != null) {
                 System.out.print(label + "\n\t\t");
             } else {
                 System.out.print("\t\t");
@@ -177,8 +175,8 @@ public class PLPAsmFormatter {
 
     // Generate PLP file
     public static int genPLP(String input, String output, boolean forceWrite) {
-        LinkedList sourceList;
-        PLPAsm assembler = new PLPAsm(null, input, 0);
+        ArrayList<PLPAsmSource> sourceList;
+        PLPAsm asm = new PLPAsm(null, input, 0);
         String metafileStr = "";
         String verilogHex = "";
         long[] objCode = null;
@@ -197,11 +195,11 @@ public class PLPAsmFormatter {
         metafileStr += "PLP-2.0\n";
 
         PLPMsg.I("genPLP(): Assembling " + input + ".", null);
-        if(assembler.preprocess(0) == PLPMsg.PLP_OK)
-            assembler.assemble();
+        if(asm.preprocess(0) == PLPMsg.PLP_OK)
+            asm.assemble();
 
-        if(assembler.isAssembled()) {
-            objCode = assembler.getObjectCode();
+        if(asm.isAssembled()) {
+            objCode = asm.getObjectCode();
             verilogHex = writeVerilogHex(objCode);
             metafileStr += "DIRTY=0\n\n";
             PLPMsg.I("genPLP(): Assembly completed.", null);
@@ -211,11 +209,11 @@ public class PLPAsmFormatter {
             PLPMsg.I("genPLP(): Assembly failed.", null);
         }
 
-        sourceList = assembler.getAsmList();
+        sourceList = asm.getAsmList();
 
         for(i = 0; i < sourceList.size(); i++) {
             temp = (PLPAsmSource) sourceList.get(i);
-            metafileStr += temp.asmFilePath + "\n";
+            metafileStr += temp.getAsmFilePath() + "\n";
         }
 
 
@@ -233,7 +231,28 @@ public class PLPAsmFormatter {
         tOut.flush();
         tOut.closeArchiveEntry();
 
-        if(assembler.isAssembled()) {
+        // Write in .asm files to the tar archive
+        File asmFileHandle;
+        FileInputStream iStream;
+
+        for(i = 0; i < sourceList.size(); i++) {
+            PLPAsmSource asmFile = sourceList.get(i);
+            entry = new TarArchiveEntry(asmFile.getAsmFilePath());
+            asmFileHandle = new File(asmFile.getAsmFilePath());
+            entry.setSize(asmFileHandle.length());
+            tOut.putArchiveEntry(entry);
+            iStream = new FileInputStream(asmFileHandle);
+
+            // We are not expecting an .asm file with size greater than 4GiB
+            // ... I hope...
+            byte[] fileStr = new byte[(int) asmFileHandle.length()];
+            iStream.read(fileStr, 0, (int) asmFileHandle.length());
+            tOut.write(fileStr);
+            tOut.flush();
+            tOut.closeArchiveEntry();
+        }
+
+        if(asm.isAssembled()) {
             // Write hex image
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(verilogHex.length());
@@ -267,15 +286,15 @@ public class PLPAsmFormatter {
         PLPMsg.I("genPLP(): " + output + ".plp written", null);
 
        
-        symTablePrettyPrint(assembler.getSymTable());
+        symTablePrettyPrint(asm.getSymTable());
         System.out.println();
-        prettyPrint(assembler);
+        prettyPrint(asm);
 
         if(PLPMsg.debugLevel >= 10)
-            System.out.println(writeCOE(assembler.getObjectCode()));
+            System.out.println(writeCOE(asm.getObjectCode()));
 
         } catch(Exception e) {
-            return PLPMsg.E("genPLP(): Unable to write to <" + output + ">\n" +
+            return PLPMsg.E("genPLP(): Unable to write to <" + output + ".plp>\n" +
                      e, PLPMsg.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
         }
 
