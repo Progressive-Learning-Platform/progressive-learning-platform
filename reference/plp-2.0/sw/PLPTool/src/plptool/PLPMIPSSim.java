@@ -121,17 +121,17 @@ public class PLPMIPSSim {
         if(coreMem.pc / 4 >= coreMem.mainMem.length)
             return PLPMsg.E("step(): Instruction memory out-of-bounds: addr=" +
                             String.format("%08x", coreMem.pc),
-                            PLPMsg.PLP_EMU_INSTRMEM_OUT_OF_BOUNDS, this);
+                            PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         if(coreMem.mainMem[(int) (coreMem.pc / 4)] == -1)
             return PLPMsg.E("step(): Memory location uninitialized: addr=" +
                             String.format("%08x", coreMem.pc),
-                            PLPMsg.PLP_EMU_UNINITIALIZED_MEMORY, this);
+                            PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
 
         if(!coreMem.isInstr[(int) (coreMem.pc / 4)])
             return PLPMsg.E("step(): Unprogrammed memory: addr=" +
                             String.format("%08x", coreMem.pc),
-                            PLPMsg.PLP_EMU_INSTRMEM_OUT_OF_BOUNDS, this);
+                            PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         // fetch instruction / frontend stage
         rf_stage.i_instruction = coreMem.mainMem[(int) (coreMem.pc / 4)];

@@ -22,10 +22,15 @@ import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.FileInputStream;
+
+import java.util.Scanner;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
 /**
  * PLPTool serial programmer backend.
@@ -36,29 +41,180 @@ public class PLPProgrammer {
     public PLPProgrammer() {
         super();
     }
+    
+    private SerialPort serialPort;
+    private CommPort commPort;
+    private CommPortIdentifier portIdentifier;
+    private InputStream in;
+    private OutputStream out;
 
-    void connect (String portName) throws Exception {
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+    int connect(String portName, int baudRate) throws Exception {
+        portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         if ( portIdentifier.isCurrentlyOwned() )
         {
-            System.out.println("Error: Port is currently in use");
+            return PLPMsg.E("Serial port " + portName + " is in use.",
+                                    PLPMsg.PLP_PRG_PORT_IN_USE, this);
         }
         else {
-            CommPort commPort = portIdentifier.open(this.getClass().getName(),2000);
+            commPort = portIdentifier.open(this.getClass().getName(),2000);
 
             if ( commPort instanceof SerialPort ) {
-                SerialPort serialPort = (SerialPort) commPort;
-                serialPort.setSerialPortParams(57600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+                serialPort = (SerialPort) commPort;
+                serialPort.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
+                                               SerialPort.STOPBITS_1,
+                                               SerialPort.PARITY_NONE);
 
-                InputStream in = serialPort.getInputStream();
-                OutputStream out = serialPort.getOutputStream();
-
-                // (new Thread(new SerialReader(in))).start();
-                // (new Thread(new SerialWriter(out))).start();
+                in = serialPort.getInputStream();
+                out = serialPort.getOutputStream();
             }
             else {
-                System.out.println("Error: Only serial ports are handled by this example.");
+                return PLPMsg.E(portName + " is not a serial port.",
+                                    PLPMsg.PLP_PRG_NOT_A_SERIAL_PORT, this);
             }
         }
+
+        return PLPMsg.PLP_OK;
+    }
+
+    int programWithPLPFile(String plpFilePath) throws Exception {
+        File plpFile = new File(plpFilePath);
+        TarArchiveEntry entry;
+        String metaStr;
+        byte[] image;
+        byte inData;
+
+        if(!plpFile.exists())
+            return PLPMsg.E(plpFilePath + " not found.",
+                            PLPMsg.PLP_PRG_PLP_FILE_NOT_FOUND, this);
+
+        TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
+
+        while((entry = tIn.getNextTarEntry()) != null) {
+            if(entry.getName().equals("plp.metafile")) {
+                image = new byte[(int) entry.getSize()];
+                tIn.read(image, 0, (int) entry.getSize());
+                metaStr = new String(image);
+                Scanner fScan = new Scanner(metaStr);
+                fScan.findWithinHorizon("DIRTY=", 0);
+                if(fScan.nextInt() == 1) {
+                    return PLPMsg.E(plpFile + " does not have up to date image.",
+                                    PLPMsg.PLP_PRG_IMAGE_OUT_OF_DATE, this);
+                }
+            }
+        }
+
+        tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
+        while((entry = tIn.getNextTarEntry()) != null) {
+            if(entry.getName().equals("plp.image")) {
+                image = new byte[(int) entry.getSize()];
+                tIn.read(image, 0, (int) entry.getSize());
+
+                if(image.length % 4 != 0)
+                    return PLPMsg.E(plpFilePath + " contains invalid image file.",
+                        PLPMsg.PLP_PRG_INVALID_IMAGE_FILE, this);
+                
+                out.write('a');
+                out.write(0);
+                out.write(0);
+                out.write(0);
+                out.write(0);
+                inData = (byte) in.read();
+                if(inData != 'f')
+                    return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+
+                for(int i = 0; i < image.length; i++) {
+                    if(i % 4 == 0) {
+                        if(i != 0) {
+                            inData = (byte) in.read();
+                            if(inData != 'f')
+                            return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                         PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                        }
+                        out.write('d');
+                    }
+                    out.write(image[i]);
+                }
+                out.write('a');
+                out.write(0);
+                out.write(0);
+                out.write(0);
+                out.write(0);
+                inData = (byte) in.read();
+                if(inData != 'f')
+                    return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+
+                out.write('j');
+                inData = (byte) in.read();
+                if(inData != 'f')
+                    return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+
+                tIn.close();
+
+                return PLPMsg.PLP_OK;
+            }
+        }
+
+        tIn.close();
+
+        return PLPMsg.E(plpFilePath + " is not a valid plp file.",
+                        PLPMsg.PLP_PRG_INVALID_PLP_FILE, this);
+    }
+
+    int programWithAsm (PLPAsm asm) throws Exception {
+        if(asm.isAssembled()) {
+            long objCode[] = asm.getObjectCode();
+            long addrTable[] = asm.getAddrTable();
+            byte inData;
+
+            for(int i = 0; i < objCode.length; i++) {
+                if(i < objCode.length - 1) {
+                    if(addrTable[i + 1] != addrTable[i] + 4) {
+                        out.write('a');
+                        out.write((int) (addrTable[i] >> 24));
+                        out.write((int) (addrTable[i] >> 16));
+                        out.write((int) (addrTable[i] >> 8));
+                        out.write((int) (addrTable[i]));
+                        inData = (byte) in.read();
+                        if(inData != 'f')
+                            return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                            PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                    }
+                }
+                out.write('d');
+                out.write((int) (objCode[i] >> 24));
+                out.write((int) (objCode[i] >> 16));
+                out.write((int) (objCode[i] >> 8));
+                out.write((int) (objCode[i]));
+                inData = (byte) in.read();
+                if(inData != 'f')
+                    return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+            }
+
+            out.write('a');
+            out.write(0);
+            out.write(0);
+            out.write(0);
+            out.write(0);
+            inData = (byte) in.read();
+            if(inData != 'f')
+                return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+
+            out.write('j');
+            inData = (byte) in.read();
+            if(inData != 'f')
+                return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                    
+        } else {
+            return PLPMsg.E("Source is not assembled.",
+                            PLPMsg.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
+        }
+
+        return PLPMsg.PLP_OK;
     }
 }

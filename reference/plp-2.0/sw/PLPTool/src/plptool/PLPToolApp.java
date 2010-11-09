@@ -81,12 +81,27 @@ public class PLPToolApp extends SingleFrameApplication {
             } else
                 PLPSimCL.simCL(args[1]);
         }
+        else if(args.length > 0 && args[0].equals("-p")) {
+            if(args.length != 4) {
+                System.out.println("Usage: PLPTool -p <plpfile> <port> <baud>");
+            } else {
+                PLPProgrammer plpProg = new PLPProgrammer();
+                try {
+                    plpProg.connect(args[2], Integer.parseInt(args[3]));
+                    plpProg.programWithPLPFile(args[1]);
+                } catch(Exception e) {
+                    
+                }
+
+            }
+
+        }
 
         else if(args.length == 0)
             launch(PLPToolApp.class, args);
         
         else {
-            PLPMsg.E("Invalid argument(s).", PLPMsg.PLP_ERROR_GENERIC, null);
+            PLPMsg.E("Invalid argument(s).", PLPMsg.PLP_TOOLAPP_ERROR, null);
             System.out.println();
             System.out.println("Run PLPTool with no command line arguments to launch GUI tool.");
             System.out.println();

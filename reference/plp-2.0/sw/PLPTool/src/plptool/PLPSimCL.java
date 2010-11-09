@@ -52,7 +52,7 @@ public class PLPSimCL {
         }
 
         System.out.println(" OK");
-        System.out.print("emu > ");
+        System.out.print("sim > ");
         while(!(input = stdIn.readLine()).equals("q")) {
             tokens = input.split(" ");
             if(input.equals("version")) {
@@ -185,7 +185,7 @@ public class PLPSimCL {
                 System.out.println("Unknown command\n");
             }
 
-            System.out.print("emu > ");
+            System.out.print("sim > ");
         }
         System.out.println("See ya!");
 
