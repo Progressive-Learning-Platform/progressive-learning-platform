@@ -6,8 +6,8 @@ instruction decode phase
 
 */
 
-module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_rfbse, p_shamt, p_func, p_rf_waddr, baddr, p_jalra, c_b, c_j, p_c_rfw, p_c_wbsource, p_c_drw, p_c_alucontrol, jaddr);
-	input 		clk;
+module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_rfbse, p_shamt, p_func, p_rf_waddr, baddr, p_jalra, c_b, c_j, p_c_rfw, p_c_wbsource, p_c_drw, p_c_alucontrol, jaddr);
+	input 		rst, clk;
 	input	[31:0]	if_pc;
 	input	[31:0]	if_inst;
 	input 		wb_rfw;
@@ -81,18 +81,32 @@ module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rf
 		(opcode == 6'h05) ? (rf[rf_rs] != rf[rf_rt]) : 0;
 
 	always @(posedge clk) begin
-		p_rfa <= rf[rf_rs];
-		p_rfb <= rf[rf_rt];
-		p_rfbse <= rfbse;
-		p_shamt <= shamt;
-		p_func <= func;
-		p_rf_waddr <= rd_rt;
-		p_jalra <= jalra;
-		p_c_rfw <= c_rfw;
-		p_c_wbsource <= c_wbsource;
-		p_c_drw <= c_drw;
-		p_c_alucontrol = c_alucontrol;
-
+		if (rst) begin		
+			p_rfa <= 0;
+			p_rfb <= 0;
+			p_rfbse <= 0;
+			p_shamt <= 0;
+			p_func <= 0;
+			p_rf_waddr <= 0;
+			p_jalra <= 0;
+			p_c_rfw <= 0;
+			p_c_wbsource <= 0;
+			p_c_drw <= 0;
+			p_c_alucontrol = 0;
+		end else begin
+			p_rfa <= rf[rf_rs];
+			p_rfb <= rf[rf_rt];
+			p_rfbse <= rfbse;
+			p_shamt <= shamt;
+			p_func <= func;
+			p_rf_waddr <= rd_rt;
+			p_jalra <= jalra;
+			p_c_rfw <= c_rfw;
+			p_c_wbsource <= c_wbsource;
+			p_c_drw <= c_drw;
+			p_c_alucontrol = c_alucontrol;
+		end
+		
 		/* regfile */
 		if (wb_rfw && wb_rf_waddr != 5'd0) begin
 			rf[wb_rf_waddr] <= wb_rf_wdata;

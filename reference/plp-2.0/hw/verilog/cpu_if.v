@@ -6,8 +6,8 @@ instruction fetch phase
 
 */
 
-module cpu_if(clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr);
-	input 		clk;
+module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr);
+	input 		rst, clk;
 	input 		pc_j;
 	input 		pc_b;
 	input 	[31:0] 	b_addr;
@@ -19,9 +19,15 @@ module cpu_if(clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr);
 	wire [31:0] next_pc;
 
 	always @(posedge clk) begin
-		p_pc <= pc;
-		pc   <= next_pc;
-	end
+		if (rst) begin
+			p_pc <= 0;
+			pc <= 0;
+		end else begin
+			p_pc <= pc;
+			pc   <= next_pc;
+		end
+		$display("PC: %d",pc);
+	end		
 
 	assign next_pc = 
 		(pc_b) ? b_addr :

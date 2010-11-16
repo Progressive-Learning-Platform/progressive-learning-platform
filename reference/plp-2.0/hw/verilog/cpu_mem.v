@@ -6,8 +6,8 @@ memory phase
 
 */
 
-module cpu_mem(clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex_rf_waddr, ex_jalra, p_c_rfw, p_c_wbsource, p_alu_r, dmem_data, p_rf_waddr, p_jalra, dmem_addr, dmem_drw);
-	input 		clk;
+module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex_rf_waddr, ex_jalra, p_c_rfw, p_c_wbsource, p_alu_r, dmem_data, p_rf_waddr, p_jalra, dmem_addr, dmem_drw);
+	input 		rst, clk;
 	input 		ex_c_rfw;
 	input [1:0]	ex_c_wbsource;
 	input 		ex_c_drw;
@@ -29,11 +29,19 @@ module cpu_mem(clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex_rf_w
 	assign dmem_drw  = ex_c_drw;
 
 	always @(posedge clk) begin
-		p_c_rfw <= ex_c_rfw;
-		p_c_wbsource <= ex_c_wbsource;
-		p_alu_r <= ex_alu_r;
-		p_rf_waddr <= ex_rf_waddr;
-		p_jalra <= ex_jalra;
+		if (rst) begin
+			p_c_rfw <= 0;
+			p_c_wbsource <= 0;
+			p_alu_r <= 0;
+			p_rf_waddr <= 0;
+			p_jalra <= 0;
+		end else begin
+			p_c_rfw <= ex_c_rfw;
+			p_c_wbsource <= ex_c_wbsource;
+			p_alu_r <= ex_alu_r;
+			p_rf_waddr <= ex_rf_waddr;
+			p_jalra <= ex_jalra;
+		end
 	end
 
 endmodule
