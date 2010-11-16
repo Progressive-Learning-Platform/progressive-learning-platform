@@ -32,9 +32,9 @@ module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rf
 	reg [31:0] rf [31:1];
 
 	wire [5:0] opcode = if_inst[31:26];
-	wire [4:0] rf_addr_a = if_inst[25:21];
-	wire [4:0] rf_addr_b = if_inst[20:16];
-	wire [4:0] rf_waddr = if_inst[15:11];
+	wire [4:0] rf_rs = if_inst[25:21];
+	wire [4:0] rf_rt = if_inst[20:16];
+	wire [4:0] rf_rd = if_inst[15:11];
 	wire [15:0] imm = if_inst[15:0];
 	wire [4:0] shamt = if_inst[10:6];
 	wire [5:0] func = if_inst[5:0];
@@ -44,6 +44,7 @@ module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rf
         wire [31:0] zeroext_imm = {{16{1'b0}},imm};
 	wire [31:0] se = c_se ? signext_imm : zeroext_imm;
 	wire [31:0] jalra = 4 + if_pc;
+	wire [4:0] rs_rt = (c_rs_rt) ? rf_rt : rf_rs;
 
 	/* control logic */
 	wire c_rfw = (
@@ -58,31 +59,32 @@ module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rf
 		opcode == 6'h03 ? 2'h02 :
 		opcode == 6'h09 ? 2'h02 : 0;
 	wire c_drw = opcode == 6'h2b ? 1 : 0;
-	wire c_alucontrol = opcode;
-	wire c_se = ??? look at green card
+	wire [5:0] c_alucontrol = opcode;
+	wire c_se = (opcode == 6'h0c || opcode == 6'h0d) ? 0 : 1;
 	wire c_rfbse = opcode == 6'h00 ? 0 : 1;
 	wire c_jjr = 
 		opcode == 6'h02 ? 0 :
 		opcode == 6'h03 ? 0 : 1;
 
-	assign jaddr = c_jjr ? rf[rf_addr_a] : if_inst[25:0];
+	assign jaddr = c_jjr ? rf[rf_rs] : if_inst[25:0];
 	assign c_j = (
 		opcode == 6'h02 || 
 		opcode == 6'h03 || 
 		opcode == 6'h08 || 
 		opcode == 6'h09);
-	assign baddr = se + if_pc;
+	assign baddr = {{14{imm[15]}},imm,2'b0} + if_pc;
+	wire c_rs_rt = opcode == 6'h00 ? 0 : 1;
 	assign c_b = 
-		(opcode == 6'h04) ? (rf[rf_addr_a] == rf[rf_addr_b]) :
-		(opcode == 6'h05) ? (rf[rf_addr_a] != rf[rf_addr_b]) : 0;
+		(opcode == 6'h04) ? (rf[rf_rs] == rf[rf_rt]) :
+		(opcode == 6'h05) ? (rf[rf_rs] != rf[rf_rt]) : 0;
 
 	always @(posedge clk) begin
-		p_rfa <= rf[rf_addr_a];
-		p_rfb <= rf[rf_addr_b];
+		p_rfa <= rf[rf_rs];
+		p_rfb <= rf[rf_rt];
 		p_rfbse <= se;
 		p_shamt <= shamt;
 		p_func <= func;
-		p_rf_waddr <= rf_waddr;
+		p_rf_waddr <= rs_rt;
 		p_jalra <= jalra;
 		p_c_rfw <= c_rfw;
 		p_c_wbsource <= c_wbsource;
