@@ -6,8 +6,8 @@ instruction execute phase
 
 */
 
-module cpu_ex(clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_rfa, id_rfb, id_rfbse, id_shamt, id_func, id_rf_waddr, id_jalra, p_c_rfw, p_c_wbsource, p_c_drw, p_alu_r, p_rfb, p_rf_waddr, p_jalra);
-	input 		clk;
+module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_rfa, id_rfb, id_rfbse, id_shamt, id_func, id_rf_waddr, id_jalra, p_c_rfw, p_c_wbsource, p_c_drw, p_alu_r, p_rfb, p_rf_waddr, p_jalra);
+	input 		rst, clk;
 	input		id_c_rfw;
 	input [1:0]	id_c_wbsource;
 	input		id_c_drw;
@@ -60,12 +60,22 @@ module cpu_ex(clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_rfa, i
 		(alu_func == 6'h23) ? x - y : 0;
 
 	always @(posedge clk) begin
-		p_c_rfw <= id_c_rfw;
-		p_c_wbsource <= id_c_wbsource;
-		p_c_drw <= id_c_drw;
-		p_alu_r <= alu_r;
-		p_rfb <= id_rfb;
-		p_rf_waddr <= id_rf_waddr;
-		p_jalra <= id_jalra;
+		if (rst) begin
+			p_c_rfw <= 0;
+			p_c_wbsource <= 0;
+			p_c_drw <= 0;
+			p_alu_r <= 0;
+			p_rfb <= 0;
+			p_rf_waddr <= 0;
+			p_jalra <= 0;
+		end else begin
+			p_c_rfw <= id_c_rfw;
+			p_c_wbsource <= id_c_wbsource;
+			p_c_drw <= id_c_drw;
+			p_alu_r <= alu_r;
+			p_rfb <= id_rfb;
+			p_rf_waddr <= id_rf_waddr;
+			p_jalra <= id_jalra;
+		end
 	end
 endmodule
