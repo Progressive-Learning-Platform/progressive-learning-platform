@@ -32,18 +32,6 @@ module cpu_ex(clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_rfa, i
 	wire cmp_signed = (x[31] == y[31]) ? x < y : x[31];
 	wire cmp_unsigned = x < y;
 
-	/* the alu */
-	wire [31:0] alu_r = 
-		(alu_func == 6'h21) ? x + y :
-		(alu_func == 6'h24) ? x & y :
-		(alu_func == 6'h27) ? ~(x|y) :
-		(alu_func == 6'h25) ? x | y :
-		(alu_func == 6'h2a) ? cmp_signed :
-		(alu_func == 6'h2b) ? cmp_unsigned :
-		(alu_func == 6'h00) ? y << shamt :
-		(alu_func == 6'h02) ? y >> shamt :
-		(alu_func == 6'h23) ? x - y : 0;
-
 	/* alu control */
 	wire [5:0] alu_func = 
 		(id_c_alucontrol == 6'h00) ? id_func :
@@ -59,11 +47,22 @@ module cpu_ex(clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_rfa, i
 
 	wire [4:0] shamt = id_c_alucontrol == 6'h0f ? 5'h10 : id_shamt;
 
+	/* the alu */
+	wire [31:0] alu_r = 
+		(alu_func == 6'h21) ? x + y :
+		(alu_func == 6'h24) ? x & y :
+		(alu_func == 6'h27) ? ~(x|y) :
+		(alu_func == 6'h25) ? x | y :
+		(alu_func == 6'h2a) ? cmp_signed :
+		(alu_func == 6'h2b) ? cmp_unsigned :
+		(alu_func == 6'h00) ? y << shamt :
+		(alu_func == 6'h02) ? y >> shamt :
+		(alu_func == 6'h23) ? x - y : 0;
+
 	always @(posedge clk) begin
 		p_c_rfw <= id_c_rfw;
 		p_c_wbsource <= id_c_wbsource;
-		p_c_drw <= p_c_drw;
-
+		p_c_drw <= id_c_drw;
 		p_alu_r <= alu_r;
 		p_rfb <= id_rfb;
 		p_rf_waddr <= id_rf_waddr;
