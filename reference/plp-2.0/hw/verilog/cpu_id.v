@@ -6,7 +6,7 @@ instruction decode phase
 
 */
 
-module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_rfbse, p_shamt, p_func, p_rf_waddr, p_baddr, p_jalra, p_c_b, c_j, p_c_rfw, p_c_wbsource, p_c_drw, p_c_alucontrol, jaddr);
+module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_rfbse, p_shamt, p_func, p_rf_waddr, baddr, p_jalra, c_b, c_j, p_c_rfw, p_c_wbsource, p_c_drw, p_c_alucontrol, jaddr);
 	input 		clk;
 	input	[31:0]	if_pc;
 	input	[31:0]	if_inst;
@@ -19,14 +19,14 @@ module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rf
 	output reg [4:0]  p_shamt;
 	output reg [5:0]  p_func;
 	output reg [4:0]  p_rf_waddr;
-	output reg [31:0] p_baddr;
+	output     [31:0] baddr;
 	output reg [31:0] p_jalra;
-	output reg 	  p_c_b;
-	output 		  c_j
+	output  	  c_b;
+	output 		  c_j;
 	output reg 	  p_c_rfw;
 	output reg [1:0]  p_c_wbsource;
 	output reg 	  p_c_drw;
-	output reg [4:0]  p_c_alucontrol;
+	output reg [5:0]  p_c_alucontrol;
 	output [31:0]	  jaddr;
 
 	reg [31:0] rf [31:1];
@@ -37,38 +37,53 @@ module cpu_id(clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rf
 	wire [4:0] rf_waddr = if_inst[15:11];
 	wire [15:0] imm = if_inst[15:0];
 	wire [4:0] shamt = if_inst[10:6];
-	wire [5:0] func = if_inst[5:0];i
+	wire [5:0] func = if_inst[5:0];
 
 	/* internal logic */
 	wire [31:0] signext_imm = {{16{imm[15]}},imm};
         wire [31:0] zeroext_imm = {{16{1'b0}},imm};
 	wire [31:0] se = c_se ? signext_imm : zeroext_imm;
-	wire [31:0] baddr = se + if_pc;
 	wire [31:0] jalra = 4 + if_pc;
 
 	/* control logic */
-	wire c_b = ???
-	wire c_rfw = ???
-	wire c_wbsource = ???
-	wire c_drw = ???
-	wire c_alucontrol = ???
-	wire c_se = ???
-	wire c_rfbse = ???
-	wire c_jjr = ???
+	wire c_rfw = (
+		opcode != 6'h08 && 
+		opcode != 6'h04 && 
+		opcode != 6'h05 && 
+		opcode != 6'h2b && 
+		opcode != 6'h02 && 
+		opcode != 6'h03);
+	wire c_wbsource = 
+		opcode == 6'h23 ? 2'h01 :
+		opcode == 6'h03 ? 2'h02 :
+		opcode == 6'h09 ? 2'h02 : 0;
+	wire c_drw = opcode == 6'h2b ? 1 : 0;
+	wire c_alucontrol = opcode;
+	wire c_se = ??? look at green card
+	wire c_rfbse = opcode == 6'h00 ? 0 : 1;
+	wire c_jjr = 
+		opcode == 6'h02 ? 0 :
+		opcode == 6'h03 ? 0 : 1;
 
-	assign jaddr = c_jjr ? rf[rf_addr_a] : rf_if_inst[25:0];
-	assign c_j = ???
+	assign jaddr = c_jjr ? rf[rf_addr_a] : if_inst[25:0];
+	assign c_j = (
+		opcode == 6'h02 || 
+		opcode == 6'h03 || 
+		opcode == 6'h08 || 
+		opcode == 6'h09);
+	assign baddr = se + if_pc;
+	assign c_b = 
+		(opcode == 6'h04) ? (rf[rf_addr_a] == rf[rf_addr_b]) :
+		(opcode == 6'h05) ? (rf[rf_addr_a] != rf[rf_addr_b]) : 0;
 
 	always @(posedge clk) begin
 		p_rfa <= rf[rf_addr_a];
 		p_rfb <= rf[rf_addr_b];
-		p_rfbse <= se
+		p_rfbse <= se;
 		p_shamt <= shamt;
 		p_func <= func;
 		p_rf_waddr <= rf_waddr;
-		p_baddr <= baddr;
 		p_jalra <= jalra;
-		p_c_b <= c_b;
 		p_c_rfw <= c_rfw;
 		p_c_wbsource <= c_wbsource;
 		p_c_drw <= c_drw;
