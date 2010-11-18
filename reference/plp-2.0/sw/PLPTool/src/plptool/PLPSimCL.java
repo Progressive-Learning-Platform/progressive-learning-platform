@@ -39,7 +39,7 @@ public class PLPSimCL {
 
         try {
 
-        System.out.println("PLPTool Command Line Emulator");
+        System.out.println("PLPTool Command Line Simulator");
         System.out.print("Assembling " + asmFile + " ...");
         asm = new PLPAsm(null, asmFile, 0);
         if(asm.preprocess(0) == PLPMsg.PLP_OK)

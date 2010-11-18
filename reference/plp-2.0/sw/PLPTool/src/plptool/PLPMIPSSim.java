@@ -19,7 +19,7 @@
 package plptool;
 
 /**
- * The PLP MIPS Architecture Emulator Backend
+ * The PLP MIPS Architecture Simulator Backend
  *
  * @author wira
  */
