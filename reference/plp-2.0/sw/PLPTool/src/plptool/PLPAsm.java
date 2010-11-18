@@ -175,6 +175,7 @@ public class PLPAsm {
         opcode.put("addu"  , new Byte((byte) 0x21));
         opcode.put("and"   , new Byte((byte) 0x24));
         opcode.put("jr"    , new Byte((byte) 0x08));
+        opcode.put("jalr"  , new Byte((byte) 0x09));
         opcode.put("nor"   , new Byte((byte) 0x27));
         opcode.put("or"    , new Byte((byte) 0x25));
         opcode.put("slt"   , new Byte((byte) 0x2A));
@@ -198,7 +199,6 @@ public class PLPAsm {
 
         opcode.put("j"     , new Byte((byte) 0x02));
         opcode.put("jal"   , new Byte((byte) 0x03));
-        opcode.put("jalr"  , new Byte((byte) 0x09));
 
         // Registers
         regs.put("$0"  , new Byte((byte) 0));
