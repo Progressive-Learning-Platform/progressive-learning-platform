@@ -131,7 +131,6 @@ public class PLPAsm {
 
         // R-type Jump instructions
         instrMap.put("jr",   new Integer(2));
-        instrMap.put("jalr", new Integer(2));
 
         // I-type Branch instructions
         instrMap.put("beq",  new Integer(3));
@@ -161,12 +160,15 @@ public class PLPAsm {
         instrMap.put("mfhi",  new Integer(8));
         instrMap.put("mflo",  new Integer(8));
 
+        // jalr Instruction
+         instrMap.put("jalr", new Integer(9));
+
         // Assembler directives
-        instrMap.put("ASM__WORD__", new Integer(9));
-        instrMap.put("ASM__ORG__",  new Integer(9));
-        instrMap.put("ASM__SKIP__", new Integer(9));
-        instrMap.put("ASM__LINE_OFFSET__", new Integer(9));
-        instrMap.put("ASM__POINTER__", new Integer(9));
+        instrMap.put("ASM__WORD__", new Integer(10));
+        instrMap.put("ASM__ORG__",  new Integer(10));
+        instrMap.put("ASM__SKIP__", new Integer(10));
+        instrMap.put("ASM__LINE_OFFSET__", new Integer(10));
+        instrMap.put("ASM__POINTER__", new Integer(10));
 
         // Instruction opcodes
         //opcode.put("add"   , new Byte((byte) 0x20));
@@ -196,6 +198,7 @@ public class PLPAsm {
 
         opcode.put("j"     , new Byte((byte) 0x02));
         opcode.put("jal"   , new Byte((byte) 0x03));
+        opcode.put("jalr"  , new Byte((byte) 0x09));
 
         // Registers
         regs.put("$0"  , new Byte((byte) 0));
@@ -698,8 +701,25 @@ public class PLPAsm {
                 case 8:
                     break;
 
-                // Others
+                // jalr Instruction
                 case 9:
+                    if(!checkNumberOfOperands(asmTokens, 3, i + lineNumOffset))
+                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+
+                    if(!regs.containsKey(asmTokens[1]) ||
+                       !regs.containsKey(asmTokens[2])) {
+                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                    }
+
+                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
+                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
+                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
+
+                    break;
+
+                // Others
+                case 10:
                     entryType[i - s] = 1;
                     if(asmTokens[0].equals("ASM__WORD__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
@@ -723,7 +743,7 @@ public class PLPAsm {
                     break;
 
                 // Pass-2 pseudo ops
-                case 10:
+                case 11:
 
                     break;
                     
