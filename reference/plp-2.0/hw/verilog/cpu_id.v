@@ -40,17 +40,15 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	wire [5:0] func = if_inst[5:0];
 
 	/* control logic */
-	wire c_rfw = (
-		opcode != 6'h08 && 
+	wire c_rfw = ( 
 		opcode != 6'h04 && 
 		opcode != 6'h05 && 
 		opcode != 6'h2b && 
-		opcode != 6'h02 && 
-		opcode != 6'h03);
+		opcode != 6'h02); /* secret bug, jump register asserts write enable but the assembler sets rd = 0 */
 	wire [1:0] c_wbsource = 
-		opcode == 6'h23 ? 2'h1 :
-		opcode == 6'h03 ? 2'h2 :
-		opcode == 6'h09 ? 2'h2 : 0;
+		(opcode == 6'h23) ? 2'h1 :
+		(opcode == 6'h03) ? 2'h2 :
+		(opcode == 6'h00 && func == 6'h09) ? 2'h2 : 0; 
 	wire c_drw = opcode == 6'h2b ? 1 : 0;
 	wire [5:0] c_alucontrol = opcode;
 	wire c_se = (opcode == 6'h0c || opcode == 6'h0d) ? 0 : 1;
@@ -58,7 +56,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	wire c_jjr = 
 		opcode == 6'h02 ? 0 :
 		opcode == 6'h03 ? 0 : 1;
-	wire [1:0] c_rd_rt = 
+	wire [1:0] c_rd_rt_31 = 
 		(opcode == 6'h03) ? 2'b10 : /* jal */
 		(opcode == 6'h00) ? 2'b00 : 2'b01;
 
@@ -68,17 +66,17 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	wire [31:0] se = c_se ? signext_imm : zeroext_imm;
 	wire [31:0] jalra = 8 + if_pc;
 	wire [4:0] rd_rt_31 = 
-		(c_rd_rt == 2'b00) ? rf_rd :
-		(c_rd_rt == 2'b01) ? rf_rt :
-		(c_rd_rt == 2'b10) ? 5'b11111 : rf_rd;
+		(c_rd_rt_31 == 2'b00) ? rf_rd :
+		(c_rd_rt_31 == 2'b01) ? rf_rt :
+		(c_rd_rt_31 == 2'b10) ? 5'b11111 : rf_rd;
 	wire [31:0] rfbse = c_rfbse ? se : rf_rt;
 
 	assign jaddr = c_jjr ? rf[rf_rs] : if_inst[25:0];
 	assign c_j = (
-		opcode == 6'h02 || 
-		opcode == 6'h03 || 
-		opcode == 6'h08 || 
-		opcode == 6'h09);
+		(opcode == 6'h02) || 
+		(opcode == 6'h03) || 
+		(opcode == 6'h00 && func == 6'h08) || 
+		(opcode == 6'h00 && func == 6'h09);
 	assign baddr = {{14{imm[15]}},imm,2'b0} + if_pc + 4;
 
 	assign c_b = 
