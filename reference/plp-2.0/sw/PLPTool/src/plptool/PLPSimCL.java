@@ -71,7 +71,6 @@ public class PLPSimCL {
                     else {
                         ram_size /= 4;
                         core = new PLPMIPSSim(asm, ram_size);
-                        core.reset();
                         init_core = true;
                         core.printfrontend();
                         System.out.println("Simulation core initialized.");
@@ -85,7 +84,8 @@ public class PLPSimCL {
                 if(!init_core)
                     System.out.println("Core is not initialized.");
                 else {
-                    core.step();
+                    if(core.step() != PLPMsg.PLP_OK)
+                       System.out.println("Simulation is stale. Please reset.");
                     core.printfrontend();
                 }
             }
@@ -95,7 +95,8 @@ public class PLPSimCL {
                 }
             else
                 for(int i = 0; i < Integer.parseInt(tokens[1]); i++) {
-                    core.step();
+                    if(core.step() != PLPMsg.PLP_OK)
+                       System.out.println("Simulation is stale. Please reset.");
                     core.printfrontend();
                 }
             }
@@ -113,7 +114,7 @@ public class PLPSimCL {
                 else {
                     System.out.println("\nMain memory listing");
                     System.out.println("===================");
-                    core.coreMem.printMainMem();
+                    core.memory.printMain();
                 }
             }
             else if(input.equals("preg")) {
@@ -122,7 +123,7 @@ public class PLPSimCL {
                 else {
                     System.out.println("\nRegisters listing");
                     System.out.println("=================");
-                    core.coreMem.printRegFile();
+                    core.memory.printRegFile();
                 }
             }
             else if(input.equals("pfd")) {
@@ -148,7 +149,8 @@ public class PLPSimCL {
                     System.out.println("Usage: wpc <address>");
                 }
                 else {
-                    core.coreMem.pc = PLPAsm.sanitize32bits(tokens[1]);
+                    core.reset();
+                    core.memory.i_pc = PLPAsm.sanitize32bits(tokens[1]);
                     if(core.fetch() != 0)
                         System.out.println("Simulation is stale. Please reset.");
                     core.printfrontend();

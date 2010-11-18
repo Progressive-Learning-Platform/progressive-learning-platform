@@ -322,34 +322,41 @@ public class PLPAsmFormatter {
 
 class MIPSInstr {
 
+    class consts {
+        final static  int   R_MASK = 0x1F;
+        final static  int   V_MASK = 0x3F;
+        final static  int   C_MASK = 0xFFFF;
+        final static  int   J_MASK = 0x3FFFFFF;
+    }
+
     public static int imm(long instr) {
-        return (int) (instr & PLPMIPSSim.consts.C_MASK); }
+        return (int) (instr & consts.C_MASK); }
 
     public static int funct(long instr) {
-        return (int) (instr & PLPMIPSSim.consts.V_MASK); }
+        return (int) (instr & consts.V_MASK); }
 
     public static int sa(long instr) {
-        return (int) ((instr >> 5) & PLPMIPSSim.consts.R_MASK);
+        return (int) ((instr >> 5) & consts.R_MASK);
     }
 
     public static int rd(long instr) {
-        return (int) ((instr >> 11) & PLPMIPSSim.consts.R_MASK);
+        return (int) ((instr >> 11) & consts.R_MASK);
     }
 
     public static int rt(long instr) {
-        return (int) ((instr >> 16) & PLPMIPSSim.consts.R_MASK);
+        return (int) ((instr >> 16) & consts.R_MASK);
     }
 
     public static int rs(long instr) {
-        return (int) ((instr >> 21) & PLPMIPSSim.consts.R_MASK);
+        return (int) ((instr >> 21) & consts.R_MASK);
     }
 
     public static int opcode(long instr) {
-        return (int) ((instr >> 26) & PLPMIPSSim.consts.V_MASK);
+        return (int) ((instr >> 26) & consts.V_MASK);
     }
 
     public static int jaddr(long instr) {
-        return (int) (instr & PLPMIPSSim.consts.J_MASK);
+        return (int) (instr & consts.J_MASK);
     }
 
     public static String format(long instr) {
@@ -373,10 +380,7 @@ class MIPSInstr {
                 ret += "$" + rd(instr) + ",$" + rt(instr) + "," + sa(instr);
                 break;
             case 2:
-                if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jr"))
-                    ret += "$" + rs(instr);
-                else if(PLPAsm.lookupInstr((byte) opcode(instr)).equals("jalr"))
-                    ret += "$" + rd(instr) + ",$" + rs(instr);
+                ret += "$" + rs(instr);
                 break;
             case 3:
                 ret += "$" + rs(instr) + ",$" + rt(instr) + ",0x" + String.format("%x", imm(instr));
@@ -396,6 +400,7 @@ class MIPSInstr {
             case 8:
                 break;
             case 9:
+                ret += "$" + rd(instr) + ",$" + rs(instr);
                 break;
         }
 

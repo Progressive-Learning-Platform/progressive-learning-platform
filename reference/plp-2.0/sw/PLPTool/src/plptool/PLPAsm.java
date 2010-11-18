@@ -883,7 +883,7 @@ public class PLPAsm {
         if(instrMap.containsKey(instrOpCode)) {
             return (Integer) instrMap.get(instrOpCode);
         }
-        return null;
+        return PLPMsg.PLP_ERROR_RETURN;
     }
 
         /**

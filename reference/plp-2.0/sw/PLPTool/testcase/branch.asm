@@ -1,7 +1,6 @@
 .org 0x0
 	beq $0,$0,label
 	nop
-        nop
 somestring:
 	.asciiz "Hey check this out bro! #commenttest"
 	.ascii "Hey check this out bro! #commenttest"
@@ -19,10 +18,6 @@ label:
 	li $11, mem
 	jal jumptest
 	nop
-        nop
-        nop
-        j label
-        nop
 	.org 0x800
 mem:
 	  .word 0x4000
@@ -34,7 +29,3 @@ jumptest:
 	nop
 	nop
 	ori $15,$15,0x00FF
-        #beq $0,$0,jumptest
-	jr $31
-        nop
-        nop

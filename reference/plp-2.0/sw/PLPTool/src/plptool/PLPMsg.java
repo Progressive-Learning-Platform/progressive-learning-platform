@@ -59,6 +59,8 @@ public class PLPMsg {
     // Simulator errors
     static int PLP_SIM_INSTRMEM_OUT_OF_BOUNDS       = 256;
     static int PLP_SIM_UNINITIALIZED_MEMORY         = 257;
+    static int PLP_SIM_UNHANDLED_INSTRUCTION_TYPE   = 258;
+    static int PLP_SIM_EVALUATION_FAILED            = 259;
 
     // Programmer errors
     static int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
