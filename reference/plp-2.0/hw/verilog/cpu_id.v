@@ -64,7 +64,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	wire [31:0] signext_imm = {{16{imm[15]}},imm};
         wire [31:0] zeroext_imm = {{16{1'b0}},imm};
 	wire [31:0] se = c_se ? signext_imm : zeroext_imm;
-	wire [31:0] jalra = 4 + if_pc;
+	wire [31:0] jalra = 8 + if_pc;
 	wire [4:0] rd_rt = (c_rd_rt) ? rf_rt : rf_rd;
 	wire [31:0] rfbse = c_rfbse ? se : rf_rt;
 
@@ -74,7 +74,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 		opcode == 6'h03 || 
 		opcode == 6'h08 || 
 		opcode == 6'h09);
-	assign baddr = {{14{imm[15]}},imm,2'b0} + if_pc;
+	assign baddr = {{14{imm[15]}},imm,2'b0} + if_pc + 4;
 
 	assign c_b = 
 		(opcode == 6'h04) ? (rf[rf_rs] == rf[rf_rt]) :
