@@ -4,6 +4,8 @@
 somestring:
 	.asciiz "Hey check this out bro! #commenttest"
 	.ascii "Hey check this out bro! #commenttest"
+	lui $15, 0x0FFF
+	li $19, mem
 label:
 	lui $15, 0xDEAD
         nop
