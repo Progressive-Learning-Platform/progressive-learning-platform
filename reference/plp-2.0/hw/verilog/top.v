@@ -19,10 +19,6 @@ module top(clk,leds,rst,txd,rxd,switches,rgb,hs,vs,gpi);
 	wire [31:0] daddr, dout, din, iaddr, iin;
 	wire drw;
 
-	/* clock signals */
-	//wire clk_half;
-	//clk_div cdiv(clk,clk_half);
-
 	cpu cpu_t(clk, daddr, dout, din, drw, iaddr, iin, rst);
         fsb fsb_t(clk, daddr, dout, din, drw, iaddr, iin, leds, rst, txd, rxd, switches);
 endmodule
