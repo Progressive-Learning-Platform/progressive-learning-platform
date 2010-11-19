@@ -70,10 +70,11 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 		(c_rd_rt_31 == 2'b01) ? rf_rt :
 		(c_rd_rt_31 == 2'b10) ? 5'b11111 : rf_rd;
 	wire [31:0] rfbse = c_rfbse ? se : rf_rt;
-	wire [31:0] jjal_jaddr = {PC+4[31:28], if_inst[25:0], 2'b0};
+	wire [31:0] pc_4 = if_pc + 4; /* used only because I can't figure out how to get the next statement to inline this */
+	wire [31:0] jjal_jaddr = {pc_4[31:28], if_inst[25:0], 2'b0};
 
-	assign jaddr = c_jjr ? rf[rf_rs] : if_inst[25:0];
-	assign c_j = (
+	assign jaddr = c_jjr ? rf[rf_rs] : jjal_jaddr;
+	assign c_j = 
 		(opcode == 6'h02) || 
 		(opcode == 6'h03) || 
 		(opcode == 6'h00 && func == 6'h08) || 
@@ -103,7 +104,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 			p_rfbse <= rfbse;
 			p_shamt <= shamt;
 			p_func <= func;
-			p_rf_waddr <= rd_rt;
+			p_rf_waddr <= rd_rt_31;
 			p_jalra <= jalra;
 			p_c_rfw <= c_rfw;
 			p_c_wbsource <= c_wbsource;
