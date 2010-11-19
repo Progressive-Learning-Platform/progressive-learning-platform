@@ -70,6 +70,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 		(c_rd_rt_31 == 2'b01) ? rf_rt :
 		(c_rd_rt_31 == 2'b10) ? 5'b11111 : rf_rd;
 	wire [31:0] rfbse = c_rfbse ? se : rf_rt;
+	wire [31:0] jjal_jaddr = {PC+4[31:28], if_inst[25:0], 2'b0};
 
 	assign jaddr = c_jjr ? rf[rf_rs] : if_inst[25:0];
 	assign c_j = (
