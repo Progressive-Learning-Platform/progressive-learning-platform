@@ -38,6 +38,9 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	wire [15:0] imm = if_inst[15:0];
 	wire [4:0] shamt = if_inst[10:6];
 	wire [5:0] func = if_inst[5:0];
+	wire [31:0] rfa = rf_rs == 0 ? 0 : rf[rf_rs];
+	wire [31:0] rfb = rf_rt == 0 ? 0 : rf[rf_rt];
+
 
 	/* control logic */
 	wire c_rfw = ( 
@@ -73,7 +76,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	wire [31:0] pc_4 = if_pc + 4; /* used only because I can't figure out how to get the next statement to inline this */
 	wire [31:0] jjal_jaddr = {pc_4[31:28], if_inst[25:0], 2'b0};
 
-	assign jaddr = c_jjr ? rf[rf_rs] : jjal_jaddr;
+	assign jaddr = c_jjr ? rfa : jjal_jaddr;
 	assign c_j = 
 		(opcode == 6'h02) || 
 		(opcode == 6'h03) || 
@@ -82,8 +85,8 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	assign baddr = {{14{imm[15]}},imm,2'b0} + if_pc + 4;
 
 	assign c_b = 
-		(opcode == 6'h04) ? (rf[rf_rs] == rf[rf_rt]) :
-		(opcode == 6'h05) ? (rf[rf_rs] != rf[rf_rt]) : 0;
+		(opcode == 6'h04) ? (rfa == rfb) :
+		(opcode == 6'h05) ? (rfa != rfb) : 0;
 
 	always @(posedge clk) begin
 		if (rst) begin		
@@ -99,8 +102,8 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 			p_c_drw <= 0;
 			p_c_alucontrol = 0;
 		end else begin
-			p_rfa <= rf[rf_rs];
-			p_rfb <= rf[rf_rt];
+			p_rfa <= rfa;
+			p_rfb <= rfb;
 			p_rfbse <= rfbse;
 			p_shamt <= shamt;
 			p_func <= func;
@@ -115,6 +118,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 		/* regfile */
 		if (wb_rfw && wb_rf_waddr != 5'd0) begin
 			rf[wb_rf_waddr] <= wb_rf_wdata;
+			$display("%d - reg %d: %x", if_pc, wb_rf_waddr, wb_rf_wdata);
 		end
 	end
 endmodule

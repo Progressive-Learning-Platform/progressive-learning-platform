@@ -19,6 +19,9 @@ module top(clk,leds,rst,txd,rxd,switches,rgb,hs,vs,gpi);
 	wire [31:0] daddr, dout, din, iaddr, iin;
 	wire drw;
 
+	always @(posedge clk)
+		$display("ram %x", din);
+
 	cpu cpu_t(clk, daddr, dout, din, drw, iaddr, iin, rst);
         fsb fsb_t(clk, daddr, dout, din, drw, iaddr, iin, leds, rst, txd, rxd, switches);
 endmodule

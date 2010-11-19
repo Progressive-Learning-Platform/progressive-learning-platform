@@ -26,7 +26,6 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr);
 			p_pc <= pc;
 			pc   <= next_pc;
 		end
-		$display("PC: %d",pc);
 	end		
 
 	assign next_pc = 

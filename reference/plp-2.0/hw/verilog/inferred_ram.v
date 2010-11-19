@@ -15,8 +15,9 @@ module inferred_ram(clka, clkb, ena, enb, wea, addra, addrb, dia, doa, dob);
 
         always @(posedge clka) begin
                 if (ena) begin
-                        if (wea)
+                        if (wea) begin
                                 RAM[addra] <= dia;
+			end
                         doa <= RAM[addra];
                 end
         end
