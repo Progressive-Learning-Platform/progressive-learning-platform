@@ -20,6 +20,6 @@ module mod_ram(clk, ie, de, iaddr, daddr, drw, din, iout, dout);
 	assign iout = ie ? idata : 32'h00000000;
 	assign dout = de ? ddata : 32'h00000000;
 
-        inferred_ram ram(clk,clk,1'b1,1'b1,(drw & de),daddr[12:2],iaddr[12:2],din,ddata,idata);
+        inferred_ram ram(~clk,~clk,1'b1,1'b1,(drw & de),daddr[12:2],iaddr[12:2],din,ddata,idata);
 
 endmodule
