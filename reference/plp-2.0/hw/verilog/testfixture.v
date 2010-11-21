@@ -15,7 +15,7 @@ module test;
 
 	initial begin 
 		clk = 0;
-		rst = 1;	
+		rst = 1;
 		#10
 		rst = 0;
 		#30

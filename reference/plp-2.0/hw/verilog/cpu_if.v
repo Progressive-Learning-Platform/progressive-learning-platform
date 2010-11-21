@@ -6,7 +6,7 @@ instruction fetch phase
 
 */
 
-module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr);
+module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr, iin, p_inst);
 	input 		rst, clk;
 	input 		pc_j;
 	input 		pc_b;
@@ -14,6 +14,8 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr);
 	input 	[31:0] 	j_addr;
 	output reg [31:0] p_pc;
 	output 	[31:0] 	imem_addr;
+	input	[31:0]	iin;
+	output reg [31:0] p_inst;
 
 	reg [31:0] pc;
 	wire [31:0] next_pc;
@@ -22,9 +24,11 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr);
 		if (rst) begin
 			p_pc <= 0;
 			pc <= 0;
+			p_inst <= 0;
 		end else begin
 			p_pc <= pc;
 			pc   <= next_pc;
+			p_inst <= iin;
 		end
 	end		
 
