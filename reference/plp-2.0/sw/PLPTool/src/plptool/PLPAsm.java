@@ -60,6 +60,11 @@ public class PLPAsm {
      */
     private HashMap<String, Long> symTable;
 
+    /**
+     * Region maps
+     */
+    private HashMap<String, Long> regionMap;
+
     private int[]       lineNumMap;
     private int[]       asmFileMap;
     private int[]       entryType;
@@ -100,6 +105,7 @@ public class PLPAsm {
         curAddr = intStartAddr;
         instrMap = new HashMap<String, Integer>();
         symTable = new HashMap<String, Long>();
+        regionMap = new HashMap<String, Long>();
         opcode = new HashMap<String, Byte>();
         regs = new HashMap<String, Byte>();
 
@@ -629,7 +635,7 @@ public class PLPAsm {
                     objectCode[i - s] |= branchTarget & 0xFFFF;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -646,7 +652,7 @@ public class PLPAsm {
                     objectCode[i - s] |= sanitize16bits(asmTokens[3]);
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -661,7 +667,7 @@ public class PLPAsm {
                     }
                     objectCode[i - s] |= sanitize16bits(asmTokens[2]);
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -678,7 +684,7 @@ public class PLPAsm {
                     objectCode[i - s] |= sanitize16bits(asmTokens[2]);
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[3])) << 21;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -693,7 +699,7 @@ public class PLPAsm {
                     }
 
                     objectCode[i - s] |= (int) (symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]) << 26;
+                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     break;
 
@@ -908,12 +914,12 @@ public class PLPAsm {
      * preserve all 16-bits of data since Java doesn't have unsigned data
      * types. Higher 2-bytes of the number are masked.
      *
-     * @return Returns 16-bit number in int with higher 2-bytes masked
+     * @return Returns 16-bit number in long with higher 2-bytes masked
      * , returns PLP_NUMBER_ERROR if parseInt failed.
      * @param Number to be sanitized in String
      * @see sanitize32bits(String)
      */
-    public static int sanitize16bits(String number) {
+    public static long sanitize16bits(String number) {
         try {
 
         if(number.startsWith("0x") || number.startsWith("0h")) {

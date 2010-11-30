@@ -404,6 +404,9 @@ class MIPSInstr {
                 break;
         }
 
+        if(PLPCfg.cfgInstrPretty && instr == 0)
+            return "nop";
+
         return ret;
     }
 }
