@@ -31,6 +31,7 @@ import java.io.File;
 public class PLPAsmSource {
     private PLPAsmSource    refSource;
     private String          asmString;
+    private String[]        asmLines;
     private String          asmFilePath;
 
     int             recursionLevel;
@@ -42,17 +43,21 @@ public class PLPAsmSource {
         try {
         if(strAsm == null) {
             Scanner fScan = new Scanner(new File(strFilePath));
-            while(fScan.hasNextLine())
+            while(fScan.hasNextLine()) {
                 asmString += fScan.nextLine() + "\n";
+            }
             fScan.close();
-        } else
+        } else {
             asmString = strAsm;
+        }
+        
+        asmLines = asmString.split("\\r?\\n");
 
         recursionLevel = intLevel;
 
         } catch(Exception e) {
             PLPMsg.E("Error reading file",
-                            PLPMsg.PLP_GENERIC_ERROR, this);
+                            PLPMsg.PLP_GENERIC_ERROR, null);
         }
     }
 
@@ -72,6 +77,16 @@ public class PLPAsmSource {
 
     public String getAsmString() {
         return asmString;
+    }
+
+    public String getAsmLine(int lineNum) {
+        if(lineNum >= asmLines.length) {
+            PLPMsg.E("Invalid line number: " + lineNum,
+                     PLPMsg.PLP_ASM_INVALID_LINENUM, this);
+            return null;
+        }
+
+        return asmLines[lineNum];
     }
 
     @Override public String toString() {

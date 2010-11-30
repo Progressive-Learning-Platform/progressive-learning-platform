@@ -206,20 +206,20 @@ public class PLPToolView extends FrameView {
         IDEPane.setLayout(IDEPaneLayout);
         IDEPaneLayout.setHorizontalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(IDEBar, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
-            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
+            .addComponent(IDEBar, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDELabel_Command, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE))
-            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
+                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE))
+            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
         );
         IDEPaneLayout.setVerticalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDEBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(IDEScroller, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -434,7 +434,7 @@ public class PLPToolView extends FrameView {
             ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ExternalViewLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -459,7 +459,7 @@ public class PLPToolView extends FrameView {
                             .addComponent(StepButton)))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         ViewSelector.addTab(resourceMap.getString("ExternalView.TabConstraints.tabTitle"), ExternalView); // NOI18N
@@ -470,11 +470,11 @@ public class PLPToolView extends FrameView {
         InternalView.setLayout(InternalViewLayout);
         InternalViewLayout.setHorizontalGroup(
             InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 790, Short.MAX_VALUE)
+            .addGap(0, 776, Short.MAX_VALUE)
         );
         InternalViewLayout.setVerticalGroup(
             InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 567, Short.MAX_VALUE)
+            .addGap(0, 551, Short.MAX_VALUE)
         );
 
         ViewSelector.addTab(resourceMap.getString("InternalView.TabConstraints.tabTitle"), InternalView); // NOI18N
@@ -483,7 +483,7 @@ public class PLPToolView extends FrameView {
         EmuPane.setLayout(EmuPaneLayout);
         EmuPaneLayout.setHorizontalGroup(
             EmuPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ViewSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
+            .addComponent(ViewSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
         );
         EmuPaneLayout.setVerticalGroup(
             EmuPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -525,9 +525,9 @@ public class PLPToolView extends FrameView {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 630, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 630, Short.MAX_VALUE)
-                    .addComponent(jComboBox3, 0, 630, Short.MAX_VALUE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 611, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 611, Short.MAX_VALUE)
+                    .addComponent(jComboBox3, 0, 611, Short.MAX_VALUE))
                 .addContainerGap())
         );
         PrgPaneLayout.setVerticalGroup(
@@ -545,7 +545,7 @@ public class PLPToolView extends FrameView {
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(493, Short.MAX_VALUE))
+                .addContainerGap(463, Short.MAX_VALUE))
         );
 
         PLPMainPane.addTab(resourceMap.getString("PrgPane.TabConstraints.tabTitle"), PrgPane); // NOI18N

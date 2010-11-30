@@ -38,6 +38,7 @@ public class PLPMsg {
     static int PLP_ASM_DIRECTIVE_SYNTAX_ERROR       = 20;
     static int PLP_ASM_DUPLICATE_LABEL              = 21;
     static int PLP_ASM_INVALID_STRING               = 22;
+    static int PLP_ASM_INVALID_LINENUM              = 23;
 
     // Assembler 2nd Pass Errors
     static int PLP_ASM_GENERAL_SYNTAX_ERROR         = 64;
@@ -61,6 +62,7 @@ public class PLPMsg {
     static int PLP_SIM_UNINITIALIZED_MEMORY         = 257;
     static int PLP_SIM_UNHANDLED_INSTRUCTION_TYPE   = 258;
     static int PLP_SIM_EVALUATION_FAILED            = 259;
+    static int PLP_SIM_STALE                        = 260;
 
     // Programmer errors
     static int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
@@ -71,6 +73,13 @@ public class PLPMsg {
     static int PLP_PRG_INVALID_PLP_FILE             = 517;
     static int PLP_PRG_INVALID_IMAGE_FILE           = 518;
     static int PLP_PRG_IMAGE_OUT_OF_DATE            = 519;
+
+    // Simulator flags
+    static long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFF0;
+    static long PLP_SIM_FWD_EX_EX                   = 0x00000001;
+    static long PLP_SIM_FWD_EX_RF                   = 0x00000002;
+    static long PLP_SIM_FWD_MEM_MEM                 = 0x00000004;
+    static long PLP_SIM_FWD_MEM_EX                  = 0x00000008;
 
     // General
     static int PLP_NUMBER_ERROR                     = -1;
@@ -114,6 +123,11 @@ public class PLPMsg {
                 System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
             else
                 System.out.println("[D] " + debugStr);
+    }
+
+    // Standard out
+    public static void M(String msgStr) {
+        System.out.println(msgStr);
     }
 
     // Mark

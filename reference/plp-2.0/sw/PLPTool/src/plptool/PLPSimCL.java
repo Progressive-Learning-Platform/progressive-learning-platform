@@ -53,7 +53,7 @@ public class PLPSimCL {
 
         System.out.println(" OK");
         System.out.print("sim > ");
-        while(!(input = stdIn.readLine()).equals("q")) {
+        while(!(input = stdIn.readLine().trim()).equals("q")) {
             tokens = input.split(" ");
             if(input.equals("version")) {
                 System.out.println(PLPMsg.versionString);
@@ -71,6 +71,7 @@ public class PLPSimCL {
                     else {
                         ram_size /= 4;
                         core = new PLPMIPSSim(asm, ram_size);
+                        core.reset();
                         init_core = true;
                         core.printfrontend();
                         System.out.println("Simulation core initialized.");
@@ -85,7 +86,8 @@ public class PLPSimCL {
                     System.out.println("Core is not initialized.");
                 else {
                     if(core.step() != PLPMsg.PLP_OK)
-                       System.out.println("Simulation is stale. Please reset.");
+                        PLPMsg.E("Simulation is stale. Please reset.",
+                                PLPMsg.PLP_SIM_STALE, null);
                     core.printfrontend();
                 }
             }
@@ -96,7 +98,8 @@ public class PLPSimCL {
             else
                 for(int i = 0; i < Integer.parseInt(tokens[1]); i++) {
                     if(core.step() != PLPMsg.PLP_OK)
-                       System.out.println("Simulation is stale. Please reset.");
+                       PLPMsg.E("Simulation is stale. Please reset.",
+                                PLPMsg.PLP_SIM_STALE, null);
                     core.printfrontend();
                 }
             }
@@ -152,7 +155,8 @@ public class PLPSimCL {
                     core.reset();
                     core.memory.i_pc = PLPAsm.sanitize32bits(tokens[1]);
                     if(core.fetch() != 0)
-                        System.out.println("Simulation is stale. Please reset.");
+                        PLPMsg.E("Simulation is stale. Please reset.",
+                                PLPMsg.PLP_SIM_STALE, null);
                     core.printfrontend();
                 }
             }
