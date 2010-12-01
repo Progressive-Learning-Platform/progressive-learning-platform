@@ -132,7 +132,7 @@ public class PLPSimCL {
                 else {
                     System.out.println("\nMain memory listing");
                     System.out.println("===================");
-                    core.memory.printMain();
+                    core.memory.print();
                 }
             }
             else if(tokens[0].equals("pram")) {
@@ -140,7 +140,7 @@ public class PLPSimCL {
                     System.out.println("Usage: pram <address>");
                 }
                 else {
-                    core.memory.printMain((int) PLPAsm.sanitize32bits(tokens[1]));
+                    core.memory.print((int) PLPAsm.sanitize32bits(tokens[1]));
                 }
             }
             else if(input.equals("preg")) {
@@ -225,7 +225,7 @@ public class PLPSimCL {
                         System.out.println("==========================");
                         for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
                             addr = (int) PLPAsm.sanitize16bits(tokens[1]) + 4 * j;
-                            core.memory.writeMain(addr, inlineAsm.getObjectCode()[j]);
+                            core.memory.write(addr, inlineAsm.getObjectCode()[j]);
                             System.out.println(String.format("%08x", addr) +
                                                "   " + PLPAsmFormatter.asciiWord(inlineAsm.getObjectCode()[j]) +
                                                "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));

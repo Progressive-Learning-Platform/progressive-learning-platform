@@ -18,6 +18,9 @@
 
 package plptool;
 
+import java.util.HashMap;
+import java.util.ArrayList;
+
 /**
  * The PLP MIPS Architecture Simulator Backend
  *
@@ -25,14 +28,16 @@ package plptool;
  */
 public class PLPMIPSSim {
 
-    // external modules
+    // modules
+    public mod_register     pc;
     public mod_memory       memory;
+    public mod_memory       regfile;
     public mod_forwarding   forwarding;
 
     // statistics
     private int instructionCount;
 
-    // pipeline stages
+    // pipeline stage modules
     public id   id_stage;
     public ex   ex_stage;
     public mem  mem_stage;
@@ -49,10 +54,8 @@ public class PLPMIPSSim {
 
     // Initialize core
     public PLPMIPSSim(PLPAsm asm, int RAMsize) {
-        memory = new mod_memory(new long[RAMsize],
-                                new long[32],
-                                new boolean[RAMsize],
-                                0);                // pc=0 on reset
+        memory = new mod_memory(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY); // pc=0 on reset
+        regfile = new mod_memory(32, false);
 
         this.asm = asm;
         this.objCode = asm.getObjectCode();
@@ -61,10 +64,10 @@ public class PLPMIPSSim {
         sim_flags = 0;
 
         // Instantiate stages
-        wb_stage = new wb(memory);
+        wb_stage = new wb(regfile);
         mem_stage = new mem(wb_stage, memory);
         ex_stage = new ex(mem_stage, new alu());
-        id_stage = new id(ex_stage, memory);
+        id_stage = new id(ex_stage, regfile);
 
         forwarding = new mod_forwarding();
     }
@@ -74,15 +77,15 @@ public class PLPMIPSSim {
 
         // init RAM
         for(i = 0; i < memory.main.length; i++)
-            memory.main[i] = -1;
+            memory.write(i * 4, -1);
 
         // init regfile
         for(i = 0; i < 32; i++)
-            memory.regfile[i] = 0;
+            regfile.write(i, 0);
 
         // load program to RAM
         for(i = 0; i < objCode.length; i++) {
-            if((int) (addrTable[i] / 4) >= memory.main.length)
+            if((int) (addrTable[i] / 4) >= memory.size())
                 PLPMsg.M("Warning: Program doesn't fit in memory.");
             else {
                 if (asm.isInstruction(i) == 0)
@@ -243,31 +246,58 @@ public class PLPMIPSSim {
         return "PLPMIPSSim(asm: " + asm.toString() + ")";
     }
 
-    public class mod_memory {
-        long            pc;
-        long            i_pc;
-        long[]          main;
-        long[]          regfile;
-        boolean[]       isInstr;
+    public class mod_register {
+        long data;
+        long i_data;
 
-        public mod_memory(long[] main, long[] regfile, boolean[] isInstr, long init_pc) {
-            this.i_pc = init_pc;
-            this.pc = -1;
-            this.main = main;
-            this.regfile = regfile;
-            this.isInstr = isInstr;
+        public mod_register() {
+
         }
 
-        public void printMain() {
+        public int write(long data) {
+            this.i_data = data;
+
+            return PLPMsg.PLP_OK;
+        }
+
+        public long eval() {
+            return data;
+        }
+
+        public void clock() {
+            data = i_data;
+        }
+    }
+
+    public class mod_memory {
+        int                 size;
+        long                pc;
+        long                i_pc;
+        HashMap<Long, Long> mXin;
+        ArrayList<Boolean>  iXInstr;
+        long[]              main;
+        long[]              regfile;
+        boolean[]           isInstr;
+        boolean             wordaligned;
+
+        public mod_memory(int size, boolean wordaligned) {
+            main = new long[size];
+            isInstr = new boolean[size];
+            mXin = new HashMap<Long, Long>();
+            iXInstr = new ArrayList<Boolean>();
+            this.wordaligned = wordaligned;
+        }
+
+        public void print() {
             PLPMsg.M("pc\taddress\t\tcontents\tASCII");
             PLPMsg.M("--\t-------\t\t--------\t-----");
             for(int i = 0; i < main.length; i++) {
                 if(main[i] != -1) {
                     if(i * 4 == pc)
                         System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t" +
-                                           PLPAsmFormatter.asciiWord(main[i]),
-                                           i * 4, main[i]));
+                    PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                           i * 4, main[i]) +
+                                           PLPAsmFormatter.asciiWord(main[i]));
                 }
             }
         }
@@ -279,14 +309,14 @@ public class PLPMIPSSim {
                 if(main[i] != -1 && isInstr[i]) {
                     if(i * 4 == pc)
                         System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t" +
-                                           MIPSInstr.format(main[i]),
-                                           i * 4, main[i]));
+                    PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                           i * 4, main[i]) +
+                                           MIPSInstr.format(main[i]));
                 }
             }
         }
 
-        public void printMain(int addr) {
+        public void print(int addr) {
 
             if((addr / 4) >= main.length || addr < 0)
                 PLPMsg.E("printMain(int): Address out of range.",
@@ -317,8 +347,8 @@ public class PLPMIPSSim {
             pc = i_pc;
         }
 
-        public int writeMain(int addr, long data) {
-            if((addr / 4) >= main.length || addr < 0)
+        public int write(int addr, long data) {
+            if((addr / 4) >= size || addr < 0)
                 return PLPMsg.E("printMain(int): Address out of range.",
                                 PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
             else if(addr % 4 != 0)
@@ -329,6 +359,22 @@ public class PLPMIPSSim {
             }
 
             return PLPMsg.PLP_OK;
+        }
+
+        public long read(int addr) {
+            if((addr / 4) >= size || addr < 0)
+                return PLPMsg.E("printMain(int): Address out of range.",
+                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+            else if(addr % 4 != 0)
+                return PLPMsg.E("printMain(int): Unaligned memory.",
+                                PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
+            else {
+                return main[addr / 4];
+            }
+        }
+
+        public int size() {
+            return size;
         }
 
         @Override public String toString() {
@@ -397,6 +443,8 @@ public class PLPMIPSSim {
         }
 
         private int eval() {
+            try {
+
             ex_reg.i_instruction = instruction;
             ex_reg.i_instrAddr = instrAddr;
 
@@ -506,6 +554,11 @@ public class PLPMIPSSim {
             ex_reg.hot = true;
 
             return PLPMsg.PLP_OK;
+
+            } catch(Exception e) {
+                return PLPMsg.E("I screwed up: " + e,
+                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+            }
         }
 
         private void clock() {
@@ -630,6 +683,8 @@ public class PLPMIPSSim {
         }
 
         private int eval() {
+            try {
+
             mem_reg.i_instruction = instruction;
             mem_reg.i_instrAddr = instrAddr;
 
@@ -653,6 +708,11 @@ public class PLPMIPSSim {
             mem_reg.hot = true;
 
             return PLPMsg.PLP_OK;
+
+            } catch(Exception e) {
+                return PLPMsg.E("I screwed up: " + e,
+                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+            }
         }
 
         private void clock() {
@@ -778,6 +838,8 @@ public class PLPMIPSSim {
         }
 
         private int eval() {
+            try {
+
             wb_reg.i_instruction = instruction;
             wb_reg.i_instrAddr = instrAddr;
 
@@ -790,14 +852,19 @@ public class PLPMIPSSim {
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1)
-                wb_reg.i_data_memreaddata = memory.main[(int) fwd_data_alu_result / 4];
+                wb_reg.i_data_memreaddata = memory.read((int) (long) fwd_data_alu_result / 4);
 
             if(ctl_memwrite == 1)
-                memory.main[(int) fwd_data_alu_result / 4] = data_memwritedata;
+                memory.write((int) (long) fwd_data_alu_result / 4, data_memwritedata);
 
             wb_reg.hot = true;
 
             return PLPMsg.PLP_OK;
+
+            } catch(Exception e) {
+                return PLPMsg.E("I screwed up: " + e,
+                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+            }
         }
 
         private void clock() {
@@ -897,6 +964,8 @@ public class PLPMIPSSim {
         }
     
         private int eval() {
+            try {
+
             long internal_2x1 = (ctl_jal == 0) ?
                                  data_alu_result : ctl_linkaddr;
 
@@ -907,6 +976,11 @@ public class PLPMIPSSim {
             instr_retired = true;
 
             return PLPMsg.PLP_OK;
+
+            } catch(Exception e) {
+                return PLPMsg.E("I screwed up: " + e,
+                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+            }
         }
 
         private void clock() {

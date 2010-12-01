@@ -93,6 +93,9 @@ public class PLPMsg {
     static int PLP_ERROR_RETURN                     = -1;
     static int PLP_OOPS                             = 9001;
 
+    // Flags
+    static boolean FLAGS_ALIGNED_MEMORY             = true;
+
     static String[] errorStr;
     static int[]    errorCodes;
 
