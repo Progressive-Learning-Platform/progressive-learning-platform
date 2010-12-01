@@ -55,6 +55,9 @@ public class PLPMIPSSim {
 
     // Initialize core
     public PLPMIPSSim(PLPAsm asm, long RAMsize) {
+        if(RAMsize <= 0)
+            RAMsize = (long) Math.pow(2, 62);
+
         memory = new mod_memory(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
         regfile = new mod_memory(32, false);
         pc = new mod_register(0); // pc=0 on reset
@@ -164,13 +167,13 @@ public class PLPMIPSSim {
                             String.format("%08x", addr),
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
-        if(memory.read(addr) == -1)
+        if(memory.read(addr) == PLPMsg.PLP_ERROR_RETURN)
             return PLPMsg.E("step(): Memory location uninitialized: addr=" +
                             String.format("%08x", addr),
                             PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
 
         if(!memory.isInstr(addr))
-            return PLPMsg.E("step(): Unprogrammed memory: addr=" +
+            return PLPMsg.E("step(): Non-executable memory: addr=" +
                             String.format("%08x", addr),
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
@@ -402,21 +405,45 @@ public class PLPMIPSSim {
         }
 
         public long read(long addr) {
-            if(wordAligned && ((addr / 4) >= size || addr < 0))
-                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
-                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(wordAligned && addr % 4 != 0)
-                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Unaligned memory.",
+            if(wordAligned && ((addr / 4) >= size || addr < 0)) {
+                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
+                         PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+                return PLPMsg.PLP_ERROR_RETURN;
+            }
+            else if (wordAligned && addr % 4 != 0) {
+                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Unaligned memory.",
                                 PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-            else if(!wordAligned && ((addr) >= size || addr < 0))
-                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
+                return PLPMsg.PLP_ERROR_RETURN;
+            }
+            else if(!wordAligned && ((addr) >= size || addr < 0)) {
+                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
                                 PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(!wordAligned && !values.containsKey(addr))
-                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
+                return PLPMsg.PLP_ERROR_RETURN;
+            }
+            else if(!wordAligned && !values.containsKey(addr)) {
+                if(PLPCfg.cfgSimDynamicMemoryAllocation) {
+                    PLPMsg.I("read(" + String.format("0x%08x", addr) +
+                             "): Dynamic memory allocation.", this);
+                    values.put(addr, (long) 0);
+                    isInstr.put(addr, false);
+                    return 0;
+                }
+                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
                                  PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-           else if(wordAligned && !values.containsKey(addr / 4))
-                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
+                return PLPMsg.PLP_ERROR_RETURN;
+            }
+            else if(wordAligned && !values.containsKey(addr / 4)) {
+                if(PLPCfg.cfgSimDynamicMemoryAllocation) {
+                    PLPMsg.I("read(" + String.format("0x%08x", addr) +
+                             "): Dynamic memory allocation.", this);
+                    values.put(addr / 4, (long) 0);
+                    isInstr.put(addr / 4, false);
+                    return 0;
+                }
+                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
                                  PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
+                return PLPMsg.PLP_ERROR_RETURN;
+            }
             else if(wordAligned) {
                 return values.get(addr / 4);
             }
@@ -1076,30 +1103,28 @@ public class PLPMIPSSim {
                 // R-types
                 case 0:
                     switch(MIPSInstr.funct(instr)) {
-                        case 0x24:
-                            return a & b;
-                        case 0x25:
-                            return a | b;
-                        case 0x27:
-                            return ~(a | b);
-                        case 0x21:
-                            return a + b;
-                        case 0x23:
-                            return a - b;
+                        case 0x24: return a & b;
+                        case 0x25: return a | b;
+                        case 0x27: return ~(a | b);
+                        case 0x21: return a + b;
+                        case 0x23: return a - b;
+                        case 0x2A:
+                        case 0x2B: return a - b;
+                        case 0x00: return a << b;
+                        case 0x02: return a >> b;
                     }
 
-                case 0x04:
-                    return (a - b == 0) ? 1 : 0;
-
-                case 0x0d:
-                    return a | b;
-
-                case 0x0f:
-                    return b << 16;
-
+                case 0x04: return (a - b == 0) ? 1 : 0;
+                case 0x05: return (a - b == 0) ? 0 : 1;
+                case 0x0c: return a & b;
+                case 0x0d: return a | b;
+                case 0x0f: return b << 16;
+                case 0x0A:
+                case 0x0B: return a - b;
+                case 0x08:
+                case 0x09:
                 case 0x23:
-                case 0x2B:
-                    return a + b;
+                case 0x2B: return a + b;
             }
 
             return 0;

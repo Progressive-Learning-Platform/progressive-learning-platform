@@ -357,7 +357,7 @@ class MIPSInstr {
         return (byte) (instr & consts.V_MASK); }
 
     public static byte sa(long instr) {
-        return (byte) ((instr >> 5) & consts.R_MASK);
+        return (byte) ((instr >> 6) & consts.R_MASK);
     }
 
     public static byte rd(long instr) {
