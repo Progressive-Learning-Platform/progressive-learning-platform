@@ -947,14 +947,14 @@ public class PLPAsm {
 
         if(number.startsWith("0x") || number.startsWith("0h")) {
             number = number.substring(2);
-            return Integer.parseInt(number, 16) & 0xFFFF;
+            return Long.parseLong(number, 16) & 0xFFFF;
         }
         else if(number.startsWith("0b")) {
             number = number.substring(2);
-            return Integer.parseInt(number, 2) & 0xFFFF;
+            return Long.parseLong(number, 2) & 0xFFFF;
         }
         else
-            return Integer.parseInt(number) & 0xFFFF;
+            return Long.parseLong(number) & 0xFFFF;
 
         } catch(Exception e) {
             return PLPMsg.E("sanitize16bits(): Argument is not a valid number\n" + e,
