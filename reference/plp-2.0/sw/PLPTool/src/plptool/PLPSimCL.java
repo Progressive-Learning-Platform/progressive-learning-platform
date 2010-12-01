@@ -88,7 +88,15 @@ public class PLPSimCL {
                     if(core.step() != PLPMsg.PLP_OK)
                         PLPMsg.E("Simulation is stale. Please reset.",
                                 PLPMsg.PLP_SIM_STALE, null);
-                    core.printfrontend();
+                    else {
+                        System.out.println();
+                        core.wb_stage.printinstr();
+                        core.mem_stage.printinstr();
+                        core.ex_stage.printinstr();
+                        core.id_stage.printinstr();
+                        core.printfrontend();
+                        System.out.println("-------------------------------------");
+                    }
                 }
             }
             else if(tokens[0].equals("s")) {
@@ -100,7 +108,14 @@ public class PLPSimCL {
                     if(core.step() != PLPMsg.PLP_OK)
                        PLPMsg.E("Simulation is stale. Please reset.",
                                 PLPMsg.PLP_SIM_STALE, null);
-                    core.printfrontend();
+                    else {
+                        core.wb_stage.printinstr();
+                        core.mem_stage.printinstr();
+                        core.ex_stage.printinstr();
+                        core.id_stage.printinstr();
+                        core.printfrontend();
+                        System.out.println("-------------------------------------");
+                    }
                 }
             }
             else if(input.equals("r")) {
@@ -118,6 +133,14 @@ public class PLPSimCL {
                     System.out.println("\nMain memory listing");
                     System.out.println("===================");
                     core.memory.printMain();
+                }
+            }
+            else if(tokens[0].equals("pram")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: pram <address>");
+                }
+                else {
+                    core.memory.printMain((int) PLPAsm.sanitize32bits(tokens[1]));
                 }
             }
             else if(input.equals("preg")) {
@@ -144,7 +167,7 @@ public class PLPSimCL {
                 else {
                     System.out.println("\nProgram Listing");
                     System.out.println("===============");
-                    core.printprogram();
+                    core.memory.printProgram();
                 }
             }
             else if(input.equals("pinstr")) {
@@ -161,7 +184,9 @@ public class PLPSimCL {
                 }
             }
             else if(tokens[0].equals("wpc")) {
-                if(tokens.length != 2) {
+                if(!init_core)
+                    System.out.println("Core is not initialized.");
+                else if(tokens.length != 2) {
                     System.out.println("Usage: wpc <address>");
                 }
                 else {
@@ -171,12 +196,41 @@ public class PLPSimCL {
                 }
             }
             else if(tokens[0].equals("j")) {
-                if(tokens.length != 2) {
+                if(!init_core)
+                    System.out.println("Core is not initialized.");
+                else if(tokens.length != 2) {
                     System.out.println("Usage: j <address>");
                 }
                 else {
                     core.memory.i_pc = PLPAsm.sanitize32bits(tokens[1]);
                     core.printfrontend();
+                }
+            }
+            else if(tokens[0].equals("asm")) {
+                if(!init_core)
+                    System.out.println("Core is not initialized.");
+                else if(tokens.length < 3) {
+                    System.out.println("Usage: asm <address> <in-line assembly>");
+                }
+                else {
+                    String iAsm = "";
+                    int addr;
+                    for(int j = 2; j < tokens.length; j++)
+                        iAsm += tokens[j] + " ";
+                    PLPAsm inlineAsm = new PLPAsm(iAsm, "PLPSimCL inline asm", 0);
+                    if(inlineAsm.preprocess(0) == PLPMsg.PLP_OK)
+                        inlineAsm.assemble();
+                    if(inlineAsm.isAssembled())
+                        System.out.println("\nIn-line assembly inserted:");
+                        System.out.println("==========================");
+                        for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
+                            addr = (int) PLPAsm.sanitize16bits(tokens[1]) + 4 * j;
+                            core.memory.writeMain(addr, inlineAsm.getObjectCode()[j]);
+                            System.out.println(String.format("%08x", addr) +
+                                               "   " + PLPAsmFormatter.asciiWord(inlineAsm.getObjectCode()[j]) +
+                                               "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
+                        }
+                    
                 }
             }
             else if(input.equals("pvars")) {
@@ -207,10 +261,17 @@ public class PLPSimCL {
                 System.out.println("No, he doesn't.\n");
             }
             else {
-                System.out.println("Unknown command\n");
+                System.out.println("Unknown command.");
             }
 
-            System.out.print("sim > ");
+            System.out.println();
+
+            if(!init_core)
+                System.out.print("sim > ");
+            else
+                System.out.print(String.format("%08x", core.sim_flags) +
+                                 " " + core.getinstrcount() +
+                                 " sim > ");
         }
         System.out.println("See ya!");
 

@@ -162,11 +162,29 @@ public class PLPAsmFormatter {
         return null;
     }
 
+    // Convert 32-bit word to printable ASCII
+    public static String asciiWord(long word) {
+        String tStr = "";
+        long tVal;
+        for(int j = 3; j >= 0; j--) {
+            tVal = word >> (8 * j);
+            tVal &= 0xFF;
+            if(tVal >= 0x21 && tVal <= 0x7E)
+                tStr += (char) tVal + " ";
+            else
+                tStr += ". ";
+        }
+
+        return tStr;
+    }
+
     // MIPS instruction string formatter {
     public static String mipsInstrStr(long instr) {
         String ret = "";
-
-        ret += PLPAsm.lookupInstr((byte) MIPSInstr.opcode(instr)) + " ";
+        if(MIPSInstr.opcode(instr) != 0)
+            ret += PLPAsm.lookupInstrOpcode((byte) MIPSInstr.opcode(instr)) + " ";
+        else
+            ret += PLPAsm.lookupInstrFunct((byte) MIPSInstr.funct(instr)) + " ";
         ret += MIPSInstr.rs(instr) + " ";
         ret += MIPSInstr.rt(instr) + " ";
         ret += MIPSInstr.rd(instr) + " ";
@@ -335,27 +353,27 @@ class MIPSInstr {
     public static int imm(long instr) {
         return (int) (instr & consts.C_MASK); }
 
-    public static int funct(long instr) {
-        return (int) (instr & consts.V_MASK); }
+    public static byte funct(long instr) {
+        return (byte) (instr & consts.V_MASK); }
 
-    public static int sa(long instr) {
-        return (int) ((instr >> 5) & consts.R_MASK);
+    public static byte sa(long instr) {
+        return (byte) ((instr >> 5) & consts.R_MASK);
     }
 
-    public static int rd(long instr) {
-        return (int) ((instr >> 11) & consts.R_MASK);
+    public static byte rd(long instr) {
+        return (byte) ((instr >> 11) & consts.R_MASK);
     }
 
-    public static int rt(long instr) {
-        return (int) ((instr >> 16) & consts.R_MASK);
+    public static byte rt(long instr) {
+        return (byte) ((instr >> 16) & consts.R_MASK);
     }
 
-    public static int rs(long instr) {
-        return (int) ((instr >> 21) & consts.R_MASK);
+    public static byte rs(long instr) {
+        return (byte) ((instr >> 21) & consts.R_MASK);
     }
 
-    public static int opcode(long instr) {
-        return (int) ((instr >> 26) & consts.V_MASK);
+    public static byte opcode(long instr) {
+        return (byte) ((instr >> 26) & consts.V_MASK);
     }
 
     public static int jaddr(long instr) {
@@ -367,12 +385,12 @@ class MIPSInstr {
         int instrType;
 
         if(opcode(instr) != 0) {
-            instrType = PLPAsm.lookupInstrType((byte) opcode(instr));
-            ret = PLPAsm.lookupInstr((byte) opcode(instr)) + " ";
+            instrType = PLPAsm.lookupInstrType(PLPAsm.lookupInstrOpcode(opcode(instr)));
+            ret = PLPAsm.lookupInstrOpcode(opcode(instr)) + " ";
         }
         else {
-            instrType = PLPAsm.lookupInstrType((byte) funct(instr));
-            ret = PLPAsm.lookupInstr((byte) funct(instr)) + " ";
+            instrType = PLPAsm.lookupInstrType(PLPAsm.lookupInstrFunct(funct(instr)));
+            ret = PLPAsm.lookupInstrFunct(funct(instr)) + " ";
         }
 
         switch(instrType) {

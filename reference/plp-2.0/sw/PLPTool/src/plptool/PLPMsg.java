@@ -63,6 +63,8 @@ public class PLPMsg {
     static int PLP_SIM_UNHANDLED_INSTRUCTION_TYPE   = 258;
     static int PLP_SIM_EVALUATION_FAILED            = 259;
     static int PLP_SIM_STALE                        = 260;
+    static int PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE     = 261;
+    static int PLP_SIM_OUT_UNALIGNED_MEMORY         = 262;
 
     // Programmer errors
     static int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
@@ -76,10 +78,11 @@ public class PLPMsg {
 
     // Simulator flags
     static long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFF0;
-    static long PLP_SIM_FWD_EX_EX                   = 0x00000001;
-    static long PLP_SIM_FWD_EX_RF                   = 0x00000002;
-    static long PLP_SIM_FWD_MEM_MEM                 = 0x00000004;
-    static long PLP_SIM_FWD_MEM_EX                  = 0x00000008;
+    static long PLP_SIM_FWD_EX_EX_RTYPE             = 0x00000001;
+    static long PLP_SIM_FWD_EX_EX_ITYPE             = 0x00000002;
+    static long PLP_SIM_FWD_EX_RF                   = 0x00000004;
+    static long PLP_SIM_FWD_MEM_MEM                 = 0x00000008;
+    static long PLP_SIM_FWD_MEM_EX                  = 0x00000010;
 
     // General
     static int PLP_NUMBER_ERROR                     = -1;
