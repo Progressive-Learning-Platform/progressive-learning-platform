@@ -18,8 +18,8 @@
 
 package plptool;
 
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.Iterator;
 
 /**
  * The PLP MIPS Architecture Simulator Backend
@@ -30,6 +30,7 @@ public class PLPMIPSSim {
 
     // modules
     public mod_register     pc;
+    public mod_bus          bus;
     public mod_memory       memory;
     public mod_memory       regfile;
     public mod_forwarding   forwarding;
@@ -53,9 +54,10 @@ public class PLPMIPSSim {
     PLPAsm asm;
 
     // Initialize core
-    public PLPMIPSSim(PLPAsm asm, int RAMsize) {
-        memory = new mod_memory(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY); // pc=0 on reset
+    public PLPMIPSSim(PLPAsm asm, long RAMsize) {
+        memory = new mod_memory(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
         regfile = new mod_memory(32, false);
+        pc = new mod_register(0); // pc=0 on reset
 
         this.asm = asm;
         this.objCode = asm.getObjectCode();
@@ -70,35 +72,32 @@ public class PLPMIPSSim {
         id_stage = new id(ex_stage, regfile);
 
         forwarding = new mod_forwarding();
+        bus = new mod_bus();
     }
 
     public int reset() {
         int i;
-
-        // init RAM
-        for(i = 0; i < memory.main.length; i++)
-            memory.write(i * 4, -1);
+        
+        // clear RAM
+        memory.clear();
 
         // init regfile
         for(i = 0; i < 32; i++)
-            regfile.write(i, 0);
+            regfile.write(i, 0, false);
 
         // load program to RAM
         for(i = 0; i < objCode.length; i++) {
-            if((int) (addrTable[i] / 4) >= memory.size())
+            if((addrTable[i] / 4) >= memory.size())
                 PLPMsg.M("Warning: Program doesn't fit in memory.");
             else {
                 if (asm.isInstruction(i) == 0)
-                    memory.isInstr[(int) addrTable[i] / 4] = true;
+                    memory.write(addrTable[i], objCode[i], true);
                 else
-                    memory.isInstr[(int) addrTable[i] / 4] = false;
-
-                memory.main[(int) addrTable[i] / 4] = objCode[i];
+                    memory.write(addrTable[i], objCode[i], false);
             }
         }
 
-        memory.pc = -1;
-        memory.i_pc = 0;
+        pc.reset(0);
         instructionCount = 0;
         sim_flags = 0;
         flushpipeline();
@@ -109,8 +108,7 @@ public class PLPMIPSSim {
     }
 
     public int softreset() {
-        memory.pc = -1;
-        memory.i_pc = 0;
+        pc.reset(0);
         flushpipeline();
 
         PLPMsg.M("core: soft reset");
@@ -128,7 +126,8 @@ public class PLPMIPSSim {
         if(mem_stage.hot) mem_stage.clock();
         if(wb_stage.hot)  wb_stage.clock();
 
-        memory.clock_pc(); // clock PC to get new instruction
+        // clock pc for next instruction
+        pc.clock();
 
         // Evaluate stages
         if(wb_stage.hot)  ret += wb_stage.eval();
@@ -146,39 +145,39 @@ public class PLPMIPSSim {
                             PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
         }
 
-        // update i_pc for next instruction
         if(id_stage.hot && id_stage.ctl_pcsrc == 1)
-            memory.i_pc = id_stage.ctl_branchtarget;
+            pc.write(id_stage.ctl_branchtarget);
         else if(id_stage.hot && id_stage.ctl_jump == 1)
-            memory.i_pc = id_stage.ctl_jumptarget;
+            pc.write(id_stage.ctl_jumptarget);
         else
-            memory.i_pc += 4;
+            pc.write(pc.eval() + 4);
 
         return fetch();
     }
 
     // IF stage
     private int fetch()  {
+        long addr = pc.eval();
 
-        if(memory.pc / 4 >= memory.main.length)
+        if(addr / 4 >= memory.size())
             return PLPMsg.E("step(): Instruction memory out-of-bounds: addr=" +
-                            String.format("%08x", memory.pc),
+                            String.format("%08x", addr),
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
-        if(memory.main[(int) (memory.pc / 4)] == -1)
+        if(memory.read(addr) == -1)
             return PLPMsg.E("step(): Memory location uninitialized: addr=" +
-                            String.format("%08x", memory.pc),
+                            String.format("%08x", addr),
                             PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
 
-        if(!memory.isInstr[(int) (memory.pc / 4)])
+        if(!memory.isInstr(addr))
             return PLPMsg.E("step(): Unprogrammed memory: addr=" +
-                            String.format("%08x", memory.pc),
+                            String.format("%08x", addr),
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         // fetch instruction / frontend stage
-        id_stage.i_instruction = memory.main[(int) (memory.pc / 4)];
-        id_stage.i_instrAddr = memory.pc;
-        id_stage.i_ctl_pcplus4 = memory.pc + 4;
+        id_stage.i_instruction = memory.read(addr);
+        id_stage.i_instrAddr = addr;
+        id_stage.i_ctl_pcplus4 = addr + 4;
 
         id_stage.hot = true;
 
@@ -197,14 +196,14 @@ public class PLPMIPSSim {
 
     public void printfrontend() {
 
-        if(memory.pc < 0)
+        if(pc.eval() < 0)
             PLPMsg.M("if:   -" +
-                     "\ni_pc: " + String.format("%08x", memory.i_pc));
+                     "\ni_pc: " + String.format("%08x", pc.input()));
         else
-            PLPMsg.M("if:   " + String.format("%08x", memory.pc) +
+            PLPMsg.M("if:   " + String.format("%08x", pc.eval()) +
                 " instr: " + String.format("%08x", id_stage.i_instruction) +
                 " : " + MIPSInstr.format(id_stage.i_instruction) +
-                "\ni_pc: "  + String.format("%08x", memory.i_pc));
+                "\ni_pc: "  + String.format("%08x", pc.input()));
     }
 
     public int run (int instructions) {
@@ -220,10 +219,10 @@ public class PLPMIPSSim {
         int i, j;
         PLPMsg.M("pc\taddress\t\thex\t\tinstruction");
         PLPMsg.M("--\t-------\t\t---\t\t-----------");
-        for(i = 0; i < memory.main.length; i++) {
+        for(i = 0; i < memory.size(); i++) {
             for(j = 0; j < addrTable.length; j++) {
                 if(i * 4 == addrTable[j] && asm.isInstruction(j) == 0) {
-                    if(memory.pc == i * 4)
+                    if(pc.eval() == i * 4)
                         System.out.print(">>>\t");
                     else
                         System.out.print("\t");
@@ -247,17 +246,21 @@ public class PLPMIPSSim {
     }
 
     public class mod_register {
-        long data;
-        long i_data;
+        private long data;
+        private long i_data;
 
-        public mod_register() {
-
+        public mod_register(long i_data) {
+            this.i_data = i_data;
         }
 
         public int write(long data) {
             this.i_data = data;
 
             return PLPMsg.PLP_OK;
+        }
+
+        public long input() {
+            return i_data;
         }
 
         public long eval() {
@@ -267,114 +270,176 @@ public class PLPMIPSSim {
         public void clock() {
             data = i_data;
         }
+
+        public void reset(long i_data) {
+            data = -1;
+            this.i_data = i_data;
+        }
     }
 
-    public class mod_memory {
-        int                 size;
-        long                pc;
-        long                i_pc;
-        HashMap<Long, Long> mXin;
-        ArrayList<Boolean>  iXInstr;
-        long[]              main;
-        long[]              regfile;
-        boolean[]           isInstr;
-        boolean             wordaligned;
+    public class mod_memory extends plp_sim_bus_module {
+        private long                    size;
+        private TreeMap<Long, Long>     values;
+        private TreeMap<Long, Boolean>  isInstr;
+        private boolean                 wordAligned;
 
-        public mod_memory(int size, boolean wordaligned) {
-            main = new long[size];
-            isInstr = new boolean[size];
-            mXin = new HashMap<Long, Long>();
-            iXInstr = new ArrayList<Boolean>();
-            this.wordaligned = wordaligned;
+        public mod_memory(long size, boolean wordAligned) {
+            values = new TreeMap<Long, Long>();
+            isInstr = new TreeMap<Long, Boolean>();
+            this.size = size;
+            this.wordAligned = wordAligned;
         }
 
-        public void print() {
-            PLPMsg.M("pc\taddress\t\tcontents\tASCII");
+        public void clear() {
+            values = new TreeMap<Long, Long>();
+            isInstr = new TreeMap<Long, Boolean>();
+        }
+
+        // memory module doesn't need eval, just return OK
+        public int eval () {
+            return PLPMsg.PLP_OK;
+        }
+
+        public void printAll(long highlight) {
+            long key;
+            PLPMsg.M("->\taddress\t\tcontents\tASCII");
             PLPMsg.M("--\t-------\t\t--------\t-----");
-            for(int i = 0; i < main.length; i++) {
-                if(main[i] != -1) {
-                    if(i * 4 == pc)
+            Iterator keyIterator = values.keySet().iterator();
+            while(keyIterator.hasNext()) {
+                key = (Long) keyIterator.next();
+                if(wordAligned) {
+                    if(key * 4 == highlight)
                         System.out.print(">>>");
                     PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                           i * 4, main[i]) +
-                                           PLPAsmFormatter.asciiWord(main[i]));
+                                           key * 4, values.get(key)) +
+                                           PLPAsmFormatter.asciiWord(values.get(key)));
+                }
+                else {
+                    if(key == highlight)
+                        System.out.print(">>>");
+                    PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                            key, values.get(key)) +
+                                            PLPAsmFormatter.asciiWord(values.get(key)));
                 }
             }
         }
 
-        public void printProgram() {
-            PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
-            PLPMsg.M("--\t-------\t\t---\t\t-----------");
-            for(int i = 0; i < main.length; i++) {
-                if(main[i] != -1 && isInstr[i]) {
-                    if(i * 4 == pc)
-                        System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                           i * 4, main[i]) +
-                                           MIPSInstr.format(main[i]));
+        public void printProgram(long highlight) {
+            if(wordAligned) {
+                long key;
+                PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
+                PLPMsg.M("--\t-------\t\t---\t\t-----------");
+                Iterator keyIterator = values.keySet().iterator();
+                while(keyIterator.hasNext()) {
+                    key = (Long) keyIterator.next();
+                    if(isInstr.get(key) == true) {
+                        if(key * 4 == highlight)
+                            System.out.print(">>>");
+                        PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                               key * 4, values.get(key)) +
+                                               MIPSInstr.format(values.get(key)));
+                    }
                 }
             }
         }
 
-        public void print(int addr) {
+        public void print(long addr) {
 
-            if((addr / 4) >= main.length || addr < 0)
-                PLPMsg.E("printMain(int): Address out of range.",
+            if(wordAligned && (addr / 4) >= size || addr < 0)
+                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Address out of range.",
                         PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(main[addr / 4] == -1)
-                PLPMsg.E("printMain(int): Address not initialized.",
+            else if(wordAligned && !values.containsKey(addr / 4))
+                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Address not initialized.",
                         PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-            else if(addr % 4 != 0)
-                PLPMsg.E("printMain(int): Unaligned memory.",
+            else if(!wordAligned && !values.containsKey(addr))
+                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Address not initialized.",
+                        PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
+            else if(wordAligned && addr % 4 != 0)
+                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Unaligned memory.",
                          PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-            else {
+            else if(wordAligned) {
                 addr /= 4;
 
                 PLPMsg.M("\naddress\t\tcontents\tASCII");
                 PLPMsg.M("-------\t\t--------\t-----");
                 PLPMsg.M(String.format("%08x\t%08x\t" +
-                                       PLPAsmFormatter.asciiWord(main[addr]),
-                                       addr * 4, main[addr]));
+                                       PLPAsmFormatter.asciiWord(values.get(addr)),
+                                       addr * 4, values.get(addr)));
+            }
+            else {
+                PLPMsg.M("\naddress\t\tcontents\tASCII");
+                PLPMsg.M("-------\t\t--------\t-----");
+                PLPMsg.M(String.format("%08x\t%08x\t" +
+                                       PLPAsmFormatter.asciiWord(values.get(addr)),
+                                       addr, values.get(addr)));
             }
         }
 
-        public void printRegFile() {
-            for(int i = 0; i < 32; i++)
-                PLPMsg.M(i + "\t" + String.format("%08x", regfile[i]));
+        public int write(long addr, long data) {
+            return this.write(addr, data, false);
         }
 
-        public void clock_pc() {
-            pc = i_pc;
-        }
-
-        public int write(int addr, long data) {
-            if((addr / 4) >= size || addr < 0)
-                return PLPMsg.E("printMain(int): Address out of range.",
+        public int write(long addr, long data, boolean isInstr) {
+            if(wordAligned && ((addr / 4) >= size || addr < 0))
+                return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address out of range.",
                                 PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(addr % 4 != 0)
-                return PLPMsg.E("printMain(int): Unaligned memory.",
+            else if(wordAligned && addr % 4 != 0)
+                return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Unaligned memory.",
                                 PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
+            else if(!wordAligned && ((addr) >= size || addr < 0))
+                return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address out of range.",
+                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+            else if(wordAligned) {
+                values.put(new Long(addr / 4), new Long(data));
+                this.isInstr.put(new Long(addr / 4), isInstr);
+            }
             else {
-                main[addr / 4] = data;
+                values.put(new Long(addr), new Long(data));
+                this.isInstr.put(new Long(addr), isInstr);
             }
 
             return PLPMsg.PLP_OK;
         }
 
-        public long read(int addr) {
-            if((addr / 4) >= size || addr < 0)
-                return PLPMsg.E("printMain(int): Address out of range.",
+        public long read(long addr) {
+            if(wordAligned && ((addr / 4) >= size || addr < 0))
+                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
                                 PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(addr % 4 != 0)
-                return PLPMsg.E("printMain(int): Unaligned memory.",
+            else if(wordAligned && addr % 4 != 0)
+                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Unaligned memory.",
                                 PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-            else {
-                return main[addr / 4];
+            else if(!wordAligned && ((addr) >= size || addr < 0))
+                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
+                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+            else if(!wordAligned && !values.containsKey(addr))
+                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
+                                 PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
+           else if(wordAligned && !values.containsKey(addr / 4))
+                return PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
+                                 PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
+            else if(wordAligned) {
+                return values.get(addr / 4);
             }
+            else
+                return values.get(addr);
         }
 
-        public int size() {
+        // returns size of memory in WORDS
+        public long size() {
             return size;
+        }
+
+        public boolean isInstr(long addr) {
+            if(wordAligned)
+                // return isInstr[(int) addr / 4];
+                return isInstr.get(addr / 4);
+            else
+                // return isInstr[(int) addr];
+                return isInstr.get(addr);
+        }
+
+        public boolean iswordAligned() {
+            return wordAligned;
         }
 
         @Override public String toString() {
@@ -406,11 +471,11 @@ public class PLPMIPSSim {
         long i_ctl_jump;
         
         private ex   ex_reg;
-        private mod_memory memory;
+        private mod_memory regfile;
 
-        public id(ex ex_reg, mod_memory memory) {
+        public id(ex ex_reg, mod_memory regfile) {
             this.ex_reg = ex_reg;
-            this.memory = memory;
+            this.regfile = regfile;
         }
 
         public void printvars() {
@@ -456,11 +521,11 @@ public class PLPMIPSSim {
 
             // rt
             ex_reg.i_data_rt     = (addr_read_0 == 0) ?
-                                   0 : memory.regfile[(int) addr_read_0];
+                                   0 : regfile.read(addr_read_0);
 
             // rs
             ex_reg.i_data_alu_in = (addr_read_1 == 0) ?
-                                   0 : memory.regfile[(int) addr_read_1];
+                                   0 : regfile.read(addr_read_1);
 
             long imm_field = MIPSInstr.imm(instruction);
             ex_reg.i_data_imm_signExtended = imm_field;
@@ -852,10 +917,10 @@ public class PLPMIPSSim {
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1)
-                wb_reg.i_data_memreaddata = memory.read((int) (long) fwd_data_alu_result / 4);
+                wb_reg.i_data_memreaddata = memory.read(fwd_data_alu_result);
 
             if(ctl_memwrite == 1)
-                memory.write((int) (long) fwd_data_alu_result / 4, data_memwritedata);
+                memory.write(fwd_data_alu_result, data_memwritedata, false);
 
             wb_reg.hot = true;
 
@@ -915,10 +980,10 @@ public class PLPMIPSSim {
         long i_data_memreaddata;
         long i_data_alu_result;
 
-        private mod_memory memory;
+        private mod_memory regfile;
 
-        public wb(mod_memory memory) {
-            this.memory = memory;
+        public wb(mod_memory regfile) {
+            this.regfile = regfile;
         }
 
         public void printvars() {
@@ -970,8 +1035,8 @@ public class PLPMIPSSim {
                                  data_alu_result : ctl_linkaddr;
 
             if(ctl_regwrite == 1 && ctl_dest_reg_addr != 0)
-                memory.regfile[(int) ctl_dest_reg_addr] =
-                    (ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata;
+                regfile.write(ctl_dest_reg_addr,
+                    (ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata, false);
 
             instr_retired = true;
 
@@ -1081,7 +1146,9 @@ public class PLPMIPSSim {
     }
 
     public class mod_bus {
-
+        public mod_bus() {
+            
+        }
     }
 
     public class io_7segs {
@@ -1102,6 +1169,16 @@ public class PLPMIPSSim {
 
     public class io_switches {
         
+    }
+
+    public abstract class plp_sim_bus_module {
+        private TreeMap<Long, Long> values;
+        private long startAddr;
+        private long endAddr;
+
+        abstract int write(long addr, long data);
+        abstract long read(long addr);
+        abstract int eval();
     }
 }
 

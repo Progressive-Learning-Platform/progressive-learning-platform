@@ -34,7 +34,7 @@ public class PLPSimCL {
         PLPMIPSSim core = null;
         String input = "";
         String tokens[];
-        int ram_size;
+        long ram_size;
         boolean init_core = false;
 
         try {
@@ -64,7 +64,7 @@ public class PLPSimCL {
                 }
                 else {
                     try {
-                    ram_size = Integer.parseInt(tokens[1]);
+                    ram_size = PLPToolbox.parseNum(tokens[1]);
                    
                     if(ram_size % 4 != 0)
                         System.out.println("RAM size has to be in multiples of 4");
@@ -77,6 +77,7 @@ public class PLPSimCL {
                         System.out.println("Simulation core initialized.");
                     }
                     } catch(Exception e) {
+                        System.out.println(e);
                         System.out.println("Usage: i <ram size in bytes>");
                     }
                 }
@@ -132,7 +133,7 @@ public class PLPSimCL {
                 else {
                     System.out.println("\nMain memory listing");
                     System.out.println("===================");
-                    core.memory.print();
+                    core.memory.printAll(core.pc.eval());
                 }
             }
             else if(tokens[0].equals("pram")) {
@@ -140,7 +141,7 @@ public class PLPSimCL {
                     System.out.println("Usage: pram <address>");
                 }
                 else {
-                    core.memory.print((int) PLPAsm.sanitize32bits(tokens[1]));
+                    core.memory.print(PLPToolbox.parseNum(tokens[1]));
                 }
             }
             else if(input.equals("preg")) {
@@ -149,7 +150,7 @@ public class PLPSimCL {
                 else {
                     System.out.println("\nRegisters listing");
                     System.out.println("=================");
-                    core.memory.printRegFile();
+                    core.regfile.printAll(-1);
                 }
             }
             else if(input.equals("pfd")) {
@@ -167,7 +168,7 @@ public class PLPSimCL {
                 else {
                     System.out.println("\nProgram Listing");
                     System.out.println("===============");
-                    core.memory.printProgram();
+                    core.memory.printProgram(core.pc.eval());
                 }
             }
             else if(input.equals("pinstr")) {
@@ -191,7 +192,7 @@ public class PLPSimCL {
                 }
                 else {
                     core.softreset();
-                    core.memory.i_pc = PLPAsm.sanitize32bits(tokens[1]);
+                    core.pc.write(PLPAsm.sanitize32bits(tokens[1]));
                     core.printfrontend();
                 }
             }
@@ -202,7 +203,7 @@ public class PLPSimCL {
                     System.out.println("Usage: j <address>");
                 }
                 else {
-                    core.memory.i_pc = PLPAsm.sanitize32bits(tokens[1]);
+                    core.pc.write(PLPAsm.sanitize32bits(tokens[1]));
                     core.printfrontend();
                 }
             }
@@ -214,18 +215,18 @@ public class PLPSimCL {
                 }
                 else {
                     String iAsm = "";
-                    int addr;
+                    long addr;
                     for(int j = 2; j < tokens.length; j++)
                         iAsm += tokens[j] + " ";
                     PLPAsm inlineAsm = new PLPAsm(iAsm, "PLPSimCL inline asm", 0);
                     if(inlineAsm.preprocess(0) == PLPMsg.PLP_OK)
                         inlineAsm.assemble();
                     if(inlineAsm.isAssembled())
-                        System.out.println("\nIn-line assembly inserted:");
-                        System.out.println("==========================");
+                        System.out.println("\nCode injected:");
+                        System.out.println("==============");
                         for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
-                            addr = (int) PLPAsm.sanitize16bits(tokens[1]) + 4 * j;
-                            core.memory.write(addr, inlineAsm.getObjectCode()[j]);
+                            addr = PLPToolbox.parseNum(tokens[1]) + 4 * j;
+                            core.memory.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
                             System.out.println(String.format("%08x", addr) +
                                                "   " + PLPAsmFormatter.asciiWord(inlineAsm.getObjectCode()[j]) +
                                                "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
