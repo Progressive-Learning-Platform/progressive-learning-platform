@@ -77,6 +77,7 @@ public class PLPAsm {
 
     private static HashMap<String, Integer>     instrMap;
     private static HashMap<String, Byte>        opcode;
+    private static HashMap<String, Byte>        funct;
     private static HashMap<String, Byte>        regs;
 
     /**
@@ -107,6 +108,7 @@ public class PLPAsm {
         symTable = new HashMap<String, Long>();
         regionMap = new HashMap<String, Long>();
         opcode = new HashMap<String, Byte>();
+        funct = new HashMap<String, Byte>();
         regs = new HashMap<String, Byte>();
 
         directiveOffset = 0;
@@ -178,18 +180,18 @@ public class PLPAsm {
 
         // Instruction opcodes
         //opcode.put("add"   , new Byte((byte) 0x20));
-        opcode.put("addu"  , new Byte((byte) 0x21));
-        opcode.put("and"   , new Byte((byte) 0x24));
-        opcode.put("jr"    , new Byte((byte) 0x08));
-        opcode.put("jalr"  , new Byte((byte) 0x09));
-        opcode.put("nor"   , new Byte((byte) 0x27));
-        opcode.put("or"    , new Byte((byte) 0x25));
-        opcode.put("slt"   , new Byte((byte) 0x2A));
-        opcode.put("sltu"  , new Byte((byte) 0x2B));
-        opcode.put("sll"   , new Byte((byte) 0x00));
-        opcode.put("srl"   , new Byte((byte) 0x02));
-        //opcode.put("sub"   , new Byte((byte) 0x22));
-        opcode.put("subu"  , new Byte((byte) 0x23));
+        funct.put("addu"  , new Byte((byte) 0x21));
+        funct.put("and"   , new Byte((byte) 0x24));
+        funct.put("jr"    , new Byte((byte) 0x08));
+        funct.put("jalr"  , new Byte((byte) 0x09));
+        funct.put("nor"   , new Byte((byte) 0x27));
+        funct.put("or"    , new Byte((byte) 0x25));
+        funct.put("slt"   , new Byte((byte) 0x2A));
+        funct.put("sltu"  , new Byte((byte) 0x2B));
+        funct.put("sll"   , new Byte((byte) 0x00));
+        funct.put("srl"   , new Byte((byte) 0x02));
+        //funct.put("sub"   , new Byte((byte) 0x22));
+        funct.put("subu"  , new Byte((byte) 0x23));
 
         opcode.put("addi"  , new Byte((byte) 0x08));
         opcode.put("addiu" , new Byte((byte) 0x09));
@@ -581,7 +583,7 @@ public class PLPAsm {
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[3])) << 16;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
+                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     break;
 
@@ -599,7 +601,7 @@ public class PLPAsm {
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 16;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
                     objectCode[i - s] |= ((byte) (sanitize16bits(asmTokens[3]) & 0x1F)) << 6;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
+                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     break;
 
@@ -613,7 +615,7 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
+                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     break;
 
@@ -720,7 +722,7 @@ public class PLPAsm {
 
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i - s] |= (Byte) opcode.get(asmTokens[0]);
+                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     break;
 
@@ -834,12 +836,12 @@ public class PLPAsm {
     }
 
     /**
-     * Returns the string representation of an opcode / function
+     * Returns the string representation of an opcode
      *
      * @return Returns instruction opcode in String
      * @param instrOpCode the opcode of the instruction in (byte)
      */
-    public static String lookupInstr(byte instrOpCode) {
+    public static String lookupInstrOpcode(byte instrOpCode) {
         String key;
 
         if(opcode.containsValue(instrOpCode)) {
@@ -847,6 +849,27 @@ public class PLPAsm {
             while(iterator.hasNext()) {
                 key = (String) iterator.next();
                 if(opcode.get(key).equals(instrOpCode)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
+        /**
+     * Returns the string representation of a function
+     *
+     * @return Returns instruction opcode in String
+     * @param instrFunct the opcode of the instruction in (byte)
+     */
+    public static String lookupInstrFunct(byte instrFunct) {
+        String key;
+
+        if(funct.containsValue(instrFunct)) {
+            Iterator iterator = funct.keySet().iterator();
+            while(iterator.hasNext()) {
+                key = (String) iterator.next();
+                if(funct.get(key).equals(instrFunct)) {
                     return key;
                 }
             }
@@ -900,13 +923,13 @@ public class PLPAsm {
      * @param instrOpCode Instruction opcode in byte
      * @see lookupInstr(byte)
      * @see lookupInstrType(String)
-     */
+     */ /***** DEPRECATED
     public static Integer lookupInstrType(byte instrOpCode) {
         if(instrMap.containsKey(lookupInstr(instrOpCode))) {
             return (Integer) instrMap.get(lookupInstr(instrOpCode));
         }
         return null;
-    }
+    } ******/
 
     /**
      * Takes in a string and attempts to parse it as a 16 bit number. This

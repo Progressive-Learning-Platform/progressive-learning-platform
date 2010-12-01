@@ -27,10 +27,10 @@ public class PLPMIPSSim {
 
     // external modules
     public mod_memory       memory;
-    public mod_forwarding    forwarding;
+    public mod_forwarding   forwarding;
 
     // statistics
-    public int instructionCount;
+    private int instructionCount;
 
     // pipeline stages
     public id   id_stage;
@@ -127,16 +127,15 @@ public class PLPMIPSSim {
 
         memory.clock_pc(); // clock PC to get new instruction
 
-        // Engage forwarding unit
-        if(PLPCfg.cfgSimForwardingUnit)
-            forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
-
         // Evaluate stages
         if(wb_stage.hot)  ret += wb_stage.eval();
         if(mem_stage.hot) ret += mem_stage.eval();
         if(ex_stage.hot)  ret += ex_stage.eval();
         if(id_stage.hot)  ret += id_stage.eval();
 
+        // Engage forwarding unit
+        if(PLPCfg.cfgSimForwardingUnit)
+            forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
 
 
         if(ret != 0) {
@@ -155,6 +154,7 @@ public class PLPMIPSSim {
         return fetch();
     }
 
+    // IF stage
     private int fetch()  {
 
         if(memory.pc / 4 >= memory.main.length)
@@ -215,8 +215,8 @@ public class PLPMIPSSim {
 
     public int printprogram() {
         int i, j;
-        PLPMsg.M("pc\taddress\t\tinstruction");
-        PLPMsg.M("--\t-------\t\t-----------");
+        PLPMsg.M("pc\taddress\t\thex\t\tinstruction");
+        PLPMsg.M("--\t-------\t\t---\t\t-----------");
         for(i = 0; i < memory.main.length; i++) {
             for(j = 0; j < addrTable.length; j++) {
                 if(i * 4 == addrTable[j] && asm.isInstruction(j) == 0) {
@@ -225,13 +225,18 @@ public class PLPMIPSSim {
                     else
                         System.out.print("\t");
                     PLPMsg.M(String.format("%08x", addrTable[j]) + "\t" +
-                                       MIPSInstr.format(objCode[j]));
+                             String.format("%08x", objCode[j]) + "\t" +
+                             MIPSInstr.format(objCode[j]));
                     break;
                 }
             }
         }
 
         return PLPMsg.PLP_OK;
+    }
+
+    public int getinstrcount() {
+        return instructionCount;
     }
 
     @Override public String toString() {
@@ -254,27 +259,52 @@ public class PLPMIPSSim {
         }
 
         public void printMain() {
-            String tStr;
-            long tVal;
-
             PLPMsg.M("pc\taddress\t\tcontents\tASCII");
             PLPMsg.M("--\t-------\t\t--------\t-----");
             for(int i = 0; i < main.length; i++) {
                 if(main[i] != -1) {
                     if(i * 4 == pc)
                         System.out.print(">>>");
-                    tStr = "";
-                    for(int j = 3; j >= 0; j--) {
-                        tVal = main[i] >> (8 * j);
-                        tVal &= 0xFF;
-                        if(tVal >= 0x21 && tVal <= 0x7E)
-                            tStr += (char) tVal + " ";
-                        else
-                            tStr += ". ";
-                    }
-                    PLPMsg.M(String.format("\t%08x\t%08x\t" + tStr,
+                    PLPMsg.M(String.format("\t%08x\t%08x\t" +
+                                           PLPAsmFormatter.asciiWord(main[i]),
                                            i * 4, main[i]));
                 }
+            }
+        }
+
+        public void printProgram() {
+            PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
+            PLPMsg.M("--\t-------\t\t---\t\t-----------");
+            for(int i = 0; i < main.length; i++) {
+                if(main[i] != -1 && isInstr[i]) {
+                    if(i * 4 == pc)
+                        System.out.print(">>>");
+                    PLPMsg.M(String.format("\t%08x\t%08x\t" +
+                                           MIPSInstr.format(main[i]),
+                                           i * 4, main[i]));
+                }
+            }
+        }
+
+        public void printMain(int addr) {
+
+            if((addr / 4) >= main.length || addr < 0)
+                PLPMsg.E("printMain(int): Address out of range.",
+                        PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+            else if(main[addr / 4] == -1)
+                PLPMsg.E("printMain(int): Address not initialized.",
+                        PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
+            else if(addr % 4 != 0)
+                PLPMsg.E("printMain(int): Unaligned memory.",
+                         PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
+            else {
+                addr /= 4;
+
+                PLPMsg.M("\naddress\t\tcontents\tASCII");
+                PLPMsg.M("-------\t\t--------\t-----");
+                PLPMsg.M(String.format("%08x\t%08x\t" +
+                                       PLPAsmFormatter.asciiWord(main[addr]),
+                                       addr * 4, main[addr]));
             }
         }
 
@@ -286,9 +316,27 @@ public class PLPMIPSSim {
         public void clock_pc() {
             pc = i_pc;
         }
+
+        public int writeMain(int addr, long data) {
+            if((addr / 4) >= main.length || addr < 0)
+                return PLPMsg.E("printMain(int): Address out of range.",
+                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+            else if(addr % 4 != 0)
+                return PLPMsg.E("printMain(int): Unaligned memory.",
+                                PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
+            else {
+                main[addr / 4] = data;
+            }
+
+            return PLPMsg.PLP_OK;
+        }
+
+        @Override public String toString() {
+            return "PLPMIPSSim.mod_memory";
+        }
     }
 
-    // Register file stage / control decode
+    // Register file stage / instruction decode
     public class id {
         boolean hot = false;
         long instruction;
@@ -389,7 +437,7 @@ public class PLPMIPSSim {
             ctl_jumptarget = 0;
 
             if(opcode != 0) {
-                switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstr(opcode))) {
+                switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstrOpcode(opcode))) {
                     case 3:
                         ctl_branch = 1;
                         break;
@@ -402,12 +450,12 @@ public class PLPMIPSSim {
                         break;
 
                     case 6:
-                        if(PLPAsm.lookupInstr(opcode).equals("lw")) {
+                        if(opcode == 0x23) {
                             ex_reg.i_fwd_ctl_memtoreg = 1;
                             ex_reg.i_fwd_ctl_regwrite = 1;
                             ex_reg.i_fwd_ctl_memread = 1;
                             ex_reg.i_ctl_aluSrc = 1;
-                        } else if(PLPAsm.lookupInstr(opcode).equals("sw")) {
+                        } else if(opcode == 0x2B) {
                             ex_reg.i_fwd_ctl_memwrite = 1;
                             ex_reg.i_ctl_aluSrc = 1;
                         }
@@ -417,7 +465,7 @@ public class PLPMIPSSim {
                     case 7:
                         ctl_jump = 1;
                         ctl_jumptarget = MIPSInstr.jaddr(instruction) << 2;
-                        if(PLPAsm.lookupInstr(opcode).equals("jal")) {
+                        if(PLPAsm.lookupInstrOpcode(opcode).equals("jal")) {
                             ex_reg.i_fwd_ctl_regwrite = 1;
                             ex_reg.i_ctl_regDst = 1;
                             ex_reg.i_ctl_rd_addr = 31;
@@ -431,7 +479,7 @@ public class PLPMIPSSim {
                                         this);
                 }
             } else {
-                switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstr(funct))) {
+                switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstrFunct(funct))) {
                     case 0:
                     case 1:
                         ex_reg.i_fwd_ctl_regwrite = 1;
@@ -442,6 +490,11 @@ public class PLPMIPSSim {
                         ctl_jump = 1;
                         ctl_jumptarget = ex_reg.i_data_alu_in;
                         break;
+
+                    default:
+                        return PLPMsg.E("Unhandled instruction type.",
+                                        PLPMsg.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
+                                        this);
                 }
             }
 
@@ -451,7 +504,7 @@ public class PLPMIPSSim {
                                ((short) ex_reg.i_data_imm_signExtended << 2);
             
             ex_reg.hot = true;
-            printinstr();
+
             return PLPMsg.PLP_OK;
         }
 
@@ -462,7 +515,8 @@ public class PLPMIPSSim {
         }
 
         @Override public String toString() {
-            return "PLPMIPSSim.id(instr: " + instruction + ")";
+            return "PLPMIPSSim.id(addr:" + String.format("%08x", instrAddr)
+                    + " instr: " + MIPSInstr.format(instruction) + ")";
         }
     }
 
@@ -597,7 +651,7 @@ public class PLPMIPSSim {
                            ctl_aluOp);
 
             mem_reg.hot = true;
-            printinstr();
+
             return PLPMsg.PLP_OK;
         }
 
@@ -736,13 +790,13 @@ public class PLPMIPSSim {
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1)
-                wb_reg.i_data_memreaddata = memory.main[(int) fwd_data_alu_result];
+                wb_reg.i_data_memreaddata = memory.main[(int) fwd_data_alu_result / 4];
 
             if(ctl_memwrite == 1)
-                memory.main[(int) fwd_data_alu_result] = data_memwritedata;
+                memory.main[(int) fwd_data_alu_result / 4] = data_memwritedata;
 
             wb_reg.hot = true;
-            printinstr();
+
             return PLPMsg.PLP_OK;
         }
 
@@ -851,7 +905,6 @@ public class PLPMIPSSim {
                     (ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata;
 
             instr_retired = true;
-            printinstr();
 
             return PLPMsg.PLP_OK;
         }
@@ -904,6 +957,10 @@ public class PLPMIPSSim {
 
                 case 0x0f:
                     return b << 16;
+
+                case 0x23:
+                case 0x2B:
+                    return a + b;
             }
 
             return 0;
@@ -930,11 +987,20 @@ public class PLPMIPSSim {
         private int eval(id id_stage, ex ex_stage, mem mem_stage, wb wb_stage) {
             sim_flags &= PLPMsg.PLP_SIM_FWD_NO_EVENTS;
 
-            if(mem_stage.i_fwd_ctl_dest_reg_addr == ex_stage.i_ctl_rt_addr) {
-                ex_stage.data_rt = mem_stage.i_fwd_data_alu_result;
-                sim_flags |= PLPMsg.PLP_SIM_FWD_EX_EX;
+            if(mem_stage.hot) {
+                if(MIPSInstr.rd(ex_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
+                    ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
+                    sim_flags |= PLPMsg.PLP_SIM_FWD_EX_EX_RTYPE;
+                }
+                else if(MIPSInstr.rd(ex_stage.instruction) == MIPSInstr.rt(id_stage.instruction)) {
+                    ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
+                    sim_flags |= PLPMsg.PLP_SIM_FWD_EX_EX_RTYPE;
+                }
+                else if(MIPSInstr.rt(ex_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
+                    ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
+                    sim_flags |= PLPMsg.PLP_SIM_FWD_EX_EX_ITYPE;
+                }
             }
-
 
             return PLPMsg.PLP_OK;
         }
