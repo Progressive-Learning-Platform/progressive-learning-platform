@@ -60,7 +60,10 @@ public class PLPAsmFormatter {
             for(int j = 3; j >= 0; j--) {
                 tVal = objectCode[i] >> (8 * j);
                 tVal &= 0xFF;
-                System.out.print((char) tVal + " ");
+                if(tVal >= 0x21 && tVal <= 0x7E)
+                    System.out.print((char) tVal + " ");
+                else
+                    System.out.print(". ");
             }
 
             System.out.println();

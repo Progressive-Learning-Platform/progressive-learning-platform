@@ -26,5 +26,5 @@ package plptool;
 public class PLPCfg {
     static boolean cfgInstrPretty                   = true;
 
-    static boolean cfgSimForwardingUnit             = true;
+    static boolean cfgSimForwardingUnit             = false;
 }

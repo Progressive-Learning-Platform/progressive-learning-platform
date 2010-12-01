@@ -33,7 +33,7 @@ public class PLPMIPSSim {
     public int instructionCount;
 
     // pipeline stages
-    public rf   rf_stage;
+    public id   id_stage;
     public ex   ex_stage;
     public mem  mem_stage;
     public wb   wb_stage;
@@ -64,7 +64,7 @@ public class PLPMIPSSim {
         wb_stage = new wb(memory);
         mem_stage = new mem(wb_stage, memory);
         ex_stage = new ex(mem_stage, new alu());
-        rf_stage = new rf(ex_stage, memory);
+        id_stage = new id(ex_stage, memory);
 
         forwarding = new mod_forwarding();
     }
@@ -105,12 +105,22 @@ public class PLPMIPSSim {
         return PLPMsg.PLP_OK;
     }
 
+    public int softreset() {
+        memory.pc = -1;
+        memory.i_pc = 0;
+        flushpipeline();
+
+        PLPMsg.M("core: soft reset");
+
+        return PLPMsg.PLP_OK;
+    }
+
     public int step () {
         instructionCount++;
         int ret = 0;
 
         // Propagate values
-        if(rf_stage.hot)  rf_stage.clock();
+        if(id_stage.hot)  id_stage.clock();
         if(ex_stage.hot)  ex_stage.clock();
         if(mem_stage.hot) mem_stage.clock();
         if(wb_stage.hot)  wb_stage.clock();
@@ -119,13 +129,13 @@ public class PLPMIPSSim {
 
         // Engage forwarding unit
         if(PLPCfg.cfgSimForwardingUnit)
-            forwarding.eval(rf_stage, ex_stage, mem_stage, wb_stage);
+            forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
 
         // Evaluate stages
         if(wb_stage.hot)  ret += wb_stage.eval();
         if(mem_stage.hot) ret += mem_stage.eval();
         if(ex_stage.hot)  ret += ex_stage.eval();
-        if(rf_stage.hot)  ret += rf_stage.eval();
+        if(id_stage.hot)  ret += id_stage.eval();
 
 
 
@@ -135,17 +145,17 @@ public class PLPMIPSSim {
         }
 
         // update i_pc for next instruction
-        if(rf_stage.hot && rf_stage.ctl_pcsrc == 1)
-            memory.i_pc = rf_stage.ctl_branchtarget;
-        else if(rf_stage.hot && rf_stage.ctl_jump == 1)
-            memory.i_pc = rf_stage.ctl_jumptarget;
+        if(id_stage.hot && id_stage.ctl_pcsrc == 1)
+            memory.i_pc = id_stage.ctl_branchtarget;
+        else if(id_stage.hot && id_stage.ctl_jump == 1)
+            memory.i_pc = id_stage.ctl_jumptarget;
         else
             memory.i_pc += 4;
 
         return fetch();
     }
 
-    public int fetch()  {
+    private int fetch()  {
 
         if(memory.pc / 4 >= memory.main.length)
             return PLPMsg.E("step(): Instruction memory out-of-bounds: addr=" +
@@ -163,20 +173,21 @@ public class PLPMIPSSim {
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         // fetch instruction / frontend stage
-        rf_stage.i_instruction = memory.main[(int) (memory.pc / 4)];
-        rf_stage.i_instrAddr = memory.pc;
-        rf_stage.i_ctl_pcplus4 = memory.pc + 4;
+        id_stage.i_instruction = memory.main[(int) (memory.pc / 4)];
+        id_stage.i_instrAddr = memory.pc;
+        id_stage.i_ctl_pcplus4 = memory.pc + 4;
 
-        rf_stage.hot = true;
+        id_stage.hot = true;
 
         return PLPMsg.PLP_OK;
     }
 
     public int flushpipeline() {
-        rf_stage.hot = false;
+        id_stage.hot = false;
         ex_stage.hot = false;
         mem_stage.hot = false;
         wb_stage.hot = false;
+        wb_stage.instr_retired = false;
 
         return PLPMsg.PLP_OK;
     }
@@ -184,11 +195,12 @@ public class PLPMIPSSim {
     public void printfrontend() {
 
         if(memory.pc < 0)
-            PLPMsg.M("i_pc: " + String.format("%08x", memory.i_pc));
+            PLPMsg.M("if:   -" +
+                     "\ni_pc: " + String.format("%08x", memory.i_pc));
         else
-            PLPMsg.M("pc:   " + String.format("%08x", memory.pc) +
-                " instr: " + String.format("%08x", rf_stage.i_instruction) +
-                " : " + MIPSInstr.format(rf_stage.i_instruction) +
+            PLPMsg.M("if:   " + String.format("%08x", memory.pc) +
+                " instr: " + String.format("%08x", id_stage.i_instruction) +
+                " : " + MIPSInstr.format(id_stage.i_instruction) +
                 "\ni_pc: "  + String.format("%08x", memory.i_pc));
     }
 
@@ -242,13 +254,26 @@ public class PLPMIPSSim {
         }
 
         public void printMain() {
-            PLPMsg.M("pc\taddress\t\tcontents");
-            PLPMsg.M("--\t-------\t\t--------");
+            String tStr;
+            long tVal;
+
+            PLPMsg.M("pc\taddress\t\tcontents\tASCII");
+            PLPMsg.M("--\t-------\t\t--------\t-----");
             for(int i = 0; i < main.length; i++) {
                 if(main[i] != -1) {
                     if(i * 4 == pc)
                         System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x", i * 4, main[i]));
+                    tStr = "";
+                    for(int j = 3; j >= 0; j--) {
+                        tVal = main[i] >> (8 * j);
+                        tVal &= 0xFF;
+                        if(tVal >= 0x21 && tVal <= 0x7E)
+                            tStr += (char) tVal + " ";
+                        else
+                            tStr += ". ";
+                    }
+                    PLPMsg.M(String.format("\t%08x\t%08x\t" + tStr,
+                                           i * 4, main[i]));
                 }
             }
         }
@@ -264,12 +289,12 @@ public class PLPMIPSSim {
     }
 
     // Register file stage / control decode
-    public class rf {
+    public class id {
         boolean hot = false;
         long instruction;
         long instrAddr;
 
-        // RF stage pipeline registers
+        // ID stage pipeline registers
         long i_instruction;
         long i_instrAddr;
         long i_ctl_pcplus4;
@@ -289,13 +314,13 @@ public class PLPMIPSSim {
         private ex   ex_reg;
         private mod_memory memory;
 
-        public rf(ex ex_reg, mod_memory memory) {
+        public id(ex ex_reg, mod_memory memory) {
             this.ex_reg = ex_reg;
             this.memory = memory;
         }
 
         public void printvars() {
-            PLPMsg.M("RF vars");
+            PLPMsg.M("ID vars");
             PLPMsg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
             PLPMsg.M("\tinstrAddr: " + String.format("%08x", instrAddr));
             PLPMsg.M("\tctl_pcplus4: " + String.format("%08x", ctl_pcplus4));
@@ -307,17 +332,23 @@ public class PLPMIPSSim {
         }
 
         public void printnextvars() {
-            PLPMsg.M("RF next vars");
+            PLPMsg.M("ID next vars");
+            PLPMsg.M("\thot: " + hot);
             PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction));
             PLPMsg.M("\ti_instrAddr: " + String.format("%08x", i_instrAddr));
             PLPMsg.M("\ti_ctl_pcplus4: " + String.format("%08x", i_ctl_pcplus4));
         }
 
-        private int eval() {
-            PLPMsg.M("rf:   " + String.format("%08x", instrAddr) +
-                     " instr: " + String.format("%08x", instruction) +
-                     " : " + MIPSInstr.format(instruction));
+        public void printinstr() {
+            if(ex_reg.hot)
+                PLPMsg.M("id:   " + String.format("%08x", instrAddr) +
+                         " instr: " + String.format("%08x", instruction) +
+                         " : " + MIPSInstr.format(instruction));
+            else
+                PLPMsg.M("id:   -");
+        }
 
+        private int eval() {
             ex_reg.i_instruction = instruction;
             ex_reg.i_instrAddr = instrAddr;
 
@@ -420,7 +451,7 @@ public class PLPMIPSSim {
                                ((short) ex_reg.i_data_imm_signExtended << 2);
             
             ex_reg.hot = true;
-
+            printinstr();
             return PLPMsg.PLP_OK;
         }
 
@@ -431,7 +462,7 @@ public class PLPMIPSSim {
         }
 
         @Override public String toString() {
-            return "PLPMIPSSim.rf(instr: " + instruction + ")";
+            return "PLPMIPSSim.id(instr: " + instruction + ")";
         }
     }
 
@@ -535,11 +566,16 @@ public class PLPMIPSSim {
             PLPMsg.M("\ti_data_rt: " + String.format("%08x",i_data_rt));
         }
 
-        private int eval() {
-            PLPMsg.M("ex:   " + String.format("%08x", instrAddr) +
-                     " instr: " + String.format("%08x", instruction) +
-                     " : " + MIPSInstr.format(instruction));
+        public void printinstr() {
+            if(mem_reg.hot)
+                PLPMsg.M("ex:   " + String.format("%08x", instrAddr) +
+                         " instr: " + String.format("%08x", instruction) +
+                         " : " + MIPSInstr.format(instruction));
+            else
+                PLPMsg.M("ex:   -");
+        }
 
+        private int eval() {
             mem_reg.i_instruction = instruction;
             mem_reg.i_instrAddr = instrAddr;
 
@@ -561,6 +597,7 @@ public class PLPMIPSSim {
                            ctl_aluOp);
 
             mem_reg.hot = true;
+            printinstr();
             return PLPMsg.PLP_OK;
         }
 
@@ -677,11 +714,16 @@ public class PLPMIPSSim {
             PLPMsg.M("\ti_data_memwritedata: " + String.format("%08x",i_data_memwritedata));
         }
 
+        public void printinstr() {
+            if(wb_reg.hot)
+                PLPMsg.M("mem:  " + String.format("%08x", instrAddr) +
+                         " instr: " + String.format("%08x", instruction) +
+                         " : " + MIPSInstr.format(instruction));
+            else
+                PLPMsg.M("mem:  -");
+        }
+
         private int eval() {
-            PLPMsg.M("mem:  " + String.format("%08x", instrAddr) +
-                     " instr: " + String.format("%08x", instruction) +
-                     " : " + MIPSInstr.format(instruction));
-            
             wb_reg.i_instruction = instruction;
             wb_reg.i_instrAddr = instrAddr;
 
@@ -700,6 +742,7 @@ public class PLPMIPSSim {
                 memory.main[(int) fwd_data_alu_result] = data_memwritedata;
 
             wb_reg.hot = true;
+            printinstr();
             return PLPMsg.PLP_OK;
         }
 
@@ -725,6 +768,7 @@ public class PLPMIPSSim {
     // Writeback stage
     public class wb {
         boolean hot = false;
+        boolean instr_retired = false;
         long instruction;
         long instrAddr;
 
@@ -788,18 +832,26 @@ public class PLPMIPSSim {
             PLPMsg.M("\ti_data_memreaddata: " + String.format("%08x",i_data_memreaddata));
             PLPMsg.M("\ti_data_alu_result: " + String.format("%08x",i_data_alu_result));
         }
+
+        public void printinstr() {
+            if(instr_retired)
+                PLPMsg.M("wb:   " + String.format("%08x", instrAddr) +
+                         " instr: " + String.format("%08x", instruction) +
+                         " : " + MIPSInstr.format(instruction));
+            else
+                PLPMsg.M("wb:   -");
+        }
     
         private int eval() {
-            PLPMsg.M("wb:   " + String.format("%08x", instrAddr) +
-                     " instr: " + String.format("%08x", instruction) +
-                     " : " + MIPSInstr.format(instruction));
-
             long internal_2x1 = (ctl_jal == 0) ?
                                  data_alu_result : ctl_linkaddr;
 
             if(ctl_regwrite == 1 && ctl_dest_reg_addr != 0)
                 memory.regfile[(int) ctl_dest_reg_addr] =
                     (ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata;
+
+            instr_retired = true;
+            printinstr();
 
             return PLPMsg.PLP_OK;
         }
@@ -858,12 +910,24 @@ public class PLPMIPSSim {
         }
     }
 
+    public class mod_breakpoint {
+        public mod_breakpoint() {
+
+        }
+    }
+
+    public class mod_monitor {
+        public mod_monitor() {
+            
+        }
+    }
+
     public class mod_forwarding {
         public mod_forwarding() {
 
         }
 
-        private int eval(rf rf_stage, ex ex_stage, mem mem_stage, wb wb_stage) {
+        private int eval(id id_stage, ex ex_stage, mem mem_stage, wb wb_stage) {
             sim_flags &= PLPMsg.PLP_SIM_FWD_NO_EVENTS;
 
             if(mem_stage.i_fwd_ctl_dest_reg_addr == ex_stage.i_ctl_rt_addr) {
