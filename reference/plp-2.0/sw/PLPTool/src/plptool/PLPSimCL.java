@@ -147,16 +147,35 @@ public class PLPSimCL {
                     core.printprogram();
                 }
             }
+            else if(input.equals("pinstr")) {
+                if(!init_core)
+                    System.out.println("Core is not initialized.");
+                else {
+                    System.out.println("\nIn-flight instructions");
+                    System.out.println("======================");
+                    core.wb_stage.printinstr();
+                    core.mem_stage.printinstr();
+                    core.ex_stage.printinstr();
+                    core.id_stage.printinstr();
+                    core.printfrontend();
+                }
+            }
             else if(tokens[0].equals("wpc")) {
                 if(tokens.length != 2) {
                     System.out.println("Usage: wpc <address>");
                 }
                 else {
-                    core.reset();
+                    core.softreset();
                     core.memory.i_pc = PLPAsm.sanitize32bits(tokens[1]);
-                    if(core.fetch() != 0)
-                        PLPMsg.E("Simulation is stale. Please reset.",
-                                PLPMsg.PLP_SIM_STALE, null);
+                    core.printfrontend();
+                }
+            }
+            else if(tokens[0].equals("j")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: j <address>");
+                }
+                else {
+                    core.memory.i_pc = PLPAsm.sanitize32bits(tokens[1]);
                     core.printfrontend();
                 }
             }
@@ -169,7 +188,7 @@ public class PLPSimCL {
                     core.wb_stage.printvars();
                     core.mem_stage.printvars();
                     core.ex_stage.printvars();
-                    core.rf_stage.printvars();
+                    core.id_stage.printvars();
                 }
             }
             else if(input.equals("pnextvars")) {
@@ -181,7 +200,7 @@ public class PLPSimCL {
                     core.wb_stage.printnextvars();
                     core.mem_stage.printnextvars();
                     core.ex_stage.printnextvars();
-                    core.rf_stage.printnextvars();
+                    core.id_stage.printnextvars();
                 }
             }
             else if(input.toLowerCase().equals("wira sucks")) {
