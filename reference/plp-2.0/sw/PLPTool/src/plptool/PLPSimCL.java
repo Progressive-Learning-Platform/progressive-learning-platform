@@ -65,7 +65,7 @@ public class PLPSimCL {
                     core.reset();
                     init_core = true;
                     core.printfrontend();
-                    core.enableiomods();
+                    core.bus.enableiomods();
                     System.out.println("Simulation core initialized with nigh-infinite RAM.");
                 }
                 else if(tokens.length != 2) {
@@ -83,7 +83,7 @@ public class PLPSimCL {
                         core.reset();
                         init_core = true;
                         core.printfrontend();
-                        core.enableiomods();
+                        core.bus.enableiomods();
                         System.out.println("Simulation core initialized.");
                     }
                     } catch(Exception e) {
@@ -215,30 +215,30 @@ public class PLPSimCL {
                 }
             }
             else if(input.equals("listio")) {
-                for(int i = 0; i < core.bus_modules.length; i++)
-                    System.out.println(i + ": " + core.bus_modules[i].introduce() +
-                                       " enabled: " + core.bus_modules[i].enabled());
+                for(int i = 0; i < core.bus.nummods(); i++)
+                    System.out.println(i + ": " + core.bus.introduceio(i) +
+                                       " enabled: " + core.bus.enabled(i));
             }
             else if(input.equals("enableio")) {
-                core.enableiomods();
+                core.bus.enableiomods();
             }
             else if(tokens[0].equals("enableio")) {
                 if(tokens.length != 2) {
                     System.out.println("Usage: enableio <index>");
                 }
                 else {
-                    core.bus_modules[(int) PLPToolbox.parseNum(tokens[1])].enable();
+                    core.bus.enableio((int) PLPToolbox.parseNum(tokens[1]));
                 }
             }
             else if(input.equals("disableio")) {
-                core.disableiomods();
+                core.bus.disableiomods();
             }
             else if(tokens[0].equals("disableio")) {
                 if(tokens.length != 2) {
                     System.out.println("Usage: disableio <index>");
                 }
                 else {
-                    core.bus_modules[(int) PLPToolbox.parseNum(tokens[1])].disable();
+                    core.bus.disableio((int) PLPToolbox.parseNum(tokens[1]));
                 }
             }
             else if(tokens[0].equals("j")) {
