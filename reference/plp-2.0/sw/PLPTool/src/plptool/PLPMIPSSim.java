@@ -28,22 +28,12 @@ package plptool;
  *
  * @author wira
  */
-public class PLPMIPSSim {
+public class PLPMIPSSim extends PLPSimCore {
 
     /**
      * The core's program counter.
      */
     public PLPSimRegModule                pc;
-
-    /**
-     * CPU front-side bus.
-     */
-    public PLPSimBus                      bus;
-
-    /**
-     * Main memory.
-     */
-    public PLPSimMemModule                memory;
 
     /**
      * Register file.
@@ -54,11 +44,6 @@ public class PLPMIPSSim {
      * Forwarding unit.
      */
     public mod_forwarding                 forwarding;
-
-    /**
-     * Numbers of instructions issued.
-     */
-    private int instructionCount;
 
     /**
      * ID stage module.
@@ -81,13 +66,6 @@ public class PLPMIPSSim {
     public wb   wb_stage;
 
     /**
-     * Simulation flags. This flag is used by various modules to indicate
-     * whether certain events have occured. Simulation flags are cleared
-     * in the beginning of each cycle.
-     */
-    private Long sim_flags;
-
-    /**
      * Object code from PLPAsm
      *
      * @see plptool.PLPAsm
@@ -107,11 +85,6 @@ public class PLPMIPSSim {
      * @see plptool.PLPAsm
      */
     PLPAsm asm;
-
-    /**
-     * Example I/O module
-     */
-    io_leds example_io;
 
     /**
      * Simulator backend constructor.
@@ -136,9 +109,6 @@ public class PLPMIPSSim {
 
         // core mods
         forwarding = new mod_forwarding();
-        
-        // modules attached to the front side bus
-        example_io = new io_leds((long) 0x8000400 << 4);
         bus = new PLPSimBus(this);
 
         // Instantiate stages
@@ -234,9 +204,6 @@ public class PLPMIPSSim {
         if(PLPCfg.cfgSimForwardingUnit)
             forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
 
-        // Evaluate modules attached to FSB
-        ret += bus.eval();
-
         if(ret != 0) {
             return PLPMsg.E("Evaluation failed.",
                             PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
@@ -315,24 +282,6 @@ public class PLPMIPSSim {
                 "\ni_pc: "  + String.format("%08x", pc.input()));
     }
 
-    /**
-     * Returns simulation flags.
-     *
-     * @return Returns the simulation flags.
-     */
-    public long getFlags() {
-        return sim_flags;
-    }
-
-    /**
-     * Get the number of instructions that have been issued on this core.
-     *
-     * @return Returns instruction count in int.
-     */
-    public int getinstrcount() {
-        return instructionCount;
-    }
-
     @Override public String toString() {
         return "PLPMIPSSim(asm: " + asm.toString() + ")";
     }
@@ -340,25 +289,25 @@ public class PLPMIPSSim {
     // Register file stage / instruction decode
     public class id {
         boolean hot = false;
-        long instruction;
-        long instrAddr;
+        public long instruction;
+        public long instrAddr;
 
         // ID stage pipeline registers
-        long i_instruction;
-        long i_instrAddr;
-        long i_ctl_pcplus4;
+        public long i_instruction;
+        public long i_instrAddr;
+        public long i_ctl_pcplus4;
 
-        long ctl_pcplus4;
+        public long ctl_pcplus4;
 
-        long ctl_pcsrc;
-        long ctl_branch;
-        long ctl_jump;
+        public long ctl_pcsrc;
+        public long ctl_branch;
+        public long ctl_jump;
 
-        long ctl_branchtarget;
-        long ctl_jumptarget;
+        public long ctl_branchtarget;
+        public long ctl_jumptarget;
 
-        long i_ctl_branch;
-        long i_ctl_jump;
+        public long i_ctl_branch;
+        public long i_ctl_jump;
         
         private ex   ex_reg;
         private PLPSimMemModule regfile;
@@ -531,50 +480,50 @@ public class PLPMIPSSim {
     // Execute stage
     public class ex {
         boolean hot = false;
-        long instruction;
-        long instrAddr;
+        public long instruction;
+        public long instrAddr;
 
         // EX stage pipeline registers
-        long fwd_ctl_memtoreg;
-        long fwd_ctl_regwrite;
+        public long fwd_ctl_memtoreg;
+        public long fwd_ctl_regwrite;
 
-        long fwd_ctl_memwrite;
-        long fwd_ctl_memread;
-        long fwd_ctl_jal;
-        long fwd_ctl_linkaddr;
+        public long fwd_ctl_memwrite;
+        public long fwd_ctl_memread;
+        public long fwd_ctl_jal;
+        public long fwd_ctl_linkaddr;
 
-        long ctl_aluSrc;
-        long ctl_aluOp;
-        long ctl_regDst;
+        public long ctl_aluSrc;
+        public long ctl_aluOp;
+        public long ctl_regDst;
 
-        long data_alu_in;
-        long data_rt;
+        public long data_alu_in;
+        public long data_rt;
 
-        long data_imm_signExtended;
-        long ctl_rt_addr;
-        long ctl_rd_addr;
+        public long data_imm_signExtended;
+        public long ctl_rt_addr;
+        public long ctl_rd_addr;
 
-        long i_instruction;
-        long i_instrAddr;
+        public long i_instruction;
+        public long i_instrAddr;
 
-        long i_fwd_ctl_memtoreg;
-        long i_fwd_ctl_regwrite;
+        public long i_fwd_ctl_memtoreg;
+        public long i_fwd_ctl_regwrite;
 
-        long i_fwd_ctl_memwrite;
-        long i_fwd_ctl_memread;
-        long i_fwd_ctl_jal;
-        long i_fwd_ctl_linkaddr;
+        public long i_fwd_ctl_memwrite;
+        public long i_fwd_ctl_memread;
+        public long i_fwd_ctl_jal;
+        public long i_fwd_ctl_linkaddr;
 
-        long i_ctl_aluSrc;
-        long i_ctl_aluOp;
-        long i_ctl_regDst;
+        public long i_ctl_aluSrc;
+        public long i_ctl_aluOp;
+        public long i_ctl_regDst;
 
-        long i_data_alu_in;
-        long i_data_rt;
+        public long i_data_alu_in;
+        public long i_data_rt;
 
-        long i_data_imm_signExtended;
-        long i_ctl_rt_addr;
-        long i_ctl_rd_addr;
+        public long i_data_imm_signExtended;
+        public long i_ctl_rt_addr;
+        public long i_ctl_rd_addr;
 
         private mem  mem_reg;
         private alu  exAlu;
@@ -699,40 +648,40 @@ public class PLPMIPSSim {
     // Memory stage
     public class mem {
         boolean hot = false;
-        long instruction;
-        long instrAddr;
+        public long instruction;
+        public long instrAddr;
 
         // MEM stage pipeline registers
-        long fwd_ctl_memtoreg;
-        long fwd_ctl_regwrite;
-        long fwd_ctl_dest_reg_addr;
-        long fwd_ctl_linkaddr;
-        long fwd_ctl_jal;
-        long fwd_data_alu_result;
+        public long fwd_ctl_memtoreg;
+        public long fwd_ctl_regwrite;
+        public long fwd_ctl_dest_reg_addr;
+        public long fwd_ctl_linkaddr;
+        public long fwd_ctl_jal;
+        public long fwd_data_alu_result;
 
-        long ctl_memwrite;
-        long ctl_memread;
+        public long ctl_memwrite;
+        public long ctl_memread;
 
-        long data_memwritedata;
+        public long data_memwritedata;
 
-        long ctl_regwrite;
+        public long ctl_regwrite;
 
-        long i_instruction;
-        long i_instrAddr;
+        public long i_instruction;
+        public long i_instrAddr;
 
-        long i_fwd_ctl_memtoreg;
-        long i_fwd_ctl_regwrite;
-        long i_fwd_ctl_dest_reg_addr;
-        long i_fwd_ctl_linkaddr;
-        long i_fwd_ctl_jal;
-        long i_fwd_data_alu_result;
+        public long i_fwd_ctl_memtoreg;
+        public long i_fwd_ctl_regwrite;
+        public long i_fwd_ctl_dest_reg_addr;
+        public long i_fwd_ctl_linkaddr;
+        public long i_fwd_ctl_jal;
+        public long i_fwd_data_alu_result;
 
-        long i_ctl_memwrite;
-        long i_ctl_memread;
+        public long i_ctl_memwrite;
+        public long i_ctl_memread;
 
-        long i_data_memwritedata;
+        public long i_data_memwritedata;
 
-        long i_ctl_regwrite;
+        public long i_ctl_regwrite;
 
         private wb   wb_reg;
         private PLPSimBus bus;
@@ -845,30 +794,30 @@ public class PLPMIPSSim {
     public class wb {
         boolean hot = false;
         boolean instr_retired = false;
-        long instruction;
-        long instrAddr;
+        public long instruction;
+        public long instrAddr;
 
         // WB stage pipeline registers
-        long ctl_memtoreg;
-        long ctl_regwrite;
-        long ctl_dest_reg_addr;
-        long ctl_linkaddr;
-        long ctl_jal;
+        public long ctl_memtoreg;
+        public long ctl_regwrite;
+        public long ctl_dest_reg_addr;
+        public long ctl_linkaddr;
+        public long ctl_jal;
 
-        long data_memreaddata;
-        long data_alu_result;
+        public long data_memreaddata;
+        public long data_alu_result;
 
-        long i_instruction;
-        long i_instrAddr;
+        public long i_instruction;
+        public long i_instrAddr;
         
-        long i_ctl_memtoreg;
-        long i_ctl_regwrite;
-        long i_ctl_dest_reg_addr;
-        long i_ctl_linkaddr;
-        long i_ctl_jal;
+        public long i_ctl_memtoreg;
+        public long i_ctl_regwrite;
+        public long i_ctl_dest_reg_addr;
+        public long i_ctl_linkaddr;
+        public long i_ctl_jal;
 
-        long i_data_memreaddata;
-        long i_data_alu_result;
+        public long i_data_memreaddata;
+        public long i_data_alu_result;
 
         private PLPSimMemModule regfile;
 

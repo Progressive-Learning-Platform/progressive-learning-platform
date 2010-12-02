@@ -28,11 +28,8 @@ public class PLPSimMods {
 
 class io_example_external extends PLPSimBusModule {
     public io_example_external(long addr) {
-        super();
+        super(addr, addr, true);
         // This I/O only has 1 register
-        super.startAddr = addr;
-        super.endAddr = addr;
-        super.wordAligned = true;
     }
 
     // When this module is evaluated, do this:
@@ -46,6 +43,8 @@ class io_example_external extends PLPSimBusModule {
         // Combinational logic
         if(value == 0xBEEF)
             PLPMsg.M(this + ": Hey, it's beef!");
+        else
+            PLPMsg.M(this + "No beef :(");
 
         return PLPMsg.PLP_OK;
     }
@@ -59,17 +58,14 @@ class io_example_external extends PLPSimBusModule {
 
     // Make sure to do this for error tracking
     @Override public String toString() {
-        return "PLPMIPSSim.io_example";
+        return "io_example";
     }
 }
 
 class io_leds extends PLPSimBusModule {
     public io_leds(long addr) {
-        super();
+        super(addr, addr, true);
         // This I/O only has 1 register
-        super.startAddr = addr;
-        super.endAddr = addr;
-        super.wordAligned = true;
     }
 
     // When this module is evaluated, do this:
@@ -100,12 +96,40 @@ class io_leds extends PLPSimBusModule {
     }
 
     public String introduce() {
-        return "PLPTool 2.0 io_leds: 8 LED arrays attached to " +
+        return "PLPTool 2.0 io_leds: 8-LED array attached to " +
                String.format("0x%08x", startAddr);
     }
 
     // Make sure to do this for error tracking
     @Override public String toString() {
-        return "PLPMIPSSim.io_leds";
+        return "io_leds";
+    }
+}
+
+class cache_hier extends PLPSimBusModule {
+    PLPSimMemModule L1_I;
+    PLPSimMemModule L1_D;
+    PLPSimMemModule L2;
+
+    public cache_hier() {
+        super(0, (long) Math.pow(2,62), true);
+    }
+
+    // When this module is evaluated, do this:
+    public int eval() {
+        return PLPMsg.PLP_OK;
+    }
+
+    public int gui_eval(Object x) {
+        return PLPMsg.PLP_OK;
+    }
+
+    public String introduce() {
+        return "PLPTool 2.0 Cache Hierarchy Module";
+    }
+
+    // Make sure to do this for error tracking
+    @Override public String toString() {
+        return "cache_hier";
     }
 }

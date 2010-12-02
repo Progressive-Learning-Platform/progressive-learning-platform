@@ -19,11 +19,12 @@
 package plptool;
 
 /**
+ * PLP Register module.
  *
  * @author wira
  */
 public class PLPSimRegModule {
-private long data;
+    private long data;
     private long i_data;
 
     public PLPSimRegModule(long i_data) {

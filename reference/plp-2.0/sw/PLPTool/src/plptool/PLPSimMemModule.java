@@ -21,15 +21,13 @@ package plptool;
 import java.util.Iterator;
 
 /**
+ * PLP memory module.
  *
  * @author wira
  */
 public class PLPSimMemModule extends PLPSimBusModule {
     public PLPSimMemModule(long size, boolean wordAligned) {
-        super();
-        super.startAddr = 0;
-        super.endAddr = size;
-        super.wordAligned = wordAligned;
+        super(0, size, wordAligned);
     }
 
     // memory module doesn't need eval, just return OK.
