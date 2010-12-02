@@ -24,8 +24,8 @@ package plptool;
  * @author wira
  */
 public class PLPCfg {
-    static boolean cfgInstrPretty                   = true;
+    public static boolean cfgInstrPretty                   = true;
 
-    static boolean cfgSimForwardingUnit             = true;
-    static boolean cfgSimDynamicMemoryAllocation    = true;
+    public static boolean cfgSimForwardingUnit             = true;
+    public static boolean cfgSimDynamicMemoryAllocation    = true;
 }

@@ -65,6 +65,7 @@ public class PLPSimCL {
                     core.reset();
                     init_core = true;
                     core.printfrontend();
+                    core.enableiomods();
                     System.out.println("Simulation core initialized with nigh-infinite RAM.");
                 }
                 else if(tokens.length != 2) {
@@ -82,6 +83,7 @@ public class PLPSimCL {
                         core.reset();
                         init_core = true;
                         core.printfrontend();
+                        core.enableiomods();
                         System.out.println("Simulation core initialized.");
                     }
                     } catch(Exception e) {
@@ -90,59 +92,57 @@ public class PLPSimCL {
                     }
                 }
             }
-            else if(input.equals("s")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    if(core.step() != PLPMsg.PLP_OK)
-                        PLPMsg.E("Simulation is stale. Please reset.",
-                                PLPMsg.PLP_SIM_STALE, null);
-                    else if(!silent) {
-                        System.out.println();
-                        core.wb_stage.printinstr();
-                        core.mem_stage.printinstr();
-                        core.ex_stage.printinstr();
-                        core.id_stage.printinstr();
-                        core.printfrontend();
-                        System.out.println("-------------------------------------");
-                    }
+            else if(input.equals("help") && !init_core) {
+                System.out.println("Run i to initialize simulation core with default RAM size.\n" +
+                                   "Run i <ram size in bytes> to specify RAM size.\n" +
+                                   "Run q to quit.\n");
+            }
+            else {
+            if(init_core) {
+            if(input.equals("s")) {
+                if(core.step() != PLPMsg.PLP_OK)
+                     PLPMsg.E("Simulation is stale. Please reset.",
+                              PLPMsg.PLP_SIM_STALE, null);
+                else if(!silent) {
+                    System.out.println();
+                    core.wb_stage.printinstr();
+                    core.mem_stage.printinstr();
+                    core.ex_stage.printinstr();
+                    core.id_stage.printinstr();
+                    core.printfrontend();
+                    System.out.println("-------------------------------------");
                 }
             }
+            
             else if(tokens[0].equals("s")) {
                 if(tokens.length != 2) {
                     System.out.println("Usage: s <number of instructions>");
                 }
-            else
-                for(int i = 0; i < Integer.parseInt(tokens[1]); i++) {
-                    if(core.step() != PLPMsg.PLP_OK)
-                       PLPMsg.E("Simulation is stale. Please reset.",
-                                PLPMsg.PLP_SIM_STALE, null);
-                    else if(!silent) {
-                        core.wb_stage.printinstr();
-                        core.mem_stage.printinstr();
-                        core.ex_stage.printinstr();
-                        core.id_stage.printinstr();
-                        core.printfrontend();
-                        System.out.println("-------------------------------------");
+                else
+                    for(int i = 0; i < Integer.parseInt(tokens[1]); i++) {
+                        if(core.step() != PLPMsg.PLP_OK)
+                        PLPMsg.E("Simulation is stale. Please reset.",
+                                 PLPMsg.PLP_SIM_STALE, null);
+                        else if(!silent) {
+                            System.out.println();
+                            core.wb_stage.printinstr();
+                            core.mem_stage.printinstr();
+                            core.ex_stage.printinstr();
+                            core.id_stage.printinstr();
+                            core.printfrontend();
+                            System.out.println("-------------------------------------");
+                        }
                     }
-                }
             }
             else if(input.equals("r")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    core.reset();
-                    core.printfrontend();
-                }
+                core.reset();
+                core.printfrontend();
             }
             else if(input.equals("pram")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    System.out.println("\nMain memory listing");
-                    System.out.println("===================");
-                    core.memory.printAll(core.pc.eval());
-                }
+                
+                System.out.println("\nMain memory listing");
+                System.out.println("===================");
+                core.memory.printAll(core.pc.eval());
             }
             else if(tokens[0].equals("pram")) {
                 if(tokens.length != 2) {
@@ -153,58 +153,40 @@ public class PLPSimCL {
                 }
             }
             else if(input.equals("preg")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    long data;
-                    System.out.println("\nRegisters listing");
-                    System.out.println("=================");
-                    for(int j = 0; j < 32; j++) {
-                        data = core.regfile.read(j);
-                        System.out.println(j + "\t" +
-                                           String.format("%08x", data) + "\t" +
-                                           PLPAsmFormatter.asciiWord(data));
-                    }
+                long data;
+                System.out.println("\nRegisters listing");
+                System.out.println("=================");
+                for(int j = 0; j < 32; j++) {
+                    data = core.regfile.read(j);
+                    System.out.println(j + "\t" +
+                                       String.format("%08x", data) + "\t" +
+                                       PLPAsmFormatter.asciiWord(data));
                 }
             }
             else if(input.equals("pfd")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    System.out.println("\nFrontend / fetch stage state");
-                    System.out.println("============================");
-                    core.printfrontend();
-                }
+                System.out.println("\nFrontend / fetch stage state");
+                System.out.println("============================");
+                core.printfrontend();
             }
             else if(input.equals("pprg")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    System.out.println("\nProgram Listing");
-                    System.out.println("===============");
-                    core.memory.printProgram(core.pc.eval());
-                }
+                System.out.println("\nProgram Listing");
+                System.out.println("===============");
+                core.memory.printProgram(core.pc.eval());
             }
             else if(input.equals("pasm")) {
                 PLPAsmFormatter.prettyPrint(asm);
             }
             else if(input.equals("pinstr")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    System.out.println("\nIn-flight instructions");
-                    System.out.println("======================");
-                    core.wb_stage.printinstr();
-                    core.mem_stage.printinstr();
-                    core.ex_stage.printinstr();
-                    core.id_stage.printinstr();
-                    core.printfrontend();
-                }
+                System.out.println("\nIn-flight instructions");
+                System.out.println("======================");
+                core.wb_stage.printinstr();
+                core.mem_stage.printinstr();
+                core.ex_stage.printinstr();
+                core.id_stage.printinstr();
+                core.printfrontend();
             }
             else if(tokens[0].equals("wpc")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else if(tokens.length != 2) {
+                if(tokens.length != 2) {
                     System.out.println("Usage: wpc <address>");
                 }
                 else {
@@ -214,9 +196,7 @@ public class PLPSimCL {
                 }
             }
             else if(tokens[0].equals("w")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else if(tokens.length != 3) {
+                if(tokens.length != 3) {
                     System.out.println("Usage: w <address> <data>");
                 }
                 else {
@@ -225,10 +205,44 @@ public class PLPSimCL {
                     core.memory.print(PLPAsm.sanitize32bits(tokens[1]));
                 }
             }
+            else if(tokens[0].equals("wbus")) {
+                if(tokens.length != 3) {
+                    System.out.println("Usage: w <address> <data>");
+                }
+                else {
+                    core.bus.write(PLPAsm.sanitize32bits(tokens[1]),
+                                      PLPAsm.sanitize32bits(tokens[2]), false);
+                }
+            }
+            else if(input.equals("listio")) {
+                for(int i = 0; i < core.bus_modules.length; i++)
+                    System.out.println(i + ": " + core.bus_modules[i].introduce() +
+                                       " enabled: " + core.bus_modules[i].enabled());
+            }
+            else if(input.equals("enableio")) {
+                core.enableiomods();
+            }
+            else if(tokens[0].equals("enableio")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: enableio <index>");
+                }
+                else {
+                    core.bus_modules[(int) PLPToolbox.parseNum(tokens[1])].enable();
+                }
+            }
+            else if(input.equals("disableio")) {
+                core.disableiomods();
+            }
+            else if(tokens[0].equals("disableio")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: disableio <index>");
+                }
+                else {
+                    core.bus_modules[(int) PLPToolbox.parseNum(tokens[1])].disable();
+                }
+            }
             else if(tokens[0].equals("j")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else if(tokens.length != 2) {
+                if(tokens.length != 2) {
                     System.out.println("Usage: j <address>");
                 }
                 else {
@@ -237,9 +251,7 @@ public class PLPSimCL {
                 }
             }
             else if(tokens[0].equals("asm")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else if(tokens.length < 3) {
+                if(tokens.length < 3) {
                     System.out.println("Usage: asm <address> <in-line assembly>");
                 }
                 else {
@@ -264,28 +276,21 @@ public class PLPSimCL {
                 }
             }
             else if(input.equals("pvars")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    System.out.println("\nOutput side values of pipeline stages");
-                    System.out.println("=====================================");
-                    core.wb_stage.printvars();
-                    core.mem_stage.printvars();
-                    core.ex_stage.printvars();
-                    core.id_stage.printvars();
-                }
+                System.out.println("\nOutput side values of pipeline stages");
+                System.out.println("=====================================");
+                core.wb_stage.printvars();
+                core.mem_stage.printvars();
+                core.ex_stage.printvars();
+                core.id_stage.printvars();
+
             }
             else if(input.equals("pnextvars")) {
-                if(!init_core)
-                    System.out.println("Core is not initialized.");
-                else {
-                    System.out.println("\nInput side values of pipeline registers");
-                    System.out.println("=======================================");
-                    core.wb_stage.printnextvars();
-                    core.mem_stage.printnextvars();
-                    core.ex_stage.printnextvars();
-                    core.id_stage.printnextvars();
-                }
+                System.out.println("\nInput side values of pipeline registers");
+                System.out.println("=======================================");
+                core.wb_stage.printnextvars();
+                core.mem_stage.printnextvars();
+                core.ex_stage.printnextvars();
+                core.id_stage.printnextvars();
             }
             else if(input.equals("silent")) {
                 if(silent) {
@@ -297,34 +302,23 @@ public class PLPSimCL {
                 }
             }
             else if(input.toLowerCase().equals("wira sucks")) {
-                System.out.println("No, he doesn't.\n");
+                System.out.println("No, he doesn't.");
             }
             else {
-                System.out.println("Unknown command. Command list:");
-                System.out.println("\n i <RAM size in bytes>\n\tInit core with RAM size in bytes. Sets RAM size to 2^62 if no argument is given.");
-                System.out.println("\n s <steps>\n\tAdvance <steps> number of cycles. Steps 1 cycle if no argument is given.");
-                System.out.println("\n r\n\tReset simulated CPU (clears memory elements and reloads program).");
-                System.out.println("\n pinstr\n\tPrint instructions currently in-flight.");
-                System.out.println("\n pvars\n\tPrint pipeline registers' values.");
-                System.out.println("\n pnextvars\n\tPrint pipeline registers' input values.");
-                System.out.println("\n pram <address>\n\tPrint value of RAM at <address>. Print all if no argument is given.");
-                System.out.println("\n preg\n\tPrint contents of register file.");
-                System.out.println("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
-                System.out.println("\n pasm\n\tPrint program object code.");
-                System.out.println("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
-                System.out.println("\n wpc <address>\n\tOverwrite program counter with <address>.");
-                System.out.println("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
-                System.out.println("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
-                System.out.println("\n silent\n\tToggle silent mode (default off).");
-                
+                simCLHelp();
             }
 
             System.out.println();
 
+            
+            } else {
+                System.out.println("Simulation core is not initialiazed. Try running the command 'i'.\n");
+            }
+        }
             if(!init_core)
                 System.out.print("sim > ");
             else
-                System.out.print(String.format("%08x", core.sim_flags) +
+                System.out.print(String.format("%08x", core.getFlags()) +
                                  " " + core.getinstrcount() +
                                  " sim > ");
         }
@@ -333,5 +327,28 @@ public class PLPSimCL {
         } catch(Exception e) {
             System.err.println(e);
         }
+    }
+
+    public static void simCLHelp() {
+        System.out.println("Unknown command. Command list:");
+        System.out.println("\n i <RAM size in bytes> ..or.. i\n\tInit core with RAM size in bytes. Set RAM size to 2^62 if no argument is given.");
+        System.out.println("\n s <steps> ..or.. s\n\tAdvance <steps> number of cycles. Step 1 cycle if no argument is given.");
+        System.out.println("\n r\n\tReset simulated CPU (clears memory elements and reloads program).");
+        System.out.println("\n pinstr\n\tPrint instructions currently in-flight.");
+        System.out.println("\n pvars\n\tPrint pipeline registers' values.");
+        System.out.println("\n pnextvars\n\tPrint pipeline registers' input values.");
+        System.out.println("\n pram <address> ..or.. pram\n\tPrint value of RAM at <address>. Print all if no argument is given.");
+        System.out.println("\n preg\n\tPrint contents of register file.");
+        System.out.println("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
+        System.out.println("\n pasm\n\tPrint program object code.");
+        System.out.println("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
+        System.out.println("\n wpc <address>\n\tOverwrite program counter with <address>.");
+        System.out.println("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
+        System.out.println("\n wbus <address> <value>\n\tWrite <value> to FSB with <address>.");
+        System.out.println("\n enableio <index> ..or.. enableio\n\tEnable evaluation of I/O device <index>. Enable all if no argument is given.");
+        System.out.println("\n disableio <index> ..or.. disableio\n\tDisable evaluation of I/O device <index>. Disable all if no argument is given.");
+        System.out.println("\n listio\n\tList I/O modules loaded.");
+        System.out.println("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
+        System.out.println("\n silent\n\tToggle silent mode (default off).");
     }
 }
