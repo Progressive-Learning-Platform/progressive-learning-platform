@@ -18,31 +18,44 @@
 
 package plptool;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author wira
  */
 public class PLPSimBus {
-    private PLPSimBusModule[] bus_modules;
+    private ArrayList<PLPSimBusModule> bus_modules;
 
     public PLPSimBus(PLPMIPSSim sim) {
         // modules attached to the front side bus
-        bus_modules = new PLPSimBusModule[3];
+        bus_modules = new ArrayList<PLPSimBusModule>();
 
-        bus_modules[0] = sim.memory;
-        bus_modules[1] = sim.example_io;
-        bus_modules[2] = new io_example_external((long) 0x8000800 << 4);
+        bus_modules.add(sim.memory);
+    }
 
-        PLPMsg.M("Built-in modules:");
-        for(int i = 0; i < bus_modules.length; i++)
-            PLPMsg.M(" " + i + ": " + bus_modules[i].introduce());
+    public int add(PLPSimBusModule module) {
+        boolean ret = bus_modules.add(module);
+
+        if(ret)
+            return PLPMsg.PLP_OK;
+        else
+            return PLPMsg.E("Failed to attach module " + module,
+                            PLPMsg.PLP_SIM_BUS_ERROR, this);
+    }
+
+    public int remove(int index) {
+        bus_modules.remove(index);
+
+        return PLPMsg.PLP_OK;
     }
 
     public long read(long addr) {
-        for(int i = bus_modules.length - 1; i >= 0; i--) {
-            if(addr >= bus_modules[i].startAddr() &&
-               addr <= bus_modules[i].endAddr())
-                return bus_modules[i].read(addr);
+        Object[] modules = bus_modules.toArray();
+        for(int i = modules.length - 1; i >= 0; i--) {
+            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
+               addr <= ((PLPSimBusModule)modules[i]).endAddr())
+                return ((PLPSimBusModule)modules[i]).read(addr);
         }
 
         return -1;
@@ -50,11 +63,11 @@ public class PLPSimBus {
 
     public int write(long addr, long data, boolean isInstr) {
         boolean noMapping = true;
-
-        for(int i = bus_modules.length - 1; i >= 0; i--) {
-            if(addr >= bus_modules[i].startAddr() &&
-               addr <= bus_modules[i].endAddr()) {
-                bus_modules[i].write(addr, data, isInstr);
+        Object[] modules = bus_modules.toArray();
+        for(int i = modules.length - 1; i >= 0; i--) {
+            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
+               addr <= ((PLPSimBusModule)modules[i]).endAddr()) {
+                ((PLPSimBusModule)modules[i]).write(addr, data, isInstr);
                 noMapping = false;
             }
         }
@@ -67,11 +80,22 @@ public class PLPSimBus {
 
     public int eval() {
         int ret = PLPMsg.PLP_OK;
-
-        for(int i = 0; i < bus_modules.length; i++)
-            ret += bus_modules[i].eval();
+        Object[] modules = bus_modules.toArray();
+        for(int i = 0; i < modules.length; i++)
+            ret += ((PLPSimBusModule)modules[i]).eval();
 
         return ret;
+    }
+
+    public int eval(int index) {
+        Object[] modules = bus_modules.toArray();
+        try {
+        return ((PLPSimBusModule)modules[index]).eval();
+
+        } catch(Exception e) {
+            return PLPMsg.E("eval(" + index + "): error: " + e,
+                            PLPMsg.PLP_SIM_BUS_ERROR, this);
+        }
     }
 
     /**
@@ -80,8 +104,10 @@ public class PLPSimBus {
      * @return Returns 0 on completion.
      */
     public int enableiomods() {
-        for(int i = 0; i < bus_modules.length; i++)
-            bus_modules[i].enable();
+        Object[] modules =bus_modules.toArray();
+
+        for(int i = 0; i < modules.length; i++)
+            ((PLPSimBusModule)modules[i]).enable();
 
         return PLPMsg.PLP_OK;
     }
@@ -92,59 +118,75 @@ public class PLPSimBus {
      * @return Returns 0 on completion.
      */
     public int disableiomods() {
-        for(int i = 0; i < bus_modules.length; i++)
-            bus_modules[i].disable();
+        Object[] modules = bus_modules.toArray();
+
+        for(int i = 0; i < modules.length; i++)
+            ((PLPSimBusModule)modules[i]).disable();
 
         return PLPMsg.PLP_OK;
     }
 
     public boolean enabled(int index) {
+        Object[] modules = bus_modules.toArray();
+
         try {
-        return bus_modules[index].enabled();
+        return ((PLPSimBusModule)modules[index]).enabled();
 
         } catch(Exception e) {
-            PLPMsg.E("enabled(): error.",
-                      PLPMsg.PLP_SIM_BUS_ERROR, this);
+            PLPMsg.E("enabled(" + index + "): error: " + e,
+                     PLPMsg.PLP_SIM_BUS_ERROR, this);
 
             return false;
         }
     }
 
     public int enableio(int index) {
+        Object[] modules = bus_modules.toArray();
+
         try {
-        bus_modules[index].enable();
+        ((PLPSimBusModule)modules[index]).enable();
         return PLPMsg.PLP_OK;
 
         } catch(Exception e) {
-            return PLPMsg.E("enableio(): error.",
+            return PLPMsg.E("enableio(" + index + "): error: " + e,
                             PLPMsg.PLP_SIM_BUS_ERROR, this);
         }
     }
 
     public int disableio(int index) {
+        Object[] modules = bus_modules.toArray();
+
         try {
-        bus_modules[index].disable();
+        ((PLPSimBusModule)modules[index]).disable();
         return PLPMsg.PLP_OK;
 
         } catch(Exception e) {
-            return PLPMsg.E("disableio(): error.",
+            return PLPMsg.E("disableio(" + index + "): error: " + e,
                             PLPMsg.PLP_SIM_BUS_ERROR, this);
         }
     }
 
     public String introduceio(int index) {
+        Object[] modules = bus_modules.toArray();
         try {
 
-        return bus_modules[index].introduce();
+        return ((PLPSimBusModule)modules[index]).introduce();
 
         } catch(Exception e) {
-            PLPMsg.E("introduceio(): error.",
+            PLPMsg.E("introduceio(" + index + "): error: " + e,
                      PLPMsg.PLP_SIM_BUS_ERROR, this);
+
             return null;
         }
     }
 
     public int nummods() {
-        return bus_modules.length;
+        Object[] modules = bus_modules.toArray();
+
+        return modules.length;
+    }
+
+    @Override public String toString() {
+        return "PLPSimBus";
     }
 }

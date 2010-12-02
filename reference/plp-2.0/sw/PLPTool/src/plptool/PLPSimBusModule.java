@@ -34,9 +34,12 @@ public abstract class PLPSimBusModule {
     protected long endAddr;
     protected boolean enabled;
 
-    public PLPSimBusModule() {
+    public PLPSimBusModule(long startAddr, long endAddr, boolean wordAligned) {
         values = new TreeMap<Long, Long>();
         isInstr = new TreeMap<Long, Boolean>();
+        this.startAddr = startAddr;
+        this.endAddr = endAddr;
+        this.wordAligned = wordAligned;
         enabled = false;
     }
 

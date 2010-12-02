@@ -64,6 +64,7 @@ public class PLPSimCL {
                     core = new PLPMIPSSim(asm, -1);
                     core.reset();
                     init_core = true;
+                    addMods(core);
                     core.printfrontend();
                     core.bus.enableiomods();
                     System.out.println("Simulation core initialized with nigh-infinite RAM.");
@@ -82,6 +83,7 @@ public class PLPSimCL {
                         core = new PLPMIPSSim(asm, ram_size);
                         core.reset();
                         init_core = true;
+                        addMods(core);
                         core.printfrontend();
                         core.bus.enableiomods();
                         System.out.println("Simulation core initialized.");
@@ -207,7 +209,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("wbus")) {
                 if(tokens.length != 3) {
-                    System.out.println("Usage: w <address> <data>");
+                    System.out.println("Usage: wbus <address> <data>");
                 }
                 else {
                     core.bus.write(PLPAsm.sanitize32bits(tokens[1]),
@@ -228,6 +230,17 @@ public class PLPSimCL {
                 }
                 else {
                     core.bus.enableio((int) PLPToolbox.parseNum(tokens[1]));
+                }
+            }
+            else if(input.equals("evalio")) {
+                core.bus.eval();
+            }
+            else if(tokens[0].equals("evalio")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: enableio <index>");
+                }
+                else {
+                    core.bus.eval((int) PLPToolbox.parseNum(tokens[1]));
                 }
             }
             else if(input.equals("disableio")) {
@@ -348,7 +361,13 @@ public class PLPSimCL {
         System.out.println("\n enableio <index> ..or.. enableio\n\tEnable evaluation of I/O device <index>. Enable all if no argument is given.");
         System.out.println("\n disableio <index> ..or.. disableio\n\tDisable evaluation of I/O device <index>. Disable all if no argument is given.");
         System.out.println("\n listio\n\tList I/O modules loaded.");
+        System.out.println("\n evalio <index> ..or.. evalio\n\tEvaluate I/O module <index>. Evaluate all if no argument is given.");
         System.out.println("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
         System.out.println("\n silent\n\tToggle silent mode (default off).");
+    }
+
+    public static void addMods(PLPSimCore core) {
+        core.bus.add(new io_leds(((long) 0x8000400 << 4) | (long) 4));
+        core.bus.add(new cache_hier());
     }
 }
