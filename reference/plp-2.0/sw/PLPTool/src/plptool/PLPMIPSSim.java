@@ -18,42 +18,110 @@
 
 package plptool;
 
-import java.util.TreeMap;
 import java.util.Iterator;
 
 /**
- * The PLP MIPS Architecture Simulator Backend
+ * PLPMIPSSim is the PLP MIPS Architecture Simulator Backend. This class
+ * contains core functionality of the simulator: the CPU itself, memory
+ * elements, pipeline registers, and I/O devices. Users can interact with the
+ * simulation core by using typical procedures such as stepping and I/O. It's
+ * up to the command line interface or the GUI to present these features to the
+ * user.
  *
  * @author wira
  */
 public class PLPMIPSSim {
 
-    // modules
-    public mod_register     pc;
-    public mod_bus          bus;
-    public mod_memory       memory;
-    public mod_memory       regfile;
-    public mod_forwarding   forwarding;
+    /**
+     * Collection of modules attached to the simulated front-bus.
+     */
+    public PLPSimBusModule[]           bus_modules;
 
-    // statistics
+    /**
+     * The core's program counter.
+     */
+    public mod_register                   pc;
+
+    /**
+     * CPU front-side bus.
+     */
+    public mod_bus                        bus;
+
+    /**
+     * Main memory.
+     */
+    public mod_memory                     memory;
+
+    /**
+     * Register file.
+     */
+    public mod_memory                     regfile;
+
+    /**
+     * Forwarding unit.
+     */
+    public mod_forwarding                 forwarding;
+
+    /**
+     * Numbers of instructions issued.
+     */
     private int instructionCount;
 
-    // pipeline stage modules
+    /**
+     * ID stage module.
+     */
     public id   id_stage;
+
+    /**
+     * EX stage module.
+     */
     public ex   ex_stage;
+
+    /**
+     * MEM stage module.
+     */
     public mem  mem_stage;
+
+    /**
+     * WB stage module.
+     */
     public wb   wb_stage;
 
-    // flags
-    public long sim_flags;
+    /**
+     * Simulation flags. This flag is used by various modules to indicate
+     * whether certain events have occured. Simulation flags are cleared
+     * in the beginning of each cycle.
+     */
+    private Long sim_flags;
 
-    // assembler objects
+    /**
+     * Object code from PLPAsm
+     *
+     * @see plptool.PLPAsm
+     */
     long[] objCode;
+
+    /**
+     * Address table from PLPAsm
+     *
+     * @see plptool.PLPAsm
+     */
     long[] addrTable;
 
+    /**
+     * The assembler object passed to the simulator.
+     *
+     * @see plptool.PLPAsm
+     */
     PLPAsm asm;
 
-    // Initialize core
+    /**
+     * Simulator backend constructor.
+     *
+     * @param RAMsize the size of main memory attached to this core
+     * @param asm assembler object passed on to this simulator
+     * @see plptool.PLPAsm
+     */
     public PLPMIPSSim(PLPAsm asm, long RAMsize) {
         if(RAMsize <= 0)
             RAMsize = (long) Math.pow(2, 62);
@@ -66,18 +134,41 @@ public class PLPMIPSSim {
         this.objCode = asm.getObjectCode();
         this.addrTable = asm.getAddrTable();
 
-        sim_flags = 0;
+        sim_flags = (long) 0;
+
+        // core mods
+        forwarding = new mod_forwarding();
+        
+        // modules attached to the front side bus
+        bus_modules = new PLPSimBusModule[3];
+
+        bus_modules[0] = memory;
+        bus_modules[1] = new io_example((long) 0x8000000 << 4);
+        bus_modules[2] = new io_leds((long) 0x8000001 << 4);
+        bus = new mod_bus(bus_modules);
+
+        PLPMsg.M("Built-in modules:");
+        for(int i = 0; i < bus_modules.length; i++)
+            PLPMsg.M(" " + i + ": " + bus_modules[i].introduce());
 
         // Instantiate stages
         wb_stage = new wb(regfile);
-        mem_stage = new mem(wb_stage, memory);
+        mem_stage = new mem(wb_stage, bus);
         ex_stage = new ex(mem_stage, new alu());
         id_stage = new id(ex_stage, regfile);
 
-        forwarding = new mod_forwarding();
-        bus = new mod_bus();
+        memory.enable();
+        regfile.enable();
     }
 
+    /**
+     * This function resets the core: clears RAM and zeroes out register file,
+     * reloads the program to memory, resets program counter, flushes the
+     * pipeline, clears flags, and resets statistics.
+     *
+     * @return Returns 0 on successful completion. Should not fail.
+     * @see softreset()
+     */
     public int reset() {
         int i;
         
@@ -102,7 +193,7 @@ public class PLPMIPSSim {
 
         pc.reset(0);
         instructionCount = 0;
-        sim_flags = 0;
+        sim_flags = (long) 0;
         flushpipeline();
 
         PLPMsg.M("core: reset");
@@ -110,6 +201,12 @@ public class PLPMIPSSim {
         return PLPMsg.PLP_OK;
     }
 
+    /**
+     * This function resets the program counter and flushes the pipeline.
+     *
+     * @return Returns 0 on completion.
+     * @see reset()
+     */
     public int softreset() {
         pc.reset(0);
         flushpipeline();
@@ -119,6 +216,11 @@ public class PLPMIPSSim {
         return PLPMsg.PLP_OK;
     }
 
+    /**
+     * Advances the simulation by one cycle.
+     *
+     * @return Returns 0 on successful completion. Error code otherwise.
+     */
     public int step () {
         instructionCount++;
         int ret = 0;
@@ -142,6 +244,9 @@ public class PLPMIPSSim {
         if(PLPCfg.cfgSimForwardingUnit)
             forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
 
+        // Evaluate modules attached to FSB
+        for(int i = 0; i < bus_modules.length; i++)
+            ret += bus_modules[i].eval();
 
         if(ret != 0) {
             return PLPMsg.E("Evaluation failed.",
@@ -158,7 +263,11 @@ public class PLPMIPSSim {
         return fetch();
     }
 
-    // IF stage
+    /**
+     * Perform an instruction fetch and warm up the decode stage.
+     *
+     * @return Returns 0 on successful completion. Error code otherwise.
+     */
     private int fetch()  {
         long addr = pc.eval();
 
@@ -187,6 +296,11 @@ public class PLPMIPSSim {
         return PLPMsg.PLP_OK;
     }
 
+    /**
+     * Disable all pipeline stages, in-flight instructions are discarded.
+     *
+     * @return Returns 0 on completion.
+     */
     public int flushpipeline() {
         id_stage.hot = false;
         ex_stage.hot = false;
@@ -197,6 +311,9 @@ public class PLPMIPSSim {
         return PLPMsg.PLP_OK;
     }
 
+    /**
+     * Print front end states.
+     */
     public void printfrontend() {
 
         if(pc.eval() < 0)
@@ -209,269 +326,50 @@ public class PLPMIPSSim {
                 "\ni_pc: "  + String.format("%08x", pc.input()));
     }
 
-    public int run (int instructions) {
+    /**
+     * Returns simulation flags.
+     *
+     * @return Returns the simulation flags.
+     */
+    public long getFlags() {
+        return sim_flags;
+    }
+
+    /**
+     * Enable all I/O mods.
+     *
+     * @return Returns 0 on completion.
+     */
+    public int enableiomods() {
+        for(int i = 0; i < bus_modules.length; i++)
+            bus_modules[i].enable();
 
         return PLPMsg.PLP_OK;
     }
 
-    public void pause() {
-
-    }
-
-    public int printprogram() {
-        int i, j;
-        PLPMsg.M("pc\taddress\t\thex\t\tinstruction");
-        PLPMsg.M("--\t-------\t\t---\t\t-----------");
-        for(i = 0; i < memory.size(); i++) {
-            for(j = 0; j < addrTable.length; j++) {
-                if(i * 4 == addrTable[j] && asm.isInstruction(j) == 0) {
-                    if(pc.eval() == i * 4)
-                        System.out.print(">>>\t");
-                    else
-                        System.out.print("\t");
-                    PLPMsg.M(String.format("%08x", addrTable[j]) + "\t" +
-                             String.format("%08x", objCode[j]) + "\t" +
-                             MIPSInstr.format(objCode[j]));
-                    break;
-                }
-            }
-        }
+    /**
+     * Disable all I/O mods. Including the main memory. Be careful.
+     *
+     * @return Returns 0 on completion.
+     */
+    public int disableiomods() {
+        for(int i = 0; i < bus_modules.length; i++)
+            bus_modules[i].disable();
 
         return PLPMsg.PLP_OK;
     }
 
+    /**
+     * Get the number of instructions that have been issued on this core.
+     *
+     * @return Returns instruction count in int.
+     */
     public int getinstrcount() {
         return instructionCount;
     }
 
     @Override public String toString() {
         return "PLPMIPSSim(asm: " + asm.toString() + ")";
-    }
-
-    public class mod_register {
-        private long data;
-        private long i_data;
-
-        public mod_register(long i_data) {
-            this.i_data = i_data;
-        }
-
-        public int write(long data) {
-            this.i_data = data;
-
-            return PLPMsg.PLP_OK;
-        }
-
-        public long input() {
-            return i_data;
-        }
-
-        public long eval() {
-            return data;
-        }
-
-        public void clock() {
-            data = i_data;
-        }
-
-        public void reset(long i_data) {
-            data = -1;
-            this.i_data = i_data;
-        }
-    }
-
-    public class mod_memory extends plp_sim_bus_module {
-        private long                    size;
-        private TreeMap<Long, Long>     values;
-        private TreeMap<Long, Boolean>  isInstr;
-        private boolean                 wordAligned;
-
-        public mod_memory(long size, boolean wordAligned) {
-            values = new TreeMap<Long, Long>();
-            isInstr = new TreeMap<Long, Boolean>();
-            this.size = size;
-            this.wordAligned = wordAligned;
-        }
-
-        public void clear() {
-            values = new TreeMap<Long, Long>();
-            isInstr = new TreeMap<Long, Boolean>();
-        }
-
-        // memory module doesn't need eval, just return OK
-        public int eval () {
-            return PLPMsg.PLP_OK;
-        }
-
-        public void printAll(long highlight) {
-            long key;
-            PLPMsg.M("->\taddress\t\tcontents\tASCII");
-            PLPMsg.M("--\t-------\t\t--------\t-----");
-            Iterator keyIterator = values.keySet().iterator();
-            while(keyIterator.hasNext()) {
-                key = (Long) keyIterator.next();
-                if(wordAligned) {
-                    if(key * 4 == highlight)
-                        System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                           key * 4, values.get(key)) +
-                                           PLPAsmFormatter.asciiWord(values.get(key)));
-                }
-                else {
-                    if(key == highlight)
-                        System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                            key, values.get(key)) +
-                                            PLPAsmFormatter.asciiWord(values.get(key)));
-                }
-            }
-        }
-
-        public void printProgram(long highlight) {
-            if(wordAligned) {
-                long key;
-                PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
-                PLPMsg.M("--\t-------\t\t---\t\t-----------");
-                Iterator keyIterator = values.keySet().iterator();
-                while(keyIterator.hasNext()) {
-                    key = (Long) keyIterator.next();
-                    if(isInstr.get(key) == true) {
-                        if(key * 4 == highlight)
-                            System.out.print(">>>");
-                        PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                               key * 4, values.get(key)) +
-                                               MIPSInstr.format(values.get(key)));
-                    }
-                }
-            }
-        }
-
-        public void print(long addr) {
-
-            if(wordAligned && (addr / 4) >= size || addr < 0)
-                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Address out of range.",
-                        PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(wordAligned && !values.containsKey(addr / 4))
-                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Address not initialized.",
-                        PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-            else if(!wordAligned && !values.containsKey(addr))
-                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Address not initialized.",
-                        PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-            else if(wordAligned && addr % 4 != 0)
-                PLPMsg.E("print(" + String.format("0x%08x", addr) + "): Unaligned memory.",
-                         PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-            else if(wordAligned) {
-                addr /= 4;
-
-                PLPMsg.M("\naddress\t\tcontents\tASCII");
-                PLPMsg.M("-------\t\t--------\t-----");
-                PLPMsg.M(String.format("%08x\t%08x\t" +
-                                       PLPAsmFormatter.asciiWord(values.get(addr)),
-                                       addr * 4, values.get(addr)));
-            }
-            else {
-                PLPMsg.M("\naddress\t\tcontents\tASCII");
-                PLPMsg.M("-------\t\t--------\t-----");
-                PLPMsg.M(String.format("%08x\t%08x\t" +
-                                       PLPAsmFormatter.asciiWord(values.get(addr)),
-                                       addr, values.get(addr)));
-            }
-        }
-
-        public int write(long addr, long data) {
-            return this.write(addr, data, false);
-        }
-
-        public int write(long addr, long data, boolean isInstr) {
-            if(wordAligned && ((addr / 4) >= size || addr < 0))
-                return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address out of range.",
-                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(wordAligned && addr % 4 != 0)
-                return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Unaligned memory.",
-                                PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-            else if(!wordAligned && ((addr) >= size || addr < 0))
-                return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address out of range.",
-                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            else if(wordAligned) {
-                values.put(new Long(addr / 4), new Long(data));
-                this.isInstr.put(new Long(addr / 4), isInstr);
-            }
-            else {
-                values.put(new Long(addr), new Long(data));
-                this.isInstr.put(new Long(addr), isInstr);
-            }
-
-            return PLPMsg.PLP_OK;
-        }
-
-        public long read(long addr) {
-            if(wordAligned && ((addr / 4) >= size || addr < 0)) {
-                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
-                         PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-                return PLPMsg.PLP_ERROR_RETURN;
-            }
-            else if (wordAligned && addr % 4 != 0) {
-                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Unaligned memory.",
-                                PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-                return PLPMsg.PLP_ERROR_RETURN;
-            }
-            else if(!wordAligned && ((addr) >= size || addr < 0)) {
-                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
-                                PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-                return PLPMsg.PLP_ERROR_RETURN;
-            }
-            else if(!wordAligned && !values.containsKey(addr)) {
-                if(PLPCfg.cfgSimDynamicMemoryAllocation) {
-                    PLPMsg.I("read(" + String.format("0x%08x", addr) +
-                             "): Dynamic memory allocation.", this);
-                    values.put(addr, (long) 0);
-                    isInstr.put(addr, false);
-                    return 0;
-                }
-                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
-                                 PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-                return PLPMsg.PLP_ERROR_RETURN;
-            }
-            else if(wordAligned && !values.containsKey(addr / 4)) {
-                if(PLPCfg.cfgSimDynamicMemoryAllocation) {
-                    PLPMsg.I("read(" + String.format("0x%08x", addr) +
-                             "): Dynamic memory allocation.", this);
-                    values.put(addr / 4, (long) 0);
-                    isInstr.put(addr / 4, false);
-                    return 0;
-                }
-                PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
-                                 PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-                return PLPMsg.PLP_ERROR_RETURN;
-            }
-            else if(wordAligned) {
-                return values.get(addr / 4);
-            }
-            else
-                return values.get(addr);
-        }
-
-        // returns size of memory in WORDS
-        public long size() {
-            return size;
-        }
-
-        public boolean isInstr(long addr) {
-            if(wordAligned)
-                // return isInstr[(int) addr / 4];
-                return isInstr.get(addr / 4);
-            else
-                // return isInstr[(int) addr];
-                return isInstr.get(addr);
-        }
-
-        public boolean iswordAligned() {
-            return wordAligned;
-        }
-
-        @Override public String toString() {
-            return "PLPMIPSSim.mod_memory";
-        }
     }
 
     // Register file stage / instruction decode
@@ -872,11 +770,11 @@ public class PLPMIPSSim {
         long i_ctl_regwrite;
 
         private wb   wb_reg;
-        private mod_memory memory;
+        private mod_bus bus;
 
-        public mem(wb wb_reg, mod_memory memory) {
+        public mem(wb wb_reg, mod_bus bus) {
             this.wb_reg = wb_reg;
-            this.memory = memory;
+            this.bus = bus;
         }
 
         public void printvars() {
@@ -944,10 +842,10 @@ public class PLPMIPSSim {
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1)
-                wb_reg.i_data_memreaddata = memory.read(fwd_data_alu_result);
+                wb_reg.i_data_memreaddata = bus.read(fwd_data_alu_result);
 
             if(ctl_memwrite == 1)
-                memory.write(fwd_data_alu_result, data_memwritedata, false);
+                bus.write(fwd_data_alu_result, data_memwritedata, false);
 
             wb_reg.hot = true;
 
@@ -1148,7 +1046,8 @@ public class PLPMIPSSim {
 
         }
 
-        private int eval(id id_stage, ex ex_stage, mem mem_stage, wb wb_stage) {
+        public int eval(PLPMIPSSim.id id_stage, PLPMIPSSim.ex ex_stage,
+                         PLPMIPSSim.mem mem_stage, PLPMIPSSim.wb wb_stage) {
             sim_flags &= PLPMsg.PLP_SIM_FWD_NO_EVENTS;
 
             if(mem_stage.hot) {
@@ -1171,39 +1070,290 @@ public class PLPMIPSSim {
     }
 
     public class mod_bus {
-        public mod_bus() {
-            
+        private PLPSimBusModule[] bus_modules;
+
+        public mod_bus(PLPSimBusModule[] bus_modules) {
+            this.bus_modules = bus_modules;
+        }
+
+        public long read(long addr) {
+            for(int i = bus_modules.length - 1; i >= 0; i--) {
+                if(addr >= bus_modules[i].startAddr() &&
+                   addr <= bus_modules[i].endAddr())
+                    return bus_modules[i].read(addr);
+            }
+
+            return -1;
+        }
+
+        public int write(long addr, long data, boolean isInstr) {
+            boolean noMapping = true;
+
+            for(int i = bus_modules.length - 1; i >= 0; i--) {
+                if(addr >= bus_modules[i].startAddr() &&
+                   addr <= bus_modules[i].endAddr()) {
+                    bus_modules[i].write(addr, data, isInstr);
+                    noMapping = false;
+                }
+            }
+
+            if(noMapping)
+                return PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY;
+            else
+                return PLPMsg.PLP_OK;
         }
     }
 
-    public class io_7segs {
+    public class mod_register {
+        private long data;
+        private long i_data;
 
+        public mod_register(long i_data) {
+            this.i_data = i_data;
+        }
+
+        public int write(long data) {
+            this.i_data = data;
+
+            return PLPMsg.PLP_OK;
+        }
+
+        public long input() {
+            return i_data;
+        }
+
+        public long eval() {
+            return data;
+        }
+
+        public void clock() {
+            data = i_data;
+        }
+
+        public void reset(long i_data) {
+            data = -1;
+            this.i_data = i_data;
+        }
     }
 
-    public class io_vga {
+    public class mod_memory extends PLPSimBusModule {
 
+        public mod_memory(long size, boolean wordAligned) {
+            super();
+            super.startAddr = 0;
+            super.endAddr = size;
+            super.wordAligned = wordAligned;
+        }
+
+        // memory module doesn't need eval, just return OK.
+        public int eval () {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return "PLPTool 2.0 mod_memory " + PLPMsg.versionString;
+        }
+
+        public void printAll(long highlight) {
+            long key;
+            PLPMsg.M("->\taddress\t\tcontents\tASCII");
+            PLPMsg.M("--\t-------\t\t--------\t-----");
+            Iterator keyIterator = super.values.keySet().iterator();
+            while(keyIterator.hasNext()) {
+                key = (Long) keyIterator.next();
+                if(wordAligned) {
+                    if(key * 4 == highlight)
+                        System.out.print(">>>");
+                    PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                           key * 4, super.values.get(key)) +
+                                           PLPAsmFormatter.asciiWord(super.values.get(key)));
+                }
+                else {
+                    if(key == highlight)
+                        System.out.print(">>>");
+                    PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                            key, super.values.get(key)) +
+                                            PLPAsmFormatter.asciiWord(super.values.get(key)));
+                }
+            }
+        }
+
+        public void printProgram(long highlight) {
+            if(wordAligned) {
+                long key;
+                PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
+                PLPMsg.M("--\t-------\t\t---\t\t-----------");
+                Iterator keyIterator = super.values.keySet().iterator();
+                while(keyIterator.hasNext()) {
+                    key = (Long) keyIterator.next();
+                    if(super.isInstr.get(key) == true) {
+                        if(key * 4 == highlight)
+                            System.out.print(">>>");
+                        PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                               key * 4, super.values.get(key)) +
+                                               MIPSInstr.format(super.values.get(key)));
+                    }
+                }
+            }
+        }
+
+        public void print(long addr) {
+            if(wordAligned) {
+                addr /= 4;
+
+                PLPMsg.M("\naddress\t\tcontents\tASCII");
+                PLPMsg.M("-------\t\t--------\t-----");
+                PLPMsg.M(String.format("%08x\t%08x\t" +
+                                       PLPAsmFormatter.asciiWord(super.read(addr)),
+                                       addr * 4, super.read(addr)));
+            }
+            else {
+                PLPMsg.M("\naddress\t\tcontents\tASCII");
+                PLPMsg.M("-------\t\t--------\t-----");
+                PLPMsg.M(String.format("%08x\t%08x\t" +
+                                       PLPAsmFormatter.asciiWord(super.read(addr)),
+                                       addr, super.read(addr)));
+            }
+        }
+
+        @Override public String toString() {
+            return "PLPMIPSSim.mod_memory";
+        }
     }
 
-    public class io_uart {
+    // This module says Hello World when its register is written with 0xBEEF
+    public class io_example extends PLPSimBusModule {
+        public io_example(long addr) {
+            super();
+            // This I/O only has 1 register
+            super.startAddr = addr;
+            super.endAddr = addr;
+            super.wordAligned = true;
+        }
 
+        // When this module is evaluated, do this:
+        public int eval() {
+            if(!enabled)
+                return PLPMsg.PLP_OK;
+
+            // Get register value
+            long value = super.read(startAddr);
+
+            // Combinational logic
+            if(value == 0xBEEF)
+                PLPMsg.M(this + ": Hey, it's beef!");
+
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return "PLPTool 2.0 io_example: an example of PLP bus module, try writing 0xbeef to " +
+                    String.format("0x%08x", startAddr) + "!";
+        }
+
+        // Make sure to do this for error tracking
+        @Override public String toString() {
+            return "PLPMIPSSim.io_example";
+        }
     }
 
-    public class io_leds {
+    public class io_7segs extends PLPSimBusModule {
+        public io_7segs() {
+            
+        }
 
+        public int eval() {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return null;
+        }
     }
 
-    public class io_switches {
-        
+    public class io_vga extends PLPSimBusModule {
+        public io_vga() {
+
+        }
+
+        public int eval() {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return null;
+        }
     }
 
-    public abstract class plp_sim_bus_module {
-        private TreeMap<Long, Long> values;
-        private long startAddr;
-        private long endAddr;
+    public class io_uart extends PLPSimBusModule {
+        public io_uart() {
 
-        abstract int write(long addr, long data);
-        abstract long read(long addr);
-        abstract int eval();
+        }
+
+        public int eval() {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return null;
+        }
+    }
+
+    public class io_leds extends PLPSimBusModule {
+        public io_leds(long addr) {
+            super();
+            // This I/O only has 1 register
+            super.startAddr = addr;
+            super.endAddr = addr;
+            super.wordAligned = true;
+        }
+
+        // When this module is evaluated, do this:
+        public int eval() {
+            if(!enabled)
+                return PLPMsg.PLP_OK;
+
+            // Get register value
+            long value = super.read(startAddr);
+
+            System.out.print(this + ": ");
+
+            // Combinational logic
+            for(int i = 7; i >= 0; i--) {
+                if((value & (long) Math.pow(2, i)) == (long) Math.pow(2, i))
+                    System.out.print("* ");
+                else
+                    System.out.print(". ");
+            }
+
+            System.out.println();
+
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return "PLPTool 2.0 io_leds: 8 LED arrays attached to " +
+                   String.format("0x%08x", startAddr);
+        }
+
+        // Make sure to do this for error tracking
+        @Override public String toString() {
+            return "PLPMIPSSim.io_leds";
+        }
+    }
+
+    public class io_switches extends PLPSimBusModule {
+        public io_switches() {
+
+        }
+
+        public int eval() {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return null;
+        }
     }
 }
 
