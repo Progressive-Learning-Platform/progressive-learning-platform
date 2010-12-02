@@ -202,9 +202,9 @@ public class PLPSimCL {
                     System.out.println("Usage: w <address> <data>");
                 }
                 else {
-                    core.memory.write(PLPAsm.sanitize32bits(tokens[1]),
-                                      PLPAsm.sanitize32bits(tokens[2]), false);
-                    core.memory.print(PLPAsm.sanitize32bits(tokens[1]));
+                    if(core.memory.write(PLPAsm.sanitize32bits(tokens[1]),
+                                      PLPAsm.sanitize32bits(tokens[2]), false) == PLPMsg.PLP_OK)
+                      core.memory.print(PLPAsm.sanitize32bits(tokens[1]));
                 }
             }
             else if(tokens[0].equals("wbus")) {

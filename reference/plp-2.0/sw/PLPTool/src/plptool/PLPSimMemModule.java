@@ -84,13 +84,11 @@ public class PLPSimMemModule extends PLPSimBusModule {
 
     public void print(long addr) {
         if(wordAligned) {
-            addr /= 4;
-
             PLPMsg.M("\naddress\t\tcontents\tASCII");
             PLPMsg.M("-------\t\t--------\t-----");
             PLPMsg.M(String.format("%08x\t%08x\t" +
                                    PLPAsmFormatter.asciiWord(super.read(addr)),
-                                   addr * 4, super.read(addr)));
+                                   addr, super.read(addr)));
         }
         else {
             PLPMsg.M("\naddress\t\tcontents\tASCII");

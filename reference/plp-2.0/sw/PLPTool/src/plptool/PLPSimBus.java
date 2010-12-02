@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class PLPSimBus {
     private ArrayList<PLPSimBusModule> bus_modules;
 
-    public PLPSimBus(PLPMIPSSim sim) {
+    public PLPSimBus(PLPSimCore sim) {
         // modules attached to the front side bus
         bus_modules = new ArrayList<PLPSimBusModule>();
 
