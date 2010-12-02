@@ -144,10 +144,8 @@ public abstract class PLPSimBusModule {
 
     public boolean isInstr(long addr) {
         if(wordAligned)
-            // return super.isInstr[(int) addr / 4];
             return isInstr.get(addr / 4);
         else
-            // return super.isInstr[(int) addr];
             return isInstr.get(addr);
     }
 
@@ -155,9 +153,10 @@ public abstract class PLPSimBusModule {
         return wordAligned;
     }
 
-    // each module does its own thing when evaluated. But most of them
+    // Each module does its own thing when evaluated. But most of them
     // will HAVE to do something!
     abstract int eval();
+    abstract int gui_eval(Object drawObj);
 
     // introduction string when the module is loaded
     abstract String introduce();

@@ -18,8 +18,6 @@
 
 package plptool;
 
-import java.util.Iterator;
-
 /**
  * PLPMIPSSim is the PLP MIPS Architecture Simulator Backend. This class
  * contains core functionality of the simulator: the CPU itself, memory
@@ -33,29 +31,24 @@ import java.util.Iterator;
 public class PLPMIPSSim {
 
     /**
-     * Collection of modules attached to the simulated front-bus.
-     */
-    public PLPSimBusModule[]           bus_modules;
-
-    /**
      * The core's program counter.
      */
-    public mod_register                   pc;
+    public PLPSimRegModule                pc;
 
     /**
      * CPU front-side bus.
      */
-    public mod_bus                        bus;
+    public PLPSimBus                      bus;
 
     /**
      * Main memory.
      */
-    public mod_memory                     memory;
+    public PLPSimMemModule                memory;
 
     /**
      * Register file.
      */
-    public mod_memory                     regfile;
+    public PLPSimMemModule                regfile;
 
     /**
      * Forwarding unit.
@@ -116,6 +109,11 @@ public class PLPMIPSSim {
     PLPAsm asm;
 
     /**
+     * Example I/O module
+     */
+    io_leds example_io;
+
+    /**
      * Simulator backend constructor.
      *
      * @param RAMsize the size of main memory attached to this core
@@ -126,9 +124,9 @@ public class PLPMIPSSim {
         if(RAMsize <= 0)
             RAMsize = (long) Math.pow(2, 62);
 
-        memory = new mod_memory(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
-        regfile = new mod_memory(32, false);
-        pc = new mod_register(0); // pc=0 on reset
+        memory = new PLPSimMemModule(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
+        regfile = new PLPSimMemModule(32, false);
+        pc = new PLPSimRegModule(0); // pc=0 on reset
 
         this.asm = asm;
         this.objCode = asm.getObjectCode();
@@ -140,16 +138,8 @@ public class PLPMIPSSim {
         forwarding = new mod_forwarding();
         
         // modules attached to the front side bus
-        bus_modules = new PLPSimBusModule[3];
-
-        bus_modules[0] = memory;
-        bus_modules[1] = new io_example((long) 0x8000000 << 4);
-        bus_modules[2] = new io_leds((long) 0x8000001 << 4);
-        bus = new mod_bus(bus_modules);
-
-        PLPMsg.M("Built-in modules:");
-        for(int i = 0; i < bus_modules.length; i++)
-            PLPMsg.M(" " + i + ": " + bus_modules[i].introduce());
+        example_io = new io_leds((long) 0x8000400 << 4);
+        bus = new PLPSimBus(this);
 
         // Instantiate stages
         wb_stage = new wb(regfile);
@@ -245,8 +235,7 @@ public class PLPMIPSSim {
             forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
 
         // Evaluate modules attached to FSB
-        for(int i = 0; i < bus_modules.length; i++)
-            ret += bus_modules[i].eval();
+        ret += bus.eval();
 
         if(ret != 0) {
             return PLPMsg.E("Evaluation failed.",
@@ -336,30 +325,6 @@ public class PLPMIPSSim {
     }
 
     /**
-     * Enable all I/O mods.
-     *
-     * @return Returns 0 on completion.
-     */
-    public int enableiomods() {
-        for(int i = 0; i < bus_modules.length; i++)
-            bus_modules[i].enable();
-
-        return PLPMsg.PLP_OK;
-    }
-
-    /**
-     * Disable all I/O mods. Including the main memory. Be careful.
-     *
-     * @return Returns 0 on completion.
-     */
-    public int disableiomods() {
-        for(int i = 0; i < bus_modules.length; i++)
-            bus_modules[i].disable();
-
-        return PLPMsg.PLP_OK;
-    }
-
-    /**
      * Get the number of instructions that have been issued on this core.
      *
      * @return Returns instruction count in int.
@@ -396,9 +361,9 @@ public class PLPMIPSSim {
         long i_ctl_jump;
         
         private ex   ex_reg;
-        private mod_memory regfile;
+        private PLPSimMemModule regfile;
 
-        public id(ex ex_reg, mod_memory regfile) {
+        public id(ex ex_reg, PLPSimMemModule regfile) {
             this.ex_reg = ex_reg;
             this.regfile = regfile;
         }
@@ -770,9 +735,9 @@ public class PLPMIPSSim {
         long i_ctl_regwrite;
 
         private wb   wb_reg;
-        private mod_bus bus;
+        private PLPSimBus bus;
 
-        public mem(wb wb_reg, mod_bus bus) {
+        public mem(wb wb_reg, PLPSimBus bus) {
             this.wb_reg = wb_reg;
             this.bus = bus;
         }
@@ -905,9 +870,9 @@ public class PLPMIPSSim {
         long i_data_memreaddata;
         long i_data_alu_result;
 
-        private mod_memory regfile;
+        private PLPSimMemModule regfile;
 
-        public wb(mod_memory regfile) {
+        public wb(PLPSimMemModule regfile) {
             this.regfile = regfile;
         }
 
@@ -1069,291 +1034,6 @@ public class PLPMIPSSim {
         }
     }
 
-    public class mod_bus {
-        private PLPSimBusModule[] bus_modules;
-
-        public mod_bus(PLPSimBusModule[] bus_modules) {
-            this.bus_modules = bus_modules;
-        }
-
-        public long read(long addr) {
-            for(int i = bus_modules.length - 1; i >= 0; i--) {
-                if(addr >= bus_modules[i].startAddr() &&
-                   addr <= bus_modules[i].endAddr())
-                    return bus_modules[i].read(addr);
-            }
-
-            return -1;
-        }
-
-        public int write(long addr, long data, boolean isInstr) {
-            boolean noMapping = true;
-
-            for(int i = bus_modules.length - 1; i >= 0; i--) {
-                if(addr >= bus_modules[i].startAddr() &&
-                   addr <= bus_modules[i].endAddr()) {
-                    bus_modules[i].write(addr, data, isInstr);
-                    noMapping = false;
-                }
-            }
-
-            if(noMapping)
-                return PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY;
-            else
-                return PLPMsg.PLP_OK;
-        }
-    }
-
-    public class mod_register {
-        private long data;
-        private long i_data;
-
-        public mod_register(long i_data) {
-            this.i_data = i_data;
-        }
-
-        public int write(long data) {
-            this.i_data = data;
-
-            return PLPMsg.PLP_OK;
-        }
-
-        public long input() {
-            return i_data;
-        }
-
-        public long eval() {
-            return data;
-        }
-
-        public void clock() {
-            data = i_data;
-        }
-
-        public void reset(long i_data) {
-            data = -1;
-            this.i_data = i_data;
-        }
-    }
-
-    public class mod_memory extends PLPSimBusModule {
-
-        public mod_memory(long size, boolean wordAligned) {
-            super();
-            super.startAddr = 0;
-            super.endAddr = size;
-            super.wordAligned = wordAligned;
-        }
-
-        // memory module doesn't need eval, just return OK.
-        public int eval () {
-            return PLPMsg.PLP_OK;
-        }
-
-        public String introduce() {
-            return "PLPTool 2.0 mod_memory " + PLPMsg.versionString;
-        }
-
-        public void printAll(long highlight) {
-            long key;
-            PLPMsg.M("->\taddress\t\tcontents\tASCII");
-            PLPMsg.M("--\t-------\t\t--------\t-----");
-            Iterator keyIterator = super.values.keySet().iterator();
-            while(keyIterator.hasNext()) {
-                key = (Long) keyIterator.next();
-                if(wordAligned) {
-                    if(key * 4 == highlight)
-                        System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                           key * 4, super.values.get(key)) +
-                                           PLPAsmFormatter.asciiWord(super.values.get(key)));
-                }
-                else {
-                    if(key == highlight)
-                        System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                            key, super.values.get(key)) +
-                                            PLPAsmFormatter.asciiWord(super.values.get(key)));
-                }
-            }
-        }
-
-        public void printProgram(long highlight) {
-            if(wordAligned) {
-                long key;
-                PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
-                PLPMsg.M("--\t-------\t\t---\t\t-----------");
-                Iterator keyIterator = super.values.keySet().iterator();
-                while(keyIterator.hasNext()) {
-                    key = (Long) keyIterator.next();
-                    if(super.isInstr.get(key) == true) {
-                        if(key * 4 == highlight)
-                            System.out.print(">>>");
-                        PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                               key * 4, super.values.get(key)) +
-                                               MIPSInstr.format(super.values.get(key)));
-                    }
-                }
-            }
-        }
-
-        public void print(long addr) {
-            if(wordAligned) {
-                addr /= 4;
-
-                PLPMsg.M("\naddress\t\tcontents\tASCII");
-                PLPMsg.M("-------\t\t--------\t-----");
-                PLPMsg.M(String.format("%08x\t%08x\t" +
-                                       PLPAsmFormatter.asciiWord(super.read(addr)),
-                                       addr * 4, super.read(addr)));
-            }
-            else {
-                PLPMsg.M("\naddress\t\tcontents\tASCII");
-                PLPMsg.M("-------\t\t--------\t-----");
-                PLPMsg.M(String.format("%08x\t%08x\t" +
-                                       PLPAsmFormatter.asciiWord(super.read(addr)),
-                                       addr, super.read(addr)));
-            }
-        }
-
-        @Override public String toString() {
-            return "PLPMIPSSim.mod_memory";
-        }
-    }
-
-    // This module says Hello World when its register is written with 0xBEEF
-    public class io_example extends PLPSimBusModule {
-        public io_example(long addr) {
-            super();
-            // This I/O only has 1 register
-            super.startAddr = addr;
-            super.endAddr = addr;
-            super.wordAligned = true;
-        }
-
-        // When this module is evaluated, do this:
-        public int eval() {
-            if(!enabled)
-                return PLPMsg.PLP_OK;
-
-            // Get register value
-            long value = super.read(startAddr);
-
-            // Combinational logic
-            if(value == 0xBEEF)
-                PLPMsg.M(this + ": Hey, it's beef!");
-
-            return PLPMsg.PLP_OK;
-        }
-
-        public String introduce() {
-            return "PLPTool 2.0 io_example: an example of PLP bus module, try writing 0xbeef to " +
-                    String.format("0x%08x", startAddr) + "!";
-        }
-
-        // Make sure to do this for error tracking
-        @Override public String toString() {
-            return "PLPMIPSSim.io_example";
-        }
-    }
-
-    public class io_7segs extends PLPSimBusModule {
-        public io_7segs() {
-            
-        }
-
-        public int eval() {
-            return PLPMsg.PLP_OK;
-        }
-
-        public String introduce() {
-            return null;
-        }
-    }
-
-    public class io_vga extends PLPSimBusModule {
-        public io_vga() {
-
-        }
-
-        public int eval() {
-            return PLPMsg.PLP_OK;
-        }
-
-        public String introduce() {
-            return null;
-        }
-    }
-
-    public class io_uart extends PLPSimBusModule {
-        public io_uart() {
-
-        }
-
-        public int eval() {
-            return PLPMsg.PLP_OK;
-        }
-
-        public String introduce() {
-            return null;
-        }
-    }
-
-    public class io_leds extends PLPSimBusModule {
-        public io_leds(long addr) {
-            super();
-            // This I/O only has 1 register
-            super.startAddr = addr;
-            super.endAddr = addr;
-            super.wordAligned = true;
-        }
-
-        // When this module is evaluated, do this:
-        public int eval() {
-            if(!enabled)
-                return PLPMsg.PLP_OK;
-
-            // Get register value
-            long value = super.read(startAddr);
-
-            System.out.print(this + ": ");
-
-            // Combinational logic
-            for(int i = 7; i >= 0; i--) {
-                if((value & (long) Math.pow(2, i)) == (long) Math.pow(2, i))
-                    System.out.print("* ");
-                else
-                    System.out.print(". ");
-            }
-
-            System.out.println();
-
-            return PLPMsg.PLP_OK;
-        }
-
-        public String introduce() {
-            return "PLPTool 2.0 io_leds: 8 LED arrays attached to " +
-                   String.format("0x%08x", startAddr);
-        }
-
-        // Make sure to do this for error tracking
-        @Override public String toString() {
-            return "PLPMIPSSim.io_leds";
-        }
-    }
-
-    public class io_switches extends PLPSimBusModule {
-        public io_switches() {
-
-        }
-
-        public int eval() {
-            return PLPMsg.PLP_OK;
-        }
-
-        public String introduce() {
-            return null;
-        }
-    }
+    
 }
 
