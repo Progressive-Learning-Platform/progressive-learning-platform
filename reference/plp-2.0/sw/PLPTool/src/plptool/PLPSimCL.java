@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
 /**
- * PLPTool command line emulator interface
+ * PLPTool command line simulator interface
  *
  * @author wira
  */
@@ -79,7 +79,6 @@ public class PLPSimCL {
                     if(ram_size % 4 != 0)
                         System.out.println("RAM size has to be in multiples of 4");
                     else {
-                        ram_size /= 4;
                         core = new PLPMIPSSim(asm, ram_size);
                         core.reset();
                         init_core = true;
@@ -165,6 +164,14 @@ public class PLPSimCL {
                                        PLPAsmFormatter.asciiWord(data));
                 }
             }
+            else if(tokens[0].equals("preg")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: preg <address>");
+                }
+                else {
+                    core.regfile.print(PLPToolbox.parseNum(tokens[1]));
+                }
+            }
             else if(input.equals("pfd")) {
                 System.out.println("\nFrontend / fetch stage state");
                 System.out.println("============================");
@@ -216,10 +223,25 @@ public class PLPSimCL {
                                       PLPAsm.sanitize32bits(tokens[2]), false);
                 }
             }
+            else if(tokens[0].equals("rbus")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: rbus <address>");
+                }
+                else {
+                    long addr = PLPAsm.sanitize32bits(tokens[1]);
+                    long value = core.bus.read(addr);
+                    if(value != PLPMsg.PLP_ERROR_RETURN)
+                        System.out.println(String.format("0x%08x=", addr) +
+                                           String.format("0x%08x", value));
+                }
+            }
             else if(input.equals("listio")) {
                 for(int i = 0; i < core.bus.nummods(); i++)
-                    System.out.println(i + ": " + core.bus.introduceio(i) +
-                                       " enabled: " + core.bus.enabled(i));
+                    System.out.println(i + ": " +
+                                       String.format("0x%08x", core.bus.iostartaddr(i)) + "-" +
+                                       String.format("0x%08x", core.bus.ioendaddr(i)) + " " +
+                                       core.bus.introduceio(i) + " (" +
+                                       (core.bus.enabled(i) ? "enabled)" : "disabled)"));
             }
             else if(input.equals("enableio")) {
                 core.bus.enableiomods();
@@ -252,6 +274,14 @@ public class PLPSimCL {
                 }
                 else {
                     core.bus.disableio((int) PLPToolbox.parseNum(tokens[1]));
+                }
+            }
+            else if(tokens[0].equals("cleario")) {
+                if(tokens.length != 2) {
+                    System.out.println("Usage: cleario <index>");
+                }
+                else {
+                    core.bus.cleario((int) PLPToolbox.parseNum(tokens[1]));
                 }
             }
             else if(tokens[0].equals("j")) {
@@ -351,7 +381,7 @@ public class PLPSimCL {
         System.out.println("\n pvars\n\tPrint pipeline registers' values.");
         System.out.println("\n pnextvars\n\tPrint pipeline registers' input values.");
         System.out.println("\n pram <address> ..or.. pram\n\tPrint value of RAM at <address>. Print all if no argument is given.");
-        System.out.println("\n preg\n\tPrint contents of register file.");
+        System.out.println("\n preg <address> ..or.. preg\n\tPrint contents of a register or print contents of register file.");
         System.out.println("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
         System.out.println("\n pasm\n\tPrint program object code.");
         System.out.println("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
@@ -367,7 +397,8 @@ public class PLPSimCL {
     }
 
     public static void addMods(PLPSimCore core) {
-        core.bus.add(new io_leds(((long) 0x8000400 << 4) | (long) 4));
-        core.bus.add(new cache_hier());
+        PLPSimMods mods = new PLPSimMods(core);
+        core.bus.add(mods.io_leds);
+        core.bus.add(mods.cache_hier);
     }
 }

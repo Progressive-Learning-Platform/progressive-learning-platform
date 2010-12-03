@@ -21,6 +21,7 @@ package plptool;
 /**
  * This abstract class defines the simulated CPU interface.
  *
+ * @see PLPMIPSSim
  * @author wira
  */
 public abstract class PLPSimCore {

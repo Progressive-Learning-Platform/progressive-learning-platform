@@ -67,6 +67,7 @@ public class PLPMsg {
     public static final int PLP_SIM_OUT_UNALIGNED_MEMORY         = 262;
     public static final int PLP_SIM_MODULE_DISABLED              = 263;
     public static final int PLP_SIM_BUS_ERROR                    = 264;
+    public static final int PLP_SIM_BUS_MAPPING_ERROR            = 265;
 
     // Programmer errors
     public static final int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
