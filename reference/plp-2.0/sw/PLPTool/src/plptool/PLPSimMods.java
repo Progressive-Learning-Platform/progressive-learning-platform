@@ -72,7 +72,7 @@ public class PLPSimMods {
                 return PLPMsg.PLP_OK;
 
             // Get register value
-            long value = super.read(startAddr);
+            long value = (Long) super.read(startAddr);
 
             System.out.print(this + ": ");
 
@@ -135,12 +135,12 @@ public class PLPSimMods {
 
         // The read and write methods can be overridden. Do all the fancy
         // cache stuff here.
-        @Override public long read(long addr) {
+        @Override public Object read(long addr) {
 
             return 0;
         }
 
-        @Override public int write(long addr, long data, boolean isInstr) {
+        @Override public int write(long addr, Object data, boolean isInstr) {
 
             return 0;
         }

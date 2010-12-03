@@ -137,7 +137,7 @@ public class PLPMIPSSim extends PLPSimCore {
 
         // init regfile
         for(i = 0; i < 32; i++)
-            regfile.write(i, 0, false);
+            regfile.write(i, new Long(0), false);
 
         // load program to RAM
         for(i = 0; i < objCode.length; i++) {
@@ -235,7 +235,7 @@ public class PLPMIPSSim extends PLPSimCore {
                             String.format("%08x", addr),
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
-        if(memory.read(addr) == PLPMsg.PLP_ERROR_RETURN)
+        if((Long) memory.read(addr) == PLPMsg.PLP_ERROR_RETURN)
             return PLPMsg.E("step(): Memory location uninitialized: addr=" +
                             String.format("%08x", addr),
                             PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
@@ -246,7 +246,7 @@ public class PLPMIPSSim extends PLPSimCore {
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         // fetch instruction / frontend stage
-        id_stage.i_instruction = memory.read(addr);
+        id_stage.i_instruction = (Long) memory.read(addr);
         id_stage.i_instrAddr = addr;
         id_stage.i_ctl_pcplus4 = addr + 4;
 
@@ -367,11 +367,11 @@ public class PLPMIPSSim extends PLPSimCore {
 
             // rt
             ex_reg.i_data_rt     = (addr_read_0 == 0) ?
-                                   0 : regfile.read(addr_read_0);
+                                   0 : (Long) regfile.read(addr_read_0);
 
             // rs
             ex_reg.i_data_alu_in = (addr_read_1 == 0) ?
-                                   0 : regfile.read(addr_read_1);
+                                   0 : (Long) regfile.read(addr_read_1);
 
             long imm_field = MIPSInstr.imm(instruction);
             ex_reg.i_data_imm_signExtended = imm_field;
@@ -771,7 +771,7 @@ public class PLPMIPSSim extends PLPSimCore {
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1)
-                wb_reg.i_data_memreaddata = bus.read(fwd_data_alu_result);
+                wb_reg.i_data_memreaddata = (Long) bus.read(fwd_data_alu_result);
 
             if(ctl_memwrite == 1)
                 bus.write(fwd_data_alu_result, data_memwritedata, false);
@@ -894,7 +894,7 @@ public class PLPMIPSSim extends PLPSimCore {
 
             if(ctl_regwrite == 1 && ctl_dest_reg_addr != 0)
                 regfile.write(ctl_dest_reg_addr,
-                    (ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata, false);
+                    (Long) ((ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata), false);
 
             instr_retired = true;
 

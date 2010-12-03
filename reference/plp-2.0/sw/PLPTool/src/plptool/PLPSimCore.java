@@ -49,12 +49,12 @@ public abstract class PLPSimCore {
     /**
      * Reset handler, to be implemented by the actual simulation core
      */
-    abstract int reset();
+    abstract public int reset();
 
     /**
      * Step handler, to be implemented by the actual simulation core.
      */
-    abstract int step();
+    abstract public int step();
 
     /**
      * Returns simulation flags.
