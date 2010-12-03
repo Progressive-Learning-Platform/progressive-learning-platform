@@ -46,6 +46,9 @@ module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex
 			p_jalra <= ex_jalra;
 			p_dout <= dmem_in;
 		end
+
+		/* debug statements, not synthesized by Xilinx */
+		$display("MEM: ALU_R: %x, DATA: %x, ADDR: %x", p_alu_r, p_dout, dmem_addr);
 	end
 
 endmodule

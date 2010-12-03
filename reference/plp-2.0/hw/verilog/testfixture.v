@@ -13,6 +13,9 @@ module test;
 
 	always #1 clk = ~clk;
 
+	always @(posedge clk)
+		$display("-----------------------------------------");
+
 	initial begin 
 		clk = 0;
 		rst = 1;

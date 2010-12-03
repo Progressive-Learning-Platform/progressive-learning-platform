@@ -30,6 +30,9 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr, iin, p_inst
 			pc   <= next_pc;
 			p_inst <= iin;
 		end
+		
+		/* debug code, not synthesized by Xilinx */
+		$display("IF: PC: %x INST: %x", p_pc, p_inst);
 	end		
 
 	assign next_pc = 
