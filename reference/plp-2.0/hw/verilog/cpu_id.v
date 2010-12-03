@@ -117,14 +117,17 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 			p_pc <= if_pc;
 		end
 	
-		/* regfile */
-		if (wb_rfw && wb_rf_waddr != 5'd0) begin
-			rf[wb_rf_waddr] <= wb_rf_wdata;
-		end
-
 		/* debug statements, not synthesized by Xilinx */
 		$display("ID: INST: %x", if_inst);
 		//if(wb_rfw)
 		//	$display("ID: DATA %x written to REG %x", wb_rf_wdata, wb_rf_waddr);
 	end
+
+	always @(negedge clk) begin
+		/* regfile */
+		if (wb_rfw && wb_rf_waddr != 5'd0) begin
+			rf[wb_rf_waddr] <= wb_rf_wdata;
+		end
+	end
+	
 endmodule
