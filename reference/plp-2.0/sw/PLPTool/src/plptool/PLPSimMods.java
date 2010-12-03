@@ -64,6 +64,7 @@ public class PLPSimMods {
         public mod_io_leds(long addr) {
             super(addr, addr, true);
             // This I/O only has 1 register
+            super.write(addr, new Long(0), false);
         }
 
         // When this module is evaluated, do this:
@@ -72,6 +73,9 @@ public class PLPSimMods {
                 return PLPMsg.PLP_OK;
 
             // Get register value
+            if(!isInitialized(startAddr))
+                return PLPMsg.PLP_SIM_BUS_ERROR;
+
             long value = (Long) super.read(startAddr);
 
             System.out.print(this + ": ");

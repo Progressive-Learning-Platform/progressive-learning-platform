@@ -98,23 +98,29 @@ public class PLPSimBus {
      * Issue a read to the bus. This will return a value from specified address
      * starting with the module with lowest index (main memory preferably).
      * If there's any address space overlap, the module with lower index will
-     * be read.
+     * be read, but all modules do get the read command.
      *
      * @param addr Address to read from
      * @return Data with successful read, -1 otherwise
      */
     public Object read(long addr) {
         Object[] modules = bus_modules.toArray();
-        for(int i = 0; i < modules.length; i++) {
+        Object value = null;
+        for(int i = modules.length - 1; i >= 0; i--) {
             if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
                addr <= ((PLPSimBusModule)modules[i]).endAddr())
-                return ((PLPSimBusModule)modules[i]).read(addr);
+                value = ((PLPSimBusModule)modules[i]).read(addr);
         }
 
-        return PLPMsg.E("read(" + String.format("0x%08x", addr) + "):" +
-                            " This address is not in any module's address space" +
-                            " or is unitialiazed.",
-                            PLPMsg.PLP_ERROR_RETURN, this);
+        if(value != null)
+            return value;
+
+        PLPMsg.E("read(" + String.format("0x%08x", addr) + "):" +
+                 " This address is not in any module's address space" +
+                 " or is unitialiazed.",
+                 PLPMsg.PLP_ERROR_RETURN, this);
+
+        return null;
     }
 
     /**
