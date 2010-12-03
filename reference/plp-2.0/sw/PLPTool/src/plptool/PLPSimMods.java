@@ -55,7 +55,7 @@ public class PLPSimMods {
 
     /**
      * This is an example module written for the PLP simulator that interacts
-     * with the simulation core solelyusing the front side bus.
+     * with the simulation core solely using the front side bus.
      *
      * TODO: add gui_eval when the simulator GUI is ready for this stage of development.
      */
@@ -131,6 +131,18 @@ public class PLPSimMods {
 
         public String introduce() {
             return "PLPTool 2.0 Cache Hierarchy Module";
+        }
+
+        // The read and write methods can be overridden. Do all the fancy
+        // cache stuff here.
+        @Override public long read(long addr) {
+
+            return 0;
+        }
+
+        @Override public int write(long addr, long data, boolean isInstr) {
+
+            return 0;
         }
 
         // Make sure to do this for error tracking
