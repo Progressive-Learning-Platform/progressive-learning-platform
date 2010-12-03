@@ -76,7 +76,7 @@ public class PLPSimMemModule extends PLPSimBusModule {
                 System.out.print(">>>");
             PLPMsg.M(String.format("\t%08x\t%08x\t",
                                    key, super.values.get(key)) +
-                                   PLPAsmFormatter.asciiWord(super.values.get(key)));
+                                   PLPAsmFormatter.asciiWord((Long) super.values.get(key)));
         }
     }
 
@@ -98,7 +98,7 @@ public class PLPSimMemModule extends PLPSimBusModule {
                         System.out.print(">>>");
                     PLPMsg.M(String.format("\t%08x\t%08x\t",
                                            key, super.values.get(key)) +
-                                           MIPSInstr.format(super.values.get(key)));
+                                           MIPSInstr.format((Long) super.values.get(key)));
                 }
             }
         }
@@ -110,7 +110,7 @@ public class PLPSimMemModule extends PLPSimBusModule {
      * @param addr
      */
     public void print(long addr) {
-        long value = super.read(addr);
+        long value = (Long) super.read(addr);
 
         if(value >= 0) {
             PLPMsg.M("\naddress\t\tcontents\tASCII");

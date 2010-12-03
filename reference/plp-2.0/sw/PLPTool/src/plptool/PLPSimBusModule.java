@@ -36,7 +36,7 @@ public abstract class PLPSimBusModule {
     /**
      * Registers for the module
      */
-    protected TreeMap<Long, Long> values;
+    protected TreeMap<Long, Object> values;
 
     /**
      * Denotes each entry in the register whether it is an instruction.
@@ -74,7 +74,7 @@ public abstract class PLPSimBusModule {
      * @param wordAligned
      */
     public PLPSimBusModule(long startAddr, long endAddr, boolean wordAligned) {
-        values = new TreeMap<Long, Long>();
+        values = new TreeMap<Long, Object>();
         isInstr = new TreeMap<Long, Boolean>();
         this.startAddr = startAddr;
         this.endAddr = endAddr;
@@ -91,7 +91,7 @@ public abstract class PLPSimBusModule {
      * @param isInstr Denotes whether the value to be written is an instruction
      * @return PLP_OK, or error code
      */
-    public int write(long addr, long data, boolean isInstr) {
+    public int write(long addr, Object data, boolean isInstr) {
         if(!enabled)
             return PLPMsg.PLP_SIM_MODULE_DISABLED;
 
@@ -106,7 +106,7 @@ public abstract class PLPSimBusModule {
                 values.remove(addr);
                 this.isInstr.remove(addr);
             }
-            values.put(new Long(addr), new Long(data));
+            values.put(new Long(addr), data);
             this.isInstr.put(new Long(addr), isInstr);
         }
 
@@ -119,7 +119,7 @@ public abstract class PLPSimBusModule {
      * @param addr Address to read from
      * @return Data, or PLP_ERROR_RETURN
      */
-    public long read(long addr) {
+    public Object read(long addr) {
         if(addr > endAddr || addr < startAddr) {
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
                      PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
@@ -134,7 +134,7 @@ public abstract class PLPSimBusModule {
             if(PLPCfg.cfgSimDynamicMemoryAllocation) {
                 PLPMsg.I("read(" + String.format("0x%08x", addr) +
                          "): Dynamic memory allocation.", this);
-                values.put(addr, (long) 0);
+                values.put(addr, new Long(0));
                 isInstr.put(addr, false);
                 return 0;
             }
@@ -150,7 +150,7 @@ public abstract class PLPSimBusModule {
      * Reinitialize the module's registers
      */
     public void clear() {
-        values = new TreeMap<Long, Long>();
+        values = new TreeMap<Long, Object>();
         isInstr = new TreeMap<Long, Boolean>();
     }
 
@@ -233,7 +233,7 @@ public abstract class PLPSimBusModule {
      *
      * @return int
      */
-    abstract int eval();
+    abstract public int eval();
 
     /**
      * gui_eval is designed for simulator developers / users to allow the
@@ -243,8 +243,8 @@ public abstract class PLPSimBusModule {
      * with.
      * @return
      */
-    abstract int gui_eval(Object x);
+    abstract public int gui_eval(Object x);
 
     // introduction string when the module is loaded
-    abstract String introduce();
+    abstract public String introduce();
 }

@@ -103,7 +103,7 @@ public class PLPSimBus {
      * @param addr Address to read from
      * @return Data with successful read, -1 otherwise
      */
-    public long read(long addr) {
+    public Object read(long addr) {
         Object[] modules = bus_modules.toArray();
         for(int i = 0; i < modules.length; i++) {
             if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
@@ -126,7 +126,7 @@ public class PLPSimBus {
      * @param isInstr Specify whether the data is instruction or not
      * @return PLP_OK on successful operation, error code otherwise
      */
-    public int write(long addr, long data, boolean isInstr) {
+    public int write(long addr, Object data, boolean isInstr) {
         boolean noMapping = true;
         Object[] modules = bus_modules.toArray();
         for(int i = modules.length - 1; i >= 0; i--) {

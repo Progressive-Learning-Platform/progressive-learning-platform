@@ -158,7 +158,7 @@ public class PLPSimCL {
                 System.out.println("\nRegisters listing");
                 System.out.println("=================");
                 for(int j = 0; j < 32; j++) {
-                    data = core.regfile.read(j);
+                    data = (Long) core.regfile.read(j);
                     System.out.println(j + "\t" +
                                        String.format("%08x", data) + "\t" +
                                        PLPAsmFormatter.asciiWord(data));
@@ -229,7 +229,7 @@ public class PLPSimCL {
                 }
                 else {
                     long addr = PLPAsm.sanitize32bits(tokens[1]);
-                    long value = core.bus.read(addr);
+                    long value = (Long) core.bus.read(addr);
                     if(value != PLPMsg.PLP_ERROR_RETURN)
                         System.out.println(String.format("0x%08x=", addr) +
                                            String.format("0x%08x", value));
