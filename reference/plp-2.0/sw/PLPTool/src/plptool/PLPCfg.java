@@ -27,5 +27,5 @@ public class PLPCfg {
     public static boolean cfgInstrPretty                   = true;
 
     public static boolean cfgSimForwardingUnit             = true;
-    public static boolean cfgSimDynamicMemoryAllocation    = true;
+    public static boolean cfgSimDynamicMemoryAllocation    = false;
 }
