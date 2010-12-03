@@ -169,7 +169,8 @@ public class PLPSimCL {
                     System.out.println("Usage: preg <address>");
                 }
                 else {
-                    core.regfile.print(PLPToolbox.parseNum(tokens[1]));
+                    long addr = PLPToolbox.parseNum(tokens[1]);
+                    core.regfile.print(addr);
                 }
             }
             else if(input.equals("pfd")) {
