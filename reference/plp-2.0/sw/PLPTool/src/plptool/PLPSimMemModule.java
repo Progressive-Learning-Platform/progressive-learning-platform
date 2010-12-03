@@ -110,13 +110,11 @@ public class PLPSimMemModule extends PLPSimBusModule {
      * @param addr
      */
     public void print(long addr) {
-        long value = (Long) super.read(addr);
-
-        if(value >= 0) {
+        if(super.isInitialized(addr)) {
             PLPMsg.M("\naddress\t\tcontents\tASCII");
             PLPMsg.M("-------\t\t--------\t-----");
-            PLPMsg.M(String.format("%08x\t%08x\t",addr, value) +
-                                   PLPAsmFormatter.asciiWord(value));
+            PLPMsg.M(String.format("%08x\t%08x\t",addr, super.read(addr)) +
+                                   PLPAsmFormatter.asciiWord((Long) super.read(addr)));
         }
     }
 
