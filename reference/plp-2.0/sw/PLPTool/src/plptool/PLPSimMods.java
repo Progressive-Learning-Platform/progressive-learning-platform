@@ -19,117 +19,157 @@
 package plptool;
 
 /**
+ * PLP first-party modules collection. See PLPSimCL for an example on how
+ * these modules can be utilized.
  *
+ * @see PLPSimBusModule
+ * @see PLPSimBus
+ * @see PLPSimCL
+ * @see PLPSimCore
+ * @see PLPMIPSSim
+ * @see mod_io_leds
+ * @see mod_cache_hier
+ * @see mod_mips_sniffer
  * @author wira
  */
 public class PLPSimMods {
-     
-}
+    public mod_io_leds                      io_leds;
+    public mod_cache_hier                   cache_hier;
+    public mod_mips_sniffer                 mips_sniffer;
 
-class io_example_external extends PLPSimBusModule {
-    public io_example_external(long addr) {
-        super(addr, addr, true);
-        // This I/O only has 1 register
+    /**
+     * The constructor of PLPSimMods is where all the first-party modules
+     * here initialized. Register address and parameters are assigned here.
+     *
+     * @param sim Developers can selectively expose different parts of the
+     * simulator to the modules by utilizing this reference.
+     * @see PLPSimCore
+     */
+    public PLPSimMods(PLPSimCore sim) {
+        io_leds = new mod_io_leds((long) 0x8000400 << 4 | 4);
+        cache_hier = new mod_cache_hier(sim.memory);
+        mips_sniffer = new mod_mips_sniffer((PLPMIPSSim) sim, (long) 0x9000800 << 4);
     }
 
-    // When this module is evaluated, do this:
-    public int eval() {
-        if(!enabled)
-            return PLPMsg.PLP_OK;
+/******************************************************************************/
 
-        // Get register value
-        long value = super.read(startAddr);
+    /**
+     * This is an example module written for the PLP simulator that interacts
+     * with the simulation core solelyusing the front side bus.
+     *
+     * TODO: add gui_eval when the simulator GUI is ready for this stage of development.
+     */
+    public class mod_io_leds extends PLPSimBusModule {
 
-        // Combinational logic
-        if(value == 0xBEEF)
-            PLPMsg.M(this + ": Hey, it's beef!");
-        else
-            PLPMsg.M(this + "No beef :(");
-
-        return PLPMsg.PLP_OK;
-    }
-
-    public int gui_eval(Object x) { return PLPMsg.PLP_OK; }
-
-    public String introduce() {
-        return "PLPTool 2.0 io_example: an example of PLP bus module, try writing 0xbeef to " +
-                String.format("0x%08x", startAddr) + "!";
-    }
-
-    // Make sure to do this for error tracking
-    @Override public String toString() {
-        return "io_example";
-    }
-}
-
-class io_leds extends PLPSimBusModule {
-    public io_leds(long addr) {
-        super(addr, addr, true);
-        // This I/O only has 1 register
-    }
-
-    // When this module is evaluated, do this:
-    public int eval() {
-        if(!enabled)
-            return PLPMsg.PLP_OK;
-
-        // Get register value
-        long value = super.read(startAddr);
-
-        System.out.print(this + ": ");
-
-        // Combinational logic
-        for(int i = 7; i >= 0; i--) {
-            if((value & (long) Math.pow(2, i)) == (long) Math.pow(2, i))
-                System.out.print("* ");
-            else
-                System.out.print(". ");
+        public mod_io_leds(long addr) {
+            super(addr, addr, true);
+            // This I/O only has 1 register
         }
 
-        System.out.println();
+        // When this module is evaluated, do this:
+        public int eval() {
+            if(!enabled)
+                return PLPMsg.PLP_OK;
 
-        return PLPMsg.PLP_OK;
+            // Get register value
+            long value = super.read(startAddr);
+
+            System.out.print(this + ": ");
+
+            // Combinational logic
+            for(int i = 7; i >= 0; i--) {
+                if((value & (long) Math.pow(2, i)) == (long) Math.pow(2, i))
+                    System.out.print("* ");
+                else
+                    System.out.print(". ");
+            }
+
+            System.out.println();
+
+            return PLPMsg.PLP_OK;
+        }
+
+        public int gui_eval(Object x) {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return "PLPTool 2.0 io_leds: 8-LED array";
+        }
+
+        // Make sure to do this for error tracking
+        @Override public String toString() {
+            return "io_leds";
+        }
     }
 
-    public int gui_eval(Object x) {
-        return PLPMsg.PLP_OK;
+/******************************************************************************/
+     
+    /**
+     * This is an example of a module that snoops the front-side bus. By
+     * making its address space equal to the address space of the main memory,
+     * it will see all memory transactions issued by the core. This allows
+     * the module to simulate a cache memory hierarchy.
+     */
+    public class mod_cache_hier extends PLPSimBusModule {
+        PLPSimMemModule L1_I;
+        PLPSimMemModule L1_D;
+        PLPSimMemModule L2;
+
+        public mod_cache_hier(PLPSimMemModule mem) {
+            super(0, mem.size() * 4 - 4, true);
+        }
+
+        // When this module is evaluated, do this:
+        public int eval() {
+            return PLPMsg.PLP_OK;
+        }
+
+        public int gui_eval(Object x) {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return "PLPTool 2.0 Cache Hierarchy Module";
+        }
+
+        // Make sure to do this for error tracking
+        @Override public String toString() {
+            return "cache_hier";
+        }
     }
 
-    public String introduce() {
-        return "PLPTool 2.0 io_leds: 8-LED array attached to " +
-               String.format("0x%08x", startAddr);
-    }
+/******************************************************************************/
 
-    // Make sure to do this for error tracking
-    @Override public String toString() {
-        return "io_leds";
+    /**
+     * This is an example of a pervasive module. By passing the simulation
+     * core to this module, it has access to everything. It also utilizes
+     * PLPSimBusModule basic feature set so the simulation core can interact
+     * with this module through the front side bus.
+     */
+    public class mod_mips_sniffer extends PLPSimBusModule {
+
+        public mod_mips_sniffer(PLPMIPSSim sim, long regaddr) {
+            super(regaddr, regaddr, true);
+        }
+
+        // When this module is evaluated, do this:
+        public int eval() {
+            return PLPMsg.PLP_OK;
+        }
+
+        public int gui_eval(Object x) {
+            return PLPMsg.PLP_OK;
+        }
+
+        public String introduce() {
+            return "PLPTool 2.0 MIPS Bus Sniffer";
+        }
+
+        // Make sure to do this for error tracking
+        @Override public String toString() {
+            return "mips_sniffer";
+        }
     }
 }
 
-class cache_hier extends PLPSimBusModule {
-    PLPSimMemModule L1_I;
-    PLPSimMemModule L1_D;
-    PLPSimMemModule L2;
-
-    public cache_hier() {
-        super(0, (long) Math.pow(2,62), true);
-    }
-
-    // When this module is evaluated, do this:
-    public int eval() {
-        return PLPMsg.PLP_OK;
-    }
-
-    public int gui_eval(Object x) {
-        return PLPMsg.PLP_OK;
-    }
-
-    public String introduce() {
-        return "PLPTool 2.0 Cache Hierarchy Module";
-    }
-
-    // Make sure to do this for error tracking
-    @Override public String toString() {
-        return "cache_hier";
-    }
-}

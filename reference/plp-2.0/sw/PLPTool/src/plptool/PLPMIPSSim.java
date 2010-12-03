@@ -95,7 +95,7 @@ public class PLPMIPSSim extends PLPSimCore {
      */
     public PLPMIPSSim(PLPAsm asm, long RAMsize) {
         if(RAMsize <= 0)
-            RAMsize = (long) Math.pow(2, 62);
+            RAMsize = (long) Math.pow(2, 31);
 
         memory = new PLPSimMemModule(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
         regfile = new PLPSimMemModule(32, false);
@@ -220,7 +220,10 @@ public class PLPMIPSSim extends PLPSimCore {
     }
 
     /**
-     * Perform an instruction fetch and warm up the decode stage.
+     * Perform an instruction fetch and warm up the decode stage. This function
+     * represents the instruction fetch phase of the MIPS core. The only
+     * memory element in this stage is the program counter (and the instruction
+     * memory, but that is external).
      *
      * @return Returns 0 on successful completion. Error code otherwise.
      */
@@ -286,7 +289,11 @@ public class PLPMIPSSim extends PLPSimCore {
         return "PLPMIPSSim(asm: " + asm.toString() + ")";
     }
 
-    // Register file stage / instruction decode
+    /**
+     * This is the instruction decode (ID) / register file (RF) stage of the
+     * MIPS core. The execute module and the register file are attached to
+     * this class.
+     */
     public class id {
         boolean hot = false;
         public long instruction;
@@ -477,7 +484,10 @@ public class PLPMIPSSim extends PLPSimCore {
         }
     }
 
-    // Execute stage
+    /**
+     * This is the execute (EX) stage of the MIPS pipeline. The memory and
+     * ALU modules are attached to this class.
+     */
     public class ex {
         boolean hot = false;
         public long instruction;
@@ -645,7 +655,12 @@ public class PLPMIPSSim extends PLPSimCore {
         }
     }
 
-    // Memory stage
+    /**
+     * This is the memory (MEM) stage of the MIPS pipeline. Writeback module
+     * is attached to this class. The bus module is also attached to this
+     * class, and it is the only place where the MIPS simulation core interacts
+     * with the outside world aside from fetching instructions in IF stage.
+     */
     public class mem {
         boolean hot = false;
         public long instruction;
@@ -790,7 +805,11 @@ public class PLPMIPSSim extends PLPSimCore {
         }
     }
 
-    // Writeback stage
+    /**
+     * This is the writeback (WB) and final stage of the MIPS pipeline.
+     * Instructions are retired and register file is written to in this
+     * stage.
+     */
     public class wb {
         boolean hot = false;
         boolean instr_retired = false;
@@ -902,6 +921,9 @@ public class PLPMIPSSim extends PLPSimCore {
         }
     }
 
+    /**
+     * The ALU.
+     */
     public class alu {
 
         public alu() {
@@ -955,6 +977,10 @@ public class PLPMIPSSim extends PLPSimCore {
         }
     }
 
+    /**
+     * The MIPS forwarding module scans the pipeline stages when evaluated
+     * and will overwrite signals to avoid hazards.
+     */
     public class mod_forwarding {
         public mod_forwarding() {
 

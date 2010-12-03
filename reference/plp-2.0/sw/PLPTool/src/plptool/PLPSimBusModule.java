@@ -21,19 +21,58 @@ package plptool;
 import java.util.TreeMap;
 
 /**
- * This is an abstract for a I/O module that can be attached to PLPMIPSSim
- * front-side bus.
+ * This is an abstract for a general purpose module that can be attached to the
+ * front-side bus. Registers for the module are implemented using TreeMap.
+ * This class provides all the necessary functions to implement a PLP
+ * simulator bus module, such as read and write functions, and address space
+ * management and error checking. The module then can be extended by
+ * implementing eval() and gui_eval() functions, effectively tying the
+ * module to the simulation core.
  *
+ * @see PLPSimBus
  * @author wira
  */
 public abstract class PLPSimBusModule {
+    /**
+     * Registers for the module
+     */
     protected TreeMap<Long, Long> values;
+
+    /**
+     * Denotes each entry in the register whether it is an instruction.
+     * Useful for main memory implementations or caches.
+     */
     protected TreeMap<Long, Boolean>  isInstr;
+
+    /**
+     * Denotes whether the registers are addressed in memory-aligned fashion.
+     */
     protected boolean wordAligned;
+
+    /**
+     * Starting address of the address space
+     */
     protected long startAddr;
+
+    /**
+     * Final address of the address space (inclusive)
+     */
     protected long endAddr;
+
+    /**
+     * Write-enable and whether evaluations are enabled, but subclasses
+     * can choose to ignore this
+     */
     protected boolean enabled;
 
+    /**
+     * The constructor for the superclass requires the address space and
+     * whether the registers of the module are word-aligned
+     *
+     * @param startAddr
+     * @param endAddr
+     * @param wordAligned
+     */
     public PLPSimBusModule(long startAddr, long endAddr, boolean wordAligned) {
         values = new TreeMap<Long, Long>();
         isInstr = new TreeMap<Long, Boolean>();
@@ -43,24 +82,30 @@ public abstract class PLPSimBusModule {
         enabled = false;
     }
 
+    /**
+     * Write data to one of the module's registers. Only possible when the
+     * module is enabled. The write command is ignored otherwise.
+     *
+     * @param addr Address to write to
+     * @param data Data to be written
+     * @param isInstr Denotes whether the value to be written is an instruction
+     * @return PLP_OK, or error code
+     */
     public int write(long addr, long data, boolean isInstr) {
         if(!enabled)
             return PLPMsg.PLP_SIM_MODULE_DISABLED;
 
-        if(wordAligned && ((addr / 4) >= endAddr || addr < startAddr))
-            return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address out of range.",
+        if(addr > endAddr || addr < startAddr)
+            return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address is out of range.",
                             PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
         else if(wordAligned && addr % 4 != 0)
-            return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Unaligned memory.",
+            return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-        else if(!wordAligned && ((addr) >= endAddr || addr < startAddr))
-            return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address out of range.",
-                            PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-        else if(wordAligned) {
-            values.put(new Long(addr / 4), new Long(data));
-            this.isInstr.put(new Long(addr / 4), isInstr);
-        }
         else {
+            if(values.containsKey(addr)) {
+                values.remove(addr);
+                this.isInstr.remove(addr);
+            }
             values.put(new Long(addr), new Long(data));
             this.isInstr.put(new Long(addr), isInstr);
         }
@@ -68,23 +113,24 @@ public abstract class PLPSimBusModule {
         return PLPMsg.PLP_OK;
     }
 
+    /**
+     * Read one of the module's registers
+     *
+     * @param addr Address to read from
+     * @return Data, or PLP_ERROR_RETURN
+     */
     public long read(long addr) {
-        if(wordAligned && ((addr / 4) >= endAddr || addr < startAddr)) {
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
+        if(addr > endAddr || addr < startAddr) {
+            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
                      PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
             return PLPMsg.PLP_ERROR_RETURN;
         }
         else if (wordAligned && addr % 4 != 0) {
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Unaligned memory.",
+            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
             return PLPMsg.PLP_ERROR_RETURN;
         }
-        else if(!wordAligned && ((addr) >= endAddr || addr < startAddr)) {
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address out of range.",
-                            PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            return PLPMsg.PLP_ERROR_RETURN;
-        }
-        else if(!wordAligned && !values.containsKey(addr)) {
+        else if(!values.containsKey(addr)) {
             if(PLPCfg.cfgSimDynamicMemoryAllocation) {
                 PLPMsg.I("read(" + String.format("0x%08x", addr) +
                          "): Dynamic memory allocation.", this);
@@ -92,74 +138,112 @@ public abstract class PLPSimBusModule {
                 isInstr.put(addr, false);
                 return 0;
             }
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
+            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
                              PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
             return PLPMsg.PLP_ERROR_RETURN;
-        }
-        else if(wordAligned && !values.containsKey(addr / 4)) {
-            if(PLPCfg.cfgSimDynamicMemoryAllocation) {
-                PLPMsg.I("read(" + String.format("0x%08x", addr) +
-                         "): Dynamic memory allocation.", this);
-                values.put(addr / 4, (long) 0);
-                isInstr.put(addr / 4, false);
-                return 0;
-            }
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address not initialized.",
-                             PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-            return PLPMsg.PLP_ERROR_RETURN;
-        }
-        else if(wordAligned) {
-            return values.get(addr / 4);
         }
         else
             return values.get(addr);
     }
 
+    /**
+     * Reinitialize the module's registers
+     */
     public void clear() {
         values = new TreeMap<Long, Long>();
         isInstr = new TreeMap<Long, Boolean>();
     }
 
-    // returns size of memory in WORDS
+    /**
+     * Returns the width of the address space
+     *
+     * @return The width of the address space in (long)
+     */
     public long size() {
-        return endAddr - startAddr + 1;
+        if(!wordAligned)
+            return endAddr - startAddr + 1;
+        else
+            return (endAddr - startAddr) / 4 + 1;
     }
 
+    /**
+     * Returns the end of the address space
+     *
+     * @return Final address in (long)
+     */
     public long endAddr() {
         return endAddr;
     }
 
+    /**
+     * Returns the beginning of the address space
+     *
+     * @return Starting address in (long)
+     */
     public long startAddr() {
         return startAddr;
     }
 
+    /**
+     * Enable the module.
+     */
     public void enable() {
         enabled = true;
     }
 
+    /**
+     * Disable the module.
+     */
     public void disable() {
         enabled = false;
     }
 
+    /**
+     * Returns whether the module is enabled
+     *
+     * @return Status of module in (boolean)
+     */
     public boolean enabled() {
         return enabled;
     }
 
+    /**
+     * Returns whether the specified register contains an instruction or not
+     *
+     * @param addr Address to read from
+     * @return Whether the specified register contains instruction or not
+     */
     public boolean isInstr(long addr) {
-        if(wordAligned)
-            return isInstr.get(addr / 4);
-        else
-            return isInstr.get(addr);
+        return isInstr.get(addr);
     }
 
+    /**
+     * Returns whether the registers of the module are word-aligned
+     *
+     * @return Whether the registers of the module are word-aligned
+     */
     public boolean iswordAligned() {
         return wordAligned;
     }
 
-    // Each module does its own thing when evaluated. But most of them
-    // will HAVE to do something!
+    /**
+     * The eval() function represents the behavior of the module itself.
+     * For example, an eval function for an array of LED will read its
+     * register and light up proper LEDs.
+     *
+     * @return int
+     */
     abstract int eval();
-    abstract int gui_eval(Object drawObj);
+
+    /**
+     * gui_eval is designed for simulator developers / users to allow the
+     * module to interact with the simulation environment directly.
+     *
+     * @param x Reference to a simulator object that this module will interact
+     * with.
+     * @return
+     */
+    abstract int gui_eval(Object x);
 
     // introduction string when the module is loaded
     abstract String introduce();

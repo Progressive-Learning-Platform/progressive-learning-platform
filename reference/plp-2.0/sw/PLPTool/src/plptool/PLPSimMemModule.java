@@ -21,17 +21,38 @@ package plptool;
 import java.util.Iterator;
 
 /**
- * PLP memory module.
+ * PLP memory module. It's simply PLPSimBusModule with pretty printouts.
  *
  * @author wira
  */
 public class PLPSimMemModule extends PLPSimBusModule {
+    /**
+     * The constructor for the memory module takes the size of the memory
+     * in bytes if it's word aligned (such as main memory), or in words
+     * (such as register file).
+     *
+     * @param size Size of memory module. In bytes if aligned, in words otherwise.
+     * @param wordAligned Denotes whether this memory module is word aligned
+     */
     public PLPSimMemModule(long size, boolean wordAligned) {
-        super(0, size, wordAligned);
+        super(0, wordAligned ? size - 4: size - 1, wordAligned);
     }
 
-    // memory module doesn't need eval, just return OK.
+    /**
+     * The memory module should not have an evaluation procedure, this is here
+     * to satisfy implementation of the PLPSimBusModule superclass. Fancier
+     * memory modules can use this.
+     *
+     * @return PLP_OK
+     */
     public int eval () { return PLPMsg.PLP_OK; }
+
+    /**
+     * The memory module should not have an evaluation procedure, this is here
+     * to satisfy implementation of the PLPSimBusModule superclass.
+     *
+     * @return PLP_OK
+     */
     public int gui_eval(Object x) { return PLPMsg.PLP_OK; }
 
 
@@ -39,6 +60,11 @@ public class PLPSimMemModule extends PLPSimBusModule {
         return "PLPSimMemModule " + PLPMsg.versionString;
     }
 
+    /**
+     * Print the contents of this memory module.
+     *
+     * @param highlight Memory location to highlight, probably the PC value
+     */
     public void printAll(long highlight) {
         long key;
         PLPMsg.M("->\taddress\t\tcontents\tASCII");
@@ -46,23 +72,19 @@ public class PLPSimMemModule extends PLPSimBusModule {
         Iterator keyIterator = super.values.keySet().iterator();
         while(keyIterator.hasNext()) {
             key = (Long) keyIterator.next();
-            if(wordAligned) {
-                if(key * 4 == highlight)
-                    System.out.print(">>>");
-                PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                       key * 4, super.values.get(key)) +
-                                       PLPAsmFormatter.asciiWord(super.values.get(key)));
-            }
-            else {
-                if(key == highlight)
-                    System.out.print(">>>");
-                PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                        key, super.values.get(key)) +
-                                        PLPAsmFormatter.asciiWord(super.values.get(key)));
-            }
+            if(key == highlight)
+                System.out.print(">>>");
+            PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                   key, super.values.get(key)) +
+                                   PLPAsmFormatter.asciiWord(super.values.get(key)));
         }
     }
 
+    /**
+     * Print the contents of this memory module formatted as MIPS program.
+     *
+     * @param highlight Memory location to highlight, probably the PC value
+     */
     public void printProgram(long highlight) {
         if(wordAligned) {
             long key;
@@ -72,34 +94,33 @@ public class PLPSimMemModule extends PLPSimBusModule {
             while(keyIterator.hasNext()) {
                 key = (Long) keyIterator.next();
                 if(super.isInstr.get(key) == true) {
-                    if(key * 4 == highlight)
+                    if(key == highlight)
                         System.out.print(">>>");
                     PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                           key * 4, super.values.get(key)) +
+                                           key, super.values.get(key)) +
                                            MIPSInstr.format(super.values.get(key)));
                 }
             }
         }
     }
 
+    /**
+     * Print the contents of the specified address
+     *
+     * @param addr
+     */
     public void print(long addr) {
-        if(wordAligned) {
+        long value = super.read(addr);
+
+        if(value >= 0) {
             PLPMsg.M("\naddress\t\tcontents\tASCII");
             PLPMsg.M("-------\t\t--------\t-----");
-            PLPMsg.M(String.format("%08x\t%08x\t" +
-                                   PLPAsmFormatter.asciiWord(super.read(addr)),
-                                   addr, super.read(addr)));
-        }
-        else {
-            PLPMsg.M("\naddress\t\tcontents\tASCII");
-            PLPMsg.M("-------\t\t--------\t-----");
-            PLPMsg.M(String.format("%08x\t%08x\t" +
-                                   PLPAsmFormatter.asciiWord(super.read(addr)),
-                                   addr, super.read(addr)));
+            PLPMsg.M(String.format("%08x\t%08x\t",addr, value) +
+                                   PLPAsmFormatter.asciiWord(value));
         }
     }
 
     @Override public String toString() {
-        return "PLPMIPSSim.mod_memory";
+        return "PLPSimMemModule";
     }
 }
