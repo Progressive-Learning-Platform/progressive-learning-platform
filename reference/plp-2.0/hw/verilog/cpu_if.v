@@ -20,11 +20,18 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr, iin, p_inst
 	reg [31:0] pc;
 	wire [31:0] next_pc;
 
+	/* flush logic (for branches and jumps) */
+	wire flush = pc_b | pc_j;
+
 	always @(posedge clk) begin
 		if (rst) begin
 			p_pc <= 0;
 			pc <= 0;
 			p_inst <= 0;
+		end else if (flush && !rst) begin
+			p_pc <= 0;
+			p_inst <= 0;
+			pc <= next_pc;
 		end else begin
 			p_pc <= pc;
 			pc   <= next_pc;
