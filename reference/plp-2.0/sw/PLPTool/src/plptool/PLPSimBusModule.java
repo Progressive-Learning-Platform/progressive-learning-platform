@@ -123,12 +123,12 @@ public abstract class PLPSimBusModule {
         if(addr > endAddr || addr < startAddr) {
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
                      PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
-            return PLPMsg.PLP_ERROR_RETURN;
+            return null;
         }
         else if (wordAligned && addr % 4 != 0) {
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
-            return PLPMsg.PLP_ERROR_RETURN;
+            return null;
         }
         else if(!values.containsKey(addr)) {
             if(PLPCfg.cfgSimDynamicMemoryAllocation) {
@@ -140,7 +140,7 @@ public abstract class PLPSimBusModule {
             }
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
                              PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
-            return PLPMsg.PLP_ERROR_RETURN;
+            return null;
         }
         else
             return values.get(addr);
@@ -224,6 +224,16 @@ public abstract class PLPSimBusModule {
      */
     public boolean iswordAligned() {
         return wordAligned;
+    }
+
+    /**
+     * True if the specified address is initialized. False otherwise
+     *
+     * @param addr The address to lookup
+     * @return Returns boolean
+     */
+    public boolean isInitialized(long addr) {
+        return values.containsKey(addr);
     }
 
     /**
