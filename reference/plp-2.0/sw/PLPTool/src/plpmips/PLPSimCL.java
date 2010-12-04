@@ -16,10 +16,14 @@
 
  */
 
-package plptool;
+package plpmips;
 
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import plptool.PLPMsg;
+import plptool.PLPSimCore;
+import plptool.PLPSimMods;
+import plptool.PLPToolbox;
 
 /**
  * PLPTool command line simulator interface
@@ -161,7 +165,7 @@ public class PLPSimCL {
                     data = (Long) core.regfile.read(j);
                     System.out.println(j + "\t" +
                                        String.format("%08x", data) + "\t" +
-                                       PLPAsmFormatter.asciiWord(data));
+                                       PLPToolbox.asciiWord(data));
                 }
             }
             else if(tokens[0].equals("preg")) {
@@ -181,7 +185,7 @@ public class PLPSimCL {
             else if(input.equals("pprg")) {
                 System.out.println("\nProgram Listing");
                 System.out.println("===============");
-                core.memory.printProgram(core.pc.eval());
+                core.printProgram(core.pc.eval());
             }
             else if(input.equals("pasm")) {
                 PLPAsmFormatter.prettyPrint(asm);
@@ -230,10 +234,12 @@ public class PLPSimCL {
                 }
                 else {
                     long addr = PLPAsm.sanitize32bits(tokens[1]);
-                    long value = (Long) core.bus.read(addr);
-                    if(value != PLPMsg.PLP_ERROR_RETURN)
+                    Object ret = core.bus.read(addr);
+                    if(ret != null) {
+                        long value = (Long) ret;
                         System.out.println(String.format("0x%08x=", addr) +
                                            String.format("0x%08x", value));
+                    }
                 }
             }
             else if(input.equals("listio")) {
@@ -241,8 +247,8 @@ public class PLPSimCL {
                     System.out.println(i + ": " +
                                        String.format("0x%08x", core.bus.iostartaddr(i)) + "-" +
                                        String.format("0x%08x", core.bus.ioendaddr(i)) + " " +
-                                       core.bus.introduceio(i) + " (" +
-                                       (core.bus.enabled(i) ? "enabled)" : "disabled)"));
+                                       core.bus.introduceio(i) +
+                                       (core.bus.enabled(i) ? " (enabled)" : " (disabled)"));
             }
             else if(input.equals("enableio")) {
                 core.bus.enableiomods();
@@ -313,7 +319,7 @@ public class PLPSimCL {
                             addr = PLPToolbox.parseNum(tokens[1]) + 4 * j;
                             core.memory.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
                             System.out.println(String.format("%08x", addr) +
-                                               "   " + PLPAsmFormatter.asciiWord(inlineAsm.getObjectCode()[j]) +
+                                               "   " + PLPToolbox.asciiWord(inlineAsm.getObjectCode()[j]) +
                                                "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
                         }
                     }

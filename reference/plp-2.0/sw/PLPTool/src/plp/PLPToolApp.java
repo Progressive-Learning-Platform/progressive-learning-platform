@@ -16,10 +16,14 @@
 
  */
 
-package plptool;
+package plp;
 
+import plpmips.PLPProgrammer;
+import plpmips.PLPAsmFormatter;
+import plpmips.PLPSimCL;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
+import plptool.PLPMsg;
 
 /**
  * The main class of the application.

@@ -19,6 +19,7 @@ package plptool;
  */
 
 import java.util.TreeMap;
+import java.util.Iterator;
 
 /**
  * This is an abstract for a general purpose module that can be attached to the
@@ -152,6 +153,29 @@ public abstract class PLPSimBusModule {
     public void clear() {
         values = new TreeMap<Long, Object>();
         isInstr = new TreeMap<Long, Boolean>();
+    }
+
+    /**
+     * Return the set of addresses and values in an n x 2 array. This can
+     * be useful to modules that have to walk through the whole register file
+     * on evaluation.
+     *
+     * @return n x 2 Object array containing addresses and values of the
+     * memory module
+     */
+    public Object[][] getValueSet() {
+        Object[][] valueSet = new Object[values.size()][2];
+        int index = 0;
+
+        Iterator keyIterator = values.keySet().iterator();
+
+        while(keyIterator.hasNext()) {
+            valueSet[index][0] = keyIterator.next();
+            valueSet[index][1] = values.get((Long) valueSet[index][0]);
+            index++;
+        }
+
+        return valueSet;
     }
 
     /**
