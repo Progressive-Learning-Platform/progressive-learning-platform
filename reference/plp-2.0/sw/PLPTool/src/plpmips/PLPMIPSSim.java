@@ -242,7 +242,7 @@ public class PLPMIPSSim extends PLPSimCore {
                             String.format("%08x", addr),
                             PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
-        if((Long) memory.read(addr) == PLPMsg.PLP_ERROR_RETURN)
+        if((Long) memory.read(addr) == null)
             return PLPMsg.E("step(): Memory location uninitialized: addr=" +
                             String.format("%08x", addr),
                             PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
@@ -307,7 +307,7 @@ public class PLPMIPSSim extends PLPSimCore {
         Object[][] values = super.memory.getValueSet();
         for(int i = 0; i < values.length; i++) {
                 if((Long) values[i][0] == highlight)
-                    System.out.print(">>>");
+                    PLPMsg.m(">>>");
                 PLPMsg.M(String.format("\t%08x\t%08x\t",
                                        (Long) values[i][0], (Long) values[i][1]) +
                                        MIPSInstr.format((Long) values[i][1]));
@@ -795,8 +795,12 @@ public class PLPMIPSSim extends PLPSimCore {
         
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
-            if(ctl_memread == 1)
+            if(ctl_memread == 1) {
+                if(bus.read(fwd_data_alu_result) == null)
+                    return PLPMsg.E("Attempted to read from unititialized memory.",
+                                    PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
                 wb_reg.i_data_memreaddata = (Long) bus.read(fwd_data_alu_result);
+            }
 
             if(ctl_memwrite == 1)
                 bus.write(fwd_data_alu_result, data_memwritedata, false);
