@@ -26,7 +26,7 @@ import plptool.PLPSimMods;
 import plptool.PLPToolbox;
 
 /**
- * PLPTool command line simulator interface
+ * PLPTool command line simulator interface for the MIPS simulation core
  *
  * @author wira
  */
@@ -44,24 +44,32 @@ public class PLPSimCL {
 
         try {
 
-        System.out.println("PLPTool Command Line Simulator");
-        System.out.print("Assembling " + asmFile + " ...");
-        asm = new PLPAsm(null, asmFile, 0);
-        if(asm.preprocess(0) == PLPMsg.PLP_OK)
-            asm.assemble();
+        PLPMsg.M("PLPTool Command Line Simulator");
+        if(asmFile != null) {
+            PLPMsg.m("Assembling " + asmFile + " ...");
+            asm = new PLPAsm(null, asmFile, 0);
+            if(asm.preprocess(0) == PLPMsg.PLP_OK)
+                asm.assemble();
+            
+            if(!asm.isAssembled()) {
+                PLPMsg.M("");
+                PLPMsg.E("Assembly failed.", PLPMsg.PLP_ERROR_RETURN, asm);
+                System.exit(PLPMsg.PLP_ERROR_RETURN);
+            }
+            PLPMsg.M(" OK");
 
-        if(!asm.isAssembled()) {
-            System.out.println();
-            PLPMsg.E("Assembly failed.", PLPMsg.PLP_ERROR_RETURN, asm);
-            System.exit(PLPMsg.PLP_ERROR_RETURN);
+        } else {
+            asm = new PLPAsm("nop", "empty", 0);
+            if(asm.preprocess(0) == PLPMsg.PLP_OK)
+                asm.assemble();
         }
-
-        System.out.println(" OK");
-        System.out.print("sim > ");
+        
+        PLPMsg.m("sim > ");
+        
         while(!(input = stdIn.readLine().trim()).equals("q")) {
             tokens = input.split(" ");
             if(input.equals("version")) {
-                System.out.println(PLPMsg.versionString);
+                PLPMsg.M(PLPMsg.versionString);
             }
             else if(tokens[0].equals("i")) {
                 if(tokens.length == 1) {
@@ -71,17 +79,17 @@ public class PLPSimCL {
                     addMods(core);
                     core.printfrontend();
                     core.bus.enableiomods();
-                    System.out.println("Simulation core initialized with nigh-infinite RAM.");
+                    PLPMsg.M("Simulation core initialized with nigh-infinite RAM.");
                 }
                 else if(tokens.length != 2) {
-                    System.out.println("Usage: i <ram size in bytes>");
+                    PLPMsg.M("Usage: i <ram size in bytes>");
                 }
                 else {
                     try {
                     ram_size = PLPToolbox.parseNum(tokens[1]);
                    
                     if(ram_size % 4 != 0)
-                        System.out.println("RAM size has to be in multiples of 4");
+                        PLPMsg.M("RAM size has to be in multiples of 4");
                     else {
                         core = new PLPMIPSSim(asm, ram_size);
                         core.reset();
@@ -89,16 +97,16 @@ public class PLPSimCL {
                         addMods(core);
                         core.printfrontend();
                         core.bus.enableiomods();
-                        System.out.println("Simulation core initialized.");
+                        PLPMsg.M("Simulation core initialized.");
                     }
                     } catch(Exception e) {
-                        System.out.println(e);
-                        System.out.println("Usage: i <ram size in bytes>");
+                        PLPMsg.M("" + e);
+                        PLPMsg.M("Usage: i <ram size in bytes>");
                     }
                 }
             }
             else if(input.equals("help") && !init_core) {
-                System.out.println("Run i to initialize simulation core with default RAM size.\n" +
+                PLPMsg.M("Run i to initialize simulation core with default RAM size.\n" +
                                    "Run i <ram size in bytes> to specify RAM size.\n" +
                                    "Run q to quit.\n");
             }
@@ -109,19 +117,19 @@ public class PLPSimCL {
                      PLPMsg.E("Simulation is stale. Please reset.",
                               PLPMsg.PLP_SIM_STALE, null);
                 else if(!silent) {
-                    System.out.println();
+                    PLPMsg.M("");
                     core.wb_stage.printinstr();
                     core.mem_stage.printinstr();
                     core.ex_stage.printinstr();
                     core.id_stage.printinstr();
                     core.printfrontend();
-                    System.out.println("-------------------------------------");
+                    PLPMsg.M("-------------------------------------");
                 }
             }
             
             else if(tokens[0].equals("s")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: s <number of instructions>");
+                    PLPMsg.M("Usage: s <number of instructions>");
                 }
                 else
                     for(int i = 0; i < Integer.parseInt(tokens[1]); i++) {
@@ -129,13 +137,13 @@ public class PLPSimCL {
                         PLPMsg.E("Simulation is stale. Please reset.",
                                  PLPMsg.PLP_SIM_STALE, null);
                         else if(!silent) {
-                            System.out.println();
+                            PLPMsg.M("");
                             core.wb_stage.printinstr();
                             core.mem_stage.printinstr();
                             core.ex_stage.printinstr();
                             core.id_stage.printinstr();
                             core.printfrontend();
-                            System.out.println("-------------------------------------");
+                            PLPMsg.M("-------------------------------------");
                         }
                     }
             }
@@ -145,13 +153,13 @@ public class PLPSimCL {
             }
             else if(input.equals("pram")) {
                 
-                System.out.println("\nMain memory listing");
-                System.out.println("===================");
+                PLPMsg.M("\nMain memory listing");
+                PLPMsg.M("===================");
                 core.memory.printAll(core.pc.eval());
             }
             else if(tokens[0].equals("pram")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: pram <address>");
+                    PLPMsg.M("Usage: pram <address>");
                 }
                 else {
                     core.memory.print(PLPToolbox.parseNum(tokens[1]));
@@ -159,18 +167,18 @@ public class PLPSimCL {
             }
             else if(input.equals("preg")) {
                 long data;
-                System.out.println("\nRegisters listing");
-                System.out.println("=================");
+                PLPMsg.M("\nRegisters listing");
+                PLPMsg.M("=================");
                 for(int j = 0; j < 32; j++) {
                     data = (Long) core.regfile.read(j);
-                    System.out.println(j + "\t" +
+                    PLPMsg.M(j + "\t" +
                                        String.format("%08x", data) + "\t" +
                                        PLPToolbox.asciiWord(data));
                 }
             }
             else if(tokens[0].equals("preg")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: preg <address>");
+                    PLPMsg.M("Usage: preg <address>");
                 }
                 else {
                     long addr = PLPToolbox.parseNum(tokens[1]);
@@ -178,21 +186,21 @@ public class PLPSimCL {
                 }
             }
             else if(input.equals("pfd")) {
-                System.out.println("\nFrontend / fetch stage state");
-                System.out.println("============================");
+                PLPMsg.M("\nFrontend / fetch stage state");
+                PLPMsg.M("============================");
                 core.printfrontend();
             }
             else if(input.equals("pprg")) {
-                System.out.println("\nProgram Listing");
-                System.out.println("===============");
+                PLPMsg.M("\nProgram Listing");
+                PLPMsg.M("===============");
                 core.printProgram(core.pc.eval());
             }
             else if(input.equals("pasm")) {
                 PLPAsmFormatter.prettyPrint(asm);
             }
             else if(input.equals("pinstr")) {
-                System.out.println("\nIn-flight instructions");
-                System.out.println("======================");
+                PLPMsg.M("\nIn-flight instructions");
+                PLPMsg.M("======================");
                 core.wb_stage.printinstr();
                 core.mem_stage.printinstr();
                 core.ex_stage.printinstr();
@@ -201,7 +209,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("wpc")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: wpc <address>");
+                    PLPMsg.M("Usage: wpc <address>");
                 }
                 else {
                     core.softreset();
@@ -211,7 +219,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("w")) {
                 if(tokens.length != 3) {
-                    System.out.println("Usage: w <address> <data>");
+                    PLPMsg.M("Usage: w <address> <data>");
                 }
                 else {
                     if(core.memory.write(PLPAsm.sanitize32bits(tokens[1]),
@@ -221,7 +229,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("wbus")) {
                 if(tokens.length != 3) {
-                    System.out.println("Usage: wbus <address> <data>");
+                    PLPMsg.M("Usage: wbus <address> <data>");
                 }
                 else {
                     core.bus.write(PLPAsm.sanitize32bits(tokens[1]),
@@ -230,21 +238,21 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("rbus")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: rbus <address>");
+                    PLPMsg.M("Usage: rbus <address>");
                 }
                 else {
                     long addr = PLPAsm.sanitize32bits(tokens[1]);
                     Object ret = core.bus.read(addr);
                     if(ret != null) {
                         long value = (Long) ret;
-                        System.out.println(String.format("0x%08x=", addr) +
+                        PLPMsg.M(String.format("0x%08x=", addr) +
                                            String.format("0x%08x", value));
                     }
                 }
             }
             else if(input.equals("listio")) {
                 for(int i = 0; i < core.bus.nummods(); i++)
-                    System.out.println(i + ": " +
+                    PLPMsg.M(i + ": " +
                                        String.format("0x%08x", core.bus.iostartaddr(i)) + "-" +
                                        String.format("0x%08x", core.bus.ioendaddr(i)) + " " +
                                        core.bus.introduceio(i) +
@@ -255,7 +263,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("enableio")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: enableio <index>");
+                    PLPMsg.M("Usage: enableio <index>");
                 }
                 else {
                     core.bus.enableio((int) PLPToolbox.parseNum(tokens[1]));
@@ -266,7 +274,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("evalio")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: enableio <index>");
+                    PLPMsg.M("Usage: enableio <index>");
                 }
                 else {
                     core.bus.eval((int) PLPToolbox.parseNum(tokens[1]));
@@ -277,7 +285,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("disableio")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: disableio <index>");
+                    PLPMsg.M("Usage: disableio <index>");
                 }
                 else {
                     core.bus.disableio((int) PLPToolbox.parseNum(tokens[1]));
@@ -285,7 +293,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("cleario")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: cleario <index>");
+                    PLPMsg.M("Usage: cleario <index>");
                 }
                 else {
                     core.bus.cleario((int) PLPToolbox.parseNum(tokens[1]));
@@ -293,7 +301,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("j")) {
                 if(tokens.length != 2) {
-                    System.out.println("Usage: j <address>");
+                    PLPMsg.M("Usage: j <address>");
                 }
                 else {
                     core.pc.write(PLPAsm.sanitize32bits(tokens[1]));
@@ -302,7 +310,7 @@ public class PLPSimCL {
             }
             else if(tokens[0].equals("asm")) {
                 if(tokens.length < 3) {
-                    System.out.println("Usage: asm <address> <in-line assembly>");
+                    PLPMsg.M("Usage: asm <address> <in-line assembly>");
                 }
                 else {
                     String iAsm = "";
@@ -313,12 +321,12 @@ public class PLPSimCL {
                     if(inlineAsm.preprocess(0) == PLPMsg.PLP_OK)
                         inlineAsm.assemble();
                     if(inlineAsm.isAssembled()) {
-                        System.out.println("\nCode injected:");
-                        System.out.println("==============");
+                        PLPMsg.M("\nCode injected:");
+                        PLPMsg.M("==============");
                         for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
                             addr = PLPToolbox.parseNum(tokens[1]) + 4 * j;
                             core.memory.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
-                            System.out.println(String.format("%08x", addr) +
+                            PLPMsg.M(String.format("%08x", addr) +
                                                "   " + PLPToolbox.asciiWord(inlineAsm.getObjectCode()[j]) +
                                                "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
                         }
@@ -326,8 +334,8 @@ public class PLPSimCL {
                 }
             }
             else if(input.equals("pvars")) {
-                System.out.println("\nOutput side values of pipeline stages");
-                System.out.println("=====================================");
+                PLPMsg.M("\nOutput side values of pipeline stages");
+                PLPMsg.M("=====================================");
                 core.wb_stage.printvars();
                 core.mem_stage.printvars();
                 core.ex_stage.printvars();
@@ -335,8 +343,8 @@ public class PLPSimCL {
 
             }
             else if(input.equals("pnextvars")) {
-                System.out.println("\nInput side values of pipeline registers");
-                System.out.println("=======================================");
+                PLPMsg.M("\nInput side values of pipeline registers");
+                PLPMsg.M("=======================================");
                 core.wb_stage.printnextvars();
                 core.mem_stage.printnextvars();
                 core.ex_stage.printnextvars();
@@ -345,34 +353,40 @@ public class PLPSimCL {
             else if(input.equals("silent")) {
                 if(silent) {
                     silent = false;
-                    System.out.println("Silent mode off.");
+                    PLPMsg.M("Silent mode off.");
                 } else {
                     silent = true;
-                    System.out.println("Silent mode on.");
+                    PLPMsg.M("Silent mode on.");
                 }
             }
+            else if(input.equals("jvm")) {
+                Runtime runtime = Runtime.getRuntime();
+                PLPMsg.M("Free JVM memory:     " + runtime.freeMemory());
+                PLPMsg.M("Total JVM memory:    " + runtime.totalMemory());
+                PLPMsg.M("Total - Free (Used): "  + (runtime.totalMemory() -  runtime.freeMemory()));
+            }
             else if(input.toLowerCase().equals("wira sucks")) {
-                System.out.println("No, he doesn't.");
+                PLPMsg.M("No, he doesn't.");
             }
             else {
                 simCLHelp();
             }
 
-            System.out.println();
+            PLPMsg.M("");
 
             
             } else {
-                System.out.println("Simulation core is not initialiazed. Try running the command 'i'.\n");
+                PLPMsg.M("Simulation core is not initialiazed. Try running the command 'i'.\n");
             }
         }
             if(!init_core)
-                System.out.print("sim > ");
+                PLPMsg.m("sim > ");
             else
-                System.out.print(String.format("%08x", core.getFlags()) +
+                PLPMsg.m(String.format("%08x", core.getFlags()) +
                                  " " + core.getinstrcount() +
                                  " sim > ");
         }
-        System.out.println("See ya!");
+        PLPMsg.M("See ya!");
 
         } catch(Exception e) {
             System.err.println(e);
@@ -380,27 +394,29 @@ public class PLPSimCL {
     }
 
     public static void simCLHelp() {
-        System.out.println("Unknown command. Command list:");
-        System.out.println("\n i <RAM size in bytes> ..or.. i\n\tInit core with RAM size in bytes. Set RAM size to 2^62 if no argument is given.");
-        System.out.println("\n s <steps> ..or.. s\n\tAdvance <steps> number of cycles. Step 1 cycle if no argument is given.");
-        System.out.println("\n r\n\tReset simulated CPU (clears memory elements and reloads program).");
-        System.out.println("\n pinstr\n\tPrint instructions currently in-flight.");
-        System.out.println("\n pvars\n\tPrint pipeline registers' values.");
-        System.out.println("\n pnextvars\n\tPrint pipeline registers' input values.");
-        System.out.println("\n pram <address> ..or.. pram\n\tPrint value of RAM at <address>. Print all if no argument is given.");
-        System.out.println("\n preg <address> ..or.. preg\n\tPrint contents of a register or print contents of register file.");
-        System.out.println("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
-        System.out.println("\n pasm\n\tPrint program object code.");
-        System.out.println("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
-        System.out.println("\n wpc <address>\n\tOverwrite program counter with <address>.");
-        System.out.println("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
-        System.out.println("\n wbus <address> <value>\n\tWrite <value> to FSB with <address>.");
-        System.out.println("\n enableio <index> ..or.. enableio\n\tEnable evaluation of I/O device <index>. Enable all if no argument is given.");
-        System.out.println("\n disableio <index> ..or.. disableio\n\tDisable evaluation of I/O device <index>. Disable all if no argument is given.");
-        System.out.println("\n listio\n\tList I/O modules loaded.");
-        System.out.println("\n evalio <index> ..or.. evalio\n\tEvaluate I/O module <index>. Evaluate all if no argument is given.");
-        System.out.println("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
-        System.out.println("\n silent\n\tToggle silent mode (default off).");
+        PLPMsg.M("Unknown command. Command list:");
+        PLPMsg.M("\n i <RAM size in bytes> ..or.. i\n\tInit core with RAM size in bytes. Set RAM size to 2^62 if no argument is given.");
+        PLPMsg.M("\n s <steps> ..or.. s\n\tAdvance <steps> number of cycles. Step 1 cycle if no argument is given.");
+        PLPMsg.M("\n r\n\tReset simulated CPU (clears memory elements and reloads program).");
+        PLPMsg.M("\n pinstr\n\tPrint instructions currently in-flight.");
+        PLPMsg.M("\n pvars\n\tPrint pipeline registers' values.");
+        PLPMsg.M("\n pnextvars\n\tPrint pipeline registers' input values.");
+        PLPMsg.M("\n pram <address> ..or.. pram\n\tPrint value of RAM at <address>. Print all if no argument is given.");
+        PLPMsg.M("\n preg <address> ..or.. preg\n\tPrint contents of a register or print contents of register file.");
+        PLPMsg.M("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
+        PLPMsg.M("\n pasm\n\tPrint program object code.");
+        PLPMsg.M("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
+        PLPMsg.M("\n wpc <address>\n\tOverwrite program counter with <address>.");
+        PLPMsg.M("\n j <address>\n\tJump to <address>.");
+        PLPMsg.M("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
+        PLPMsg.M("\n wbus <address> <value>\n\tWrite <value> to FSB with <address>.");
+        PLPMsg.M("\n rbus <address>\n\tIssue read of <addr> to FSB.");
+        PLPMsg.M("\n enableio <index> ..or.. enableio\n\tEnable evaluation of I/O device <index>. Enable all if no argument is given.");
+        PLPMsg.M("\n disableio <index> ..or.. disableio\n\tDisable evaluation of I/O device <index>. Disable all if no argument is given.");
+        PLPMsg.M("\n listio\n\tList I/O modules loaded.");
+        PLPMsg.M("\n evalio <index> ..or.. evalio\n\tEvaluate I/O module <index>. Evaluate all if no argument is given.");
+        PLPMsg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
+        PLPMsg.M("\n silent\n\tToggle silent mode (default off).");
     }
 
     public static void addMods(PLPSimCore core) {

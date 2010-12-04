@@ -64,8 +64,7 @@ public class PLPSimMods {
     public class mod_io_leds extends PLPSimBusModule {
 
         public mod_io_leds(long addr) {
-            super(addr, addr, true);
-            // This I/O only has 1 register
+            super(addr, addr, true); // This I/O only has 1 register
             super.write(addr, new Long(0), false);
         }
 
