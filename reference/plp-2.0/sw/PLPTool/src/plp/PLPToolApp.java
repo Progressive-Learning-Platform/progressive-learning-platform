@@ -80,7 +80,10 @@ public class PLPToolApp extends SingleFrameApplication {
             }
         }
         else if(args.length > 0 && args[0].equals("-s")) {
-            if(args.length != 2) {
+            if(args.length == 1) {
+                PLPSimCL.simCL(null);
+            }
+            else if(args.length != 2) {
                 System.out.println("Usage: PLPTool -s <asm>");
             } else
                 PLPSimCL.simCL(args[1]);
@@ -101,9 +104,15 @@ public class PLPToolApp extends SingleFrameApplication {
 
         }
 
-        else if(args.length == 0)
+        else if(args.length == 0) {
+            /*
+            javax.swing.JRootPane rootPane = (javax.swing.JRootPane) PLPToolApp.getApplication().getMainView();
+            javax.swing.JLayeredPane mainPane = (javax.swing.JLayeredPane) rootPane.getComponent(1);
+            javax.swing.JPanel outputPane = (javax.swing.JPanel) mainPane.getComponent(0);
+            PLPMsg.output = (java.awt.TextArea) outputPane.getComponent(0);
+             */
             launch(PLPToolApp.class, args);
-        
+        }
         else {
             PLPMsg.E("Invalid argument(s).", PLPMsg.PLP_TOOLAPP_ERROR, null);
             System.out.println();
