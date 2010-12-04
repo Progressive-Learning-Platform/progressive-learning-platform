@@ -26,9 +26,9 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_c
 	input 		id_c_rfbse;
 	input [4:0]	id_rs;
 	input [4:0]	id_rt;
-	input [31:0]	wb_wbdata;
+	input [31:0]	wb_wdata;
 	input 		wb_rfw;
-	input [4:0]	wb_waddr
+	input [4:0]	wb_waddr;
 	output reg	p_c_rfw;
 	output reg [1:0] p_c_wbsource;
 	output reg	p_c_drw;
@@ -41,8 +41,19 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_c
 	output c_b;
 	output c_j;
 
-	wire [31:0] x = id_rfa;
-	wire [31:0] y = id_rfbse;
+	/* forward logic */
+	wire [1:0] forwardX = (p_c_rfw & (p_rf_waddr == id_rs) & (p_rf_waddr != 0)) ? 2'b01 :
+			      (wb_rfw & (wb_waddr == id_rs) & (wb_waddr != 0)) ? 2'b10 : 0;
+	wire [1:0] forwardY = (p_c_rfw & (p_rf_waddr == id_rt) & (p_rf_waddr != 0)) ? 2'b01 :
+			      (wb_rfw & (wb_waddr == id_rt) & (wb_waddr != 0)) ? 2'b10 : 0;
+
+	wire [31:0] x = (forwardX == 2'b00) ? id_rfa :
+			(forwardX == 2'b01) ? p_alu_r :
+			(forwardX == 2'b10) ? wb_wdata : 0;
+	wire [31:0] y = (id_c_rfbse) ? id_se : 
+			(forwardY == 2'b00) ? id_rfb :
+			(forwardY == 2'b01) ? p_alu_r :
+			(forwardY == 2'b10) ? wb_wdata : 0;
 	wire cmp_signed = (x[31] == y[31]) ? x < y : x[31];
 	wire cmp_unsigned = x < y;
 
