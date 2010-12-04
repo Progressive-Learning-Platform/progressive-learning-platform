@@ -16,11 +16,13 @@
 
  */
 
-package plptool;
+package plpmips;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import plptool.PLPAsmSource;
+import plptool.PLPMsg;
 
 
 /**

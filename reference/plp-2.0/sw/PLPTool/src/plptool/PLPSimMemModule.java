@@ -21,7 +21,8 @@ package plptool;
 import java.util.Iterator;
 
 /**
- * PLP memory module. It's simply PLPSimBusModule with pretty printouts.
+ * PLP memory module. This module implements a wrapper read function that
+ * typecasts stored objects to Long.
  *
  * @author wira
  */
@@ -55,7 +56,6 @@ public class PLPSimMemModule extends PLPSimBusModule {
      */
     public int gui_eval(Object x) { return PLPMsg.PLP_OK; }
 
-
     public String introduce() {
         return "PLPSimMemModule " + PLPMsg.versionString;
     }
@@ -66,41 +66,17 @@ public class PLPSimMemModule extends PLPSimBusModule {
      * @param highlight Memory location to highlight, probably the PC value
      */
     public void printAll(long highlight) {
-        long key;
+        long addr;
         PLPMsg.M("->\taddress\t\tcontents\tASCII");
         PLPMsg.M("--\t-------\t\t--------\t-----");
-        Iterator keyIterator = super.values.keySet().iterator();
-        while(keyIterator.hasNext()) {
-            key = (Long) keyIterator.next();
-            if(key == highlight)
+        Object[][] valueSet = super.getValueSet();
+        for(int i = 0; i < valueSet.length; i++) {
+            addr = (Long) valueSet[i][0];
+            if(addr == highlight)
                 System.out.print(">>>");
             PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                   key, super.values.get(key)) +
-                                   PLPAsmFormatter.asciiWord((Long) super.values.get(key)));
-        }
-    }
-
-    /**
-     * Print the contents of this memory module formatted as MIPS program.
-     *
-     * @param highlight Memory location to highlight, probably the PC value
-     */
-    public void printProgram(long highlight) {
-        if(wordAligned) {
-            long key;
-            PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
-            PLPMsg.M("--\t-------\t\t---\t\t-----------");
-            Iterator keyIterator = super.values.keySet().iterator();
-            while(keyIterator.hasNext()) {
-                key = (Long) keyIterator.next();
-                if(super.isInstr.get(key) == true) {
-                    if(key == highlight)
-                        System.out.print(">>>");
-                    PLPMsg.M(String.format("\t%08x\t%08x\t",
-                                           key, super.values.get(key)) +
-                                           MIPSInstr.format((Long) super.values.get(key)));
-                }
-            }
+                                   addr, super.values.get(addr)) +
+                                   PLPToolbox.asciiWord((Long) super.values.get(addr)));
         }
     }
 
@@ -114,7 +90,7 @@ public class PLPSimMemModule extends PLPSimBusModule {
             PLPMsg.M("\naddress\t\tcontents\tASCII");
             PLPMsg.M("-------\t\t--------\t-----");
             PLPMsg.M(String.format("%08x\t%08x\t",addr, super.read(addr)) +
-                                   PLPAsmFormatter.asciiWord((Long) super.read(addr)));
+                                   PLPToolbox.asciiWord((Long) super.read(addr)));
         }
     }
 
