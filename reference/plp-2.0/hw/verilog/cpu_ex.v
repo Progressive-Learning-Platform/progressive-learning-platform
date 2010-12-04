@@ -6,7 +6,7 @@ instruction execute phase
 
 */
 
-module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_c_j, id_c_b, id_c_jjr, id_rfa, id_rfb, id_rfbse, id_shamt, id_func, id_rf_waddr, id_pc, id_jaddr, p_c_rfw, p_c_wbsource, p_c_drw, p_alu_r, p_rfb, p_rf_waddr, p_jalra, baddr, jaddr, c_b, c_j);
+module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_c_j, id_c_b, id_c_jjr, id_rfa, id_rfb, id_se, id_shamt, id_func, id_rf_waddr, id_pc, id_jaddr, id_c_rfbse, id_rs, id_rt, wb_wdata, wb_rfw, wb_waddr, p_c_rfw, p_c_wbsource, p_c_drw, p_alu_r, p_rfb, p_rf_waddr, p_jalra, baddr, jaddr, c_b, c_j);
 	input 		rst, clk;
 	input		id_c_rfw;
 	input [1:0]	id_c_wbsource;
@@ -17,12 +17,18 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw, id_c_alucontrol, id_c
 	input		id_c_jjr;
 	input [31:0]	id_rfa;
 	input [31:0]	id_rfb;
-	input [31:0]	id_rfbse;
+	input [31:0]	id_se;
 	input [4:0]	id_shamt;
 	input [5:0]	id_func;
 	input [4:0]	id_rf_waddr;
 	input [31:0]	id_pc;
 	input [25:0]	id_jaddr;
+	input 		id_c_rfbse;
+	input [4:0]	id_rs;
+	input [4:0]	id_rt;
+	input [31:0]	wb_wbdata;
+	input 		wb_rfw;
+	input [4:0]	wb_waddr
 	output reg	p_c_rfw;
 	output reg [1:0] p_c_wbsource;
 	output reg	p_c_drw;

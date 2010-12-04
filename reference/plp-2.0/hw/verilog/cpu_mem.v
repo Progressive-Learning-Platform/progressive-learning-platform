@@ -6,7 +6,7 @@ memory phase
 
 */
 
-module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex_rf_waddr, ex_jalra, p_c_rfw, p_c_wbsource, p_alu_r, dmem_data, p_rf_waddr, p_jalra, dmem_addr, dmem_drw, dmem_in, p_dout);
+module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex_rf_waddr, ex_jalra, ex_rt, wb_wdata, p_c_rfw, p_c_wbsource, p_alu_r, dmem_data, p_rf_waddr, p_jalra, dmem_addr, dmem_drw, dmem_in, p_dout);
 	input 		rst, clk;
 	input 		ex_c_rfw;
 	input [1:0]	ex_c_wbsource;
@@ -15,6 +15,8 @@ module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex
 	input [31:0]	ex_rfb;
 	input [4:0]	ex_rf_waddr;
 	input [31:0]	ex_jalra;
+	input [4:0]	ex_rt;
+	input [31:0]	wb_wdata;
 	output reg 	p_c_rfw;
 	output reg [1:0] p_c_wbsource;
 	output reg [31:0] p_alu_r;
@@ -26,9 +28,12 @@ module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex
 	input [31:0]	dmem_in;
 	output reg [31:0] p_dout;
 
-	assign dmem_data = ex_rfb;
 	assign dmem_addr = ex_alu_r;
 	assign dmem_drw  = ex_c_drw;
+
+	/* forwarding logic */
+	wire forward = p_c_rfw & (ex_rt == p_rf_waddr) & (p_rf_waddr != 0);
+	assign dmem_data = forward ? wb_wdata : ex_rfb;
 
 	always @(posedge clk) begin
 		if (rst) begin
