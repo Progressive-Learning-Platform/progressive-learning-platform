@@ -46,30 +46,30 @@ public class PLPAsmFormatter {
         long objectCode[] = asm.getObjectCode();
         long tVal;
 
-        System.out.println("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII");
-        System.out.println("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----");
+        PLPMsg.M("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII");
+        PLPMsg.M("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----");
 
         for(int i = 0; i < addrTable.length; i++) {
             if((label = asm.lookupLabel(addrTable[i])) != null) {
-                System.out.print(label + "\n\t\t");
+                PLPMsg.m(label + "\n\t\t");
             } else {
-                System.out.print("\t\t");
+                PLPMsg.m("\t\t");
             }
 
-            System.out.print("0x" + String.format("%07x", addrTable[i]) + "\t");
-            System.out.print(String.format("%08x", (int) objectCode[i]) + "\t");
-            System.out.print(mipsBinFormat(intBinPadder((int) objectCode[i], 32)) + "\t");
+            PLPMsg.m("0x" + String.format("%07x", addrTable[i]) + "\t");
+            PLPMsg.m(String.format("%08x", (int) objectCode[i]) + "\t");
+            PLPMsg.m(mipsBinFormat(intBinPadder((int) objectCode[i], 32)) + "\t");
 
             for(int j = 3; j >= 0; j--) {
                 tVal = objectCode[i] >> (8 * j);
                 tVal &= 0xFF;
                 if(tVal >= 0x21 && tVal <= 0x7E)
-                    System.out.print((char) tVal + " ");
+                    PLPMsg.m((char) tVal + " ");
                 else
-                    System.out.print(". ");
+                    PLPMsg.m(". ");
             }
 
-            System.out.println();
+            PLPMsg.M("");
         }
 
         return PLPMsg.PLP_OK;
@@ -297,11 +297,11 @@ public class PLPAsmFormatter {
 
        
         symTablePrettyPrint(asm.getSymTable());
-        System.out.println();
+        PLPMsg.M("");
         prettyPrint(asm);
 
         if(PLPMsg.debugLevel >= 10)
-            System.out.println(writeCOE(asm.getObjectCode()));
+            PLPMsg.M(writeCOE(asm.getObjectCode()));
 
         } catch(Exception e) {
             return PLPMsg.E("genPLP(): Unable to write to <" + output + ".plp>\n" +
@@ -315,7 +315,7 @@ public class PLPAsmFormatter {
     public static int symTablePrettyPrint(HashMap symTable) {
         String key, value;
 
-        System.out.println("\nSymbol Table" +
+        PLPMsg.M("\nSymbol Table" +
                            "\n============");
         Iterator iterator = symTable.keySet().iterator();
 
@@ -323,7 +323,7 @@ public class PLPAsmFormatter {
             key = iterator.next().toString();
             value = String.format("0x%08x", symTable.get(key));
 
-            System.out.println(value + "\t:\t" + key);
+            PLPMsg.M(value + "\t:\t" + key);
         }
 
         return 0;

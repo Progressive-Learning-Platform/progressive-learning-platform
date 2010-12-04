@@ -18,6 +18,8 @@
 
 package plptool;
 
+import javax.swing.JTextArea;
+
 /**
  * PLPTool constant definitions and messaging utility class.
  *
@@ -26,6 +28,8 @@ package plptool;
 public class PLPMsg {
 
     public static String versionString = "Beta 2";
+
+    public static JTextArea output = null;
 
     public static final int debugLevel = 0;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
@@ -106,9 +110,16 @@ public class PLPMsg {
     // Error message
     public static int E(String errStr, int errorCode, Object objIdentifier) {
         if(objIdentifier != null)
-            System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
+            if(output == null)
+                System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
+            else
+                output.append("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr + "\n");
         else
-            System.out.println("[E] #" + errorCode + " " + errStr);
+            if(output == null)
+                System.out.println("[E] #" + errorCode + " " + errStr);
+            else
+                output.append("[E] #" + errorCode + " " + errStr + "\n");
+
         lastError = errorCode;
         lastPartyResponsible = objIdentifier;
         return errorCode;
@@ -117,9 +128,15 @@ public class PLPMsg {
     // Information message
     public static void I(String infoStr, Object objIdentifier) {
         if(objIdentifier != null)
-            System.out.println("[I] " + objIdentifier.toString() + ": " + infoStr);
+            if(output == null)
+                System.out.println("[I] " + objIdentifier.toString() + ": " + infoStr);
+            else
+                output.append("[I] " + objIdentifier.toString() + ": " + infoStr + "\n");
         else
-            System.out.println("[I] " + infoStr);
+            if(output == null)
+                System.out.println("[I] " + infoStr);
+            else
+                output.append("[I] " + infoStr + "\n");
     }
 
     // Debug message
@@ -133,7 +150,18 @@ public class PLPMsg {
 
     // Standard out
     public static void M(String msgStr) {
-        System.out.println(msgStr);
+        if(output == null)
+            System.out.println(msgStr);
+        else
+            output.append(msgStr + "\n");
+    }
+
+    // Standard out no new-line
+    public static void m(String msgStr) {
+        if(output == null)
+            System.out.print(msgStr);
+        else
+            output.append(msgStr);
     }
 
     // Mark
