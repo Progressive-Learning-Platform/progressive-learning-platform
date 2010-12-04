@@ -30,6 +30,7 @@ public class PLPToolView extends FrameView {
         super(app);
 
         initComponents();
+        simFrame = null;
         PLPMsg.output = Output; // reroute PLPMsg output
         PLPMsg.M("PLPTool GUI\n");
         PLPMsg.m("Welcome to the GUI PLP software. You can start using this tool ");
@@ -81,17 +82,19 @@ public class PLPToolView extends FrameView {
         IDECommander = new javax.swing.JTextField();
         IDELabel_Command = new javax.swing.JLabel();
         SimPane = new javax.swing.JPanel();
-        ViewSelector = new javax.swing.JTabbedPane();
-        ExternalView = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        CodeTable = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        RegisterTable = new javax.swing.JTable();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        MemoryTable = new javax.swing.JTable();
-        RunButton = new javax.swing.JToggleButton();
-        StepButton = new javax.swing.JButton();
-        InternalView = new javax.swing.JPanel();
+        SimControls = new javax.swing.JPanel();
+        tglCore = new javax.swing.JToggleButton();
+        tglMainMem = new javax.swing.JToggleButton();
+        tglRegs = new javax.swing.JToggleButton();
+        tglBus = new javax.swing.JToggleButton();
+        tglIF = new javax.swing.JToggleButton();
+        tglID = new javax.swing.JToggleButton();
+        tglEX = new javax.swing.JToggleButton();
+        tglMEM = new javax.swing.JToggleButton();
+        tglWB = new javax.swing.JToggleButton();
+        tglProgList = new javax.swing.JToggleButton();
+        btnDump = new javax.swing.JButton();
+        SimDesktop = new javax.swing.JDesktopPane();
         PrgPane = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -178,6 +181,11 @@ public class PLPToolView extends FrameView {
                 IDEAssembleBtnMouseClicked(evt);
             }
         });
+        IDEAssembleBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IDEAssembleBtnActionPerformed(evt);
+            }
+        });
         IDEBar.add(IDEAssembleBtn);
 
         IDEScroller.setName("IDEScroller"); // NOI18N
@@ -220,13 +228,13 @@ public class PLPToolView extends FrameView {
         IDEPane.setLayout(IDEPaneLayout);
         IDEPaneLayout.setHorizontalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
             .addGroup(IDEPaneLayout.createSequentialGroup()
-                .addComponent(IDELabel_Command, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE))
-            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
-            .addComponent(IDEBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+                .addComponent(IDELabel_Command)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE))
+            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+            .addComponent(IDEBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
         );
         IDEPaneLayout.setVerticalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,262 +255,124 @@ public class PLPToolView extends FrameView {
         SimPane.setEnabled(false);
         SimPane.setName("EmulatorTab"); // NOI18N
 
-        ViewSelector.setName("ViewSelector"); // NOI18N
+        SimControls.setName("SimControls"); // NOI18N
 
-        ExternalView.setName("ExternalView"); // NOI18N
-
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(320, 28));
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
-
-        CodeTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "S", "PC", "Address", "BP", "Assembly"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        tglCore.setText(resourceMap.getString("tglCore.text")); // NOI18N
+        tglCore.setName("tglCore"); // NOI18N
+        tglCore.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tglCoreMouseClicked(evt);
             }
         });
-        CodeTable.setMaximumSize(new java.awt.Dimension(10000, 64));
-        CodeTable.setMinimumSize(new java.awt.Dimension(1320, 64));
-        CodeTable.setName("CodeTable"); // NOI18N
-        CodeTable.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(CodeTable);
-        CodeTable.getColumnModel().getColumn(0).setResizable(false);
-        CodeTable.getColumnModel().getColumn(0).setPreferredWidth(40);
-        CodeTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title2")); // NOI18N
-        CodeTable.getColumnModel().getColumn(1).setResizable(false);
-        CodeTable.getColumnModel().getColumn(1).setPreferredWidth(40);
-        CodeTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title3")); // NOI18N
-        CodeTable.getColumnModel().getColumn(2).setResizable(false);
-        CodeTable.getColumnModel().getColumn(2).setPreferredWidth(200);
-        CodeTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title0")); // NOI18N
-        CodeTable.getColumnModel().getColumn(3).setResizable(false);
-        CodeTable.getColumnModel().getColumn(3).setPreferredWidth(40);
-        CodeTable.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title1")); // NOI18N
-        CodeTable.getColumnModel().getColumn(4).setResizable(false);
-        CodeTable.getColumnModel().getColumn(4).setPreferredWidth(1000);
-        CodeTable.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("CodeTable.columnModel.title4")); // NOI18N
-
-        jScrollPane2.setName("jScrollPane2"); // NOI18N
-
-        RegisterTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
-            },
-            new String [] {
-                "Register", "Value"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        tglCore.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tglCorePropertyChange(evt);
             }
         });
-        RegisterTable.setName("RegisterTable"); // NOI18N
-        jScrollPane2.setViewportView(RegisterTable);
-        RegisterTable.getColumnModel().getColumn(0).setResizable(false);
-        RegisterTable.getColumnModel().getColumn(0).setPreferredWidth(300);
-        RegisterTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title0")); // NOI18N
-        RegisterTable.getColumnModel().getColumn(1).setResizable(false);
-        RegisterTable.getColumnModel().getColumn(1).setPreferredWidth(700);
-        RegisterTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title1")); // NOI18N
 
-        jScrollPane3.setName("jScrollPane3"); // NOI18N
+        tglMainMem.setText(resourceMap.getString("tglMainMem.text")); // NOI18N
+        tglMainMem.setName("tglMainMem"); // NOI18N
 
-        MemoryTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
-            },
-            new String [] {
-                "Address", "Value"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
+        tglRegs.setText(resourceMap.getString("tglRegs.text")); // NOI18N
+        tglRegs.setName("tglRegs"); // NOI18N
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
+        tglBus.setText(resourceMap.getString("tglBus.text")); // NOI18N
+        tglBus.setName("tglBus"); // NOI18N
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        tglIF.setText(resourceMap.getString("tglIF.text")); // NOI18N
+        tglIF.setName("tglIF"); // NOI18N
+        tglIF.setPreferredSize(new java.awt.Dimension(53, 23));
+
+        tglID.setText(resourceMap.getString("tglID.text")); // NOI18N
+        tglID.setName("tglID"); // NOI18N
+        tglID.setPreferredSize(new java.awt.Dimension(53, 23));
+
+        tglEX.setText(resourceMap.getString("tglEX.text")); // NOI18N
+        tglEX.setName("tglEX"); // NOI18N
+        tglEX.setPreferredSize(new java.awt.Dimension(55, 23));
+
+        tglMEM.setText(resourceMap.getString("tglMEM.text")); // NOI18N
+        tglMEM.setName("tglMEM"); // NOI18N
+
+        tglWB.setText(resourceMap.getString("tglWB.text")); // NOI18N
+        tglWB.setName("tglWB"); // NOI18N
+        tglWB.setPreferredSize(new java.awt.Dimension(55, 23));
+
+        tglProgList.setText(resourceMap.getString("tglProgList.text")); // NOI18N
+        tglProgList.setName("tglProgList"); // NOI18N
+
+        btnDump.setText(resourceMap.getString("btnDump.text")); // NOI18N
+        btnDump.setName("btnDump"); // NOI18N
+        btnDump.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDumpActionPerformed(evt);
             }
         });
-        MemoryTable.setName("MemoryTable"); // NOI18N
-        jScrollPane3.setViewportView(MemoryTable);
-        MemoryTable.getColumnModel().getColumn(0).setResizable(false);
-        MemoryTable.getColumnModel().getColumn(0).setPreferredWidth(300);
-        MemoryTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title0")); // NOI18N
-        MemoryTable.getColumnModel().getColumn(1).setResizable(false);
-        MemoryTable.getColumnModel().getColumn(1).setPreferredWidth(700);
-        MemoryTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("RegisterTable.columnModel.title1")); // NOI18N
 
-        RunButton.setText(resourceMap.getString("RunButton.text")); // NOI18N
-        RunButton.setName("RunButton"); // NOI18N
-
-        StepButton.setText(resourceMap.getString("StepButton.text")); // NOI18N
-        StepButton.setName("StepButton"); // NOI18N
-
-        javax.swing.GroupLayout ExternalViewLayout = new javax.swing.GroupLayout(ExternalView);
-        ExternalView.setLayout(ExternalViewLayout);
-        ExternalViewLayout.setHorizontalGroup(
-            ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ExternalViewLayout.createSequentialGroup()
+        javax.swing.GroupLayout SimControlsLayout = new javax.swing.GroupLayout(SimControls);
+        SimControls.setLayout(SimControlsLayout);
+        SimControlsLayout.setHorizontalGroup(
+            SimControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SimControlsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(ExternalViewLayout.createSequentialGroup()
-                        .addComponent(RunButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(StepButton)))
+                .addComponent(tglCore)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglMainMem)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglRegs)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglBus)
+                .addGap(18, 18, 18)
+                .addComponent(tglID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglIF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglEX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglMEM)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglWB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnDump)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tglProgList)
+                .addContainerGap(49, Short.MAX_VALUE))
+        );
+        SimControlsLayout.setVerticalGroup(
+            SimControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimControlsLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(SimControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tglCore)
+                    .addComponent(tglMainMem)
+                    .addComponent(tglRegs)
+                    .addComponent(tglBus)
+                    .addComponent(tglIF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tglID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tglEX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tglMEM)
+                    .addComponent(tglWB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDump)
+                    .addComponent(tglProgList))
                 .addContainerGap())
         );
-        ExternalViewLayout.setVerticalGroup(
-            ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ExternalViewLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(ExternalViewLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(ExternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(RunButton)
-                            .addComponent(StepButton)))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
-        ViewSelector.addTab(resourceMap.getString("ExternalView.TabConstraints.tabTitle"), ExternalView); // NOI18N
-
-        InternalView.setName("InternalView"); // NOI18N
-
-        javax.swing.GroupLayout InternalViewLayout = new javax.swing.GroupLayout(InternalView);
-        InternalView.setLayout(InternalViewLayout);
-        InternalViewLayout.setHorizontalGroup(
-            InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 750, Short.MAX_VALUE)
-        );
-        InternalViewLayout.setVerticalGroup(
-            InternalViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 557, Short.MAX_VALUE)
-        );
-
-        ViewSelector.addTab(resourceMap.getString("InternalView.TabConstraints.tabTitle"), InternalView); // NOI18N
+        SimDesktop.setAutoscrolls(true);
+        SimDesktop.setName("SimDesktop"); // NOI18N
 
         javax.swing.GroupLayout SimPaneLayout = new javax.swing.GroupLayout(SimPane);
         SimPane.setLayout(SimPaneLayout);
         SimPaneLayout.setHorizontalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ViewSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+            .addComponent(SimControls, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(SimDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
         );
         SimPaneLayout.setVerticalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ViewSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimPaneLayout.createSequentialGroup()
+                .addComponent(SimDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(SimControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         PLPMainPane.addTab(resourceMap.getString("EmulatorTab.TabConstraints.tabTitle"), SimPane); // NOI18N
@@ -541,9 +411,9 @@ public class PLPToolView extends FrameView {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 590, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 590, Short.MAX_VALUE)
-                    .addComponent(jComboBox3, 0, 590, Short.MAX_VALUE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 691, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 691, Short.MAX_VALUE)
+                    .addComponent(jComboBox3, 0, 691, Short.MAX_VALUE))
                 .addContainerGap())
         );
         PrgPaneLayout.setVerticalGroup(
@@ -583,7 +453,7 @@ public class PLPToolView extends FrameView {
             OutputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OutputPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                 .addContainerGap())
         );
         OutputPaneLayout.setVerticalGroup(
@@ -607,6 +477,22 @@ public class PLPToolView extends FrameView {
     }//GEN-LAST:event_exitMenuItemMouseReleased
 
     private void IDEAssembleBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IDEAssembleBtnMouseClicked
+        
+    }//GEN-LAST:event_IDEAssembleBtnMouseClicked
+
+    private void tglCoreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tglCoreMouseClicked
+        // TODO add your handling code here:
+        
+
+    }//GEN-LAST:event_tglCoreMouseClicked
+
+    private void tglCorePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tglCorePropertyChange
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_tglCorePropertyChange
+
+    private void IDEAssembleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDEAssembleBtnActionPerformed
+        // TODO add your handling code here:
         int ret = 0;
         PLPMsg.output = IDEStdOut;
         PLPMsg.M("Assembling...");
@@ -621,23 +507,31 @@ public class PLPToolView extends FrameView {
             sim = new PLPMIPSSim(asm, (long) Math.pow(2,32) - 1);
             sim.reset();
             simFrame = new PLPMIPSCoreGUI(sim);
+            SimDesktop.add(simFrame);
             simFrame.setVisible(true);
         }
         else {
             PLPMainPane.setEnabledAt(1, false);
             PLPMainPane.setEnabledAt(2, false);
-            simFrame.setVisible(false);
-            simFrame.dispose();
+            if(simFrame != null) {
+                simFrame.setVisible(false);
+                simFrame.dispose();
+            }
             PLPMsg.M("Fix your code.");
         }
 
         PLPMsg.M("");
         PLPMsg.output = Output;
-    }//GEN-LAST:event_IDEAssembleBtnMouseClicked
+    }//GEN-LAST:event_IDEAssembleBtnActionPerformed
+
+    private void btnDumpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDumpActionPerformed
+        // TODO add your handling code here:
+        sim.regfile.printAll(-1);
+        sim.memory.printAll(sim.pc.eval());
+        sim.printProgram(sim.pc.eval());
+    }//GEN-LAST:event_btnDumpActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable CodeTable;
-    private javax.swing.JPanel ExternalView;
     private javax.swing.JButton IDEAssembleBtn;
     private javax.swing.JToolBar IDEBar;
     private javax.swing.JTextField IDECommander;
@@ -653,29 +547,33 @@ public class PLPToolView extends FrameView {
     private javax.swing.JSplitPane IDESplitter;
     private javax.swing.JTextArea IDEStdOut;
     private javax.swing.JScrollPane IDETreePane;
-    private javax.swing.JPanel InternalView;
-    private javax.swing.JTable MemoryTable;
     private javax.swing.JTextArea Output;
     private javax.swing.JPanel OutputPane;
     private javax.swing.JScrollPane OutputScrollPane;
     private javax.swing.JTabbedPane PLPMainPane;
     private javax.swing.JPanel PrgPane;
-    private javax.swing.JTable RegisterTable;
-    private javax.swing.JToggleButton RunButton;
+    private javax.swing.JPanel SimControls;
+    private javax.swing.JDesktopPane SimDesktop;
     private javax.swing.JPanel SimPane;
-    private javax.swing.JButton StepButton;
-    private javax.swing.JTabbedPane ViewSelector;
+    private javax.swing.JButton btnDump;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JToggleButton tglBus;
+    private javax.swing.JToggleButton tglCore;
+    private javax.swing.JToggleButton tglEX;
+    private javax.swing.JToggleButton tglID;
+    private javax.swing.JToggleButton tglIF;
+    private javax.swing.JToggleButton tglMEM;
+    private javax.swing.JToggleButton tglMainMem;
+    private javax.swing.JToggleButton tglProgList;
+    private javax.swing.JToggleButton tglRegs;
+    private javax.swing.JToggleButton tglWB;
     // End of variables declaration//GEN-END:variables
 
     private JDialog aboutBox;
