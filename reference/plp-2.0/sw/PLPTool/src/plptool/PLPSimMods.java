@@ -18,6 +18,8 @@
 
 package plptool;
 
+import plpmips.PLPMIPSSim;
+
 /**
  * PLP first-party modules collection. See PLPSimCL for an example on how
  * these modules can be utilized.

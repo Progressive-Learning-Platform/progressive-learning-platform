@@ -16,7 +16,14 @@
 
  */
 
-package plptool;
+package plpmips;
+
+import plptool.PLPSimMemModule;
+import plptool.PLPCfg;
+import plptool.PLPMsg;
+import plptool.PLPSimBus;
+import plptool.PLPSimCore;
+import plptool.PLPSimRegModule;
 
 /**
  * PLPMIPSSim is the PLP MIPS Architecture Simulator Backend. This class
@@ -287,6 +294,24 @@ public class PLPMIPSSim extends PLPSimCore {
 
     @Override public String toString() {
         return "PLPMIPSSim(asm: " + asm.toString() + ")";
+    }
+
+    /**
+     * Print the program loaded.
+     *
+     * @param highlight Memory location to highlight, probably the PC value
+     */
+    public void printProgram(long highlight) {
+        PLPMsg.M("pc\taddress\t\thex\t\tDisassembly");
+        PLPMsg.M("--\t-------\t\t---\t\t-----------");
+        Object[][] values = super.memory.getValueSet();
+        for(int i = 0; i < values.length; i++) {
+                if((Long) values[i][0] == highlight)
+                    System.out.print(">>>");
+                PLPMsg.M(String.format("\t%08x\t%08x\t",
+                                       (Long) values[i][0], (Long) values[i][1]) +
+                                       MIPSInstr.format((Long) values[i][1]));
+        }
     }
 
     /**
@@ -1008,7 +1033,6 @@ public class PLPMIPSSim extends PLPSimCore {
             return PLPMsg.PLP_OK;
         }
     }
-
-    
+   
 }
 

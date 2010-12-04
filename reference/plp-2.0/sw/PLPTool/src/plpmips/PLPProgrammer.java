@@ -16,7 +16,7 @@
 
  */
 
-package plptool;
+package plpmips;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
@@ -31,6 +31,7 @@ import java.util.Scanner;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import plptool.PLPMsg;
 
 /**
  * PLPTool serial programmer backend.
@@ -48,7 +49,7 @@ public class PLPProgrammer {
     private InputStream in;
     private OutputStream out;
 
-    int connect(String portName, int baudRate) throws Exception {
+    public int connect(String portName, int baudRate) throws Exception {
         portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         if ( portIdentifier.isCurrentlyOwned() )
         {
@@ -76,7 +77,7 @@ public class PLPProgrammer {
         return PLPMsg.PLP_OK;
     }
 
-    int programWithPLPFile(String plpFilePath) throws Exception {
+    public int programWithPLPFile(String plpFilePath) throws Exception {
         File plpFile = new File(plpFilePath);
         TarArchiveEntry entry;
         String metaStr;
@@ -163,7 +164,7 @@ public class PLPProgrammer {
                         PLPMsg.PLP_PRG_INVALID_PLP_FILE, this);
     }
 
-    int programWithAsm (PLPAsm asm) throws Exception {
+    public int programWithAsm (PLPAsm asm) throws Exception {
         if(asm.isAssembled()) {
             long objCode[] = asm.getObjectCode();
             long addrTable[] = asm.getAddrTable();

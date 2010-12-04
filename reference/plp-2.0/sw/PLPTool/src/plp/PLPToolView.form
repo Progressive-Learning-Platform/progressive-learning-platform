@@ -51,7 +51,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItem">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="plptool.PLPToolView" id="showAboutBox" methodName="showAboutBox"/>
+                  <action class="plp.PLPToolView" id="showAboutBox" methodName="showAboutBox"/>
                 </Property>
                 <Property name="name" type="java.lang.String" value="aboutMenuItem" noResource="true"/>
               </Properties>
@@ -93,14 +93,14 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="IDEBar" alignment="0" pref="788" max="32767" attributes="0"/>
-                  <Component id="IDESplitter" alignment="0" pref="788" max="32767" attributes="0"/>
+                  <Component id="IDEBar" alignment="0" pref="795" max="32767" attributes="0"/>
+                  <Component id="IDESplitter" alignment="0" pref="795" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDELabel_Command" min="-2" pref="86" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="IDECommander" pref="684" max="32767" attributes="0"/>
+                      <Component id="IDECommander" pref="691" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="IDEScroller" alignment="0" pref="788" max="32767" attributes="0"/>
+                  <Component id="IDEScroller" alignment="0" pref="795" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -108,7 +108,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDEBar" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="IDESplitter" pref="396" max="32767" attributes="0"/>
+                      <Component id="IDESplitter" pref="419" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="IDEScroller" min="-2" pref="110" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -123,6 +123,7 @@
           <SubComponents>
             <Container class="javax.swing.JToolBar" name="IDEBar">
               <Properties>
+                <Property name="floatable" type="boolean" value="false"/>
                 <Property name="rollover" type="boolean" value="true"/>
                 <Property name="name" type="java.lang.String" value="IDEBar" noResource="true"/>
               </Properties>
@@ -278,11 +279,12 @@
         </Container>
         <Container class="javax.swing.JPanel" name="EmuPane">
           <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="EmulatorTab" noResource="true"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Simulate">
+              <JTabbedPaneConstraints tabName="Emulate">
                 <Property name="tabTitle" type="java.lang.String" resourceKey="EmulatorTab.TabConstraints.tabTitle"/>
               </JTabbedPaneConstraints>
             </Constraint>
@@ -291,7 +293,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="ViewSelector" alignment="0" pref="788" max="32767" attributes="0"/>
+                  <Component id="ViewSelector" alignment="0" pref="795" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -325,7 +327,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane1" pref="338" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" pref="360" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jScrollPane2" min="-2" pref="195" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -357,7 +359,7 @@
                                   <Component id="jScrollPane2" alignment="0" pref="535" max="32767" attributes="1"/>
                                   <Component id="jScrollPane1" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="21" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -539,12 +541,12 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="776" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="790" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="551" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="567" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                   </Layout>
@@ -555,6 +557,7 @@
         </Container>
         <Container class="javax.swing.JPanel" name="PrgPane">
           <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="PrgPane" noResource="true"/>
           </Properties>
           <Constraints>
@@ -577,9 +580,9 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jComboBox2" alignment="1" pref="611" max="32767" attributes="1"/>
-                          <Component id="jComboBox1" alignment="1" pref="611" max="32767" attributes="1"/>
-                          <Component id="jComboBox3" alignment="0" pref="611" max="32767" attributes="0"/>
+                          <Component id="jComboBox2" alignment="1" pref="630" max="32767" attributes="1"/>
+                          <Component id="jComboBox1" alignment="1" pref="630" max="32767" attributes="1"/>
+                          <Component id="jComboBox3" alignment="0" pref="630" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -603,7 +606,7 @@
                           <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="463" max="32767" attributes="0"/>
+                      <EmptySpace pref="493" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

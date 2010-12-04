@@ -67,7 +67,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Attaches a module to the bus.
+     * Attach a module to the bus.
      *
      * @param module PLPSimBusModule-based class to be added
      * @return Index of the new added module, or -1 if error occurred
@@ -83,7 +83,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Removes a module specified by the index from this bus.
+     * Remove a module specified by the index from this bus.
      *
      * @param index
      * @return Always returns PLP_OK
@@ -378,7 +378,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Returns a reference to the requested module for direct access.
+     * Get a reference to the requested module for direct access.
      *
      * @param index Index of the module
      * @return PLPSimBusModule reference of the module
