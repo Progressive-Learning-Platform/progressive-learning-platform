@@ -5,8 +5,8 @@
 
 package plptest;
 
-import plptool.PLPMIPSSim;
-import plptool.PLPAsm;
+import plpmips.PLPMIPSSim;
+import plpmips.PLPAsm;
 import plptool.PLPSimMods;
 import plptool.PLPMsg;
 /**
@@ -16,7 +16,7 @@ import plptool.PLPMsg;
 public class PLPTest {
     public static void main(String[] args) {
         PLPAsm asm = new PLPAsm("start:\n" +
-                                "li $3,0x80004000\n" +
+                                "li $3,0x80004004\n" +
                                 "li $4,0xbeef\n" +
                                 "nop\n" +
                                 "nop\n" +
@@ -34,7 +34,7 @@ public class PLPTest {
         
         PLPMIPSSim sim = new PLPMIPSSim(asm, 8000);
         PLPSimMods mods = new PLPSimMods(sim);
-        //sim.bus.add(mods.io_example_external);
+        sim.bus.add(mods.io_leds);
         sim.bus.enableiomods();
         //sim.bus.write((long) 0x8000400 << 4, 0xbeef, false);
         //System.out.println(String.format("%08x", sim.bus.read((long) 0x8000400 << 4)));

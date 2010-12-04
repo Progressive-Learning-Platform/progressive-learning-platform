@@ -25,7 +25,7 @@ package plptool;
  */
 public class PLPMsg {
 
-    static String versionString = "Beta 2";
+    public static String versionString = "Beta 2";
 
     public static final int debugLevel = 0;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
@@ -97,11 +97,9 @@ public class PLPMsg {
     public static final int PLP_OOPS                             = 9001;
 
     // Flags
-    static boolean FLAGS_ALIGNED_MEMORY             = true;
+    public static boolean FLAGS_ALIGNED_MEMORY             = true;
 
-    static String[] errorStr;
-
-    static Object lastPartyResponsible;
+    public static Object lastPartyResponsible;
     public static int lastError = 0;
     public static int markCounter = 0;
 

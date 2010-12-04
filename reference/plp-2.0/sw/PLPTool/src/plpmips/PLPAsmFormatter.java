@@ -16,7 +16,7 @@
 
  */
 
-package plptool;
+package plpmips;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,6 +28,9 @@ import java.util.ArrayList;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import plptool.PLPAsmSource;
+import plptool.PLPCfg;
+import plptool.PLPMsg;
 
 /**
  * Utility class to package / display object codes produces by PLPAsm
@@ -162,21 +165,7 @@ public class PLPAsmFormatter {
         return null;
     }
 
-    // Convert 32-bit word to printable ASCII
-    public static String asciiWord(long word) {
-        String tStr = "";
-        long tVal;
-        for(int j = 3; j >= 0; j--) {
-            tVal = word >> (8 * j);
-            tVal &= 0xFF;
-            if(tVal >= 0x21 && tVal <= 0x7E)
-                tStr += (char) tVal + " ";
-            else
-                tStr += ". ";
-        }
-
-        return tStr;
-    }
+    
 
     // MIPS instruction string formatter {
     public static String mipsInstrStr(long instr) {
