@@ -143,9 +143,15 @@ public class PLPMsg {
     public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
         if(requestedDebugLevel <= debugLevel)
             if(objIdentifier != null)
-                System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
+                if(output == null)
+                    System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
+                else
+                    output.append("[D] " + objIdentifier.toString() + ": " + debugStr + "\n");
             else
-                System.out.println("[D] " + debugStr);
+                if(output == null)
+                    System.out.println("[D] " + debugStr);
+                else
+                    output.append("[D] " + debugStr + "\n");
     }
 
     // Standard out
@@ -166,7 +172,10 @@ public class PLPMsg {
 
     // Mark
     public static void mark() {
-        System.out.println("[D] " + markCounter + " We're here!");
+        if(output == null)
+            System.out.println("[D] " + markCounter + " We're here!");
+        else
+            output.append("[D] " + markCounter + " We're here!" + "\n");
         markCounter++;
     }
 }
