@@ -24,9 +24,11 @@ module mod_leds(clk, de, daddr, drw, din, dout, leds, rst);
 
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
-		if (drw && de && !rst)
+		if (drw && de && !rst) begin
 			leds = din[7:0];
-		else if (rst)
+			$display("MOD_LEDS: %x", din[7:0]);
+		end else if (rst) begin
 			leds = 8'hff;
+		end
 	end
 endmodule

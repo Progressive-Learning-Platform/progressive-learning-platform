@@ -21,7 +21,7 @@ module test;
 		rst = 1;
 		#10
 		rst = 0;
-		#40
+		#200
 		$display("done");
 		$stop;
 	end
