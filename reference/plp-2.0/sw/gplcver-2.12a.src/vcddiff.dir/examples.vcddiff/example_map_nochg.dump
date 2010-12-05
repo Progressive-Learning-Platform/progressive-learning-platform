@@ -1,0 +1,69 @@
+$date June 26, 1989 10:05:41 
+$end
+$version VERILOG-SIMULATOR 1.0a 
+$end
+$timescale  1 ns 
+$end
+$scope module top $end 
+$scope module m1  $end 
+$var trireg 1 aa net1 $end
+$var trireg 1 bb net2 $end
+$var trireg 1 cc net3 $end
+$upscope $end 
+$scope task t1 $end 
+$var reg 32 ee accumulator[31:0] $end
+$var integer 32 ff index  $end
+$upscope $end 
+$upscope $end 
+$enddefinitions $end
+$comment 
+  Note: $dumpvars was executed at time '#500'. 
+        All initial values are dumped at this time.
+$end
+
+
+xaa
+xbb
+xcc
+bx ee
+bx ff
+$end
+#505 
+0aa
+1bb
+1cc 
+b10zx1110x11100 ee 
+b1111000101z01x ff
+#510 
+0cc
+#520 
+1cc
+#530 
+0cc 
+bz ee
+#535 
+$dumpall
+   0aa   1bb   0cc 
+bz ee
+b1111000101z01
+$end
+#540 
+1cc
+#1000
+$dumpoff 
+xaa 
+xbb 
+xcc 
+bx ee 
+bx ff 
+$end
+#2000
+$dumpon 
+zaa 
+1bb 
+0cc 
+b0 ee 
+bx ff 
+$end
+#2010
+1cc
