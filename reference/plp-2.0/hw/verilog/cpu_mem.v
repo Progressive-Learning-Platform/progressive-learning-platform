@@ -57,7 +57,7 @@ module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw,
 		end
 
 		/* debug statements, not synthesized by Xilinx */
-		$display("MEM: ALU_R: %x, DATA: %x, ADDR: %x", p_alu_r, p_dout, dmem_addr);
+		$display("MEM: %x %x %x %x %x %x", ex_rt, p_rf_waddr, wb_wdata, p_c_rfw, forward, dmem_data);
 	end
 
 endmodule
