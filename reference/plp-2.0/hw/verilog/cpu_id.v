@@ -68,7 +68,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 	wire c_drw = (opcode == 6'h2b && !stall) ? 1 : 0;
 	wire [5:0] c_alucontrol = opcode;
 	wire c_se = (opcode == 6'h0c || opcode == 6'h0d) ? 0 : 1;
-	wire c_rfbse = opcode == 6'h00 ? 0 : 1;
+	wire c_rfbse = (opcode == 6'h00 || opcode == 6'h04 || opcode == 6'h05) ? 0 : 1;
 	wire c_jjr = 
 		opcode == 6'h02 ? 0 :
 		opcode == 6'h03 ? 0 : 1;

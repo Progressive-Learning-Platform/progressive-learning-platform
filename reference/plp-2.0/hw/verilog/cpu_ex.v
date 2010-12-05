@@ -104,7 +104,7 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
 	assign c_j = id_c_j;
 	assign c_b = id_c_b & (alu_r == 0);
 	assign jaddr = id_c_jjr ? x : jjal_jaddr;
-	assign baddr = {{14{y[15]}},y,2'b0} + pc_4;
+	assign baddr = {{14{id_se[15]}},id_se,2'b0} + pc_4;
 
 	always @(posedge clk) begin
 		if (rst) begin
