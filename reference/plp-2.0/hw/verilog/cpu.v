@@ -45,6 +45,7 @@ module cpu(clk, daddr, dout, din, drw, iaddr, iin, rst);
 	wire	[31:0]	exmem_rfb;
 	wire	[4:0]	exmem_rf_waddr;
 	wire	[31:0]	exmem_jalra;
+	wire	[4:0]	exmem_rt;
 	wire	[31:0]	exif_baddr;
 	wire	[31:0]	exif_jaddr;
 	wire		exif_b;
@@ -75,7 +76,7 @@ module cpu(clk, daddr, dout, din, drw, iaddr, iin, rst);
 			idex_pc, idex_jaddr, idex_c_rfbse, idex_rs, idex_rt, 
 			wbid_wdata, wbid_rfw, wbid_waddr, exmem_c_rfw, exmem_c_wbsource, 
 			exmem_c_drw, exmem_alu_r, exmem_rfb, exmem_rf_waddr, exmem_jalra, 
-			exif_baddr, exif_jaddr, exif_b, exif_j);
+			exmem_rt, exif_baddr, exif_jaddr, exif_b, exif_j);
 	cpu_mem stage_mem (rst, clk, exmem_c_rfw, exmem_c_wbsource, exmem_c_drw,
 			exmem_alu_r, exmem_rfb, exmem_rf_waddr, exmem_jalra, exmem_rt,
 			wbid_wdata, memwb_c_rfw, memwb_c_wbsource, memwb_alu_r, dout, 

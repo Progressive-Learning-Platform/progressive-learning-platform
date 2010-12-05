@@ -51,7 +51,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 	wire [31:0] rfb = rf_rt == 0 ? 0 : rf[rf_rt];
 
 	/* hazard logic */
-	wire stall = ((p_c_alucontrol == 6'h23) & ((p_rt == rf_rs) | (p_rt == rf_rt)) & (p_rt != 0));
+	wire stall = ((p_c_alucontrol == 6'h23) & ((p_rt == rf_rs) | (p_rt == rf_rt)) & (p_rt != 0) & (opcode != 6'h2b));
 	assign c_stall = stall;
 
 	/* control logic */
@@ -135,9 +135,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 		end
 	
 		/* debug statements, not synthesized by Xilinx */
-		$display("ID: INST: %x", if_inst);
-		//if(wb_rfw)
-		//	$display("ID: DATA %x written to REG %x", wb_rf_wdata, wb_rf_waddr);
+		//$display("ID: INST: %x", if_inst);
 	end
 
 	always @(negedge clk) begin
@@ -145,6 +143,8 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 		if (wb_rfw && wb_rf_waddr != 5'd0) begin
 			rf[wb_rf_waddr] <= wb_rf_wdata;
 		end
+		if(wb_rfw)
+			$display("ID: DATA %x written to REG %x", wb_rf_wdata, wb_rf_waddr);
 	end
 	
 endmodule

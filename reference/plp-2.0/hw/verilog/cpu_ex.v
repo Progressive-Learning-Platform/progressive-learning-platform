@@ -12,7 +12,7 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
 		id_pc, id_jaddr, id_c_rfbse, id_rs, id_rt,
 		wb_wdata, wb_rfw, wb_waddr, p_c_rfw, p_c_wbsource,
 		p_c_drw, p_alu_r, p_rfb, p_rf_waddr, p_jalra,
-		baddr, jaddr, c_b, c_j);
+		p_rt, baddr, jaddr, c_b, c_j);
 	input 		rst, clk;
 	input		id_c_rfw;
 	input [1:0]	id_c_wbsource;
@@ -42,6 +42,7 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
 	output reg [31:0] p_rfb;
 	output reg [4:0] p_rf_waddr;
 	output reg [31:0] p_jalra;
+	output reg [4:0] p_rt;
 	output [31:0]	baddr;
 	output [31:0]	jaddr;
 	output c_b;
@@ -56,12 +57,13 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
 	wire [31:0] x = (forwardX == 2'b00) ? id_rfa :
 			(forwardX == 2'b01) ? p_alu_r :
 			(forwardX == 2'b10) ? wb_wdata : 0;
-	wire [31:0] y = (id_c_rfbse) ? id_se : 
-			(forwardY == 2'b00) ? id_rfb :
+	wire [31:0] eff_y = (forwardY == 2'b00) ? id_rfb :
 			(forwardY == 2'b01) ? p_alu_r :
 			(forwardY == 2'b10) ? wb_wdata : 0;
+	wire [31:0] y = (id_c_rfbse) ? id_se : eff_y;
 	wire cmp_signed = (x[31] == y[31]) ? x < y : x[31];
 	wire cmp_unsigned = x < y;
+
 
 	/* alu control */
 	wire [5:0] alu_func = 
@@ -113,17 +115,19 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
 			p_rfb <= 0;
 			p_rf_waddr <= 0;
 			p_jalra <= 0;
+			p_rt <= 0;
 		end else begin
 			p_c_rfw <= id_c_rfw;
 			p_c_wbsource <= id_c_wbsource;
 			p_c_drw <= id_c_drw;
 			p_alu_r <= alu_r;
-			p_rfb <= id_rfb;
+			p_rfb <= eff_y;
 			p_rf_waddr <= id_rf_waddr;
 			p_jalra <= jalra;
+			p_rt <= id_rt;
 		end
 	
 		/* debug statements, not synthesized by Xilinx */
-		$display("EX: PC: %x", id_pc);
+		//$display("EX: PC: %x", id_pc);
 	end
 endmodule

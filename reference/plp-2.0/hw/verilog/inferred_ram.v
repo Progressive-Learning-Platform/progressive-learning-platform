@@ -17,6 +17,7 @@ module inferred_ram(clka, clkb, ena, enb, wea, addra, addrb, dia, doa, dob);
                 if (ena) begin
                         if (wea) begin
                                 RAM[addra] <= dia;
+				$display("RAM: %x written to %x", dia, addra);
 			end
                         doa <= RAM[addra];
                 end
