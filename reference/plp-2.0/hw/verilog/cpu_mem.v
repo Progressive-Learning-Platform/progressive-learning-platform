@@ -6,7 +6,11 @@ memory phase
 
 */
 
-module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw, ex_alu_r, ex_rfb, ex_rf_waddr, ex_jalra, ex_rt, wb_wdata, p_c_rfw, p_c_wbsource, p_alu_r, dmem_data, p_rf_waddr, p_jalra, dmem_addr, dmem_drw, dmem_in, p_dout);
+module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw,
+		ex_alu_r, ex_rfb, ex_rf_waddr, ex_jalra, ex_rt,
+		wb_wdata, p_c_rfw, p_c_wbsource, p_alu_r, dmem_data,
+		p_rf_waddr, p_jalra, dmem_addr, dmem_drw, dmem_in,
+		p_dout);
 	input 		rst, clk;
 	input 		ex_c_rfw;
 	input [1:0]	ex_c_wbsource;

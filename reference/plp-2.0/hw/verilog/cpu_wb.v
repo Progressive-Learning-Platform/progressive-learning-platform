@@ -6,7 +6,8 @@ writeback phase
 
 */
 
-module cpu_wb(mem_c_rfw, mem_c_wbsource, mem_alu_r, mem_dmem_in, mem_rf_waddr, mem_jalra, rfw, wdata, rf_waddr);
+module cpu_wb(mem_c_rfw, mem_c_wbsource, mem_alu_r, mem_dmem_in, mem_rf_waddr,
+		mem_jalra, rfw, wdata, rf_waddr);
 	input mem_c_rfw;
 	input [1:0] mem_c_wbsource;
 	input [31:0] mem_alu_r;
