@@ -81,12 +81,12 @@ public class PLPToolApp extends SingleFrameApplication {
         }
         else if(args.length > 0 && args[0].equals("-s")) {
             if(args.length == 1) {
-                PLPSimCL.simCL(null);
+                PLPSimCL.simCL(null, null, null);
             }
             else if(args.length != 2) {
                 System.out.println("Usage: PLPTool -s <asm>");
             } else
-                PLPSimCL.simCL(args[1]);
+                PLPSimCL.simCL(null, args[1], null);
         }
         else if(args.length > 0 && args[0].equals("-p")) {
             if(args.length != 4) {

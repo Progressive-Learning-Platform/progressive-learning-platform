@@ -55,15 +55,15 @@ public class PLPSimBus {
     }
 
     /**
-     * Passing the simulator core object will attach the main memory to
-     * the bus.
+     * This constructor will attach the provided memory module to the bus.
+     * Can be used with simulator cores with main memory attached to the bus.
      *
      * @param PLPSimCore The simulator core
      * @see PLPSimBus()
      */
-    public PLPSimBus(PLPSimCore sim) {
+    public PLPSimBus(PLPSimMemModule mem) {
         bus_modules = new ArrayList<PLPSimBusModule>();
-        bus_modules.add(sim.memory);
+        bus_modules.add(mem);
     }
 
     /**

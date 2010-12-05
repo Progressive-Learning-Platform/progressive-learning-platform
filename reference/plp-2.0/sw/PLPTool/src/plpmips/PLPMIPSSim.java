@@ -116,7 +116,7 @@ public class PLPMIPSSim extends PLPSimCore {
 
         // core mods
         forwarding = new mod_forwarding();
-        bus = new PLPSimBus((PLPSimCore) this);
+        bus = new PLPSimBus(memory);
 
         // Instantiate stages
         wb_stage = new wb(regfile);

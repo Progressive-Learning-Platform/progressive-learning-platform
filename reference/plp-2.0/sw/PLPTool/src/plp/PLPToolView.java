@@ -37,7 +37,7 @@ public class PLPToolView extends FrameView {
         PLPMsg.M("by opening the Develop tab to write or open an assembly file.");
         PLPMainPane.setEnabledAt(1, false);
         PLPMainPane.setEnabledAt(2, false);
-        PLPMainPane.setSelectedIndex(3);
+        PLPMainPane.setSelectedIndex(0);
     }
 
     @Action
@@ -48,6 +48,10 @@ public class PLPToolView extends FrameView {
             aboutBox.setLocationRelativeTo(mainFrame);
         }
         PLPToolApp.getApplication().show(aboutBox);
+    }
+
+    public void plpMsgRouteBack() {
+        PLPMsg.output = Output;
     }
 
     /** This method is called from within the constructor to
@@ -465,6 +469,12 @@ public class PLPToolView extends FrameView {
         PLPMsg.output = IDEStdOut;
         PLPMsg.M("Assembling...");
         asm = new PLPAsm(IDEEditor.getText(), "IDEEditor", 0);
+
+        if(simFrame != null) {
+            simFrame.setVisible(false);
+            simFrame.dispose();
+        }
+
         if((ret = asm.preprocess(0)) == PLPMsg.PLP_OK) {
             ret = asm.assemble();
         }
@@ -472,20 +482,17 @@ public class PLPToolView extends FrameView {
             PLPMsg.M("Done.");
             PLPMainPane.setEnabledAt(1, true);
             PLPMainPane.setEnabledAt(2, true);
-            sim = new PLPMIPSSim(asm, (long) Math.pow(2,32) - 1);
+            sim = new PLPMIPSSim(asm, -1);
             sim.reset();
             sim.step();
-            simFrame = new PLPMIPSCoreGUI(sim);
+            simFrame = new PLPMIPSCoreGUI(sim, this);
             SimDesktop.add(simFrame);
             simFrame.setVisible(true);
         }
         else {
             PLPMainPane.setEnabledAt(1, false);
             PLPMainPane.setEnabledAt(2, false);
-            if(simFrame != null) {
-                simFrame.setVisible(false);
-                simFrame.dispose();
-            }
+            
             PLPMsg.M("Fix your code.");
         }
 
@@ -495,9 +502,8 @@ public class PLPToolView extends FrameView {
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
         // TODO add your handling code here:
-        sim.regfile.printAll(-1);
-        sim.memory.printAll(sim.pc.eval());
-        sim.printProgram(sim.pc.eval());
+        sim.step();
+        simFrame.updateComponents();
     }//GEN-LAST:event_btnStepActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -79,17 +79,17 @@ public class PLPSimMods {
 
             long value = (Long) super.read(startAddr);
 
-            System.out.print(this + ": ");
+            PLPMsg.m(this + ": ");
 
             // Combinational logic
             for(int i = 7; i >= 0; i--) {
                 if((value & (long) Math.pow(2, i)) == (long) Math.pow(2, i))
-                    System.out.print("* ");
+                    PLPMsg.m("* ");
                 else
-                    System.out.print(". ");
+                    PLPMsg.m(". ");
             }
 
-            System.out.println();
+            PLPMsg.M("");
 
             return PLPMsg.PLP_OK;
         }
