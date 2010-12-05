@@ -6,7 +6,11 @@ instruction decode phase
 
 */
 
-module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_se, p_shamt, p_func, p_rf_waddr, p_c_rfw, p_c_wbsource, p_c_drw, p_c_alucontrol, p_c_j, p_c_b, p_c_jjr, p_jaddr, p_pc, p_c_rfbse, p_rs, p_rt);
+module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
+		wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_se, 
+		p_shamt, p_func, p_rf_waddr, p_c_rfw, p_c_wbsource,
+		p_c_drw, p_c_alucontrol, p_c_j, p_c_b, p_c_jjr,
+		p_jaddr, p_pc, p_c_rfbse, p_rs, p_rt, c_stall);
 	input 		rst, clk;
 	input	[31:0]	if_pc;
 	input	[31:0]	if_inst;
@@ -31,6 +35,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 	output reg	  p_c_rfbse;
 	output reg [4:0]  p_rs;
 	output reg [4:0]  p_rt;
+	output		  c_stall;
 
 	reg [31:0] rf [31:1];
 
@@ -47,6 +52,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw, wb_rf_waddr, wb_rf_wdata, p_rfa,
 
 	/* hazard logic */
 	wire stall = ((p_c_alucontrol == 6'h23) & ((p_rt == rf_rs) | (p_rt == rf_rt)) & (p_rt != 0));
+	assign c_stall = stall;
 
 	/* control logic */
 	wire c_rfw = ( 

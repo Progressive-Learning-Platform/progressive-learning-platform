@@ -6,7 +6,8 @@ instruction fetch phase
 
 */
 
-module cpu_if(rst, clk, imem_addr, p_pc, pc_j, pc_b, b_addr, j_addr, iin, p_inst, stall);
+module cpu_if(rst, clk, imem_addr, p_pc, pc_j,
+		pc_b, b_addr, j_addr, iin, p_inst, stall);
 	input 		rst, clk;
 	input 		pc_j;
 	input 		pc_b;
