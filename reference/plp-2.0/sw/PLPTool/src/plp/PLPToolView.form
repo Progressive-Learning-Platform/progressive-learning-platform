@@ -93,14 +93,14 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="IDESplitter" alignment="0" pref="856" max="32767" attributes="0"/>
+                  <Component id="IDESplitter" alignment="0" pref="870" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDELabel_Command" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="IDECommander" pref="805" max="32767" attributes="0"/>
+                      <Component id="IDECommander" pref="819" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="IDEScroller" alignment="0" pref="856" max="32767" attributes="0"/>
-                  <Component id="IDEBar" alignment="1" pref="856" max="32767" attributes="0"/>
+                  <Component id="IDEScroller" alignment="0" pref="870" max="32767" attributes="0"/>
+                  <Component id="IDEBar" alignment="1" pref="870" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -108,7 +108,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDEBar" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="IDESplitter" pref="325" max="32767" attributes="0"/>
+                      <Component id="IDESplitter" pref="347" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="IDEScroller" min="-2" pref="110" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -291,13 +291,13 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="SimControls" alignment="1" max="32767" attributes="0"/>
-                  <Component id="SimDesktop" alignment="0" pref="856" max="32767" attributes="0"/>
+                  <Component id="SimDesktop" alignment="0" pref="870" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="SimDesktop" pref="447" max="32767" attributes="0"/>
+                      <Component id="SimDesktop" pref="469" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="SimControls" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -315,47 +315,44 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglCore" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglMainMem" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextField1" min="-2" pref="42" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglRegs" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnStep" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglBus" min="-2" max="-2" attributes="0"/>
+                          <Component id="jToggleButton1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btnReset" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="tglID" min="-2" max="-2" attributes="0"/>
+                          <Component id="tglBusView" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglIF" min="-2" max="-2" attributes="0"/>
+                          <Component id="tglIODisplay" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglEX" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglMEM" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglWB" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnMem" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="btnDump" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglProgList" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="49" max="32767" attributes="0"/>
+                          <Component id="jTextField2" min="-2" pref="78" max="-2" attributes="0"/>
+                          <EmptySpace pref="74" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="tglCore" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglMainMem" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglRegs" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglBus" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglIF" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglID" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglEX" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglMEM" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglWB" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnDump" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglProgList" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jToggleButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnStep" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnReset" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="tglBusView" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="tglIODisplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnMem" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -363,90 +360,68 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JToggleButton" name="tglCore">
+                <Component class="javax.swing.JButton" name="btnStep">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglCore.text"/>
-                    <Property name="name" type="java.lang.String" value="tglCore" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="btnStep.text"/>
+                    <Property name="name" type="java.lang.String" value="btnStep" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tglCoreMouseClicked"/>
-                    <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="tglCorePropertyChange"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStepActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglMainMem">
+                <Component class="javax.swing.JLabel" name="jLabel4">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglMainMem.text"/>
-                    <Property name="name" type="java.lang.String" value="tglMainMem" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="jLabel4.text"/>
+                    <Property name="name" type="java.lang.String" value="jLabel4" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglRegs">
+                <Component class="javax.swing.JToggleButton" name="jToggleButton1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglRegs.text"/>
-                    <Property name="name" type="java.lang.String" value="tglRegs" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="jToggleButton1.text"/>
+                    <Property name="name" type="java.lang.String" value="jToggleButton1" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglBus">
+                <Component class="javax.swing.JTextField" name="jTextField1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglBus.text"/>
-                    <Property name="name" type="java.lang.String" value="tglBus" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="jTextField1.text"/>
+                    <Property name="name" type="java.lang.String" value="jTextField1" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglIF">
+                <Component class="javax.swing.JButton" name="btnReset">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglIF.text"/>
-                    <Property name="name" type="java.lang.String" value="tglIF" noResource="true"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[53, 23]"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="btnReset.text"/>
+                    <Property name="name" type="java.lang.String" value="btnReset" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglID">
+                <Component class="javax.swing.JToggleButton" name="tglBusView">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglID.text"/>
-                    <Property name="name" type="java.lang.String" value="tglID" noResource="true"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[53, 23]"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="tglBusView.text"/>
+                    <Property name="name" type="java.lang.String" value="tglBusView" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglEX">
+                <Component class="javax.swing.JToggleButton" name="tglIODisplay">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglEX.text"/>
-                    <Property name="name" type="java.lang.String" value="tglEX" noResource="true"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[55, 23]"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="tglIODisplay.text"/>
+                    <Property name="name" type="java.lang.String" value="tglIODisplay" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglMEM">
+                <Component class="javax.swing.JToggleButton" name="btnMem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglMEM.text"/>
-                    <Property name="name" type="java.lang.String" value="tglMEM" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="btnMem.text"/>
+                    <Property name="name" type="java.lang.String" value="btnMem" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglWB">
+                <Component class="javax.swing.JLabel" name="jLabel5">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglWB.text"/>
-                    <Property name="name" type="java.lang.String" value="tglWB" noResource="true"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[55, 23]"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="jLabel5.text"/>
+                    <Property name="name" type="java.lang.String" value="jLabel5" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="tglProgList">
+                <Component class="javax.swing.JTextField" name="jTextField2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglProgList.text"/>
-                    <Property name="name" type="java.lang.String" value="tglProgList" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="jTextField2.text"/>
+                    <Property name="name" type="java.lang.String" value="jTextField2" noResource="true"/>
                   </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnDump">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="btnDump.text"/>
-                    <Property name="name" type="java.lang.String" value="btnDump" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDumpActionPerformed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -485,9 +460,9 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jComboBox2" alignment="1" pref="691" max="32767" attributes="1"/>
-                          <Component id="jComboBox1" alignment="1" pref="691" max="32767" attributes="1"/>
-                          <Component id="jComboBox3" alignment="0" pref="691" max="32767" attributes="0"/>
+                          <Component id="jComboBox2" alignment="1" pref="705" max="32767" attributes="1"/>
+                          <Component id="jComboBox1" alignment="1" pref="705" max="32767" attributes="1"/>
+                          <Component id="jComboBox3" alignment="0" pref="705" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -511,7 +486,7 @@
                           <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="399" max="32767" attributes="0"/>
+                      <EmptySpace pref="421" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -594,7 +569,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="OutputScrollPane" pref="836" max="32767" attributes="0"/>
+                      <Component id="OutputScrollPane" pref="850" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -603,7 +578,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="OutputScrollPane" pref="476" max="32767" attributes="0"/>
+                      <Component id="OutputScrollPane" pref="498" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -654,6 +629,6 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,32,0,0,2,-8"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,54,0,0,3,107"/>
   </AuxValues>
 </Form>
