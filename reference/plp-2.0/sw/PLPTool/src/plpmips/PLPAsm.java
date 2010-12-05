@@ -528,11 +528,7 @@ public class PLPAsm {
             stripComments = asmLines[i].split("#");
             stripComments[0] = stripComments[0].trim();
             asmTokens = stripComments[0].split(delimiters);
-
-            objectCode[i - s] = 0;
-            entryType[i - s] = 0;
             skip = false;
-
             PLPMsg.D("assemble(line " + (i + lineNumOffset) + "): " + asmLines[i], 3, this);
 
             // resolve symbols
@@ -568,7 +564,14 @@ public class PLPAsm {
                 }
             }
 
-            switch((Integer) instrMap.get(asmTokens[0])) {
+            int instrType = (Integer) instrMap.get(asmTokens[0]);
+
+            if(instrType < 10) {
+                objectCode[i - s] = 0;
+                entryType[i - s] = 0;
+            }
+
+            switch(instrType) {
 
                 // 3-op R-type
                 case 0:
@@ -730,11 +733,11 @@ public class PLPAsm {
 
                 // Others
                 case 10:
-                    entryType[i - s] = 1;
+                    ;
                     if(asmTokens[0].equals("ASM__WORD__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
                             return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
-
+                        entryType[i - s] = 1;
                         objectCode[i - s] = sanitize32bits(asmTokens[1]);
                     }
                     else if(asmTokens[0].equals("ASM__ORG__")) {

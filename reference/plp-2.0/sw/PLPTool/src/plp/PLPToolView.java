@@ -83,17 +83,16 @@ public class PLPToolView extends FrameView {
         IDELabel_Command = new javax.swing.JLabel();
         SimPane = new javax.swing.JPanel();
         SimControls = new javax.swing.JPanel();
-        tglCore = new javax.swing.JToggleButton();
-        tglMainMem = new javax.swing.JToggleButton();
-        tglRegs = new javax.swing.JToggleButton();
-        tglBus = new javax.swing.JToggleButton();
-        tglIF = new javax.swing.JToggleButton();
-        tglID = new javax.swing.JToggleButton();
-        tglEX = new javax.swing.JToggleButton();
-        tglMEM = new javax.swing.JToggleButton();
-        tglWB = new javax.swing.JToggleButton();
-        tglProgList = new javax.swing.JToggleButton();
-        btnDump = new javax.swing.JButton();
+        btnStep = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        jTextField1 = new javax.swing.JTextField();
+        btnReset = new javax.swing.JButton();
+        tglBusView = new javax.swing.JToggleButton();
+        tglIODisplay = new javax.swing.JToggleButton();
+        btnMem = new javax.swing.JToggleButton();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
         SimDesktop = new javax.swing.JDesktopPane();
         PrgPane = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -228,20 +227,20 @@ public class PLPToolView extends FrameView {
         IDEPane.setLayout(IDEPaneLayout);
         IDEPaneLayout.setHorizontalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDELabel_Command)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE))
-            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
-            .addComponent(IDEBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE))
+            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
+            .addComponent(IDEBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
         );
         IDEPaneLayout.setVerticalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDEBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(IDEScroller, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -257,57 +256,40 @@ public class PLPToolView extends FrameView {
 
         SimControls.setName("SimControls"); // NOI18N
 
-        tglCore.setText(resourceMap.getString("tglCore.text")); // NOI18N
-        tglCore.setName("tglCore"); // NOI18N
-        tglCore.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tglCoreMouseClicked(evt);
-            }
-        });
-        tglCore.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tglCorePropertyChange(evt);
-            }
-        });
-
-        tglMainMem.setText(resourceMap.getString("tglMainMem.text")); // NOI18N
-        tglMainMem.setName("tglMainMem"); // NOI18N
-
-        tglRegs.setText(resourceMap.getString("tglRegs.text")); // NOI18N
-        tglRegs.setName("tglRegs"); // NOI18N
-
-        tglBus.setText(resourceMap.getString("tglBus.text")); // NOI18N
-        tglBus.setName("tglBus"); // NOI18N
-
-        tglIF.setText(resourceMap.getString("tglIF.text")); // NOI18N
-        tglIF.setName("tglIF"); // NOI18N
-        tglIF.setPreferredSize(new java.awt.Dimension(53, 23));
-
-        tglID.setText(resourceMap.getString("tglID.text")); // NOI18N
-        tglID.setName("tglID"); // NOI18N
-        tglID.setPreferredSize(new java.awt.Dimension(53, 23));
-
-        tglEX.setText(resourceMap.getString("tglEX.text")); // NOI18N
-        tglEX.setName("tglEX"); // NOI18N
-        tglEX.setPreferredSize(new java.awt.Dimension(55, 23));
-
-        tglMEM.setText(resourceMap.getString("tglMEM.text")); // NOI18N
-        tglMEM.setName("tglMEM"); // NOI18N
-
-        tglWB.setText(resourceMap.getString("tglWB.text")); // NOI18N
-        tglWB.setName("tglWB"); // NOI18N
-        tglWB.setPreferredSize(new java.awt.Dimension(55, 23));
-
-        tglProgList.setText(resourceMap.getString("tglProgList.text")); // NOI18N
-        tglProgList.setName("tglProgList"); // NOI18N
-
-        btnDump.setText(resourceMap.getString("btnDump.text")); // NOI18N
-        btnDump.setName("btnDump"); // NOI18N
-        btnDump.addActionListener(new java.awt.event.ActionListener() {
+        btnStep.setText(resourceMap.getString("btnStep.text")); // NOI18N
+        btnStep.setName("btnStep"); // NOI18N
+        btnStep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDumpActionPerformed(evt);
+                btnStepActionPerformed(evt);
             }
         });
+
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        jToggleButton1.setText(resourceMap.getString("jToggleButton1.text")); // NOI18N
+        jToggleButton1.setName("jToggleButton1"); // NOI18N
+
+        jTextField1.setText(resourceMap.getString("jTextField1.text")); // NOI18N
+        jTextField1.setName("jTextField1"); // NOI18N
+
+        btnReset.setText(resourceMap.getString("btnReset.text")); // NOI18N
+        btnReset.setName("btnReset"); // NOI18N
+
+        tglBusView.setText(resourceMap.getString("tglBusView.text")); // NOI18N
+        tglBusView.setName("tglBusView"); // NOI18N
+
+        tglIODisplay.setText(resourceMap.getString("tglIODisplay.text")); // NOI18N
+        tglIODisplay.setName("tglIODisplay"); // NOI18N
+
+        btnMem.setText(resourceMap.getString("btnMem.text")); // NOI18N
+        btnMem.setName("btnMem"); // NOI18N
+
+        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setName("jLabel5"); // NOI18N
+
+        jTextField2.setText(resourceMap.getString("jTextField2.text")); // NOI18N
+        jTextField2.setName("jTextField2"); // NOI18N
 
         javax.swing.GroupLayout SimControlsLayout = new javax.swing.GroupLayout(SimControls);
         SimControls.setLayout(SimControlsLayout);
@@ -315,45 +297,42 @@ public class PLPToolView extends FrameView {
             SimControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(SimControlsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tglCore)
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglMainMem)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglRegs)
+                .addComponent(btnStep)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglBus)
+                .addComponent(jToggleButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnReset)
                 .addGap(18, 18, 18)
-                .addComponent(tglID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tglBusView)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglIF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tglIODisplay)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglEX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglMEM)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglWB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnMem)
                 .addGap(18, 18, 18)
-                .addComponent(btnDump)
+                .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tglProgList)
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         SimControlsLayout.setVerticalGroup(
             SimControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimControlsLayout.createSequentialGroup()
+            .addGroup(SimControlsLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(SimControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tglCore)
-                    .addComponent(tglMainMem)
-                    .addComponent(tglRegs)
-                    .addComponent(tglBus)
-                    .addComponent(tglIF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tglID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tglEX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tglMEM)
-                    .addComponent(tglWB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDump)
-                    .addComponent(tglProgList))
+                    .addComponent(jLabel4)
+                    .addComponent(jToggleButton1)
+                    .addComponent(btnStep)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReset)
+                    .addComponent(tglBusView)
+                    .addComponent(tglIODisplay)
+                    .addComponent(btnMem)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -365,12 +344,12 @@ public class PLPToolView extends FrameView {
         SimPaneLayout.setHorizontalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(SimControls, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(SimDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+            .addComponent(SimDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
         );
         SimPaneLayout.setVerticalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimPaneLayout.createSequentialGroup()
-                .addComponent(SimDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(SimDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(SimControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -411,9 +390,9 @@ public class PLPToolView extends FrameView {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 691, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 691, Short.MAX_VALUE)
-                    .addComponent(jComboBox3, 0, 691, Short.MAX_VALUE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 705, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 705, Short.MAX_VALUE)
+                    .addComponent(jComboBox3, 0, 705, Short.MAX_VALUE))
                 .addContainerGap())
         );
         PrgPaneLayout.setVerticalGroup(
@@ -431,7 +410,7 @@ public class PLPToolView extends FrameView {
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(399, Short.MAX_VALUE))
+                .addContainerGap(421, Short.MAX_VALUE))
         );
 
         PLPMainPane.addTab(resourceMap.getString("PrgPane.TabConstraints.tabTitle"), PrgPane); // NOI18N
@@ -453,14 +432,14 @@ public class PLPToolView extends FrameView {
             OutputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OutputPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
+                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
                 .addContainerGap())
         );
         OutputPaneLayout.setVerticalGroup(
             OutputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OutputPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -480,17 +459,6 @@ public class PLPToolView extends FrameView {
         
     }//GEN-LAST:event_IDEAssembleBtnMouseClicked
 
-    private void tglCoreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tglCoreMouseClicked
-        // TODO add your handling code here:
-        
-
-    }//GEN-LAST:event_tglCoreMouseClicked
-
-    private void tglCorePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tglCorePropertyChange
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_tglCorePropertyChange
-
     private void IDEAssembleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDEAssembleBtnActionPerformed
         // TODO add your handling code here:
         int ret = 0;
@@ -506,6 +474,7 @@ public class PLPToolView extends FrameView {
             PLPMainPane.setEnabledAt(2, true);
             sim = new PLPMIPSSim(asm, (long) Math.pow(2,32) - 1);
             sim.reset();
+            sim.step();
             simFrame = new PLPMIPSCoreGUI(sim);
             SimDesktop.add(simFrame);
             simFrame.setVisible(true);
@@ -524,12 +493,12 @@ public class PLPToolView extends FrameView {
         PLPMsg.output = Output;
     }//GEN-LAST:event_IDEAssembleBtnActionPerformed
 
-    private void btnDumpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDumpActionPerformed
+    private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
         // TODO add your handling code here:
         sim.regfile.printAll(-1);
         sim.memory.printAll(sim.pc.eval());
         sim.printProgram(sim.pc.eval());
-    }//GEN-LAST:event_btnDumpActionPerformed
+    }//GEN-LAST:event_btnStepActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton IDEAssembleBtn;
@@ -555,25 +524,24 @@ public class PLPToolView extends FrameView {
     private javax.swing.JPanel SimControls;
     private javax.swing.JDesktopPane SimDesktop;
     private javax.swing.JPanel SimPane;
-    private javax.swing.JButton btnDump;
+    private javax.swing.JToggleButton btnMem;
+    private javax.swing.JButton btnReset;
+    private javax.swing.JButton btnStep;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JToggleButton tglBus;
-    private javax.swing.JToggleButton tglCore;
-    private javax.swing.JToggleButton tglEX;
-    private javax.swing.JToggleButton tglID;
-    private javax.swing.JToggleButton tglIF;
-    private javax.swing.JToggleButton tglMEM;
-    private javax.swing.JToggleButton tglMainMem;
-    private javax.swing.JToggleButton tglProgList;
-    private javax.swing.JToggleButton tglRegs;
-    private javax.swing.JToggleButton tglWB;
+    private javax.swing.JToggleButton tglBusView;
+    private javax.swing.JToggleButton tglIODisplay;
     // End of variables declaration//GEN-END:variables
 
     private JDialog aboutBox;
