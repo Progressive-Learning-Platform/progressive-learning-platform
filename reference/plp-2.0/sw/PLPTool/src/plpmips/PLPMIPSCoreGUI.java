@@ -11,6 +11,8 @@
 
 package plpmips;
 
+import javax.swing.table.DefaultTableCellRenderer;
+
 /**
  *
  * @author wira
@@ -25,6 +27,42 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         this.sim = sim;
         this.mainWindow = mainWindow;
         initComponents();
+        renderer.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        tblRegFile.setDefaultRenderer(tblRegFile.getColumnClass(2), renderer);
+
+        tblRegFile.setValueAt("0: $zero", 0, 0);
+        tblRegFile.setValueAt("1: $at", 1, 0);
+        tblRegFile.setValueAt("2: $v0", 2, 0);
+        tblRegFile.setValueAt("3: $v1", 3, 0);
+        tblRegFile.setValueAt("4: $a0", 4, 0);
+        tblRegFile.setValueAt("5: $a1", 5, 0);
+        tblRegFile.setValueAt("6: $a2", 6, 0);
+        tblRegFile.setValueAt("7: $a3", 7, 0);
+        tblRegFile.setValueAt("8: $t0", 8, 0);
+        tblRegFile.setValueAt("9: $t1", 9, 0);
+        tblRegFile.setValueAt("10: $t2", 10, 0);
+        tblRegFile.setValueAt("11: $t3", 11, 0);
+        tblRegFile.setValueAt("12: $t4", 12, 0);
+        tblRegFile.setValueAt("13: $t5", 13, 0);
+        tblRegFile.setValueAt("14: $t6", 14, 0);
+        tblRegFile.setValueAt("15: $t7", 15, 0);
+        tblRegFile.setValueAt("16: $s0", 16, 0);
+        tblRegFile.setValueAt("17: $s1", 17, 0);
+        tblRegFile.setValueAt("18: $s2", 18, 0);
+        tblRegFile.setValueAt("19: $s3", 19, 0);
+        tblRegFile.setValueAt("20: $s4", 20, 0);
+        tblRegFile.setValueAt("21: $s5", 21, 0);
+        tblRegFile.setValueAt("22: $s6", 22, 0);
+        tblRegFile.setValueAt("23: $s7", 23, 0);
+        tblRegFile.setValueAt("24: $t8", 24, 0);
+        tblRegFile.setValueAt("25: $t9", 25, 0);
+        tblRegFile.setValueAt("26: $k0", 26, 0);
+        tblRegFile.setValueAt("27: $k1", 27, 0);
+        tblRegFile.setValueAt("28: $gp", 28, 0);
+        tblRegFile.setValueAt("29: $sp", 29, 0);
+        tblRegFile.setValueAt("30: $fp", 30, 0);
+        tblRegFile.setValueAt("31: $ra", 31, 0);
+
         updateComponents();
     }
 
@@ -45,13 +83,13 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblRegFile = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        tblProgram = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblMemMap = new javax.swing.JTable();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
@@ -111,7 +149,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblRegFile.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -165,16 +203,15 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setColumnSelectionAllowed(true);
-        jTable1.setName("jTable1"); // NOI18N
-        jScrollPane1.setViewportView(jTable1);
-        jTable1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jTable1.getColumnModel().getColumn(0).setResizable(false);
-        jTable1.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("jTable1.columnModel.title0")); // NOI18N
-        jTable1.getColumnModel().getColumn(1).setResizable(false);
-        jTable1.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTable1.columnModel.title1")); // NOI18N
-        jTable1.getColumnModel().getColumn(2).setResizable(false);
-        jTable1.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("jTable1.columnModel.title2")); // NOI18N
+        tblRegFile.setColumnSelectionAllowed(true);
+        tblRegFile.setName("tblRegFile"); // NOI18N
+        tblRegFile.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(tblRegFile);
+        tblRegFile.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblRegFile.getColumnModel().getColumn(0).setResizable(false);
+        tblRegFile.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblRegFile.columnModel.title0")); // NOI18N
+        tblRegFile.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblRegFile.columnModel.title1")); // NOI18N
+        tblRegFile.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblRegFile.columnModel.title2")); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -199,7 +236,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
         jScrollPane3.setName("jScrollPane3"); // NOI18N
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        tblProgram.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null}
             },
@@ -222,13 +259,14 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable3.setName("jTable3"); // NOI18N
-        jScrollPane3.setViewportView(jTable3);
-        jTable3.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("jTable3.columnModel.title0")); // NOI18N
-        jTable3.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTable3.columnModel.title1")); // NOI18N
-        jTable3.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("jTable3.columnModel.title2")); // NOI18N
-        jTable3.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("jTable3.columnModel.title3")); // NOI18N
-        jTable3.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("jTable3.columnModel.title4")); // NOI18N
+        tblProgram.setName("tblProgram"); // NOI18N
+        tblProgram.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(tblProgram);
+        tblProgram.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblProgram.columnModel.title0")); // NOI18N
+        tblProgram.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblProgram.columnModel.title1")); // NOI18N
+        tblProgram.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblProgram.columnModel.title2")); // NOI18N
+        tblProgram.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblProgram.columnModel.title3")); // NOI18N
+        tblProgram.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblProgram.columnModel.title4")); // NOI18N
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -253,7 +291,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
         jScrollPane2.setName("jScrollPane2"); // NOI18N
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblMemMap.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null}
             },
@@ -276,13 +314,14 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable2.setName("jTable2"); // NOI18N
-        jScrollPane2.setViewportView(jTable2);
-        jTable2.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("jTable2.columnModel.title0")); // NOI18N
-        jTable2.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTable2.columnModel.title1")); // NOI18N
-        jTable2.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("jTable2.columnModel.title2")); // NOI18N
-        jTable2.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("jTable2.columnModel.title3")); // NOI18N
-        jTable2.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("jTable2.columnModel.title4")); // NOI18N
+        tblMemMap.setName("tblMemMap"); // NOI18N
+        tblMemMap.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tblMemMap);
+        tblMemMap.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title0")); // NOI18N
+        tblMemMap.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title1")); // NOI18N
+        tblMemMap.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title2")); // NOI18N
+        tblMemMap.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title3")); // NOI18N
+        tblMemMap.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title4")); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -492,8 +531,8 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         plpmips.PLPSimCL.init_core = true;
         simCLOutput.append(simCLConsole.getText() + "\n");
         plpmips.PLPSimCL.simCLCommand(simCLConsole.getText(), sim);
+        simCLConsole.setText("");
         updateComponents();
-        mainWindow.plpMsgRouteBack();
 }//GEN-LAST:event_simCLExecActionPerformed
 
     private void simCLConsoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_simCLConsoleKeyPressed
@@ -511,6 +550,11 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             PC.setText(String.format("0xXXXXXXXX"));
             nextInstr.setText("Unknown");
         }
+
+        for(int i = 0; i < 32; i++) {
+            tblRegFile.setValueAt(sim.regfile.read(i), i, 2);
+            tblRegFile.setValueAt(String.format("0x%08x", sim.regfile.read(i)), i, 1);
+        }
     }
 
     public javax.swing.JTextArea getSimCLOutput() {
@@ -520,6 +564,8 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
     public javax.swing.JTextField getSimCLConsole() {
         return simCLConsole;
     }
+
+    private javax.swing.table.DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField PC;
@@ -545,14 +591,14 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
     private javax.swing.JTextField nextInstr;
     private javax.swing.JButton simCLClear;
     private javax.swing.JTextField simCLConsole;
     private javax.swing.JButton simCLExec;
     private javax.swing.JTextArea simCLOutput;
+    private javax.swing.JTable tblMemMap;
+    private javax.swing.JTable tblProgram;
+    private javax.swing.JTable tblRegFile;
     // End of variables declaration//GEN-END:variables
 
 }
