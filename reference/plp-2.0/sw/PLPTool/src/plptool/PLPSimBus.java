@@ -205,7 +205,7 @@ public class PLPSimBus {
      *
      * @return Returns 0 on completion.
      */
-    public int enableiomods() {
+    public int enableAllModules() {
         Object[] modules =bus_modules.toArray();
 
         for(int i = 0; i < modules.length; i++)
@@ -220,7 +220,7 @@ public class PLPSimBus {
      *
      * @return Returns 0 on completion.
      */
-    public int disableiomods() {
+    public int disableAllModules() {
         Object[] modules = bus_modules.toArray();
 
         for(int i = 0; i < modules.length; i++)
@@ -235,7 +235,7 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return Boolean on whether the module is enabled
      */
-    public boolean enabled(int index) {
+    public boolean getEnabled(int index) {
         Object[] modules = bus_modules.toArray();
 
         try {
@@ -255,7 +255,7 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return PLP_OK, or error code
      */
-    public int enableio(int index) {
+    public int enableMod(int index) {
         Object[] modules = bus_modules.toArray();
 
         try {
@@ -274,7 +274,7 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return PLP_OK, or error code
      */
-    public int disableio(int index) {
+    public int disableMod(int index) {
         Object[] modules = bus_modules.toArray();
 
         try {
@@ -293,7 +293,7 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return PLP_OK, or error code
      */
-    public int cleario(int index) {
+    public int clearModRegisters(int index) {
         Object[] modules = bus_modules.toArray();
 
         try {
@@ -312,7 +312,7 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return String of introduction
      */
-    public String introduceio(int index) {
+    public String introduceMod(int index) {
         Object[] modules = bus_modules.toArray();
         try {
 
@@ -332,7 +332,7 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return Starting address in (long)
      */
-    public long iostartaddr(int index) {
+    public long getModStartAddress(int index) {
         Object[] modules = bus_modules.toArray();
         try {
 
@@ -352,7 +352,7 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return Ending address in (long)
      */
-    public long ioendaddr(int index) {
+    public long getModEndAddress(int index) {
         Object[] modules = bus_modules.toArray();
         try {
 
@@ -371,7 +371,7 @@ public class PLPSimBus {
      *
      * @return Number of modules in (int)
      */
-    public int nummods() {
+    public int getNumOfMods() {
         Object[] modules = bus_modules.toArray();
 
         return modules.length;

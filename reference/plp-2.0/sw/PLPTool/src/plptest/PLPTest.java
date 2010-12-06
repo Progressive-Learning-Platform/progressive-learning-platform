@@ -35,7 +35,7 @@ public class PLPTest {
         PLPMIPSSim sim = new PLPMIPSSim(asm, 8000);
         PLPSimMods mods = new PLPSimMods(sim);
         sim.bus.add(mods.io_leds);
-        sim.bus.enableiomods();
+        sim.bus.enableAllModules();
         //sim.bus.write((long) 0x8000400 << 4, 0xbeef, false);
         //System.out.println(String.format("%08x", sim.bus.read((long) 0x8000400 << 4)));
         sim.bus.eval();

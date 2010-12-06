@@ -12,6 +12,8 @@
 package plpmips;
 
 import javax.swing.table.DefaultTableCellRenderer;
+import plptool.PLPSimCore;
+import plptool.PLPSimMods;
 
 /**
  *
@@ -21,11 +23,15 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
     private PLPMIPSSim sim;
     private plp.PLPToolView mainWindow;
+    private long old_pc;
 
     /** Creates new form PLPMIPSCoreGUI */
     public PLPMIPSCoreGUI(PLPMIPSSim sim, plp.PLPToolView mainWindow) {
         this.sim = sim;
         this.mainWindow = mainWindow;
+        PLPSimMods mods = new PLPSimMods(sim);
+        sim.bus.add(mods.io_leds);
+        sim.bus.enableAllModules();
         initComponents();
         renderer.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         tblRegFile.setDefaultRenderer(tblRegFile.getColumnClass(2), renderer);
@@ -62,6 +68,11 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         tblRegFile.setValueAt("29: $sp", 29, 0);
         tblRegFile.setValueAt("30: $fp", 30, 0);
         tblRegFile.setValueAt("31: $ra", 31, 0);
+
+        old_pc = -1;
+
+        clearProgramMemoryTable();
+        fillProgramMemoryTable();
 
         updateComponents();
     }
@@ -136,11 +147,11 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 429, Short.MAX_VALUE)
+            .addGap(0, 546, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 388, Short.MAX_VALUE)
+            .addGap(0, 419, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
@@ -149,6 +160,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
+        tblRegFile.setFont(resourceMap.getFont("tblRegFile.font")); // NOI18N
         tblRegFile.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
@@ -219,14 +231,14 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -236,9 +248,10 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
         jScrollPane3.setName("jScrollPane3"); // NOI18N
 
+        tblProgram.setFont(resourceMap.getFont("tblProgram.font")); // NOI18N
         tblProgram.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "PC", "Breakpoint", "Address", "Instruction (Hex)", "Instruction"
@@ -274,14 +287,14 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -291,16 +304,17 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
         jScrollPane2.setName("jScrollPane2"); // NOI18N
 
+        tblMemMap.setFont(resourceMap.getFont("tblMemMap.font")); // NOI18N
         tblMemMap.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Index", "Module Name", "Start Address", "End Address", "Enabled"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Long.class, java.lang.Long.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, true
@@ -329,14 +343,14 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -383,7 +397,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                     .addComponent(jCheckBox1)
                     .addComponent(jLabel4)
                     .addComponent(jRadioButton1))
-                .addContainerGap(290, Short.MAX_VALUE))
+                .addContainerGap(380, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,7 +418,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                 .addComponent(jRadioButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jRadioButton4)
-                .addContainerGap(200, Short.MAX_VALUE))
+                .addContainerGap(197, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel6.TabConstraints.tabTitle"), jPanel6); // NOI18N
@@ -420,7 +434,6 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         simCLOutput.setLineWrap(true);
         simCLOutput.setRows(5);
         simCLOutput.setWrapStyleWord(true);
-        simCLOutput.setMinimumSize(new java.awt.Dimension(0, 0));
         simCLOutput.setName("simCLOutput"); // NOI18N
         jScrollPane4.setViewportView(simCLOutput);
 
@@ -458,9 +471,9 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(simCLConsole, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                        .addComponent(simCLConsole, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(simCLExec)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -474,7 +487,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(simCLClear)
@@ -495,12 +508,12 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(PC, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(PC, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nextInstr, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE))
+                        .addComponent(nextInstr, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -510,11 +523,11 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(PC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(nextInstr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
-                .addContainerGap())
+                    .addComponent(nextInstr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
+                .addGap(12, 12, 12))
         );
 
         pack();
@@ -531,6 +544,10 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         plpmips.PLPSimCL.init_core = true;
         simCLOutput.append(simCLConsole.getText() + "\n");
         plpmips.PLPSimCL.simCLCommand(simCLConsole.getText(), sim);
+        if(simCLConsole.getText().trim().startsWith("asm")) {
+            clearProgramMemoryTable();
+            fillProgramMemoryTable();
+        }
         simCLConsole.setText("");
         updateComponents();
 }//GEN-LAST:event_simCLExecActionPerformed
@@ -541,7 +558,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             simCLExecActionPerformed(null);
 }//GEN-LAST:event_simCLConsoleKeyPressed
 
-    public void updateComponents() {
+    public final void updateComponents() {
         long pc = sim.pc.eval();
         if(pc >= 0) {
             PC.setText(String.format("0x%08x", pc));
@@ -555,6 +572,20 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             tblRegFile.setValueAt(sim.regfile.read(i), i, 2);
             tblRegFile.setValueAt(String.format("0x%08x", sim.regfile.read(i)), i, 1);
         }
+
+        javax.swing.table.DefaultTableModel memMap = (javax.swing.table.DefaultTableModel) tblMemMap.getModel();
+        while(memMap.getRowCount() > 0)
+                memMap.removeRow(0);
+        for(int i = 0; i < sim.bus.getNumOfMods(); i++) {
+            Object row[] = new Object[] {i, sim.bus.getRefMod(i),
+                                         String.format("0x%08x", sim.bus.getModStartAddress(i)),
+                                         String.format("0x%08x", sim.bus.getModEndAddress(i)),
+                                         sim.bus.getEnabled(i) };
+            memMap.addRow(row);
+        }
+        tblMemMap.setModel(memMap);
+
+        updateProgramMemoryTablePC();
     }
 
     public javax.swing.JTextArea getSimCLOutput() {
@@ -563,6 +594,64 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
     public javax.swing.JTextField getSimCLConsole() {
         return simCLConsole;
+    }
+
+    public final void clearProgramMemoryTable() {
+        javax.swing.table.DefaultTableModel program = (javax.swing.table.DefaultTableModel) tblProgram.getModel();
+
+        while(program.getRowCount() > 0)
+            program.removeRow(0);
+
+        tblProgram.setModel(program);
+    }
+
+    public final void fillProgramMemoryTable() {
+        javax.swing.table.DefaultTableModel program = (javax.swing.table.DefaultTableModel) tblProgram.getModel();
+
+        Object[][] objCode = sim.memory.getValueSet();
+        Object row[];
+        for(int i = 0; i < objCode.length; i++) {
+            if((Boolean) objCode[i][2]) {
+                row = new Object[]
+                      {"", false,
+                       String.format("0x%08x", objCode[i][0]),
+                       String.format("0x%08x", objCode[i][1]),
+                       MIPSInstr.format((Long) objCode[i][1])};
+                program.addRow(row);
+            }
+        }
+
+        tblProgram.setModel(program);
+    }
+
+    public final void updateProgramMemoryTablePC() {
+        if(sim.pc.eval() != old_pc) {
+            javax.swing.table.DefaultTableModel program = (javax.swing.table.DefaultTableModel) tblProgram.getModel();
+
+            for(int i = 0; i < program.getRowCount(); i++) {
+                if(program.getValueAt(i, 0).equals(">"))
+                    program.setValueAt("", i, 0);
+                else if(program.getValueAt(i, 0).equals(">>"))
+                    program.setValueAt(">", i, 0);
+                else if(program.getValueAt(i, 0).equals(">>>"))
+                    program.setValueAt(">>", i, 0);
+                else if(program.getValueAt(i, 0).equals(">>>>"))
+                    program.setValueAt(">>>", i, 0);
+                else if(program.getValueAt(i, 0).equals(">>>>>"))
+                    program.setValueAt(">>>>", i, 0);
+
+                if(PC.getText().equals(program.getValueAt(i, 2)))
+                    program.setValueAt(">>>>>", i, 0);
+            }
+
+            tblProgram.setModel(program);
+            
+            old_pc = sim.pc.eval();
+        }
+    }
+
+    public PLPSimCore getSim() {
+        return sim;
     }
 
     private javax.swing.table.DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
