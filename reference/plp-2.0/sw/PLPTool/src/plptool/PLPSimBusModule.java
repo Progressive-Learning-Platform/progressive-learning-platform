@@ -92,7 +92,7 @@ public abstract class PLPSimBusModule {
      * @param isInstr Denotes whether the value to be written is an instruction
      * @return PLP_OK, or error code
      */
-    public int write(long addr, Object data, boolean isInstr) {
+    public int writeReg(long addr, Object data, boolean isInstr) {
         if(!enabled)
             return PLPMsg.PLP_SIM_MODULE_DISABLED;
 
@@ -120,7 +120,7 @@ public abstract class PLPSimBusModule {
      * @param addr Address to read from
      * @return Data, or PLP_ERROR_RETURN
      */
-    public Object read(long addr) {
+    public Object readReg(long addr) {
         if(addr > endAddr || addr < startAddr) {
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
                      PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
@@ -146,6 +146,34 @@ public abstract class PLPSimBusModule {
         else
             return values.get(addr);
     }
+    
+    /**
+     * Wrapper function for writeReg. Developers may wish to override this
+     * function to implement module-specific write actions without sacrificing
+     * PLPSimBusModule original writeReg functionality. This is the actual
+     * function that will called by PLPSimBus.
+     * 
+     * @param addr Address to write to
+     * @param data Data to be written
+     * @param isInstr Denotes whether the value to be written is an instruction
+     * @return PLP_OK, or error code
+     */
+    public int write(long addr, Object data, boolean isInstr) {
+        return writeReg(addr, data, isInstr);
+    }
+
+    /**
+     * Wrapper function for readReg. Developers may wish to override this
+     * function to implement module-specific read actions without sacrificing
+     * PLPSimBusModule original readReg functionality. This is the actual
+     * function that will called by PLPSimBus.
+     *
+     * @param addr Address to read from
+     * @return Data, or PLP_ERROR_RETURN
+     */
+    public Object read(long addr) {
+        return readReg(addr);
+    }
 
     /**
      * Reinitialize the module's registers
@@ -156,15 +184,17 @@ public abstract class PLPSimBusModule {
     }
 
     /**
-     * Return the set of addresses and values in an n x 2 array. This can
+     * Return the set of addresses, values and boolean denoting whether the
+     * stored value is an instruction in an n x 3 array. This can
      * be useful to modules that have to walk through the whole register file
      * on evaluation.
      *
-     * @return n x 2 Object array containing addresses and values of the
-     * memory module
+     * @return n x 3 Object array containing addresses, values of the
+     * memory module and boolean denoting whether the value is instruction or
+     * not.
      */
     public Object[][] getValueSet() {
-        Object[][] valueSet = new Object[values.size()][2];
+        Object[][] valueSet = new Object[values.size()][3];
         int index = 0;
 
         Iterator keyIterator = values.keySet().iterator();
@@ -172,6 +202,7 @@ public abstract class PLPSimBusModule {
         while(keyIterator.hasNext()) {
             valueSet[index][0] = keyIterator.next();
             valueSet[index][1] = values.get((Long) valueSet[index][0]);
+            valueSet[index][2] = isInstr.get((Long) valueSet[index][0]);
             index++;
         }
 
