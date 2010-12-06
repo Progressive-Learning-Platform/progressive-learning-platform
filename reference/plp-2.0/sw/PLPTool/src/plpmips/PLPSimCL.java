@@ -188,22 +188,22 @@ public class PLPSimCL {
             }
         }
         else if(input.equals("listio")) {
-            for(int i = 0; i < core.bus.nummods(); i++)
+            for(int i = 0; i < core.bus.getNumOfMods(); i++)
                 PLPMsg.M(i + ": " +
-                                   String.format("0x%08x", core.bus.iostartaddr(i)) + "-" +
-                                   String.format("0x%08x", core.bus.ioendaddr(i)) + " " +
-                                   core.bus.introduceio(i) +
-                                   (core.bus.enabled(i) ? " (enabled)" : " (disabled)"));
+                                   String.format("0x%08x", core.bus.getModStartAddress(i)) + "-" +
+                                   String.format("0x%08x", core.bus.getModEndAddress(i)) + " " +
+                                   core.bus.introduceMod(i) +
+                                   (core.bus.getEnabled(i) ? " (enabled)" : " (disabled)"));
         }
         else if(input.equals("enableio")) {
-            core.bus.enableiomods();
+            core.bus.enableAllModules();
         }
         else if(tokens[0].equals("enableio")) {
             if(tokens.length != 2) {
                 PLPMsg.M("Usage: enableio <index>");
             }
             else {
-                core.bus.enableio((int) PLPToolbox.parseNum(tokens[1]));
+                core.bus.enableMod((int) PLPToolbox.parseNum(tokens[1]));
             }
         }
         else if(input.equals("evalio")) {
@@ -218,14 +218,14 @@ public class PLPSimCL {
             }
         }
         else if(input.equals("disableio")) {
-            core.bus.disableiomods();
+            core.bus.disableAllModules();
         }
         else if(tokens[0].equals("disableio")) {
             if(tokens.length != 2) {
                 PLPMsg.M("Usage: disableio <index>");
             }
             else {
-                core.bus.disableio((int) PLPToolbox.parseNum(tokens[1]));
+                core.bus.disableMod((int) PLPToolbox.parseNum(tokens[1]));
             }
         }
         else if(tokens[0].equals("cleario")) {
@@ -233,7 +233,7 @@ public class PLPSimCL {
                 PLPMsg.M("Usage: cleario <index>");
             }
             else {
-                core.bus.cleario((int) PLPToolbox.parseNum(tokens[1]));
+                core.bus.clearModRegisters((int) PLPToolbox.parseNum(tokens[1]));
             }
         }
         else if(tokens[0].equals("j")) {
@@ -383,7 +383,7 @@ public class PLPSimCL {
                         init_core = true;
                         addMods(x_core);
                         x_core.printfrontend();
-                        x_core.bus.enableiomods();
+                        x_core.bus.enableAllModules();
                         PLPMsg.M("Simulation core initialized with nigh-infinite RAM.");
                     }
                     else if(tokens.length != 2) {
@@ -401,7 +401,7 @@ public class PLPSimCL {
                             init_core = true;
                             addMods(x_core);
                             x_core.printfrontend();
-                            x_core.bus.enableiomods();
+                            x_core.bus.enableAllModules();
                             PLPMsg.M("Simulation core initialized.");
                         }
                         } catch(Exception e) {
