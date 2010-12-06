@@ -8,7 +8,7 @@ run
 -p xc3s1200e-4-fg320
 -top top
 -opt_mode Speed
--opt_level 1
+-opt_level 2
 -iuc NO
 -keep_hierarchy Yes
 -netlist_hierarchy Rebuilt
@@ -45,7 +45,9 @@ run
 -max_fanout 500
 -bufg 24
 -register_duplication YES
--register_balancing No
+-register_balancing YES
+-move_first_stage YES
+-move_last_stage YES
 -slice_packing YES
 -optimize_primitives NO
 -use_clock_enable Yes
