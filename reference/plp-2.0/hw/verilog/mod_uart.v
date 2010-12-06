@@ -33,18 +33,24 @@ SEND BUFFER:
 	Lower byte contains data to be sent
 
 */
-
-module mod_uart(clk, de, daddr, drw, din, dout, txd, rxd, rst);
-	input clk, rst;
-	input de;
-	input [31:0] daddr;
-	input drw;
-	input [31:0] din;
-	output [31:0] dout;
+module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
+        input rst;
+        input clk;
+        input ie,de;
+        input [31:0] iaddr, daddr;
+        input drw;
+        input [31:0] din;
+        output [31:0] iout, dout;
 	output txd;
 	input rxd;
 
-	wire [31:0] eff_data;
+        /* by spec, the iout and dout signals must go hiZ when we're not using them */
+        wire [31:0] idata, ddata;
+        assign iout = ie ? idata : 32'hzzzzzzzz;
+        assign dout = de ? ddata : 32'hzzzzzzzz;
+
+	/* hopefully the machine never tries to execute off of the uart, so we'll zero the idata line */
+	assign idata = 32'h00000000;
 
 	/* the uart */
 	wire data_rdy,cts,send,clear;
@@ -55,10 +61,7 @@ module mod_uart(clk, de, daddr, drw, din, dout, txd, rxd, rst);
 	assign send = (de && drw && daddr == 32'h0) ? din[0] : 0;
 	assign clear = (de && drw && daddr == 32'h0) ? din[1] : 0;
 
-	/* bus connections */
-	assign dout = de ? eff_data : 32'h00000000;
-
-	assign eff_data = (daddr == 32'h0) ? 0 : /* command reg */
+	assign ddata = (daddr == 32'h0) ? 0 : /* command reg */
 			  (daddr == 32'h4) ? {30'h0,data_rdy,cts} : /* status */
 			  (daddr == 32'h8) ? {24'h0,in_buffer} : /* receive */
 			  (daddr == 32'hc) ? {24'h0,out_buffer} : 0; /* transmit */

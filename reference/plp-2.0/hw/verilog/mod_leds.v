@@ -9,18 +9,23 @@ led control module
 /*
 There are 8 leds on the Spartan3E board, and they are addressable as the last byte of the returned word
 */
-
-module mod_leds(clk, de, daddr, drw, din, dout, leds, rst);
-	input clk,rst;
-	input de;
-	input [31:0] daddr;
-	input drw;
-	input [31:0] din;
-	output [31:0] dout;
-
+module mod_leds(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, leds);
+        input rst;
+        input clk;
+        input ie,de;
+        input [31:0] iaddr, daddr;
+        input drw;
+        input [31:0] din;
+        output [31:0] iout, dout;
 	output reg [7:0] leds;
 
-	assign dout = de ? {24'h000000,leds} : 32'h00000000;
+        /* by spec, the iout and dout signals must go hiZ when we're not using them */
+        wire [31:0] idata, ddata;
+        assign iout = ie ? idata : 32'hzzzzzzzz;
+        assign dout = de ? ddata : 32'hzzzzzzzz;
+
+	assign idata = 32'h00000000;
+	assign ddata = {24'h000000,leds};
 
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin

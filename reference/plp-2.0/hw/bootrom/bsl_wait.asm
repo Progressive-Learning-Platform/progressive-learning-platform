@@ -4,7 +4,7 @@
 #uses the timer hardware
 
 bsl_wait:
-	lui $t0, 0x9000		#address of the timer
+	lui $t0, 0xf060		#address of the timer
 	sw  $zero, 0($t0)	#clear the timer
 bsl_wait_loop:
 	lw  $t1, 0($t0)		#get the timer

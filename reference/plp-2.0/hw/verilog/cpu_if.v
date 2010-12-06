@@ -45,7 +45,7 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j,
 		end
 		
 		/* debug code, not synthesized by Xilinx */
-		//$display("IF: PC: %x INST: %x", p_pc, p_inst);
+		$display("IF: PC: %x INST: %x", p_pc, p_inst);
 	end		
 
 	assign next_pc = 

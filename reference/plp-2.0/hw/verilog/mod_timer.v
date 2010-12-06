@@ -3,22 +3,26 @@ David Fritz
 
 timer module
 
-2.23.2010
-
 a simple 32-bit timer. Timer increments on every edge. 
 
 */
+module mod_timer(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout);
+        input rst;
+        input clk;
+        input ie,de;
+        input [31:0] iaddr, daddr;
+        input drw;
+        input [31:0] din;
+        output [31:0] iout, dout;
 
-module mod_timer(clk, de, drw, din, dout, rst);
-	input clk,rst;
-	input de;
-	input drw;
-	input [31:0] din;
-	output [31:0] dout;
+        /* by spec, the iout and dout signals must go hiZ when we're not using them */
+        wire [31:0] idata, ddata;
+        assign iout = ie ? idata : 32'hzzzzzzzz;
+        assign dout = de ? ddata : 32'hzzzzzzzz;
 
 	reg [31:0] timer;
 
-	assign dout = de ? timer : 32'h00000000;
+	assign ddata = timer;
 
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
