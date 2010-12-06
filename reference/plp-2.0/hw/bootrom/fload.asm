@@ -20,11 +20,7 @@ nop
 #
 
 startup:
-	lui $s0, 0x4000
-	ori $s1, $zero, 0xa5
-	sw $s1, 0($s0)
-
-	lui $s0, 0x8000		#address for the board id	
+	lui $s0, 0xf050		#address for the board id	
 	lw  $s2, 4($s0)		#get the board frequency into $s2
 flash_leds:
 	srl $s3, $s2, 3		#one eighth of the frequency into $a0
