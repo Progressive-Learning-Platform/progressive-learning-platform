@@ -143,8 +143,8 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 		if (wb_rfw && wb_rf_waddr != 5'd0) begin
 			rf[wb_rf_waddr] <= wb_rf_wdata;
 		end
-		if(wb_rfw)
-			$display("ID: DATA %x written to REG %x", wb_rf_wdata, wb_rf_waddr);
+		//if(wb_rfw)
+		//	$display("ID: DATA %x written to REG %x", wb_rf_wdata, wb_rf_waddr);
 	end
 	
 endmodule

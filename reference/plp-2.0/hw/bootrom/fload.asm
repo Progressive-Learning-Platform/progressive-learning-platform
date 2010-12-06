@@ -20,11 +20,15 @@ nop
 #
 
 startup:
+	lui $s0, 0x4000
+	ori $s1, $zero, 0xa5
+	sw $s1, 0($s0)
+
 	lui $s0, 0x8000		#address for the board id	
 	lw  $s2, 4($s0)		#get the board frequency into $s2
 flash_leds:
 	srl $s3, $s2, 3		#one eighth of the frequency into $a0
-	ori $s5, $zero, 0xff00
+	ori $s5, $zero, 0xff01
 	ori $s4, $zero, 16
 flash_leds_loop:		#scroll the leds through
 	move $a0, $s5
