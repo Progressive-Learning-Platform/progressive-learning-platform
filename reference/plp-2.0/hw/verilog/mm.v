@@ -3,28 +3,35 @@ David Fritz
 
 memory map module
 
-2.5.2010
 */
 
 /* the memory map is as follows:
+
 0x00000000      512             bootloader ROM
 0x10000000      8192            RAM
-0x20000000      4               rs/232
-0x30000000      4               switches
-0x40000000      4               leds
-0x50000000      4               buttons
-0x60000000      4               GPIO
-0x70000000      ?               VGA framebuffer
-0xf0000000	?		DDR
+0xf0000000      16              UART
+0xf0100000      4               switches
+0xf0200000      4               leds
+
+0xf0800000      8               PLPID
+0xf0900000      4               timer
+
 */
 
 
 
 module mm(addr, mod, eff_addr);
 	input [31:0] addr; /* word aligned base address */
-	output [3:0] mod; /* the module */
+	output [7:0] mod; /* the module */
 	output [31:0] eff_addr; /* effective address */
 
-	assign mod = addr[31:28];
-	assign eff_addr = {4'h0,addr[27:0]};
+	assign mod = (addr[31:20] == 12'h000) ? 0 : /* mod_rom */
+		     (addr[31:20] == 12'h100) ? 1 : /* mod_ram */
+		     (addr[31:20] == 12'hf00) ? 2 : /* mod_uart */
+		     (addr[31:20] == 12'hf01) ? 3 : /* mod_switches */
+		     (addr[31:20] == 12'hf02) ? 4 : /* mod_leds */
+		     (addr[31:20] == 12'hf05) ? 8 : /* mod_plpid */
+		     (addr[31:20] == 12'hf06) ? 9 : /* mod_timer */
+		     0;
+	assign eff_addr = {12'h000,addr[19:0]};
 endmodule

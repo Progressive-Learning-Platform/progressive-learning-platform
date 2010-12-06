@@ -6,7 +6,7 @@ pipelined mips machine
 
 */
 
-module cpu(clk, daddr, dout, din, drw, iaddr, iin, rst);
+module cpu(rst, clk, daddr, dout, din, drw, iaddr, iin);
 	input clk, rst;
 	output [31:0] daddr;
 	output [31:0] dout;

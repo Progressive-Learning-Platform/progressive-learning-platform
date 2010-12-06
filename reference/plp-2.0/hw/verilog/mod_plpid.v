@@ -1,15 +1,13 @@
 /* 
 David Fritz
 
-switches control module
+plpid module
 
-2.23.2010
-*/
+a simple cpuid module that is used to determine in software the board 
+id and frequency.
 
-/*
-There are 4 switches on the Spartan3E board, and they are addressable as the last nibble of the returned word
 */
-module mod_switches(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, switches);
+module mod_plpid(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout);
         input rst;
         input clk;
         input ie,de;
@@ -17,13 +15,15 @@ module mod_switches(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, switch
         input drw;
         input [31:0] din;
         output [31:0] iout, dout;
-	input [7:0] switches;
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
         assign iout = ie ? idata : 32'hzzzzzzzz;
         assign dout = de ? ddata : 32'hzzzzzzzz;
 
-	assign idata = 32'h00000000;
-	assign ddata = {24'h0000000,switches};
+	parameter cpu_id = 32'hdeadbeef;
+	parameter board_freq = 1; //32'h02faf080;	/* 50 mhz */
+
+	assign ddata = (daddr == 0) ? cpu_id :
+		       (daddr == 4) ? board_freq : 0;
 endmodule
