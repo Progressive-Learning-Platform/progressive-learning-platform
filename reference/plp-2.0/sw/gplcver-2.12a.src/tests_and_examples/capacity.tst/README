@@ -1,0 +1,21 @@
+
+                     RUNNING THE CAPACITY TEST
+
+This directory contains a 3.2 million gate circuit that requires about
+150MB of memory to run.  Circuit is a shift register from John Hillawi's
+DA Solutions bench marks and is used with permission.
+
+To run the test type:
+
+  ../../bin/cver -f lfsr.vc
+
+Then type: 
+
+  diff verilog.log lfsr.plg
+
+to check for correct output.  The diff command will print minor differences
+such as date, time, memory use depending on you system.
+The +printstats option prints out circuit size statistics.
+
+Also, try running the lfsr_udp.vc to see 50k gate version of same circuit
+coded using udps.
