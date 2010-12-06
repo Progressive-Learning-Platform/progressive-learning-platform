@@ -10,8 +10,8 @@ run
 -opt_mode Speed
 -opt_level 1
 -iuc NO
--keep_hierarchy No
--netlist_hierarchy As_Optimized
+-keep_hierarchy Yes
+-netlist_hierarchy Rebuilt
 -rtlview Yes
 -glob_opt AllClockNets
 -read_cores YES
@@ -23,7 +23,7 @@ run
 -slice_utilization_ratio 100
 -bram_utilization_ratio 100
 -verilog2001 YES
--fsm_extract YES -fsm_encoding Auto
+-fsm_extract YES -fsm_encoding One-Hot
 -safe_implementation No
 -fsm_style LUT
 -ram_extract Yes

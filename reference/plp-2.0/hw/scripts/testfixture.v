@@ -13,15 +13,15 @@ module test;
 
 	always #1 clk = ~clk;
 
-	always @(posedge clk)
-		$display("-----------------------------------------");
+//	always @(posedge clk)
+//		$display("-----------------------------------------");
 
 	initial begin 
 		clk = 0;
 		rst = 1;
 		#10
 		rst = 0;
-		#200
+		#1000
 		$display("done");
 		$stop;
 	end

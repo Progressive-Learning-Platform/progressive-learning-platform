@@ -18,7 +18,7 @@ module mod_cpuid(de, daddr, dout);
 	wire [31:0] eff_dout;
 	
 	parameter cpu_id = 32'hdeadbeef;
-	parameter board_freq = 32'h00000001;	/* 25 mhz */
+	parameter board_freq = 32'h02faf080;	/* 50 mhz */
 
 	assign dout = de ? eff_dout : 32'h00000000;
 
