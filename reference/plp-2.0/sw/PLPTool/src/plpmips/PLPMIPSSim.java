@@ -297,7 +297,7 @@ public class PLPMIPSSim extends PLPSimCore {
     }
 
     /**
-     * Print the program loaded.
+     * Print the loaded program.
      *
      * @param highlight Memory location to highlight, probably the PC value
      */
@@ -308,7 +308,8 @@ public class PLPMIPSSim extends PLPSimCore {
         for(int i = 0; i < values.length; i++) {
                 if((Long) values[i][0] == highlight)
                     PLPMsg.m(">>>");
-                PLPMsg.M(String.format("\t%08x\t%08x\t",
+                if((Boolean) values[i][2])
+                    PLPMsg.M(String.format("\t%08x\t%08x\t",
                                        (Long) values[i][0], (Long) values[i][1]) +
                                        MIPSInstr.format((Long) values[i][1]));
         }
