@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package plptest;
+package plpfun;
 
 import plpmips.PLPMIPSSim;
 import plpmips.PLPAsm;

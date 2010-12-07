@@ -100,6 +100,8 @@ public class PLPMsg {
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;
 
+    public static final int PLP_LONG_SIM                         = 100;
+
     // Flags
     public static boolean FLAGS_ALIGNED_MEMORY             = true;
 
