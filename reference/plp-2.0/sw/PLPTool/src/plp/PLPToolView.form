@@ -93,14 +93,14 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="IDESplitter" alignment="0" pref="870" max="32767" attributes="0"/>
+                  <Component id="IDESplitter" alignment="0" pref="867" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDELabel_Command" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="IDECommander" pref="819" max="32767" attributes="0"/>
+                      <Component id="IDECommander" pref="793" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="IDEScroller" alignment="0" pref="870" max="32767" attributes="0"/>
-                  <Component id="IDEBar" alignment="1" pref="870" max="32767" attributes="0"/>
+                  <Component id="IDEScroller" alignment="0" pref="867" max="32767" attributes="0"/>
+                  <Component id="IDEBar" alignment="1" pref="867" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -108,7 +108,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDEBar" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="IDESplitter" pref="347" max="32767" attributes="0"/>
+                      <Component id="IDESplitter" pref="330" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="IDEScroller" min="-2" pref="110" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -291,13 +291,13 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="simControls" alignment="1" max="32767" attributes="0"/>
-                  <Component id="simDesktop" alignment="0" pref="870" max="32767" attributes="0"/>
+                  <Component id="simDesktop" alignment="0" pref="867" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="simDesktop" pref="469" max="32767" attributes="0"/>
+                      <Component id="simDesktop" pref="451" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="simControls" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -329,12 +329,12 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="tglIODisplay" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnMem" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btnMem" min="-2" pref="99" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTextField2" min="-2" pref="78" max="-2" attributes="0"/>
-                          <EmptySpace pref="80" max="32767" attributes="0"/>
+                          <Component id="jTextField2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="86" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -407,6 +407,9 @@
                     <Property name="text" type="java.lang.String" resourceKey="tglIODisplay.text"/>
                     <Property name="name" type="java.lang.String" value="tglIODisplay" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tglIODisplayActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JToggleButton" name="btnMem">
                   <Properties>
@@ -464,9 +467,9 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jComboBox2" alignment="1" pref="705" max="32767" attributes="1"/>
-                          <Component id="jComboBox1" alignment="1" pref="705" max="32767" attributes="1"/>
-                          <Component id="jComboBox3" alignment="0" pref="705" max="32767" attributes="0"/>
+                          <Component id="jComboBox2" alignment="1" pref="690" max="32767" attributes="1"/>
+                          <Component id="jComboBox1" alignment="1" pref="690" max="32767" attributes="1"/>
+                          <Component id="jComboBox3" alignment="0" pref="690" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -490,7 +493,7 @@
                           <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="421" max="32767" attributes="0"/>
+                      <EmptySpace pref="397" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -573,7 +576,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="OutputScrollPane" pref="850" max="32767" attributes="0"/>
+                      <Component id="OutputScrollPane" pref="843" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -582,7 +585,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="OutputScrollPane" pref="498" max="32767" attributes="0"/>
+                      <Component id="OutputScrollPane" pref="484" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

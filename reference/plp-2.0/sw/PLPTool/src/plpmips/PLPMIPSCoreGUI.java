@@ -36,16 +36,6 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         plpmips.PLPSimCL.errFrame = mainWindow.getErrFrame();
         plptool.PLPMsg.output = simCLOutput;
 
-        if(ledArrayFrame != null) {
-            ledArrayFrame.setVisible(false);
-            ledArrayFrame.dispose();
-        }
-
-        ledArray = new LEDArray((long) 0xf020000 << 4);
-        sim.bus.add(ledArray);
-        ledArrayFrame = new LEDArrayFrame();
-        mainWindow.summonFrame(ledArrayFrame);
-
         sim.bus.enableAllModules();
         sim.bus.eval();
 
@@ -604,7 +594,8 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             memMap.addRow(row);
         }
         tblMemMap.setModel(memMap);
-        ledArray.gui_eval(ledArrayFrame);
+
+        mainWindow.getIORegistry().gui_eval();
 
         updateProgramMemoryTablePC();
     }
