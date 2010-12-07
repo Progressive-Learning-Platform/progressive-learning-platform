@@ -14,3 +14,7 @@ NET "switches<0>" LOC = "g18";
 NET "switches<1>" LOC = "h18";
 NET "switches<2>" LOC = "k18";
 NET "switches<3>" LOC = "k17";
+NET "switches<4>" LOC = "l14";
+NET "switches<5>" LOC = "l13";
+NET "switches<6>" LOC = "n17";
+NET "switches<7>" LOC = "r17";
