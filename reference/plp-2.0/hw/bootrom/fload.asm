@@ -47,7 +47,7 @@ flash_leds_loop:		#scroll the leds through
 #check the switches
 	jal libplp_switches_read
 	ori $s0, $zero, 1
-	beq $s0, $zero, boot_uart
+	beq $s0, $v0, boot_uart
 	nop
 	j flash_leds
 	nop
