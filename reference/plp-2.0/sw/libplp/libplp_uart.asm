@@ -36,12 +36,12 @@ libplp_uart_write_string_multi_word:
 libplp_uart_write_string_loop:
 	ori $t7, $zero, 4
 	jal libplp_uart_write	#write this byte
-	addi $t7, $t7, -1
+	addiu $t7, $t7, -1
 	srl $a0, $a0, 8
 	bne $a0, $zero, libplp_uart_write_string_loop
 	nop
 	bne $t7, $zero, libplp_uart_write_string_multi_word
-	addi $t8, $t8, 4	#increment for the next word
+	addiu $t8, $t8, 4	#increment for the next word
 libplp_uart_write_string_done:
 	jr $t9			#go home
 	nop

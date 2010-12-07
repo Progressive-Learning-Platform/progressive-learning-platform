@@ -70,7 +70,7 @@ boot_uart_run:
 	beq $v0, $s0, boot_uart_address
 	beq $v0, $s1, boot_uart_data
 	beq $v0, $s2, boot_uart_jump
-	beq $v0, $s2, boot_uart_version
+	beq $v0, $s3, boot_uart_version
 	nop
 	j boot_uart_run
 	nop
