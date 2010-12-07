@@ -705,7 +705,7 @@ public class PLPAsm {
                                         PLPMsg.PLP_ASM_INVALID_JUMP_TARGET, this);
                     }
 
-                    objectCode[i - s] |= (int) (symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
+                    objectCode[i - s] |= (long) (symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
                     objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     break;

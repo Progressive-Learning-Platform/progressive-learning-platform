@@ -24,6 +24,7 @@ import plptool.PLPMsg;
 import plptool.PLPSimCore;
 import plptool.PLPSimMods;
 import plptool.PLPToolbox;
+import plp.PLPErrorFrame;
 
 /**
  * PLPTool command line simulator interface for the MIPS simulation core
@@ -40,8 +41,12 @@ public class PLPSimCL {
     static boolean init_core = false;
     static boolean silent = false;
     static BufferedReader stdIn;
+    static PLPErrorFrame errFrame = null;
 
     public static void simCLCommand(String input, PLPMIPSSim core) {
+        if(errFrame != null)
+            errFrame.clearError();
+
         tokens = input.split(" ");
         if(input.equals("version")) {
             PLPMsg.M(PLPMsg.versionString);
@@ -68,8 +73,17 @@ public class PLPSimCL {
             if(tokens.length != 2) {
                 PLPMsg.M("Usage: s <number of instructions>");
             }
-            else
-                for(int i = 0; i < Integer.parseInt(tokens[1]); i++) {
+            else {
+                int steps = Integer.parseInt(tokens[1]);
+                long time = 0;
+                if(steps > PLPMsg.PLP_LONG_SIM) {
+                    if(!silent) {
+                        PLPMsg.M("This might take a while, turning on silent mode.");
+                        silent = true;
+                    }
+                    time = System.currentTimeMillis();
+                }
+                for(int i = 0; i < steps; i++) {
                     if(core.step() != PLPMsg.PLP_OK)
                     PLPMsg.E("Simulation is stale. Please reset.",
                              PLPMsg.PLP_SIM_STALE, null);
@@ -83,6 +97,9 @@ public class PLPSimCL {
                         PLPMsg.M("-------------------------------------");
                     }
                 }
+                if(steps > PLPMsg.PLP_LONG_SIM)
+                    PLPMsg.M("That took " + (System.currentTimeMillis() - time) + " milliseconds.");
+            }
         }
         else if(input.equals("r")) {
             core.reset();
@@ -315,6 +332,10 @@ public class PLPSimCL {
         } else {
             PLPMsg.M("Simulation core is not initialiazed. Try running the command 'i'.\n");
         }
+
+        if(PLPMsg.lastError != 0 && errFrame != null)
+            errFrame.setError(PLPMsg.lastError);
+
         if(!init_core)
             PLPMsg.m("sim > ");
         else
@@ -366,6 +387,8 @@ public class PLPSimCL {
         } catch(Exception e) {
             System.err.println(e);
         }
+
+
     }
 
     public static void simCL(String asmStr, String asmFile, javax.swing.JTextField inComp) {
