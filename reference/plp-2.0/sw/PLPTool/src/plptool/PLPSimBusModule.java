@@ -294,7 +294,9 @@ public abstract class PLPSimBusModule {
     /**
      * The eval() function represents the behavior of the module itself.
      * For example, an eval function for an array of LED will read its
-     * register and light up proper LEDs.
+     * register and light up proper LEDs. Simulation cores will call this
+     * function every cycle, so this may slow down the simulation
+     * considerably.
      *
      * @return int
      */
@@ -302,9 +304,11 @@ public abstract class PLPSimBusModule {
 
     /**
      * gui_eval is designed for simulator developers / users to allow the
-     * module to interact with the simulation environment directly.
+     * module to interact with the simulation environment directly. This
+     * function is only called every time the GUI components are refreshed.
+     * Simulation cores do/should not call this function every cycle.
      *
-     * @param x Reference to a simulator object that this module will interact
+     * @param x Reference to a frame object that this module will interact
      * with.
      * @return
      */
