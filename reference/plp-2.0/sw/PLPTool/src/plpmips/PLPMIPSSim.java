@@ -207,6 +207,9 @@ public class PLPMIPSSim extends PLPSimCore {
         if(ex_stage.hot)  ret += ex_stage.eval();
         if(id_stage.hot)  ret += id_stage.eval();
 
+        // Evaluate modules attached to the bus
+        ret += bus.eval();
+
         // Engage forwarding unit
         if(PLPCfg.cfgSimForwardingUnit)
             forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
