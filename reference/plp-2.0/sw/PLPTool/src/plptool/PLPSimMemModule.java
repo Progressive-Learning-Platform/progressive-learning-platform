@@ -18,8 +18,6 @@
 
 package plptool;
 
-import java.util.Iterator;
-
 /**
  * PLP memory module. This module implements a wrapper read function that
  * typecasts stored objects to Long.
@@ -35,8 +33,8 @@ public class PLPSimMemModule extends PLPSimBusModule {
      * @param size Size of memory module. In bytes if aligned, in words otherwise.
      * @param wordAligned Denotes whether this memory module is word aligned
      */
-    public PLPSimMemModule(long size, boolean wordAligned) {
-        super(0, wordAligned ? size - 4: size - 1, wordAligned);
+    public PLPSimMemModule(long addr, long size, boolean wordAligned) {
+        super(addr, wordAligned ? size - 4: size - 1, wordAligned);
     }
 
     /**
