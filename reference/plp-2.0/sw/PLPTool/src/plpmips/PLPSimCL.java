@@ -25,6 +25,7 @@ import plptool.PLPSimCore;
 import plptool.PLPSimMods;
 import plptool.PLPToolbox;
 import plp.PLPErrorFrame;
+import plptool.Constants;
 
 /**
  * PLPTool command line simulator interface for the MIPS simulation core
@@ -49,15 +50,15 @@ public class PLPSimCL {
 
         tokens = input.split(" ");
         if(input.equals("version")) {
-            PLPMsg.M(PLPMsg.versionString);
+            PLPMsg.M(plptool.Constants.versionString);
         }
         if(init_core) {
         if(input.equals("i")) {
         }
         else if(input.equals("s")) {
-            if(core.step() != PLPMsg.PLP_OK)
+            if(core.step() != Constants.PLP_OK)
                  PLPMsg.E("Simulation is stale. Please reset.",
-                          PLPMsg.PLP_SIM_STALE, null);
+                          Constants.PLP_SIM_STALE, null);
             else if(!silent) {
                 PLPMsg.M("");
                 core.wb_stage.printinstr();
@@ -76,7 +77,7 @@ public class PLPSimCL {
             else {
                 int steps = Integer.parseInt(tokens[1]);
                 long time = 0;
-                if(steps > PLPMsg.PLP_LONG_SIM) {
+                if(steps > Constants.PLP_LONG_SIM) {
                     if(!silent) {
                         PLPMsg.M("This might take a while, turning on silent mode.");
                         silent = true;
@@ -84,9 +85,9 @@ public class PLPSimCL {
                     time = System.currentTimeMillis();
                 }
                 for(int i = 0; i < steps; i++) {
-                    if(core.step() != PLPMsg.PLP_OK)
+                    if(core.step() != Constants.PLP_OK)
                     PLPMsg.E("Simulation is stale. Please reset.",
-                             PLPMsg.PLP_SIM_STALE, null);
+                             Constants.PLP_SIM_STALE, null);
                     else if(!silent) {
                         PLPMsg.M("");
                         core.wb_stage.printinstr();
@@ -97,7 +98,7 @@ public class PLPSimCL {
                         PLPMsg.M("-------------------------------------");
                     }
                 }
-                if(steps > PLPMsg.PLP_LONG_SIM)
+                if(steps > Constants.PLP_LONG_SIM)
                     PLPMsg.M("That took " + (System.currentTimeMillis() - time) + " milliseconds.");
             }
         }
@@ -177,7 +178,7 @@ public class PLPSimCL {
             }
             else {
                 if(core.memory.write(PLPAsm.sanitize32bits(tokens[1]),
-                                  PLPAsm.sanitize32bits(tokens[2]), false) == PLPMsg.PLP_OK)
+                                  PLPAsm.sanitize32bits(tokens[2]), false) == Constants.PLP_OK)
                   core.memory.print(PLPAsm.sanitize32bits(tokens[1]));
             }
         }
@@ -272,7 +273,7 @@ public class PLPSimCL {
                 for(int j = 2; j < tokens.length; j++)
                     iAsm += tokens[j] + " ";
                 PLPAsm inlineAsm = new PLPAsm(iAsm, "PLPSimCL inline asm", 0);
-                if(inlineAsm.preprocess(0) == PLPMsg.PLP_OK)
+                if(inlineAsm.preprocess(0) == Constants.PLP_OK)
                     inlineAsm.assemble();
                 if(inlineAsm.isAssembled()) {
                     PLPMsg.M("\nCode injected:");
@@ -353,32 +354,32 @@ public class PLPSimCL {
         if(asmFile != null) {
             PLPMsg.m("Assembling " + asmFile + " ...");
             asm = new PLPAsm(null, asmFile, 0);
-            if(asm.preprocess(0) == PLPMsg.PLP_OK)
+            if(asm.preprocess(0) == Constants.PLP_OK)
                 asm.assemble();
 
             if(!asm.isAssembled()) {
                 PLPMsg.M("");
-                PLPMsg.E("Assembly failed.", PLPMsg.PLP_ERROR_RETURN, asm);
-                System.exit(PLPMsg.PLP_ERROR_RETURN);
+                PLPMsg.E("Assembly failed.", Constants.PLP_ERROR_RETURN, asm);
+                System.exit(Constants.PLP_ERROR_RETURN);
             }
             PLPMsg.M(" OK");
         }
         else if(asmStr != null) {
             PLPMsg.m("Assembling in-line ...");
             asm = new PLPAsm(asmStr, "In-line", 0);
-            if(asm.preprocess(0) == PLPMsg.PLP_OK)
+            if(asm.preprocess(0) == Constants.PLP_OK)
                 asm.assemble();
 
             if(!asm.isAssembled()) {
                 PLPMsg.M("");
-                PLPMsg.E("Assembly failed.", PLPMsg.PLP_ERROR_RETURN, asm);
-                System.exit(PLPMsg.PLP_ERROR_RETURN);
+                PLPMsg.E("Assembly failed.", Constants.PLP_ERROR_RETURN, asm);
+                System.exit(Constants.PLP_ERROR_RETURN);
             }
             PLPMsg.M(" OK");
 
         } else {
             asm = new PLPAsm("nop", "empty", 0);
-            if(asm.preprocess(0) == PLPMsg.PLP_OK)
+            if(asm.preprocess(0) == Constants.PLP_OK)
                 asm.assemble();
         }
 

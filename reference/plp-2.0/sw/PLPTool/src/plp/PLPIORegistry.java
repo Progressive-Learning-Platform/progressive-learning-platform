@@ -19,6 +19,8 @@
 package plp;
 
 import plptool.mods.IORegistry;
+import plptool.PLPSimBusModule;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -27,10 +29,12 @@ import plptool.mods.IORegistry;
 public class PLPIORegistry extends javax.swing.JInternalFrame {
 
     Object[][] modInfo;
+    PLPToolView mainWindow;
 
     /** Creates new form PLPIORegistry */
     public PLPIORegistry(plp.PLPToolView mainWindow) {
 
+        this.mainWindow = mainWindow;
         IORegistry ioRegistry = mainWindow.getIORegistry();
         modInfo = ioRegistry.getAvailableModulesInformation();
 
@@ -52,22 +56,33 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        paneAdd = new javax.swing.JPanel();
         lblModule = new javax.swing.JLabel();
         cmbModuleSelect = new javax.swing.JComboBox();
-        txtModuleAddress = new javax.swing.JTextField();
-        txtModuleRegfileSize = new javax.swing.JTextField();
         lblAddr = new javax.swing.JLabel();
+        txtModuleAddress = new javax.swing.JTextField();
         lblRegfileSize = new javax.swing.JLabel();
-        btnAdd = new javax.swing.JButton();
+        txtModuleRegfileSize = new javax.swing.JTextField();
         txtModInfoScroll = new javax.swing.JScrollPane();
         txtModInfo = new javax.swing.JTextArea();
+        btnAdd = new javax.swing.JButton();
+        paneList = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblMods = new javax.swing.JTable();
+        btnRemove = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        paneIOConfig = new javax.swing.JPanel();
 
-        setClosable(true);
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setIconifiable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plp.PLPToolApp.class).getContext().getResourceMap(PLPIORegistry.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+
+        jTabbedPane1.setName("jTabbedPane1"); // NOI18N
+
+        paneAdd.setName("addPane"); // NOI18N
 
         lblModule.setText(resourceMap.getString("lblModule.text")); // NOI18N
         lblModule.setName("lblModule"); // NOI18N
@@ -80,17 +95,28 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             }
         });
 
+        lblAddr.setText(resourceMap.getString("lblAddr.text")); // NOI18N
+        lblAddr.setName("lblAddr"); // NOI18N
+
         txtModuleAddress.setText(resourceMap.getString("txtModuleAddress.text")); // NOI18N
         txtModuleAddress.setName("txtModuleAddress"); // NOI18N
+
+        lblRegfileSize.setText(resourceMap.getString("lblRegfileSize.text")); // NOI18N
+        lblRegfileSize.setName("lblRegfileSize"); // NOI18N
 
         txtModuleRegfileSize.setText(resourceMap.getString("txtModuleRegfileSize.text")); // NOI18N
         txtModuleRegfileSize.setName("txtModuleRegfileSize"); // NOI18N
 
-        lblAddr.setText(resourceMap.getString("lblAddr.text")); // NOI18N
-        lblAddr.setName("lblAddr"); // NOI18N
+        txtModInfoScroll.setName("txtModInfoScroll"); // NOI18N
 
-        lblRegfileSize.setText(resourceMap.getString("lblRegfileSize.text")); // NOI18N
-        lblRegfileSize.setName("lblRegfileSize"); // NOI18N
+        txtModInfo.setColumns(20);
+        txtModInfo.setEditable(false);
+        txtModInfo.setFont(resourceMap.getFont("txtModInfo.font")); // NOI18N
+        txtModInfo.setLineWrap(true);
+        txtModInfo.setRows(5);
+        txtModInfo.setWrapStyleWord(true);
+        txtModInfo.setName("txtModInfo"); // NOI18N
+        txtModInfoScroll.setViewportView(txtModInfo);
 
         btnAdd.setText(resourceMap.getString("btnAdd.text")); // NOI18N
         btnAdd.setName("btnAdd"); // NOI18N
@@ -100,15 +126,149 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             }
         });
 
-        txtModInfoScroll.setName("txtModInfoScroll"); // NOI18N
+        javax.swing.GroupLayout paneAddLayout = new javax.swing.GroupLayout(paneAdd);
+        paneAdd.setLayout(paneAddLayout);
+        paneAddLayout.setHorizontalGroup(
+            paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneAddLayout.createSequentialGroup()
+                .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, paneAddLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE))
+                    .addGroup(paneAddLayout.createSequentialGroup()
+                        .addContainerGap(377, Short.MAX_VALUE)
+                        .addComponent(btnAdd))
+                    .addGroup(paneAddLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblModule)
+                            .addComponent(lblAddr)
+                            .addComponent(lblRegfileSize))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+                            .addComponent(cmbModuleSelect, javax.swing.GroupLayout.Alignment.TRAILING, 0, 450, Short.MAX_VALUE)
+                            .addComponent(txtModuleAddress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        paneAddLayout.setVerticalGroup(
+            paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneAddLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblModule)
+                    .addComponent(cmbModuleSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtModuleAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAddr))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblRegfileSize))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAdd)
+                .addContainerGap())
+        );
 
-        txtModInfo.setColumns(20);
-        txtModInfo.setEditable(false);
-        txtModInfo.setLineWrap(true);
-        txtModInfo.setRows(5);
-        txtModInfo.setWrapStyleWord(true);
-        txtModInfo.setName("txtModInfo"); // NOI18N
-        txtModInfoScroll.setViewportView(txtModInfo);
+        jTabbedPane1.addTab(resourceMap.getString("addPane.TabConstraints.tabTitle"), paneAdd); // NOI18N
+
+        paneList.setName("paneList"); // NOI18N
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        tblMods.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Registry Pos.", "Bus Position", "Start Address", "End Address"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblMods.setName("tblMods"); // NOI18N
+        tblMods.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(tblMods);
+        tblMods.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblMods.columnModel.title0")); // NOI18N
+        tblMods.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMods.columnModel.title5")); // NOI18N
+        tblMods.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblMods.columnModel.title1")); // NOI18N
+        tblMods.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblMods.columnModel.title3")); // NOI18N
+        tblMods.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblMods.columnModel.title4")); // NOI18N
+
+        btnRemove.setText(resourceMap.getString("btnRemove.text")); // NOI18N
+        btnRemove.setName("btnRemove"); // NOI18N
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
+        jButton1.setName("jButton1"); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout paneListLayout = new javax.swing.GroupLayout(paneList);
+        paneList.setLayout(paneListLayout);
+        paneListLayout.setHorizontalGroup(
+            paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneListLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                    .addGroup(paneListLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemove)))
+                .addContainerGap())
+        );
+        paneListLayout.setVerticalGroup(
+            paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneListLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRemove)
+                    .addComponent(jButton1))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("paneList.TabConstraints.tabTitle"), paneList); // NOI18N
+
+        paneIOConfig.setName("paneIOConfig"); // NOI18N
+
+        javax.swing.GroupLayout paneIOConfigLayout = new javax.swing.GroupLayout(paneIOConfig);
+        paneIOConfig.setLayout(paneIOConfigLayout);
+        paneIOConfigLayout.setHorizontalGroup(
+            paneIOConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 560, Short.MAX_VALUE)
+        );
+        paneIOConfigLayout.setVerticalGroup(
+            paneIOConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 424, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("paneIOConfig.TabConstraints.tabTitle"), paneIOConfig); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -116,42 +276,14 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblModule)
-                        .addGap(27, 27, 27)
-                        .addComponent(cmbModuleSelect, 0, 367, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblAddr)
-                            .addComponent(lblRegfileSize))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
-                            .addComponent(txtModuleAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)))
-                    .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbModuleSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblModule))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtModuleAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblAddr))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblRegfileSize))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAdd)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -177,17 +309,79 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
+
         int modIndex = cmbModuleSelect.getSelectedIndex();
+        long addr = plptool.PLPToolbox.parseNum(txtModuleAddress.getText());
+        long size = plptool.PLPToolbox.parseNum(txtModuleRegfileSize.getText());
         
+
+        if(addr != plptool.Constants.PLP_NUMBER_ERROR && size > 0) {
+            if(!(Boolean) modInfo[modIndex][4] || (addr % 4 == 0)) {
+                mainWindow.getIORegistry().attachModuleToBus(modIndex, addr, size, mainWindow.getSim(), mainWindow);
+                refreshModulesTable();
+            }
+        } else {
+            plptool.PLPMsg.M("ERROR");
+        }
+        
+        mainWindow.updateComponents();
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
+        if(tblMods.getModel().getRowCount() > 0 &&
+                tblMods.getSelectedRow() > -1)  {
+
+            int index = (Integer) tblMods.getModel().getValueAt(tblMods.getSelectedRow(), 1);
+            mainWindow.getIORegistry().removeModule(index, mainWindow.getSim());
+            refreshModulesTable();
+            mainWindow.updateComponents();
+        }
+    }//GEN-LAST:event_btnRemoveActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        mainWindow.getIORegistry().removeAllModules(mainWindow.getSim());
+        refreshModulesTable();
+        mainWindow.updateComponents();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void refreshModulesTable() {
+        DefaultTableModel mods = (DefaultTableModel) tblMods.getModel();
+        Object[] modules;
+
+        modules = mainWindow.getIORegistry().getAttachedModules();
+
+        while(mods.getRowCount() > 0)
+            mods.removeRow(0);
+
+        for(int i = 0; i < modules.length; i++) {
+            Object[] row = new Object[]
+            { modules[i].toString(),
+              i,
+              mainWindow.getIORegistry().getPositionInBus(i),
+              String.format("0x%08x", mainWindow.getIORegistry().getModule(i).startAddr()),
+              String.format("0x%08x", mainWindow.getIORegistry().getModule(i).endAddr())
+            };
+            mods.addRow(row);
+        }
+
+        tblMods.setModel(mods);
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnRemove;
     private javax.swing.JComboBox cmbModuleSelect;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblAddr;
     private javax.swing.JLabel lblModule;
     private javax.swing.JLabel lblRegfileSize;
+    private javax.swing.JPanel paneAdd;
+    private javax.swing.JPanel paneIOConfig;
+    private javax.swing.JPanel paneList;
+    private javax.swing.JTable tblMods;
     private javax.swing.JTextArea txtModInfo;
     private javax.swing.JScrollPane txtModInfoScroll;
     private javax.swing.JTextField txtModuleAddress;

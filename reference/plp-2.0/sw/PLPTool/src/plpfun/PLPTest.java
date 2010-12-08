@@ -9,6 +9,7 @@ import plpmips.PLPMIPSSim;
 import plpmips.PLPAsm;
 import plptool.PLPSimMods;
 import plptool.PLPMsg;
+
 /**
  *
  * @author wira
@@ -24,8 +25,8 @@ public class PLPTest {
                                 "j start\n" +
                                 "nop"
                                 , "in-line", 0);
-        if(asm.preprocess(0) == PLPMsg.PLP_OK) {
-            if(asm.assemble() != PLPMsg.PLP_OK)
+        if(asm.preprocess(0) == plptool.Constants.PLP_OK) {
+            if(asm.assemble() != plptool.Constants.PLP_OK)
                 System.exit(-1);
         }
         else

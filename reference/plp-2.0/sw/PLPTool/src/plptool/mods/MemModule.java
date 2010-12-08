@@ -16,7 +16,12 @@
 
  */
 
-package plptool;
+package plptool.mods;
+
+import plptool.Constants;
+import plptool.PLPMsg;
+import plptool.PLPSimBusModule;
+import plptool.PLPToolbox;
 
 /**
  * PLP memory module. This module implements a wrapper read function that
@@ -24,7 +29,7 @@ package plptool;
  *
  * @author wira
  */
-public class PLPSimMemModule extends PLPSimBusModule {
+public class MemModule extends PLPSimBusModule {
     /**
      * The constructor for the memory module takes the size of the memory
      * in bytes if it's word aligned (such as main memory), or in words
@@ -33,8 +38,8 @@ public class PLPSimMemModule extends PLPSimBusModule {
      * @param size Size of memory module. In bytes if aligned, in words otherwise.
      * @param wordAligned Denotes whether this memory module is word aligned
      */
-    public PLPSimMemModule(long addr, long size, boolean wordAligned) {
-        super(addr, wordAligned ? size - 4: size - 1, wordAligned);
+    public MemModule(long addr, long size, boolean wordAligned) {
+        super(addr, addr + (wordAligned ? size - 4: size - 1), wordAligned);
     }
 
     /**
@@ -44,7 +49,7 @@ public class PLPSimMemModule extends PLPSimBusModule {
      *
      * @return PLP_OK
      */
-    public int eval () { return PLPMsg.PLP_OK; }
+    public int eval () { return Constants.PLP_OK; }
 
     /**
      * The memory module should not have an evaluation procedure, this is here
@@ -52,10 +57,10 @@ public class PLPSimMemModule extends PLPSimBusModule {
      *
      * @return PLP_OK
      */
-    public int gui_eval(Object x) { return PLPMsg.PLP_OK; }
+    public int gui_eval(Object x) { return Constants.PLP_OK; }
 
     public String introduce() {
-        return "PLPSimMemModule " + PLPMsg.versionString;
+        return "Memory Module " + Constants.versionString;
     }
 
     /**
@@ -92,7 +97,17 @@ public class PLPSimMemModule extends PLPSimBusModule {
         }
     }
 
+    /**
+     * Override super.read() so now it returns a Long
+     *
+     * @param addr Address to be read from
+     * @return Returns Long
+     */
+    @Override public Long read(long addr) {
+        return (Long) readReg(addr);
+    }
+
     @Override public String toString() {
-        return "PLPSimMemModule";
+        return "MemModule";
     }
 }

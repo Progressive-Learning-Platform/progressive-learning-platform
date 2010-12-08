@@ -34,7 +34,7 @@ public class PLPSimRegModule {
     public int write(long data) {
         this.i_data = data;
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     public long input() {

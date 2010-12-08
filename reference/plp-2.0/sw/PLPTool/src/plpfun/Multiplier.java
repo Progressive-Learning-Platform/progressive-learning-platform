@@ -7,6 +7,7 @@ package plpfun;
 
 import plptool.PLPSimBusModule;
 import plptool.PLPMsg;
+import plptool.Constants;
 
 /**
  *
@@ -29,7 +30,7 @@ public class Multiplier extends PLPSimBusModule{
 
     public int eval() {
         if(!enabled)
-            return PLPMsg.PLP_SIM_MODULE_DISABLED;
+            return Constants.PLP_SIM_MODULE_DISABLED;
 
         Object[][] valueSet = super.getValueSet();
 
@@ -37,12 +38,12 @@ public class Multiplier extends PLPSimBusModule{
         super.write(super.startAddr + 8, result >> 32, false);
         super.write(super.startAddr + 12, result & 0xffffffff, false);
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     public int gui_eval(Object x) {
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     public String introduce() {

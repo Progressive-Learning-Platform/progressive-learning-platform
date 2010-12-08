@@ -32,6 +32,7 @@ import java.util.Scanner;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import plptool.PLPMsg;
+import plptool.Constants;
 
 /**
  * PLPTool serial programmer backend.
@@ -54,7 +55,7 @@ public class PLPProgrammer {
         if ( portIdentifier.isCurrentlyOwned() )
         {
             return PLPMsg.E("Serial port " + portName + " is in use.",
-                                    PLPMsg.PLP_PRG_PORT_IN_USE, this);
+                                    Constants.PLP_PRG_PORT_IN_USE, this);
         }
         else {
             commPort = portIdentifier.open(this.getClass().getName(),2000);
@@ -70,11 +71,11 @@ public class PLPProgrammer {
             }
             else {
                 return PLPMsg.E(portName + " is not a serial port.",
-                                    PLPMsg.PLP_PRG_NOT_A_SERIAL_PORT, this);
+                                    Constants.PLP_PRG_NOT_A_SERIAL_PORT, this);
             }
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     public int programWithPLPFile(String plpFilePath) throws Exception {
@@ -86,7 +87,7 @@ public class PLPProgrammer {
 
         if(!plpFile.exists())
             return PLPMsg.E(plpFilePath + " not found.",
-                            PLPMsg.PLP_PRG_PLP_FILE_NOT_FOUND, this);
+                            Constants.PLP_PRG_PLP_FILE_NOT_FOUND, this);
 
         TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
 
@@ -99,7 +100,7 @@ public class PLPProgrammer {
                 fScan.findWithinHorizon("DIRTY=", 0);
                 if(fScan.nextInt() == 1) {
                     return PLPMsg.E(plpFile + " does not have up to date image.",
-                                    PLPMsg.PLP_PRG_IMAGE_OUT_OF_DATE, this);
+                                    Constants.PLP_PRG_IMAGE_OUT_OF_DATE, this);
                 }
             }
         }
@@ -112,7 +113,7 @@ public class PLPProgrammer {
 
                 if(image.length % 4 != 0)
                     return PLPMsg.E(plpFilePath + " contains invalid image file.",
-                        PLPMsg.PLP_PRG_INVALID_IMAGE_FILE, this);
+                        Constants.PLP_PRG_INVALID_IMAGE_FILE, this);
                 
                 out.write('a');
                 out.write(0);
@@ -122,7 +123,7 @@ public class PLPProgrammer {
                 inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
                 for(int i = 0; i < image.length; i++) {
                     if(i % 4 == 0) {
@@ -130,7 +131,7 @@ public class PLPProgrammer {
                             inData = (byte) in.read();
                             if(inData != 'f')
                             return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                         PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                         Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                         }
                         out.write('d');
                     }
@@ -144,24 +145,24 @@ public class PLPProgrammer {
                 inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
                 out.write('j');
                 inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
                 tIn.close();
 
-                return PLPMsg.PLP_OK;
+                return Constants.PLP_OK;
             }
         }
 
         tIn.close();
 
         return PLPMsg.E(plpFilePath + " is not a valid plp file.",
-                        PLPMsg.PLP_PRG_INVALID_PLP_FILE, this);
+                        Constants.PLP_PRG_INVALID_PLP_FILE, this);
     }
 
     public int programWithAsm (PLPAsm asm) throws Exception {
@@ -181,7 +182,7 @@ public class PLPProgrammer {
                         inData = (byte) in.read();
                         if(inData != 'f')
                             return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                            PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                            Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                     }
                 }
                 out.write('d');
@@ -192,7 +193,7 @@ public class PLPProgrammer {
                 inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                    PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
             }
 
             out.write('a');
@@ -203,19 +204,19 @@ public class PLPProgrammer {
             inData = (byte) in.read();
             if(inData != 'f')
                 return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
             out.write('j');
             inData = (byte) in.read();
             if(inData != 'f')
                 return PLPMsg.E("Programming failed, no acknowledgement received.",
-                                PLPMsg.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                                Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                     
         } else {
             return PLPMsg.E("Source is not assembled.",
-                            PLPMsg.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
+                            Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 }

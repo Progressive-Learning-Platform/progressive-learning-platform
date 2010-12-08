@@ -18,9 +18,10 @@
 
 package plpmips;
 
-import plptool.PLPSimMemModule;
+import plptool.mods.MemModule;
 import plptool.PLPCfg;
 import plptool.PLPMsg;
+import plptool.Constants;
 import plptool.PLPSimBus;
 import plptool.PLPSimCore;
 import plptool.PLPSimRegModule;
@@ -45,7 +46,7 @@ public class PLPMIPSSim extends PLPSimCore {
     /**
      * Register file.
      */
-    public PLPSimMemModule                regfile;
+    public MemModule                regfile;
 
     /**
      * Forwarding unit.
@@ -104,8 +105,8 @@ public class PLPMIPSSim extends PLPSimCore {
         if(RAMsize <= 0)
             RAMsize = (long) Math.pow(2, 31);
 
-        memory = new PLPSimMemModule(0, RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
-        regfile = new PLPSimMemModule(0, 32, false);
+        memory = new MemModule(0, RAMsize, Constants.FLAGS_ALIGNED_MEMORY);
+        regfile = new MemModule(0, 32, false);
         pc = new PLPSimRegModule(0); // pc=0 on reset
 
         this.asm = asm;
@@ -165,7 +166,7 @@ public class PLPMIPSSim extends PLPSimCore {
 
         PLPMsg.M("core: reset");
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -180,7 +181,7 @@ public class PLPMIPSSim extends PLPSimCore {
 
         PLPMsg.M("core: soft reset");
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -216,7 +217,7 @@ public class PLPMIPSSim extends PLPSimCore {
 
         if(ret != 0) {
             return PLPMsg.E("Evaluation failed.",
-                            PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+                            Constants.PLP_SIM_EVALUATION_FAILED, this);
         }
 
         if(id_stage.hot && id_stage.ctl_pcsrc == 1)
@@ -243,26 +244,26 @@ public class PLPMIPSSim extends PLPSimCore {
         if(addr / 4 >= memory.size())
             return PLPMsg.E("step(): Instruction memory out-of-bounds: addr=" +
                             String.format("%08x", addr),
-                            PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
+                            Constants.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         if((Long) memory.read(addr) == null)
             return PLPMsg.E("step(): Memory location uninitialized: addr=" +
                             String.format("%08x", addr),
-                            PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
+                            Constants.PLP_SIM_UNINITIALIZED_MEMORY, this);
 
         if(!memory.isInstr(addr))
             return PLPMsg.E("step(): Non-executable memory: addr=" +
                             String.format("%08x", addr),
-                            PLPMsg.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
+                            Constants.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         // fetch instruction / frontend stage
-        id_stage.i_instruction = (Long) memory.read(addr);
+        id_stage.i_instruction = memory.read(addr);
         id_stage.i_instrAddr = addr;
         id_stage.i_ctl_pcplus4 = addr + 4;
 
         id_stage.hot = true;
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -277,7 +278,7 @@ public class PLPMIPSSim extends PLPSimCore {
         wb_stage.hot = false;
         wb_stage.instr_retired = false;
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -346,9 +347,9 @@ public class PLPMIPSSim extends PLPSimCore {
         public long i_ctl_jump;
         
         private ex   ex_reg;
-        private PLPSimMemModule regfile;
+        private MemModule regfile;
 
-        public id(ex ex_reg, PLPSimMemModule regfile) {
+        public id(ex ex_reg, MemModule regfile) {
             this.ex_reg = ex_reg;
             this.regfile = regfile;
         }
@@ -463,7 +464,7 @@ public class PLPMIPSSim extends PLPSimCore {
                         break;
                     default:
                         return PLPMsg.E("Unhandled instruction type.",
-                                        PLPMsg.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
+                                        Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
                                         this);
                 }
             } else {
@@ -481,7 +482,7 @@ public class PLPMIPSSim extends PLPSimCore {
 
                     default:
                         return PLPMsg.E("Unhandled instruction type.",
-                                        PLPMsg.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
+                                        Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
                                         this);
                 }
             }
@@ -493,11 +494,11 @@ public class PLPMIPSSim extends PLPSimCore {
             
             ex_reg.hot = true;
 
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
 
             } catch(Exception e) {
                 return PLPMsg.E("I screwed up: " + e,
-                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+                                Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }
 
@@ -650,11 +651,11 @@ public class PLPMIPSSim extends PLPSimCore {
 
             mem_reg.hot = true;
 
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
 
             } catch(Exception e) {
                 return PLPMsg.E("I screwed up: " + e,
-                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+                                Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }
 
@@ -802,7 +803,7 @@ public class PLPMIPSSim extends PLPSimCore {
             if(ctl_memread == 1) {
                 if(bus.read(fwd_data_alu_result) == null)
                     return PLPMsg.E("Attempted to read from unititialized memory.",
-                                    PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+                                    Constants.PLP_SIM_EVALUATION_FAILED, this);
                 wb_reg.i_data_memreaddata = (Long) bus.read(fwd_data_alu_result);
             }
 
@@ -811,11 +812,11 @@ public class PLPMIPSSim extends PLPSimCore {
 
             wb_reg.hot = true;
 
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
 
             } catch(Exception e) {
                 return PLPMsg.E("I screwed up: " + e,
-                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+                                Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }
 
@@ -871,9 +872,9 @@ public class PLPMIPSSim extends PLPSimCore {
         public long i_data_memreaddata;
         public long i_data_alu_result;
 
-        private PLPSimMemModule regfile;
+        private MemModule regfile;
 
-        public wb(PLPSimMemModule regfile) {
+        public wb(MemModule regfile) {
             this.regfile = regfile;
         }
 
@@ -931,11 +932,11 @@ public class PLPMIPSSim extends PLPSimCore {
 
             instr_retired = true;
 
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
 
             } catch(Exception e) {
                 return PLPMsg.E("I screwed up: " + e,
-                                PLPMsg.PLP_SIM_EVALUATION_FAILED, this);
+                                Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }
 
@@ -1021,24 +1022,24 @@ public class PLPMIPSSim extends PLPSimCore {
 
         public int eval(PLPMIPSSim.id id_stage, PLPMIPSSim.ex ex_stage,
                          PLPMIPSSim.mem mem_stage, PLPMIPSSim.wb wb_stage) {
-            sim_flags &= PLPMsg.PLP_SIM_FWD_NO_EVENTS;
+            sim_flags &= Constants.PLP_SIM_FWD_NO_EVENTS;
 
             if(mem_stage.hot) {
                 if(MIPSInstr.rd(ex_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
                     ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
-                    sim_flags |= PLPMsg.PLP_SIM_FWD_EX_EX_RTYPE;
+                    sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }
                 else if(MIPSInstr.rd(ex_stage.instruction) == MIPSInstr.rt(id_stage.instruction)) {
                     ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
-                    sim_flags |= PLPMsg.PLP_SIM_FWD_EX_EX_RTYPE;
+                    sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }
                 else if(MIPSInstr.rt(ex_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
                     ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
-                    sim_flags |= PLPMsg.PLP_SIM_FWD_EX_EX_ITYPE;
+                    sim_flags |= Constants.PLP_SIM_FWD_EX_EX_ITYPE;
                 }
             }
 
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
         }
     }
    

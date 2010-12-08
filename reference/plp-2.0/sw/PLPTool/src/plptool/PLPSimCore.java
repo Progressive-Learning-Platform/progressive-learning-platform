@@ -18,6 +18,8 @@
 
 package plptool;
 
+import plptool.mods.MemModule;
+
 /**
  * This abstract class defines the simulated CPU interface.
  *
@@ -39,7 +41,7 @@ public abstract class PLPSimCore {
     /**
      * Main memory.
      */
-    public PLPSimMemModule memory;
+    public MemModule memory;
 
     /**
      * CPU front-side bus.

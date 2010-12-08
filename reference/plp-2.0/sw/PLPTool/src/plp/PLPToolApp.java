@@ -24,6 +24,7 @@ import plpmips.PLPSimCL;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.PLPMsg;
+import plptool.Constants;
 
 /**
  * The main class of the application.
@@ -59,7 +60,7 @@ public class PLPToolApp extends SingleFrameApplication {
     public static void main(String[] args) {
         System.out.println("\nPLP Java Tool");
         System.out.println("Copyright 2010 David Fritz, Brian Gordon, Wira Mulia");
-        System.out.println(PLPMsg.versionString + "\n");
+        System.out.println(Constants.versionString + "\n");
         System.out.println("This software is licensed under GPLv3.");
         System.out.println();
 
@@ -108,7 +109,7 @@ public class PLPToolApp extends SingleFrameApplication {
             launch(PLPToolApp.class, args);
         }
         else {
-            PLPMsg.E("Invalid argument(s).", PLPMsg.PLP_TOOLAPP_ERROR, null);
+            PLPMsg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
             System.out.println();
             System.out.println("Run PLPTool with no command line arguments to launch GUI tool.");
             System.out.println();
