@@ -1,5 +1,5 @@
 
-module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches);
+module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches, sseg_an, sseg_display);
 	input clk, rst;
 
 	/* cpu i/o */
@@ -13,6 +13,8 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	input mod_uart_rxd;
 	output mod_uart_txd;
 	input [7:0] mod_switches_switches;
+	output [3:0] sseg_an;
+	output [7:0] sseg_display;
 
 	/* effective address calculation for the modules */
 	wire [7:0] imod, dmod;
@@ -31,6 +33,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	wire mod7_ie = imod == 7;
 	wire mod8_ie = imod == 8;
 	wire mod9_ie = imod == 9;
+	wire mod10_ie = imod == 10;
 
 	wire mod0_de = dmod == 0;
 	wire mod1_de = dmod == 1;
@@ -42,6 +45,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	wire mod7_de = dmod == 7;
 	wire mod8_de = dmod == 8;
 	wire mod9_de = dmod == 9;
+	wire mod10_de = dmod == 10;
 
 	/* module instantiations */
 	/* 0 */ mod_rom		rom_t		(rst, clk, mod0_ie, mod0_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
@@ -52,4 +56,5 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	
 	/* 8 */ mod_plpid	plpid_t   	(rst, clk, mod8_ie, mod8_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
 	/* 9 */ mod_timer	timer_t	  	(rst, clk, mod9_ie, mod9_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
+	/* 10 */ mod_sseg	sseg_t		(rst, clk, mod10_ie, mod10_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, sseg_an, sseg_display);
 endmodule

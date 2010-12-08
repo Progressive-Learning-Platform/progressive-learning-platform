@@ -19,6 +19,7 @@ version_string:
 .include ../../sw/libplp/libplp_plpid.asm
 .include ../../sw/libplp/libplp_uart.asm
 .include ../../sw/libplp/libplp_switches.asm
+.include ../../sw/libplp/libplp_sseg.asm
 
 #
 #startup 
@@ -37,6 +38,11 @@ startup:
 	nop
 	ori $a0, $zero, 0x000d	#newline
 	jal libplp_uart_write
+
+#seven segment
+	li $a0, 0xfaf0f5f7
+	jal libplp_sseg_write_raw
+	nop
 
 #the led routine, which waits for the switches to be non-zero
 flash_leds:
