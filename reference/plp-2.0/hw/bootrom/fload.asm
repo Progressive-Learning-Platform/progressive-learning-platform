@@ -9,6 +9,8 @@
 j startup
 nop
 
+fritz_propaganda:
+	.asciiz "from each according to his ability, to each according to his need"
 version_string:
 	.asciiz "plp2.0"
 
@@ -28,6 +30,13 @@ startup:
 	jal libplp_plpid_read_frequency
 	nop
 	move $s2, $v0		#get the board frequency into $s2
+
+#influence the masses
+	li $a0, fritz_propaganda
+	jal libplp_uart_write_string
+	nop
+	ori $a0, $zero, 0x000d	#newline
+	jal libplp_uart_write
 
 #the led routine, which waits for the switches to be non-zero
 flash_leds:
@@ -79,14 +88,17 @@ boot_uart_get_4_bytes:
 	move $s6, $31	#save the return address
 	jal libplp_uart_read
 	nop
-	jal libplp_uart_read
 	sll $s7, $v0, 24
+	jal libplp_uart_read
+	nop
 	sll $t0, $v0, 16
-	jal libplp_uart_read
 	or $s7, $s7, $t0
+	jal libplp_uart_read
+	nop
 	sll $t0, $v0, 8
-	jal libplp_uart_read
 	or $s7, $s7, $t0
+	jal libplp_uart_read
+	nop
 	or $s7, $s7, $v0
 	jr $s6
 	move $v0, $s7
@@ -117,7 +129,8 @@ boot_uart_jump:
 	nop
 
 boot_uart_version:
-	jal libplp_uart_write_string
 	li $a0, version_string
+	jal libplp_uart_write_string
+	nop
 	j boot_uart_run
 	nop
