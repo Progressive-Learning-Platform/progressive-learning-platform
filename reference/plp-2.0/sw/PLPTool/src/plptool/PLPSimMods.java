@@ -18,6 +18,7 @@
 
 package plptool;
 
+import plptool.mods.MemModule;
 import plpmips.PLPMIPSSim;
 
 /**
@@ -71,11 +72,11 @@ public class PLPSimMods {
         // When this module is evaluated, do this:
         public int eval() {
             if(!enabled)
-                return PLPMsg.PLP_OK;
+                return Constants.PLP_OK;
 
             // Get register value
             if(!isInitialized(startAddr))
-                return PLPMsg.PLP_SIM_BUS_ERROR;
+                return Constants.PLP_SIM_BUS_ERROR;
 
             long value = (Long) super.read(startAddr);
 
@@ -91,11 +92,11 @@ public class PLPSimMods {
 
             PLPMsg.M("");
 
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
         }
 
         public int gui_eval(Object x) {
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
         }
 
         public String introduce() {
@@ -117,21 +118,21 @@ public class PLPSimMods {
      * the module to simulate a cache memory hierarchy.
      */
     public class mod_cache_hier extends PLPSimBusModule {
-        PLPSimMemModule L1_I;
-        PLPSimMemModule L1_D;
-        PLPSimMemModule L2;
+        MemModule L1_I;
+        MemModule L1_D;
+        MemModule L2;
 
-        public mod_cache_hier(PLPSimMemModule mem) {
+        public mod_cache_hier(MemModule mem) {
             super(0, mem.size() * 4 - 4, true);
         }
 
         // When this module is evaluated, do this:
         public int eval() {
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
         }
 
         public int gui_eval(Object x) {
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
         }
 
         public String introduce() {
@@ -172,11 +173,11 @@ public class PLPSimMods {
 
         // When this module is evaluated, do this:
         public int eval() {
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
         }
 
         public int gui_eval(Object x) {
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
         }
 
         public String introduce() {

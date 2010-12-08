@@ -57,7 +57,7 @@ public class PLPAsmSource {
 
         } catch(Exception e) {
             PLPMsg.E("Error reading file",
-                            PLPMsg.PLP_GENERIC_ERROR, null);
+                            Constants.PLP_GENERIC_ERROR, null);
         }
     }
 
@@ -67,7 +67,7 @@ public class PLPAsmSource {
         if(refSource != null)
             return 0;
         else {
-            return PLPMsg.PLP_ASM_INVALID_REFSOURCE;
+            return Constants.PLP_ASM_INVALID_REFSOURCE;
         }
     }
 
@@ -82,7 +82,7 @@ public class PLPAsmSource {
     public String getAsmLine(int lineNum) {
         if(lineNum >= asmLines.length) {
             PLPMsg.E("Invalid line number: " + lineNum,
-                     PLPMsg.PLP_ASM_INVALID_LINENUM, this);
+                     Constants.PLP_ASM_INVALID_LINENUM, this);
             return null;
         }
 

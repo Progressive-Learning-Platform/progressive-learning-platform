@@ -94,14 +94,14 @@ public abstract class PLPSimBusModule {
      */
     public int writeReg(long addr, Object data, boolean isInstr) {
         if(!enabled)
-            return PLPMsg.PLP_SIM_MODULE_DISABLED;
+            return Constants.PLP_SIM_MODULE_DISABLED;
 
         if(addr > endAddr || addr < startAddr)
             return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address is out of range.",
-                            PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+                            Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
         else if(wordAligned && addr % 4 != 0)
             return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
-                            PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
+                            Constants.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
         else {
             if(values.containsKey(addr)) {
                 values.remove(addr);
@@ -111,7 +111,7 @@ public abstract class PLPSimBusModule {
             this.isInstr.put(new Long(addr), isInstr);
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -123,12 +123,12 @@ public abstract class PLPSimBusModule {
     public Object readReg(long addr) {
         if(addr > endAddr || addr < startAddr) {
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
-                     PLPMsg.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
+                     Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
             return null;
         }
         else if (wordAligned && addr % 4 != 0) {
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
-                            PLPMsg.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
+                            Constants.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
             return null;
         }
         else if(!values.containsKey(addr)) {
@@ -140,7 +140,7 @@ public abstract class PLPSimBusModule {
                 return 0;
             }
             PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
-                             PLPMsg.PLP_SIM_UNINITIALIZED_MEMORY, this);
+                             Constants.PLP_SIM_UNINITIALIZED_MEMORY, this);
             return null;
         }
         else
@@ -151,7 +151,7 @@ public abstract class PLPSimBusModule {
      * Wrapper function for writeReg. Developers may wish to override this
      * function to implement module-specific write actions without sacrificing
      * PLPSimBusModule original writeReg functionality. This is the actual
-     * function that will called by PLPSimBus.
+     * function that will be called by PLPSimBus.
      * 
      * @param addr Address to write to
      * @param data Data to be written
@@ -166,7 +166,7 @@ public abstract class PLPSimBusModule {
      * Wrapper function for readReg. Developers may wish to override this
      * function to implement module-specific read actions without sacrificing
      * PLPSimBusModule original readReg functionality. This is the actual
-     * function that will called by PLPSimBus.
+     * function that will be called by PLPSimBus.
      *
      * @param addr Address to read from
      * @return Data, or PLP_ERROR_RETURN
@@ -306,7 +306,7 @@ public abstract class PLPSimBusModule {
      * gui_eval is designed for simulator developers / users to allow the
      * module to interact with the simulation environment directly. This
      * function is only called every time the GUI components are refreshed.
-     * Simulation cores do/should not call this function every cycle.
+     * Simulation cores do not/should not call this function every cycle.
      *
      * @param x Reference to a frame object that this module will interact
      * with.

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import plptool.PLPAsmSource;
 import plptool.PLPMsg;
+import plptool.Constants;
 
 
 /**
@@ -320,7 +321,7 @@ public class PLPAsm {
             if(asmTokens[0].equals(".include")) {
                 if(asmTokens.length < 2) {
                    return PLPMsg.E("Directive syntax error in line " + i,
-                                   PLPMsg.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                                   Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
 
                 preprocessedAsm += "ASM__SKIP__\n";
@@ -341,7 +342,7 @@ public class PLPAsm {
             else if(asmTokens[0].equals(".org")) {
                 if(asmTokens.length < 2) {
                    return PLPMsg.E("Directive syntax error in line " + i,
-                                  PLPMsg.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                                  Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
 
                 preprocessedAsm += "ASM__ORG__ " + asmTokens[1] + "\n";
@@ -354,7 +355,7 @@ public class PLPAsm {
             else if(asmTokens[0].equals(".word")) {
                 if(asmTokens.length < 2) {
                    return PLPMsg.E("Directive syntax error in line " + i,
-                                   PLPMsg.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                                   Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
 
                 preprocessedAsm += "ASM__WORD__ " + asmTokens[1] + "\n";
@@ -367,7 +368,7 @@ public class PLPAsm {
             else if(asmTokens[0].equals(".space")) {
                 if(asmTokens.length < 2) {
                    return  PLPMsg.E("Directive syntax error in line " + i,
-                                    PLPMsg.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                                    Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
                 
                 for(j = 0; j < Integer.parseInt(asmTokens[1]); j++) {
@@ -389,7 +390,7 @@ public class PLPAsm {
                 tempLabel = asmTokens[0].substring(0, asmTokens[0].length() - 1);
                 if(symTable.containsKey(tempLabel)) {
                     return PLPMsg.E("Line " + i + ", label \"" + tempLabel + "\" already defined.",
-                                    PLPMsg.PLP_ASM_DUPLICATE_LABEL, this);
+                                    Constants.PLP_ASM_DUPLICATE_LABEL, this);
                 }
                 symTable.put(tempLabel, new Long((int) curAddr));
                 preprocessedAsm += "ASM__SKIP__\n";
@@ -400,7 +401,7 @@ public class PLPAsm {
             else if(asmTokens[0].equals(".ascii") || asmTokens[0].equals(".asciiz")) {
                 if(asmTokens.length < 2) {
                    return  PLPMsg.E("Directive syntax error in line " + i,
-                                    PLPMsg.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                                    Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
 
                 String tString[] = asmLines[i - 1].split("[ ]+", 2);
@@ -412,7 +413,7 @@ public class PLPAsm {
 
                     if(tString[1].charAt(tString[1].length() - 1) != '\"')
                         return PLPMsg.E("Invalid string literal at line " + i,
-                                        PLPMsg.PLP_ASM_INVALID_STRING, this);
+                                        Constants.PLP_ASM_INVALID_STRING, this);
 
                     tString[1] = tString[1].substring(0, tString[1].length() - 1);
                 }
@@ -470,7 +471,7 @@ public class PLPAsm {
             else {
                 if(instrMap.containsKey(asmTokens[0]) == false) {
                     return PLPMsg.E("Unable to process token " + asmTokens[0] + " in line " + i,
-                                    PLPMsg.PLP_ASM_INVALID_TOKEN, this);
+                                    Constants.PLP_ASM_INVALID_TOKEN, this);
                 }
                 PLPMsg.D("exit i: " + i, 5, this);
                 curAddr += 4;
@@ -483,7 +484,7 @@ public class PLPAsm {
 
         } catch(Exception e) {
             return PLPMsg.E("preprocess(): Uncaught exception in line " + i + "\n" + e,
-                            PLPMsg.PLP_GENERIC_ERROR, this);
+                            Constants.PLP_GENERIC_ERROR, this);
         }
 
         PLPMsg.D("First pass completed.", 1, this);
@@ -576,13 +577,13 @@ public class PLPAsm {
                 // 3-op R-type
                 case 0:
                     if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2]) ||
                        !regs.containsKey(asmTokens[3])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                        Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
 
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
@@ -595,12 +596,12 @@ public class PLPAsm {
                 // Shift R-type
                 case 1:
                     if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                         PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
 
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 16;
@@ -613,11 +614,11 @@ public class PLPAsm {
                 // Jump R-type
                 case 2:
                     if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                        Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
                     objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
@@ -627,15 +628,15 @@ public class PLPAsm {
                 // Branch I-type
                 case 3:
                     if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                        Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     if(!symTable.containsKey(asmTokens[3])) {
                         return PLPMsg.E("assemble(): Invalid branch target in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_BRANCH_TARGET, this);
+                                        Constants.PLP_ASM_INVALID_BRANCH_TARGET, this);
                     }
                     branchTarget = symTable.get(asmTokens[3]) - (asmPC + 4);
                     branchTarget /= 4;
@@ -649,12 +650,12 @@ public class PLPAsm {
                 // Arithmetic and Logic I-type
                 case 4:
                     if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                        Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= sanitize16bits(asmTokens[3]);
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
@@ -666,11 +667,11 @@ public class PLPAsm {
                 // Load upper immediate I-type
                 case 5:
                     if(!checkNumberOfOperands(asmTokens, 3, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                        Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= sanitize16bits(asmTokens[2]);
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
@@ -681,12 +682,12 @@ public class PLPAsm {
                 // Load/Store Word I-type
                 case 6:
                     if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[3])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                        Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= sanitize16bits(asmTokens[2]);
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
@@ -698,11 +699,11 @@ public class PLPAsm {
                 // J-type
                 case 7:
                     if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!symTable.containsKey(asmTokens[1])) {
                         return PLPMsg.E("assemble(): Invalid jump target in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_JUMP_TARGET, this);
+                                        Constants.PLP_ASM_INVALID_JUMP_TARGET, this);
                     }
 
                     objectCode[i - s] |= (long) (symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
@@ -717,12 +718,12 @@ public class PLPAsm {
                 // jalr Instruction
                 case 9:
                     if(!checkNumberOfOperands(asmTokens, 3, i + lineNumOffset))
-                        return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                        return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
                         return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
-                                        PLPMsg.PLP_ASM_INVALID_REGISTER, this);
+                                        Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
 
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
@@ -736,13 +737,13 @@ public class PLPAsm {
                     ;
                     if(asmTokens[0].equals("ASM__WORD__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
-                            return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                            return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
                         entryType[i - s] = 1;
                         objectCode[i - s] = sanitize32bits(asmTokens[1]);
                     }
                     else if(asmTokens[0].equals("ASM__ORG__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
-                            return PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
+                            return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                         asmPC = sanitize32bits(asmTokens[1]);
                         s++;
@@ -762,12 +763,12 @@ public class PLPAsm {
                     
                 default:
                     return PLPMsg.E("assemble(): This should not happen. Report bug.",
-                                     PLPMsg.PLP_OOPS, this);
+                                     Constants.PLP_OOPS, this);
             }
 
             if(PLPMsg.lastError > 0) {
                 return PLPMsg.E("assemble(): Unhandled error(s) encountered in line " + (i + lineNumOffset) + ". Assembly failed.",
-                                 PLPMsg.PLP_GENERIC_ERROR, this);
+                                 Constants.PLP_GENERIC_ERROR, this);
             }
 
             // Update address table and assembler PC if this line is a valid
@@ -785,10 +786,10 @@ public class PLPAsm {
         } catch(Exception e) {
             return PLPMsg.E("assemble(): Uncaught exception in line " +
                             (i + lineNumOffset) + "\n" + e,
-                            PLPMsg.PLP_GENERIC_ERROR, this);
+                            Constants.PLP_GENERIC_ERROR, this);
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
     
     /**
@@ -917,7 +918,7 @@ public class PLPAsm {
         if(instrMap.containsKey(instrOpCode)) {
             return (Integer) instrMap.get(instrOpCode);
         }
-        return PLPMsg.PLP_ERROR_RETURN;
+        return Constants.PLP_ERROR_RETURN;
     }
 
         /**
@@ -963,7 +964,7 @@ public class PLPAsm {
 
         } catch(Exception e) {
             return PLPMsg.E("sanitize16bits(): Argument is not a valid number\n" + e,
-                            PLPMsg.PLP_NUMBER_ERROR, null);
+                            Constants.PLP_NUMBER_ERROR, null);
         }
     }
 
@@ -994,7 +995,7 @@ public class PLPAsm {
 
         } catch(Exception e) {
             return PLPMsg.E("sanitize32bits(): Argument is not a valid number\n" + e,
-                            PLPMsg.PLP_NUMBER_ERROR, null);
+                            Constants.PLP_NUMBER_ERROR, null);
         }
     }
 
@@ -1009,7 +1010,7 @@ public class PLPAsm {
     private boolean checkNumberOfOperands(Object iObj[], int length, int lineNum) {
         if(iObj.length != length) {
             PLPMsg.E("checkNumberOfOperands(): Invalid number of operands in line " + lineNum,
-                            PLPMsg.PLP_ASM_INVALID_NUMBER_OF_OPERANDS, this);
+                            Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS, this);
             return false;
         }
         return true;

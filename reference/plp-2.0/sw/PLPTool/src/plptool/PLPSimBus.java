@@ -18,6 +18,7 @@
 
 package plptool;
 
+import plptool.mods.MemModule;
 import java.util.ArrayList;
 
 /**
@@ -61,7 +62,7 @@ public class PLPSimBus {
      * @param PLPSimCore The simulator core
      * @see PLPSimBus()
      */
-    public PLPSimBus(PLPSimMemModule mem) {
+    public PLPSimBus(MemModule mem) {
         bus_modules = new ArrayList<PLPSimBusModule>();
         bus_modules.add(mem);
     }
@@ -79,7 +80,7 @@ public class PLPSimBus {
             return bus_modules.indexOf(module);
         else
             return PLPMsg.E("Failed to attach module " + module,
-                            PLPMsg.PLP_ERROR_RETURN, this);
+                            Constants.PLP_ERROR_RETURN, this);
     }
 
     /**
@@ -91,7 +92,7 @@ public class PLPSimBus {
     public int remove(int index) {
         bus_modules.remove(index);
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -118,7 +119,7 @@ public class PLPSimBus {
         PLPMsg.E("read(" + String.format("0x%08x", addr) + "):" +
                  " This address is not in any module's address space" +
                  " or is unitialiazed.",
-                 PLPMsg.PLP_ERROR_RETURN, this);
+                 Constants.PLP_ERROR_RETURN, this);
 
         return null;
     }
@@ -146,9 +147,9 @@ public class PLPSimBus {
         if(noMapping)
             return PLPMsg.E("write(" + String.format("0x%08x", addr) + "):" +
                             " This address is not in any module's address space.",
-                            PLPMsg.PLP_SIM_BUS_MAPPING_ERROR, this);
+                            Constants.PLP_SIM_BUS_MAPPING_ERROR, this);
         else
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
     }
 
     /**
@@ -157,7 +158,7 @@ public class PLPSimBus {
      * @return PLP_OK, or error code
      */
     public int eval() {
-        int ret = PLPMsg.PLP_OK;
+        int ret = Constants.PLP_OK;
         Object[] modules = bus_modules.toArray();
         for(int i = 0; i < modules.length; i++)
             ret += ((PLPSimBusModule)modules[i]).eval();
@@ -178,7 +179,7 @@ public class PLPSimBus {
 
         } catch(Exception e) {
             return PLPMsg.E("eval(" + index + "): error: " + e,
-                            PLPMsg.PLP_SIM_BUS_ERROR, this);
+                            Constants.PLP_SIM_BUS_ERROR, this);
         }
     }
 
@@ -196,7 +197,7 @@ public class PLPSimBus {
 
         } catch(Exception e) {
             return PLPMsg.E("eval(" + index + "): error: " + e,
-                            PLPMsg.PLP_SIM_BUS_ERROR, this);
+                            Constants.PLP_SIM_BUS_ERROR, this);
         }
     }
 
@@ -211,7 +212,7 @@ public class PLPSimBus {
         for(int i = 0; i < modules.length; i++)
             ((PLPSimBusModule)modules[i]).enable();
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -226,7 +227,7 @@ public class PLPSimBus {
         for(int i = 0; i < modules.length; i++)
             ((PLPSimBusModule)modules[i]).disable();
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     /**
@@ -243,7 +244,7 @@ public class PLPSimBus {
 
         } catch(Exception e) {
             PLPMsg.E("enabled(" + index + "): error: " + e,
-                     PLPMsg.PLP_SIM_BUS_ERROR, this);
+                     Constants.PLP_SIM_BUS_ERROR, this);
 
             return false;
         }
@@ -260,11 +261,11 @@ public class PLPSimBus {
 
         try {
         ((PLPSimBusModule)modules[index]).enable();
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
 
         } catch(Exception e) {
             return PLPMsg.E("enableio(" + index + "): error: " + e,
-                            PLPMsg.PLP_SIM_BUS_ERROR, this);
+                            Constants.PLP_SIM_BUS_ERROR, this);
         }
     }
 
@@ -279,11 +280,11 @@ public class PLPSimBus {
 
         try {
         ((PLPSimBusModule)modules[index]).disable();
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
 
         } catch(Exception e) {
             return PLPMsg.E("disableio(" + index + "): error: " + e,
-                            PLPMsg.PLP_SIM_BUS_ERROR, this);
+                            Constants.PLP_SIM_BUS_ERROR, this);
         }
     }
 
@@ -298,11 +299,11 @@ public class PLPSimBus {
 
         try {
         ((PLPSimBusModule)modules[index]).clear();
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
 
         } catch(Exception e) {
             return PLPMsg.E("cleario(" + index + "): error: " + e,
-                            PLPMsg.PLP_SIM_BUS_ERROR, this);
+                            Constants.PLP_SIM_BUS_ERROR, this);
         }
     }
 
@@ -320,7 +321,7 @@ public class PLPSimBus {
 
         } catch(Exception e) {
             PLPMsg.E("introduceio(" + index + "): error: " + e,
-                     PLPMsg.PLP_SIM_BUS_ERROR, this);
+                     Constants.PLP_SIM_BUS_ERROR, this);
 
             return null;
         }
@@ -340,9 +341,9 @@ public class PLPSimBus {
 
         } catch(Exception e) {
             PLPMsg.E("iostartaddr(" + index + "): error: " + e,
-                     PLPMsg.PLP_SIM_BUS_ERROR, this);
+                     Constants.PLP_SIM_BUS_ERROR, this);
 
-            return PLPMsg.PLP_ERROR_RETURN;
+            return Constants.PLP_ERROR_RETURN;
         }
     }
 
@@ -360,9 +361,9 @@ public class PLPSimBus {
 
         } catch(Exception e) {
             PLPMsg.E("ioendaddr(" + index + "): error: " + e,
-                     PLPMsg.PLP_SIM_BUS_ERROR, this);
+                     Constants.PLP_SIM_BUS_ERROR, this);
 
-            return PLPMsg.PLP_ERROR_RETURN;
+            return Constants.PLP_ERROR_RETURN;
         }
     }
 
@@ -391,7 +392,7 @@ public class PLPSimBus {
 
         } catch(Exception e) {
             PLPMsg.E("getRefMod(" + index + "): error: " + e,
-                     PLPMsg.PLP_SIM_BUS_ERROR, this);
+                     Constants.PLP_SIM_BUS_ERROR, this);
 
             return null;
         }

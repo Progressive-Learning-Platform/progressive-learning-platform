@@ -20,7 +20,7 @@ package plptool.mods;
 
 import java.awt.Color;
 import plptool.PLPSimBusModule;
-import plptool.PLPMsg;
+import plptool.Constants;
 
 /**
  * An example of a bus module utilizing the gui_eval function. When evaluated,
@@ -36,19 +36,19 @@ public class LEDArray extends PLPSimBusModule {
 
     public int eval() {
         // No need to eval every cycle
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     public int gui_eval(Object x) {
         if(!enabled)
-            return PLPMsg.PLP_OK;
+            return Constants.PLP_OK;
 
         // Get register value
         if(!isInitialized(startAddr)) {
             ((LEDArrayFrame)x).setAddress(super.startAddr());
             ((LEDArrayFrame)x).setValue(0);
 
-            return PLPMsg.PLP_SIM_BUS_ERROR;
+            return Constants.PLP_SIM_BUS_ERROR;
         }
         
         long value = (Long) super.read(super.startAddr);
@@ -64,15 +64,15 @@ public class LEDArray extends PLPSimBusModule {
                 ((LEDArrayFrame)x).getLED(i).setBackground(Color.BLACK);
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     public String introduce() {
-        return "PLP LED array";
+        return "LED array";
     }
 
     @Override
     public String toString() {
-        return "PLP LED Array";
+        return "LEDArray";
     }
 }

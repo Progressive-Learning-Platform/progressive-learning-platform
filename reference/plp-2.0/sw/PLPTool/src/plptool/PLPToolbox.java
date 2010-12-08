@@ -38,8 +38,8 @@ public class PLPToolbox {
             return Long.parseLong(number);
 
         } catch(Exception e) {
-            return PLPMsg.E("parse64Num(): Argument is not a valid number\n" + e,
-                            PLPMsg.PLP_NUMBER_ERROR, null);
+            return PLPMsg.E("parseNum(): Argument is not a valid number\n" + e,
+                            Constants.PLP_NUMBER_ERROR, null);
         }
     }
 

@@ -31,6 +31,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import plptool.PLPAsmSource;
 import plptool.PLPCfg;
 import plptool.PLPMsg;
+import plptool.Constants;
 
 /**
  * Utility class to package / display object codes produces by PLPAsm
@@ -72,7 +73,7 @@ public class PLPAsmFormatter {
             PLPMsg.M("");
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     // Output packed binary file
@@ -87,10 +88,10 @@ public class PLPAsmFormatter {
 
         } catch(Exception e) {
             return PLPMsg.E("writeBin(): Unable to write to " + outputFileName,
-                     PLPMsg.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
+                     Constants.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     // Output COE
@@ -142,7 +143,7 @@ public class PLPAsmFormatter {
 
         } catch(Exception e) {
             PLPMsg.E("intBinpadder(): can't convert " + number,
-                     PLPMsg.PLP_OUT_UNHANDLED_ERROR, null);
+                     Constants.PLP_OUT_UNHANDLED_ERROR, null);
             return null;
         }
     }
@@ -199,13 +200,13 @@ public class PLPAsmFormatter {
 
         if(outFile.exists() && !forceWrite) {
             return PLPMsg.E("genPLP(): " + output + ".plp already exists. Use -af to overwrite.",
-                            PLPMsg.PLP_OUT_FILE_EXISTS, null);
+                            Constants.PLP_OUT_FILE_EXISTS, null);
         }
 
         metafileStr += "PLP-2.0\n";
 
         PLPMsg.I("genPLP(): Assembling " + input + ".", null);
-        if(asm.preprocess(0) == PLPMsg.PLP_OK)
+        if(asm.preprocess(0) == Constants.PLP_OK)
             asm.assemble();
 
         if(asm.isAssembled()) {
@@ -300,15 +301,15 @@ public class PLPAsmFormatter {
         PLPMsg.M("");
         prettyPrint(asm);
 
-        if(PLPMsg.debugLevel >= 10)
+        if(Constants.debugLevel >= 10)
             PLPMsg.M(writeCOE(asm.getObjectCode()));
 
         } catch(Exception e) {
             return PLPMsg.E("genPLP(): Unable to write to <" + output + ".plp>\n" +
-                     e, PLPMsg.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
+                     e, Constants.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
         }
 
-        return PLPMsg.PLP_OK;
+        return Constants.PLP_OK;
     }
 
     // Symbol table pretty print
