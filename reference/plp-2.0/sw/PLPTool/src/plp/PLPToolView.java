@@ -580,7 +580,8 @@ public class PLPToolView extends FrameView {
     }//GEN-LAST:event_IDEAssembleBtnActionPerformed
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
-        simRunner.stepCount = 0;
+        if(simRunner != null)
+            simRunner.stepCount = 0;
         // TODO add your handling code here:
         errFrame.clearError();
 
@@ -602,8 +603,8 @@ public class PLPToolView extends FrameView {
     }//GEN-LAST:event_btnStepActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        // TODO add your handling code here:
-        simRunner.stepCount = 0;
+        if(simRunner != null)
+            simRunner.stepCount = 0;
         sim.reset();
         simFrame.updateComponents();
         errFrame.clearError();

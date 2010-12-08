@@ -43,7 +43,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 2;
+    private final int NUMBER_OF_MODULES = 3;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -89,6 +89,18 @@ public class IORegistry {
         mods[1][4] = true;
         mods[1][5] = true;
 
+        /* ********************************************************************/
+        // LEDArray
+        mods[2][0] = "Switches";
+        mods[2][1] = false;
+        mods[2][2] = 1;
+        mods[2][3] = "Input switches. Action on the GUI frame will update the "
+                   + "I/O register. This is a read-only register, writes "
+                   + "issued to this module will have no effect and return "
+                   + "a write error.";
+        mods[2][4] = true;
+        mods[2][5] = true;
+
 
         // ADDITIONAL MODULE INFO HERE 
     }
@@ -115,6 +127,14 @@ public class IORegistry {
             case 1:
                 module = new LEDArray(addr);
                 moduleFrame = new LEDArrayFrame();
+
+                break;
+
+            /******************************************************************/
+            // Switches is summoned
+            case 2:
+                module = new Switches(addr);
+                moduleFrame = new SwitchesFrame((Switches) module);
 
                 break;
 
