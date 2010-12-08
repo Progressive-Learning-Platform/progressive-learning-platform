@@ -15,6 +15,7 @@ memory map module
 
 0xf0800000      8               PLPID
 0xf0900000      4               timer
+0xf0a00000	4		sseg
 
 */
 
@@ -32,6 +33,7 @@ module mm(addr, mod, eff_addr);
 		     (addr[31:20] == 12'hf02) ? 4 : /* mod_leds */
 		     (addr[31:20] == 12'hf05) ? 8 : /* mod_plpid */
 		     (addr[31:20] == 12'hf06) ? 9 : /* mod_timer */
+		     (addr[31:20] == 12'hf0a) ? 10 : /* mod_sseg */
 		     0;
 	assign eff_addr = {12'h000,addr[19:0]};
 endmodule

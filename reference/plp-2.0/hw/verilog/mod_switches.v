@@ -25,5 +25,5 @@ module mod_switches(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, switch
         assign dout = de ? ddata : 32'hzzzzzzzz;
 
 	assign idata = 32'h00000000;
-	assign ddata = {24'h0000000,switches};
+	assign ddata = {24'h000000,switches};
 endmodule
