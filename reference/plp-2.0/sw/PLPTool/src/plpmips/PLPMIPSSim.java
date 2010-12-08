@@ -104,8 +104,8 @@ public class PLPMIPSSim extends PLPSimCore {
         if(RAMsize <= 0)
             RAMsize = (long) Math.pow(2, 31);
 
-        memory = new PLPSimMemModule(RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
-        regfile = new PLPSimMemModule(32, false);
+        memory = new PLPSimMemModule(0, RAMsize, PLPMsg.FLAGS_ALIGNED_MEMORY);
+        regfile = new PLPSimMemModule(0, 32, false);
         pc = new PLPSimRegModule(0); // pc=0 on reset
 
         this.asm = asm;
