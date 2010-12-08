@@ -133,8 +133,8 @@ public class IORegistry {
             /******************************************************************/
             // Switches is summoned
             case 2:
-                module = new Switches(addr);
-                moduleFrame = new SwitchesFrame((Switches) module);
+                // module = new Switches(addr);
+                // moduleFrame = new SwitchesFrame((Switches) module);
 
                 break;
 
