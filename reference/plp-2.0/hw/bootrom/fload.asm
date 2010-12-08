@@ -39,8 +39,10 @@ startup:
 	ori $a0, $zero, 0x000d	#newline
 	jal libplp_uart_write
 
+shiny:
+
 #seven segment
-	li $a0, 0xfaf0f5f7
+	li $a0, 0x8cc1c78c
 	jal libplp_sseg_write_raw
 	nop
 
@@ -49,7 +51,11 @@ flash_leds:
 	srl $s3, $s2, 3		#one eighth of the frequency into $a0
 	ori $s5, $zero, 0xff00
 	ori $s4, $zero, 16
-flash_leds_loop:		#scroll the leds through
+flash_leds_loop:		#scroll the leds through and update the sseg
+	ori $t0, $zero, 0x00ff
+	beq $s5, $t0, sseg_version
+	nop
+flash_leds_loop2:
 	move $a0, $s5
 	jal libplp_leds_write
 	addiu $s4, $s4, -1
@@ -58,13 +64,24 @@ flash_leds_loop:		#scroll the leds through
 	srl $s5, $s5, 1
 	bne $s4, $zero, flash_leds_loop
 	nop
+	j switches
+	nop
+
+#more seven segment
+sseg_version:
+	li $a0, 0x24c0ffff
+	jal libplp_sseg_write_raw
+	nop
+	j flash_leds_loop2
+	nop
 
 #check the switches
+switches: 
 	jal libplp_switches_read
 	ori $s0, $zero, 1
 	beq $s0, $v0, boot_uart
 	nop
-	j flash_leds
+	j shiny
 	nop
 
 #boot from uart
