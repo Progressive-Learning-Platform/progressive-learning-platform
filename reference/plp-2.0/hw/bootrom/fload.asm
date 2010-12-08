@@ -42,7 +42,7 @@ startup:
 shiny:
 
 #seven segment
-	li $a0, 0x8cc1c78c
+	li $a0, 0x8cc78cff
 	jal libplp_sseg_write_raw
 	nop
 
