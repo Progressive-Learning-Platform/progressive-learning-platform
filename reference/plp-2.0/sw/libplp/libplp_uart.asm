@@ -31,16 +31,29 @@ libplp_uart_write_string: 		#we have a pointer to the string in a0, just loop an
 	move $t8, $a0		#save the argument
 libplp_uart_write_string_multi_word:
 	lw $a0, 0($t8)		#first 1-4 characters
+	ori $t0, $zero, 0x00ff  #reverse the word to make it big endian
+	and $t1, $t0, $a0	#least significant byte
+	sll $t1, $t1, 24
+	srl $a0, $a0, 8
+	and $t2, $t0, $a0	#second byte
+	sll $t2, $t2, 16
+	srl $a0, $a0, 8
+	and $t3, $t0, $a0	#third byte
+	sll $t3, $t3, 8
+	srl $a0, $a0, 8		#last byte in a0
+	or $a0, $t1, $a0
+	or $a0, $t2, $a0
+	or $a0, $t3, $a0
 	beq $a0, $zero, libplp_uart_write_string_done
 	nop
-libplp_uart_write_string_loop:
 	ori $t7, $zero, 4
+libplp_uart_write_string_loop:
 	jal libplp_uart_write	#write this byte
 	addiu $t7, $t7, -1
 	srl $a0, $a0, 8
 	bne $a0, $zero, libplp_uart_write_string_loop
 	nop
-	bne $t7, $zero, libplp_uart_write_string_multi_word
+	beq $t7, $zero, libplp_uart_write_string_multi_word
 	addiu $t8, $t8, 4	#increment for the next word
 libplp_uart_write_string_done:
 	jr $t9			#go home
