@@ -212,6 +212,7 @@ public class PLPAsmFormatter {
         if(asm.isAssembled()) {
             objCode = asm.getObjectCode();
             verilogHex = writeVerilogHex(objCode);
+            metafileStr += "START=" + asm.getAddrTable()[0] + "\n";
             metafileStr += "DIRTY=0\n\n";
             PLPMsg.I("genPLP(): Assembly completed.", null);
         }

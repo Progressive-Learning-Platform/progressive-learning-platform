@@ -84,6 +84,7 @@ public class PLPProgrammer {
         String metaStr;
         byte[] image;
         byte inData;
+        long start = 0;
 
         if(!plpFile.exists())
             return PLPMsg.E(plpFilePath + " not found.",
@@ -97,6 +98,8 @@ public class PLPProgrammer {
                 tIn.read(image, 0, (int) entry.getSize());
                 metaStr = new String(image);
                 Scanner fScan = new Scanner(metaStr);
+                fScan.findWithinHorizon("START=", 0);
+                start = fScan.nextLong();
                 fScan.findWithinHorizon("DIRTY=", 0);
                 if(fScan.nextInt() == 1) {
                     return PLPMsg.E(plpFile + " does not have up to date image.",
@@ -114,12 +117,12 @@ public class PLPProgrammer {
                 if(image.length % 4 != 0)
                     return PLPMsg.E(plpFilePath + " contains invalid image file.",
                         Constants.PLP_PRG_INVALID_IMAGE_FILE, this);
-                
+
                 out.write('a');
-                out.write(0);
-                out.write(0);
-                out.write(0);
-                out.write(0);
+                out.write((int) (start >> 24));
+                out.write((int) (start >> 16));
+                out.write((int) (start >> 8));
+                out.write((int) (start));
                 inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
@@ -138,10 +141,10 @@ public class PLPProgrammer {
                     out.write(image[i]);
                 }
                 out.write('a');
-                out.write(0);
-                out.write(0);
-                out.write(0);
-                out.write(0);
+                out.write((int) (start >> 24));
+                out.write((int) (start >> 16));
+                out.write((int) (start >> 8));
+                out.write((int) (start));
                 inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
