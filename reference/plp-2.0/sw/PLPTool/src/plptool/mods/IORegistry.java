@@ -58,7 +58,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 3;
+    private final int NUMBER_OF_MODULES = 4;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -125,6 +125,12 @@ public class IORegistry {
         mods[2][4] = true;
         mods[2][5] = true;
 
+        mods[3][0] = "FTracer";
+        mods[3][1] = true;
+        mods[3][2] = 1337;
+        mods[3][3] = "Traces all bus activity to the console.";
+        mods[3][4] = true;
+        mods[3][5] = false;
 
         // ADDITIONAL MODULE INFO HERE 
     }
@@ -177,6 +183,12 @@ public class IORegistry {
                 module = new Switches(addr);
                 moduleFrame = new SwitchesFrame((Switches) module);
 
+                break;
+
+            /******************************************************************/
+            // FTrace is requested, he doesn't respond to summons
+            case 3:
+                module = new FTracer(addr, size);
                 break;
 
             // ADD YOUR MODULE INITIALIZATION HERE
