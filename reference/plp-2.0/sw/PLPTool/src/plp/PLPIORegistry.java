@@ -19,6 +19,7 @@
 package plp;
 
 import plptool.mods.IORegistry;
+import plptool.mods.Presets;
 import plptool.PLPSimBusModule;
 import javax.swing.table.DefaultTableModel;
 
@@ -44,7 +45,9 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
         for(int i = 0; i < ioRegistry.getNumOfMods(); i++)
             cmbModuleSelect.addItem(modInfo[i][0]);
 
-
+        cmbPresets.removeAllItems();
+        for(int i = 0; i < Presets.presets.length; i++)
+            cmbPresets.addItem(Presets.presets[i][0]);
     }
 
     /** This method is called from within the constructor to
@@ -73,6 +76,9 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
         btnRemove = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         paneIOConfig = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        cmbPresets = new javax.swing.JComboBox();
+        btnLoadPreset = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setIconifiable(true);
@@ -131,24 +137,20 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
         paneAddLayout.setHorizontalGroup(
             paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneAddLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, paneAddLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE))
+                    .addComponent(txtModInfoScroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(btnAdd)
                     .addGroup(paneAddLayout.createSequentialGroup()
-                        .addContainerGap(377, Short.MAX_VALUE)
-                        .addComponent(btnAdd))
-                    .addGroup(paneAddLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblModule)
                             .addComponent(lblAddr)
                             .addComponent(lblRegfileSize))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-                            .addComponent(cmbModuleSelect, javax.swing.GroupLayout.Alignment.TRAILING, 0, 450, Short.MAX_VALUE)
-                            .addComponent(txtModuleAddress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE))))
+                            .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                            .addComponent(cmbModuleSelect, javax.swing.GroupLayout.Alignment.TRAILING, 0, 341, Short.MAX_VALUE)
+                            .addComponent(txtModuleAddress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneAddLayout.setVerticalGroup(
@@ -167,7 +169,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
                     .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRegfileSize))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAdd)
                 .addContainerGap())
@@ -234,7 +236,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneListLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
                     .addGroup(paneListLayout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -245,7 +247,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneListLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemove)
@@ -257,15 +259,42 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
         paneIOConfig.setName("paneIOConfig"); // NOI18N
 
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        cmbPresets.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbPresets.setName("cmbPresets"); // NOI18N
+
+        btnLoadPreset.setText(resourceMap.getString("btnLoadPreset.text")); // NOI18N
+        btnLoadPreset.setName("btnLoadPreset"); // NOI18N
+        btnLoadPreset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadPresetActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout paneIOConfigLayout = new javax.swing.GroupLayout(paneIOConfig);
         paneIOConfig.setLayout(paneIOConfigLayout);
         paneIOConfigLayout.setHorizontalGroup(
             paneIOConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 560, Short.MAX_VALUE)
+            .addGroup(paneIOConfigLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmbPresets, 0, 233, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnLoadPreset)
+                .addContainerGap())
         );
         paneIOConfigLayout.setVerticalGroup(
             paneIOConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 424, Short.MAX_VALUE)
+            .addGroup(paneIOConfigLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneIOConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(btnLoadPreset)
+                    .addComponent(cmbPresets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(413, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("paneIOConfig.TabConstraints.tabTitle"), paneIOConfig); // NOI18N
@@ -276,14 +305,14 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -325,6 +354,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
         }
         
         mainWindow.updateComponents();
+        refreshModulesTable();
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
@@ -344,7 +374,21 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
         mainWindow.updateComponents();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void refreshModulesTable() {
+    private void btnLoadPresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadPresetActionPerformed
+        int index = cmbPresets.getSelectedIndex();
+
+        if(index > -1) {
+            Integer[] modsType = (Integer[]) Presets.presets[index][1];
+            Long[] startAddresses = (Long[]) Presets.presets[index][2];
+            Long[] sizes = (Long[]) Presets.presets[index][3];
+            for(int i = 0; i < modsType.length; i++)
+                mainWindow.getIORegistry().attachModuleToBus(modsType[i], startAddresses[i], sizes[i], mainWindow.getSim(), mainWindow);
+            mainWindow.updateComponents();
+            refreshModulesTable();
+        }
+    }//GEN-LAST:event_btnLoadPresetActionPerformed
+
+    public void refreshModulesTable() {
         DefaultTableModel mods = (DefaultTableModel) tblMods.getModel();
         Object[] modules;
 
@@ -370,9 +414,12 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnLoadPreset;
     private javax.swing.JButton btnRemove;
     private javax.swing.JComboBox cmbModuleSelect;
+    private javax.swing.JComboBox cmbPresets;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblAddr;

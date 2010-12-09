@@ -32,9 +32,9 @@ import java.util.ArrayList;
  * function.
  *
  * @see PLPSimCore
- * @see PLPMIPSSim
+ * @see plpmips.PLPMIPSSim
  * @see PLPSimBusModule
- * @see PLPSimMemModule
+ * @see plptool.mods.MemModule
  * @see getModRef(int)
  * @author wira
  */
@@ -96,7 +96,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Issue a read to the bus. This will return a value from specified address
+     * Issues a read to the bus. This will return a value from specified address
      * starting with the module with lowest index (main memory preferably).
      * If there's any address space overlap, the module with lower index will
      * be read, but all modules do get the read command.
@@ -125,7 +125,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Issue a write to the bus. The write will be issued to all modules
+     * Issues a write to the bus. The write will be issued to all modules
      * if there's an address overlap.
      *
      * @param addr Address to write to
@@ -153,7 +153,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Evaluate all modules attached to the bus.
+     * Evaluates all modules attached to the bus.
      *
      * @return PLP_OK, or error code
      */
@@ -167,7 +167,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Evaluate module that has the specified index
+     * Evaluates module that has the specified index
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -184,7 +184,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Execute a GUI evaluation on the module that has the specified index
+     * Executes a GUI evaluation on the module that has the specified index
      *
      * @param index Index of the module
      * @param x Object to draw to, left to the module to implement
@@ -202,7 +202,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Enable all I/O mods.
+     * Enables all I/O mods.
      *
      * @return Returns 0 on completion.
      */
@@ -216,7 +216,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Disable all I/O mods. Including the main memory if it is attached to
+     * Disables all I/O mods. Including the main memory if it is attached to
      * the bus. Be careful.
      *
      * @return Returns 0 on completion.
@@ -251,7 +251,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Enable specified module, allowing evaluations and writes
+     * Enables specified module, allowing evaluations and writes
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -270,7 +270,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Disable specified module, disallowing evaluations and writes
+     * Disables specified module, disallowing evaluations and writes
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -289,7 +289,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Clear saved values of specified module.
+     * Clears saved values of specified module.
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -379,7 +379,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Get a reference to the requested module for direct access.
+     * Returns a reference to the requested module for direct access.
      *
      * @param index Index of the module
      * @return PLPSimBusModule reference of the module

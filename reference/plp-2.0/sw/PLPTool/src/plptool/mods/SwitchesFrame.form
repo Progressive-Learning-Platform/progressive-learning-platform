@@ -2,6 +2,7 @@
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <Properties>
+    <Property name="iconifiable" type="boolean" value="true"/>
     <Property name="title" type="java.lang.String" resourceKey="Form.title"/>
     <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
   </Properties>
@@ -36,7 +37,6 @@
                       <Component id="txtValue" pref="207" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="bit7" min="0" pref="0" max="32767" attributes="1"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="bit6" min="0" pref="0" max="32767" attributes="1"/>

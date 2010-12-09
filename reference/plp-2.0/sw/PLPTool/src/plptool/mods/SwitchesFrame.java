@@ -73,6 +73,7 @@ public class SwitchesFrame extends javax.swing.JInternalFrame {
         bit1 = new javax.swing.JToggleButton();
         bit0 = new javax.swing.JToggleButton();
 
+        setIconifiable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plp.PLPToolApp.class).getContext().getResourceMap(SwitchesFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
@@ -169,7 +170,6 @@ public class SwitchesFrame extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtValue, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bit7, 0, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bit6, 0, 0, Short.MAX_VALUE)

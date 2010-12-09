@@ -28,15 +28,34 @@ import javax.swing.JTextArea;
 public class PLPMsg {
 
     /**
-     * JTextArea PLPMsg should print its output to
+     * JTextArea PLPMsg should print its output to.
      */
     public static JTextArea output = null;
 
+    /**
+     * Last object that was responsible for invoking an Error messsage.
+     */
     public static Object lastPartyResponsible;
+
+    /**
+     * The error code of the last error.
+     */
     public static int lastError = 0;
+
+    /**
+     * Mark counter. Debug purposes only.
+     */
     public static int markCounter = 0;
 
-    // Error message
+    /**
+     * This function either prints out an error message to stdout or the
+     * specified JTextArea in the output pointer.
+     *
+     * @param errStr Error string to print.
+     * @param errorCode Error code.
+     * @param objIdentifier A reference to the offending object.
+     * @return The error code for further handling.
+     */
     public static int E(String errStr, int errorCode, Object objIdentifier) {
         if(objIdentifier != null)
             if(output == null)
@@ -54,7 +73,12 @@ public class PLPMsg {
         return errorCode;
     }
 
-    // Information message
+    /**
+     * Prints an informative message to the current output object.
+     *
+     * @param infoStr Information string to print out.
+     * @param objIdentifier The object invoking this call.
+     */
     public static void I(String infoStr, Object objIdentifier) {
         if(objIdentifier != null)
             if(output == null)
@@ -68,7 +92,14 @@ public class PLPMsg {
                 output.append("[I] " + infoStr + "\n");
     }
 
-    // Debug message
+    /**
+     * Prints out a debug message if the current debug level is lower or
+     * equal to the requested level.
+     *
+     * @param debugStr Debug string to print out.
+     * @param requestedDebugLevel Debug level requested.
+     * @param objIdentifier The object invoking this call.
+     */
     public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
         if(requestedDebugLevel <= Constants.debugLevel)
             if(objIdentifier != null)
@@ -83,7 +114,11 @@ public class PLPMsg {
                     output.append("[D] " + debugStr + "\n");
     }
 
-    // Standard out
+    /**
+     * Re-routable System.out.println(String)
+     *
+     * @param msgStr Message string
+     */
     public static void M(String msgStr) {
         if(output == null)
             System.out.println(msgStr);
@@ -91,7 +126,11 @@ public class PLPMsg {
             output.append(msgStr + "\n");
     }
 
-    // Standard out no new-line
+    /**
+     * Re-routable System.out.print(String)
+     *
+     * @param msgStr Message string
+     */
     public static void m(String msgStr) {
         if(output == null)
             System.out.print(msgStr);
@@ -99,7 +138,9 @@ public class PLPMsg {
             output.append(msgStr);
     }
 
-    // Mark
+    /**
+     * Debug marking.
+     */
     public static void mark() {
         if(output == null)
             System.out.println("[D] " + markCounter + " We're here!");

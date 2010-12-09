@@ -28,15 +28,31 @@ import java.util.LinkedList;
 import javax.swing.JInternalFrame;
 
 /**
- * This class connects a module to its display frame, and allows users to
+ * This class associates a module to its display frame, and allows users to
  * dynamically load / remove modules during runtime. Module developers
  * need to add module information and initialization here. 
  *
+ * @see plptool.PLPSimBus
+ * @see plptool.PLPSimBusModule
+ * @see plp.PLPIORegistry
  * @author wira
  */
 public class IORegistry {
+    /**
+     * This is the data structure storing all the modules attached to this
+     * registry
+     */
     private ArrayList<PLPSimBusModule> modules;
+
+    /**
+     * This list contains references to the GUI frames of attached
+     * PLPSimBusModule objects.
+     */
     private ArrayList<JInternalFrame> moduleFrames;
+
+    /**
+     * Stores the position of the attached modules in the simulation bus.
+     */
     private LinkedList<Integer> positionInBus;
 
     /**********************************************************************
@@ -48,6 +64,11 @@ public class IORegistry {
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
 
+    /**
+     * IORegistry constructor populates the module information array.
+     * Module developers will have to add their module's information here
+     * to be listed in the PLPTool I/O window.
+     */
     public IORegistry() {
         modules = new ArrayList<PLPSimBusModule>();
         moduleFrames = new ArrayList<JInternalFrame>();
@@ -68,6 +89,7 @@ public class IORegistry {
 
         /* ********************************************************************/
         // PLPSimMemModule
+
         mods[0][0] = "Memory Module";
         mods[0][1] = true;
         mods[0][2] = 0;
@@ -79,6 +101,7 @@ public class IORegistry {
 
         /* ********************************************************************/
         // LEDArray
+
         mods[1][0] = "LED Array";
         mods[1][1] = false;
         mods[1][2] = 1;
@@ -89,8 +112,10 @@ public class IORegistry {
         mods[1][4] = true;
         mods[1][5] = true;
 
+
         /* ********************************************************************/
-        // LEDArray
+        // Switches
+
         mods[2][0] = "Switches";
         mods[2][1] = false;
         mods[2][2] = 1;
@@ -105,6 +130,21 @@ public class IORegistry {
         // ADDITIONAL MODULE INFO HERE 
     }
 
+    /**
+     * Instantiates and attaches a PLPSimBusModule-based module to this I/O
+     * registry and to the bus of the given simulation core. This method also
+     * associates a module with its internal frame, if GUI representation is
+     * implemented. Module developers will have to write their module's
+     * initialization here.
+     *
+     * @param index Module type as registered in the constructor.
+     * @param addr The starting address of the module's address space.
+     * @param size The size of the module's address space.
+     * @param sim Simulation core associated with the main application.
+     * @param mainWindow PLPTool application root window.
+     * @return PLP_OK on completion, or PLP_SIM_INVALID_MODULE if invalid index
+     * is specified.
+     */
     public int attachModuleToBus(int index, long addr, long size, PLPSimCore sim, PLPToolView mainWindow) {
 
         PLPSimBusModule module = null;
@@ -133,8 +173,8 @@ public class IORegistry {
             /******************************************************************/
             // Switches is summoned
             case 2:
-                // module = new Switches(addr);
-                // moduleFrame = new SwitchesFrame((Switches) module);
+                module = new Switches(addr);
+                moduleFrame = new SwitchesFrame((Switches) module);
 
                 break;
 
@@ -160,26 +200,51 @@ public class IORegistry {
         return Constants.PLP_OK;
     }
 
+    /**
+     * @return The number of modules attached to this registry.
+     */
     public int getNumOfModsAttached() {
         return modules.size();
     }
 
+    /**
+     * @return The number of modules defined in the registry.
+     */
     public int getNumOfMods() {
         return NUMBER_OF_MODULES;
     }
 
+    /**
+     * @param index Index of the module to be retrieved.
+     * @return The module at index attached to this registry.
+     */
     public PLPSimBusModule getModule(int index) {
         return modules.get(index);
     }
 
+    /**
+     * @param index Index of the module.
+     * @return The position of the specified module in the simulation bus.
+     */
     public int getPositionInBus(int index) {
         return positionInBus.get(index);
     }
 
+    /**
+     * @param index Index of the module.
+     * @return The frame object associated with the specified module.
+     */
     public JInternalFrame getModuleFrame(int index) {
         return moduleFrames.get(index);
     }
 
+    /**
+     * Removes all modules attached to this registry AND removes them
+     * from the simulation bus, effectively destroying all modules that
+     * were attached to the simulation.
+     *
+     * @param sim Simulation core that is being run.
+     */
     public void removeAllModules(PLPSimCore sim) {
         while(!modules.isEmpty()) {
             if(moduleFrames.get(0) != null)
@@ -190,6 +255,13 @@ public class IORegistry {
         }
     }
 
+    /**
+     * Removes the specified module from the registry AND the simulation
+     * bus.
+     *
+     * @param index Index of the module to be removed.
+     * @param sim Simulation core that is being run.
+     */
     public void removeModule(int index, PLPSimCore sim) {
         sim.bus.remove(positionInBus.get(index));
         positionInBus.remove(index);
@@ -205,15 +277,25 @@ public class IORegistry {
         }
     }
 
+    /**
+     * Execute a GUI evaluation on all modules attached to this registry.
+     */
     public void gui_eval() {
         for(int index = 0; index < getNumOfModsAttached(); index++)
             modules.get(index).gui_eval(moduleFrames.get(index));
     }
-    
+
+    /**
+     * @return Module information in an object array. Used by the I/O window
+     * of the main app to list available modules that are in this registry.
+     */
     public Object[][] getAvailableModulesInformation() {
         return mods;
     }
 
+    /**
+     * @return All modules attached to this registry as an object array.
+     */
     public Object[] getAttachedModules() {
         return modules.toArray();
     }

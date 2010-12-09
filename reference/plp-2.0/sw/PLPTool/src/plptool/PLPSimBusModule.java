@@ -184,10 +184,8 @@ public abstract class PLPSimBusModule {
     }
 
     /**
-     * Return the set of addresses, values and boolean denoting whether the
-     * stored value is an instruction in an n x 3 array. This can
-     * be useful to modules that have to walk through the whole register file
-     * on evaluation.
+     * This method can be useful to modules that have to walk through the whole
+     * register file on evaluation.
      *
      * @return n x 3 Object array containing addresses, values of the
      * memory module and boolean denoting whether the value is instruction or
@@ -298,7 +296,7 @@ public abstract class PLPSimBusModule {
      * function every cycle, so this may slow down the simulation
      * considerably.
      *
-     * @return int
+     * @return Status code.
      */
     abstract public int eval();
 
@@ -310,10 +308,12 @@ public abstract class PLPSimBusModule {
      *
      * @param x Reference to a frame object that this module will interact
      * with.
-     * @return
+     * @return Status code.
      */
     abstract public int gui_eval(Object x);
 
-    // introduction string when the module is loaded
+    /**
+     * Introduction string when the module is loaded.
+     */
     abstract public String introduce();
 }
