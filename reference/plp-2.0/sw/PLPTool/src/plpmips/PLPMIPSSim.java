@@ -153,9 +153,9 @@ public class PLPMIPSSim extends PLPSimCore {
                 PLPMsg.M("Warning: Program doesn't fit in memory.");
             else {
                 if (asm.isInstruction(i) == 0)
-                    memory.write(addrTable[i], objCode[i], true);
+                    bus.write(addrTable[i], objCode[i], true);
                 else
-                    memory.write(addrTable[i], objCode[i], false);
+                    bus.write(addrTable[i], objCode[i], false);
             }
         }
 
@@ -257,7 +257,7 @@ public class PLPMIPSSim extends PLPSimCore {
                             Constants.PLP_SIM_INSTRMEM_OUT_OF_BOUNDS, this);
 
         // fetch instruction / frontend stage
-        id_stage.i_instruction = memory.read(addr);
+        id_stage.i_instruction = (Long) bus.read(addr);
         id_stage.i_instrAddr = addr;
         id_stage.i_ctl_pcplus4 = addr + 4;
 

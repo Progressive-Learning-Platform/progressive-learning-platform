@@ -556,7 +556,6 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
             fillProgramMemoryTable();
         }
         simCLConsole.setText("");
-        simCLOutput.setCaretPosition(simCLOutput.getText().length() - 1);
         updateComponents();
 }//GEN-LAST:event_simCLExecActionPerformed
 
