@@ -28,9 +28,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="btnClose" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnClose" min="-2" pref="93" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnApply" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnApply" min="-2" pref="94" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jTabbedPane1" alignment="1" pref="417" max="32767" attributes="0"/>
               </Group>

@@ -9,7 +9,9 @@ import plptool.PLPSimBusModule;
 import plptool.PLPMsg;
 
 /**
+ * PLP Switches I/O module.
  *
+ * @see PLPSimBusModule
  * @author wira
  */
 public class Switches extends PLPSimBusModule {
