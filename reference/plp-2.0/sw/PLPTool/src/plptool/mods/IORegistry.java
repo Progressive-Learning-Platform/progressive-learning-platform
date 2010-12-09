@@ -18,7 +18,6 @@
 
 package plptool.mods;
 
-import plp.PLPToolView;
 import plptool.PLPSimCore;
 import plptool.PLPSimBusModule;
 import plptool.Constants;
@@ -48,7 +47,7 @@ public class IORegistry {
      * This list contains references to the GUI frames of attached
      * PLPSimBusModule objects.
      */
-    private ArrayList<JInternalFrame> moduleFrames;
+    private ArrayList<Object> moduleFrames;
 
     /**
      * Stores the position of the attached modules in the simulation bus.
@@ -71,7 +70,7 @@ public class IORegistry {
      */
     public IORegistry() {
         modules = new ArrayList<PLPSimBusModule>();
-        moduleFrames = new ArrayList<JInternalFrame>();
+        moduleFrames = new ArrayList<Object>();
 
         // We save bus position because the simulation core may already
         // have built-in modules attached
@@ -141,14 +140,16 @@ public class IORegistry {
      * @param addr The starting address of the module's address space.
      * @param size The size of the module's address space.
      * @param sim Simulation core associated with the main application.
-     * @param mainWindow PLPTool application root window.
+     * @param simDesktop Simulator desktop the module frames will be added to
+     * (if applicable).
      * @return PLP_OK on completion, or PLP_SIM_INVALID_MODULE if invalid index
      * is specified.
      */
-    public int attachModuleToBus(int index, long addr, long size, PLPSimCore sim, PLPToolView mainWindow) {
+    public int attachModuleToBus(int index, long addr, long size,
+                                 PLPSimCore sim, javax.swing.JDesktopPane simDesktop) {
 
         PLPSimBusModule module = null;
-        JInternalFrame moduleFrame = null;
+        Object moduleFrame = null;
 
         switch(index) {
 
@@ -194,8 +195,10 @@ public class IORegistry {
         module.enable();
         positionInBus.add(sim.bus.add(module));
 
-        if(moduleFrame != null)
-            mainWindow.summonFrame(moduleFrame);
+        if(moduleFrame != null && simDesktop != null && moduleFrame instanceof JInternalFrame) {
+            simDesktop.add((JInternalFrame) moduleFrame);
+            ((JInternalFrame) moduleFrame).setVisible(true);
+        }
 
         return Constants.PLP_OK;
     }
@@ -234,7 +237,7 @@ public class IORegistry {
      * @param index Index of the module.
      * @return The frame object associated with the specified module.
      */
-    public JInternalFrame getModuleFrame(int index) {
+    public Object getModuleFrame(int index) {
         return moduleFrames.get(index);
     }
 
@@ -247,8 +250,8 @@ public class IORegistry {
      */
     public void removeAllModules(PLPSimCore sim) {
         while(!modules.isEmpty()) {
-            if(moduleFrames.get(0) != null)
-                moduleFrames.get(0).dispose();
+            if(moduleFrames.get(0) != null && moduleFrames.get(0) instanceof JInternalFrame)
+                ((JInternalFrame) moduleFrames.get(0)).dispose();
             moduleFrames.remove(0);
             modules.remove(0);
             sim.bus.remove(positionInBus.remove(positionInBus.size() - 1));
@@ -266,8 +269,8 @@ public class IORegistry {
         sim.bus.remove(positionInBus.get(index));
         positionInBus.remove(index);
         modules.remove(index);
-        if(moduleFrames.get(index) != null)
-            moduleFrames.get(index).dispose();
+        if(moduleFrames.get(index) != null && moduleFrames.get(0) instanceof JInternalFrame)
+            ((JInternalFrame) moduleFrames.get(index)).dispose();
         moduleFrames.remove(index);
 
         // we have to update bus positions

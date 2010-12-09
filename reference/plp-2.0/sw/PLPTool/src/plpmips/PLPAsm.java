@@ -68,6 +68,7 @@ public class PLPAsm {
      */
     private HashMap<String, Long> regionMap;
 
+    private int         mapperIndex;
     private int[]       lineNumMap;
     private int[]       asmFileMap;
     private int[]       entryType;
@@ -82,6 +83,11 @@ public class PLPAsm {
     private static HashMap<String, Byte>        opcode;
     private static HashMap<String, Byte>        funct;
     private static HashMap<String, Byte>        regs;
+
+    /**
+     * Current index of assembly file
+     */
+    private int         asmIndex;
 
     /**
      * This variable describes the state of the asm sources attached to this
@@ -113,6 +119,8 @@ public class PLPAsm {
         opcode = new HashMap<String, Byte>();
         funct = new HashMap<String, Byte>();
         regs = new HashMap<String, Byte>();
+        asmIndex = 0;
+        mapperIndex = 0;
 
         directiveOffset = 0;
         topLevelFile = strFilePath;
@@ -287,11 +295,11 @@ public class PLPAsm {
      * @return Returns 0 on completion, error code otherwise
      * @param asmIndex asm source index to preprocess
      */
-    public int preprocess(int asmIndex) {
+    public int preprocess(int index) {
         int i = 0, j = 0;
         int recursionRetVal;
 
-        PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(asmIndex);
+        PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(index);
         curActiveFile = topLevelAsm.getAsmFilePath();
 
         String delimiters = ",[ ]+|,|[ ]+|[()]|\t";
@@ -300,6 +308,11 @@ public class PLPAsm {
         String[] asmTokens;
         String savedActiveFile;
         String tempLabel;
+
+        if(lineNumMap == null) {
+            lineNumMap = new int[asmLines.length];
+            asmFileMap = new int[asmLines.length];
+        }
 
         try {
 
@@ -324,7 +337,7 @@ public class PLPAsm {
                                    Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
 
-                preprocessedAsm += "ASM__SKIP__\n";
+                appendPreprocessedAsm("ASM__SKIP__", i, true);
                 asmIndex++;
                 PLPAsmSource childAsm = new PLPAsmSource
                                             (null, asmTokens[1], asmIndex);
@@ -345,7 +358,8 @@ public class PLPAsm {
                                   Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
 
-                preprocessedAsm += "ASM__ORG__ " + asmTokens[1] + "\n";
+                appendPreprocessedAsm("ASM__ORG__ " + asmTokens[1], i, true);
+
                 directiveOffset++;
                 curAddr = sanitize32bits(asmTokens[1]);
             }
@@ -358,7 +372,7 @@ public class PLPAsm {
                                    Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 }
 
-                preprocessedAsm += "ASM__WORD__ " + asmTokens[1] + "\n";
+                appendPreprocessedAsm("ASM__WORD__ " + asmTokens[1], i, true);
                 curAddr += 4;
             }
 
@@ -372,14 +386,14 @@ public class PLPAsm {
                 }
                 
                 for(j = 0; j < Integer.parseInt(asmTokens[1]); j++) {
-                    preprocessedAsm += "ASM__WORD__ 0\n";
+                    appendPreprocessedAsm("ASM__WORD__ 0", i, true);
                     curAddr += 4;
                 }
             }
 
             // Comments
             else if(asmLines[i - 1].equals("") || asmTokens[0].charAt(0) == '#') {
-                preprocessedAsm += "ASM__SKIP__\n";
+                appendPreprocessedAsm("ASM__SKIP__", i, true);
                 directiveOffset++;
             }
             
@@ -393,7 +407,7 @@ public class PLPAsm {
                                     Constants.PLP_ASM_DUPLICATE_LABEL, this);
                 }
                 symTable.put(tempLabel, new Long((int) curAddr));
-                preprocessedAsm += "ASM__SKIP__\n";
+                appendPreprocessedAsm("ASM__SKIP__", i, true);
                 directiveOffset++;
             }
 
@@ -435,13 +449,13 @@ public class PLPAsm {
 
                 for(j = 0; j < strLen; j++) {
                     if(j % 4 == 0)
-                        preprocessedAsm += "ASM__WORD__ 0x";
+                        appendPreprocessedAsm("ASM__WORD__ 0x", i, false);
 
-                    preprocessedAsm += String.format("%02x", (int) tString[1].charAt(j));
+                    appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
 
                     if((j + 1) % 4 == 0 && j > 0) {
                         curAddr += 4;
-                        preprocessedAsm += "\n";
+                        appendPreprocessedAsm("", i, true);
                     }
                 }
 
@@ -451,19 +465,19 @@ public class PLPAsm {
 
             // Pseudo-ops
             else if(asmTokens[0].equals("nop")) {
-                preprocessedAsm += "sll $0,$0,0\n";
+                appendPreprocessedAsm("sll $0,$0,0", i, true);
                 curAddr += 4;
             }
 
             else if(asmTokens[0].equals("move")) {
-                preprocessedAsm += "or " + asmTokens[1] + ",$0," + asmTokens[2] + "\n";
+                appendPreprocessedAsm("or " + asmTokens[1] + ",$0," + asmTokens[2], i, true);
                 curAddr += 4;
             }
 
             // load-immediate
             else if(asmTokens[0].equals("li")) {
-                preprocessedAsm += "lui " + asmTokens[1] + ",$_hi:" + asmTokens[2] + "\n";
-                preprocessedAsm += "ori " + asmTokens[1] + "," + asmTokens[1] + ",$_lo:" + asmTokens[2] + "\n";
+                appendPreprocessedAsm("lui " + asmTokens[1] + ",$_hi:" + asmTokens[2], i, true);
+                appendPreprocessedAsm("ori " + asmTokens[1] + "," + asmTokens[1] + ",$_lo:" + asmTokens[2], i, true);
                 curAddr += 8;
             }
 
@@ -475,7 +489,7 @@ public class PLPAsm {
                 }
                 PLPMsg.D("exit i: " + i, 5, this);
                 curAddr += 4;
-                preprocessedAsm += asmLines[i - 1] + "\n";
+                appendPreprocessedAsm(asmLines[i - 1], i, true);
             }
 
             PLPMsg.D("pr:\n" + preprocessedAsm + ">>>", 30, this);
@@ -490,6 +504,37 @@ public class PLPAsm {
         PLPMsg.D("First pass completed.", 1, this);
 
         return 0;
+    }
+
+    /**
+     * Appends the preprocessed assembly string. This method also updates
+     * the assembly file and line number mapping for error reporting purposes.
+     *
+     * @param index The 'preprocessed assembly' line number.
+     * @param str Text to add to the string.
+     * @param lineNum The line number of the assembly file currently being
+     * preprocessed.
+     */
+    public void appendPreprocessedAsm(String str, int lineNum, boolean newline) {
+
+        // running out of mapper space? This is a complete hack!
+
+        if(mapperIndex >= lineNumMap.length) {
+            int[] newLineNumMap = new int[2 * lineNumMap.length];
+            System.arraycopy(lineNumMap, 0, newLineNumMap, 0, lineNumMap.length);
+            lineNumMap = newLineNumMap;
+            int[] newAsmFileMap = new int[2 * lineNumMap.length];
+            System.arraycopy(asmFileMap, 0, newAsmFileMap, 0, asmFileMap.length);
+            asmFileMap = newAsmFileMap;
+
+            PLPMsg.D("new lineNumMap length: " + lineNumMap.length, 5, this);
+        }
+
+        lineNumMap[mapperIndex] = lineNum;
+        asmFileMap[mapperIndex] = asmIndex;
+        if(newline)
+            mapperIndex++;
+        preprocessedAsm += str + (newline ? "\n" : "");
     }
 
     /**
@@ -530,7 +575,8 @@ public class PLPAsm {
             stripComments[0] = stripComments[0].trim();
             asmTokens = stripComments[0].split(delimiters);
             skip = false;
-            PLPMsg.D("assemble(line " + (i + lineNumOffset) + "): " + asmLines[i], 3, this);
+            PLPMsg.D("assemble(file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                     " line " + lineNumMap[i]  + "): " + asmLines[i], 3, this);
 
             // resolve symbols
             String tSymbol;
@@ -576,13 +622,14 @@ public class PLPAsm {
 
                 // 3-op R-type
                 case 0:
-                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 4, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
 
@@ -595,12 +642,13 @@ public class PLPAsm {
 
                 // Shift R-type
                 case 1:
-                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 4, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                          Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
 
@@ -613,11 +661,12 @@ public class PLPAsm {
 
                 // Jump R-type
                 case 2:
-                    if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 2, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
@@ -627,15 +676,17 @@ public class PLPAsm {
 
                 // Branch I-type
                 case 3:
-                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 4, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     if(!symTable.containsKey(asmTokens[3])) {
-                        return PLPMsg.E("assemble(): Invalid branch target in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid branch target in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_BRANCH_TARGET, this);
                     }
                     branchTarget = symTable.get(asmTokens[3]) - (asmPC + 4);
@@ -649,12 +700,13 @@ public class PLPAsm {
 
                 // Arithmetic and Logic I-type
                 case 4:
-                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 4, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= sanitize16bits(asmTokens[3]);
@@ -666,11 +718,12 @@ public class PLPAsm {
 
                 // Load upper immediate I-type
                 case 5:
-                    if(!checkNumberOfOperands(asmTokens, 3, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 3, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= sanitize16bits(asmTokens[2]);
@@ -681,12 +734,13 @@ public class PLPAsm {
 
                 // Load/Store Word I-type
                 case 6:
-                    if(!checkNumberOfOperands(asmTokens, 4, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 4, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     objectCode[i - s] |= sanitize16bits(asmTokens[2]);
@@ -698,11 +752,12 @@ public class PLPAsm {
 
                 // J-type
                 case 7:
-                    if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 2, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!symTable.containsKey(asmTokens[1])) {
-                        return PLPMsg.E("assemble(): Invalid jump target in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid jump target in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_JUMP_TARGET, this);
                     }
 
@@ -717,12 +772,13 @@ public class PLPAsm {
 
                 // jalr Instruction
                 case 9:
-                    if(!checkNumberOfOperands(asmTokens, 3, i + lineNumOffset))
+                    if(!checkNumberOfOperands(asmTokens, 3, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                         return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                     if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        return PLPMsg.E("assemble(): Invalid register in line " + (i + lineNumOffset),
+                        return PLPMsg.E("assemble(): Invalid register in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
                                         Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
 
@@ -736,13 +792,13 @@ public class PLPAsm {
                 case 10:
                     ;
                     if(asmTokens[0].equals("ASM__WORD__")) {
-                        if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
+                        if(!checkNumberOfOperands(asmTokens, 2, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                             return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
                         entryType[i - s] = 1;
                         objectCode[i - s] = sanitize32bits(asmTokens[1]);
                     }
                     else if(asmTokens[0].equals("ASM__ORG__")) {
-                        if(!checkNumberOfOperands(asmTokens, 2, i + lineNumOffset))
+                        if(!checkNumberOfOperands(asmTokens, 2, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                             return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;
 
                         asmPC = sanitize32bits(asmTokens[1]);
@@ -767,8 +823,9 @@ public class PLPAsm {
             }
 
             if(PLPMsg.lastError > 0) {
-                return PLPMsg.E("assemble(): Unhandled error(s) encountered in line " + (i + lineNumOffset) + ". Assembly failed.",
-                                 Constants.PLP_GENERIC_ERROR, this);
+                    return PLPMsg.E("assemble(): Unhandled error in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i],
+                                        Constants.PLP_GENERIC_ERROR, this);
             }
 
             // Update address table and assembler PC if this line is a valid
@@ -784,8 +841,8 @@ public class PLPAsm {
         assembled = true;
         
         } catch(Exception e) {
-            return PLPMsg.E("assemble(): Uncaught exception in line " +
-                            (i + lineNumOffset) + "\n" + e,
+            return PLPMsg.E("assemble(): Unhandled exception in file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+                                        " line number " + lineNumMap[i] + "\n" + e,
                             Constants.PLP_GENERIC_ERROR, this);
         }
 
@@ -1007,9 +1064,10 @@ public class PLPAsm {
      * @param length assertion
      * @param lineNum line number in asm source where this function is called
      */
-    private boolean checkNumberOfOperands(Object iObj[], int length, int lineNum) {
+    private boolean checkNumberOfOperands(Object iObj[], int length, String file, int lineNum) {
         if(iObj.length != length) {
-            PLPMsg.E("checkNumberOfOperands(): Invalid number of operands in line " + lineNum,
+            PLPMsg.E("checkNumberOfOperands(): Invalid number of operands in file " + file +
+                    " line " + lineNum,
                             Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS, this);
             return false;
         }

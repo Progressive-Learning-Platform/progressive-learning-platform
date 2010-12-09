@@ -46,12 +46,16 @@ import java.awt.Color;
 public class PLPToolView extends FrameView {
 
     static final int MAX_STEPS = 60000;
+    PLPToolApp toolApp = null;
 
     public PLPToolView(SingleFrameApplication app) {
         super(app);
 
+        toolApp = (PLPToolApp) app;
+
         initComponents();
         ioRegistry = new IORegistry();
+        toolApp.setIORegistry(ioRegistry);
         simFrame = null;
         ioRegWindow = null;
         PLPMsg.output = Output; // reroute PLPMsg output
@@ -554,6 +558,7 @@ public class PLPToolView extends FrameView {
             sim = new PLPMIPSSim(asm, -1);
             // *******************************
 
+            toolApp.setSim(sim);
             sim.reset();
             sim.step();
 
@@ -663,6 +668,11 @@ public class PLPToolView extends FrameView {
         if(sim != null)
             ioRegistry.removeAllModules(sim);
     }
+
+    public javax.swing.JDesktopPane getSimDesktop() {
+        return simDesktop;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton IDEAssembleBtn;

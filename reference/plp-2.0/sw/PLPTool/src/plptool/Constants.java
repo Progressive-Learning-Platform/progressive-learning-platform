@@ -77,6 +77,7 @@ public static final String versionString = "Beta 2";
     public static final int PLP_PRG_INVALID_PLP_FILE             = 517;
     public static final int PLP_PRG_INVALID_IMAGE_FILE           = 518;
     public static final int PLP_PRG_IMAGE_OUT_OF_DATE            = 519;
+    public static final int PLP_PRG_UNABLE_TO_CLOSE_PORT         = 520;
 
     // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFF0;
