@@ -128,7 +128,8 @@ public class IORegistry {
         mods[3][0] = "FTracer";
         mods[3][1] = true;
         mods[3][2] = 1337;
-        mods[3][3] = "Traces all bus activity to the console.";
+        mods[3][3] = "Traces all bus activity to the console. This module "
+                   + "requires the simulator to be reset to work properly.";
         mods[3][4] = true;
         mods[3][5] = false;
 

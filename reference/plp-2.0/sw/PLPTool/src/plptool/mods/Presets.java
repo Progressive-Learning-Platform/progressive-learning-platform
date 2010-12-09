@@ -50,6 +50,16 @@ public class Presets {
 
             new Long[]{(long) 1,
                        (long) 1}
+        },
+        /**********************************************************************/
+        {
+            "Tracer covering whole memory space",
+
+            new Integer[]{3},
+
+            new Long[]{(long) 0x0},
+
+            new Long[]{(long) 0xfffffff << 4 | 0xf}
         }
     };
 

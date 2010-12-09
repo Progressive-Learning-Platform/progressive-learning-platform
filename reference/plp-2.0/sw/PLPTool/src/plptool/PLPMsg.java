@@ -122,8 +122,10 @@ public class PLPMsg {
     public static void M(String msgStr) {
         if(output == null)
             System.out.println(msgStr);
-        else
+        else {
             output.append(msgStr + "\n");
+            output.setCaretPosition(output.getText().length() - 1);
+        }
     }
 
     /**
@@ -134,8 +136,10 @@ public class PLPMsg {
     public static void m(String msgStr) {
         if(output == null)
             System.out.print(msgStr);
-        else
+        else {
             output.append(msgStr);
+            output.setCaretPosition(output.getText().length() - 1);
+        }
     }
 
     /**
