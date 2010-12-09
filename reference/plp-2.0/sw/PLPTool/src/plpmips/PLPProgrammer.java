@@ -78,6 +78,18 @@ public class PLPProgrammer {
         return Constants.PLP_OK;
     }
 
+    public int close() {
+        try {
+            in.close();
+            out.close();
+
+            return Constants.PLP_OK;
+        } catch(Exception e) {
+            return PLPMsg.E("Can not close serial port.",
+                    Constants.PLP_PRG_UNABLE_TO_CLOSE_PORT, null);
+        }
+    }
+
     public int programWithPLPFile(String plpFilePath) throws Exception {
         File plpFile = new File(plpFilePath);
         TarArchiveEntry entry;

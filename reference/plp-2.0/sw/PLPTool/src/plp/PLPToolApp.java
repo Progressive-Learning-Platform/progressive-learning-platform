@@ -25,17 +25,23 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.PLPMsg;
 import plptool.Constants;
+import plptool.mods.IORegistry;
 
 /**
  * The main class of the application.
  */
 public class PLPToolApp extends SingleFrameApplication {
+    
+    PLPToolView mainWindow;
+    private plptool.PLPSimCore sim;
+    private IORegistry ioRegistry;
 
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        show(new PLPToolView(this));
+        mainWindow = new PLPToolView(this);
+        show(mainWindow);
     }
 
     /**
@@ -97,6 +103,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 try {
                     plpProg.connect(args[2], Integer.parseInt(args[3]));
                     plpProg.programWithPLPFile(args[1]);
+                    plpProg.close();
                 } catch(Exception e) {
                     
                 }
@@ -128,5 +135,21 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("      Launches the command line emulator to simulate <asm>.");
             System.out.println();
         }
+    }
+
+    public plptool.PLPSimCore getSim() {
+        return sim;
+    }
+
+    public void setSim(plptool.PLPSimCore sim) {
+        this.sim = sim;
+    }
+
+    public IORegistry getIORegistry() {
+        return ioRegistry;
+    }
+
+    public void setIORegistry(IORegistry ioRegistry) {
+        this.ioRegistry = ioRegistry;
     }
 }

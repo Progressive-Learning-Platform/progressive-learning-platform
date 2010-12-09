@@ -20,11 +20,12 @@ package plp;
 
 import plptool.mods.IORegistry;
 import plptool.mods.Presets;
-import plptool.PLPSimBusModule;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Front-end for IORegistry for PLPToolView
  *
+ * @see IORegistry
  * @author wira
  */
 public class PLPIORegistry extends javax.swing.JInternalFrame {
@@ -320,7 +321,6 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmbModuleSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbModuleSelectActionPerformed
-        // TODO add your handling code here:
         if(modInfo != null && cmbModuleSelect.getSelectedIndex() >= 0) {
 
         if(!(Boolean) modInfo[cmbModuleSelect.getSelectedIndex()][1]) {
@@ -337,8 +337,6 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_cmbModuleSelectActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
-
         int modIndex = cmbModuleSelect.getSelectedIndex();
         long addr = plptool.PLPToolbox.parseNum(txtModuleAddress.getText());
         long size = plptool.PLPToolbox.parseNum(txtModuleRegfileSize.getText());
@@ -346,7 +344,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
         if(addr != plptool.Constants.PLP_NUMBER_ERROR && size > 0) {
             if(!(Boolean) modInfo[modIndex][4] || (addr % 4 == 0)) {
-                mainWindow.getIORegistry().attachModuleToBus(modIndex, addr, size, mainWindow.getSim(), mainWindow);
+                mainWindow.getIORegistry().attachModuleToBus(modIndex, addr, size, mainWindow.getSim(), mainWindow.getSimDesktop());
                 refreshModulesTable();
             }
         } else {
@@ -382,7 +380,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             Long[] startAddresses = (Long[]) Presets.presets[index][2];
             Long[] sizes = (Long[]) Presets.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
-                mainWindow.getIORegistry().attachModuleToBus(modsType[i], startAddresses[i], sizes[i], mainWindow.getSim(), mainWindow);
+                mainWindow.getIORegistry().attachModuleToBus(modsType[i], startAddresses[i], sizes[i], mainWindow.getSim(), mainWindow.getSimDesktop());
             mainWindow.updateComponents();
             refreshModulesTable();
         }
