@@ -13,6 +13,7 @@ public class FTracer extends PLPSimBusModule {
 
     public FTracer(long addr, long size) {
         super(addr, size, true);
+        PLPMsg.M("TRACER Registered");
     }
 
     public int eval() {
@@ -29,16 +30,11 @@ public class FTracer extends PLPSimBusModule {
         return "Tracer";
     }
 
-    public int file(String f) {
-        //open file
-        
-        return Constants.PLP_OK;
-    }
-
     @Override
     public int write(long addr, Object data, boolean isInstr) {
         //trace!
-
+        if (!isInstr)
+            PLPMsg.M(String.format("[TRACE] W %08x %08x", addr, data ));
         return super.writeReg(addr, data, isInstr);
     }
 
@@ -47,6 +43,9 @@ public class FTracer extends PLPSimBusModule {
         Object ret = super.readReg(addr);
 
         //trace ret
+        char rType = super.isInstr(addr) ? 'I' : 'R';
+
+        PLPMsg.M(String.format("[TRACE] %c %08x %08x", rType, addr, (Long)ret));
 
         return ret;
     }
