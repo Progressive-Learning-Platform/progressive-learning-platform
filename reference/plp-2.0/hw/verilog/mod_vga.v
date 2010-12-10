@@ -55,7 +55,7 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
 		end
 	end			
 	
-	assign fb_write = (de && drw && (daddr == 32'h00000000 || daddr => 32'h0000000c) ? 1 : 0;
+	assign fb_write = (de && drw && (daddr == 32'h00000000 || daddr >= 32'h0000000c)) ? 1 : 0;
 	assign eff_daddr = (daddr == 32'h00000000) ? (col + (320 * row)) : daddr[16:0];
 	assign ddata = (daddr == 32'h00000004) ? {22'b0, row} :
 			  (daddr == 32'h00000008) ? {22'b0, col} : {24'b0, eff_dout_fb};
@@ -124,7 +124,7 @@ module vga_bram(clka, clkb, ena, enb, wea, addra, addrb, dia, doa, dob);
         input clka, clkb;
         input wea;
         input ena, enb;
-        input [10:0] addra, addrb;
+        input [16:0] addra, addrb;
         input [7:0] dia;
         output reg [7:0] doa, dob;
         reg [7:0] RAM [76799:0];
