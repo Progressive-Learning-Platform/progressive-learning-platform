@@ -148,7 +148,7 @@ public class PLPToolView extends FrameView {
         btnMem = new javax.swing.JToggleButton();
         lblFlags = new javax.swing.JLabel();
         txtFlags = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnOpts = new javax.swing.JButton();
         simDesktop = new javax.swing.JDesktopPane();
         PrgPane = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -283,20 +283,20 @@ public class PLPToolView extends FrameView {
         IDEPane.setLayout(IDEPaneLayout);
         IDEPaneLayout.setHorizontalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
+            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDELabel_Command)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE))
-            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
-            .addComponent(IDEBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
+                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
+            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
+            .addComponent(IDEBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
         );
         IDEPaneLayout.setVerticalGroup(
             IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(IDEPaneLayout.createSequentialGroup()
                 .addComponent(IDEBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(IDEScroller, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -359,11 +359,11 @@ public class PLPToolView extends FrameView {
         txtFlags.setText(resourceMap.getString("txtFlags.text")); // NOI18N
         txtFlags.setName("txtFlags"); // NOI18N
 
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnOpts.setText(resourceMap.getString("btnOpts.text")); // NOI18N
+        btnOpts.setName("btnOpts"); // NOI18N
+        btnOpts.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnOptsActionPerformed(evt);
             }
         });
 
@@ -391,8 +391,8 @@ public class PLPToolView extends FrameView {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtFlags, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(137, Short.MAX_VALUE))
+                .addComponent(btnOpts)
+                .addContainerGap(152, Short.MAX_VALUE))
         );
         simControlsLayout.setVerticalGroup(
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -408,12 +408,11 @@ public class PLPToolView extends FrameView {
                     .addComponent(btnMem)
                     .addComponent(lblFlags)
                     .addComponent(txtFlags, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(btnOpts))
                 .addContainerGap())
         );
 
         simDesktop.setBackground(resourceMap.getColor("simDesktop.background")); // NOI18N
-        simDesktop.setAutoscrolls(true);
         simDesktop.setName("simDesktop"); // NOI18N
 
         javax.swing.GroupLayout SimPaneLayout = new javax.swing.GroupLayout(SimPane);
@@ -421,12 +420,12 @@ public class PLPToolView extends FrameView {
         SimPaneLayout.setHorizontalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(simControls, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
+            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
         );
         SimPaneLayout.setVerticalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimPaneLayout.createSequentialGroup()
-                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
+                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(simControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -467,9 +466,9 @@ public class PLPToolView extends FrameView {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 705, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 705, Short.MAX_VALUE)
-                    .addComponent(jComboBox3, 0, 705, Short.MAX_VALUE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 686, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 686, Short.MAX_VALUE)
+                    .addComponent(jComboBox3, 0, 686, Short.MAX_VALUE))
                 .addContainerGap())
         );
         PrgPaneLayout.setVerticalGroup(
@@ -487,7 +486,7 @@ public class PLPToolView extends FrameView {
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(421, Short.MAX_VALUE))
+                .addContainerGap(391, Short.MAX_VALUE))
         );
 
         PLPMainPane.addTab(resourceMap.getString("PrgPane.TabConstraints.tabTitle"), PrgPane); // NOI18N
@@ -509,14 +508,14 @@ public class PLPToolView extends FrameView {
             OutputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OutputPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
+                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
                 .addContainerGap())
         );
         OutputPaneLayout.setVerticalGroup(
             OutputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OutputPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -542,7 +541,9 @@ public class PLPToolView extends FrameView {
         PLPMsg.output = IDEStdOut;
         destroySimulation();
         PLPMsg.M("Assembling...");
-        asm = new PLPAsm(IDEEditor.getText(), "IDEEditor", 0);
+        
+        if(PLPCfg.cfgArch.equals("plpmips"))
+            asm = new PLPAsm(IDEEditor.getText(), "IDEEditor", 0);
 
         if((ret = asm.preprocess(0)) == Constants.PLP_OK) {
             ret = asm.assemble();
@@ -554,22 +555,19 @@ public class PLPToolView extends FrameView {
             
             errFrame = new PLPErrorFrame();
 
-            // ***** MIPS CORE-SPECIFIC ******
-            sim = new PLPMIPSSim(asm, -1);
-            // *******************************
-
+            if(PLPCfg.cfgArch.equals("plpmips"))
+                sim = new PLPMIPSSim((PLPAsm) asm, -1);
+    
             toolApp.setSim(sim);
             sim.reset();
             sim.step();
 
-            // ***** MIPS CORE-SPECIFIC ******
-            simFrame = new PLPMIPSCoreGUI((PLPMIPSSim) sim, this);
-            // *******************************
-            
+            if(PLPCfg.cfgArch.equals("plpmips"))
+                simFrame = new PLPMIPSCoreGUI((PLPMIPSSim) sim, this);
 
             simDesktop.add(simFrame);
             simDesktop.add(errFrame);
-            PLPMsg.output = simFrame.getSimCLOutput();
+            
             simFrame.setVisible(true);
             errFrame.setVisible(true);
             PLPMainPane.setSelectedIndex(1);
@@ -587,7 +585,6 @@ public class PLPToolView extends FrameView {
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
         if(simRunner != null)
             simRunner.stepCount = 0;
-        // TODO add your handling code here:
         errFrame.clearError();
 
         try {
@@ -639,11 +636,11 @@ public class PLPToolView extends FrameView {
         }
     }//GEN-LAST:event_tglRunActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnOptsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptsActionPerformed
         if(opts == null)
             opts = new PLPOptions();
         opts.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnOptsActionPerformed
 
     public void unselectTglRun() {
         tglRun.setSelected(false);
@@ -697,9 +694,9 @@ public class PLPToolView extends FrameView {
     private javax.swing.JPanel PrgPane;
     private javax.swing.JPanel SimPane;
     private javax.swing.JToggleButton btnMem;
+    private javax.swing.JButton btnOpts;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnStep;
-    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
@@ -719,7 +716,7 @@ public class PLPToolView extends FrameView {
     // End of variables declaration//GEN-END:variables
 
     private JDialog aboutBox;
-    private plpmips.PLPMIPSCoreGUI simFrame;
+    private PLPSimCoreGUI simFrame;
     private PLPErrorFrame errFrame;
     private IORegistry ioRegistry;
     private PLPIORegistry ioRegWindow;
@@ -728,7 +725,7 @@ public class PLPToolView extends FrameView {
 
     // Backends
     private PLPSimCore sim;
-    private PLPAsm asm;
+    private PLPAsmX asm;
     private PLPProgrammer prg;
 
 }

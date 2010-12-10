@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 /*
@@ -12,34 +25,32 @@
 package plpmips;
 
 import javax.swing.table.DefaultTableCellRenderer;
-import plptool.PLPSimCore;
-import plptool.mods.LEDArray;
-import plptool.mods.LEDArrayFrame;
 
 /**
  *
  * @author wira
  */
-public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
+public class PLPMIPSCoreGUI extends plptool.PLPSimCoreGUI {
 
-    private PLPMIPSSim sim;
     private plp.PLPToolView mainWindow;
-    private LEDArrayFrame ledArrayFrame;
-    private LEDArray ledArray;
     private long old_pc;
     private String lastCLCommand = "";
 
     /** Creates new form PLPMIPSCoreGUI */
     public PLPMIPSCoreGUI(PLPMIPSSim sim, plp.PLPToolView mainWindow) {
+        super();
         this.sim = sim;
         this.mainWindow = mainWindow;
         plpmips.PLPSimCL.errFrame = mainWindow.getErrFrame();
-        plptool.PLPMsg.output = simCLOutput;
 
         sim.bus.enableAllModules();
         sim.bus.eval();
 
         initComponents();
+
+        // Take over console output
+        plptool.PLPMsg.output = simCLOutput;
+
         renderer.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         tblRegFile.setDefaultRenderer(tblRegFile.getColumnClass(2), renderer);
 
@@ -550,7 +561,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
         plpmips.PLPSimCL.init_core = true;
         lastCLCommand = simCLConsole.getText();
         simCLOutput.append(simCLConsole.getText() + "\n");
-        plpmips.PLPSimCL.simCLCommand(simCLConsole.getText(), sim);
+        plpmips.PLPSimCL.simCLCommand(simCLConsole.getText(), (PLPMIPSSim) sim);
         if(simCLConsole.getText().trim().startsWith("asm")) {
             clearProgramMemoryTable();
             fillProgramMemoryTable();
@@ -568,18 +579,18 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 }//GEN-LAST:event_simCLConsoleKeyPressed
 
     public final void updateComponents() {
-        long pc = sim.pc.eval();
+        long pc = ((PLPMIPSSim)sim).pc.eval();
         if(pc >= 0) {
             PC.setText(String.format("0x%08x", pc));
-            nextInstr.setText(MIPSInstr.format(sim.id_stage.i_instruction));
+            nextInstr.setText(MIPSInstr.format(((PLPMIPSSim)sim).id_stage.i_instruction));
         } else {
             PC.setText(String.format("0xXXXXXXXX"));
             nextInstr.setText("Unknown");
         }
 
         for(int i = 0; i < 32; i++) {
-            tblRegFile.setValueAt(sim.regfile.read(i), i, 2);
-            tblRegFile.setValueAt(String.format("0x%08x", sim.regfile.read(i)), i, 1);
+            tblRegFile.setValueAt(((PLPMIPSSim)sim).regfile.read(i), i, 2);
+            tblRegFile.setValueAt(String.format("0x%08x", ((PLPMIPSSim)sim).regfile.read(i)), i, 1);
         }
 
         javax.swing.table.DefaultTableModel memMap = (javax.swing.table.DefaultTableModel) tblMemMap.getModel();
@@ -598,7 +609,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
         updateProgramMemoryTablePC();
     }
-
+/*
     public javax.swing.JTextArea getSimCLOutput() {
         return simCLOutput;
     }
@@ -606,7 +617,7 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
     public javax.swing.JTextField getSimCLConsole() {
         return simCLConsole;
     }
-
+*/
     public final void clearProgramMemoryTable() {
         javax.swing.table.DefaultTableModel program = (javax.swing.table.DefaultTableModel) tblProgram.getModel();
 
@@ -636,21 +647,21 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
     }
 
     public final void updateProgramMemoryTablePC() {
-        if(sim.pc.eval() != old_pc) {
+        if(((PLPMIPSSim)sim).pc.eval() != old_pc) {
             javax.swing.table.DefaultTableModel program = (javax.swing.table.DefaultTableModel) tblProgram.getModel();
 
             for(int i = 0; i < program.getRowCount(); i++) {
-                if(sim.id_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   sim.id_stage.hot)
+                if(((PLPMIPSSim)sim).id_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
+                   ((PLPMIPSSim)sim).id_stage.hot)
                     program.setValueAt("ID>", i, 0);
-                else if(sim.ex_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   sim.ex_stage.hot)
+                else if(((PLPMIPSSim)sim).ex_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
+                   ((PLPMIPSSim)sim).ex_stage.hot)
                     program.setValueAt("EX>", i, 0);
-                else if(sim.mem_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   sim.mem_stage.hot)
+                else if(((PLPMIPSSim)sim).mem_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
+                   ((PLPMIPSSim)sim).mem_stage.hot)
                     program.setValueAt("MEM>", i, 0);
-                else if(sim.wb_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   sim.wb_stage.hot)
+                else if(((PLPMIPSSim)sim).wb_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
+                   ((PLPMIPSSim)sim).wb_stage.hot)
                     program.setValueAt("WB>", i, 0);
                 else
                     program.setValueAt("", i, 0);
@@ -661,12 +672,8 @@ public class PLPMIPSCoreGUI extends javax.swing.JInternalFrame {
 
             tblProgram.setModel(program);
             
-            old_pc = sim.pc.eval();
+            old_pc = ((PLPMIPSSim)sim).pc.eval();
         }
-    }
-
-    public PLPSimCore getSim() {
-        return sim;
     }
 
     private javax.swing.table.DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();

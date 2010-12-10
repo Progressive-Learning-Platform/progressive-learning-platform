@@ -27,6 +27,7 @@ import plptool.mods.MemModule;
  * @author wira
  */
 public abstract class PLPSimCore {
+
     /**
      * Simulation flags. This flag is used by various modules to indicate
      * whether certain events have occured.
@@ -57,6 +58,12 @@ public abstract class PLPSimCore {
      * Step handler, to be implemented by the actual simulation core.
      */
     abstract public int step();
+
+    /**
+     * Simulator application will call this program when it instantiates
+     * a simulation core.
+     */
+    abstract public int loadProgram(PLPAsmX asm);
 
     /**
      * Returns simulation flags.

@@ -34,27 +34,9 @@ import plptool.Constants;
  *
  * @author wira
  */
-public class PLPAsm {
+public class PLPAsm extends plptool.PLPAsmX {
 
     private ArrayList<PLPAsmSource>  SourceList;
-
-    /**
-     * The address table attached to this assembler.
-     *
-     * @see objectCode[]
-     */
-    private long[]      addrTable;
-
-    /**
-     * The object code attached to this assembler.
-     *
-     * @see preprocess(int)
-     * @see assemble()
-     * @see getObjectCode()
-     */
-    private long[]      objectCode;      // Java needs unsigned types!
-                                         // higher 4 bytes are useless, cast
-                                         // to int before using.
 
     /**
      * Assembler's symbol table.
@@ -849,24 +831,6 @@ public class PLPAsm {
         return Constants.PLP_OK;
     }
     
-    /**
-     * Returns the object code array attached to this assembler object.
-     * 
-     * @return Returns the object code as array of longs.
-     */
-    public long[] getObjectCode() {
-        return objectCode;
-    }
-
-    /**
-     * Returns the instruction addresses array attached to this assembler object.
-     *
-     * @return Returns the address table as array of longs.
-     */
-    public long[] getAddrTable() {
-        return addrTable;
-    }
-
     /**
      * Returns whether the object code entry in the given index is an instruction
      * (zero) or not (non-zero)

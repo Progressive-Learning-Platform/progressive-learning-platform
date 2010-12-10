@@ -93,14 +93,14 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="IDESplitter" alignment="0" pref="870" max="32767" attributes="0"/>
+                  <Component id="IDESplitter" alignment="0" pref="863" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDELabel_Command" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="IDECommander" pref="819" max="32767" attributes="0"/>
+                      <Component id="IDECommander" pref="789" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="IDEScroller" alignment="0" pref="870" max="32767" attributes="0"/>
-                  <Component id="IDEBar" alignment="1" pref="870" max="32767" attributes="0"/>
+                  <Component id="IDEScroller" alignment="0" pref="863" max="32767" attributes="0"/>
+                  <Component id="IDEBar" alignment="1" pref="863" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -108,7 +108,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="IDEBar" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="IDESplitter" pref="347" max="32767" attributes="0"/>
+                      <Component id="IDESplitter" pref="324" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="IDEScroller" min="-2" pref="110" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -291,13 +291,13 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="simControls" alignment="1" max="32767" attributes="0"/>
-                  <Component id="simDesktop" alignment="0" pref="870" max="32767" attributes="0"/>
+                  <Component id="simDesktop" alignment="0" pref="863" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="simDesktop" pref="469" max="32767" attributes="0"/>
+                      <Component id="simDesktop" pref="445" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="simControls" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -333,8 +333,8 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="txtFlags" min="-2" pref="77" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="137" max="32767" attributes="0"/>
+                          <Component id="btnOpts" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="152" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -352,7 +352,7 @@
                               <Component id="btnMem" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="lblFlags" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtFlags" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnOpts" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -426,13 +426,13 @@
                     <Property name="name" type="java.lang.String" value="txtFlags" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="jButton1">
+                <Component class="javax.swing.JButton" name="btnOpts">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="jButton1.text"/>
-                    <Property name="name" type="java.lang.String" value="jButton1" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="btnOpts.text"/>
+                    <Property name="name" type="java.lang.String" value="btnOpts" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOptsActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
@@ -440,7 +440,6 @@
             <Container class="javax.swing.JDesktopPane" name="simDesktop">
               <Properties>
                 <Property name="background" type="java.awt.Color" resourceKey="simDesktop.background"/>
-                <Property name="autoscrolls" type="boolean" value="true"/>
                 <Property name="name" type="java.lang.String" value="simDesktop" noResource="true"/>
               </Properties>
 
@@ -473,9 +472,9 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jComboBox2" alignment="1" pref="705" max="32767" attributes="1"/>
-                          <Component id="jComboBox1" alignment="1" pref="705" max="32767" attributes="1"/>
-                          <Component id="jComboBox3" alignment="0" pref="705" max="32767" attributes="0"/>
+                          <Component id="jComboBox2" alignment="1" pref="686" max="32767" attributes="1"/>
+                          <Component id="jComboBox1" alignment="1" pref="686" max="32767" attributes="1"/>
+                          <Component id="jComboBox3" alignment="0" pref="686" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -499,7 +498,7 @@
                           <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="421" max="32767" attributes="0"/>
+                      <EmptySpace pref="391" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -582,7 +581,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="OutputScrollPane" pref="850" max="32767" attributes="0"/>
+                      <Component id="OutputScrollPane" pref="839" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -591,7 +590,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="OutputScrollPane" pref="498" max="32767" attributes="0"/>
+                      <Component id="OutputScrollPane" pref="478" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

@@ -14,7 +14,7 @@ andi $22,$22,0x00ff
 ori $22,$22,0xff00
 nop
 nop
-sw $22,0x4000($24)
+sw $22,0x0000($24)
 nop
 nop
 sll $22,$22,4

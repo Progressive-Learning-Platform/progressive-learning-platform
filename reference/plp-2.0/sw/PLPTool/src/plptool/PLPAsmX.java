@@ -19,10 +19,45 @@
 package plptool;
 
 /**
- * PLPTool assembler 2.1
+ * PLPTool assembler abstract.
  *
  * @author wira
  */
-public class PLPAsmX {
+public abstract class PLPAsmX {
+    /**
+     * The address table attached to this assembler.
+     *
+     * @see objectCode[]
+     */
+    protected long[]  addrTable;
 
+    /**
+     * The object code attached to this assembler.
+     *
+     * @see preprocess(int)
+     * @see assemble()
+     * @see getObjectCode()
+     */
+    protected long[]  objectCode;
+
+    abstract public int preprocess(int index);
+    abstract public int assemble();
+
+    /**
+     * Returns the object code array attached to this assembler object.
+     *
+     * @return Returns the object code as array of longs.
+     */
+    public long[] getObjectCode() {
+        return objectCode;
+    }
+
+    /**
+     * Returns the instruction addresses array attached to this assembler object.
+     *
+     * @return Returns the address table as array of longs.
+     */
+    public long[] getAddrTable() {
+        return addrTable;
+    }
 }

@@ -31,6 +31,8 @@ public class PLPSimRunner extends Thread {
     private PLPSimCore sim;
     private PLPToolView mainWindow;
     public int stepCount;
+    private int startInstr;
+    private long startTime;
 
     public PLPSimRunner(PLPSimCore sim, PLPToolView mainWindow) {
         this.sim = sim;
@@ -42,10 +44,13 @@ public class PLPSimRunner extends Thread {
     public void run() {
         PLPMsg.lastError = 0;
         mainWindow.getErrFrame().clearError();
+        startInstr = sim.getinstrcount();
+        startTime = System.currentTimeMillis();
 
         while(stepCount > 0) {
             sim.step();
-            mainWindow.updateComponents();
+            if(PLPCfg.cfgRefreshGUIDuringSimRun)
+                mainWindow.updateComponents();
             if(PLPMsg.lastError != 0) {
                 mainWindow.getErrFrame().setError(PLPMsg.lastError);
                 break;
@@ -54,6 +59,10 @@ public class PLPSimRunner extends Thread {
                 this.sleep(PLPCfg.cfgSimDelay);
             } catch(Exception e) {}
         }
+
+        long time = System.currentTimeMillis() - startTime;
+        PLPMsg.m("SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
+        PLPMsg.M("in " + time + " milliseconds of real time.");
 
         mainWindow.unselectTglRun();
     }

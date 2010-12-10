@@ -147,17 +147,7 @@ public class PLPMIPSSim extends PLPSimCore {
         for(i = 0; i < 32; i++)
             regfile.write(i, new Long(0), false);
 
-        // load program to RAM
-        for(i = 0; i < objCode.length; i++) {
-            if((addrTable[i] / 4) >= memory.size())
-                PLPMsg.M("Warning: Program doesn't fit in memory.");
-            else {
-                if (asm.isInstruction(i) == 0)
-                    bus.write(addrTable[i], objCode[i], true);
-                else
-                    bus.write(addrTable[i], objCode[i], false);
-            }
-        }
+        loadProgram(asm);
 
         pc.reset(0);
         instructionCount = 0;
@@ -180,6 +170,25 @@ public class PLPMIPSSim extends PLPSimCore {
         flushpipeline();
 
         PLPMsg.M("core: soft reset");
+
+        return Constants.PLP_OK;
+    }
+
+    public int loadProgram(plptool.PLPAsmX x) {
+
+        // load program to bus
+        for(int i = 0; i < objCode.length; i++) {
+            if((((PLPAsm)x).getAddrTable()[i] / 4) >= memory.size())
+                PLPMsg.M("Warning: Program doesn't fit in memory.");
+            else {
+                if (asm.isInstruction(i) == 0)
+                    bus.write(((PLPAsm)x).getAddrTable()[i],
+                              ((PLPAsm)x).getObjectCode()[i], true);
+                else
+                    bus.write(((PLPAsm)x).getAddrTable()[i],
+                              ((PLPAsm)x).getObjectCode()[i], false);
+            }
+        }
 
         return Constants.PLP_OK;
     }
