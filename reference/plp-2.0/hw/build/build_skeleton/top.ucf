@@ -30,13 +30,4 @@ NET "sseg_display<4>" LOC = "g14";
 NET "sseg_display<5>" LOC = "j17";
 NET "sseg_display<6>" LOC = "h14";
 NET "sseg_display<7>" LOC = "c17";
-NET "rgb<0>" LOC = "u5";
-NET "rgb<0>" LOC = "u4";
-NET "rgb<0>" LOC = "n8";
-NET "rgb<0>" LOC = "p8";
-NET "rgb<0>" LOC = "p6";
-NET "rgb<0>" LOC = "r9";
-NET "rgb<0>" LOC = "t8";
-NET "rgb<0>" LOC = "r8";
-NET "hs" LOC = "t4";
-NET "vs" LOC = "u3";
+
