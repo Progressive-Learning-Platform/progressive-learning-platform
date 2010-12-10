@@ -1,5 +1,5 @@
 
-module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches, mod_sseg_an, mod_sseg_display, mod_vga_rgb, mod_vga_hs, mod_vga_vs);
+module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches, mod_sseg_an, mod_sseg_display);
 	input clk, rst;
 
 	/* cpu i/o */
@@ -15,8 +15,6 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	input [7:0] mod_switches_switches;
 	output [3:0] mod_sseg_an;
 	output [7:0] mod_sseg_display;
-	output [7:0] mod_vga_rgb;
-	output mod_vga_hs, mod_vga_vs;
 
 	/* effective address calculation for the modules */
 	wire [7:0] imod, dmod;
@@ -55,8 +53,6 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	/* 2 */ mod_uart	uart_t		(rst, clk, mod2_ie, mod2_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_uart_txd, mod_uart_rxd);
 	/* 3 */ mod_switches 	switches_t 	(rst, clk, mod3_ie, mod3_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_switches_switches);
 	/* 4 */ mod_leds	leds_t    	(rst, clk, mod4_ie, mod4_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_leds_leds);
-
-	/* 6 */ mod_vga		vga_t		(rst, clk, mod6_ie, mod6_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_vga_rgb, mod_vga_hs, mod_vga_vs);
 
 	/* 8 */ mod_plpid	plpid_t   	(rst, clk, mod8_ie, mod8_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
 	/* 9 */ mod_timer	timer_t	  	(rst, clk, mod9_ie, mod9_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
