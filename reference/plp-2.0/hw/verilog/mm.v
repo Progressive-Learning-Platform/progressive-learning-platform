@@ -13,6 +13,8 @@ memory map module
 0xf0100000      4               switches
 0xf0200000      4               leds
 
+0xf0600000	?		VGA
+
 0xf0800000      8               PLPID
 0xf0900000      4               timer
 0xf0a00000	4		sseg
@@ -31,6 +33,7 @@ module mm(addr, mod, eff_addr);
 		     (addr[31:20] == 12'hf00) ? 2 : /* mod_uart */
 		     (addr[31:20] == 12'hf01) ? 3 : /* mod_switches */
 		     (addr[31:20] == 12'hf02) ? 4 : /* mod_leds */
+		     (addr[31:20] == 12'hf04) ? 6 : /* mod_vga */
 		     (addr[31:20] == 12'hf05) ? 8 : /* mod_plpid */
 		     (addr[31:20] == 12'hf06) ? 9 : /* mod_timer */
 		     (addr[31:20] == 12'hf0a) ? 10 : /* mod_sseg */
