@@ -27,5 +27,6 @@ map      -intstyle xflow -p xc3s1200e-fg320-4 -cm area -ir off -pr off -c 100 -o
 par      -intstyle xflow -w -ol high -t 1 top_map.ncd top.ncd top.pcf
 trce     -intstyle xflow -v 3 -s 4 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf
 bitgen   -intstyle xflow -f top.ut top.ncd
+promgen -w -c FF -x xcf04s -p mcs -o top -u 0 top.bit 
 
 
