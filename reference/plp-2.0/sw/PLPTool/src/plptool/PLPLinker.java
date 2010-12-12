@@ -18,11 +18,31 @@
 
 package plptool;
 
+import java.util.ArrayList;
+
 /**
  * PLPTool Linker. Slated for PLP 2.1.
  *
  * @author wira
  */
 public class PLPLinker {
+    public int link(PLPAsmX[] asms, long[] regionMap) {
+        int i, j, ret;
+        int[] regionMapCounters = new int[regionMap.length];
 
+        int[][] asmRegionLengths = new int[asms.length][regionMap.length];
+
+        for(i = 0; i < asms.length; i++) {
+            if((ret = asms[i].preprocess(0)) != Constants.PLP_OK)
+                return ret;
+            for(j = 0; j < asms[i].getRegionMap().size(); j++) {
+                if(asms[i].getRegionMap().get(j) > regionMap.length)
+                    return Constants.PLP_ERROR_RETURN;
+
+                asmRegionLengths[i][asms[i].getRegionMap().get(j)]++;
+            }
+        }
+
+        return Constants.PLP_OK;
+    }
 }

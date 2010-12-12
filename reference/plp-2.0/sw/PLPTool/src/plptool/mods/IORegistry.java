@@ -125,6 +125,10 @@ public class IORegistry {
         mods[2][4] = true;
         mods[2][5] = true;
 
+
+        /* ********************************************************************/
+        // FTracer
+
         mods[3][0] = "FTracer";
         mods[3][1] = true;
         mods[3][2] = 1337;

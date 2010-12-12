@@ -38,18 +38,6 @@ public class PLPAsm extends plptool.PLPAsmX {
 
     private ArrayList<PLPAsmSource>  SourceList;
 
-    /**
-     * Assembler's symbol table.
-     *
-     * @see objectCode[]
-     */
-    private HashMap<String, Long> symTable;
-
-    /**
-     * Region maps
-     */
-    private HashMap<String, Long> regionMap;
-
     private int         mapperIndex;
     private int[]       lineNumMap;
     private int[]       asmFileMap;
@@ -72,12 +60,9 @@ public class PLPAsm extends plptool.PLPAsmX {
     private int         asmIndex;
 
     /**
-     * This variable describes the state of the asm sources attached to this
-     * assembler. This variable is set true when all assembly sources were
-     * successfully assembled and objectCode[], addrtable[] and symTable are
-     * populated.
+     * Current active region being populated
      */
-    private boolean     assembled;
+    private int         curRegion;
 
     /**
      * PLPAsm constructor. Reads file described by strFilePath if strAsm is
@@ -90,6 +75,8 @@ public class PLPAsm extends plptool.PLPAsmX {
      * @param intStartAddr Default starting address
      */
     public PLPAsm (String strAsm, String strFilePath, int intStartAddr) {
+        super(null, null);
+
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
         SourceList = new ArrayList<PLPAsmSource>();
         SourceList.add(plpAsmObj);
@@ -97,7 +84,7 @@ public class PLPAsm extends plptool.PLPAsmX {
         curAddr = intStartAddr;
         instrMap = new HashMap<String, Integer>();
         symTable = new HashMap<String, Long>();
-        regionMap = new HashMap<String, Long>();
+        regionMap = new ArrayList<Integer>();
         opcode = new HashMap<String, Byte>();
         funct = new HashMap<String, Byte>();
         regs = new HashMap<String, Byte>();
@@ -284,6 +271,8 @@ public class PLPAsm extends plptool.PLPAsmX {
         PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(index);
         curActiveFile = topLevelAsm.getAsmFilePath();
 
+        curRegion = 0; // unmapped region / flat model
+
         String delimiters = ",[ ]+|,|[ ]+|[()]|\t";
         String lineDelim  = "\\r?\\n";
         String[] asmLines  = topLevelAsm.getAsmString().split(lineDelim);
@@ -341,9 +330,26 @@ public class PLPAsm extends plptool.PLPAsmX {
                 }
 
                 appendPreprocessedAsm("ASM__ORG__ " + asmTokens[1], i, true);
-
                 directiveOffset++;
                 curAddr = sanitize32bits(asmTokens[1]);
+            }
+
+            // .text directive
+            else if(asmTokens[0].equals(".text")) {
+                if(asmTokens.length != 1) {
+                   return PLPMsg.E("Directive syntax error in line " + i,
+                                  Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                }
+                curRegion = 1;
+            }
+
+            // .data directive
+            else if(asmTokens[0].equals(".data")) {
+                if(asmTokens.length != 1) {
+                   return PLPMsg.E("Directive syntax error in line " + i,
+                                  Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                }
+                curRegion = 2;
             }
 
             // .word directive:
@@ -355,6 +361,7 @@ public class PLPAsm extends plptool.PLPAsmX {
                 }
 
                 appendPreprocessedAsm("ASM__WORD__ " + asmTokens[1], i, true);
+                regionMap.add(curRegion);
                 curAddr += 4;
             }
 
@@ -369,6 +376,7 @@ public class PLPAsm extends plptool.PLPAsmX {
                 
                 for(j = 0; j < Integer.parseInt(asmTokens[1]); j++) {
                     appendPreprocessedAsm("ASM__WORD__ 0", i, true);
+                    regionMap.add(curRegion);
                     curAddr += 4;
                 }
             }
@@ -436,6 +444,7 @@ public class PLPAsm extends plptool.PLPAsmX {
                     appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
 
                     if((j + 1) % 4 == 0 && j > 0) {
+                        regionMap.add(curRegion);
                         curAddr += 4;
                         appendPreprocessedAsm("", i, true);
                     }
@@ -448,11 +457,14 @@ public class PLPAsm extends plptool.PLPAsmX {
             // Pseudo-ops
             else if(asmTokens[0].equals("nop")) {
                 appendPreprocessedAsm("sll $0,$0,0", i, true);
+                regionMap.add(curRegion);
                 curAddr += 4;
             }
 
+            // copy register
             else if(asmTokens[0].equals("move")) {
                 appendPreprocessedAsm("or " + asmTokens[1] + ",$0," + asmTokens[2], i, true);
+                regionMap.add(curRegion);
                 curAddr += 4;
             }
 
@@ -460,6 +472,8 @@ public class PLPAsm extends plptool.PLPAsmX {
             else if(asmTokens[0].equals("li")) {
                 appendPreprocessedAsm("lui " + asmTokens[1] + ",$_hi:" + asmTokens[2], i, true);
                 appendPreprocessedAsm("ori " + asmTokens[1] + "," + asmTokens[1] + ",$_lo:" + asmTokens[2], i, true);
+                regionMap.add(curRegion);
+                regionMap.add(curRegion);
                 curAddr += 8;
             }
 
@@ -470,6 +484,7 @@ public class PLPAsm extends plptool.PLPAsmX {
                                     Constants.PLP_ASM_INVALID_TOKEN, this);
                 }
                 PLPMsg.D("exit i: " + i, 5, this);
+                regionMap.add(curRegion);
                 curAddr += 4;
                 appendPreprocessedAsm(asmLines[i - 1], i, true);
             }
@@ -529,8 +544,8 @@ public class PLPAsm extends plptool.PLPAsmX {
     public int assemble() {
         int i = 0, j = 0;
         long asmPC = 0;
-        int lineNumOffset = 1;
         int s = 0;              // assembler directive line offsets
+        curRegion = 0;          // reset to default region
         
         String delimiters = ",[ ]+|,|[ ]+|[()]";
         String lineDelim  = "\\r?\\n";
@@ -843,26 +858,6 @@ public class PLPAsm extends plptool.PLPAsmX {
     }
 
     /**
-     * Returns the symbol table attached to this assembler object.
-     *
-     * @return Returns the symbol table as a HashMap.
-     */
-    public HashMap getSymTable() {
-        return symTable;
-    }
-
-    /**
-     * Returns whether the source files attached to this assembler have
-     * been successfully assembled.
-     *
-     * @return Returns boolean true if all sources are assembled, false
-     * otherwise
-     */
-    public boolean isAssembled() {
-        return assembled;
-    }
-
-    /**
      * Returns the string representation of an opcode
      *
      * @return Returns instruction opcode in String
@@ -905,28 +900,6 @@ public class PLPAsm extends plptool.PLPAsmX {
     }
 
     /**
-     * Lookup if the provided memory address has a label attached to it in the
-     * symbol table.
-     *
-     * @return Returns the label in String if found, null otherwise
-     * @param address memory address to look up
-     */
-    public String lookupLabel(long address) {
-        String key;
-
-        if(symTable.containsValue(address)) {
-            Iterator iterator = symTable.keySet().iterator();
-            while(iterator.hasNext()) {
-                key = (String) iterator.next();
-                if(symTable.get(key).equals(address)) {
-                    return key;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Lookup instruction type of the provided opcode as defined by
      * the PLPAsm class.
      *
@@ -941,22 +914,6 @@ public class PLPAsm extends plptool.PLPAsmX {
         }
         return Constants.PLP_ERROR_RETURN;
     }
-
-        /**
-     * Lookup instruction type of the provided opcode as defined by
-     * the PLPAsm class.
-     *
-     * @return Returns instruction type
-     * @param instrOpCode Instruction opcode in byte
-     * @see lookupInstr(byte)
-     * @see lookupInstrType(String)
-     */ /***** DEPRECATED
-    public static Integer lookupInstrType(byte instrOpCode) {
-        if(instrMap.containsKey(lookupInstr(instrOpCode))) {
-            return (Integer) instrMap.get(lookupInstr(instrOpCode));
-        }
-        return null;
-    } ******/
 
     /**
      * Takes in a string and attempts to parse it as a 16 bit number. This
