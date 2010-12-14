@@ -16,7 +16,7 @@
 
  */
 
-package plpmips;
+package plptool.mips;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
@@ -39,9 +39,8 @@ import plptool.Constants;
  *
  * @author wira
  */
-public class PLPProgrammer {
-    public PLPProgrammer() {
-        super();
+public class SerialProgrammer extends plptool.PLPSerialProgrammer {
+    public SerialProgrammer() {
     }
     
     private SerialPort serialPort;
@@ -180,7 +179,7 @@ public class PLPProgrammer {
                         Constants.PLP_PRG_INVALID_PLP_FILE, this);
     }
 
-    public int programWithAsm (PLPAsm asm) throws Exception {
+    public int programWithAsm(plptool.PLPAsm asm) throws Exception {
         if(asm.isAssembled()) {
             long objCode[] = asm.getObjectCode();
             long addrTable[] = asm.getAddrTable();

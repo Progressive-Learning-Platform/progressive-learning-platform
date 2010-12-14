@@ -9,7 +9,7 @@
  * Created on Dec 7, 2010, 11:38:40 PM
  */
 
-package plp;
+package plptool.gui;
 
 import plptool.PLPCfg;
 
@@ -40,7 +40,7 @@ public class PLPOptions extends javax.swing.JFrame {
         btnApply = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plp.PLPToolApp.class).getContext().getResourceMap(PLPOptions.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPOptions.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
         setResizable(false);

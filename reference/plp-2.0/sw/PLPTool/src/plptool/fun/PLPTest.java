@@ -3,10 +3,10 @@
  * and open the template in the editor.
  */
 
-package plpfun;
+package plptool.fun;
 
-import plpmips.PLPMIPSSim;
-import plpmips.PLPAsm;
+import plptool.mips.SimCore;
+import plptool.mips.Asm;
 import plptool.PLPSimMods;
 import plptool.PLPMsg;
 
@@ -16,7 +16,7 @@ import plptool.PLPMsg;
  */
 public class PLPTest {
     public static void main(String[] args) {
-        PLPAsm asm = new PLPAsm("start:\n" +
+        Asm asm = new Asm("start:\n" +
                                 "li $3,0x80004004\n" +
                                 "li $4,0xbeef\n" +
                                 "nop\n" +
@@ -24,7 +24,7 @@ public class PLPTest {
                                 "sw $4,0($3)\n" +
                                 "j start\n" +
                                 "nop"
-                                , "in-line", 0);
+                                , "in-line");
         if(asm.preprocess(0) == plptool.Constants.PLP_OK) {
             if(asm.assemble() != plptool.Constants.PLP_OK)
                 System.exit(-1);
@@ -33,7 +33,7 @@ public class PLPTest {
             System.exit(-1);
 
         
-        PLPMIPSSim sim = new PLPMIPSSim(asm, 8000);
+        SimCore sim = new SimCore(asm, 8000);
         PLPSimMods mods = new PLPSimMods(sim);
         sim.bus.add(mods.io_leds);
         sim.bus.enableAllModules();

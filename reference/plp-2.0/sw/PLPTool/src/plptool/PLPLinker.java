@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * @author wira
  */
 public class PLPLinker {
-    public int link(PLPAsmX[] asms, long[] regionMap) {
+    public int link(PLPAsm[] asms, long[] regionMap) {
         int i, j, ret;
         int[] regionMapCounters = new int[regionMap.length];
 

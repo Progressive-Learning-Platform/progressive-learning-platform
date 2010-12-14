@@ -16,7 +16,7 @@
             <definitions>./lib/nblibraries.properties</definitions>
         </libraries>
         <swingapp xmlns="http://www.netbeans.org/ns/form-swingapp/1">
-            <application-class name="plp.PLPToolApp"/>
+            <application-class name="plptool.gui.PLPToolApp"/>
         </swingapp>
     </configuration>
 </project>

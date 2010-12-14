@@ -16,11 +16,11 @@
 
  */
 
-package plp;
+package plptool.gui;
 
-import plpmips.PLPProgrammer;
-import plpmips.PLPAsmFormatter;
-import plpmips.PLPSimCL;
+import plptool.mips.SerialProgrammer;
+import plptool.mips.Formatter;
+import plptool.mips.SimCLI;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.PLPMsg;
@@ -75,7 +75,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -a <asm> <out>");
                 System.exit(-1);
             } else {
-                PLPAsmFormatter.genPLP(args[1], args[2], false);
+                Formatter.genPLP(args[1], args[2], false);
             }
         }
         else if(args.length > 0 && args[0].equals("-af")) {
@@ -83,23 +83,23 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -af <asm> <out>");
                 System.exit(-1);
             } else {
-                PLPAsmFormatter.genPLP(args[1], args[2], true);
+                Formatter.genPLP(args[1], args[2], true);
             }
         }
         else if(args.length > 0 && args[0].equals("-s")) {
             if(args.length == 1) {
-                PLPSimCL.simCL(null, null, null);
+                SimCLI.simCL(null, null, null);
             }
             else if(args.length != 2) {
                 System.out.println("Usage: PLPTool -s <asm>");
             } else
-                PLPSimCL.simCL(null, args[1], null);
+                SimCLI.simCL(null, args[1], null);
         }
         else if(args.length > 0 && args[0].equals("-p")) {
             if(args.length != 4) {
                 System.out.println("Usage: PLPTool -p <plpfile> <port> <baud>");
             } else {
-                PLPProgrammer plpProg = new PLPProgrammer();
+                SerialProgrammer plpProg = new SerialProgrammer();
                 try {
                     plpProg.connect(args[2], Integer.parseInt(args[3]));
                     plpProg.programWithPLPFile(args[1]);

@@ -19,7 +19,7 @@
 package plptool;
 
 import plptool.mods.MemModule;
-import plpmips.PLPMIPSSim;
+import plptool.mips.SimCore;
 
 /**
  * PLP first-party modules collection. See PLPSimCL for an example on how
@@ -51,7 +51,7 @@ public class PLPSimMods {
     public PLPSimMods(PLPSimCore sim) {
         io_leds = new mod_io_leds((long) 0x8000400 << 4 | 4);
         cache_hier = new mod_cache_hier(sim.memory);
-        mips_sniffer = new mod_mips_sniffer((PLPMIPSSim) sim, (long) 0x9000800 << 4);
+        mips_sniffer = new mod_mips_sniffer((SimCore) sim, (long) 0x9000800 << 4);
     }
 
 /******************************************************************************/
@@ -167,7 +167,7 @@ public class PLPSimMods {
      */
     public class mod_mips_sniffer extends PLPSimBusModule {
 
-        public mod_mips_sniffer(PLPMIPSSim sim, long regaddr) {
+        public mod_mips_sniffer(SimCore sim, long regaddr) {
             super(regaddr, regaddr, true);
         }
 

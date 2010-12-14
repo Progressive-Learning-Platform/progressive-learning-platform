@@ -16,7 +16,7 @@
 
  */
 
-package plpmips;
+package plptool.mips;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,18 +34,12 @@ import plptool.Constants;
  *
  * @author wira
  */
-public class PLPAsm extends plptool.PLPAsmX {
+public class Asm extends plptool.PLPAsm {
 
-    private ArrayList<PLPAsmSource>  SourceList;
-
-    private int         mapperIndex;
-    private int[]       lineNumMap;
-    private int[]       asmFileMap;
     private int[]       entryType;
 
     private long        curAddr;
     private int         directiveOffset;
-    private String      preprocessedAsm;
     private String      curActiveFile;
     private String      topLevelFile;
 
@@ -54,10 +48,7 @@ public class PLPAsm extends plptool.PLPAsmX {
     private static HashMap<String, Byte>        funct;
     private static HashMap<String, Byte>        regs;
 
-    /**
-     * Current index of assembly file
-     */
-    private int         asmIndex;
+
 
     /**
      * Current active region being populated
@@ -74,27 +65,20 @@ public class PLPAsm extends plptool.PLPAsmX {
      * @param strFilePath  Top level assembly source to attach
      * @param intStartAddr Default starting address
      */
-    public PLPAsm (String strAsm, String strFilePath, int intStartAddr) {
-        super(null, null);
+    public Asm (String strAsm, String strFilePath) {
+        super(strAsm, strFilePath);
 
-        PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
-        SourceList = new ArrayList<PLPAsmSource>();
-        SourceList.add(plpAsmObj);
-        preprocessedAsm = new String();
-        curAddr = intStartAddr;
+        curAddr = 0;
         instrMap = new HashMap<String, Integer>();
         symTable = new HashMap<String, Long>();
         regionMap = new ArrayList<Integer>();
         opcode = new HashMap<String, Byte>();
         funct = new HashMap<String, Byte>();
         regs = new HashMap<String, Byte>();
-        asmIndex = 0;
-        mapperIndex = 0;
 
         directiveOffset = 0;
         topLevelFile = strFilePath;
 
-        assembled = false;
 
         defineArch();
     }
@@ -501,37 +485,6 @@ public class PLPAsm extends plptool.PLPAsmX {
         PLPMsg.D("First pass completed.", 1, this);
 
         return 0;
-    }
-
-    /**
-     * Appends the preprocessed assembly string. This method also updates
-     * the assembly file and line number mapping for error reporting purposes.
-     *
-     * @param index The 'preprocessed assembly' line number.
-     * @param str Text to add to the string.
-     * @param lineNum The line number of the assembly file currently being
-     * preprocessed.
-     */
-    public void appendPreprocessedAsm(String str, int lineNum, boolean newline) {
-
-        // running out of mapper space? This is a complete hack!
-
-        if(mapperIndex >= lineNumMap.length) {
-            int[] newLineNumMap = new int[2 * lineNumMap.length];
-            System.arraycopy(lineNumMap, 0, newLineNumMap, 0, lineNumMap.length);
-            lineNumMap = newLineNumMap;
-            int[] newAsmFileMap = new int[2 * lineNumMap.length];
-            System.arraycopy(asmFileMap, 0, newAsmFileMap, 0, asmFileMap.length);
-            asmFileMap = newAsmFileMap;
-
-            PLPMsg.D("new lineNumMap length: " + lineNumMap.length, 5, this);
-        }
-
-        lineNumMap[mapperIndex] = lineNum;
-        asmFileMap[mapperIndex] = asmIndex;
-        if(newline)
-            mapperIndex++;
-        preprocessedAsm += str + (newline ? "\n" : "");
     }
 
     /**

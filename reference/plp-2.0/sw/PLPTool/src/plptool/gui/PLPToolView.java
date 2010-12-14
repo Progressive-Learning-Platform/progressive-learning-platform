@@ -20,10 +20,9 @@
  * PLPToolView.java
  */
 
-package plp;
+package plptool.gui;
 
 import plptool.*;
-import plpmips.*;
 import plptool.mods.IORegistry;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
@@ -163,11 +162,11 @@ public class PLPToolView extends FrameView {
 
         menuBar.setName("menuBar"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plp.PLPToolApp.class).getContext().getResourceMap(PLPToolView.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPToolView.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(plp.PLPToolApp.class).getContext().getActionMap(PLPToolView.class, this);
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getActionMap(PLPToolView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         exitMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -543,7 +542,7 @@ public class PLPToolView extends FrameView {
         PLPMsg.M("Assembling...");
         
         if(PLPCfg.cfgArch.equals("plpmips"))
-            asm = new PLPAsm(IDEEditor.getText(), "IDEEditor", 0);
+            asm = new plptool.mips.Asm(IDEEditor.getText(), "IDEEditor");
 
         if((ret = asm.preprocess(0)) == Constants.PLP_OK) {
             ret = asm.assemble();
@@ -556,14 +555,14 @@ public class PLPToolView extends FrameView {
             errFrame = new PLPErrorFrame();
 
             if(PLPCfg.cfgArch.equals("plpmips"))
-                sim = new PLPMIPSSim((PLPAsm) asm, -1);
+                sim = new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
     
             toolApp.setSim(sim);
             sim.reset();
             sim.step();
 
             if(PLPCfg.cfgArch.equals("plpmips"))
-                simFrame = new PLPMIPSCoreGUI((PLPMIPSSim) sim, this);
+                simFrame = new plptool.mips.SimCoreGUI((plptool.mips.SimCore) sim, this);
 
             simDesktop.add(simFrame);
             simDesktop.add(errFrame);
@@ -725,7 +724,7 @@ public class PLPToolView extends FrameView {
 
     // Backends
     private PLPSimCore sim;
-    private PLPAsmX asm;
-    private PLPProgrammer prg;
+    private PLPAsm asm;
+    private PLPSerialProgrammer prg;
 
 }

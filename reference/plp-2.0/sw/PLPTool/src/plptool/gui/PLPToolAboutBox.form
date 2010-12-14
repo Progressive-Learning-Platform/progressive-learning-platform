@@ -105,7 +105,7 @@
     <Component class="javax.swing.JButton" name="closeButton">
       <Properties>
         <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-          <action class="plp.PLPToolAboutBox" id="closeAboutBox" methodName="closeAboutBox"/>
+          <action class="plptool.gui.PLPToolAboutBox" id="closeAboutBox" methodName="closeAboutBox"/>
         </Property>
         <Property name="name" type="java.lang.String" value="closeButton" noResource="true"/>
       </Properties>
@@ -223,7 +223,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
-        <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="11" style="1"/>
         </Property>
         <Property name="foreground" type="java.awt.Color" resourceKey="jLabel2.foreground"/>
