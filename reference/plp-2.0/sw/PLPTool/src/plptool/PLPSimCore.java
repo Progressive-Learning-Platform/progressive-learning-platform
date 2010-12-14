@@ -63,7 +63,7 @@ public abstract class PLPSimCore {
      * Simulator application will call this program when it instantiates
      * a simulation core.
      */
-    abstract public int loadProgram(PLPAsmX asm);
+    abstract public int loadProgram(PLPAsm asm);
 
     /**
      * Returns simulation flags.

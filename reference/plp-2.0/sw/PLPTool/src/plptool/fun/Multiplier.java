@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package plpfun;
+package plptool.fun;
 
 import plptool.PLPSimBusModule;
 import plptool.PLPMsg;

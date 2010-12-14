@@ -16,7 +16,7 @@
 
  */
 
-package plpmips;
+package plptool.mips;
 
 import plptool.mods.MemModule;
 import plptool.PLPCfg;
@@ -36,7 +36,7 @@ import plptool.PLPSimRegModule;
  *
  * @author wira
  */
-public class PLPMIPSSim extends PLPSimCore {
+public class SimCore extends PLPSimCore {
 
     /**
      * The core's program counter.
@@ -92,7 +92,7 @@ public class PLPMIPSSim extends PLPSimCore {
      *
      * @see plptool.PLPAsm
      */
-    PLPAsm asm;
+    Asm asm;
 
     /**
      * Simulator backend constructor.
@@ -101,7 +101,7 @@ public class PLPMIPSSim extends PLPSimCore {
      * @param asm assembler object passed on to this simulator
      * @see plptool.PLPAsm
      */
-    public PLPMIPSSim(PLPAsm asm, long RAMsize) {
+    public SimCore(Asm asm, long RAMsize) {
         if(RAMsize <= 0)
             RAMsize = (long) Math.pow(2, 31);
 
@@ -174,19 +174,19 @@ public class PLPMIPSSim extends PLPSimCore {
         return Constants.PLP_OK;
     }
 
-    public int loadProgram(plptool.PLPAsmX x) {
+    public int loadProgram(plptool.PLPAsm x) {
 
         // load program to bus
         for(int i = 0; i < objCode.length; i++) {
-            if((((PLPAsm)x).getAddrTable()[i] / 4) >= memory.size())
+            if((((Asm)x).getAddrTable()[i] / 4) >= memory.size())
                 PLPMsg.M("Warning: Program doesn't fit in memory.");
             else {
                 if (asm.isInstruction(i) == 0)
-                    bus.write(((PLPAsm)x).getAddrTable()[i],
-                              ((PLPAsm)x).getObjectCode()[i], true);
+                    bus.write(((Asm)x).getAddrTable()[i],
+                              ((Asm)x).getObjectCode()[i], true);
                 else
-                    bus.write(((PLPAsm)x).getAddrTable()[i],
-                              ((PLPAsm)x).getObjectCode()[i], false);
+                    bus.write(((Asm)x).getAddrTable()[i],
+                              ((Asm)x).getObjectCode()[i], false);
             }
         }
 
@@ -435,7 +435,7 @@ public class PLPMIPSSim extends PLPSimCore {
             ctl_jumptarget = 0;
 
             if(opcode != 0) {
-                switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstrOpcode(opcode))) {
+                switch(Asm.lookupInstrType(Asm.lookupInstrOpcode(opcode))) {
                     case 3:
                         ctl_branch = 1;
                         break;
@@ -463,7 +463,7 @@ public class PLPMIPSSim extends PLPSimCore {
                     case 7:
                         ctl_jump = 1;
                         ctl_jumptarget = MIPSInstr.jaddr(instruction) << 2;
-                        if(PLPAsm.lookupInstrOpcode(opcode).equals("jal")) {
+                        if(Asm.lookupInstrOpcode(opcode).equals("jal")) {
                             ex_reg.i_fwd_ctl_regwrite = 1;
                             ex_reg.i_ctl_regDst = 1;
                             ex_reg.i_ctl_rd_addr = 31;
@@ -477,7 +477,7 @@ public class PLPMIPSSim extends PLPSimCore {
                                         this);
                 }
             } else {
-                switch(PLPAsm.lookupInstrType(PLPAsm.lookupInstrFunct(funct))) {
+                switch(Asm.lookupInstrType(Asm.lookupInstrFunct(funct))) {
                     case 0:
                     case 1:
                         ex_reg.i_fwd_ctl_regwrite = 1;
@@ -1029,8 +1029,8 @@ public class PLPMIPSSim extends PLPSimCore {
 
         }
 
-        public int eval(PLPMIPSSim.id id_stage, PLPMIPSSim.ex ex_stage,
-                         PLPMIPSSim.mem mem_stage, PLPMIPSSim.wb wb_stage) {
+        public int eval(SimCore.id id_stage, SimCore.ex ex_stage,
+                         SimCore.mem mem_stage, SimCore.wb wb_stage) {
             sim_flags &= Constants.PLP_SIM_FWD_NO_EVENTS;
 
             if(mem_stage.hot) {

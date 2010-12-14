@@ -16,7 +16,7 @@
 
  */
 
-package plp;
+package plptool.gui;
 
 import plptool.mods.IORegistry;
 import plptool.mods.Presets;
@@ -34,7 +34,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
     PLPToolView mainWindow;
 
     /** Creates new form PLPIORegistry */
-    public PLPIORegistry(plp.PLPToolView mainWindow) {
+    public PLPIORegistry(plptool.gui.PLPToolView mainWindow) {
 
         this.mainWindow = mainWindow;
         IORegistry ioRegistry = mainWindow.getIORegistry();
@@ -83,7 +83,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setIconifiable(true);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plp.PLPToolApp.class).getContext().getResourceMap(PLPIORegistry.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPIORegistry.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
 

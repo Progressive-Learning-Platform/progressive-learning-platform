@@ -16,7 +16,7 @@
 
  */
 
-package plpmips;
+package plptool.mips;
 
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -24,7 +24,7 @@ import plptool.PLPMsg;
 import plptool.PLPSimCore;
 import plptool.PLPSimMods;
 import plptool.PLPToolbox;
-import plp.PLPErrorFrame;
+import plptool.gui.PLPErrorFrame;
 import plptool.Constants;
 
 /**
@@ -32,10 +32,10 @@ import plptool.Constants;
  *
  * @author wira
  */
-public class PLPSimCL {
+public class SimCLI {
     
-    static PLPAsm asm;
-    static PLPMIPSSim x_core = null;
+    static Asm asm;
+    static SimCore x_core = null;
     static String input = "";
     static String tokens[];
     static long ram_size;
@@ -44,7 +44,7 @@ public class PLPSimCL {
     static BufferedReader stdIn;
     static PLPErrorFrame errFrame = null;
 
-    public static void simCLCommand(String input, PLPMIPSSim core) {
+    public static void simCLCommand(String input, SimCore core) {
         if(errFrame != null)
             errFrame.clearError();
 
@@ -151,7 +151,7 @@ public class PLPSimCL {
             core.printProgram(core.pc.eval());
         }
         else if(input.equals("pasm")) {
-            PLPAsmFormatter.prettyPrint(asm);
+            Formatter.prettyPrint(asm);
         }
         else if(input.equals("pinstr")) {
             PLPMsg.M("\nIn-flight instructions");
@@ -168,7 +168,7 @@ public class PLPSimCL {
             }
             else {
                 core.softreset();
-                core.pc.write(PLPAsm.sanitize32bits(tokens[1]));
+                core.pc.write(Asm.sanitize32bits(tokens[1]));
                 core.printfrontend();
             }
         }
@@ -177,9 +177,9 @@ public class PLPSimCL {
                 PLPMsg.M("Usage: w <address> <data>");
             }
             else {
-                if(core.memory.write(PLPAsm.sanitize32bits(tokens[1]),
-                                  PLPAsm.sanitize32bits(tokens[2]), false) == Constants.PLP_OK)
-                  core.memory.print(PLPAsm.sanitize32bits(tokens[1]));
+                if(core.memory.write(Asm.sanitize32bits(tokens[1]),
+                                  Asm.sanitize32bits(tokens[2]), false) == Constants.PLP_OK)
+                  core.memory.print(Asm.sanitize32bits(tokens[1]));
             }
         }
         else if(tokens[0].equals("wbus")) {
@@ -187,8 +187,8 @@ public class PLPSimCL {
                 PLPMsg.M("Usage: wbus <address> <data>");
             }
             else {
-                core.bus.write(PLPAsm.sanitize32bits(tokens[1]),
-                                  PLPAsm.sanitize32bits(tokens[2]), false);
+                core.bus.write(Asm.sanitize32bits(tokens[1]),
+                                  Asm.sanitize32bits(tokens[2]), false);
             }
         }
         else if(tokens[0].equals("rbus")) {
@@ -196,7 +196,7 @@ public class PLPSimCL {
                 PLPMsg.M("Usage: rbus <address>");
             }
             else {
-                long addr = PLPAsm.sanitize32bits(tokens[1]);
+                long addr = Asm.sanitize32bits(tokens[1]);
                 Object ret = core.bus.read(addr);
                 if(ret != null) {
                     long value = (Long) ret;
@@ -259,7 +259,7 @@ public class PLPSimCL {
                 PLPMsg.M("Usage: j <address>");
             }
             else {
-                core.pc.write(PLPAsm.sanitize32bits(tokens[1]));
+                core.pc.write(Asm.sanitize32bits(tokens[1]));
                 core.printfrontend();
             }
         }
@@ -272,7 +272,7 @@ public class PLPSimCL {
                 long addr;
                 for(int j = 2; j < tokens.length; j++)
                     iAsm += tokens[j] + " ";
-                PLPAsm inlineAsm = new PLPAsm(iAsm, "PLPSimCL inline asm", 0);
+                Asm inlineAsm = new Asm(iAsm, "PLPSimCL inline asm");
                 if(inlineAsm.preprocess(0) == Constants.PLP_OK)
                     inlineAsm.assemble();
                 if(inlineAsm.isAssembled()) {
@@ -353,7 +353,7 @@ public class PLPSimCL {
         PLPMsg.M("PLPTool Command Line Simulator");
         if(asmFile != null) {
             PLPMsg.m("Assembling " + asmFile + " ...");
-            asm = new PLPAsm(null, asmFile, 0);
+            asm = new Asm(null, asmFile);
             if(asm.preprocess(0) == Constants.PLP_OK)
                 asm.assemble();
 
@@ -366,7 +366,7 @@ public class PLPSimCL {
         }
         else if(asmStr != null) {
             PLPMsg.m("Assembling in-line ...");
-            asm = new PLPAsm(asmStr, "In-line", 0);
+            asm = new Asm(asmStr, "In-line");
             if(asm.preprocess(0) == Constants.PLP_OK)
                 asm.assemble();
 
@@ -378,7 +378,7 @@ public class PLPSimCL {
             PLPMsg.M(" OK");
 
         } else {
-            asm = new PLPAsm("nop", "empty", 0);
+            asm = new Asm("nop", "empty");
             if(asm.preprocess(0) == Constants.PLP_OK)
                 asm.assemble();
         }
@@ -402,7 +402,7 @@ public class PLPSimCL {
                 tokens = input.split(" ");
                 if(tokens[0].equals("i")) {
                     if(tokens.length == 1) {
-                        x_core = new PLPMIPSSim(asm, -1);
+                        x_core = new SimCore(asm, -1);
                         x_core.reset();
                         init_core = true;
                         addMods(x_core);
@@ -420,7 +420,7 @@ public class PLPSimCL {
                         if(ram_size % 4 != 0)
                             PLPMsg.M("RAM size has to be in multiples of 4");
                         else {
-                            x_core = new PLPMIPSSim(asm, ram_size);
+                            x_core = new SimCore(asm, ram_size);
                             x_core.reset();
                             init_core = true;
                             addMods(x_core);

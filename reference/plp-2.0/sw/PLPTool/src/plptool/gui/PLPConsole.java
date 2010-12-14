@@ -4,21 +4,21 @@
  */
 
 /*
- * PLPSimDemo.java
+ * PLPConsole.java
  *
- * Created on Dec 3, 2010, 11:08:56 PM
+ * Created on 14 Des 10, 15:49:21
  */
 
-package plp;
+package plptool.gui;
 
 /**
  *
  * @author wira
  */
-public class PLPSimDemo extends javax.swing.JFrame {
+public class PLPConsole extends javax.swing.JFrame {
 
-    /** Creates new form PLPSimDemo */
-    public PLPSimDemo() {
+    /** Creates new form PLPConsole */
+    public PLPConsole() {
         initComponents();
     }
 
@@ -31,6 +31,7 @@ public class PLPSimDemo extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

@@ -27,13 +27,28 @@ import java.util.Iterator;
  *
  * @author wira
  */
-public abstract class PLPAsmX {
+public abstract class PLPAsm {
 
-    public PLPAsmX(long[] addrTable, long[] objectCode) {
-        if(addrTable != null)
-            this.addrTable = addrTable;
-        if(objectCode != null)
-            this.objectCode = objectCode;
+    /**
+     * Assembly source files attached to this assembler
+     */
+    protected ArrayList<PLPAsmSource>  SourceList;
+
+    protected int         mapperIndex;
+    protected int[]       lineNumMap;
+    protected int[]       asmFileMap;
+
+    protected String      preprocessedAsm;
+
+    public PLPAsm(String strAsm, String strFilePath) {
+        PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
+        SourceList = new ArrayList<PLPAsmSource>();
+        SourceList.add(plpAsmObj);
+        preprocessedAsm = new String();
+
+        asmIndex = 0;
+        mapperIndex = 0;
+        assembled = false;
     }
     /**
      * The address table attached to this assembler.
@@ -52,6 +67,11 @@ public abstract class PLPAsmX {
     protected long[]  objectCode;
 
     /**
+     * Current index of assembly file
+     */
+    protected int         asmIndex;
+
+    /**
      * The region of which each object code entry belongs to. This is
      * implementation specific and used by the linker to generate final
      * program.
@@ -68,6 +88,37 @@ public abstract class PLPAsmX {
     abstract public int preprocess(int index);
     
     abstract public int assemble();
+
+    /**
+     * Appends the preprocessed assembly string. This method also updates
+     * the assembly file and line number mapping for error reporting purposes.
+     *
+     * @param index The 'preprocessed assembly' line number.
+     * @param str Text to add to the string.
+     * @param lineNum The line number of the assembly file currently being
+     * preprocessed.
+     */
+    protected void appendPreprocessedAsm(String str, int lineNum, boolean newline) {
+
+        // running out of mapper space? This is a complete hack!
+
+        if(mapperIndex >= lineNumMap.length) {
+            int[] newLineNumMap = new int[2 * lineNumMap.length];
+            System.arraycopy(lineNumMap, 0, newLineNumMap, 0, lineNumMap.length);
+            lineNumMap = newLineNumMap;
+            int[] newAsmFileMap = new int[2 * lineNumMap.length];
+            System.arraycopy(asmFileMap, 0, newAsmFileMap, 0, asmFileMap.length);
+            asmFileMap = newAsmFileMap;
+
+            PLPMsg.D("new lineNumMap length: " + lineNumMap.length, 5, this);
+        }
+
+        lineNumMap[mapperIndex] = lineNum;
+        asmFileMap[mapperIndex] = asmIndex;
+        if(newline)
+            mapperIndex++;
+        preprocessedAsm += str + (newline ? "\n" : "");
+    }
 
     /**
      * Returns the object code array attached to this assembler object.
@@ -94,6 +145,15 @@ public abstract class PLPAsmX {
      */
     public HashMap getSymTable() {
         return symTable;
+    }
+
+    /**
+     * Attaches a new symbol table to this assembler object
+     *
+     * @param symTable New symbol table to attach
+     */
+    public void setSymTable(HashMap<String, Long> symTable) {
+        this.symTable = symTable;
     }
 
     /**

@@ -286,7 +286,7 @@ public class IORegistry {
         sim.bus.remove(positionInBus.get(index));
         positionInBus.remove(index);
         modules.remove(index);
-        if(moduleFrames.get(index) != null && moduleFrames.get(0) instanceof JInternalFrame)
+        if(moduleFrames.get(index) != null && moduleFrames.get(index) instanceof JInternalFrame)
             ((JInternalFrame) moduleFrames.get(index)).dispose();
         moduleFrames.remove(index);
 

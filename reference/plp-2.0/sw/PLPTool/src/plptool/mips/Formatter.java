@@ -16,7 +16,7 @@
 
  */
 
-package plpmips;
+package plptool.mips;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,10 +38,10 @@ import plptool.Constants;
  *
  * @author wira
  */
-public class PLPAsmFormatter {
+public class Formatter {
 
     // Print to stdout, prettily.
-    public static int prettyPrint(PLPAsm asm) {
+    public static int prettyPrint(Asm asm) {
         String label;
         long addrTable[] = asm.getAddrTable();
         long objectCode[] = asm.getObjectCode();
@@ -172,9 +172,9 @@ public class PLPAsmFormatter {
     public static String mipsInstrStr(long instr) {
         String ret = "";
         if(MIPSInstr.opcode(instr) != 0)
-            ret += PLPAsm.lookupInstrOpcode((byte) MIPSInstr.opcode(instr)) + " ";
+            ret += Asm.lookupInstrOpcode((byte) MIPSInstr.opcode(instr)) + " ";
         else
-            ret += PLPAsm.lookupInstrFunct((byte) MIPSInstr.funct(instr)) + " ";
+            ret += Asm.lookupInstrFunct((byte) MIPSInstr.funct(instr)) + " ";
         ret += MIPSInstr.rs(instr) + " ";
         ret += MIPSInstr.rt(instr) + " ";
         ret += MIPSInstr.rd(instr) + " ";
@@ -187,7 +187,7 @@ public class PLPAsmFormatter {
     // Generate PLP file
     public static int genPLP(String input, String output, boolean forceWrite) {
         ArrayList<PLPAsmSource> sourceList;
-        PLPAsm asm = new PLPAsm(null, input, 0);
+        Asm asm = new Asm(null, input);
         String metafileStr = "";
         String verilogHex = "";
         long[] objCode = null;
@@ -376,12 +376,12 @@ class MIPSInstr {
         int instrType;
 
         if(opcode(instr) != 0) {
-            instrType = PLPAsm.lookupInstrType(PLPAsm.lookupInstrOpcode(opcode(instr)));
-            ret = PLPAsm.lookupInstrOpcode(opcode(instr)) + " ";
+            instrType = Asm.lookupInstrType(Asm.lookupInstrOpcode(opcode(instr)));
+            ret = Asm.lookupInstrOpcode(opcode(instr)) + " ";
         }
         else {
-            instrType = PLPAsm.lookupInstrType(PLPAsm.lookupInstrFunct(funct(instr)));
-            ret = PLPAsm.lookupInstrFunct(funct(instr)) + " ";
+            instrType = Asm.lookupInstrType(Asm.lookupInstrFunct(funct(instr)));
+            ret = Asm.lookupInstrFunct(funct(instr)) + " ";
         }
 
         switch(instrType) {

@@ -16,7 +16,7 @@
 
  */
 
-package plp;
+package plptool.gui;
 
 import plptool.PLPSimCore;
 import plptool.PLPMsg;
