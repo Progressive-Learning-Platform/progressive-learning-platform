@@ -580,13 +580,13 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 }//GEN-LAST:event_simCLConsoleKeyPressed
 
     public final void updateComponents() {
-        long pc = ((SimCore)sim).pc.eval();
+        long pc = ((SimCore)sim).id_stage.i_instrAddr;
         if(pc >= 0) {
             PC.setText(String.format("0x%08x", pc));
             nextInstr.setText(MIPSInstr.format(((SimCore)sim).id_stage.i_instruction));
         } else {
             PC.setText(String.format("0xXXXXXXXX"));
-            nextInstr.setText("Unknown");
+            nextInstr.setText("STALL");
         }
 
         for(int i = 0; i < 32; i++) {
@@ -653,21 +653,21 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
             for(int i = 0; i < program.getRowCount(); i++) {
                 if(((SimCore)sim).id_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   ((SimCore)sim).id_stage.hot)
+                   ((SimCore)sim).ex_stage.hot)
                     program.setValueAt("ID>", i, 0);
                 else if(((SimCore)sim).ex_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   ((SimCore)sim).ex_stage.hot)
+                   ((SimCore)sim).mem_stage.hot)
                     program.setValueAt("EX>", i, 0);
                 else if(((SimCore)sim).mem_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   ((SimCore)sim).mem_stage.hot)
+                   ((SimCore)sim).wb_stage.hot)
                     program.setValueAt("MEM>", i, 0);
                 else if(((SimCore)sim).wb_stage.instrAddr == Long.parseLong(((String) program.getValueAt(i, 2)).substring(2), 16) &&
-                   ((SimCore)sim).wb_stage.hot)
+                   ((SimCore)sim).wb_stage.instr_retired)
                     program.setValueAt("WB>", i, 0);
                 else
                     program.setValueAt("", i, 0);
 
-                if(PC.getText().equals(program.getValueAt(i, 2)))
+                if(PC.getText().equals(program.getValueAt(i, 2)) && ((SimCore)sim).stall == 0)
                     program.setValueAt("IF>>>", i, 0);
             }
 

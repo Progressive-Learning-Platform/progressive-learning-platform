@@ -435,12 +435,17 @@ public class SimCLI {
                     }
                 }
                 else if(input.equals("help") && !init_core) {
-                    PLPMsg.M("Run i to initialize simulation core with default RAM size.\n" +
+                    PLPMsg.m("Run i to initialize simulation core with default RAM size.\n" +
                                        "Run i <ram size in bytes> to specify RAM size.\n" +
-                                       "Run q to quit.\n");
+                                       "Run q to quit.\nsim >");
                 }
                 if(init_core)
                     simCLCommand(input, x_core);
+                else
+                    PLPMsg.m("Run i to initialize simulation core with default RAM size.\n" +
+                                       "Run i <ram size in bytes> to specify RAM size.\n" +
+                                       "Run q to quit.\nsim >");
+
             }
             PLPMsg.M("See ya!");
         }
@@ -477,8 +482,6 @@ public class SimCLI {
     }
 
     public static void addMods(PLPSimCore core) {
-        PLPSimMods mods = new PLPSimMods(core);
-        core.bus.add(mods.io_leds);
-        core.bus.add(mods.cache_hier);
+        
     }
 }
