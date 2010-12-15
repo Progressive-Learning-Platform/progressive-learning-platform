@@ -80,7 +80,7 @@ public static final String versionString = "Beta 2";
     public static final int PLP_PRG_UNABLE_TO_CLOSE_PORT         = 520;
 
     // Simulator flags
-    public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFF0;
+    public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFE0;
     public static final long PLP_SIM_FWD_EX_EX_RTYPE             = 0x00000001;
     public static final long PLP_SIM_FWD_EX_EX_ITYPE             = 0x00000002;
     public static final long PLP_SIM_FWD_EX_RF                   = 0x00000004;

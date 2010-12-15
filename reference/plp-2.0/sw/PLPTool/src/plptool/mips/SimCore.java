@@ -323,7 +323,7 @@ public class SimCore extends PLPSimCore {
     }
 
     @Override public String toString() {
-        return "PLPMIPSSim(asm: " + asm.toString() + ")";
+        return "mips.SimCore(asm: " + asm.toString() + ")";
     }
 
     /**
@@ -473,7 +473,7 @@ public class SimCore extends PLPSimCore {
                     
                     case 7:
                         ex_reg.i_ctl_jump = 1;
-                        ex_reg.i_ctl_jumptarget = (instruction & 0xC0000000) |
+                        ex_reg.i_ctl_jumptarget = (instrAddr & 0xF0000000) |
                                                   (MIPSInstr.jaddr(instruction) << 2);
                         if(Asm.lookupInstrOpcode(opcode).equals("jal")) {
                             ex_reg.i_fwd_ctl_regwrite = 1;
@@ -1107,20 +1107,41 @@ public class SimCore extends PLPSimCore {
                          SimCore.mem mem_stage, SimCore.wb wb_stage) {
             sim_flags &= Constants.PLP_SIM_FWD_NO_EVENTS;
 
+            long mem_rt =   MIPSInstr.rt(mem_stage.instruction);
+            long id_rt =    MIPSInstr.rt(id_stage.instruction);
+            long id_rs =    MIPSInstr.rs(id_stage.instruction);
+
+            if(wb_stage.hot) {
+                if(MIPSInstr.rt(mem_stage.instruction) == MIPSInstr.rt(id_stage.instruction)) {
+                    ex_stage.i_data_rt = mem_stage.fwd_data_alu_result;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                }
+                if(MIPSInstr.rt(mem_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
+                    ex_stage.i_data_alu_in = mem_stage.fwd_data_alu_result;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                }
+            }
+
             if(mem_stage.hot) {
                 if(MIPSInstr.rd(ex_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
                     ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }
-                else if(MIPSInstr.rd(ex_stage.instruction) == MIPSInstr.rt(id_stage.instruction)) {
+                if(MIPSInstr.rd(ex_stage.instruction) == MIPSInstr.rt(id_stage.instruction)) {
                     ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }
-                else if(MIPSInstr.rt(ex_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
+                if(MIPSInstr.rt(ex_stage.instruction) == MIPSInstr.rs(id_stage.instruction)) {
                     ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_ITYPE;
                 }
+                if(MIPSInstr.rt(ex_stage.instruction) == MIPSInstr.rt(id_stage.instruction)) {
+                    ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
+                    sim_flags |= Constants.PLP_SIM_FWD_EX_EX_ITYPE;
+                }
             }
+
+            
 
             return Constants.PLP_OK;
         }

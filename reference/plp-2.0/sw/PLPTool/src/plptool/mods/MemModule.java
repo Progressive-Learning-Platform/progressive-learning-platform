@@ -90,8 +90,6 @@ public class MemModule extends PLPSimBusModule {
      */
     public void print(long addr) {
         if(super.isInitialized(addr)) {
-            PLPMsg.M("\naddress\t\tcontents\tASCII");
-            PLPMsg.M("-------\t\t--------\t-----");
             PLPMsg.M(String.format("%08x\t%08x\t",addr, super.read(addr)) +
                                    PLPToolbox.asciiWord((Long) super.read(addr)));
         }

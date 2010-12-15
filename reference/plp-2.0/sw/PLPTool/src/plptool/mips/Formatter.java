@@ -408,6 +408,7 @@ class MIPSInstr {
                 break;
             case 7:
                 ret += String.format("%08x", jaddr(instr));
+                ret += " + instrAddr[31:28]";
                 break;
             case 8:
                 break;

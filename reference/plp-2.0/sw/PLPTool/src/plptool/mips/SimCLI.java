@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import plptool.PLPMsg;
 import plptool.PLPSimCore;
-import plptool.PLPSimMods;
 import plptool.PLPToolbox;
 import plptool.gui.PLPErrorFrame;
 import plptool.Constants;
@@ -43,8 +42,9 @@ public class SimCLI {
     static boolean silent = false;
     static BufferedReader stdIn;
     static PLPErrorFrame errFrame = null;
+    static plptool.mods.IORegistry ioRegistry;
 
-    public static void simCLCommand(String input, SimCore core) {
+    public static void simCLCommand(String input, SimCore core, plptool.mods.IORegistry ioReg) {
         if(errFrame != null)
             errFrame.clearError();
 
@@ -229,7 +229,7 @@ public class SimCLI {
         }
         else if(tokens[0].equals("evalio")) {
             if(tokens.length != 2) {
-                PLPMsg.M("Usage: enableio <index>");
+                PLPMsg.M("Usage: evalio <index>");
             }
             else {
                 core.bus.eval((int) PLPToolbox.parseNum(tokens[1]));
@@ -254,6 +254,42 @@ public class SimCLI {
                 core.bus.clearModRegisters((int) PLPToolbox.parseNum(tokens[1]));
             }
         }
+        else if(input.equals("listmods")) {
+            PLPMsg.M("Registered modules:");
+            Object modInfo[][] = ioReg.getAvailableModulesInformation();
+            for(int i = 0; i < modInfo.length; i++) {
+                PLPMsg.M(i + ": " + modInfo[i][0] + " - " + modInfo[i][3]);
+            }
+        }
+        else if(input.equals("attachedmods")) {
+            PLPMsg.M("Attached modules:");
+            Object mods[] = ioReg.getAttachedModules();
+            for(int i = 0; i < mods.length; i++) {
+                PLPMsg.M(i + ": "
+                        + ((plptool.PLPSimBusModule)mods[i]).introduce() +
+                        " - position in bus: " + ioReg.getPositionInBus(i));
+            }
+        }
+        else if(tokens[0].equals("addmod")) {
+            if(tokens.length != 4) {
+                PLPMsg.M("Usage: addmod <mod ID> <address> <register file size>");
+            }
+            else {
+                ioReg.attachModuleToBus((int) PLPToolbox.parseNum(tokens[1]),
+                                        PLPToolbox.parseNum(tokens[2]),
+                                        PLPToolbox.parseNum(tokens[3]),
+                                        core, null);
+            }
+        }
+        else if(tokens[0].equals("rmmod")) {
+            if(tokens.length != 2) {
+                PLPMsg.M("Usage: rmmod <mod index in the REGISTRY>");
+            }
+            else {
+                ioReg.removeModule((int) PLPToolbox.parseNum(tokens[1]), core);
+            }
+        }
+
         else if(tokens[0].equals("j")) {
             if(tokens.length != 2) {
                 PLPMsg.M("Usage: j <address>");
@@ -323,8 +359,23 @@ public class SimCLI {
         else if(input.toLowerCase().equals("wira sucks")) {
             PLPMsg.M("No, he doesn't.");
         }
+        else if(input.equals("help sim")) {
+            simCLHelp(1);
+        }
+        else if(input.equals("help print")) {
+            simCLHelp(2);
+        }
+        else if(input.equals("help bus")) {
+            simCLHelp(3);
+        }
+        else if(input.equals("help mods")) {
+            simCLHelp(4);
+        }
+        else if(input.equals("help misc")) {
+            simCLHelp(5);
+        }
         else {
-            simCLHelp();
+            simCLHelp(0);
         }
 
         PLPMsg.M("");
@@ -383,6 +434,7 @@ public class SimCLI {
                 asm.assemble();
         }
 
+        ioRegistry = new plptool.mods.IORegistry();
         PLPMsg.m("sim > ");
 
         } catch(Exception e) {
@@ -434,13 +486,8 @@ public class SimCLI {
                         }
                     }
                 }
-                else if(input.equals("help") && !init_core) {
-                    PLPMsg.m("Run i to initialize simulation core with default RAM size.\n" +
-                                       "Run i <ram size in bytes> to specify RAM size.\n" +
-                                       "Run q to quit.\nsim >");
-                }
                 if(init_core)
-                    simCLCommand(input, x_core);
+                    simCLCommand(input, x_core, ioRegistry);
                 else
                     PLPMsg.m("Run i to initialize simulation core with default RAM size.\n" +
                                        "Run i <ram size in bytes> to specify RAM size.\n" +
@@ -455,30 +502,69 @@ public class SimCLI {
         }
     }
 
-    public static void simCLHelp() {
-        PLPMsg.M("Unknown command. Command list:");
-        PLPMsg.M("\n i <RAM size in bytes> ..or.. i\n\tInit core with RAM size in bytes. Set RAM size to 2^62 if no argument is given.");
-        PLPMsg.M("\n s <steps> ..or.. s\n\tAdvance <steps> number of cycles. Step 1 cycle if no argument is given.");
-        PLPMsg.M("\n r\n\tReset simulated CPU (clears memory elements and reloads program).");
-        PLPMsg.M("\n pinstr\n\tPrint instructions currently in-flight.");
-        PLPMsg.M("\n pvars\n\tPrint pipeline registers' values.");
-        PLPMsg.M("\n pnextvars\n\tPrint pipeline registers' input values.");
-        PLPMsg.M("\n pram <address> ..or.. pram\n\tPrint value of RAM at <address>. Print all if no argument is given.");
-        PLPMsg.M("\n preg <address> ..or.. preg\n\tPrint contents of a register or print contents of register file.");
-        PLPMsg.M("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
-        PLPMsg.M("\n pasm\n\tPrint program object code.");
-        PLPMsg.M("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
-        PLPMsg.M("\n wpc <address>\n\tOverwrite program counter with <address>.");
-        PLPMsg.M("\n j <address>\n\tJump to <address>.");
-        PLPMsg.M("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
-        PLPMsg.M("\n wbus <address> <value>\n\tWrite <value> to FSB with <address>.");
-        PLPMsg.M("\n rbus <address>\n\tIssue read of <addr> to FSB.");
-        PLPMsg.M("\n enableio <index> ..or.. enableio\n\tEnable evaluation of I/O device <index>. Enable all if no argument is given.");
-        PLPMsg.M("\n disableio <index> ..or.. disableio\n\tDisable evaluation of I/O device <index>. Disable all if no argument is given.");
-        PLPMsg.M("\n listio\n\tList I/O modules loaded.");
-        PLPMsg.M("\n evalio <index> ..or.. evalio\n\tEvaluate I/O module <index>. Evaluate all if no argument is given.");
-        PLPMsg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
-        PLPMsg.M("\n silent\n\tToggle silent mode (default off).");
+    public static void simCLHelp(int commandGroup) {
+        switch(commandGroup) {
+            case 0:
+                PLPMsg.M("\nPLPTool MIPS Command Line Interface Help.");
+                PLPMsg.M("\n help sim\n\tList general simulator commands.");
+                PLPMsg.M("\n help print\n\tList commands to print various simulator information to screen.");
+                PLPMsg.M("\n help bus\n\tList I/O bus commands.");
+                PLPMsg.M("\n help mods\n\tList PLP modules commands.");
+                PLPMsg.M("\n help misc\n\tMiscellaneous commands.");
+
+                break;
+
+            case 1:
+                PLPMsg.M("\nGeneral Simulation Control.");
+                PLPMsg.M("\n i <RAM size in bytes> ..or.. i\n\tInit core with RAM size in bytes. Set RAM size to 2^62 if no argument is given.");
+                PLPMsg.M("\n s <steps> ..or.. s\n\tAdvance <steps> number of cycles. Step 1 cycle if no argument is given.");
+                PLPMsg.M("\n r\n\tReset simulated CPU (clears memory elements and reloads program).");
+                PLPMsg.M("\n wpc <address>\n\tOverwrite program counter with <address>.");
+                PLPMsg.M("\n j <address>\n\tJump to <address>.");
+                PLPMsg.M("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
+
+                break;
+
+            case 2:
+                PLPMsg.M("\nPrint information to screen.");
+                PLPMsg.M("\n pinstr\n\tPrint instructions currently in-flight.");
+                PLPMsg.M("\n pvars\n\tPrint pipeline registers' values.");
+                PLPMsg.M("\n pnextvars\n\tPrint pipeline registers' input values.");
+                PLPMsg.M("\n pram <address> ..or.. pram\n\tPrint value of RAM at <address>. Print all if no argument is given.");
+                PLPMsg.M("\n preg <address> ..or.. preg\n\tPrint contents of a register or print contents of register file.");
+                PLPMsg.M("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
+                PLPMsg.M("\n pasm\n\tPrint program object code.");
+                PLPMsg.M("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
+
+                break;
+
+            case 3:
+                PLPMsg.M("\nBus control.");
+                PLPMsg.M("\n wbus <address> <value>\n\tWrite <value> to FSB with <address>.");
+                PLPMsg.M("\n rbus <address>\n\tIssue read of <addr> to FSB.");
+                PLPMsg.M("\n enableio <index> ..or.. enableio\n\tEnable evaluation of I/O device <index>. Enable all if no argument is given.");
+                PLPMsg.M("\n disableio <index> ..or.. disableio\n\tDisable evaluation of I/O device <index>. Disable all if no argument is given.");
+                PLPMsg.M("\n listio\n\tList I/O modules loaded.");
+                PLPMsg.M("\n evalio <index> ..or.. evalio\n\tEvaluate I/O module <index>. Evaluate all if no argument is given.");
+
+                break;
+
+            case 4:
+                PLPMsg.M("\nModule management.");
+                PLPMsg.M("\n listmods\n\tList avaiable modules in the PLP I/O registry.");
+                PLPMsg.M("\n addmod <mod ID> <address> <regfile size>\n\tAttach module with <mod ID> starting at <address> with <regfile size> to the registry and the bus.");
+                PLPMsg.M("\n rmmod <index in the REGISTRY>\n\tRemove the module with <index in the REGISTRY> from the registry and the bus.");
+                PLPMsg.M("\n attachedmods\n\tList all modules attached to the simulation.");
+
+                break;
+
+            case 5:
+                PLPMsg.M("\nMiscellaneous.");
+                PLPMsg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
+                PLPMsg.M("\n silent\n\tToggle silent mode (default off).");
+
+                break;
+        }
     }
 
     public static void addMods(PLPSimCore core) {

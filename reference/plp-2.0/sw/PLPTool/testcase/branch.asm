@@ -1,5 +1,11 @@
 .org 0x0
-	beq $0,$0,label
+	li $10,0x00054000
+	li $11,0x00050004
+	sw $11,0($10)
+	lui $2,0xff3fdd
+	lui $3,0xff3fdd
+	bne $3,$2,label
+	beq $3,$2,label
 	nop
 somestring:
 	.asciiz "Hey check this out bro! #commenttest"
