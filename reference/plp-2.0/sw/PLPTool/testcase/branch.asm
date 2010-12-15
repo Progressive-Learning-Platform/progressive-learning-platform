@@ -7,6 +7,7 @@ somestring:
 	lui $15, 0x0FFF
 	li $19, mem
 label:
+	bne $0,$0,label
 	lui $15, 0xDEAD
         nop
 	nop
@@ -18,6 +19,8 @@ label:
 	li $11, mem
 	jal jumptest
 	nop
+	j label
+	li $4, 0xFEEDBEEF #beef should not be written to $4
 	.org 0x800
 mem:
 	  .word 0x4000
@@ -28,4 +31,5 @@ jumptest:
 	nop
 	nop
 	nop
+	jr $31
 	ori $15,$15,0x00FF
