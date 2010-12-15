@@ -32,16 +32,16 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
-    private plptool.gui.PLPToolView mainWindow;
+    private plptool.gui.PLPBackend backend;
     private long old_pc;
     private String lastCLCommand = "";
 
     /** Creates new form PLPMIPSCoreGUI */
-    public SimCoreGUI(SimCore sim, plptool.gui.PLPToolView mainWindow) {
+    public SimCoreGUI(plptool.gui.PLPBackend backend) {
         super();
-        this.sim = sim;
-        this.mainWindow = mainWindow;
-        plptool.mips.SimCLI.errFrame = mainWindow.getErrFrame();
+        this.sim = backend.sim;
+        this.backend = backend;
+        plptool.mips.SimCLI.errFrame = backend.g_err;
 
         sim.bus.enableAllModules();
         sim.bus.eval();
@@ -606,7 +606,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         }
         tblMemMap.setModel(memMap);
 
-        mainWindow.getIORegistry().gui_eval();
+        backend.ioreg.gui_eval();
 
         updateProgramMemoryTablePC();
     }

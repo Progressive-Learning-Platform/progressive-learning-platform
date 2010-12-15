@@ -18,9 +18,6 @@
 
 package plptool.gui;
 
-import plptool.mips.SerialProgrammer;
-import plptool.mips.Formatter;
-import plptool.mips.SimCLI;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.PLPMsg;
@@ -33,14 +30,19 @@ import plptool.mods.IORegistry;
 public class PLPToolApp extends SingleFrameApplication {
     
     PLPToolView mainWindow;
-    private plptool.PLPSimCore sim;
-    private IORegistry ioRegistry;
 
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        mainWindow = new PLPToolView(this);
+        PLPBackend backend = new PLPBackend(true, "UNSPECIFIED");
+        backend.ioreg = new IORegistry();
+        backend.g_err = new PLPErrorFrame();
+        backend.g_dev = new PLPDevelop(backend);
+        backend.g_ioreg = new PLPIORegistry(backend);
+        mainWindow = new PLPToolView(this, backend);
+        backend.g_main = mainWindow;
+        backend.g_desktop = mainWindow.getSimDesktop();
         show(mainWindow);
     }
 
@@ -75,7 +77,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -a <asm> <out>");
                 System.exit(-1);
             } else {
-                Formatter.genPLP(args[1], args[2], false);
+                plptool.mips.Formatter.genPLP(args[1], args[2], false);
             }
         }
         else if(args.length > 0 && args[0].equals("-af")) {
@@ -83,23 +85,23 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -af <asm> <out>");
                 System.exit(-1);
             } else {
-                Formatter.genPLP(args[1], args[2], true);
+                plptool.mips.Formatter.genPLP(args[1], args[2], true);
             }
         }
         else if(args.length > 0 && args[0].equals("-s")) {
             if(args.length == 1) {
-                SimCLI.simCL(null, null, null);
+                plptool.mips.SimCLI.simCL(null, null, null);
             }
             else if(args.length != 2) {
                 System.out.println("Usage: PLPTool -s <asm>");
             } else
-                SimCLI.simCL(null, args[1], null);
+                plptool.mips.SimCLI.simCL(null, args[1], null);
         }
         else if(args.length > 0 && args[0].equals("-p")) {
             if(args.length != 4) {
                 System.out.println("Usage: PLPTool -p <plpfile> <port> <baud>");
             } else {
-                SerialProgrammer plpProg = new SerialProgrammer();
+                plptool.mips.SerialProgrammer plpProg = new plptool.mips.SerialProgrammer();
                 try {
                     plpProg.connect(args[2], Integer.parseInt(args[3]));
                     plpProg.programWithPLPFile(args[1]);
@@ -107,9 +109,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 } catch(Exception e) {
                     
                 }
-
             }
-
         }
 
         else if(args.length == 0) {
@@ -135,21 +135,5 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("      Launches the command line emulator to simulate <asm>.");
             System.out.println();
         }
-    }
-
-    public plptool.PLPSimCore getSim() {
-        return sim;
-    }
-
-    public void setSim(plptool.PLPSimCore sim) {
-        this.sim = sim;
-    }
-
-    public IORegistry getIORegistry() {
-        return ioRegistry;
-    }
-
-    public void setIORegistry(IORegistry ioRegistry) {
-        this.ioRegistry = ioRegistry;
     }
 }
