@@ -23,7 +23,6 @@
 package plptool.gui;
 
 import plptool.*;
-import plptool.mods.IORegistry;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -45,18 +44,14 @@ import java.awt.Color;
 public class PLPToolView extends FrameView {
 
     static final int MAX_STEPS = 60000;
-    PLPToolApp toolApp = null;
+    PLPBackend backend;
 
-    public PLPToolView(SingleFrameApplication app) {
+    public PLPToolView(SingleFrameApplication app, PLPBackend backend) {
         super(app);
 
-        toolApp = (PLPToolApp) app;
+        this.backend = backend;
 
         initComponents();
-        ioRegistry = new IORegistry();
-        toolApp.setIORegistry(ioRegistry);
-        simFrame = null;
-        ioRegWindow = null;
         PLPMsg.output = Output; // reroute PLPMsg output
         PLPMsg.M("PLPTool GUI\n");
         PLPMsg.m("Welcome to the GUI PLP software. You can start using this tool ");
@@ -84,26 +79,11 @@ public class PLPToolView extends FrameView {
         PLPMainPane.setSelectedIndex(0);
     }
 
-    public PLPErrorFrame getErrFrame() {
-        return errFrame;
-    }
-
-    public IORegistry getIORegistry() {
-        return ioRegistry;
-    }
-
-    public PLPSimCore getSim() {
-        return sim;
-    }
-
     public void summonFrame(javax.swing.JInternalFrame frame) {
         simDesktop.add(frame);
         frame.setVisible(true);
     }
 
-    public void updateComponents() {
-        simFrame.updateComponents();
-    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -527,7 +507,6 @@ public class PLPToolView extends FrameView {
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitMenuItemMouseReleased
-        // TODO add your handling code here:
     }//GEN-LAST:event_exitMenuItemMouseReleased
 
     private void IDEAssembleBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IDEAssembleBtnMouseClicked
@@ -535,40 +514,39 @@ public class PLPToolView extends FrameView {
     }//GEN-LAST:event_IDEAssembleBtnMouseClicked
 
     private void IDEAssembleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDEAssembleBtnActionPerformed
-        // TODO add your handling code here:
         int ret = 0;
         PLPMsg.output = IDEStdOut;
         destroySimulation();
         PLPMsg.M("Assembling...");
         
         if(PLPCfg.cfgArch.equals("plpmips"))
-            asm = new plptool.mips.Asm(IDEEditor.getText(), "IDEEditor");
+            backend.asm = new plptool.mips.Asm(IDEEditor.getText(), "IDEEditor");
 
-        if((ret = asm.preprocess(0)) == Constants.PLP_OK) {
-            ret = asm.assemble();
+        if((ret = backend.asm.preprocess(0)) == Constants.PLP_OK) {
+            ret = backend.asm.assemble();
         }
         if(ret == Constants.PLP_OK) {
             PLPMsg.M("Done.");
             PLPMainPane.setEnabledAt(1, true);
             PLPMainPane.setEnabledAt(2, true);
             
-            errFrame = new PLPErrorFrame();
+            backend.g_err = new PLPErrorFrame();
 
             if(PLPCfg.cfgArch.equals("plpmips"))
-                sim = new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
+                backend.sim = new plptool.mips.SimCore((plptool.mips.Asm) backend.asm, -1);
     
-            toolApp.setSim(sim);
-            sim.reset();
-            sim.step();
+            backend.sim.reset();
+            backend.sim.step();
 
             if(PLPCfg.cfgArch.equals("plpmips"))
-                simFrame = new plptool.mips.SimCoreGUI((plptool.mips.SimCore) sim, this);
+                backend.g_sim = new plptool.mips.SimCoreGUI(backend);
 
-            simDesktop.add(simFrame);
-            simDesktop.add(errFrame);
+            simDesktop.add(backend.g_sim);
+            simDesktop.add(backend.g_err);
             
-            simFrame.setVisible(true);
-            errFrame.setVisible(true);
+            backend.g_sim.setVisible(true);
+            backend.g_err.setVisible(true);
+
             PLPMainPane.setSelectedIndex(1);
         }
         else {
@@ -584,14 +562,14 @@ public class PLPToolView extends FrameView {
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
         if(simRunner != null)
             simRunner.stepCount = 0;
-        errFrame.clearError();
+        backend.g_err.clearError();
 
         try {
             int steps = Integer.parseInt(txtSteps.getText());
             if(steps <= MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps; i++)
-                    sim.step();
-                simFrame.updateComponents();
+                    backend.sim.step();
+                backend.g_sim.updateComponents();
             } else {
                 txtSteps.setText("1");
             }
@@ -600,31 +578,31 @@ public class PLPToolView extends FrameView {
         }
 
         if(PLPMsg.lastError != 0)
-            errFrame.setError(PLPMsg.lastError);
+            backend.g_err.setError(PLPMsg.lastError);
     }//GEN-LAST:event_btnStepActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         if(simRunner != null)
             simRunner.stepCount = 0;
-        sim.reset();
-        simFrame.updateComponents();
-        errFrame.clearError();
+        backend.sim.reset();
+        backend.g_sim.updateComponents();
+        backend.g_err.clearError();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void tglIODisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglIODisplayActionPerformed
         if(tglIODisplay.isSelected()) {
-            if(ioRegWindow == null) {
-                ioRegWindow = new PLPIORegistry(this);
-                simDesktop.add(ioRegWindow);
+            if(backend.g_ioreg == null) {
+                backend.g_ioreg = new PLPIORegistry(backend);
+                simDesktop.add(backend.g_ioreg);
             }
-            ioRegWindow.setVisible(true);
+            backend.g_ioreg.setVisible(true);
         } else
-            ioRegWindow.setVisible(false);
+            backend.g_ioreg.setVisible(false);
     }//GEN-LAST:event_tglIODisplayActionPerformed
 
     private void tglRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglRunActionPerformed
         if(tglRun.isSelected()) {
-            simRunner = new PLPSimRunner(sim, this);
+            simRunner = new PLPSimRunner(backend);
             simRunner.start();
         } else {
             if(simRunner != null) {
@@ -646,23 +624,20 @@ public class PLPToolView extends FrameView {
     }
 
     public void destroySimulation() {
-        if(simFrame != null) {
-            simFrame.dispose();
-            errFrame.dispose();
+        if(backend.sim != null) {
+            backend.g_sim.dispose();
+            backend.g_err.dispose();
+            backend.ioreg.removeAllModules(backend.sim);
         }
 
         if(simRunner != null) {
             simRunner.stepCount = 0;
         }
 
-        ioRegistry.removeAllModules(sim);
-
         simDesktop.removeAll();
-        ioRegWindow = null;
+        backend.g_ioreg.dispose();
+        backend.g_ioreg = null;
         tglIODisplay.setSelected(false);
-
-        if(sim != null)
-            ioRegistry.removeAllModules(sim);
     }
 
     public javax.swing.JDesktopPane getSimDesktop() {
@@ -714,17 +689,8 @@ public class PLPToolView extends FrameView {
     private javax.swing.JTextField txtSteps;
     // End of variables declaration//GEN-END:variables
 
-    private JDialog aboutBox;
-    private PLPSimCoreGUI simFrame;
-    private PLPErrorFrame errFrame;
-    private IORegistry ioRegistry;
-    private PLPIORegistry ioRegWindow;
-    private PLPSimRunner simRunner;
-    private PLPOptions opts;
-
-    // Backends
-    private PLPSimCore sim;
-    private PLPAsm asm;
-    private PLPSerialProgrammer prg;
+    private JDialog             aboutBox;
+    private PLPSimRunner        simRunner;
+    private PLPOptions          opts;
 
 }

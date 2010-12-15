@@ -31,13 +31,13 @@ import javax.swing.table.DefaultTableModel;
 public class PLPIORegistry extends javax.swing.JInternalFrame {
 
     Object[][] modInfo;
-    PLPToolView mainWindow;
+    PLPBackend backend;
 
     /** Creates new form PLPIORegistry */
-    public PLPIORegistry(plptool.gui.PLPToolView mainWindow) {
+    public PLPIORegistry(PLPBackend backend) {
 
-        this.mainWindow = mainWindow;
-        IORegistry ioRegistry = mainWindow.getIORegistry();
+        this.backend = backend;
+        IORegistry ioRegistry = backend.ioreg;
         modInfo = ioRegistry.getAvailableModulesInformation();
 
         initComponents();
@@ -344,14 +344,14 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
         if(addr != plptool.Constants.PLP_NUMBER_ERROR && size > 0) {
             if(!(Boolean) modInfo[modIndex][4] || (addr % 4 == 0)) {
-                mainWindow.getIORegistry().attachModuleToBus(modIndex, addr, size, mainWindow.getSim(), mainWindow.getSimDesktop());
+                backend.ioreg.attachModuleToBus(modIndex, addr, size, backend.sim, backend.g_main.getSimDesktop());
                 refreshModulesTable();
             }
         } else {
             plptool.PLPMsg.M("ERROR");
         }
         
-        mainWindow.updateComponents();
+        backend.updateComponents();
         refreshModulesTable();
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -360,16 +360,16 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
                 tblMods.getSelectedRow() > -1)  {
 
             int index = (Integer) tblMods.getModel().getValueAt(tblMods.getSelectedRow(), 1);
-            mainWindow.getIORegistry().removeModule(index, mainWindow.getSim());
+            backend.ioreg.removeModule(index, backend.sim);
             refreshModulesTable();
-            mainWindow.updateComponents();
+            backend.updateComponents();
         }
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        mainWindow.getIORegistry().removeAllModules(mainWindow.getSim());
+        backend.ioreg.removeAllModules(backend.sim);
         refreshModulesTable();
-        mainWindow.updateComponents();
+        backend.updateComponents();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnLoadPresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadPresetActionPerformed
@@ -380,8 +380,8 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             Long[] startAddresses = (Long[]) Presets.presets[index][2];
             Long[] sizes = (Long[]) Presets.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
-                mainWindow.getIORegistry().attachModuleToBus(modsType[i], startAddresses[i], sizes[i], mainWindow.getSim(), mainWindow.getSimDesktop());
-            mainWindow.updateComponents();
+                backend.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], backend.sim, backend.g_main.getSimDesktop());
+            backend.updateComponents();
             refreshModulesTable();
         }
     }//GEN-LAST:event_btnLoadPresetActionPerformed
@@ -390,7 +390,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
         DefaultTableModel mods = (DefaultTableModel) tblMods.getModel();
         Object[] modules;
 
-        modules = mainWindow.getIORegistry().getAttachedModules();
+        modules = backend.ioreg.getAttachedModules();
 
         while(mods.getRowCount() > 0)
             mods.removeRow(0);
@@ -399,9 +399,9 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             Object[] row = new Object[]
             { modules[i].toString(),
               i,
-              mainWindow.getIORegistry().getPositionInBus(i),
-              String.format("0x%08x", mainWindow.getIORegistry().getModule(i).startAddr()),
-              String.format("0x%08x", mainWindow.getIORegistry().getModule(i).endAddr())
+              backend.ioreg.getPositionInBus(i),
+              String.format("0x%08x", backend.ioreg.getModule(i).startAddr()),
+              String.format("0x%08x", backend.ioreg.getModule(i).endAddr())
             };
             mods.addRow(row);
         }

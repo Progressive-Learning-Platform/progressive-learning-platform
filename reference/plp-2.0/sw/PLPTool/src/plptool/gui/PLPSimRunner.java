@@ -29,30 +29,30 @@ import plptool.PLPCfg;
 public class PLPSimRunner extends Thread {
 
     private PLPSimCore sim;
-    private PLPToolView mainWindow;
+    private PLPBackend backend;
     public int stepCount;
     private int startInstr;
     private long startTime;
 
-    public PLPSimRunner(PLPSimCore sim, PLPToolView mainWindow) {
-        this.sim = sim;
-        this.mainWindow = mainWindow;
+    public PLPSimRunner(PLPBackend backend) {
+        this.sim = backend.sim;
+        this.backend = backend;
         stepCount = 1;
     }
 
     @Override
     public void run() {
         PLPMsg.lastError = 0;
-        mainWindow.getErrFrame().clearError();
+        backend.g_err.clearError();
         startInstr = sim.getinstrcount();
         startTime = System.currentTimeMillis();
 
         while(stepCount > 0) {
             sim.step();
             if(PLPCfg.cfgRefreshGUIDuringSimRun)
-                mainWindow.updateComponents();
+                backend.updateComponents();
             if(PLPMsg.lastError != 0) {
-                mainWindow.getErrFrame().setError(PLPMsg.lastError);
+                backend.g_err.setError(PLPMsg.lastError);
                 break;
             }
             try {
@@ -64,6 +64,6 @@ public class PLPSimRunner extends Thread {
         PLPMsg.m("SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
         PLPMsg.M("in " + time + " milliseconds of real time.");
 
-        mainWindow.unselectTglRun();
+        backend.g_main.unselectTglRun();
     }
 }
