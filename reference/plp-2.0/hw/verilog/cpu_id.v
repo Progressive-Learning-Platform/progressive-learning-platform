@@ -105,12 +105,12 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 		(c_rd_rt_31 == 2'b10) ? 5'b11111 : rf_rd;
 
 	wire c_j = 
-		(opcode == 6'h02) || 
+		((opcode == 6'h02) || 
 		(opcode == 6'h03) || 
 		(opcode == 6'h00 && func == 6'h08) || 
-		(opcode == 6'h00 && func == 6'h09);
+		(opcode == 6'h00 && func == 6'h09)) && !stall;
 
-	wire c_b = (opcode == 6'h04) || (opcode == 6'h05);
+	wire c_b = ((opcode == 6'h04) || (opcode == 6'h05)) && !stall;
 
 	always @(posedge clk) begin
 		if (rst) begin		
