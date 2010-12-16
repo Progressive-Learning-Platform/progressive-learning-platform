@@ -41,7 +41,7 @@ module mod_plpid(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout);
         assign dout = de ? ddata : 32'hzzzzzzzz;
 
 	parameter cpu_id = 32'hdeadbeef;
-	parameter board_freq = 32'h02faf080;	/* 50 mhz */
+	parameter board_freq = 32'h017d7840;	/* 25 mhz */
 
 	assign ddata = (daddr == 0) ? cpu_id :
 		       (daddr == 4) ? board_freq : 0;
