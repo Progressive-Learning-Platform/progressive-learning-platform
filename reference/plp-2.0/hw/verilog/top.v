@@ -37,8 +37,9 @@ module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display);
 	wire [31:0] daddr, dout, din, iaddr, iin;
 	wire drw;
 
-	cpu cpu_t(rst, clk, daddr, dout, din, drw, iaddr, iin);
-        arbiter arbiter_t(rst, clk, daddr, dout, din, drw, iaddr, iin, leds, txd, rxd, switches, sseg_an, sseg_display);
+	clock c_t(clk, c);
+	cpu cpu_t(rst, c, daddr, dout, din, drw, iaddr, iin);
+        arbiter arbiter_t(rst, c, daddr, dout, din, drw, iaddr, iin, leds, txd, rxd, switches, sseg_an, sseg_display);
 endmodule
 	
 

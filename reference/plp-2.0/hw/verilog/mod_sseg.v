@@ -47,7 +47,7 @@ module mod_sseg(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, sseg_an, s
 	assign idata = 32'h00000000;
 	assign ddata = sseg;
 
-	parameter CLOCK_FREQ = 50000000;
+	parameter CLOCK_FREQ = 25000000;
 	parameter TICKS = CLOCK_FREQ/240; /* 60Hz (by 4) tick clock */
 	reg [31:0] counter;
 

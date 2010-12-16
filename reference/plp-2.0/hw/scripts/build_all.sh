@@ -12,4 +12,5 @@ echo "==========================================="
 echo "Build hardware"
 echo "==========================================="
 
-sh scripts/build_linux.sh
+sh scripts/build_1200k_linux.sh
+sh scripts/build_500k_linux.sh

@@ -4,8 +4,8 @@
 # source /opt/Xilinx/12.3/ISE_DS/settings64.sh 
 
 cd build
-cp -R build_skeleton build_volatile
-cd build_volatile
+cp -R build_500k_skeleton build_500k_volatile
+cd build_500k_volatile
 
 echo "==========================================="
 echo "Create Verilog project list"
@@ -22,8 +22,8 @@ echo "==========================================="
 echo "Create programming file"
 echo "==========================================="
 xst      -intstyle xflow -ifn top.xst -ofn top.syr
-ngdbuild -intstyle xflow -dd _ngo -nt timestamp -uc top.ucf -p xc3s1200e-fg320-4 "top.ngc" top.ngd
-map      -intstyle xflow -p xc3s1200e-fg320-4 -cm area -ir off -pr off -c 100 -o top_map.ncd top.ngd top.pcf
+ngdbuild -intstyle xflow -dd _ngo -nt timestamp -uc top.ucf -p xc3s500e-fg320-4 "top.ngc" top.ngd
+map      -intstyle xflow -p xc3s500e-fg320-4 -cm area -ir off -pr off -c 100 -o top_map.ncd top.ngd top.pcf
 par      -intstyle xflow -w -ol high -t 1 top_map.ncd top.ncd top.pcf
 trce     -intstyle xflow -v 3 -s 4 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf
 bitgen   -intstyle xflow -f top.ut top.ncd
