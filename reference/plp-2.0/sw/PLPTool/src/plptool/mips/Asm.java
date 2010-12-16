@@ -642,8 +642,8 @@ public class Asm extends plptool.PLPAsm {
                     branchTarget = symTable.get(asmTokens[3]) - (asmPC + 4);
                     branchTarget /= 4;
                     objectCode[i - s] |= branchTarget & 0xFFFF;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
+                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
+                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 16;
                     objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     break;

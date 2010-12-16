@@ -6,7 +6,7 @@
 # result in all 8 LEDs illuminated
 #
 
-.org 0x10000000
+.org 0x0000000
 
 j start
 nop
