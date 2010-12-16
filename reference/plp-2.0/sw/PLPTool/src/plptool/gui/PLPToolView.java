@@ -56,6 +56,7 @@ public class PLPToolView extends FrameView {
         PLPMsg.M("PLPTool GUI\n");
         PLPMsg.m("Welcome to the GUI PLP software. You can start using this tool ");
         PLPMsg.M("by opening the Develop tab to write or open an assembly file.");
+        simControls.setVisible(false);
         PLPMainPane.setEnabledAt(1, false);
         PLPMainPane.setEnabledAt(2, false);
         
@@ -547,6 +548,7 @@ public class PLPToolView extends FrameView {
             backend.g_sim.setVisible(true);
             backend.g_err.setVisible(true);
 
+            simControls.setVisible(true);
             PLPMainPane.setSelectedIndex(1);
         }
         else {

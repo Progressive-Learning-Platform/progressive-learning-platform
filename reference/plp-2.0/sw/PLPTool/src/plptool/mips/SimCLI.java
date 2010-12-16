@@ -350,6 +350,28 @@ public class SimCLI {
                 PLPMsg.M("Silent mode on.");
             }
         }
+        else if(input.equals("flags")) {
+            long f = core.getFlags();
+            if((f & Constants.PLP_SIM_FWD_EX_EX_ITYPE) == Constants.PLP_SIM_FWD_EX_EX_ITYPE)
+                PLPMsg.M("PLP_SIM_FWD_EX_EX_ITYPE");
+            if((f & Constants.PLP_SIM_FWD_EX_EX_RTYPE) == Constants.PLP_SIM_FWD_EX_EX_RTYPE)
+                PLPMsg.M("PLP_SIM_FWD_EX_EX_RTYPE");
+            if((f & Constants.PLP_SIM_FWD_MEM_EX) == Constants.PLP_SIM_FWD_MEM_EX)
+                PLPMsg.M("PLP_SIM_FWD_MEM_EX");
+            if((f & Constants.PLP_SIM_FWD_MEM_EX_LW) == Constants.PLP_SIM_FWD_MEM_EX_LW)
+                PLPMsg.M("PLP_SIM_FWD_MEM_EX_LW");
+            if((f & Constants.PLP_SIM_FWD_MEM_MEM) == Constants.PLP_SIM_FWD_MEM_MEM)
+                PLPMsg.M("PLP_SIM_FWD_MEM_MEM");
+            if((f & Constants.PLP_SIM_IF_STALL_SET) == Constants.PLP_SIM_IF_STALL_SET)
+                PLPMsg.M("PLP_SIM_IF_STALL_SET");
+            if((f & Constants.PLP_SIM_ID_STALL_SET) == Constants.PLP_SIM_ID_STALL_SET)
+                PLPMsg.M("PLP_SIM_ID_STALL_SET");
+            if((f & Constants.PLP_SIM_EX_STALL_SET) == Constants.PLP_SIM_EX_STALL_SET)
+                PLPMsg.M("PLP_SIM_EX_STALL_SET");
+            if((f & Constants.PLP_SIM_MEM_STALL_SET) == Constants.PLP_SIM_MEM_STALL_SET)
+                PLPMsg.M("PLP_SIM_MEM_STALL_SET");
+
+        }
         else if(input.equals("jvm")) {
             Runtime runtime = Runtime.getRuntime();
             PLPMsg.M("Free JVM memory:     " + runtime.freeMemory());
@@ -522,6 +544,7 @@ public class SimCLI {
                 PLPMsg.M("\n wpc <address>\n\tOverwrite program counter with <address>.");
                 PLPMsg.M("\n j <address>\n\tJump to <address>.");
                 PLPMsg.M("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
+                PLPMsg.M("\n flags\n\tPrint out simulation flags that are set.");
 
                 break;
 
