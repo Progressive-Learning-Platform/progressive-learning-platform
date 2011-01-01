@@ -35,7 +35,7 @@ module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod
 	output [7:0] sseg_display;
 	output mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub;
 	inout [15:0] mod_sram_data;
-	output [23:0] mod_sram_addr;	
+	output [23:1] mod_sram_addr;	
 
 	wire [31:0] daddr, dout, din, iaddr, iin;
 	wire drw;

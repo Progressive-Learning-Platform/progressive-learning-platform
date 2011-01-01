@@ -12,7 +12,13 @@ nop
 fritz_propaganda:
 	.asciiz "from each according to his ability, to each according to his need"
 version_string:
-	.asciiz "plp2.0"
+	.asciiz "plp2.1"
+memory_test:
+	.asciiz "starting memory test..."
+memory_success:
+	.asciiz "success!"
+memory_fail:
+	.asciiz "fail!"
 
 .include ../../sw/libplp/libplp_timer.asm
 .include ../../sw/libplp/libplp_leds.asm
@@ -38,7 +44,10 @@ startup:
 	nop
 	ori $a0, $zero, 0x000d	#newline
 	jal libplp_uart_write
-
+	nop
+	ori $a0, $zero, 0x000a  #linefeed
+	jal libplp_uart_write
+	nop
 shiny:
 
 #seven segment
@@ -69,7 +78,7 @@ flash_leds_loop2:
 
 #more seven segment
 sseg_version:
-	li $a0, 0x24c0ffff
+	li $a0, 0x24f9ffff
 	jal libplp_sseg_write_raw
 	nop
 	j flash_leds_loop2
@@ -80,6 +89,9 @@ switches:
 	jal libplp_switches_read
 	ori $s0, $zero, 1
 	beq $s0, $v0, boot_uart
+	nop
+	ori $s0, $zero, 2
+	beq $s0, $v0, boot_memory_test
 	nop
 	j shiny
 	nop
@@ -156,4 +168,55 @@ boot_uart_version:
 	jal libplp_uart_write_string
 	nop
 	j boot_uart_run
+	nop
+
+#walk across memory and make sure we can read/write to all locations
+boot_memory_test:
+	li $a0, memory_test
+	jal libplp_uart_write_string
+	nop
+	ori $a0, $zero, 0x000d  #newline
+        jal libplp_uart_write
+        nop
+        ori $a0, $zero, 0x000a  #linefeed
+        jal libplp_uart_write
+        nop
+
+	li $t0, 0x10000000	#base address of memory
+	li $t1, 0x10100000	#upper address of memory (just 20 bits for now)
+	li $t2, 0xdeadbeef	#value to write to memory
+
+boot_memory_test_write_loop:
+	sw $t2, 0($t0)
+	addiu $t0, $t0, 4
+	bne $t0, $t1, boot_memory_test_write_loop
+	nop
+
+	li $t0, 0x10000000
+boot_memory_test_read_loop:
+	lw $t3, 0($t0)
+	bne $t2, $t3, boot_memory_test_fail
+	nop
+	addiu $t0, $t0, 4
+	bne $t0, $t1, boot_memory_test_read_loop
+	nop
+
+boot_memory_test_success:
+	li $a0, memory_success
+	jal libplp_uart_write_string
+	nop
+	j boot_memory_test_halt
+	nop
+
+boot_memory_test_fail:
+	#write the lower bits of the failed valued
+	move $a0, $t3
+	jal libplp_sseg_write
+	nop
+	li $a0, memory_fail
+	jal libplp_uart_write_string
+	nop
+
+boot_memory_test_halt:
+	j boot_memory_test_halt
 	nop

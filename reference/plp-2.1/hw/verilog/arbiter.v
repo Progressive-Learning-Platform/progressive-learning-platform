@@ -35,7 +35,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	output [7:0] mod_sseg_display;
 	output cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub;
 	inout [15:0] mod_sram_data;
-	output [23:0] mod_sram_addr;
+	output [23:1] mod_sram_addr;
 
 	/* effective address calculation for the modules */
 	wire [7:0] imod, dmod;

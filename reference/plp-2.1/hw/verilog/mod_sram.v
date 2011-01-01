@@ -36,7 +36,7 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 	
 	output cpu_stall;
 	output sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_lb, sram_ub;
-	output [23:0] sram_addr;
+	output [23:1] sram_addr;
 	output sram_we;
 	inout [15:0] sram_data;
 
@@ -56,8 +56,9 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 
 	reg [1:0] state = 2'b00;
 
-	assign sram_data = (sram_we) ? 16'hzzzz : din;
-	assign sram_addr = {daddr[23:2],state[1],1'b0};
+	assign sram_data = (sram_we) ? 16'hzzzz : 
+			   (state == 2'b00) ? din[31:16] : din[15:0];
+	assign sram_addr = {daddr[23:2],state[1]};
 	assign sram_we   = !drw && de && !rst;
 	assign cpu_stall = (state != 2'b00);
 
