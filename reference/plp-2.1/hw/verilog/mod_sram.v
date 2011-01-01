@@ -35,12 +35,13 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
         output [31:0] iout, dout;
 	
 	output cpu_stall;
-	output sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub;
-	output reg [23:0] sram_addr;
+	output sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_lb, sram_ub;
+	output [23:0] sram_addr;
+	output sram_we;
 	inout [15:0] sram_data;
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
-        wire [31:0] idata, ddata;
+        reg [31:0] idata, ddata;
         assign iout = ie ? idata : 32'hzzzzzzzz;
         assign dout = de ? ddata : 32'hzzzzzzzz;
 
@@ -55,16 +56,25 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 
 	reg [1:0] state = 2'b00;
 
+	assign sram_data = (sram_we) ? 16'hzzzz : din;
+	assign sram_addr = {daddr[23:2],state[1],1'b0};
+	assign sram_we   = !drw && de && !rst;
+	assign cpu_stall = (state != 2'b00);
+
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
-		if (drw && de && !rst) begin /* write */
-			
-		end else if (!drw && de && !rst) begin /* read */
-			if (state == 2'b00) begin /* new read cycle */
-				cpu_stall = 1;
-				state = 2'b01;
-				sram_we = 1;
-				sram_addr = daddr;
+		if (de && !rst) begin
+			/* 
+			   when state transitions to 01, no more than 20ns have elapsed
+			   when state transitions to 10, 60ns have elapsed
+			   when state transitions to 11, 100ns have elapsed
+			   when state transitions to 00, 140ns have elapsed
+ 			*/
+			state = state + 1;
+			if (state == 2'b10) ddata[31:16] = sram_data;
+			if (state == 2'b00) ddata[15:0]  = sram_data;
+		end else if (rst) begin
+			state = 2'b00;
 		end
 	end
 endmodule
