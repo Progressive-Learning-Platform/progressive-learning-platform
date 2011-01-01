@@ -28,6 +28,7 @@ memory map module
 
 0x00000000      512             bootloader ROM
 0x10000000      8192            RAM
+0x20000000	16777216	SRAM
 0xf0000000      16              UART
 0xf0100000      4               switches
 0xf0200000      4               leds
