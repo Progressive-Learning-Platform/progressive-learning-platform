@@ -58,3 +58,38 @@ libplp_uart_write_string_loop:
 libplp_uart_write_string_done:
 	jr $t9			#go home
 	nop
+
+libplp_uart_write_value_b2:
+	move $t8, $ra
+	move $t7, $a0
+	li $t6, 0x30
+	li $t5, 0x31
+	li $t4, 0x80000000
+	li $t3, 33
+libplp_uart_write_value_b2_loop:
+	and $t0, $t7, $t4
+	sll $t7, $t7, 1
+	addiu $t3, $t3, -1
+	beq $t3, $zero, libplp_uart_write_value_b2_done
+	nop
+	beq $t0, $zero, libplp_uart_write_zero
+	nop
+	j libplp_uart_write_one
+	nop
+
+libplp_uart_write_value_b2_done:
+	jr $t8
+	nop
+
+libplp_uart_write_zero:
+	li $a0, 0x30
+	jal libplp_uart_write
+	nop
+	j libplp_uart_write_value_b2_loop
+	nop
+libplp_uart_write_one:
+	li $a0, 0x31
+	jal libplp_uart_write
+	nop
+	j libplp_uart_write_value_b2_loop
+	nop
