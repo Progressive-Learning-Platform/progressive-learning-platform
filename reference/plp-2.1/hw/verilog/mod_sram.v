@@ -54,28 +54,26 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 	assign sram_ub  = 0;
 	assign sram_lb  = 0;
 
-	reg [1:0] state = 2'b00;
+	reg [2:0] state = 3'b000;
+	wire UL = (state == 3'b000 || state == 3'b001 || state == 3'b010 || state == 3'b011) ? 0 : 1;
 
-	assign sram_data = (sram_we) ? 16'hzzzz : 
-			   (state == 2'b00) ? din[31:16] : din[15:0];
-	assign sram_addr = {daddr[23:2],state[1]};
-	assign sram_we   = !drw && de && !rst;
-	assign cpu_stall = (state != 2'b00);
+	assign sram_data = (!drw && de && !rst) ? 16'hzzzz : 
+			   (state == 3'b000 || state == 3'b001 || state == 3'b010 || state == 3'b011) ? din[31:16] : din[15:0];
+	assign sram_addr = {daddr[23:2],UL};
+	assign sram_we   = !(drw && de && !rst && state != 3'b011 && state != 3'b110);
+	assign cpu_stall = (state != 3'b000);
 
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
 		if (de && !rst) begin
-			/* 
-			   when state transitions to 01, no more than 20ns have elapsed
-			   when state transitions to 10, 60ns have elapsed
-			   when state transitions to 11, 100ns have elapsed
-			   when state transitions to 00, 140ns have elapsed
- 			*/
-			state = state + 1;
-			if (state == 2'b10) ddata[31:16] = sram_data;
-			if (state == 2'b00) ddata[15:0]  = sram_data;
+			if (state == 3'b011) ddata[31:16] <= sram_data;
+			if (state == 3'b110) ddata[15:0]  <= sram_data;
+			if (state == 3'b110)
+				state <= 3'b000;
+			else
+				state <= state + 1;
 		end else if (rst) begin
-			state = 2'b00;
+			state <= 3'b000;
 		end
 	end
 endmodule

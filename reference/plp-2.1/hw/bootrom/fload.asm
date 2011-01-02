@@ -182,23 +182,24 @@ boot_memory_test:
         jal libplp_uart_write
         nop
 
-	li $t0, 0x10000000	#base address of memory
-	li $t1, 0x10100000	#upper address of memory (just 20 bits for now)
-	li $t2, 0xdeadbeef	#value to write to memory
+	li $s0, 0x10000000	#base address of memory
+	li $s1, 0x10100000	#upper address of memory (just 20 bits for now)
+	li $s2, 0xdeadbeef	#value to write to memory
 
 boot_memory_test_write_loop:
-	sw $t2, 0($t0)
-	addiu $t0, $t0, 4
-	bne $t0, $t1, boot_memory_test_write_loop
+	sw $s0, 0($s0)
+	addiu $s0, $s0, 4
+	bne $s0, $s1, boot_memory_test_write_loop
 	nop
 
-	li $t0, 0x10000000
+	li $s0, 0x10000000
 boot_memory_test_read_loop:
-	lw $t3, 0($t0)
-	bne $t2, $t3, boot_memory_test_fail
+	lw $s3, 0($s0)
+
+	bne $s0, $s3, boot_memory_test_fail
 	nop
-	addiu $t0, $t0, 4
-	bne $t0, $t1, boot_memory_test_read_loop
+	addiu $s0, $s0, 4
+	bne $s0, $s1, boot_memory_test_read_loop
 	nop
 
 boot_memory_test_success:
@@ -209,10 +210,16 @@ boot_memory_test_success:
 	nop
 
 boot_memory_test_fail:
-	#write the lower bits of the failed valued
-	move $a0, $t3
-	jal libplp_sseg_write
+	move $a0, $s3
+	jal libplp_uart_write_value_b2
 	nop
+	ori $a0, $zero, 0x000d  #newline
+        jal libplp_uart_write
+        nop
+        ori $a0, $zero, 0x000a  #linefeed
+        jal libplp_uart_write
+        nop
+
 	li $a0, memory_fail
 	jal libplp_uart_write_string
 	nop
