@@ -35,7 +35,7 @@ public class PLPToolApp extends SingleFrameApplication {
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        PLPBackend backend = new PLPBackend(true, "UNSPECIFIED");
+        PLPBackend backend = new PLPBackend(true, "plpmips"); // default to plpmips for now
         backend.ioreg = new IORegistry();
         backend.g_err = new PLPErrorFrame();
         backend.g_dev = new PLPDevelop(backend);
@@ -43,6 +43,7 @@ public class PLPToolApp extends SingleFrameApplication {
         simUI = new PLPSimulator(this, backend);
         backend.g_simui = simUI;
         backend.g_desktop = simUI.getSimDesktop();
+        backend.g_dev.setVisible(true);
         // show(mainWindow);
     }
 

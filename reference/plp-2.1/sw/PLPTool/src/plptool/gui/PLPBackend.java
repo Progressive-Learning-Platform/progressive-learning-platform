@@ -49,6 +49,7 @@ public class PLPBackend {
     public plptool.gui.PLPIORegistry           g_ioreg;    // I/O registry GUI
     public plptool.gui.PLPDevelop              g_dev;      // IDE GUI
     public plptool.gui.PLPErrorFrame           g_err;      // Error frame
+    public plptool.gui.PLPToolAboutBox         g_about;    // About Frame
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -64,6 +65,11 @@ public class PLPBackend {
 
     public int setArch(String arch) {
         this.arch = arch;
+
+        return Constants.PLP_OK;
+    }
+
+    public int savePLPFile(String path) {
 
         return Constants.PLP_OK;
     }
