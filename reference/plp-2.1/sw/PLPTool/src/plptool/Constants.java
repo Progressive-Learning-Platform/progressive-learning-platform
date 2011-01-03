@@ -97,6 +97,9 @@ public static final String versionString = "Beta 2";
     public static final int PLP_OK                               = 0;
     public static final int PLP_GENERIC_ERROR                    = 1;
     public static final int PLP_TOOLAPP_ERROR                    = 2;
+    public static final int PLP_FILE_OPEN_ERROR                  = 3;
+    public static final int PLP_FILE_SAVE_ERROR                  = 4;
+    public static final int PLP_NO_ASM_OPEN                      = 5;
 
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;
@@ -106,3 +109,4 @@ public static final String versionString = "Beta 2";
     // Flags
     public static final boolean FLAGS_ALIGNED_MEMORY             = true;
 }
+

@@ -1108,6 +1108,7 @@ public class SimCore extends PLPSimCore {
             boolean mem_instr_is_branch = (mem_instrType == 3) ? true : false;
             boolean ex_instr_is_itype =
                     (ex_instrType >= 3 && ex_instrType <= 6) ? true : false;
+            boolean ex_instr_is_branch = (ex_instrType == 3) ? true : false;
 
             if(wb_stage.hot) {
                 // MEM->MEM
@@ -1129,8 +1130,10 @@ public class SimCore extends PLPSimCore {
                 }
 
                 // MEM->EX Load Word, stall
-                if(mem_rt == ex_rt && mem_rt != 0 && ex_rt != 0 && mem_stage.ctl_memread == 1
-                        && ex_stage.fwd_ctl_memwrite == 0 && !ex_instr_is_itype) {
+                if(mem_rt == ex_rt && mem_rt != 0 && ex_rt != 0
+                        && mem_stage.ctl_memread == 1
+                        && ex_stage.fwd_ctl_memwrite == 0
+                        && (!ex_instr_is_itype || ex_instr_is_branch)) {
                     mem_stage.i_instruction = 0;
                     mem_stage.i_instrAddr = -1;
                     ex_stage.data_rt = wb_stage.i_data_memreaddata;

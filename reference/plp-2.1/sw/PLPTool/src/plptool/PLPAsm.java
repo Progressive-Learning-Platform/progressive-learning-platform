@@ -50,6 +50,16 @@ public abstract class PLPAsm {
         mapperIndex = 0;
         assembled = false;
     }
+
+    public PLPAsm(ArrayList<PLPAsmSource> asms) {
+        SourceList = asms;
+        preprocessedAsm = new String();
+
+        asmIndex = 0;
+        mapperIndex = 0;
+        assembled = false;
+    }
+
     /**
      * The address table attached to this assembler.
      *
