@@ -83,6 +83,23 @@ public class Asm extends plptool.PLPAsm {
         defineArch();
     }
 
+    public Asm (ArrayList<PLPAsmSource> asms) {
+        super(asms);
+
+        curAddr = 0;
+        instrMap = new HashMap<String, Integer>();
+        symTable = new HashMap<String, Long>();
+        regionMap = new ArrayList<Integer>();
+        opcode = new HashMap<String, Byte>();
+        funct = new HashMap<String, Byte>();
+        regs = new HashMap<String, Byte>();
+
+        directiveOffset = 0;
+        topLevelFile = asms.get(0).getAsmFilePath();
+
+        defineArch();
+    }
+
     /**
      * Define instruction->opcode mappings, instruction type mapping and
      * register mappings.

@@ -561,7 +561,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         SimCLI.init_core = true;
         lastCLCommand = simCLConsole.getText();
         simCLOutput.append("exec: " + simCLConsole.getText() + "\n");
-        SimCLI.simCLCommand(simCLConsole.getText(), (SimCore) sim, backend.ioreg);
+        SimCLI.simCLCommand(simCLConsole.getText(), (SimCore) backend.sim, backend.ioreg);
         if(simCLConsole.getText().trim().startsWith("asm")) {
             clearProgramMemoryTable();
             fillProgramMemoryTable();

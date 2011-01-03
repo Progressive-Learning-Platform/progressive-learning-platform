@@ -41,21 +41,18 @@ import java.awt.Color;
 /**
  * The application's main frame.
  */
-public class PLPToolView extends FrameView {
+public class PLPSimulator extends FrameView {
 
     static final int MAX_STEPS = 60000;
     PLPBackend backend;
 
-    public PLPToolView(SingleFrameApplication app, PLPBackend backend) {
+    public PLPSimulator(SingleFrameApplication app, PLPBackend backend) {
         super(app);
 
         this.backend = backend;
 
         initComponents();
-        PLPMsg.output = Output; // reroute PLPMsg output
-        PLPMsg.M("PLPTool GUI\n");
-        PLPMsg.m("Welcome to the GUI PLP software. You can start using this tool ");
-        PLPMsg.M("by opening the Develop tab to write or open an assembly file.");
+        PLPMsg.M("PLPTool Simulator GUI Loaded\n");
         simControls.setVisible(false);
         PLPMainPane.setEnabledAt(1, false);
         PLPMainPane.setEnabledAt(2, false);
@@ -73,7 +70,7 @@ public class PLPToolView extends FrameView {
     }
 
     public void plpMsgRouteBack() {
-        PLPMsg.output = Output;
+        PLPMsg.output = null;
     }
 
     public void selectFirstPane(){
@@ -101,22 +98,6 @@ public class PLPToolView extends FrameView {
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         PLPMainPane = new javax.swing.JTabbedPane();
-        IDEPane = new javax.swing.JPanel();
-        IDEBar = new javax.swing.JToolBar();
-        IDENewBtn = new javax.swing.JButton();
-        IDEOpenBtn = new javax.swing.JButton();
-        IDESaveBtn = new javax.swing.JButton();
-        IDESaveAsBtn = new javax.swing.JButton();
-        IDEAssembleBtn = new javax.swing.JButton();
-        IDEScroller = new javax.swing.JScrollPane();
-        IDEStdOut = new javax.swing.JTextArea();
-        IDESplitter = new javax.swing.JSplitPane();
-        IDETreePane = new javax.swing.JScrollPane();
-        IDEContextTree = new javax.swing.JTree();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        IDEEditor = new javax.swing.JEditorPane();
-        IDECommander = new javax.swing.JTextField();
-        IDELabel_Command = new javax.swing.JLabel();
         SimPane = new javax.swing.JPanel();
         simControls = new javax.swing.JPanel();
         btnStep = new javax.swing.JButton();
@@ -137,17 +118,14 @@ public class PLPToolView extends FrameView {
         jComboBox2 = new javax.swing.JComboBox();
         jComboBox3 = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
-        OutputPane = new javax.swing.JPanel();
-        OutputScrollPane = new javax.swing.JScrollPane();
-        Output = new javax.swing.JTextArea();
 
         menuBar.setName("menuBar"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPToolView.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPSimulator.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getActionMap(PLPToolView.class, this);
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getActionMap(PLPSimulator.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         exitMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -170,122 +148,6 @@ public class PLPToolView extends FrameView {
 
         PLPMainPane.setMinimumSize(new java.awt.Dimension(56, 55));
         PLPMainPane.setName("PLPMainPane"); // NOI18N
-
-        IDEPane.setName("IDETab"); // NOI18N
-        IDEPane.setVerifyInputWhenFocusTarget(false);
-
-        IDEBar.setFloatable(false);
-        IDEBar.setRollover(true);
-        IDEBar.setName("IDEBar"); // NOI18N
-
-        IDENewBtn.setText(resourceMap.getString("IDENewBtn.text")); // NOI18N
-        IDENewBtn.setFocusable(false);
-        IDENewBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        IDENewBtn.setName("IDENewBtn"); // NOI18N
-        IDENewBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        IDEBar.add(IDENewBtn);
-
-        IDEOpenBtn.setText(resourceMap.getString("IDEOpenBtn.text")); // NOI18N
-        IDEOpenBtn.setFocusable(false);
-        IDEOpenBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        IDEOpenBtn.setName("IDEOpenBtn"); // NOI18N
-        IDEOpenBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        IDEBar.add(IDEOpenBtn);
-
-        IDESaveBtn.setText(resourceMap.getString("IDESaveBtn.text")); // NOI18N
-        IDESaveBtn.setFocusable(false);
-        IDESaveBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        IDESaveBtn.setName("IDESaveBtn"); // NOI18N
-        IDESaveBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        IDEBar.add(IDESaveBtn);
-
-        IDESaveAsBtn.setText(resourceMap.getString("IDESaveAsBtn.text")); // NOI18N
-        IDESaveAsBtn.setFocusable(false);
-        IDESaveAsBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        IDESaveAsBtn.setName("IDESaveAsBtn"); // NOI18N
-        IDESaveAsBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        IDEBar.add(IDESaveAsBtn);
-
-        IDEAssembleBtn.setText(resourceMap.getString("IDEAssembleBtn.text")); // NOI18N
-        IDEAssembleBtn.setFocusable(false);
-        IDEAssembleBtn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        IDEAssembleBtn.setName("IDEAssembleBtn"); // NOI18N
-        IDEAssembleBtn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        IDEAssembleBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                IDEAssembleBtnMouseClicked(evt);
-            }
-        });
-        IDEAssembleBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                IDEAssembleBtnActionPerformed(evt);
-            }
-        });
-        IDEBar.add(IDEAssembleBtn);
-
-        IDEScroller.setName("IDEScroller"); // NOI18N
-
-        IDEStdOut.setColumns(20);
-        IDEStdOut.setEditable(false);
-        IDEStdOut.setFont(resourceMap.getFont("IDEStdOut.font")); // NOI18N
-        IDEStdOut.setRows(5);
-        IDEStdOut.setName("IDEStdOut"); // NOI18N
-        IDEScroller.setViewportView(IDEStdOut);
-
-        IDESplitter.setResizeWeight(0.7);
-        IDESplitter.setName("IDESplitter"); // NOI18N
-
-        IDETreePane.setName("IDETreePane"); // NOI18N
-
-        IDEContextTree.setName("IDEContextTree"); // NOI18N
-        IDETreePane.setViewportView(IDEContextTree);
-
-        IDESplitter.setRightComponent(IDETreePane);
-
-        jScrollPane4.setName("jScrollPane4"); // NOI18N
-
-        IDEEditor.setFont(resourceMap.getFont("IDEEditor.font")); // NOI18N
-        IDEEditor.setName("IDEEditor"); // NOI18N
-        jScrollPane4.setViewportView(IDEEditor);
-
-        IDESplitter.setLeftComponent(jScrollPane4);
-
-        IDECommander.setText(resourceMap.getString("IDECommander.text")); // NOI18N
-        IDECommander.setName("IDECommander"); // NOI18N
-
-        IDELabel_Command.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        IDELabel_Command.setText(resourceMap.getString("IDELabel_Command.text")); // NOI18N
-        IDELabel_Command.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        IDELabel_Command.setInheritsPopupMenu(false);
-        IDELabel_Command.setName("IDELabel_Command"); // NOI18N
-
-        javax.swing.GroupLayout IDEPaneLayout = new javax.swing.GroupLayout(IDEPane);
-        IDEPane.setLayout(IDEPaneLayout);
-        IDEPaneLayout.setHorizontalGroup(
-            IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
-            .addGroup(IDEPaneLayout.createSequentialGroup()
-                .addComponent(IDELabel_Command)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDECommander, javax.swing.GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
-            .addComponent(IDEScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
-            .addComponent(IDEBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
-        );
-        IDEPaneLayout.setVerticalGroup(
-            IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(IDEPaneLayout.createSequentialGroup()
-                .addComponent(IDEBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDESplitter, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(IDEScroller, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(IDEPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(IDECommander, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(IDELabel_Command)))
-        );
-
-        PLPMainPane.addTab(resourceMap.getString("IDETab.TabConstraints.tabTitle"), IDEPane); // NOI18N
 
         SimPane.setEnabled(false);
         SimPane.setName("EmulatorTab"); // NOI18N
@@ -372,7 +234,7 @@ public class PLPToolView extends FrameView {
                 .addComponent(txtFlags, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnOpts)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(137, Short.MAX_VALUE))
         );
         simControlsLayout.setVerticalGroup(
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -400,12 +262,12 @@ public class PLPToolView extends FrameView {
         SimPaneLayout.setHorizontalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(simControls, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
+            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
         );
         SimPaneLayout.setVerticalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimPaneLayout.createSequentialGroup()
-                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
+                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(simControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -446,9 +308,9 @@ public class PLPToolView extends FrameView {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 686, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 686, Short.MAX_VALUE)
-                    .addComponent(jComboBox3, 0, 686, Short.MAX_VALUE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 705, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 705, Short.MAX_VALUE)
+                    .addComponent(jComboBox3, 0, 705, Short.MAX_VALUE))
                 .addContainerGap())
         );
         PrgPaneLayout.setVerticalGroup(
@@ -466,40 +328,10 @@ public class PLPToolView extends FrameView {
                 .addGroup(PrgPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addContainerGap(391, Short.MAX_VALUE))
+                .addContainerGap(421, Short.MAX_VALUE))
         );
 
         PLPMainPane.addTab(resourceMap.getString("PrgPane.TabConstraints.tabTitle"), PrgPane); // NOI18N
-
-        OutputPane.setName("OutputPane"); // NOI18N
-
-        OutputScrollPane.setName("OutputScrollPane"); // NOI18N
-
-        Output.setColumns(20);
-        Output.setEditable(false);
-        Output.setFont(resourceMap.getFont("Output.font")); // NOI18N
-        Output.setRows(5);
-        Output.setName("Output"); // NOI18N
-        OutputScrollPane.setViewportView(Output);
-
-        javax.swing.GroupLayout OutputPaneLayout = new javax.swing.GroupLayout(OutputPane);
-        OutputPane.setLayout(OutputPaneLayout);
-        OutputPaneLayout.setHorizontalGroup(
-            OutputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(OutputPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        OutputPaneLayout.setVerticalGroup(
-            OutputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(OutputPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(OutputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        PLPMainPane.addTab(resourceMap.getString("OutputPane.TabConstraints.tabTitle"), OutputPane); // NOI18N
 
         PLPMainPane.getAccessibleContext().setAccessibleName(resourceMap.getString("jTabbedPane1.AccessibleContext.accessibleName")); // NOI18N
 
@@ -509,57 +341,6 @@ public class PLPToolView extends FrameView {
 
     private void exitMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitMenuItemMouseReleased
     }//GEN-LAST:event_exitMenuItemMouseReleased
-
-    private void IDEAssembleBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IDEAssembleBtnMouseClicked
-        
-    }//GEN-LAST:event_IDEAssembleBtnMouseClicked
-
-    private void IDEAssembleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDEAssembleBtnActionPerformed
-        int ret = 0;
-        PLPMsg.output = IDEStdOut;
-        destroySimulation();
-        PLPMsg.M("Assembling...");
-        
-        if(PLPCfg.cfgArch.equals("plpmips"))
-            backend.asm = new plptool.mips.Asm(IDEEditor.getText(), "IDEEditor");
-
-        if((ret = backend.asm.preprocess(0)) == Constants.PLP_OK) {
-            ret = backend.asm.assemble();
-        }
-        if(ret == Constants.PLP_OK) {
-            PLPMsg.M("Done.");
-            PLPMainPane.setEnabledAt(1, true);
-            PLPMainPane.setEnabledAt(2, true);
-            
-            backend.g_err = new PLPErrorFrame();
-
-            if(PLPCfg.cfgArch.equals("plpmips"))
-                backend.sim = new plptool.mips.SimCore((plptool.mips.Asm) backend.asm, -1);
-    
-            backend.sim.reset();
-            backend.sim.step();
-
-            if(PLPCfg.cfgArch.equals("plpmips"))
-                backend.g_sim = new plptool.mips.SimCoreGUI(backend);
-
-            simDesktop.add(backend.g_sim);
-            simDesktop.add(backend.g_err);
-            
-            backend.g_sim.setVisible(true);
-            backend.g_err.setVisible(true);
-
-            simControls.setVisible(true);
-            PLPMainPane.setSelectedIndex(1);
-        }
-        else {
-            PLPMainPane.setEnabledAt(1, false);
-            PLPMainPane.setEnabledAt(2, false);
-            
-            PLPMsg.M("Fix your code.");
-            PLPMsg.M("");
-            PLPMsg.output = Output;
-        }
-    }//GEN-LAST:event_IDEAssembleBtnActionPerformed
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
         if(simRunner != null)
@@ -648,24 +429,6 @@ public class PLPToolView extends FrameView {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton IDEAssembleBtn;
-    private javax.swing.JToolBar IDEBar;
-    private javax.swing.JTextField IDECommander;
-    private javax.swing.JTree IDEContextTree;
-    private javax.swing.JEditorPane IDEEditor;
-    private javax.swing.JLabel IDELabel_Command;
-    private javax.swing.JButton IDENewBtn;
-    private javax.swing.JButton IDEOpenBtn;
-    private javax.swing.JPanel IDEPane;
-    private javax.swing.JButton IDESaveAsBtn;
-    private javax.swing.JButton IDESaveBtn;
-    private javax.swing.JScrollPane IDEScroller;
-    private javax.swing.JSplitPane IDESplitter;
-    private javax.swing.JTextArea IDEStdOut;
-    private javax.swing.JScrollPane IDETreePane;
-    private javax.swing.JTextArea Output;
-    private javax.swing.JPanel OutputPane;
-    private javax.swing.JScrollPane OutputScrollPane;
     private javax.swing.JTabbedPane PLPMainPane;
     private javax.swing.JPanel PrgPane;
     private javax.swing.JPanel SimPane;
@@ -679,7 +442,6 @@ public class PLPToolView extends FrameView {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel lblControl;
     private javax.swing.JLabel lblFlags;
     private javax.swing.JMenuBar menuBar;

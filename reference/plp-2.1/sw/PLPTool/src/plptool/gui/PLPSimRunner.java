@@ -64,6 +64,6 @@ public class PLPSimRunner extends Thread {
         PLPMsg.m("SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
         PLPMsg.M("in " + time + " milliseconds of real time.");
 
-        backend.g_main.unselectTglRun();
+        backend.g_simui.unselectTglRun();
     }
 }

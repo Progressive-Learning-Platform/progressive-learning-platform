@@ -29,7 +29,7 @@ import plptool.mods.IORegistry;
  */
 public class PLPToolApp extends SingleFrameApplication {
     
-    PLPToolView mainWindow;
+    PLPSimulator simUI;
 
     /**
      * At startup create and show the main frame of the application.
@@ -40,10 +40,10 @@ public class PLPToolApp extends SingleFrameApplication {
         backend.g_err = new PLPErrorFrame();
         backend.g_dev = new PLPDevelop(backend);
         backend.g_ioreg = new PLPIORegistry(backend);
-        mainWindow = new PLPToolView(this, backend);
-        backend.g_main = mainWindow;
-        backend.g_desktop = mainWindow.getSimDesktop();
-        show(mainWindow);
+        simUI = new PLPSimulator(this, backend);
+        backend.g_simui = simUI;
+        backend.g_desktop = simUI.getSimDesktop();
+        // show(mainWindow);
     }
 
     /**
