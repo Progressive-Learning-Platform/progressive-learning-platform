@@ -64,318 +64,177 @@
         </Menu>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JTabbedPane" name="PLPMainPane">
+    <Container class="javax.swing.JPanel" name="SimPane">
       <Properties>
-        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[56, 55]"/>
-        </Property>
-        <Property name="name" type="java.lang.String" value="PLPMainPane" noResource="true"/>
+        <Property name="enabled" type="boolean" value="false"/>
+        <Property name="name" type="java.lang.String" value="EmulatorTab" noResource="true"/>
       </Properties>
-      <AccessibilityProperties>
-        <Property name="AccessibleContext.accessibleName" type="java.lang.String" resourceKey="jTabbedPane1.AccessibleContext.accessibleName"/>
-      </AccessibilityProperties>
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="simControls" alignment="1" max="32767" attributes="0"/>
+              <Component id="simDesktop" alignment="0" pref="875" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="simDesktop" pref="497" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="simControls" min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="SimPane">
+        <Container class="javax.swing.JPanel" name="simControls">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
-            <Property name="name" type="java.lang.String" value="EmulatorTab" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="simControls" noResource="true"/>
           </Properties>
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Simulate">
-                <Property name="tabTitle" type="java.lang.String" resourceKey="EmulatorTab.TabConstraints.tabTitle"/>
-              </JTabbedPaneConstraints>
-            </Constraint>
-          </Constraints>
 
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="simControls" alignment="1" max="32767" attributes="0"/>
-                  <Component id="simDesktop" alignment="0" pref="870" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblControl" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="txtSteps" min="-2" pref="42" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnStep" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="tglRun" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnReset" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="tglIODisplay" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnMem" min="-2" pref="99" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="lblFlags" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="txtFlags" min="-2" pref="77" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="btnOpts" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="164" max="32767" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="simDesktop" pref="469" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lblControl" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tglRun" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnStep" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtSteps" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnReset" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tglIODisplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnMem" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblFlags" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtFlags" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnOpts" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="simControls" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="simControls">
+            <Component class="javax.swing.JButton" name="btnStep">
               <Properties>
-                <Property name="name" type="java.lang.String" value="simControls" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="btnStep.text"/>
+                <Property name="name" type="java.lang.String" value="btnStep" noResource="true"/>
               </Properties>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lblControl" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtSteps" min="-2" pref="42" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnStep" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tglRun" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnReset" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="tglIODisplay" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnMem" min="-2" pref="99" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="lblFlags" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtFlags" min="-2" pref="77" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="btnOpts" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="137" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblControl" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglRun" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnStep" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtSteps" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnReset" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tglIODisplay" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnMem" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblFlags" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtFlags" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnOpts" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
-              <SubComponents>
-                <Component class="javax.swing.JButton" name="btnStep">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="btnStep.text"/>
-                    <Property name="name" type="java.lang.String" value="btnStep" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStepActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblControl">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="lblControl.text"/>
-                    <Property name="name" type="java.lang.String" value="lblControl" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JToggleButton" name="tglRun">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglRun.text"/>
-                    <Property name="name" type="java.lang.String" value="tglRun" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tglRunActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtSteps">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="txtSteps.text"/>
-                    <Property name="name" type="java.lang.String" value="txtSteps" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnReset">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="btnReset.text"/>
-                    <Property name="name" type="java.lang.String" value="btnReset" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JToggleButton" name="tglIODisplay">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="tglIODisplay.text"/>
-                    <Property name="name" type="java.lang.String" value="tglIODisplay" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tglIODisplayActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JToggleButton" name="btnMem">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="btnMem.text"/>
-                    <Property name="name" type="java.lang.String" value="btnMem" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblFlags">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="lblFlags.text"/>
-                    <Property name="name" type="java.lang.String" value="lblFlags" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtFlags">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="txtFlags.text"/>
-                    <Property name="name" type="java.lang.String" value="txtFlags" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnOpts">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="btnOpts.text"/>
-                    <Property name="name" type="java.lang.String" value="btnOpts" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOptsActionPerformed"/>
-                  </Events>
-                </Component>
-              </SubComponents>
-            </Container>
-            <Container class="javax.swing.JDesktopPane" name="simDesktop">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStepActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblControl">
               <Properties>
-                <Property name="background" type="java.awt.Color" resourceKey="simDesktop.background"/>
-                <Property name="name" type="java.lang.String" value="simDesktop" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="lblControl.text"/>
+                <Property name="name" type="java.lang.String" value="lblControl" noResource="true"/>
               </Properties>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
-            </Container>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="tglRun">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="tglRun.text"/>
+                <Property name="name" type="java.lang.String" value="tglRun" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tglRunActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtSteps">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="txtSteps.text"/>
+                <Property name="name" type="java.lang.String" value="txtSteps" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnReset">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="btnReset.text"/>
+                <Property name="name" type="java.lang.String" value="btnReset" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="tglIODisplay">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="tglIODisplay.text"/>
+                <Property name="name" type="java.lang.String" value="tglIODisplay" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tglIODisplayActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="btnMem">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="btnMem.text"/>
+                <Property name="name" type="java.lang.String" value="btnMem" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblFlags">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="lblFlags.text"/>
+                <Property name="name" type="java.lang.String" value="lblFlags" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtFlags">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="txtFlags.text"/>
+                <Property name="name" type="java.lang.String" value="txtFlags" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnOpts">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="btnOpts.text"/>
+                <Property name="name" type="java.lang.String" value="btnOpts" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOptsActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="PrgPane">
+        <Container class="javax.swing.JDesktopPane" name="simDesktop">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
-            <Property name="name" type="java.lang.String" value="PrgPane" noResource="true"/>
+            <Property name="background" type="java.awt.Color" resourceKey="simDesktop.background"/>
+            <Property name="name" type="java.lang.String" value="simDesktop" noResource="true"/>
           </Properties>
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Program">
-                <Property name="tabTitle" type="java.lang.String" resourceKey="PrgPane.TabConstraints.tabTitle"/>
-              </JTabbedPaneConstraints>
-            </Constraint>
-          </Constraints>
 
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jLabel3" max="32767" attributes="1"/>
-                          <Component id="jLabel2" max="32767" attributes="1"/>
-                          <Component id="jLabel1" alignment="0" pref="141" max="32767" attributes="1"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jComboBox2" alignment="1" pref="705" max="32767" attributes="1"/>
-                          <Component id="jComboBox1" alignment="1" pref="705" max="32767" attributes="1"/>
-                          <Component id="jComboBox3" alignment="0" pref="705" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jComboBox2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace pref="421" max="32767" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-          </Layout>
-          <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel1">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel1.text"/>
-                <Property name="name" type="java.lang.String" value="jLabel1" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
-                <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="jComboBox1">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Item 1"/>
-                    <StringItem index="1" value="Item 2"/>
-                    <StringItem index="2" value="Item 3"/>
-                    <StringItem index="3" value="Item 4"/>
-                  </StringArray>
-                </Property>
-                <Property name="name" type="java.lang.String" value="jComboBox1" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="jComboBox2">
-              <Properties>
-                <Property name="editable" type="boolean" value="true"/>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Item 1"/>
-                    <StringItem index="1" value="Item 2"/>
-                    <StringItem index="2" value="Item 3"/>
-                    <StringItem index="3" value="Item 4"/>
-                  </StringArray>
-                </Property>
-                <Property name="name" type="java.lang.String" value="jComboBox2" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="jComboBox3">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Item 1"/>
-                    <StringItem index="1" value="Item 2"/>
-                    <StringItem index="2" value="Item 3"/>
-                    <StringItem index="3" value="Item 4"/>
-                  </StringArray>
-                </Property>
-                <Property name="name" type="java.lang.String" value="jComboBox3" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel3.text"/>
-                <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
-              </Properties>
-            </Component>
-          </SubComponents>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
         </Container>
       </SubComponents>
     </Container>
   </NonVisualComponents>
   <Properties>
     <Property name="component" type="javax.swing.JComponent" editor="org.netbeans.modules.form.ComponentChooserEditor">
-      <ComponentRef name="PLPMainPane"/>
-    </Property>
-    <Property name="menuBar" type="javax.swing.JMenuBar" editor="org.netbeans.modules.form.ComponentChooserEditor">
-      <ComponentRef name="menuBar"/>
+      <ComponentRef name="SimPane"/>
     </Property>
   </Properties>
   <AuxValues>
