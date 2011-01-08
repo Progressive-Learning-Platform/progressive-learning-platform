@@ -70,7 +70,6 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 
 	/* module instantiations */
 	/* 0 */ mod_rom		rom_t		(rst, clk, mod0_ie, mod0_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
-	///* 1 */ mod_ram 	ram_t		(rst, clk, mod1_ie, mod1_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
 	/* 1 */ mod_sram	ram_t		(rst, clk, mod1_ie, mod1_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr);
 	/* 2 */ mod_uart	uart_t		(rst, clk, mod2_ie, mod2_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_uart_txd, mod_uart_rxd);
 	/* 3 */ mod_switches 	switches_t 	(rst, clk, mod3_ie, mod3_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_switches_switches);
