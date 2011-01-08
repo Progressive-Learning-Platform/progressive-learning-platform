@@ -27,8 +27,7 @@ memory map module
 /* the memory map is as follows:
 
 0x00000000      512             bootloader ROM
-0x10000000      8192            RAM
-0x20000000	16777216	SRAM
+0x10000000	16777216	SRAM
 0xf0000000      16              UART
 0xf0100000      4               switches
 0xf0200000      4               leds
@@ -49,7 +48,7 @@ module mm(addr, mod, eff_addr);
 	output [31:0] eff_addr; /* effective address */
 
 	assign mod = (addr[31:20] == 12'h000) ? 0 : /* mod_rom */
-		     (addr[31:20] == 12'h100) ? 1 : /* mod_ram */
+		     (addr[31:24] ==   8'h10) ? 1 : /* mod_ram */
 		     (addr[31:20] == 12'hf00) ? 2 : /* mod_uart */
 		     (addr[31:20] == 12'hf01) ? 3 : /* mod_switches */
 		     (addr[31:20] == 12'hf02) ? 4 : /* mod_leds */
@@ -57,5 +56,5 @@ module mm(addr, mod, eff_addr);
 		     (addr[31:20] == 12'hf06) ? 9 : /* mod_timer */
 		     (addr[31:20] == 12'hf0a) ? 10 : /* mod_sseg */
 		     0;
-	assign eff_addr = {12'h000,addr[19:0]};
+	assign eff_addr = (mod == 8'h01) ? {8'h00,addr[23:0]} : {12'h000,addr[19:0]};
 endmodule
