@@ -199,7 +199,7 @@ boot_memory_test_read_loop_fail_done:
 	bne $s0, $s1, boot_memory_test_read_loop
 	nop
 
-boot_memory_test_done
+boot_memory_test_done:
 	li $a0, memory_done
 	jal libplp_uart_write_string
 	nop
@@ -210,7 +210,7 @@ boot_memory_test_fail:
 	jal libplp_uart_write_value_b2
 	move $a0, $s0
 
-	jal libpllp_uart_write
+	jal libplp_uart_write
 	ori $a0, $zero, 0x003a	#colon
 
 	jal libplp_uart_write_value_b2
