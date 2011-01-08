@@ -15,10 +15,8 @@ version_string:
 	.asciiz "plp2.1"
 memory_test:
 	.asciiz "starting memory test..."
-memory_success:
-	.asciiz "success!"
-memory_fail:
-	.asciiz "fail!"
+memory_done:
+	.asciiz "done."
 
 .include ../../sw/libplp/libplp_timer.asm
 .include ../../sw/libplp/libplp_leds.asm
@@ -175,12 +173,10 @@ boot_memory_test:
 	li $a0, memory_test
 	jal libplp_uart_write_string
 	nop
+        jal libplp_uart_write
 	ori $a0, $zero, 0x000d  #newline
         jal libplp_uart_write
-        nop
         ori $a0, $zero, 0x000a  #linefeed
-        jal libplp_uart_write
-        nop
 
 	li $s0, 0x10000000	#base address of memory
 	li $s1, 0x11000000	#upper address of memory 
@@ -198,30 +194,33 @@ boot_memory_test_read_loop:
 
 	bne $s0, $s3, boot_memory_test_fail
 	nop
+boot_memory_test_read_loop_fail_done:
 	addiu $s0, $s0, 4
 	bne $s0, $s1, boot_memory_test_read_loop
 	nop
 
-boot_memory_test_success:
-	li $a0, memory_success
+boot_memory_test_done
+	li $a0, memory_done
 	jal libplp_uart_write_string
 	nop
 	j boot_memory_test_halt
 	nop
 
 boot_memory_test_fail:
-	move $a0, $s3
 	jal libplp_uart_write_value_b2
-	nop
+	move $a0, $s0
+
+	jal libpllp_uart_write
+	ori $a0, $zero, 0x003a	#colon
+
+	jal libplp_uart_write_value_b2
+	move $a0, $s3
+        jal libplp_uart_write
 	ori $a0, $zero, 0x000d  #newline
         jal libplp_uart_write
-        nop
         ori $a0, $zero, 0x000a  #linefeed
-        jal libplp_uart_write
-        nop
 
-	li $a0, memory_fail
-	jal libplp_uart_write_string
+	j boot_memory_test_read_loop_fail_done
 	nop
 
 boot_memory_test_halt:
