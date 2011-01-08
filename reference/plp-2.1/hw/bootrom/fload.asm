@@ -183,7 +183,7 @@ boot_memory_test:
         nop
 
 	li $s0, 0x10000000	#base address of memory
-	li $s1, 0x10100000	#upper address of memory (just 20 bits for now)
+	li $s1, 0x11000000	#upper address of memory 
 	li $s2, 0xdeadbeef	#value to write to memory
 
 boot_memory_test_write_loop:
