@@ -10,7 +10,7 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "from each according to his ability, to each according to his need"
+	.asciiz "O brave new world that has such people in it. Let's start at once."
 version_string:
 	.asciiz "plp2.1"
 memory_test:
