@@ -35,27 +35,53 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
         output [31:0] iout, dout;
 
 	/* sram related signals */
-	output cpu_stall, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub;
+	output cpu_stall, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub;
 	output [23:1] sram_addr;
 	inout [15:0] sram_data;
+	
+	wire [23:1] eff_addr;
+	wire eff_drw;
+	wire [31:0] sram_dout;
+	wire rdy;
 	sram_interface sram(clk, eff_addr, eff_drw, din, sram_dout, rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr);
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
-        wire [31:0] idata, ddata;
+        reg [31:0] idata, ddata;
         assign iout = ie ? idata : 32'hzzzzzzzz;
         assign dout = de ? ddata : 32'hzzzzzzzz;
 
-        assign idata = 
-        assign ddata = 
-
+	/* 
+	 * there are six possible scenarios
+	 * nop
+	 * instruction read and no data
+	 * data read and no instruction
+	 * instruction and data read
+	 * data write and no instruction
+	 * instruction read and data write
+	 *
+	 * state = 0  = idle
+	 * state = 10 = instruction
+	 * state = 11 = data
+	 */
+	reg [1:0] state = 2'b00;
+	assign eff_addr = state[0] ? daddr[23:1] : iaddr[23:1];
+	assign eff_drw  = state[0] && de && drw && !rst;
+	assign cpu_stall = state != 2'b00;
+	wire [1:0] next_state = (state == 2'b00 && ie) ? 2'b10 :
+				(state == 2'b00 && !ie && de) ? 2'b11 :
+				(state == 2'b10 && de) ? 2'b11 : 2'b00;
+				
         /* all data bus activity is negative edge triggered */
         always @(negedge clk) begin
-                if (drw && de && !rst) begin
-                        leds = din[7:0];
-                        $display("MOD_LEDS: %x", din[7:0]);
-                end else if (rst) begin
-                        leds = 8'hff;
-                end
+                if (state ==  && ie && rdy && !rst)
+			idata <= sram_dout;
+		else if (state ==  && de && rdy && !rst)
+			ddata <= sram_dout;	/* if it's a write cycle, we'll just read garbage, which is fine */
+                else if (rst)
+			state <= 2'b00;
+		
+		/* handle the state */
+		state <= next_state;
         end
 endmodule
 
