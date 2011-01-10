@@ -39,11 +39,12 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 	output [23:1] sram_addr;
 	inout [15:0] sram_data;
 	
-	wire [23:1] eff_addr;
+	wire [31:0] eff_addr;
 	wire eff_drw;
 	wire [31:0] sram_dout;
 	wire rdy;
-	sram_interface sram(clk, eff_addr, eff_drw, din, sram_dout, rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr);
+	wire eff_rst;
+	sram_interface sram(eff_rst, clk, eff_addr, eff_drw, din, sram_dout, rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr);
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         reg [31:0] idata, ddata;
@@ -64,29 +65,33 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 	 * state = 11 = data
 	 */
 	reg [1:0] state = 2'b00;
-	assign eff_addr = state[0] ? daddr[23:1] : iaddr[23:1];
+	assign eff_addr = state[0] ? daddr : iaddr;
 	assign eff_drw  = state[0] && de && drw && !rst;
 	assign cpu_stall = state != 2'b00;
-	wire [1:0] next_state = (state == 2'b00 && ie) ? 2'b10 :
-				(state == 2'b00 && !ie && de) ? 2'b11 :
-				(state == 2'b10 && de) ? 2'b11 : 2'b00;
-				
+	assign eff_rst = state == 2'b00;
+	wire [1:0] next_state = (state == 2'b00 && ie)         ? 2'b10 : /* idle to instruction read */
+				(state == 2'b00 && !ie && de)  ? 2'b11 : /* idle to data r/w */
+				(state == 2'b10 && de && rdy)  ? 2'b11 : /* instruction read to data r/w */
+				(state == 2'b10 && !de && rdy) ? 2'b00 : /* instruction read to idle */
+				(state == 2'b11 && rdy)	       ? 2'b00 : /* data r/w to idle */
+				state;					 /* otherwise stay put */
         /* all data bus activity is negative edge triggered */
         always @(negedge clk) begin
-                if (state ==  && ie && rdy && !rst)
+                if (state == 2'b10 && ie && rdy && !rst)
 			idata <= sram_dout;
-		else if (state ==  && de && rdy && !rst)
+		else if (state == 2'b11 && de && rdy && !rst)
 			ddata <= sram_dout;	/* if it's a write cycle, we'll just read garbage, which is fine */
-                else if (rst)
-			state <= 2'b00;
 		
 		/* handle the state */
-		state <= next_state;
+		if (rst) 
+			state <= 2'b00;
+		else
+			state <= next_state;
         end
 endmodule
 
-module sram_interface(clk, addr, drw, din, dout, rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr);
-        input clk;
+module sram_interface(rst, clk, addr, drw, din, dout, rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr);
+        input clk, rst;
         input [31:0] addr;
         input drw;
         input [31:0] din;
@@ -111,19 +116,21 @@ module sram_interface(clk, addr, drw, din, dout, rdy, sram_clk, sram_adv, sram_c
 
 	assign sram_data = (!drw) ? 16'hzzzz : 
 			   (state == 3'b000 || state == 3'b001 || state == 3'b010 || state == 3'b011) ? din[31:16] : din[15:0];
-	assign sram_addr = {daddr[23:2],UL};
+	assign sram_addr = {addr[23:2],UL};
 	assign sram_we   = !(drw && state != 3'b011 && state != 3'b110);
 	assign rdy = (state == 3'b000);
 
 	/* all data bus activity is negative edge triggered */
-	always @(negedge clk) begin
-		if (de && !rst) begin
+	always @(posedge clk) begin
+		if (!rst) begin
 			if (state == 3'b011) dout[31:16] <= sram_data;
 			if (state == 3'b110) dout[15:0]  <= sram_data;
 			if (state == 3'b110)
 				state <= 3'b000;
 			else
 				state <= state + 1;
+		end else begin
+			state <= 3'b000;
 		end
 	end
 endmodule
