@@ -18,6 +18,8 @@
 
 package plptool.gui;
 
+import javax.swing.tree.*;
+
 /**
  *
  * @author wira
@@ -30,10 +32,19 @@ public class PLPDevelop extends javax.swing.JFrame {
     public PLPDevelop(PLPBackend backend) {
         this.backend = backend;
         initComponents();
+
+        DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("ASM files");
+        projectRoot.add(new DefaultMutableTreeNode("main.asm"));
+        DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
+        treeProject.setModel(treeModel);
     }
 
     public void updateComponents() {
 
+    }
+
+    public javax.swing.JTextArea getOutput() {
+        return txtOutput;
     }
 
     /** This method is called from within the constructor to
@@ -45,30 +56,32 @@ public class PLPDevelop extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        devMainPane = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
+        btnAssemble = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtOutput = new javax.swing.JTextArea();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
+        txtEditor = new javax.swing.JEditorPane();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        treeProject = new javax.swing.JTree();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
+        rootmenuFile = new javax.swing.JMenu();
+        menuNew = new javax.swing.JMenuItem();
+        menuSeparator1 = new javax.swing.JPopupMenu.Separator();
+        menuOpen = new javax.swing.JMenuItem();
+        menuSave = new javax.swing.JMenuItem();
+        menuSeparator2 = new javax.swing.JPopupMenu.Separator();
+        menuExit = new javax.swing.JMenuItem();
+        rootmenuEdit = new javax.swing.JMenu();
+        rootmenuAbout = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
 
-        jPanel1.setName("jPanel1"); // NOI18N
+        devMainPane.setName("devMainPane"); // NOI18N
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPDevelop.class);
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
@@ -77,30 +90,44 @@ public class PLPDevelop extends javax.swing.JFrame {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.setName("jComboBox1"); // NOI18N
 
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
+        btnAssemble.setText(resourceMap.getString("btnAssemble.text")); // NOI18N
+        btnAssemble.setName("btnAssemble"); // NOI18N
+        btnAssemble.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAssembleActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        txtOutput.setColumns(20);
+        txtOutput.setRows(5);
+        txtOutput.setName("txtOutput"); // NOI18N
+        jScrollPane3.setViewportView(txtOutput);
+
+        javax.swing.GroupLayout devMainPaneLayout = new javax.swing.GroupLayout(devMainPane);
+        devMainPane.setLayout(devMainPaneLayout);
+        devMainPaneLayout.setHorizontalGroup(
+            devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(devMainPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 438, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 497, Short.MAX_VALUE)
+                .addComponent(btnAssemble)
                 .addContainerGap())
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        devMainPaneLayout.setVerticalGroup(
+            devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(btnAssemble))
                 .addContainerGap())
         );
 
@@ -109,65 +136,65 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        jEditorPane1.setFont(resourceMap.getFont("jEditorPane1.font")); // NOI18N
-        jEditorPane1.setName("jEditorPane1"); // NOI18N
-        jScrollPane1.setViewportView(jEditorPane1);
+        txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
+        txtEditor.setName("txtEditor"); // NOI18N
+        jScrollPane1.setViewportView(txtEditor);
 
         jSplitPane1.setRightComponent(jScrollPane1);
 
         jScrollPane2.setName("jScrollPane2"); // NOI18N
 
-        jTree1.setName("jTree1"); // NOI18N
-        jScrollPane2.setViewportView(jTree1);
+        treeProject.setName("treeProject"); // NOI18N
+        jScrollPane2.setViewportView(treeProject);
 
         jSplitPane1.setLeftComponent(jScrollPane2);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
-        jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
-        jMenu1.setName("jMenu1"); // NOI18N
+        rootmenuFile.setText(resourceMap.getString("rootmenuFile.text")); // NOI18N
+        rootmenuFile.setName("rootmenuFile"); // NOI18N
 
-        jMenuItem2.setText(resourceMap.getString("jMenuItem2.text")); // NOI18N
-        jMenuItem2.setName("jMenuItem2"); // NOI18N
-        jMenu1.add(jMenuItem2);
+        menuNew.setText(resourceMap.getString("menuNew.text")); // NOI18N
+        menuNew.setName("menuNew"); // NOI18N
+        rootmenuFile.add(menuNew);
 
-        jSeparator2.setName("jSeparator2"); // NOI18N
-        jMenu1.add(jSeparator2);
+        menuSeparator1.setName("menuSeparator1"); // NOI18N
+        rootmenuFile.add(menuSeparator1);
 
-        jMenuItem3.setText(resourceMap.getString("jMenuItem3.text")); // NOI18N
-        jMenuItem3.setName("jMenuItem3"); // NOI18N
-        jMenu1.add(jMenuItem3);
+        menuOpen.setText(resourceMap.getString("menuOpen.text")); // NOI18N
+        menuOpen.setName("menuOpen"); // NOI18N
+        rootmenuFile.add(menuOpen);
 
-        jMenuItem4.setText(resourceMap.getString("jMenuItem4.text")); // NOI18N
-        jMenuItem4.setName("jMenuItem4"); // NOI18N
-        jMenu1.add(jMenuItem4);
+        menuSave.setText(resourceMap.getString("menuSave.text")); // NOI18N
+        menuSave.setName("menuSave"); // NOI18N
+        rootmenuFile.add(menuSave);
 
-        jSeparator1.setName("jSeparator1"); // NOI18N
-        jMenu1.add(jSeparator1);
+        menuSeparator2.setName("menuSeparator2"); // NOI18N
+        rootmenuFile.add(menuSeparator2);
 
-        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
-        jMenuItem1.setName("jMenuItem1"); // NOI18N
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        menuExit.setText(resourceMap.getString("menuExit.text")); // NOI18N
+        menuExit.setName("menuExit"); // NOI18N
+        menuExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                menuExitActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        rootmenuFile.add(menuExit);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(rootmenuFile);
 
-        jMenu2.setText(resourceMap.getString("jMenu2.text")); // NOI18N
-        jMenu2.setName("jMenu2"); // NOI18N
-        jMenuBar1.add(jMenu2);
+        rootmenuEdit.setText(resourceMap.getString("rootmenuEdit.text")); // NOI18N
+        rootmenuEdit.setName("rootmenuEdit"); // NOI18N
+        jMenuBar1.add(rootmenuEdit);
 
-        jMenu3.setText(resourceMap.getString("jMenu3.text")); // NOI18N
-        jMenu3.setName("jMenu3"); // NOI18N
-        jMenu3.addActionListener(new java.awt.event.ActionListener() {
+        rootmenuAbout.setText(resourceMap.getString("rootmenuAbout.text")); // NOI18N
+        rootmenuAbout.setName("rootmenuAbout"); // NOI18N
+        rootmenuAbout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu3ActionPerformed(evt);
+                rootmenuAboutActionPerformed(evt);
             }
         });
-        jMenuBar1.add(jMenu3);
+        jMenuBar1.add(rootmenuAbout);
 
         setJMenuBar(jMenuBar1);
 
@@ -175,49 +202,64 @@ public class PLPDevelop extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 709, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
+            .addComponent(devMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(devMainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
         System.exit(0);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_menuExitActionPerformed
 
-    private void jMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu3ActionPerformed
+    private void rootmenuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuAboutActionPerformed
         backend.g_about.setVisible(true);
-    }//GEN-LAST:event_jMenu3ActionPerformed
+    }//GEN-LAST:event_rootmenuAboutActionPerformed
+
+    private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
+        if(backend.plpfile != null)
+            backend.assemble();
+        else if(!txtEditor.getText().equals("")) {
+            backend.asms = new java.util.ArrayList<plptool.PLPAsmSource>();
+            backend.asms.add(new plptool.PLPAsmSource(txtEditor.getText(), "unsaved.asm", 0));
+            backend.assemble();
+        }
+        
+        if(backend.asm.isAssembled()) {
+            backend.simulate();
+        }
+    }//GEN-LAST:event_btnAssembleActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnAssemble;
+    private javax.swing.JPanel devMainPane;
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTree jTree1;
+    private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenuItem menuNew;
+    private javax.swing.JMenuItem menuOpen;
+    private javax.swing.JMenuItem menuSave;
+    private javax.swing.JPopupMenu.Separator menuSeparator1;
+    private javax.swing.JPopupMenu.Separator menuSeparator2;
+    private javax.swing.JMenu rootmenuAbout;
+    private javax.swing.JMenu rootmenuEdit;
+    private javax.swing.JMenu rootmenuFile;
+    private javax.swing.JTree treeProject;
+    private javax.swing.JEditorPane txtEditor;
+    private javax.swing.JTextArea txtOutput;
     // End of variables declaration//GEN-END:variables
 
 }

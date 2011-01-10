@@ -36,6 +36,7 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     @Override protected void startup() {
         PLPBackend backend = new PLPBackend(true, "plpmips"); // default to plpmips for now
+        backend.app = this;
         backend.ioreg = new IORegistry();
         backend.g_err = new PLPErrorFrame();
         backend.g_dev = new PLPDevelop(backend);
@@ -43,6 +44,8 @@ public class PLPToolApp extends SingleFrameApplication {
         simUI = new PLPSimulator(this, backend);
         backend.g_simui = simUI;
         backend.g_desktop = simUI.getSimDesktop();
+        //backend.g_about = PLPToolAboutBox(simUI.getRootPane());
+        simUI.getSimDesktop().add(backend.g_ioreg);
         backend.g_dev.setVisible(true);
         // show(mainWindow);
     }

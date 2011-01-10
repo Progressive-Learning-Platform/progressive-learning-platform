@@ -75,10 +75,10 @@ public class PLPSimulator extends FrameView {
     private void initComponents() {
 
         menuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
-        exitMenuItem = new javax.swing.JMenuItem();
-        helpMenu = new javax.swing.JMenu();
-        aboutMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
+        javax.swing.JMenu helpMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         SimPane = new javax.swing.JPanel();
         simControls = new javax.swing.JPanel();
         btnStep = new javax.swing.JButton();
@@ -238,8 +238,7 @@ public class PLPSimulator extends FrameView {
         SimPaneLayout.setVerticalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(simControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -339,14 +338,10 @@ public class PLPSimulator extends FrameView {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel SimPane;
-    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JToggleButton btnMem;
     private javax.swing.JButton btnOpts;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnStep;
-    private javax.swing.JMenuItem exitMenuItem;
-    private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenu helpMenu;
     private javax.swing.JLabel lblControl;
     private javax.swing.JLabel lblFlags;
     private javax.swing.JMenuBar menuBar;
