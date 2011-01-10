@@ -1165,11 +1165,11 @@ public class SimCore extends PLPSimCore {
                     ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }
-                if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.ctl_branch != 1) {
+                if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.ctl_branch != 1 && ex_stage.fwd_ctl_memwrite != 1) {
                     ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_ITYPE;
                 }
-                if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.ctl_branch != 1) {
+                if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.ctl_branch != 1 && ex_stage.fwd_ctl_memwrite != 1) {
                     ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_ITYPE;
                 }

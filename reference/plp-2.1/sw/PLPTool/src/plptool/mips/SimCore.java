@@ -27,7 +27,7 @@ import plptool.PLPSimCore;
 import plptool.PLPSimRegModule;
 
 /**
- * PLPMIPSSim is the PLP MIPS Architecture Simulator Backend. This class
+ * mips.SimCore is the PLP MIPS Architecture Simulator Backend. This class
  * contains core functionality of the simulator: the CPU itself, memory
  * elements, pipeline registers, and I/O devices. Users can interact with the
  * simulation core by using typical procedures such as stepping and I/O. It's
@@ -1162,11 +1162,11 @@ public class SimCore extends PLPSimCore {
                     ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }
-                if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.ctl_branch != 1) {
+                if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.ctl_branch != 1 && ex_stage.fwd_ctl_memwrite != 1) {
                     ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_ITYPE;
                 }
-                if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.ctl_branch != 1) {
+                if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.ctl_branch != 1 && ex_stage.fwd_ctl_memwrite != 1) {
                     ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_ITYPE;
                 }
