@@ -174,6 +174,7 @@ public class Asm extends plptool.PLPAsm {
         //funct.put("sub"   , new Byte((byte) 0x22));
         funct.put("subu"  , new Byte((byte) 0x23));
 
+        opcode.put("_RTYPE", new Byte((byte) 0x00));
         opcode.put("addi"  , new Byte((byte) 0x08));
         opcode.put("addiu" , new Byte((byte) 0x09));
         opcode.put("andi"  , new Byte((byte) 0x0C));
@@ -757,7 +758,6 @@ public class Asm extends plptool.PLPAsm {
 
                 // Others
                 case 10:
-                    ;
                     if(asmTokens[0].equals("ASM__WORD__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]))
                             return Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS;

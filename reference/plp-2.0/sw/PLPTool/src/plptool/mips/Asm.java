@@ -157,6 +157,7 @@ public class Asm extends plptool.PLPAsm {
         //funct.put("sub"   , new Byte((byte) 0x22));
         funct.put("subu"  , new Byte((byte) 0x23));
 
+        opcode.put("_RTYPE", new Byte((byte) 0x00));
         opcode.put("addi"  , new Byte((byte) 0x08));
         opcode.put("addiu" , new Byte((byte) 0x09));
         opcode.put("andi"  , new Byte((byte) 0x0C));
