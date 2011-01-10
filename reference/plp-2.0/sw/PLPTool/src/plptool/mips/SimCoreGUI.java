@@ -93,6 +93,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         fillProgramMemoryTable();
 
         updateComponents();
+        coreMainPane.setSelectedIndex(2);
     }
 
     /** This method is called from within the constructor to

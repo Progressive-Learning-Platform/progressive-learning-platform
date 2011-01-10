@@ -8,6 +8,9 @@ package plptool.gui;
 import plptool.Constants;
 import plptool.PLPMsg;
 
+import org.jdesktop.application.Application;
+import org.jdesktop.application.SingleFrameApplication;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -26,6 +29,10 @@ import java.util.ArrayList;
  * @author wira
  */
 public class PLPBackend {
+
+    public SingleFrameApplication              app;        // App
+
+    public String                              plpfile;    // current PLP file
 
     public plptool.PLPCfg                      cfg;        // Configuration
     public plptool.PLPMsg                      msg;        // Messaging class
@@ -61,6 +68,8 @@ public class PLPBackend {
     public PLPBackend(boolean g, String arch) {
         this.g = g;
         this.arch = arch;
+
+        plpfile = null;
     }
 
     public int setArch(String arch) {
@@ -121,7 +130,9 @@ public class PLPBackend {
 
     public int assemble() {
 
-        if(asms.isEmpty())
+        PLPMsg.output = g_dev.getOutput();
+
+        if(asms == null || asms.isEmpty())
             return PLPMsg.E("No source files are open.",
                             Constants.PLP_NO_ASM_OPEN, this);
 
@@ -134,8 +145,19 @@ public class PLPBackend {
                 asm.assemble();
         }
 
-        if(g) {
-            // ...drive GUI ... //
+        return Constants.PLP_OK;
+    }
+
+    public int simulate() {
+        if(arch.equals("plpmips")) {
+            g_simui.destroySimulation();
+            sim = new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
+            g_sim = new plptool.mips.SimCoreGUI(this);
+            g_simui.getSimDesktop().add(g_sim);
+            g_sim.updateComponents();
+            g_sim.setVisible(true);
+
+            app.show(g_simui);
         }
 
         return Constants.PLP_OK;
@@ -150,5 +172,10 @@ public class PLPBackend {
         g_sim.updateComponents();
         g_dev.updateComponents();
         ioreg.gui_eval();
+    }
+
+    @Override
+    public String toString() {
+        return "PLPBackend(" + plpfile + ")";
     }
 }

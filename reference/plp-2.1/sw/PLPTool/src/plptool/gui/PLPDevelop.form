@@ -7,64 +7,64 @@
         <Property name="name" type="java.lang.String" value="jMenuBar1" noResource="true"/>
       </Properties>
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
+        <Menu class="javax.swing.JMenu" name="rootmenuFile">
           <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="jMenu1.text"/>
-            <Property name="name" type="java.lang.String" value="jMenu1" noResource="true"/>
+            <Property name="text" type="java.lang.String" resourceKey="rootmenuFile.text"/>
+            <Property name="name" type="java.lang.String" value="rootmenuFile" noResource="true"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+            <MenuItem class="javax.swing.JMenuItem" name="menuNew">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jMenuItem2.text"/>
-                <Property name="name" type="java.lang.String" value="jMenuItem2" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuNew.text"/>
+                <Property name="name" type="java.lang.String" value="menuNew" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="menuSeparator1">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
+                <Property name="name" type="java.lang.String" value="menuSeparator1" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
+            <MenuItem class="javax.swing.JMenuItem" name="menuOpen">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jMenuItem3.text"/>
-                <Property name="name" type="java.lang.String" value="jMenuItem3" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuOpen.text"/>
+                <Property name="name" type="java.lang.String" value="menuOpen" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
+            <MenuItem class="javax.swing.JMenuItem" name="menuSave">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jMenuItem4.text"/>
-                <Property name="name" type="java.lang.String" value="jMenuItem4" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuSave.text"/>
+                <Property name="name" type="java.lang.String" value="menuSave" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="menuSeparator2">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jSeparator1" noResource="true"/>
+                <Property name="name" type="java.lang.String" value="menuSeparator2" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+            <MenuItem class="javax.swing.JMenuItem" name="menuExit">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="jMenuItem1.text"/>
-                <Property name="name" type="java.lang.String" value="jMenuItem1" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuExit.text"/>
+                <Property name="name" type="java.lang.String" value="menuExit" noResource="true"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuExitActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu2">
+        <Menu class="javax.swing.JMenu" name="rootmenuEdit">
           <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="jMenu2.text"/>
-            <Property name="name" type="java.lang.String" value="jMenu2" noResource="true"/>
+            <Property name="text" type="java.lang.String" resourceKey="rootmenuEdit.text"/>
+            <Property name="name" type="java.lang.String" value="rootmenuEdit" noResource="true"/>
           </Properties>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu3">
+        <Menu class="javax.swing.JMenu" name="rootmenuAbout">
           <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="jMenu3.text"/>
-            <Property name="name" type="java.lang.String" value="jMenu3" noResource="true"/>
+            <Property name="text" type="java.lang.String" resourceKey="rootmenuAbout.text"/>
+            <Property name="name" type="java.lang.String" value="rootmenuAbout" noResource="true"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenu3ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rootmenuAboutActionPerformed"/>
           </Events>
         </Menu>
       </SubComponents>
@@ -93,49 +93,50 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-          <Component id="jSplitPane1" alignment="0" pref="709" max="32767" attributes="0"/>
+          <Component id="jSplitPane1" alignment="0" pref="768" max="32767" attributes="0"/>
+          <Component id="devMainPane" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
+              <Component id="jSplitPane1" pref="386" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jSplitPane1" pref="376" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <Component id="devMainPane" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="devMainPane">
       <Properties>
-        <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
+        <Property name="name" type="java.lang.String" value="devMainPane" noResource="true"/>
       </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jComboBox1" min="-2" pref="136" max="-2" attributes="0"/>
-                  <EmptySpace pref="438" max="32767" attributes="0"/>
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="497" max="32767" attributes="0"/>
+                  <Component id="btnAssemble" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
+              <Component id="jScrollPane3" alignment="0" pref="768" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="jScrollPane3" pref="85" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnAssemble" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -162,12 +163,34 @@
             <Property name="name" type="java.lang.String" value="jComboBox1" noResource="true"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="btnAssemble">
           <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="jButton1.text"/>
-            <Property name="name" type="java.lang.String" value="jButton1" noResource="true"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnAssemble.text"/>
+            <Property name="name" type="java.lang.String" value="btnAssemble" noResource="true"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAssembleActionPerformed"/>
+          </Events>
         </Component>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="jScrollPane3" noResource="true"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTextArea" name="txtOutput">
+              <Properties>
+                <Property name="columns" type="int" value="20"/>
+                <Property name="rows" type="int" value="5"/>
+                <Property name="name" type="java.lang.String" value="txtOutput" noResource="true"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JSplitPane" name="jSplitPane1">
@@ -195,10 +218,10 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JEditorPane" name="jEditorPane1">
+            <Component class="javax.swing.JEditorPane" name="txtEditor">
               <Properties>
-                <Property name="font" type="java.awt.Font" resourceKey="jEditorPane1.font"/>
-                <Property name="name" type="java.lang.String" value="jEditorPane1" noResource="true"/>
+                <Property name="font" type="java.awt.Font" resourceKey="txtEditor.font"/>
+                <Property name="name" type="java.lang.String" value="txtEditor" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -218,9 +241,9 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTree" name="jTree1">
+            <Component class="javax.swing.JTree" name="treeProject">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jTree1" noResource="true"/>
+                <Property name="name" type="java.lang.String" value="treeProject" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>
