@@ -256,14 +256,17 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jSplitPane1" alignment="0" pref="768" max="32767" attributes="0"/>
           <Component id="devMainPane" alignment="0" max="32767" attributes="0"/>
+          <Component id="jToolBar1" alignment="0" pref="780" max="32767" attributes="0"/>
+          <Component id="jSplitPane1" alignment="0" pref="780" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <Component id="jSplitPane1" pref="357" max="32767" attributes="0"/>
+              <Component id="jToolBar1" min="-2" pref="39" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jSplitPane1" pref="312" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="devMainPane" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -279,7 +282,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane3" alignment="0" pref="768" max="32767" attributes="0"/>
+              <Component id="jScrollPane3" alignment="0" pref="780" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -359,11 +362,11 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="txtCurFile" min="-2" pref="477" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lblPosition" pref="237" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="750" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="txtCurFile" pref="572" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="lblPosition" min="-2" pref="148" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -376,7 +379,7 @@
                           <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="326" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="281" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -418,6 +421,26 @@
             </Component>
           </SubComponents>
         </Container>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JToolBar" name="jToolBar1">
+      <Properties>
+        <Property name="rollover" type="boolean" value="true"/>
+        <Property name="name" type="java.lang.String" value="jToolBar1" noResource="true"/>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="jButton1">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="jButton1.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="jButton1.text"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="name" type="java.lang.String" value="jButton1" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

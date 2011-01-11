@@ -51,6 +51,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuExportASM.setEnabled(false);
         menuDeleteASM.setEnabled(false);
         menuSave.setEnabled(false);
+        menuSaveAs.setEnabled(false);
 
         treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -82,6 +83,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuImportASM.setEnabled(true);
         menuNewASM.setEnabled(true);
         menuSave.setEnabled(true);
+        menuSaveAs.setEnabled(true);
     }
 
     public int save() {
@@ -109,6 +111,8 @@ public class PLPDevelop extends javax.swing.JFrame {
         txtEditor = new javax.swing.JEditorPane();
         txtCurFile = new javax.swing.JTextField();
         lblPosition = new javax.swing.JLabel();
+        jToolBar1 = new javax.swing.JToolBar();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -160,7 +164,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         devMainPane.setLayout(devMainPaneLayout);
         devMainPaneLayout.setHorizontalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,11 +210,11 @@ public class PLPDevelop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPosition, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -220,10 +224,21 @@ public class PLPDevelop extends javax.swing.JFrame {
                     .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
+
+        jToolBar1.setRollover(true);
+        jToolBar1.setName("jToolBar1"); // NOI18N
+
+        jButton1.setIcon(resourceMap.getIcon("jButton1.icon")); // NOI18N
+        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setName("jButton1"); // NOI18N
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jButton1);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
@@ -394,13 +409,16 @@ public class PLPDevelop extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
             .addComponent(devMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(devMainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -427,6 +445,8 @@ public class PLPDevelop extends javax.swing.JFrame {
         PLPMsg.output = txtOutput;
 
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileFilter(new PlpFilter());
+        fc.setAcceptAllFileFilterUsed(false);
 
         int retVal = fc.showOpenDialog(null);
         
@@ -489,12 +509,14 @@ public class PLPDevelop extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel devMainPane;
+    private javax.swing.JButton jButton1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
@@ -531,4 +553,36 @@ public class PLPDevelop extends javax.swing.JFrame {
     private javax.swing.JTextArea txtOutput;
     // End of variables declaration//GEN-END:variables
 
+}
+
+class AsmFilter extends javax.swing.filechooser.FileFilter {
+    public boolean accept(java.io.File f) {
+        if(f.isDirectory())
+            return true;
+
+        if(f.getAbsolutePath().endsWith(".asm"))
+            return true;
+
+        return false;
+    }
+
+    public String getDescription() {
+        return ".ASM files";
+    }
+}
+
+class PlpFilter extends javax.swing.filechooser.FileFilter {
+    public boolean accept(java.io.File f) {
+        if(f.isDirectory())
+            return true;
+
+        if(f.getAbsolutePath().endsWith(".plp"))
+            return true;
+
+        return false;
+    }
+
+    public String getDescription() {
+        return "PLP project files";
+    }
 }
