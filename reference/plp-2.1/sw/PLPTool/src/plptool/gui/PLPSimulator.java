@@ -53,6 +53,7 @@ public class PLPSimulator extends FrameView {
 
         initComponents();
         PLPMsg.M("PLPTool Simulator GUI Loaded\n");
+        this.getFrame().setTitle("PLP Simulator");
     }
 
      public void plpMsgRouteBack() {
@@ -74,11 +75,6 @@ public class PLPSimulator extends FrameView {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        menuBar = new javax.swing.JMenuBar();
-        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
-        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
-        javax.swing.JMenu helpMenu = new javax.swing.JMenu();
-        javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         SimPane = new javax.swing.JPanel();
         simControls = new javax.swing.JPanel();
         btnStep = new javax.swing.JButton();
@@ -93,38 +89,12 @@ public class PLPSimulator extends FrameView {
         btnOpts = new javax.swing.JButton();
         simDesktop = new javax.swing.JDesktopPane();
 
-        menuBar.setName("menuBar"); // NOI18N
-
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPSimulator.class);
-        fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
-        fileMenu.setName("fileMenu"); // NOI18N
-
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getActionMap(PLPSimulator.class, this);
-        exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
-        exitMenuItem.setName("exitMenuItem"); // NOI18N
-        exitMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                exitMenuItemMouseReleased(evt);
-            }
-        });
-        fileMenu.add(exitMenuItem);
-
-        menuBar.add(fileMenu);
-
-        helpMenu.setText(resourceMap.getString("helpMenu.text")); // NOI18N
-        helpMenu.setName("helpMenu"); // NOI18N
-
-        aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
-        aboutMenuItem.setName("aboutMenuItem"); // NOI18N
-        helpMenu.add(aboutMenuItem);
-
-        menuBar.add(helpMenu);
-
         SimPane.setEnabled(false);
         SimPane.setName("EmulatorTab"); // NOI18N
 
         simControls.setName("simControls"); // NOI18N
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPSimulator.class);
         btnStep.setText(resourceMap.getString("btnStep.text")); // NOI18N
         btnStep.setName("btnStep"); // NOI18N
         btnStep.addActionListener(new java.awt.event.ActionListener() {
@@ -205,7 +175,7 @@ public class PLPSimulator extends FrameView {
                 .addComponent(txtFlags, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnOpts)
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
         simControlsLayout.setVerticalGroup(
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -238,7 +208,7 @@ public class PLPSimulator extends FrameView {
         SimPaneLayout.setVerticalGroup(
             SimPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SimPaneLayout.createSequentialGroup()
-                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(simControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -306,10 +276,6 @@ public class PLPSimulator extends FrameView {
             backend.g_err.setError(PLPMsg.lastError);
 }//GEN-LAST:event_btnStepActionPerformed
 
-    private void exitMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitMenuItemMouseReleased
-
-}//GEN-LAST:event_exitMenuItemMouseReleased
-
     public void unselectTglRun() {
         tglRun.setSelected(false);
     }
@@ -326,7 +292,8 @@ public class PLPSimulator extends FrameView {
         }
 
         simDesktop.removeAll();
-        backend.g_ioreg.dispose();
+        if(backend.g_ioreg != null)
+            backend.g_ioreg.dispose();
         backend.g_ioreg = null;
         tglIODisplay.setSelected(false);
     }
@@ -344,7 +311,6 @@ public class PLPSimulator extends FrameView {
     private javax.swing.JButton btnStep;
     private javax.swing.JLabel lblControl;
     private javax.swing.JLabel lblFlags;
-    private javax.swing.JMenuBar menuBar;
     private javax.swing.JPanel simControls;
     private javax.swing.JDesktopPane simDesktop;
     private javax.swing.JToggleButton tglIODisplay;
