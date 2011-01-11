@@ -25,7 +25,7 @@ top level module for mips design
 2.6.2010
 */
 
-module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr);
+module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs);
 	input clk;
 	output [7:0] leds;
 	input rst,rxd;
@@ -36,6 +36,8 @@ module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod
 	output mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub;
 	inout [15:0] mod_sram_data;
 	output [23:1] mod_sram_addr;	
+	output [7:0] mod_vga_rgb;
+	output mod_vga_hs, mod_vga_vs;
 
 	wire [31:0] daddr, dout, din, iaddr, iin;
 	wire drw;
@@ -43,7 +45,7 @@ module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod
 
 	clock c_t(clk, cpu_stall, arbiter_c, cpu_c);
 	cpu cpu_t(rst, cpu_c, daddr, dout, din, drw, iaddr, iin);
-        arbiter arbiter_t(rst, arbiter_c, daddr, dout, din, drw, iaddr, iin, leds, txd, rxd, switches, sseg_an, sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr);
+        arbiter arbiter_t(rst, arbiter_c, daddr, dout, din, drw, iaddr, iin, leds, txd, rxd, switches, sseg_an, sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs);
 endmodule
 	
 
