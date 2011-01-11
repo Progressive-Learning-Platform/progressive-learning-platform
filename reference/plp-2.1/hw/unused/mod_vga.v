@@ -6,10 +6,8 @@ VGA module, framebuffer, and signal generator
 
 Memory map:
 
-0xf0400000 - data field (read/write to row and column address specified in row/column registers)
-0xf0400004 - row address (used for specifying row instead of flat memory access)
-0xf0400008 - column address (used for specifying column instead of flat memory access)
-0xf040000c - flat memory access of the vga framebuffer (varying size)
+0xf0400000 - control register
+0xf0400004 - frame buffer pointer
 
 */
 
@@ -32,35 +30,27 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
         assign idata = 32'h00000000;
 
 	wire [7:0] eff_rgb;
-	wire [7:0] eff_dout_fb;
-	wire [16:0] screen_addr, eff_daddr;
 	wire [10:0] hcount, vcount;
 	wire blank, fb_write;
-	
-	reg [16:0] row, col;
+
+	reg enable;
+	reg [31:0] fb_pointer;
 	
 	/* the vga controller */
 	vga_controller vga(clk, rst, hs, vs, blank, hcount, vcount);
-
-	/* block ram for the vga controller */
-	/* first port is for cpu access, second is for vga controller */
-	vga_bram vga_bram_t (~clk,~clk,1'b1,1'b1,fb_write,eff_daddr,screen_addr,din[7:0],eff_dout_fb,eff_rgb);
+	vga_sram_bypass (clk, fb_pointer, hcount, vcount, eff_rgb);
 
 	always @(negedge clk) begin
 		if (drw && de) begin
-			if (daddr == 32'h00000004) //row
-				row = din;
-			else if (daddr == 32'h00000008) //col
-				col = din;
+			if (daddr == 32'h00000000)
+				enable <= din[0];
+			else if (daddr = 32'h00000004)
+				fb_pointer <= din;
 		end
 	end			
-	
-	assign fb_write = (de && drw && (daddr == 32'h00000000 || daddr >= 32'h0000000c)) ? 1 : 0;
-	assign eff_daddr = (daddr == 32'h00000000) ? (col + (320 * row)) : daddr[16:0];
-	assign ddata = (daddr == 32'h00000004) ? {22'b0, row} :
-			  (daddr == 32'h00000008) ? {22'b0, col} : {24'b0, eff_dout_fb};
-	assign screen_addr = (hcount >> 1) + (320 * (vcount >> 1));
-	assign rgb = (blank) ? 0 : eff_rgb;
+
+	assign rgb = (blank) ? 0 : 
+		     (enable) ? eff_rgb: 0;
 endmodule
 
 module vga_controller (clk, rst, hs, vs, blank, hcount, vcount);
@@ -120,29 +110,16 @@ module vga_controller (clk, rst, hs, vs, blank, hcount, vcount);
   end
 endmodule
 
-module vga_bram(clka, clkb, ena, enb, wea, addra, addrb, dia, doa, dob);
-        input clka, clkb;
-        input wea;
-        input ena, enb;
-        input [16:0] addra, addrb;
-        input [7:0] dia;
-        output reg [7:0] doa, dob;
-        reg [7:0] RAM [76799:0];
+module vga_sram_bypass (clk, fb_addr, hcount, vcount, rgb);
+	input clk;
+	input [31:0] fb_addr;
+	input [10:0] hcount, vcount;
+	output [7:0] rgb;
 
-        always @(posedge clka) begin
-                if (ena) begin
-                        if (wea) begin
-                                RAM[addra] <= dia;
-                                $display("RAM: %x written to %x", dia, addra);
-                        end
-                        doa <= RAM[addra];
-                end
-        end
+	reg [7:0] buffer [639:0]; /* our buffer */
+	
+	/* we use hcount to index into the buffer */
+	assign rgb = buffer[hcount];
 
-        always @(posedge clkb) begin
-                if (enb) begin
-                        dob <= RAM[addrb];
-                end
-        end
+	
 endmodule
-
