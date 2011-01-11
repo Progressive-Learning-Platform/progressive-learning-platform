@@ -975,15 +975,6 @@ public class Asm extends plptool.PLPAsm {
     }
 
     /**
-     * Returns the SourceList attached to this assembly.
-     *
-     * @return Returns SourceList as ArrayList
-     */
-    public ArrayList<PLPAsmSource> getAsmList() {
-        return SourceList;
-    }
-
-    /**
      * Casting PLPAsm as String will return PLPAsm(assembly file)
      *
      * @return Returns informative string

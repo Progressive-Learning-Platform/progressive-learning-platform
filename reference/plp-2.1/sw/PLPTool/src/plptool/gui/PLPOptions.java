@@ -19,8 +19,15 @@ import plptool.PLPCfg;
  */
 public class PLPOptions extends javax.swing.JFrame {
 
+    private PLPBackend backend = null;
+
     /** Creates new form PLPOptions */
     public PLPOptions() {
+        initComponents();
+    }
+
+    public PLPOptions(PLPBackend backend) {
+        this.backend = backend;
         initComponents();
     }
 

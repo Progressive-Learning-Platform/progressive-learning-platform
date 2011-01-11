@@ -229,4 +229,13 @@ public abstract class PLPAsm {
     public boolean isAssembled() {
         return assembled;
     }
+
+    /**
+     * Returns the SourceList attached to this assembly.
+     *
+     * @return Returns SourceList as ArrayList
+     */
+    public ArrayList<PLPAsmSource> getAsmList() {
+        return SourceList;
+    }
 }

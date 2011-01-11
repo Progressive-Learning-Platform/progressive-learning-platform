@@ -52,6 +52,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuDeleteASM.setEnabled(false);
         menuSave.setEnabled(false);
 
+        treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         PLPMsg.M("Welcome to Progressive Learning Platform Software Tool version " + Constants.versionString);
     }
@@ -107,12 +108,14 @@ public class PLPDevelop extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JEditorPane();
         txtCurFile = new javax.swing.JTextField();
+        lblPosition = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
         menuSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuOpen = new javax.swing.JMenuItem();
         menuSave = new javax.swing.JMenuItem();
+        menuSaveAs = new javax.swing.JMenuItem();
         menuSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuNewASM = new javax.swing.JMenuItem();
         menuImportASM = new javax.swing.JMenuItem();
@@ -170,6 +173,11 @@ public class PLPDevelop extends javax.swing.JFrame {
         jScrollPane2.setName("jScrollPane2"); // NOI18N
 
         treeProject.setName("treeProject"); // NOI18N
+        treeProject.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                treeProjectMousePressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(treeProject);
 
         jSplitPane1.setLeftComponent(jScrollPane2);
@@ -180,25 +188,39 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
         txtEditor.setName("txtEditor"); // NOI18N
+        txtEditor.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txtEditorCaretUpdate(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtEditor);
 
         txtCurFile.setEditable(false);
         txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
         txtCurFile.setName("txtCurFile"); // NOI18N
 
+        lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
+        lblPosition.setName("lblPosition"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblPosition, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -234,7 +256,16 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuSave.setText(resourceMap.getString("menuSave.text")); // NOI18N
         menuSave.setName("menuSave"); // NOI18N
+        menuSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSaveActionPerformed(evt);
+            }
+        });
         rootmenuFile.add(menuSave);
+
+        menuSaveAs.setText(resourceMap.getString("menuSaveAs.text")); // NOI18N
+        menuSaveAs.setName("menuSaveAs"); // NOI18N
+        rootmenuFile.add(menuSaveAs);
 
         menuSeparator2.setName("menuSeparator2"); // NOI18N
         rootmenuFile.add(menuSeparator2);
@@ -417,6 +448,45 @@ public class PLPDevelop extends javax.swing.JFrame {
         backend.app.show(backend.g_about);
     }//GEN-LAST:event_menuAboutActionPerformed
 
+    private void treeProjectMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMousePressed
+        if(evt.getClickCount() == 2) { // user double clicked the project tree
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
+
+            if(node == null)
+                return;
+
+            if(node.isLeaf()) {
+                String nodeStr = (String) node.getUserObject();
+
+                if(nodeStr.endsWith("asm")) {
+                    
+                    String[] tokens = nodeStr.split("::");
+
+                    if(!tokens[0].equals(Integer.parseInt(tokens[0]))) {
+                        PLPMsg.I("Opening " + nodeStr, null);
+
+                        backend.asms.get(backend.open_asm).setAsmString(txtEditor.getText());
+                        backend.open_asm = Integer.parseInt(tokens[0]);
+                        backend.refreshProjectView();
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_treeProjectMousePressed
+
+    private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
+        int caretPos = txtEditor.getCaretPosition();
+        String[] lines = txtEditor.getText().split("\\r?\\n");
+
+        int line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
+
+        lblPosition.setText(caretPos + " line: " + line);
+    }//GEN-LAST:event_txtEditorCaretUpdate
+
+    private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
+        backend.savePLPFile();
+    }//GEN-LAST:event_menuSaveActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel devMainPane;
     private javax.swing.JMenuBar jMenuBar1;
@@ -425,6 +495,7 @@ public class PLPDevelop extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
     private javax.swing.JMenuItem menuCopy;
@@ -442,6 +513,7 @@ public class PLPDevelop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuProgram;
     private javax.swing.JMenuItem menuRedo;
     private javax.swing.JMenuItem menuSave;
+    private javax.swing.JMenuItem menuSaveAs;
     private javax.swing.JPopupMenu.Separator menuSeparator1;
     private javax.swing.JPopupMenu.Separator menuSeparator2;
     private javax.swing.JPopupMenu.Separator menuSeparator3;
