@@ -311,10 +311,19 @@ public class Asm extends plptool.PLPAsm {
                 }
 
                 appendPreprocessedAsm("ASM__SKIP__", i, true);
-                asmIndex++;
-                PLPAsmSource childAsm = new PLPAsmSource
-                                            (null, asmTokens[1], asmIndex);
-                SourceList.add(childAsm);
+                boolean found = false;
+                for(int k = 0; k < SourceList.size(); k++) {
+                    if(asmTokens[1].equals(SourceList.get(k).getAsmFilePath())) {
+                        asmIndex = k;
+                        found = true;
+                    }
+                }
+                if(!found) {
+                    asmIndex = SourceList.size();
+                    PLPAsmSource childAsm = new PLPAsmSource
+                                                (null, asmTokens[1], asmIndex);
+                    SourceList.add(childAsm);
+                }
                 savedActiveFile = curActiveFile;
                 recursionRetVal = this.preprocess(asmIndex);
                 curActiveFile = savedActiveFile;

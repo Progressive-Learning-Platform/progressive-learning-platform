@@ -23,7 +23,7 @@ package plptool;
  * @author wira
  */
 public class Constants {
-public static final String versionString = "Beta 2";
+public static final String versionString = "2.1";
     public static final int debugLevel = 0;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
 
@@ -100,6 +100,7 @@ public static final String versionString = "Beta 2";
     public static final int PLP_FILE_OPEN_ERROR                  = 3;
     public static final int PLP_FILE_SAVE_ERROR                  = 4;
     public static final int PLP_NO_ASM_OPEN                      = 5;
+    public static final int PLP_ASM_NOT_ASSEMBLED                = 6;
 
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;

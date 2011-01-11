@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.util.Scanner;
 import java.util.ArrayList;
 
+import javax.swing.tree.*;
+
 /**
  * This is the PLPTool application project backend.
  *
@@ -33,6 +35,8 @@ public class PLPBackend {
     public SingleFrameApplication              app;        // App
 
     public String                              plpfile;    // current PLP file
+    public boolean                             saved;
+    public int                                 open_asm;   // current open ASM
 
     public plptool.PLPCfg                      cfg;        // Configuration
     public plptool.PLPMsg                      msg;        // Messaging class
@@ -69,6 +73,7 @@ public class PLPBackend {
         this.g = g;
         this.arch = arch;
 
+        saved = false;
         plpfile = null;
     }
 
@@ -83,13 +88,28 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
+    public int newPLPFile() {
+        saved = false;
+        plpfile = "Unsaved Project";
+
+        asms = new ArrayList<plptool.PLPAsmSource>();
+        asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
+
+        refreshProjectView();
+
+        return Constants.PLP_OK;
+    }
+
     public int openPLPFile(String path) {
         File plpFile = new File(path);
-        asms = new ArrayList<plptool.PLPAsmSource>();
+
+        PLPMsg.I("Opening " + path, this);
 
         if(!plpFile.exists())
             return PLPMsg.E(path + " not found.",
                             Constants.PLP_FILE_OPEN_ERROR, this);
+
+        asms = new ArrayList<plptool.PLPAsmSource>();
 
         try {
 
@@ -106,6 +126,7 @@ public class PLPBackend {
 
             if(entry.getName().endsWith("asm")) {
                 asms.add(new plptool.PLPAsmSource(metaStr, entry.getName(), asmIndex));
+                PLPMsg.I(" - ASM file [" + asmIndex + "]: " + entry.getName(), this);
                 asmIndex++;
             }
 
@@ -113,12 +134,48 @@ public class PLPBackend {
                 meta = metaStr;
             }
         }
+        
+        if(asmIndex == 0) {
+            return PLPMsg.E("Invalid PLP File: no .asm files found.",
+                            Constants.PLP_FILE_OPEN_ERROR, this);
+        }
 
         }
         catch(Exception e) {
-
+            return PLPMsg.E("Invalid PLP archive: " + path,
+                            Constants.PLP_FILE_OPEN_ERROR, this);
         }
 
+        plpfile = path;
+        saved = true;
+
+        
+
+        if(g) {
+            refreshProjectView();
+        }
+
+   
+
+        return Constants.PLP_OK;
+    }
+
+    public int refreshProjectView() {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(plpfile);
+        DefaultMutableTreeNode srcRoot = new DefaultMutableTreeNode("Source Files");
+        root.add(srcRoot);
+        for(int i = 0; i < asms.size(); i++)
+            srcRoot.add(new DefaultMutableTreeNode(i + "::" + asms.get(i).getAsmFilePath()));
+
+        g_dev.getProjectTree().setModel(new DefaultTreeModel(root));
+        g_dev.getEditor().setText(asms.get(0).getAsmString());
+        g_dev.getEditor().setEnabled(true);
+        g_dev.enableBuildControls();
+        open_asm = 0;
+        g_dev.setCurFile(asms.get(open_asm).getAsmFilePath());
+
+        app.hide(g_simui);
+        g_simui.destroySimulation();
 
         return Constants.PLP_OK;
     }
@@ -130,7 +187,8 @@ public class PLPBackend {
 
     public int assemble() {
 
-        PLPMsg.output = g_dev.getOutput();
+        PLPMsg.I("Assembling...", this);
+        asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
 
         if(asms == null || asms.isEmpty())
             return PLPMsg.E("No source files are open.",
@@ -145,17 +203,30 @@ public class PLPBackend {
                 asm.assemble();
         }
 
+        PLPMsg.I("Done.", this);
+
         return Constants.PLP_OK;
     }
 
     public int simulate() {
+        PLPMsg.I("Starting simulation...", this);
+
+        if(!asm.isAssembled())
+            return PLPMsg.E("The project is not assembled.",
+                            Constants.PLP_ASM_NOT_ASSEMBLED, this);
+
         if(arch.equals("plpmips")) {
             g_simui.destroySimulation();
-            sim = new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
+            g_ioreg = new PLPIORegistry(this);
+            sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
+            sim.reset();
             g_sim = new plptool.mips.SimCoreGUI(this);
             g_simui.getSimDesktop().add(g_sim);
+            g_simui.getSimDesktop().add(g_err);
+            g_simui.getSimDesktop().add(g_ioreg);
             g_sim.updateComponents();
             g_sim.setVisible(true);
+            g_err.setVisible(true);
 
             app.show(g_simui);
         }

@@ -30,6 +30,7 @@ import plptool.mods.IORegistry;
 public class PLPToolApp extends SingleFrameApplication {
     
     PLPSimulator simUI;
+    static String plpFilePath = null;
 
     /**
      * At startup create and show the main frame of the application.
@@ -44,9 +45,14 @@ public class PLPToolApp extends SingleFrameApplication {
         simUI = new PLPSimulator(this, backend);
         backend.g_simui = simUI;
         backend.g_desktop = simUI.getSimDesktop();
-        //backend.g_about = PLPToolAboutBox(simUI.getRootPane());
+        backend.g_about = new PLPToolAboutBox(backend.g_dev);
         simUI.getSimDesktop().add(backend.g_ioreg);
+
         backend.g_dev.setVisible(true);
+
+        PLPMsg.output = backend.g_dev.getOutput();
+        if(plpFilePath != null)
+            backend.openPLPFile(plpFilePath);
         // show(mainWindow);
     }
 
@@ -115,7 +121,6 @@ public class PLPToolApp extends SingleFrameApplication {
                 }
             }
         }
-
         else if(args.length == 0) {
             launch(PLPToolApp.class, args);
         }

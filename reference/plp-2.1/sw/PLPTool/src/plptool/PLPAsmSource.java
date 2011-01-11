@@ -79,6 +79,10 @@ public class PLPAsmSource {
         return asmString;
     }
 
+    public void setAsmString(String newStr) {
+        asmString = newStr;
+    }
+
     public String getAsmLine(int lineNum) {
         if(lineNum >= asmLines.length) {
             PLPMsg.E("Invalid line number: " + lineNum,

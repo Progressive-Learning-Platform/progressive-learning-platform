@@ -60,13 +60,17 @@ public class PLPMsg {
         if(objIdentifier != null)
             if(output == null)
                 System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
-            else
+            else {
                 output.append("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr + "\n");
+                output.setCaretPosition(output.getText().length() - 1);
+            }
         else
             if(output == null)
                 System.out.println("[E] #" + errorCode + " " + errStr);
-            else
+            else {
                 output.append("[E] #" + errorCode + " " + errStr + "\n");
+                output.setCaretPosition(output.getText().length() - 1);
+            }
 
         lastError = errorCode;
         lastPartyResponsible = objIdentifier;
@@ -83,13 +87,17 @@ public class PLPMsg {
         if(objIdentifier != null)
             if(output == null)
                 System.out.println("[I] " + objIdentifier.toString() + ": " + infoStr);
-            else
+            else {
                 output.append("[I] " + objIdentifier.toString() + ": " + infoStr + "\n");
+                output.setCaretPosition(output.getText().length() - 1);
+            }
         else
             if(output == null)
                 System.out.println("[I] " + infoStr);
-            else
+            else {
                 output.append("[I] " + infoStr + "\n");
+                output.setCaretPosition(output.getText().length() - 1);
+            }
     }
 
     /**
@@ -105,13 +113,17 @@ public class PLPMsg {
             if(objIdentifier != null)
                 if(output == null)
                     System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
-                else
+                else {
                     output.append("[D] " + objIdentifier.toString() + ": " + debugStr + "\n");
+                    output.setCaretPosition(output.getText().length() - 1);
+                }
             else
                 if(output == null)
                     System.out.println("[D] " + debugStr);
-                else
+                else {
                     output.append("[D] " + debugStr + "\n");
+                    output.setCaretPosition(output.getText().length() - 1);
+                }
     }
 
     /**
