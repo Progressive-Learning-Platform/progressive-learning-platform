@@ -112,20 +112,19 @@ module sram_interface(rst, clk, addr, drw, din, dout, rdy, sram_clk, sram_adv, s
 	assign sram_lb  = 0;
 
 	reg [2:0] state = 3'b000;
-	wire UL = (state == 3'b000 || state == 3'b001 || state == 3'b010 || state == 3'b011) ? 0 : 1;
+	wire UL = (state == 3'b000 || state == 3'b001 || (state == 3'b010 && drw)) ? 0 : 1;
 
 	assign sram_data = (!drw) ? 16'hzzzz : 
-			   (state == 3'b000 || state == 3'b001 || state == 3'b010 || state == 3'b011) ? din[31:16] : din[15:0];
+			   (state == 3'b000 || state == 3'b001 || state == 3'b010) ? din[31:16] : din[15:0];
 	assign sram_addr = {addr[23:2],UL};
-	assign sram_we   = !(drw && state != 3'b011 && state != 3'b110);
+	assign sram_we   = !(drw && state != 3'b010 && state != 3'b101);
 	assign rdy = (state == 3'b000);
 
-	/* all data bus activity is negative edge triggered */
 	always @(posedge clk) begin
 		if (!rst) begin
-			if (state == 3'b011) dout[31:16] <= sram_data;
-			if (state == 3'b110) dout[15:0]  <= sram_data;
-			if (state == 3'b110)
+			if (state == 3'b001) dout[31:16] <= sram_data;
+			if (state == 3'b011) dout[15:0]  <= sram_data;
+			if ((state == 3'b101 && drw) || (state == 3'b011 && !drw))
 				state <= 3'b000;
 			else
 				state <= state + 1;
