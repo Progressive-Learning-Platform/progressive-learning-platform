@@ -146,10 +146,7 @@ public class PLPBackend {
         TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
         entry.setSize(meta.length());
         tOut.putArchiveEntry(entry);
-        byte[] data = new byte[meta.length()];
-        for(i = 0; i < meta.length(); i++) {
-            data[i] = (byte) meta.charAt(i);
-        }
+        byte[] data = meta.getBytes();
         tOut.write(data);
         tOut.flush();
         tOut.closeArchiveEntry();
