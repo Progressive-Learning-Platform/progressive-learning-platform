@@ -344,7 +344,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
         if(addr != plptool.Constants.PLP_NUMBER_ERROR && size > 0) {
             if(!(Boolean) modInfo[modIndex][4] || (addr % 4 == 0)) {
-                backend.ioreg.attachModuleToBus(modIndex, addr, size, backend.sim, backend.g_simui.getSimDesktop());
+                backend.ioreg.attachModuleToBus(modIndex, addr, size, backend.sim, backend.g_simsh.getSimDesktop());
                 refreshModulesTable();
             }
         } else {
@@ -380,7 +380,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             Long[] startAddresses = (Long[]) Presets.presets[index][2];
             Long[] sizes = (Long[]) Presets.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
-                backend.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], backend.sim, backend.g_simui.getSimDesktop());
+                backend.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], backend.sim, backend.g_simsh.getSimDesktop());
             backend.updateComponents();
             refreshModulesTable();
         }

@@ -50,6 +50,15 @@
                 <Property name="text" type="java.lang.String" resourceKey="menuSave.text"/>
                 <Property name="name" type="java.lang.String" value="menuSave" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSaveActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuSaveAs">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuSaveAs.text"/>
+                <Property name="name" type="java.lang.String" value="menuSaveAs" noResource="true"/>
+              </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="menuSeparator2">
               <Properties>
@@ -331,6 +340,9 @@
               <Properties>
                 <Property name="name" type="java.lang.String" value="treeProject" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="treeProjectMousePressed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -347,16 +359,24 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="txtCurFile" alignment="0" pref="685" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" alignment="0" pref="685" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="txtCurFile" min="-2" pref="477" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblPosition" pref="237" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="txtCurFile" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="329" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="326" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -377,6 +397,9 @@
                     <Property name="font" type="java.awt.Font" resourceKey="txtEditor.font"/>
                     <Property name="name" type="java.lang.String" value="txtEditor" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="txtEditorCaretUpdate"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -385,6 +408,12 @@
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="text" type="java.lang.String" resourceKey="txtCurFile.text"/>
                 <Property name="name" type="java.lang.String" value="txtCurFile" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblPosition">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="lblPosition.text"/>
+                <Property name="name" type="java.lang.String" value="lblPosition" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>
