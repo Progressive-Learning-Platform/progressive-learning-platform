@@ -123,6 +123,9 @@ public class PLPToolApp extends SingleFrameApplication {
                 }
             }
         }
+        else  if(args.length > 0 && args[0].equals("-plp")) {
+            PLPFileManipulator.CLI(args);
+        }
         else if(args.length == 1) {
             open = true;
             plpFilePath = args[0];
