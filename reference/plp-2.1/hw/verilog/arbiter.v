@@ -17,7 +17,7 @@
  */
 
 
-module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches, mod_sseg_an, mod_sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs);
+module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches, mod_sseg_an, mod_sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs, mod_gpio_gpio);
 	input clk, rst;
 
 	/* cpu i/o */
@@ -38,6 +38,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	output [23:1] mod_sram_addr;
 	output [7:0] mod_vga_rgb;
 	output mod_vga_hs, mod_vga_vs;
+	inout [15:0] mod_gpio_gpio;
 
 	/* effective address calculation for the modules */
 	wire [7:0] imod, dmod;
@@ -56,7 +57,6 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	wire mod7_ie = imod == 7;
 	wire mod8_ie = imod == 8;
 	wire mod9_ie = imod == 9;
-	wire mod10_ie = imod == 10;
 
 	wire mod0_de = dmod == 0;
 	wire mod1_de = dmod == 1;
@@ -68,7 +68,6 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	wire mod7_de = dmod == 7;
 	wire mod8_de = dmod == 8;
 	wire mod9_de = dmod == 9;
-	wire mod10_de = dmod == 10;
 
 	/* module instantiations */
 	/* 0 */ mod_rom		rom_t		(rst, clk, mod0_ie, mod0_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
@@ -76,8 +75,9 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	/* 2 */ mod_uart	uart_t		(rst, clk, mod2_ie, mod2_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_uart_txd, mod_uart_rxd);
 	/* 3 */ mod_switches 	switches_t 	(rst, clk, mod3_ie, mod3_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_switches_switches);
 	/* 4 */ mod_leds	leds_t    	(rst, clk, mod4_ie, mod4_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_leds_leds);
-	/* 5 */ mod_vga		vga_t		(rst, clk, mod5_ie, mod5_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_vga_rgb, mod_vga_hs, mod_vga_vs);
-	/* 8 */ mod_plpid	plpid_t   	(rst, clk, mod8_ie, mod8_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
-	/* 9 */ mod_timer	timer_t	  	(rst, clk, mod9_ie, mod9_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
-	/* 10 */ mod_sseg	sseg_t		(rst, clk, mod10_ie, mod10_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_sseg_an, mod_sseg_display);
+	/* 5 */ mod_gpio	gpio_t		(rst, clk, mod5_ie, mod5_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, gpio);
+	/* 6 */ mod_vga		vga_t		(rst, clk, mod6_ie, mod6_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_vga_rgb, mod_vga_hs, mod_vga_vs);
+	/* 7 */ mod_plpid	plpid_t   	(rst, clk, mod7_ie, mod7_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
+	/* 8 */ mod_timer	timer_t	  	(rst, clk, mod8_ie, mod8_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data);
+	/* 9 */ mod_sseg	sseg_t		(rst, clk, mod9_ie, mod9_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, bus_cpu_inst, bus_cpu_data, mod_sseg_an, mod_sseg_display);
 endmodule
