@@ -111,7 +111,7 @@ public class PLPBackend {
     public int savePLPFile() {
 
         // commit changes of currently open source file
-        if(g) updateAsm(open_asm, g_dev.getEditor().getText());
+        if(g) updateAsm(open_asm, g_dev.getEditorText());
         assemble();
 
         if(plpfile == null || plpfile.equals("Unsaved Project"))
@@ -209,6 +209,7 @@ public class PLPBackend {
 
         tOut.close();
 
+        modified = false;
         if(g) refreshProjectView(false);
         PLPMsg.I(plpfile + " written", null);
 
@@ -256,10 +257,10 @@ public class PLPBackend {
             if(entry.getName().equals("plp.metafile")) {
                 meta = metaStr;
 
-                java.util.Scanner metaScanner = new java.util.Scanner(meta);
+                Scanner metaScanner = new Scanner(meta);
                 metaScanner.findWithinHorizon("MAINSRC=", 0);
                 main_asm = metaScanner.nextInt();
-                metaScanner = new java.util.Scanner(meta);
+                metaScanner = new Scanner(meta);
                 metaScanner.findWithinHorizon("DIRTY=", 0);
                 if(metaScanner.nextInt() == 0)
                     dirty = false;
@@ -281,7 +282,7 @@ public class PLPBackend {
 
         plpfile = path;
         modified = false;
-        open_asm = 0;
+        open_asm = main_asm;
 
         if(g) {
             refreshProjectView(false);
@@ -290,9 +291,8 @@ public class PLPBackend {
             g_dev.disableSimControls();
             if(!dirty)
                 assemble();
+            modified = false;
         }
-
-   
 
         return Constants.PLP_OK;
     }
@@ -316,12 +316,20 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
+    public int updateWindowTitle() {
+        File fHandler = new File(plpfile);
+        String windowTitle = fHandler.getName() + ((modified) ? "*" : "") +
+                             " - PLP Software Tool " + Constants.versionString;
+        g_dev.setTitle(windowTitle);
+
+        return Constants.PLP_OK;
+    }
+
     public int refreshProjectView(boolean commitCurrentAsm) {
         if(commitCurrentAsm)
-            updateAsm(open_asm, g_dev.getEditor().getText());
+            updateAsm(open_asm, g_dev.getEditorText());
 
-        File fHandler = new File(plpfile);
-        g_dev.setTitle(fHandler.getName() + " - PLP Software Tool " + Constants.versionString);
+        updateWindowTitle();
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(plpfile);
         DefaultMutableTreeNode srcRoot = new DefaultMutableTreeNode("Source Files");
@@ -331,7 +339,7 @@ public class PLPBackend {
         for(int i = 0; i < asms.size(); i++)
             srcRoot.add(new DefaultMutableTreeNode(i + "::" + asms.get(i).getAsmFilePath()));
 
-        java.util.Scanner metaScanner = new java.util.Scanner(meta);
+        Scanner metaScanner = new Scanner(meta);
         metaScanner.findWithinHorizon("DIRTY=", 0);
         int meta_dirty =  metaScanner.nextInt();
         metaRoot.add(new DefaultMutableTreeNode("meta.DIRTY=" + meta_dirty));
@@ -342,7 +350,7 @@ public class PLPBackend {
         for(int i = 0; i < g_dev.getProjectTree().getRowCount(); i++)
             g_dev.getProjectTree().expandRow(i);
         
-        g_dev.getEditor().setText(asms.get(open_asm).getAsmString());
+        g_dev.setEditorText(asms.get(open_asm).getAsmString());
         g_dev.getEditor().setEnabled(true);
         g_dev.getEditor().setCaretPosition(0);
         g_dev.enableBuildControls();
@@ -428,7 +436,8 @@ public class PLPBackend {
             return PLPMsg.E("updateAsm() error.",
                             Constants.PLP_GENERIC_ERROR, null);
 
-        modified = true;
+        if(!asms.get(index).getAsmString().equals(newStr))
+            modified = true;
 
         asms.get(index).setAsmString(newStr);
 

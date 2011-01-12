@@ -272,6 +272,7 @@ public class Asm extends plptool.PLPAsm {
 
         PLPAsmSource topLevelAsm = (PLPAsmSource) SourceList.get(index);
         curActiveFile = topLevelAsm.getAsmFilePath();
+        asmIndex = index;
 
         curRegion = 0; // unmapped region / flat model
 
