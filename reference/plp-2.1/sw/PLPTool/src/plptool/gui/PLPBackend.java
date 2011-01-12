@@ -96,6 +96,8 @@ public class PLPBackend {
         meta += "DIRTY=1\n\n";
         meta += "MAINSRC=0";
 
+        PLPMsg.I("New project initialized.", null);
+
         if(g) {
             refreshProjectView(false);
             g_simsh.destroySimulation();
@@ -298,6 +300,8 @@ public class PLPBackend {
     public int importAsm(String path) {
         File asmFile = new File(path);
 
+        PLPMsg.I("Importing " + path, null);
+
         if(!asmFile.exists())
             return PLPMsg.E("ASM Import: " + path + " not found.",
                             Constants.PLP_FILE_OPEN_ERROR, this);
@@ -447,6 +451,7 @@ public class PLPBackend {
         if(index <= open_asm && open_asm != 0)
             open_asm--;
 
+        PLPMsg.I("Removing " + asms.get(index).getAsmFilePath(), null);
         asms.remove(index);
         if(g) refreshProjectView(false);
 
