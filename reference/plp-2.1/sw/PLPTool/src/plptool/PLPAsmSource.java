@@ -37,12 +37,12 @@ public class PLPAsmSource {
     int             recursionLevel;
 
     public PLPAsmSource(String strAsm, String strFilePath, int intLevel) {
-        asmString = new String();
         asmFilePath = strFilePath;
 
         try {
         if(strAsm == null) {
             Scanner fScan = new Scanner(new File(strFilePath));
+            asmString = new String();
             while(fScan.hasNextLine()) {
                 asmString += fScan.nextLine() + "\n";
             }
@@ -81,6 +81,10 @@ public class PLPAsmSource {
 
     public void setAsmString(String newStr) {
         asmString = newStr;
+    }
+
+    public void setAsmFilePath(String newPath) {
+        asmFilePath = newPath;
     }
 
     public String getAsmLine(int lineNum) {

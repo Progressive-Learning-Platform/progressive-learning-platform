@@ -282,6 +282,8 @@ public class Asm extends plptool.PLPAsm {
         String savedActiveFile;
         String tempLabel;
 
+        int prevAsmIndex;
+
         if(lineNumMap == null) {
             lineNumMap = new int[asmLines.length];
             asmFileMap = new int[asmLines.length];
@@ -312,6 +314,8 @@ public class Asm extends plptool.PLPAsm {
 
                 appendPreprocessedAsm("ASM__SKIP__", i, true);
                 boolean found = false;
+                prevAsmIndex = asmIndex;
+                recursionRetVal = 0;
                 for(int k = 0; k < SourceList.size(); k++) {
                     if(asmTokens[1].equals(SourceList.get(k).getAsmFilePath())) {
                         asmIndex = k;
@@ -322,11 +326,15 @@ public class Asm extends plptool.PLPAsm {
                     asmIndex = SourceList.size();
                     PLPAsmSource childAsm = new PLPAsmSource
                                                 (null, asmTokens[1], asmIndex);
-                    SourceList.add(childAsm);
+                    if(childAsm.getAsmString() != null) {
+                        SourceList.add(childAsm);
+                        found = true;
+                    }
                 }
                 savedActiveFile = curActiveFile;
-                recursionRetVal = this.preprocess(asmIndex);
+                if(found) { recursionRetVal = this.preprocess(asmIndex); }
                 curActiveFile = savedActiveFile;
+                asmIndex = prevAsmIndex;
                 directiveOffset++;
 
                 if(recursionRetVal != 0)

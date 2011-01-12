@@ -32,8 +32,9 @@ public class PLPBackend {
     public SingleFrameApplication              app;        // App
 
     public String                              plpfile;    // current PLP file
-    public boolean                             saved;
+    public boolean                             modified;
     public int                                 open_asm;   // current open ASM
+    public int                                 main_asm;   // main program
 
     public plptool.PLPCfg                      cfg;        // Configuration
     public plptool.PLPMsg                      msg;        // Messaging class
@@ -71,7 +72,7 @@ public class PLPBackend {
         this.g = g;
         this.arch = arch;
 
-        saved = false;
+        modified = false;
         plpfile = null;
     }
 
@@ -81,23 +82,25 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
-    public int savePLPFile(String path) {
-
-        return Constants.PLP_OK;
-    }
-
     public int newPLPFile() {
-        saved = false;
+        modified = true;
         plpfile = "Unsaved Project";
 
         asms = new ArrayList<plptool.PLPAsmSource>();
         asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
         open_asm = 0;
+        main_asm = 0;
+
+        meta =  "PLP-2.1\n";
+        meta += "START=0x0\n";
+        meta += "DIRTY=1\n\n";
+        meta += "MAINSRC=0";
 
         if(g) {
-            refreshProjectView();
+            refreshProjectView(false);
             g_simsh.destroySimulation();
             g_simsh.setVisible(false);
+            g_dev.disableSimControls();
         }
 
         return Constants.PLP_OK;
@@ -105,10 +108,12 @@ public class PLPBackend {
 
     public int savePLPFile() {
 
-        asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
+        // commit changes of currently open source file
+        if(g) updateAsm(open_asm, g_dev.getEditor().getText());
+        assemble();
 
         if(plpfile == null || plpfile.equals("Unsaved Project"))
-            return PLPMsg.E("No PLP project file open.",
+            return PLPMsg.E("No PLP project file open. Use Save As.",
                             Constants.PLP_FILE_SAVE_ERROR, null);
 
         ArrayList<PLPAsmSource> sourceList;
@@ -126,12 +131,18 @@ public class PLPBackend {
         if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
             verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
-            meta += "START=" + asm.getAddrTable()[0] + "\n";
-            meta += "DIRTY=0\n\n";
+            if(objCode.length > 0)
+                meta += "START=" + asm.getAddrTable()[0] + "\n";
+            else
+                meta += "START=0\n";
+            meta += "DIRTY=0\n";
         }
         else {
-            meta += "DIRTY=1\n\n";
+            meta += "DIRTY=1\n";
         }
+
+        meta += "MAINSRC=" + main_asm + "\n";
+        meta += "\n";
 
         sourceList = asms;
 
@@ -165,7 +176,7 @@ public class PLPBackend {
             tOut.closeArchiveEntry();
         }
 
-        if(asm != null && asm.isAssembled()) {
+        if(asm != null && asm.isAssembled() && objCode != null) {
             // Write hex image
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(verilogHex.length());
@@ -196,9 +207,11 @@ public class PLPBackend {
 
         tOut.close();
 
+        if(g) refreshProjectView(false);
         PLPMsg.I(plpfile + " written", null);
 
         } catch(Exception e) {
+            e.printStackTrace();
             return PLPMsg.E("genPLP(): Unable to write to " + plpfile + "\n" +
                      e, Constants.PLP_FILE_SAVE_ERROR, null);
         }
@@ -209,8 +222,9 @@ public class PLPBackend {
 
     public int openPLPFile(String path) {
         File plpFile = new File(path);
+        boolean dirty = true;
 
-        PLPMsg.I("Opening " + path, this);
+        PLPMsg.I("Opening " + path, null);
 
         if(!plpFile.exists())
             return PLPMsg.E(path + " not found.",
@@ -233,12 +247,21 @@ public class PLPBackend {
 
             if(entry.getName().endsWith("asm")) {
                 asms.add(new plptool.PLPAsmSource(metaStr, entry.getName(), asmIndex));
-                PLPMsg.I(" - ASM file [" + asmIndex + "]: " + entry.getName(), this);
+                PLPMsg.I(" - ASM file [" + asmIndex + "]: " + entry.getName(), null);
                 asmIndex++;
             }
 
             if(entry.getName().equals("plp.metafile")) {
                 meta = metaStr;
+
+                java.util.Scanner metaScanner = new java.util.Scanner(meta);
+                metaScanner.findWithinHorizon("MAINSRC=", 0);
+                main_asm = metaScanner.nextInt();
+                metaScanner = new java.util.Scanner(meta);
+                metaScanner.findWithinHorizon("DIRTY=", 0);
+                if(metaScanner.nextInt() == 0)
+                    dirty = false;
+                
             }
         }
         
@@ -249,18 +272,22 @@ public class PLPBackend {
 
         }
         catch(Exception e) {
+            e.printStackTrace();
             return PLPMsg.E("Invalid PLP archive: " + path,
                             Constants.PLP_FILE_OPEN_ERROR, this);
         }
 
         plpfile = path;
-        saved = true;
+        modified = false;
         open_asm = 0;
 
         if(g) {
-            refreshProjectView();
+            refreshProjectView(false);
             g_simsh.destroySimulation();
             g_simsh.setVisible(false);
+            g_dev.disableSimControls();
+            if(!dirty)
+                assemble();
         }
 
    
@@ -268,20 +295,60 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
-    public int refreshProjectView() {
+    public int importAsm(String path) {
+        File asmFile = new File(path);
+
+        if(!asmFile.exists())
+            return PLPMsg.E("ASM Import: " + path + " not found.",
+                            Constants.PLP_FILE_OPEN_ERROR, this);
+
+        asms.add(new PLPAsmSource(null, path, asms.size()));
+        asms.get(asms.size() - 1).setAsmFilePath(asmFile.getName());
+
+        modified = true;
+
+        if(g) refreshProjectView(true);
+
+        return Constants.PLP_OK;
+    }
+
+    public int refreshProjectView(boolean commitCurrentAsm) {
+        if(commitCurrentAsm)
+            updateAsm(open_asm, g_dev.getEditor().getText());
+
+        File fHandler = new File(plpfile);
+        g_dev.setTitle(fHandler.getName() + " - PLP Software Tool " + Constants.versionString);
+
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(plpfile);
         DefaultMutableTreeNode srcRoot = new DefaultMutableTreeNode("Source Files");
+        DefaultMutableTreeNode metaRoot = new DefaultMutableTreeNode("Meta Information");
         root.add(srcRoot);
+        root.add(metaRoot);
         for(int i = 0; i < asms.size(); i++)
             srcRoot.add(new DefaultMutableTreeNode(i + "::" + asms.get(i).getAsmFilePath()));
 
+        java.util.Scanner metaScanner = new java.util.Scanner(meta);
+        metaScanner.findWithinHorizon("DIRTY=", 0);
+        int meta_dirty =  metaScanner.nextInt();
+        metaRoot.add(new DefaultMutableTreeNode("meta.DIRTY=" + meta_dirty));
+        metaRoot.add(new DefaultMutableTreeNode("meta.MAINSRC=" + main_asm));
+        
+
         g_dev.getProjectTree().setModel(new DefaultTreeModel(root));
-        g_dev.getProjectTree().expandRow(1);
+        for(int i = 0; i < g_dev.getProjectTree().getRowCount(); i++)
+            g_dev.getProjectTree().expandRow(i);
+        
         g_dev.getEditor().setText(asms.get(open_asm).getAsmString());
         g_dev.getEditor().setEnabled(true);
         g_dev.getEditor().setCaretPosition(0);
         g_dev.enableBuildControls();
-        g_dev.setCurFile(asms.get(open_asm).getAsmFilePath());
+
+        String header = asms.get(open_asm).getAsmFilePath();
+
+        if(main_asm == open_asm)
+            header += " <main program>";
+
+        g_dev.setCurFile(header);
 
         return Constants.PLP_OK;
     }
@@ -293,7 +360,10 @@ public class PLPBackend {
 
     public int assemble() {
 
-        PLPMsg.I("Assembling...", this);
+        PLPMsg.I("Assembling...", null);
+
+        if(g) g_dev.disableSimControls();
+
         asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
 
         if(asms == null || asms.isEmpty())
@@ -302,20 +372,25 @@ public class PLPBackend {
 
         // ...assemble asm objects... //
         if(arch.equals("plpmips")) {
-            int ret;
             asm = new plptool.mips.Asm(asms);
 
-            if(asm.preprocess(0) == Constants.PLP_OK)
+            if(asm.preprocess(main_asm) == Constants.PLP_OK)
                 asm.assemble();
+            
         }
 
-        PLPMsg.I("Done.", this);
+        if(g && asm != null && asm.isAssembled()) {
+            modified = true;
+            g_dev.enableSimControls();
+        }
+
+        PLPMsg.I("Done.", null);
 
         return Constants.PLP_OK;
     }
 
     public int simulate() {
-        PLPMsg.I("Starting simulation...", this);
+        PLPMsg.I("Starting simulation...", null);
 
         if(!asm.isAssembled())
             return PLPMsg.E("The project is not assembled.",
@@ -340,6 +415,40 @@ public class PLPBackend {
                 g_simsh.setVisible(true);
             }
         }
+
+        return Constants.PLP_OK;
+    }
+
+    public int updateAsm(int index, String newStr) {
+        if(asms == null || index < 0 || index >= asms.size())
+            return PLPMsg.E("updateAsm() error.",
+                            Constants.PLP_GENERIC_ERROR, null);
+
+        modified = true;
+
+        asms.get(index).setAsmString(newStr);
+
+        return Constants.PLP_OK;
+    }
+
+    public int removeAsm(int index) {
+        if(asms.size() <= 1) {
+            return  PLPMsg.E("Can not delete last source file.",
+                            Constants.PLP_GENERIC_ERROR, null);
+        }
+
+        if(asms == null || index < 0 || index >= asms.size())
+            return  PLPMsg.E("removeAsm: invalid index.",
+                            Constants.PLP_GENERIC_ERROR, null);
+
+        modified = true;
+        if(index == main_asm)
+            main_asm = 0;
+        if(index <= open_asm)
+            open_asm--;
+
+        asms.remove(index);
+        if(g) refreshProjectView(true);
 
         return Constants.PLP_OK;
     }
