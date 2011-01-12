@@ -364,7 +364,7 @@ public class PLPBackend {
 
         if(g) g_dev.disableSimControls();
 
-        asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
+        if(g) asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
 
         if(asms == null || asms.isEmpty())
             return PLPMsg.E("No source files are open.",
@@ -444,11 +444,11 @@ public class PLPBackend {
         modified = true;
         if(index == main_asm)
             main_asm = 0;
-        if(index <= open_asm)
+        if(index <= open_asm && open_asm != 0)
             open_asm--;
 
         asms.remove(index);
-        if(g) refreshProjectView(true);
+        if(g) refreshProjectView(false);
 
         return Constants.PLP_OK;
     }
