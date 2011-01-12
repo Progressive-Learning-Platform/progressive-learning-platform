@@ -40,8 +40,8 @@ public class PLPDevelop extends javax.swing.JFrame {
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
         treeProject.setModel(treeModel);
         
-        jSplitPane1.setDividerLocation(0.25);
-
+        splitter.setDividerLocation(0.25);
+        
         PLPMsg.output = txtOutput;
         txtEditor.setEnabled(false);
         txtOutput.setEditable(false);
@@ -52,6 +52,8 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuDeleteASM.setEnabled(false);
         menuSave.setEnabled(false);
         menuSaveAs.setEnabled(false);
+        btnAssemble.setEnabled(false);
+        disableSimControls();
 
         treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -78,12 +80,27 @@ public class PLPDevelop extends javax.swing.JFrame {
         return treeProject;
     }
 
-    public void enableBuildControls() {
+    public final void enableBuildControls() {
         rootmenuProject.setEnabled(true);
         menuImportASM.setEnabled(true);
         menuNewASM.setEnabled(true);
         menuSave.setEnabled(true);
         menuSaveAs.setEnabled(true);
+        btnAssemble.setEnabled(true);
+        menuDeleteASM.setEnabled(true);
+        menuExportASM.setEnabled(true);
+    }
+
+    public final void disableSimControls() {
+        menuSimulate.setEnabled(false);
+        menuProgram.setEnabled(false);
+        btnSimulate.setEnabled(false);
+    }
+
+    public final  void enableSimControls() {
+        menuSimulate.setEnabled(true);
+        menuProgram.setEnabled(true);
+        btnSimulate.setEnabled(true);
     }
 
     public int save() {
@@ -103,16 +120,18 @@ public class PLPDevelop extends javax.swing.JFrame {
         devMainPane = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtOutput = new javax.swing.JTextArea();
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        splitter = new javax.swing.JSplitPane();
+        scrollerTree = new javax.swing.JScrollPane();
         treeProject = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scrollerEditor = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JEditorPane();
         txtCurFile = new javax.swing.JTextField();
-        lblPosition = new javax.swing.JLabel();
-        jToolBar1 = new javax.swing.JToolBar();
-        jButton1 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        lblPosition = new javax.swing.JTextPane();
+        toolbar = new javax.swing.JToolBar();
+        btnAssemble = new javax.swing.JButton();
+        btnSimulate = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -120,11 +139,6 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuOpen = new javax.swing.JMenuItem();
         menuSave = new javax.swing.JMenuItem();
         menuSaveAs = new javax.swing.JMenuItem();
-        menuSeparator2 = new javax.swing.JPopupMenu.Separator();
-        menuNewASM = new javax.swing.JMenuItem();
-        menuImportASM = new javax.swing.JMenuItem();
-        menuExportASM = new javax.swing.JMenuItem();
-        menuDeleteASM = new javax.swing.JMenuItem();
         menuSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuExit = new javax.swing.JMenuItem();
         rootmenuEdit = new javax.swing.JMenu();
@@ -141,6 +155,13 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuAssemble = new javax.swing.JMenuItem();
         menuSimulate = new javax.swing.JMenuItem();
         menuProgram = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        menuNewASM = new javax.swing.JMenuItem();
+        menuImportASM = new javax.swing.JMenuItem();
+        menuExportASM = new javax.swing.JMenuItem();
+        menuDeleteASM = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        menuSetMainProgram = new javax.swing.JMenuItem();
         rootmenuHelp = new javax.swing.JMenu();
         menuAbout = new javax.swing.JMenuItem();
 
@@ -171,10 +192,11 @@ public class PLPDevelop extends javax.swing.JFrame {
             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setName("jSplitPane1"); // NOI18N
-        jSplitPane1.setPreferredSize(new java.awt.Dimension(150, 342));
+        splitter.setDividerLocation(100);
+        splitter.setName("splitter"); // NOI18N
+        splitter.setPreferredSize(new java.awt.Dimension(150, 342));
 
-        jScrollPane2.setName("jScrollPane2"); // NOI18N
+        scrollerTree.setName("scrollerTree"); // NOI18N
 
         treeProject.setName("treeProject"); // NOI18N
         treeProject.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -182,63 +204,82 @@ public class PLPDevelop extends javax.swing.JFrame {
                 treeProjectMousePressed(evt);
             }
         });
-        jScrollPane2.setViewportView(treeProject);
+        scrollerTree.setViewportView(treeProject);
 
-        jSplitPane1.setLeftComponent(jScrollPane2);
+        splitter.setLeftComponent(scrollerTree);
 
         jPanel1.setName("jPanel1"); // NOI18N
 
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
+        scrollerEditor.setName("scrollerEditor"); // NOI18N
 
         txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
+        txtEditor.setMinimumSize(new java.awt.Dimension(1, 1));
         txtEditor.setName("txtEditor"); // NOI18N
+        txtEditor.setPreferredSize(new java.awt.Dimension(1, 1));
         txtEditor.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 txtEditorCaretUpdate(evt);
             }
         });
-        jScrollPane1.setViewportView(txtEditor);
+        scrollerEditor.setViewportView(txtEditor);
 
+        txtCurFile.setBackground(resourceMap.getColor("txtCurFile.background")); // NOI18N
         txtCurFile.setEditable(false);
         txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
         txtCurFile.setName("txtCurFile"); // NOI18N
 
-        lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        lblPosition.setEditable(false);
         lblPosition.setName("lblPosition"); // NOI18N
+        jScrollPane4.setViewportView(lblPosition);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scrollerEditor, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 644, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblPosition))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txtCurFile)
+                    .addComponent(jScrollPane4))
+                .addGap(10, 10, 10)
+                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        jSplitPane1.setRightComponent(jPanel1);
+        splitter.setRightComponent(jPanel1);
 
-        jToolBar1.setRollover(true);
-        jToolBar1.setName("jToolBar1"); // NOI18N
+        toolbar.setRollover(true);
+        toolbar.setName("toolbar"); // NOI18N
 
-        jButton1.setIcon(resourceMap.getIcon("jButton1.icon")); // NOI18N
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setName("jButton1"); // NOI18N
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButton1);
+        btnAssemble.setIcon(resourceMap.getIcon("btnAssemble.icon")); // NOI18N
+        btnAssemble.setText(resourceMap.getString("btnAssemble.text")); // NOI18N
+        btnAssemble.setFocusable(false);
+        btnAssemble.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAssemble.setName("btnAssemble"); // NOI18N
+        btnAssemble.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnAssemble);
+
+        btnSimulate.setIcon(resourceMap.getIcon("btnSimulate.icon")); // NOI18N
+        btnSimulate.setText(resourceMap.getString("btnSimulate.text")); // NOI18N
+        btnSimulate.setFocusable(false);
+        btnSimulate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimulate.setName("btnSimulate"); // NOI18N
+        btnSimulate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnSimulate);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
@@ -278,28 +319,15 @@ public class PLPDevelop extends javax.swing.JFrame {
         });
         rootmenuFile.add(menuSave);
 
+        menuSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
         menuSaveAs.setText(resourceMap.getString("menuSaveAs.text")); // NOI18N
         menuSaveAs.setName("menuSaveAs"); // NOI18N
+        menuSaveAs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSaveAsActionPerformed(evt);
+            }
+        });
         rootmenuFile.add(menuSaveAs);
-
-        menuSeparator2.setName("menuSeparator2"); // NOI18N
-        rootmenuFile.add(menuSeparator2);
-
-        menuNewASM.setText(resourceMap.getString("menuNewASM.text")); // NOI18N
-        menuNewASM.setName("menuNewASM"); // NOI18N
-        rootmenuFile.add(menuNewASM);
-
-        menuImportASM.setText(resourceMap.getString("menuImportASM.text")); // NOI18N
-        menuImportASM.setName("menuImportASM"); // NOI18N
-        rootmenuFile.add(menuImportASM);
-
-        menuExportASM.setText(resourceMap.getString("menuExportASM.text")); // NOI18N
-        menuExportASM.setName("menuExportASM"); // NOI18N
-        rootmenuFile.add(menuExportASM);
-
-        menuDeleteASM.setText(resourceMap.getString("menuDeleteASM.text")); // NOI18N
-        menuDeleteASM.setName("menuDeleteASM"); // NOI18N
-        rootmenuFile.add(menuDeleteASM);
 
         menuSeparator3.setName("menuSeparator3"); // NOI18N
         rootmenuFile.add(menuSeparator3);
@@ -357,18 +385,25 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         rootmenuProject.setText(resourceMap.getString("rootmenuProject.text")); // NOI18N
         rootmenuProject.setName("rootmenuProject"); // NOI18N
+        rootmenuProject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rootmenuProjectActionPerformed(evt);
+            }
+        });
 
-        menuAssemble.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
+        menuAssemble.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        menuAssemble.setIcon(resourceMap.getIcon("menuAssemble.icon")); // NOI18N
         menuAssemble.setText(resourceMap.getString("menuAssemble.text")); // NOI18N
         menuAssemble.setName("menuAssemble"); // NOI18N
         menuAssemble.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuAssembleActionPerformed(evt);
+                menuAssembleActionPerformed1(evt);
             }
         });
         rootmenuProject.add(menuAssemble);
 
-        menuSimulate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
+        menuSimulate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, 0));
+        menuSimulate.setIcon(resourceMap.getIcon("menuSimulate.icon")); // NOI18N
         menuSimulate.setText(resourceMap.getString("menuSimulate.text")); // NOI18N
         menuSimulate.setName("menuSimulate"); // NOI18N
         menuSimulate.addActionListener(new java.awt.event.ActionListener() {
@@ -381,6 +416,48 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuProgram.setText(resourceMap.getString("menuProgram.text")); // NOI18N
         menuProgram.setName("menuProgram"); // NOI18N
         rootmenuProject.add(menuProgram);
+
+        jSeparator1.setName("jSeparator1"); // NOI18N
+        rootmenuProject.add(jSeparator1);
+
+        menuNewASM.setText(resourceMap.getString("menuNewASM.text")); // NOI18N
+        menuNewASM.setName("menuNewASM"); // NOI18N
+        rootmenuProject.add(menuNewASM);
+
+        menuImportASM.setText(resourceMap.getString("menuImportASM.text")); // NOI18N
+        menuImportASM.setName("menuImportASM"); // NOI18N
+        menuImportASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuImportASMActionPerformed(evt);
+            }
+        });
+        rootmenuProject.add(menuImportASM);
+
+        menuExportASM.setText(resourceMap.getString("menuExportASM.text")); // NOI18N
+        menuExportASM.setName("menuExportASM"); // NOI18N
+        rootmenuProject.add(menuExportASM);
+
+        menuDeleteASM.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        menuDeleteASM.setText(resourceMap.getString("menuDeleteASM.text")); // NOI18N
+        menuDeleteASM.setName("menuDeleteASM"); // NOI18N
+        menuDeleteASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDeleteASMActionPerformed(evt);
+            }
+        });
+        rootmenuProject.add(menuDeleteASM);
+
+        jSeparator2.setName("jSeparator2"); // NOI18N
+        rootmenuProject.add(jSeparator2);
+
+        menuSetMainProgram.setText(resourceMap.getString("menuSetMainProgram.text")); // NOI18N
+        menuSetMainProgram.setName("menuSetMainProgram"); // NOI18N
+        menuSetMainProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSetMainProgramActionPerformed(evt);
+            }
+        });
+        rootmenuProject.add(menuSetMainProgram);
 
         jMenuBar1.add(rootmenuProject);
 
@@ -410,15 +487,17 @@ public class PLPDevelop extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(devMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
+            .addComponent(toolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(splitter, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                .addComponent(splitter, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(devMainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -433,13 +512,6 @@ public class PLPDevelop extends javax.swing.JFrame {
     private void rootmenuHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuHelpActionPerformed
         backend.g_about.setVisible(true);
     }//GEN-LAST:event_rootmenuHelpActionPerformed
-
-    private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
-        PLPMsg.output = txtOutput;
-
-        if(backend.plpfile != null)
-            backend.assemble();
-    }//GEN-LAST:event_menuAssembleActionPerformed
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         PLPMsg.output = txtOutput;
@@ -468,32 +540,6 @@ public class PLPDevelop extends javax.swing.JFrame {
         backend.app.show(backend.g_about);
     }//GEN-LAST:event_menuAboutActionPerformed
 
-    private void treeProjectMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMousePressed
-        if(evt.getClickCount() == 2) { // user double clicked the project tree
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
-
-            if(node == null)
-                return;
-
-            if(node.isLeaf()) {
-                String nodeStr = (String) node.getUserObject();
-
-                if(nodeStr.endsWith("asm")) {
-                    
-                    String[] tokens = nodeStr.split("::");
-
-                    if(!tokens[0].equals(Integer.parseInt(tokens[0]))) {
-                        PLPMsg.I("Opening " + nodeStr, null);
-
-                        backend.asms.get(backend.open_asm).setAsmString(txtEditor.getText());
-                        backend.open_asm = Integer.parseInt(tokens[0]);
-                        backend.refreshProjectView();
-                    }
-                }
-            }
-        }
-    }//GEN-LAST:event_treeProjectMousePressed
-
     private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
         int caretPos = txtEditor.getCaretPosition();
         String[] lines = txtEditor.getText().split("\\r?\\n");
@@ -507,17 +553,127 @@ public class PLPDevelop extends javax.swing.JFrame {
         backend.savePLPFile();
     }//GEN-LAST:event_menuSaveActionPerformed
 
+    private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
+        PLPMsg.output = txtOutput;
+
+        if(backend.plpfile != null)
+            backend.assemble();
+}//GEN-LAST:event_menuAssembleActionPerformed
+
+    private void menuAssembleActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
+        PLPMsg.output = txtOutput;
+
+        if(backend.plpfile != null)
+            backend.assemble();
+    }//GEN-LAST:event_menuAssembleActionPerformed1
+
+    private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
+        PLPMsg.output = txtOutput;
+
+        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileFilter(new PlpFilter());
+        fc.setAcceptAllFileFilterUsed(false);
+
+        int retVal = fc.showSaveDialog(null);
+
+        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+            backend.plpfile = fc.getSelectedFile().getAbsolutePath();
+            backend.savePLPFile();
+            backend.openPLPFile(backend.plpfile);
+        }
+    }//GEN-LAST:event_menuSaveAsActionPerformed
+
+    private void menuImportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuImportASMActionPerformed
+        PLPMsg.output = txtOutput;
+
+        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileFilter(new AsmFilter());
+        fc.setAcceptAllFileFilterUsed(false);
+
+        int retVal = fc.showOpenDialog(null);
+
+        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+            backend.importAsm(fc.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_menuImportASMActionPerformed
+
+    private void menuDeleteASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteASMActionPerformed
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
+
+        if(node == null)
+            return;
+
+        if(node.isLeaf()) {
+            String nodeStr = (String) node.getUserObject();
+
+            if(nodeStr.endsWith("asm")) {
+
+                if(backend.asms.size() <= 1) {
+                    PLPMsg.E("Can not delete last source file.",
+                             Constants.PLP_GENERIC_ERROR, null);
+                    
+                    return;
+                }
+
+                String[] tokens = nodeStr.split("::");
+
+                int remove_asm = Integer.parseInt(tokens[0]);
+                if(remove_asm == backend.open_asm) {
+                    backend.open_asm = 0;
+                    backend.refreshProjectView(false);
+                }
+
+                backend.removeAsm(remove_asm);
+            }
+        }
+    }//GEN-LAST:event_menuDeleteASMActionPerformed
+
+    private void rootmenuProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuProjectActionPerformed
+
+    }//GEN-LAST:event_rootmenuProjectActionPerformed
+
+    private void menuSetMainProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
+        backend.main_asm = backend.open_asm;
+        backend.refreshProjectView(true);
+    }//GEN-LAST:event_menuSetMainProgramActionPerformed
+
+    private void treeProjectMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMousePressed
+        if(evt.getClickCount() == 2) { // user double clicked the project tree
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
+
+            if(node == null)
+                return;
+
+            if(node.isLeaf()) {
+                String nodeStr = (String) node.getUserObject();
+
+                if(nodeStr.endsWith("asm")) {
+
+                    String[] tokens = nodeStr.split("::");
+
+                    if(!tokens[0].equals(Integer.parseInt(tokens[0]))) {
+                        PLPMsg.I("Opening " + nodeStr, null);
+
+                        backend.asms.get(backend.open_asm).setAsmString(txtEditor.getText());
+                        backend.open_asm = Integer.parseInt(tokens[0]);
+                        backend.refreshProjectView(false);
+                    }
+                }
+            }
+        }
+}//GEN-LAST:event_treeProjectMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAssemble;
+    private javax.swing.JButton btnSimulate;
     private javax.swing.JPanel devMainPane;
-    private javax.swing.JButton jButton1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel lblPosition;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JTextPane lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
     private javax.swing.JMenuItem menuCopy;
@@ -537,16 +693,20 @@ public class PLPDevelop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuSave;
     private javax.swing.JMenuItem menuSaveAs;
     private javax.swing.JPopupMenu.Separator menuSeparator1;
-    private javax.swing.JPopupMenu.Separator menuSeparator2;
     private javax.swing.JPopupMenu.Separator menuSeparator3;
     private javax.swing.JPopupMenu.Separator menuSeparator4;
     private javax.swing.JPopupMenu.Separator menuSeparator5;
+    private javax.swing.JMenuItem menuSetMainProgram;
     private javax.swing.JMenuItem menuSimulate;
     private javax.swing.JMenuItem menuUndo;
     private javax.swing.JMenu rootmenuEdit;
     private javax.swing.JMenu rootmenuFile;
     private javax.swing.JMenu rootmenuHelp;
     private javax.swing.JMenu rootmenuProject;
+    private javax.swing.JScrollPane scrollerEditor;
+    private javax.swing.JScrollPane scrollerTree;
+    private javax.swing.JSplitPane splitter;
+    private javax.swing.JToolBar toolbar;
     private javax.swing.JTree treeProject;
     private javax.swing.JTextField txtCurFile;
     private javax.swing.JEditorPane txtEditor;

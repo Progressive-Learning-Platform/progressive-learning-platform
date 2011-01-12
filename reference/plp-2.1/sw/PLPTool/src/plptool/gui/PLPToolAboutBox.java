@@ -30,16 +30,13 @@ public class PLPToolAboutBox extends javax.swing.JDialog {
 
         closeButton = new javax.swing.JButton();
         javax.swing.JLabel appTitleLabel = new javax.swing.JLabel();
-        javax.swing.JLabel versionLabel = new javax.swing.JLabel();
         javax.swing.JLabel appVersionLabel = new javax.swing.JLabel();
-        javax.swing.JLabel vendorLabel = new javax.swing.JLabel();
         javax.swing.JLabel appVendorLabel = new javax.swing.JLabel();
-        javax.swing.JLabel homepageLabel = new javax.swing.JLabel();
         javax.swing.JLabel appHomepageLabel = new javax.swing.JLabel();
         javax.swing.JLabel appDescLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPToolAboutBox.class);
@@ -56,23 +53,11 @@ public class PLPToolAboutBox extends javax.swing.JDialog {
         appTitleLabel.setText(resourceMap.getString("Application.title")); // NOI18N
         appTitleLabel.setName("appTitleLabel"); // NOI18N
 
-        versionLabel.setFont(versionLabel.getFont().deriveFont(versionLabel.getFont().getStyle() | java.awt.Font.BOLD));
-        versionLabel.setText(resourceMap.getString("versionLabel.text")); // NOI18N
-        versionLabel.setName("versionLabel"); // NOI18N
-
         appVersionLabel.setText(resourceMap.getString("Application.version")); // NOI18N
         appVersionLabel.setName("appVersionLabel"); // NOI18N
 
-        vendorLabel.setFont(vendorLabel.getFont().deriveFont(vendorLabel.getFont().getStyle() | java.awt.Font.BOLD));
-        vendorLabel.setText(resourceMap.getString("vendorLabel.text")); // NOI18N
-        vendorLabel.setName("vendorLabel"); // NOI18N
-
         appVendorLabel.setText(resourceMap.getString("Application.vendor")); // NOI18N
         appVendorLabel.setName("appVendorLabel"); // NOI18N
-
-        homepageLabel.setFont(homepageLabel.getFont().deriveFont(homepageLabel.getFont().getStyle() | java.awt.Font.BOLD));
-        homepageLabel.setText(resourceMap.getString("homepageLabel.text")); // NOI18N
-        homepageLabel.setName("homepageLabel"); // NOI18N
 
         appHomepageLabel.setFont(resourceMap.getFont("appHomepageLabel.font")); // NOI18N
         appHomepageLabel.setForeground(resourceMap.getColor("appHomepageLabel.foreground")); // NOI18N
@@ -84,13 +69,14 @@ public class PLPToolAboutBox extends javax.swing.JDialog {
             }
         });
 
+        appDescLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         appDescLabel.setText(resourceMap.getString("appDescLabel.text")); // NOI18N
         appDescLabel.setName("appDescLabel"); // NOI18N
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setForeground(resourceMap.getColor("jLabel2.foreground")); // NOI18N
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
@@ -100,69 +86,62 @@ public class PLPToolAboutBox extends javax.swing.JDialog {
             }
         });
 
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setIcon(resourceMap.getIcon("pulpImage.icon")); // NOI18N
-        jLabel4.setText(resourceMap.getString("pulpImage.text")); // NOI18N
-        jLabel4.setName("pulpImage"); // NOI18N
+        jLabel3.setIcon(resourceMap.getIcon("jLabel3.icon")); // NOI18N
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(47, 47, 47))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(versionLabel)
-                            .addComponent(vendorLabel)
-                            .addComponent(homepageLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(appVersionLabel)
-                            .addComponent(appVendorLabel)
-                            .addComponent(appHomepageLabel)))
-                    .addComponent(appTitleLabel)
-                    .addComponent(appDescLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(closeButton)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(appTitleLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(appDescLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(versionLabel)
-                            .addComponent(appVersionLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(vendorLabel)
-                            .addComponent(appVendorLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(appHomepageLabel)
-                            .addComponent(homepageLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                        .addComponent(appVersionLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(appDescLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(closeButton)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel3))))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(appHomepageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(appVendorLabel))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(appTitleLabel)
+                    .addComponent(appDescLabel)
+                    .addComponent(appVersionLabel))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(appHomepageLabel)
+                        .addGap(3, 3, 3)
+                        .addComponent(appVendorLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(closeButton))))
-                .addContainerGap())
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(closeButton)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3))))
         );
 
         pack();
@@ -192,7 +171,7 @@ public class PLPToolAboutBox extends javax.swing.JDialog {
     private javax.swing.JButton closeButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
     
 }
