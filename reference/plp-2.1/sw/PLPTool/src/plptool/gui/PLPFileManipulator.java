@@ -18,6 +18,8 @@
 
 package plptool.gui;
 
+import plptool.Constants;
+
 /**
  *
  * @author wira
@@ -25,14 +27,34 @@ package plptool.gui;
 public class PLPFileManipulator {
     public static void CLI(String[] args) {
         PLPBackend backend = new PLPBackend(false, "plpmips");
-        backend.openPLPFile(args[1]);
+
+	java.io.File plpHandler = new java.io.File(args[1]);
+	
+	if(plpHandler.exists())
+            backend.openPLPFile(args[1]);
+        else {
+            backend.newPLPFile();
+            backend.plpfile = args[1];
+            if(backend.savePLPFile() != Constants.PLP_OK)
+                return;
+        }
         
-        if(backend.plpfile == null)
+        if(backend.plpfile == null || args.length <= 2)
             return;
 
         if(args[2].equals("-importasm") || args[2].equals("-i")) {
             backend.importAsm(args[3]);
-            backend.savePLPFile();
         }
+        else if(args[2].equals("-setmain") || args[2].equals("-sm")) {
+            int main_index = Integer.parseInt(args[3]);
+            if(main_index < 0 || main_index >= backend.asms.size())
+                return;
+            backend.main_asm = main_index;
+        }
+        else if(args[2].equals("-getmain") || args[2].equals("-gm")) {
+            plptool.PLPMsg.I("MAINSRC=" + backend.main_asm, null);
+	}
+        
+        backend.savePLPFile();
     }
 }
