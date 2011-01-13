@@ -116,7 +116,7 @@ public class PLPBackend {
         assemble();
 
         if(plpfile == null || plpfile.equals("Unsaved Project"))
-            return PLPMsg.E("No PLP project file open. Use Save As.",
+            return PLPMsg.E("No PLP project file is open. Use Save As.",
                             Constants.PLP_FILE_SAVE_ERROR, null);
 
         ArrayList<PLPAsmSource> sourceList;
@@ -412,6 +412,16 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
+    public PLPAsmSource getAsm(int index) {
+        if(asms == null || index < 0 || index >= asms.size()) {
+            PLPMsg.E("updateAsm: Invalid index.",
+                     Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+            return null;
+        }
+
+        return asms.get(index);
+    }
+
     public int updateAsm(int index, String newStr) {
         if(asms == null || index < 0 || index >= asms.size())
             return PLPMsg.E("updateAsm: Invalid index.",
@@ -457,10 +467,6 @@ public class PLPBackend {
 
     public int exportAsm(int index, String path) {
         File asmFile = new File(path);
-
-        if(asms == null || index < 0 || index >= asms.size())
-            return  PLPMsg.E("exportAsm: Invalid index.",
-                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         PLPMsg.I("Exporting " + asms.get(index).getAsmFilePath() +
                  " to " + path, null);

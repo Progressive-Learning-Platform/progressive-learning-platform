@@ -21,6 +21,8 @@ package plptool.gui;
 import plptool.Constants;
 import plptool.PLPMsg;
 
+import java.io.*;
+
 /**
  *
  * @author wira
@@ -28,8 +30,11 @@ import plptool.PLPMsg;
 public class PLPFileManipulator {
     public static void CLI(String[] args) {
         PLPBackend backend = new PLPBackend(false, "plpmips");
+	
+        if(args == null || args.length < 2) 
+            return;
 
-	java.io.File plpHandler = new java.io.File(args[1]);
+        File plpHandler = new File(args[1]);
 	
 	if(plpHandler.exists())
             backend.openPLPFile(args[1]);
@@ -52,13 +57,13 @@ public class PLPFileManipulator {
             backend.importAsm(args[3]);
             backend.savePLPFile();
         }
-        if(args[2].equals("-importdir") || args[2].equals("-d")) {
+        else if(args[2].equals("-importdir") || args[2].equals("-d")) {
             if(!(args.length == 4)) {
                 PLPMsg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
-            java.io.File dir = new java.io.File(args[3]);
+            File dir = new File(args[3]);
 
             String files[] = dir.list();
 
@@ -66,7 +71,7 @@ public class PLPFileManipulator {
                 backend.importAsm(dir.getAbsolutePath() + "/" + files[i]);
             backend.savePLPFile();
         }
-        else if((args[2].equals("-setmain") || args[2].equals("-sm"))) {
+        else if((args[2].equals("-setmain") || args[2].equals("-s"))) {
             if(!(args.length == 4)) {
                 PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
                 return;
@@ -78,7 +83,19 @@ public class PLPFileManipulator {
             backend.main_asm = main_index;
             backend.savePLPFile();
         }
-        else if((args[2].equals("-getmain") || args[2].equals("-gm"))) {
+        else if(args[2].equals("-v")) {
+            if(!(args.length == 4)) {
+                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+
+            int index = Integer.parseInt(args[3]);
+            if(index < 0 || index >= backend.asms.size())
+                return;
+            PLPMsg.M(backend.getAsm(index).getAsmString());
+        }
+
+        else if(args[2].equals("-m")) {
             PLPMsg.I("MAINSRC=" + backend.main_asm, null);
 	}
         else if((args[2].equals("-r"))) {
@@ -99,6 +116,34 @@ public class PLPFileManipulator {
 
             int index = Integer.parseInt(args[3]);
             backend.exportAsm(index, args[4]);
+        }
+        else if((args[2].equals("-edit"))) {
+            if(!(args.length == 4)) {
+                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+ 
+            try {
+
+            int index = Integer.parseInt(args[3]);
+            File temp = new File("PLPTool.temp.asm");
+            if(temp.exists()) 
+                temp.delete();
+            backend.exportAsm(index, "PLPTool.temp.asm");
+            String file = backend.getAsm(index).getAsmFilePath();
+            Process p = Runtime.getRuntime().exec("gedit PLPTool.temp.asm");
+            p.waitFor();
+            File newFile = new File(file);
+            temp.renameTo(newFile);
+            backend.removeAsm(index);
+            backend.importAsm(newFile.getAbsolutePath());
+            newFile.delete();
+            backend.savePLPFile();  
+            } catch(Exception e) { e.printStackTrace(); }
+        }
+
+        else if(args[2].equals("-a")) {
+            backend.savePLPFile();
         }
         else {
             PLPMsg.I("Invalid option: " + args[2], null);
