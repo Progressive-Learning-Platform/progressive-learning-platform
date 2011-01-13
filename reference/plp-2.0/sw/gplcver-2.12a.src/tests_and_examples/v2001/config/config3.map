@@ -1,0 +1,10 @@
+library top test.v;
+library foolib foo/fo?.v;
+library lib lib/*.v;
+
+config cfg;
+ design top.test;
+ default liblist foolib lib;
+ instance test.f1 use foolib.foo;
+ instance test.f2 use lib.bar;
+endconfig
