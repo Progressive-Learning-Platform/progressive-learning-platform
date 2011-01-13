@@ -25,13 +25,13 @@ module inferred_rom(clka, clkb, ena, enb, addra, addrb, doa, dob);
         output reg [31:0] doa, dob;
         reg [31:0] RAM [511:0];
 
-        always @(posedge clka) begin
+        always @(negedge clka) begin
                 if (ena) begin
                         doa <= RAM[addra];
                 end
         end
 
-        always @(posedge clkb) begin
+        always @(negedge clkb) begin
                 if (enb) begin
                         dob <= RAM[addrb];
                 end
