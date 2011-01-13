@@ -25,7 +25,7 @@ SRAM interface
 31.12.2010
 */
 
-module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr);
+module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy);
         input rst;
         input clk;
         input ie,de;
@@ -33,6 +33,12 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
         input drw;
         input [31:0] din;
         output [31:0] iout, dout;
+
+	/* vga bypass signals */
+	output [31:0] mod_vga_sram_data;
+	input [31:0] mod_vga_sram_addr;
+	input mod_vga_sram_read;
+	output mod_vga_sram_rdy;
 
 	/* sram related signals */
 	output cpu_stall, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub;
@@ -63,30 +69,48 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 	 * state = 0  = idle
 	 * state = 10 = instruction
 	 * state = 11 = data
+	 *
+	 * bypass_state = 0 = no vga bypass active
+	 * bypass_state = 1 = vga bypass in flight
+	 *
 	 */
 	reg [1:0] state = 2'b00;
-	assign eff_addr = state[0] ? daddr : iaddr;
+	reg bypass_state = 1'b0;
+	assign eff_addr = bypass_state ? mod_vga_sram_addr : 
+			  (!bypass_state && state[0]) ? daddr : iaddr;
 	assign eff_drw  = state[0] && de && drw && !rst;
-	assign cpu_stall = state != 2'b00;
-	assign eff_rst = state == 2'b00;
+	assign cpu_stall = (state != 2'b00) || (bypass_state && (ie || de));
+	assign eff_rst = state == 2'b00 && bypass_state;
 	wire [1:0] next_state = (state == 2'b00 && ie)         ? 2'b10 : /* idle to instruction read */
 				(state == 2'b00 && !ie && de)  ? 2'b11 : /* idle to data r/w */
 				(state == 2'b10 && de && rdy)  ? 2'b11 : /* instruction read to data r/w */
 				(state == 2'b10 && !de && rdy) ? 2'b00 : /* instruction read to idle */
 				(state == 2'b11 && rdy)	       ? 2'b00 : /* data r/w to idle */
 				state;					 /* otherwise stay put */
+
+	wire vga_bypass_next_state = (state == 2'b00 && mod_vga_sram_read && !bypass_state) ? 1'b1 : /* a new vga bypass request */
+				     (bypass_state && rdy) 				    ? 1'b0 : /* vga bypass request done */
+				     bypass_state;						     /* otherwise stay put */
+
+	/* vga bypass */
+	assign mod_vga_sram_data = ddata;
+	assign mod_vga_sram_rdy  = bypass_state[1] && rdy;
+
         /* all data bus activity is negative edge triggered */
         always @(negedge clk) begin
                 if (state == 2'b10 && ie && rdy && !rst)
 			idata <= sram_dout;
-		else if (state == 2'b11 && de && rdy && !rst)
+		else if ((state == 2'b11 && de && rdy && !rst) || (bypass_state && rdy && !rst)
 			ddata <= sram_dout;	/* if it's a write cycle, we'll just read garbage, which is fine */
 		
 		/* handle the state */
-		if (rst) 
+		if (rst) begin 
 			state <= 2'b00;
-		else
+			bypass_state <= 1'b0;
+		end else begin
 			state <= next_state;
+			bypass_state <= vga_bypass_next_state;
+		end
         end
 endmodule
 
