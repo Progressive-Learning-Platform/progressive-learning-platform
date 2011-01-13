@@ -16,6 +16,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -214,9 +215,9 @@ public class PLPBackend {
         PLPMsg.I(plpfile + " written", null);
 
         } catch(Exception e) {
-            e.printStackTrace();
-            return PLPMsg.E("genPLP(): Unable to write to " + plpfile + "\n" +
-                     e, Constants.PLP_FILE_SAVE_ERROR, null);
+            if(Constants.debugLevel >= 10) e.printStackTrace();
+            return PLPMsg.E("savePLPFile: Unable to write to " + plpfile + "\n" +
+                     e, Constants.PLP_FILE_SAVE_ERROR, this);
         }
 
 
@@ -230,8 +231,8 @@ public class PLPBackend {
         PLPMsg.I("Opening " + path, null);
 
         if(!plpFile.exists())
-            return PLPMsg.E(path + " not found.",
-                            Constants.PLP_FILE_OPEN_ERROR, this);
+            return PLPMsg.E("openPLPFile(" + path + "): File not found.",
+                            Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
         asms = new ArrayList<plptool.PLPAsmSource>();
 
@@ -269,15 +270,15 @@ public class PLPBackend {
         }
         
         if(asmIndex == 0) {
-            return PLPMsg.E("Invalid PLP File: no .asm files found.",
-                            Constants.PLP_FILE_OPEN_ERROR, this);
+            return PLPMsg.E("openPLPFile(" + path + "): no .asm files found.",
+                            Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
         }
         catch(Exception e) {
             e.printStackTrace();
-            return PLPMsg.E("Invalid PLP archive: " + path,
-                            Constants.PLP_FILE_OPEN_ERROR, this);
+            return PLPMsg.E("openPLPFile(" + path + "): Invalid PLP archive.",
+                            Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
         plpfile = path;
@@ -293,25 +294,6 @@ public class PLPBackend {
                 assemble();
             modified = false;
         }
-
-        return Constants.PLP_OK;
-    }
-
-    public int importAsm(String path) {
-        File asmFile = new File(path);
-
-        PLPMsg.I("Importing " + path, null);
-
-        if(!asmFile.exists())
-            return PLPMsg.E("ASM Import: " + path + " not found.",
-                            Constants.PLP_FILE_OPEN_ERROR, this);
-
-        asms.add(new PLPAsmSource(null, path, asms.size()));
-        asms.get(asms.size() - 1).setAsmFilePath(asmFile.getName());
-
-        modified = true;
-
-        if(g) refreshProjectView(true);
 
         return Constants.PLP_OK;
     }
@@ -379,8 +361,8 @@ public class PLPBackend {
         if(g) asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
 
         if(asms == null || asms.isEmpty())
-            return PLPMsg.E("No source files are open.",
-                            Constants.PLP_NO_ASM_OPEN, this);
+            return PLPMsg.E("assemble(): No source files are open.",
+                            Constants.PLP_BACKEND_EMPTY_ASM_LIST, this);
 
         // ...assemble asm objects... //
         if(arch.equals("plpmips")) {
@@ -388,7 +370,6 @@ public class PLPBackend {
 
             if(asm.preprocess(main_asm) == Constants.PLP_OK)
                 asm.assemble();
-            
         }
 
         if(g && asm != null && asm.isAssembled()) {
@@ -405,8 +386,8 @@ public class PLPBackend {
         PLPMsg.I("Starting simulation...", null);
 
         if(!asm.isAssembled())
-            return PLPMsg.E("The project is not assembled.",
-                            Constants.PLP_ASM_NOT_ASSEMBLED, this);
+            return PLPMsg.E("simulate(): The project is not assembled.",
+                            Constants.PLP_BACKEND_NO_ASSEMBLED_OBJECT, this);
 
         if(arch.equals("plpmips")) {
             sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
@@ -433,8 +414,8 @@ public class PLPBackend {
 
     public int updateAsm(int index, String newStr) {
         if(asms == null || index < 0 || index >= asms.size())
-            return PLPMsg.E("updateAsm() error.",
-                            Constants.PLP_GENERIC_ERROR, null);
+            return PLPMsg.E("updateAsm: Invalid index.",
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(!asms.get(index).getAsmString().equals(newStr))
             modified = true;
@@ -444,22 +425,93 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
+    public int importAsm(String path) {
+        File asmFile = new File(path);
+
+        PLPMsg.I("Importing " + path, null);
+
+        if(!asmFile.exists())
+            return PLPMsg.E("importAsm(" + path + "): file not found.",
+                            Constants.PLP_BACKEND_ASM_IMPORT_ERROR, this);
+
+        String existingPath;
+        for(int i = 0; i < asms.size(); i++) {
+            existingPath = asms.get(i).getAsmFilePath();
+
+            if(existingPath.equals(path) ||
+               existingPath.equals(asmFile.getName())) {
+                return PLPMsg.E("importAsm(" + path + "): File with the same name already exists.",
+                                Constants.PLP_BACKEND_IMPORT_CONFLICT, this);
+            }
+        }
+
+        asms.add(new PLPAsmSource(null, path, asms.size()));
+        asms.get(asms.size() - 1).setAsmFilePath(asmFile.getName());
+
+        modified = true;
+
+        if(g) refreshProjectView(true);
+
+        return Constants.PLP_OK;
+    }
+
+    public int exportAsm(int index, String path) {
+        File asmFile = new File(path);
+
+        if(asms == null || index < 0 || index >= asms.size())
+            return  PLPMsg.E("exportAsm: Invalid index.",
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+
+        PLPMsg.I("Exporting " + asms.get(index).getAsmFilePath() +
+                 " to " + path, null);
+
+        if(asms == null || index < 0 || index >= asms.size())
+            return PLPMsg.E("exportAsm: Invalid index.",
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+
+        if(asmFile.exists()) {
+            return PLPMsg.E("exportAsm: " + path + " exists.",
+                            Constants.PLP_FILE_SAVE_ERROR, this);
+        }
+
+        try {
+
+        FileWriter asmWriter = new FileWriter(asmFile);
+        asmWriter.write(asms.get(index).getAsmString());
+        asmWriter.close();
+
+        } catch(Exception e) {
+            if(Constants.debugLevel >= 10) e.printStackTrace();
+            return PLPMsg.E("exportAsm(" + asms.get(index).getAsmFilePath() +
+                            "): Unable to write to " + path + "\n",
+                            Constants.PLP_FILE_SAVE_ERROR, this);
+        }
+
+        return Constants.PLP_OK;
+    }
+
     public int removeAsm(int index) {
         if(asms.size() <= 1) {
-            return  PLPMsg.E("Can not delete last source file.",
-                            Constants.PLP_GENERIC_ERROR, null);
+            return  PLPMsg.E("removeAsm: Can not delete last source file.",
+                            Constants.PLP_BACKEND_DELETING_LAST_ASM_ERROR, this);
         }
 
         if(asms == null || index < 0 || index >= asms.size())
-            return  PLPMsg.E("removeAsm: invalid index.",
-                            Constants.PLP_GENERIC_ERROR, null);
+            return  PLPMsg.E("removeAsm: Invalid index.",
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         modified = true;
         if(index == main_asm)
             main_asm = 0;
-        if(index <= open_asm && open_asm != 0)
+        if(index < open_asm) {
+            if(g) updateAsm(open_asm, g_dev.getEditorText());
             open_asm--;
-
+        }
+        else if(index == open_asm && open_asm != 0)
+            open_asm--;
+        else
+            if(g) updateAsm(open_asm, g_dev.getEditorText());
+            
         PLPMsg.I("Removing " + asms.get(index).getAsmFilePath(), null);
         asms.remove(index);
         if(g) refreshProjectView(false);
@@ -480,6 +532,6 @@ public class PLPBackend {
 
     @Override
     public String toString() {
-        return "";
+        return "PLPBackend(" + plpfile + ")";
     }
 }

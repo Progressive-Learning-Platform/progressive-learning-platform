@@ -50,6 +50,21 @@ public class PLPFileManipulator {
             }
 
             backend.importAsm(args[3]);
+            backend.savePLPFile();
+        }
+        if(args[2].equals("-importdir") || args[2].equals("-d")) {
+            if(!(args.length == 4)) {
+                PLPMsg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+
+            java.io.File dir = new java.io.File(args[3]);
+
+            String files[] = dir.list();
+
+            for(int i = 0; i < files.length; i++)
+                backend.importAsm(dir.getAbsolutePath() + "/" + files[i]);
+            backend.savePLPFile();
         }
         else if((args[2].equals("-setmain") || args[2].equals("-sm"))) {
             if(!(args.length == 4)) {
@@ -61,15 +76,33 @@ public class PLPFileManipulator {
             if(main_index < 0 || main_index >= backend.asms.size())
                 return;
             backend.main_asm = main_index;
+            backend.savePLPFile();
         }
         else if((args[2].equals("-getmain") || args[2].equals("-gm"))) {
             PLPMsg.I("MAINSRC=" + backend.main_asm, null);
 	}
+        else if((args[2].equals("-r"))) {
+            if(!(args.length == 4)) {
+                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+
+            int index = Integer.parseInt(args[3]);
+            backend.removeAsm(index);
+            backend.savePLPFile();
+        }
+        else if((args[2].equals("-e"))) {
+            if(!(args.length == 5)) {
+                PLPMsg.E("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+
+            int index = Integer.parseInt(args[3]);
+            backend.exportAsm(index, args[4]);
+        }
         else {
             PLPMsg.I("Invalid option: " + args[2], null);
             return;
-        }
-        
-        backend.savePLPFile();
+        }         
     }
 }

@@ -79,6 +79,17 @@ public static final String versionString = "2.1";
     public static final int PLP_PRG_IMAGE_OUT_OF_DATE            = 519;
     public static final int PLP_PRG_UNABLE_TO_CLOSE_PORT         = 520;
 
+    // Backend errors
+    public static final int PLP_BACKEND_PLP_OPEN_ERROR           = 1024;
+    public static final int PLP_BACKEND_PLP_SAVE_ERROR           = 1025;
+    public static final int PLP_BACKEND_INVALID_PLP_FILE         = 1026;
+    public static final int PLP_BACKEND_BOUND_CHECK_FAILED       = 1027;
+    public static final int PLP_BACKEND_NO_ASSEMBLED_OBJECT      = 1028;
+    public static final int PLP_BACKEND_EMPTY_ASM_LIST           = 1029;
+    public static final int PLP_BACKEND_ASM_IMPORT_ERROR         = 1030;
+    public static final int PLP_BACKEND_DELETING_LAST_ASM_ERROR  = 1031;
+    public static final int PLP_BACKEND_IMPORT_CONFLICT          = 1032;
+
     // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFE0;
     public static final long PLP_SIM_FWD_EX_EX_RTYPE             = 0x00000001;
@@ -99,8 +110,6 @@ public static final String versionString = "2.1";
     public static final int PLP_TOOLAPP_ERROR                    = 2;
     public static final int PLP_FILE_OPEN_ERROR                  = 3;
     public static final int PLP_FILE_SAVE_ERROR                  = 4;
-    public static final int PLP_NO_ASM_OPEN                      = 5;
-    public static final int PLP_ASM_NOT_ASSEMBLED                = 6;
 
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;

@@ -29,8 +29,8 @@ import plptool.Constants;
  */
 public class PLPDevelop extends javax.swing.JFrame {
 
+    boolean trackChanges = false;
     PLPBackend backend;
-    String editorTracker;
 
     /** Creates new form PLPDevelop */
     public PLPDevelop(PLPBackend backend) {
@@ -59,10 +59,24 @@ public class PLPDevelop extends javax.swing.JFrame {
         treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosing(java.awt.event.WindowEvent we) {
                 exit();
             }
         });
+
+        txtEditor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                notifyBackendModified();
+            }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                notifyBackendModified();
+            }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                notifyBackendModified();
+            }
+        });
+
 
         this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -71,6 +85,13 @@ public class PLPDevelop extends javax.swing.JFrame {
 
     public void updateComponents() {
 
+    }
+
+    public void notifyBackendModified() {
+        if(trackChanges) {
+            backend.modified = true;
+            backend.updateWindowTitle();
+        }
     }
 
     public javax.swing.JTextArea getOutput() {
@@ -82,8 +103,9 @@ public class PLPDevelop extends javax.swing.JFrame {
     }
 
     public void setEditorText(String str) {
+        trackChanges = false;
         txtEditor.setText(str);
-        editorTracker = str;
+        trackChanges = true;
     }
 
     public String getEditorText() {
@@ -135,6 +157,34 @@ public class PLPDevelop extends javax.swing.JFrame {
         }
     }
 
+    public void newPLPFile() {
+        switch(askSaveFirst("create a new project", "Create a new project")) {
+            case 2:
+                return;
+            default:
+                backend.newPLPFile();
+        }
+    }
+
+    public void openPLPFile() {
+        switch(askSaveFirst("open a project", "Open a project")) {
+            case 2:
+                return;
+            default:
+                PLPMsg.output = txtOutput;
+
+                final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+                fc.setFileFilter(new PlpFilter());
+                fc.setAcceptAllFileFilterUsed(false);
+
+                int retVal = fc.showOpenDialog(null);
+
+                if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                    backend.openPLPFile(fc.getSelectedFile().getAbsolutePath());
+                }
+        }
+    }
+
     public int askSaveFirst(String action, String capAction) {
         if(backend.modified) {
             Object[] options = {"Save and " + action,
@@ -159,6 +209,90 @@ public class PLPDevelop extends javax.swing.JFrame {
         return -1;
     }
 
+    public int deleteASM() {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
+
+        if(node == null)
+            return Constants.PLP_GENERIC_ERROR;
+
+        if(node.isLeaf()) {
+            String nodeStr = (String) node.getUserObject();
+
+            if(nodeStr.endsWith("asm")) {
+
+                if(backend.asms.size() <= 1) {
+                    PLPMsg.E("Can not delete last source file.",
+                             Constants.PLP_GENERIC_ERROR, null);
+
+                    return Constants.PLP_GENERIC_ERROR;
+                }
+
+                String[] tokens = nodeStr.split("::");
+
+                int remove_asm = Integer.parseInt(tokens[0]);
+                if(remove_asm == backend.open_asm) {
+                    backend.open_asm = 0;
+                    backend.refreshProjectView(false);
+                }
+
+                backend.removeAsm(remove_asm);
+            }
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    public int importASM() {
+        PLPMsg.output = txtOutput;
+
+        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileFilter(new AsmFilter());
+        fc.setAcceptAllFileFilterUsed(false);
+
+        int retVal = fc.showOpenDialog(null);
+
+        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+            backend.importAsm(fc.getSelectedFile().getAbsolutePath());
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    public int exportASM() {
+        PLPMsg.output = txtOutput;
+        int indexToExport = -1;
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
+
+        if(node == null)
+            return Constants.PLP_GENERIC_ERROR;
+
+        if(node.isLeaf()) {
+            String nodeStr = (String) node.getUserObject();
+
+            if(nodeStr.endsWith("asm")) {
+                String[] tokens = nodeStr.split("::");
+                indexToExport = Integer.parseInt(tokens[0]);
+            }
+        }
+
+        if(indexToExport >= 0) {
+            final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+            fc.setFileFilter(new AsmFilter());
+            fc.setAcceptAllFileFilterUsed(false);
+
+            int retVal = fc.showSaveDialog(null);
+
+            if(retVal == javax.swing.JFileChooser.APPROVE_OPTION)
+                backend.exportAsm(indexToExport, fc.getSelectedFile().getAbsolutePath());
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    public void about() {
+        backend.app.show(backend.g_about);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -169,8 +303,10 @@ public class PLPDevelop extends javax.swing.JFrame {
     private void initComponents() {
 
         devMainPane = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        scrollOutput = new javax.swing.JScrollPane();
         txtOutput = new javax.swing.JTextArea();
+        scrollPos = new javax.swing.JScrollPane();
+        lblPosition = new javax.swing.JTextPane();
         splitter = new javax.swing.JSplitPane();
         scrollerTree = new javax.swing.JScrollPane();
         treeProject = new javax.swing.JTree();
@@ -178,12 +314,11 @@ public class PLPDevelop extends javax.swing.JFrame {
         scrollerEditor = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JEditorPane();
         txtCurFile = new javax.swing.JTextField();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        lblPosition = new javax.swing.JTextPane();
         toolbar = new javax.swing.JToolBar();
         btnAssemble = new javax.swing.JButton();
         btnSimulate = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
+        btnAbout = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -217,7 +352,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         rootmenuHelp = new javax.swing.JMenu();
         menuAbout = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPDevelop.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage("resources/plp.png"));
@@ -225,23 +360,35 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         devMainPane.setName("devMainPane"); // NOI18N
 
-        jScrollPane3.setName("jScrollPane3"); // NOI18N
+        scrollOutput.setName("scrollOutput"); // NOI18N
 
         txtOutput.setColumns(20);
         txtOutput.setFont(resourceMap.getFont("txtOutput.font")); // NOI18N
         txtOutput.setRows(5);
         txtOutput.setName("txtOutput"); // NOI18N
-        jScrollPane3.setViewportView(txtOutput);
+        scrollOutput.setViewportView(txtOutput);
+
+        scrollPos.setName("scrollPos"); // NOI18N
+
+        lblPosition.setEditable(false);
+        lblPosition.setName("lblPosition"); // NOI18N
+        scrollPos.setViewportView(lblPosition);
 
         javax.swing.GroupLayout devMainPaneLayout = new javax.swing.GroupLayout(devMainPane);
         devMainPane.setLayout(devMainPaneLayout);
         devMainPaneLayout.setHorizontalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollPos, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(scrollOutput, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+            .addGroup(devMainPaneLayout.createSequentialGroup()
+                .addComponent(scrollOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPos, javax.swing.GroupLayout.PREFERRED_SIZE, 23, Short.MAX_VALUE))
         );
 
         splitter.setDividerLocation(100);
@@ -273,6 +420,17 @@ public class PLPDevelop extends javax.swing.JFrame {
                 txtEditorCaretUpdate(evt);
             }
         });
+        txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtEditorKeyTyped(evt);
+            }
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEditorKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtEditorKeyReleased(evt);
+            }
+        });
         scrollerEditor.setViewportView(txtEditor);
 
         txtCurFile.setBackground(resourceMap.getColor("txtCurFile.background")); // NOI18N
@@ -280,30 +438,19 @@ public class PLPDevelop extends javax.swing.JFrame {
         txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
         txtCurFile.setName("txtCurFile"); // NOI18N
 
-        jScrollPane4.setName("jScrollPane4"); // NOI18N
-
-        lblPosition.setEditable(false);
-        lblPosition.setName("lblPosition"); // NOI18N
-        jScrollPane4.setViewportView(lblPosition);
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
+            .addComponent(scrollerEditor)
+            .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
+                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
         );
 
         splitter.setRightComponent(jPanel1);
@@ -341,6 +488,19 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         jSeparator3.setName("jSeparator3"); // NOI18N
         toolbar.add(jSeparator3);
+
+        btnAbout.setIcon(resourceMap.getIcon("btnAbout.icon")); // NOI18N
+        btnAbout.setText(resourceMap.getString("btnAbout.text")); // NOI18N
+        btnAbout.setFocusable(false);
+        btnAbout.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAbout.setName("btnAbout"); // NOI18N
+        btnAbout.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAboutActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnAbout);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
@@ -496,6 +656,11 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         menuExportASM.setText(resourceMap.getString("menuExportASM.text")); // NOI18N
         menuExportASM.setName("menuExportASM"); // NOI18N
+        menuExportASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuExportASMActionPerformed(evt);
+            }
+        });
         rootmenuProject.add(menuExportASM);
 
         menuDeleteASM.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
@@ -531,6 +696,7 @@ public class PLPDevelop extends javax.swing.JFrame {
             }
         });
 
+        menuAbout.setIcon(resourceMap.getIcon("menuAbout.icon")); // NOI18N
         menuAbout.setText(resourceMap.getString("menuAbout.text")); // NOI18N
         menuAbout.setName("menuAbout"); // NOI18N
         menuAbout.addActionListener(new java.awt.event.ActionListener() {
@@ -557,7 +723,7 @@ public class PLPDevelop extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(splitter, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                .addComponent(splitter, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(devMainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -570,21 +736,11 @@ public class PLPDevelop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuExitActionPerformed
 
     private void rootmenuHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuHelpActionPerformed
-        backend.g_about.setVisible(true);
+
     }//GEN-LAST:event_rootmenuHelpActionPerformed
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
-        PLPMsg.output = txtOutput;
-
-        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-        fc.setFileFilter(new PlpFilter());
-        fc.setAcceptAllFileFilterUsed(false);
-
-        int retVal = fc.showOpenDialog(null);
-        
-        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            backend.openPLPFile(fc.getSelectedFile().getAbsolutePath());
-        }
+        openPLPFile();
     }//GEN-LAST:event_menuOpenActionPerformed
 
     private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
@@ -593,11 +749,11 @@ public class PLPDevelop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSimulateActionPerformed
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
-        backend.newPLPFile();
+        newPLPFile();
     }//GEN-LAST:event_menuNewActionPerformed
 
     private void menuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
-        backend.app.show(backend.g_about);
+        about();
     }//GEN-LAST:event_menuAboutActionPerformed
 
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
@@ -635,48 +791,11 @@ public class PLPDevelop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSaveAsActionPerformed
 
     private void menuImportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuImportASMActionPerformed
-        PLPMsg.output = txtOutput;
-
-        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-        fc.setFileFilter(new AsmFilter());
-        fc.setAcceptAllFileFilterUsed(false);
-
-        int retVal = fc.showOpenDialog(null);
-
-        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            backend.importAsm(fc.getSelectedFile().getAbsolutePath());
-        }
+        importASM();
     }//GEN-LAST:event_menuImportASMActionPerformed
 
     private void menuDeleteASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteASMActionPerformed
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
-
-        if(node == null)
-            return;
-
-        if(node.isLeaf()) {
-            String nodeStr = (String) node.getUserObject();
-
-            if(nodeStr.endsWith("asm")) {
-
-                if(backend.asms.size() <= 1) {
-                    PLPMsg.E("Can not delete last source file.",
-                             Constants.PLP_GENERIC_ERROR, null);
-                    
-                    return;
-                }
-
-                String[] tokens = nodeStr.split("::");
-
-                int remove_asm = Integer.parseInt(tokens[0]);
-                if(remove_asm == backend.open_asm) {
-                    backend.open_asm = 0;
-                    backend.refreshProjectView(false);
-                }
-
-                backend.removeAsm(remove_asm);
-            }
-        }
+        deleteASM();
     }//GEN-LAST:event_menuDeleteASMActionPerformed
 
     private void rootmenuProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuProjectActionPerformed
@@ -715,7 +834,6 @@ public class PLPDevelop extends javax.swing.JFrame {
 
     private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
         int caretPos = txtEditor.getCaretPosition();
-        String[] lines = txtEditor.getText().split("\\r?\\n");
 
         int line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
 
@@ -734,14 +852,33 @@ public class PLPDevelop extends javax.swing.JFrame {
             backend.simulate();
     }//GEN-LAST:event_btnSimulateActionPerformed
 
+    private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
+        
+    }//GEN-LAST:event_txtEditorKeyReleased
+
+    private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
+
+    }//GEN-LAST:event_txtEditorKeyTyped
+
+    private void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
+        about();
+    }//GEN-LAST:event_btnAboutActionPerformed
+
+    private void txtEditorKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyPressed
+
+    }//GEN-LAST:event_txtEditorKeyPressed
+
+    private void menuExportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExportASMActionPerformed
+        exportASM();
+    }//GEN-LAST:event_menuExportASMActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnAssemble;
     private javax.swing.JButton btnSimulate;
     private javax.swing.JPanel devMainPane;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
@@ -775,6 +912,8 @@ public class PLPDevelop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuFile;
     private javax.swing.JMenu rootmenuHelp;
     private javax.swing.JMenu rootmenuProject;
+    private javax.swing.JScrollPane scrollOutput;
+    private javax.swing.JScrollPane scrollPos;
     private javax.swing.JScrollPane scrollerEditor;
     private javax.swing.JScrollPane scrollerTree;
     private javax.swing.JSplitPane splitter;
