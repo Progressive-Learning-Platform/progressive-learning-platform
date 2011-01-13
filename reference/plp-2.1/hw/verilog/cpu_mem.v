@@ -25,12 +25,12 @@ memory phase
 
 */
 
-module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw,
+module cpu_mem(rst, clk, cpu_stall, ex_c_rfw, ex_c_wbsource, ex_c_drw,
 		ex_alu_r, ex_rfb, ex_rf_waddr, ex_jalra, ex_rt,
 		wb_wdata, p_c_rfw, p_c_wbsource, p_alu_r, dmem_data,
 		p_rf_waddr, p_jalra, dmem_addr, dmem_drw, dmem_in,
 		p_dout);
-	input 		rst, clk;
+	input 		rst, clk, cpu_stall;
 	input 		ex_c_rfw;
 	input [1:0]	ex_c_wbsource;
 	input 		ex_c_drw;
@@ -59,6 +59,7 @@ module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw,
 	assign dmem_data = forward ? wb_wdata : ex_rfb;
 
 	always @(posedge clk) begin
+		if (!cpu_stall) begin
 		if (rst) begin
 			p_c_rfw <= 0;
 			p_c_wbsource <= 0;
@@ -77,6 +78,7 @@ module cpu_mem(rst, clk, ex_c_rfw, ex_c_wbsource, ex_c_drw,
 
 		/* debug statements, not synthesized by Xilinx */
 		//$display("MEM: %x %x %x %x %x %x", ex_rt, p_rf_waddr, wb_wdata, p_c_rfw, forward, dmem_data);
+		end
 	end
 
 endmodule
