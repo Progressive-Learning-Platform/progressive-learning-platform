@@ -38,7 +38,7 @@ run
 -rom_style Auto
 -auto_bram_packing NO
 -mux_extract Yes
--resource_sharing NO
+-resource_sharing No
 -async_to_sync NO
 -mult_style Auto
 -iobuf YES

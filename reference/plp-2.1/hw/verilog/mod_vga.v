@@ -11,7 +11,7 @@ Memory map:
 
 */
 
-module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs);
+module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs, sram_data, sram_addr, sram_read, sram_rdy);
         input rst;
         input clk;
         input ie,de;
@@ -21,6 +21,10 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
         output [31:0] iout, dout;
         output [7:0] rgb;
 	output hs, vs;
+	input [31:0] sram_data;
+	output [31:0] sram_addr;
+	output sram_read;
+	input sram_rdy;
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
@@ -38,7 +42,7 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
 	
 	/* the vga controller */
 	vga_controller vga(clk, rst, hs, vs, blank, hcount, vcount);
-	vga_sram_bypass bypass(clk, fb_pointer, hcount, vcount, eff_rgb);
+	vga_sram_bypass bypass(clk, fb_pointer, hcount, vcount, eff_rgb, sram_data, sram_addr, sram_read, sram_rdy);
 
 	always @(negedge clk) begin
 		if (drw && de) begin
@@ -120,12 +124,17 @@ module vga_sram_bypass (clk, fb_addr, hcount, vcount, rgb, sram_data, sram_addr,
 	output sram_read;
 	input sram_rdy;
 
-	reg [7:0] buffer [639:0]; /* our buffer */
+	reg [31:0] buffer [159:0]; /* our buffer */
 	reg [10:0] vcount_current = 0;
-	reg [9:0] pos = 0;	
+	reg [7:0] pos = 160;
 
 	/* we use hcount to index into the buffer */
-	assign rgb = buffer[hcount];
+	wire [10:0] eff_hcount = hcount >> 2;
+	assign rgb = (hcount[1:0] == 2'b00) ? buffer[eff_hcount][31:24] :
+		     (hcount[1:0] == 2'b01) ? buffer[eff_hcount][23:16] :
+		     (hcount[1:0] == 2'b10) ? buffer[eff_hcount][15:8] :
+		     buffer[eff_hcount][7:0];
+
 	assign sram_addr = fb_addr + (vcount_current * 640) + pos;
 	assign sram_read = pos != 640;
 
@@ -134,12 +143,9 @@ module vga_sram_bypass (clk, fb_addr, hcount, vcount, rgb, sram_data, sram_addr,
 			vcount_current <= vcount;
 			pos <= 0;
 		end
-		if (pos != 640 && sram_rdy) begin
+		if (pos != 160 && sram_rdy) begin
 			pos <= pos + 4;
-			buffer[pos]   <= sram_data[31:24];
-			buffer[pos+1] <= sram_data[23:16];
-			buffer[pos+2] <= sram_data[15:8];
-			buffer[pos+3] <= sram_data[7:0];
+			buffer[pos>>2] <= sram_data;
 		end
 	end
 endmodule
