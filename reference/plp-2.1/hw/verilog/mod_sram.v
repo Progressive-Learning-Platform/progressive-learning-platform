@@ -94,13 +94,13 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 
 	/* vga bypass */
 	assign mod_vga_sram_data = ddata;
-	assign mod_vga_sram_rdy  = bypass_state[1] && rdy;
+	assign mod_vga_sram_rdy  = bypass_state && rdy;
 
         /* all data bus activity is negative edge triggered */
         always @(negedge clk) begin
                 if (state == 2'b10 && ie && rdy && !rst)
 			idata <= sram_dout;
-		else if ((state == 2'b11 && de && rdy && !rst) || (bypass_state && rdy && !rst)
+		else if ((state == 2'b11 && de && rdy && !rst) || (bypass_state && rdy && !rst))
 			ddata <= sram_dout;	/* if it's a write cycle, we'll just read garbage, which is fine */
 		
 		/* handle the state */
