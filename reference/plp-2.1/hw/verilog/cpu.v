@@ -26,8 +26,8 @@ pipelined mips machine
 
 */
 
-module cpu(rst, clk, daddr, dout, din, drw, iaddr, iin);
-	input clk, rst;
+module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin);
+	input clk, rst, cpu_stall;
 	output [31:0] daddr;
 	output [31:0] dout;
 	input [31:0] din;
@@ -82,22 +82,22 @@ module cpu(rst, clk, daddr, dout, din, drw, iaddr, iin);
 	wire	[31:0]	wbid_wdata;
 	wire	[4:0]	wbid_waddr;	
 
-	cpu_if  stage_if (rst, clk, iaddr, ifid_pc, exif_j,
+	cpu_if  stage_if (rst, clk, cpu_stall, iaddr, ifid_pc, exif_j,
 			exif_b, exif_baddr, exif_jaddr, iin, ifid_inst, idif_stall);
-	cpu_id  stage_id (rst, clk, ifid_pc, ifid_inst, wbid_rfw,
+	cpu_id  stage_id (rst, clk, cpu_stall, ifid_pc, ifid_inst, wbid_rfw,
 			wbid_waddr, wbid_wdata, idex_rfa, idex_rfb, idex_se,
 			idex_shamt, idex_func, idex_rf_waddr, idex_c_rfw, idex_c_wbsource,
 			idex_c_drw, idex_c_alucontrol, idex_c_j, idex_c_b, idex_c_jjr,
 			idex_jaddr, idex_pc, idex_c_rfbse, idex_rs, idex_rt,
 			idif_stall);
-	cpu_ex  stage_ex (rst, clk, idex_c_rfw, idex_c_wbsource, idex_c_drw,
+	cpu_ex  stage_ex (rst, clk, cpu_stall, idex_c_rfw, idex_c_wbsource, idex_c_drw,
 			idex_c_alucontrol, idex_c_j, idex_c_b, idex_c_jjr, idex_rfa,
 			idex_rfb, idex_se, idex_shamt, idex_func, idex_rf_waddr,
 			idex_pc, idex_jaddr, idex_c_rfbse, idex_rs, idex_rt, 
 			wbid_wdata, wbid_rfw, wbid_waddr, exmem_c_rfw, exmem_c_wbsource, 
 			exmem_c_drw, exmem_alu_r, exmem_rfb, exmem_rf_waddr, exmem_jalra, 
 			exmem_rt, exif_baddr, exif_jaddr, exif_b, exif_j);
-	cpu_mem stage_mem (rst, clk, exmem_c_rfw, exmem_c_wbsource, exmem_c_drw,
+	cpu_mem stage_mem (rst, clk, cpu_stall, exmem_c_rfw, exmem_c_wbsource, exmem_c_drw,
 			exmem_alu_r, exmem_rfb, exmem_rf_waddr, exmem_jalra, exmem_rt,
 			wbid_wdata, memwb_c_rfw, memwb_c_wbsource, memwb_alu_r, dout, 
 			memwb_rf_waddr, memwb_jalra, daddr, drw, din, 

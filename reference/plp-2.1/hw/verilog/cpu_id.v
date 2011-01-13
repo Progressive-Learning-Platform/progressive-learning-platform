@@ -25,12 +25,12 @@ instruction decode phase
 
 */
 
-module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
+module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
 		wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_se, 
 		p_shamt, p_func, p_rf_waddr, p_c_rfw, p_c_wbsource,
 		p_c_drw, p_c_alucontrol, p_c_j, p_c_b, p_c_jjr,
 		p_jaddr, p_pc, p_c_rfbse, p_rs, p_rt, c_stall);
-	input 		rst, clk;
+	input 		rst, clk, cpu_stall;
 	input	[31:0]	if_pc;
 	input	[31:0]	if_inst;
 	input 		wb_rfw;
@@ -113,6 +113,7 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 	wire c_b = ((opcode == 6'h04) || (opcode == 6'h05)) && !stall;
 
 	always @(posedge clk) begin
+		if (!cpu_stall) begin
 		if (rst) begin		
 			p_rfa <= 0;
 			p_rfb <= 0;
@@ -155,15 +156,18 @@ module cpu_id(rst, clk, if_pc, if_inst, wb_rfw,
 	
 		/* debug statements, not synthesized by Xilinx */
 		//$display("ID: INST: %x", if_inst);
+		end
 	end
 
 	always @(negedge clk) begin
+		if (!cpu_stall) begin
 		/* regfile */
 		if (wb_rfw && wb_rf_waddr != 5'd0) begin
 			rf[wb_rf_waddr] <= wb_rf_wdata;
 		end
 		//if(wb_rfw)
 		//	$display("ID: DATA %x written to REG %x", wb_rf_wdata, wb_rf_waddr);
+		end
 	end
 	
 endmodule
