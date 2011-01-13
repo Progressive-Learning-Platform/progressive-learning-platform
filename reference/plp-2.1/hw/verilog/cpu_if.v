@@ -25,9 +25,9 @@ instruction fetch phase
 
 */
 
-module cpu_if(rst, clk, imem_addr, p_pc, pc_j,
+module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 		pc_b, b_addr, j_addr, iin, p_inst, stall);
-	input 		rst, clk;
+	input 		rst, clk, cpu_stall;
 	input 		pc_j;
 	input 		pc_b;
 	input 	[31:0] 	b_addr;
@@ -45,6 +45,7 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j,
 	wire flush = pc_b | pc_j;
 
 	always @(posedge clk) begin
+		if (!cpu_stall) begin
 		if (rst) begin
 			p_pc <= 0;
 			pc <= 0;
@@ -65,6 +66,7 @@ module cpu_if(rst, clk, imem_addr, p_pc, pc_j,
 		
 		/* debug code, not synthesized by Xilinx */
 		$display("IF: PC: %x INST: %x", p_pc, p_inst);
+		end
 	end		
 
 	assign next_pc = 

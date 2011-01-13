@@ -25,14 +25,14 @@ instruction execute phase
 
 */
 
-module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
+module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 		id_c_alucontrol, id_c_j, id_c_b, id_c_jjr, id_rfa,
 		id_rfb, id_se, id_shamt, id_func, id_rf_waddr,
 		id_pc, id_jaddr, id_c_rfbse, id_rs, id_rt,
 		wb_wdata, wb_rfw, wb_waddr, p_c_rfw, p_c_wbsource,
 		p_c_drw, p_alu_r, p_rfb, p_rf_waddr, p_jalra,
 		p_rt, baddr, jaddr, c_b, c_j);
-	input 		rst, clk;
+	input 		rst, clk, cpu_stall;
 	input		id_c_rfw;
 	input [1:0]	id_c_wbsource;
 	input		id_c_drw;
@@ -126,6 +126,7 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
 	assign baddr = {{14{id_se[15]}},id_se,2'b0} + pc_4;
 
 	always @(posedge clk) begin
+		if (!cpu_stall) begin
 		if (rst) begin
 			p_c_rfw <= 0;
 			p_c_wbsource <= 0;
@@ -148,5 +149,6 @@ module cpu_ex(rst, clk, id_c_rfw, id_c_wbsource, id_c_drw,
 	
 		/* debug statements, not synthesized by Xilinx */
 		//$display("EX: PC: %x", id_pc);
+		end
 	end
 endmodule

@@ -42,7 +42,7 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
 	
 	/* the vga controller */
 	vga_controller vga(clk, rst, hs, vs, blank, hcount, vcount);
-	vga_sram_bypass bypass(clk, fb_pointer, hcount, vcount, eff_rgb, sram_data, sram_addr, sram_read, sram_rdy);
+	vga_sram_bypass bypass(clk, enable, fb_pointer, hcount, vcount, eff_rgb, sram_data, sram_addr, sram_read, sram_rdy);
 
 	always @(negedge clk) begin
 		if (drw && de) begin
@@ -114,8 +114,8 @@ module vga_controller (clk, rst, hs, vs, blank, hcount, vcount);
   end
 endmodule
 
-module vga_sram_bypass (clk, fb_addr, hcount, vcount, rgb, sram_data, sram_addr, sram_read, sram_rdy);
-	input clk;
+module vga_sram_bypass (clk, enable, fb_addr, hcount, vcount, rgb, sram_data, sram_addr, sram_read, sram_rdy);
+	input clk, enable;
 	input [31:0] fb_addr;
 	input [10:0] hcount, vcount;
 	output [7:0] rgb;
@@ -124,28 +124,37 @@ module vga_sram_bypass (clk, fb_addr, hcount, vcount, rgb, sram_data, sram_addr,
 	output sram_read;
 	input sram_rdy;
 
-	reg [31:0] buffer [159:0]; /* our buffer */
+	/* we use four smaller brams instead of one large one to prevent
+	 * routing issues with xilinx that appear when brams are in the same clb as
+	 * a multiplier, which we also have here */
+	reg [7:0] buffer_0 [159:0]; /* our buffer */
+	reg [7:0] buffer_1 [159:0];
+	reg [7:0] buffer_2 [159:0];
+	reg [7:0] buffer_3 [159:0];
+
 	reg [10:0] vcount_current = 0;
-	reg [7:0] pos = 160;
+	reg [9:0] pos = 640;
 
 	/* we use hcount to index into the buffer */
-	wire [10:0] eff_hcount = hcount >> 2;
-	assign rgb = (hcount[1:0] == 2'b00) ? buffer[eff_hcount][31:24] :
-		     (hcount[1:0] == 2'b01) ? buffer[eff_hcount][23:16] :
-		     (hcount[1:0] == 2'b10) ? buffer[eff_hcount][15:8] :
-		     buffer[eff_hcount][7:0];
+	assign rgb = (hcount[1:0] == 2'b00) ? buffer_0[hcount>>2] :
+		     (hcount[1:0] == 2'b01) ? buffer_1[hcount>>2] :
+		     (hcount[1:0] == 2'b10) ? buffer_2[hcount>>2] :
+		     buffer_3[hcount>>2];
 
 	assign sram_addr = fb_addr + (vcount_current * 640) + pos;
-	assign sram_read = pos != 640;
+	assign sram_read = (pos != 640 && enable);
 
 	always @(negedge clk) begin
 		if (vcount_current != vcount) begin /* a new line is starting, let's refill our buffer */
 			vcount_current <= vcount;
 			pos <= 0;
 		end
-		if (pos != 160 && sram_rdy) begin
+		if (pos != 640 && sram_rdy) begin
 			pos <= pos + 4;
-			buffer[pos>>2] <= sram_data;
+			buffer_0[pos>>0] <= sram_data[31:24];
+			buffer_1[pos>>0] <= sram_data[23:16];
+			buffer_2[pos>>0] <= sram_data[15:8];
+			buffer_3[pos>>0] <= sram_data[7:0];
 		end
 	end
 endmodule
