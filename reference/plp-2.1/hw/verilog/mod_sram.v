@@ -76,15 +76,16 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 	 */
 	reg [1:0] state = 2'b00;
 	reg bypass_state = 1'b0;
-	assign eff_addr = state[0] ? daddr : iaddr;
-	assign eff_drw  = state[0] && de && drw && !rst;
+	assign eff_addr = bypass_state ? mod_vga_sram_addr :
+			  (state[0] && !bypass_state) ? daddr : iaddr;
+	assign eff_drw  = state[0] && de && drw && !rst && !bypass_state;
 	assign cpu_stall = (state != 2'b00);
-	assign eff_rst = state == 2'b00;
+	assign eff_rst = state == 2'b00 && !bypass_state;
 	wire [1:0] next_state = (state == 2'b00 && ie)         ? 2'b10 : /* idle to instruction read */
 				(state == 2'b00 && !ie && de)  ? 2'b11 : /* idle to data r/w */
-				(state == 2'b10 && de && rdy)  ? 2'b11 : /* instruction read to data r/w */
-				(state == 2'b10 && !de && rdy) ? 2'b00 : /* instruction read to idle */
-				(state == 2'b11 && rdy)	       ? 2'b00 : /* data r/w to idle */
+				(state == 2'b10 && de && rdy && !bypass_state) ? 2'b11 : /* instruction read to data r/w */
+				(state == 2'b10 && !de && rdy && !bypass_state) ? 2'b00 : /* instruction read to idle */
+				(state == 2'b11 && rdy && !bypass_state) ? 2'b00 : /* data r/w to idle */
 				state;					 /* otherwise stay put */
 
 	wire vga_bypass_next_state = (state == 2'b00 && mod_vga_sram_read && !bypass_state) ? 1'b1 : /* a new vga bypass request */
@@ -99,7 +100,7 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
         always @(negedge clk) begin
                 if (state == 2'b10 && ie && rdy && !rst)
 			idata <= sram_dout;
-		else if ((state == 2'b11 && de && rdy && !rst))
+		else if ((state == 2'b11 && de && rdy && !rst && !bypass_state) || (bypass_state && !rst && rdy))
 			ddata <= sram_dout;	/* if it's a write cycle, we'll just read garbage, which is fine */
 		
 		/* handle the state */
