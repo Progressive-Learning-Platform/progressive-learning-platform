@@ -43,9 +43,9 @@ startup:
 	ori $a0, $zero, 0x000d	#newline
 	jal libplp_uart_write
 	nop
-	#ori $a0, $zero, 0x000a  #linefeed
-	#jal libplp_uart_write
-	#nop
+	ori $a0, $zero, 0x000a  #linefeed
+	jal libplp_uart_write
+	nop
 shiny:
 
 #seven segment
@@ -175,8 +175,8 @@ boot_memory_test:
 	nop
         jal libplp_uart_write
 	ori $a0, $zero, 0x000d  #newline
-        #jal libplp_uart_write
-        #ori $a0, $zero, 0x000a  #linefeed
+        jal libplp_uart_write
+        ori $a0, $zero, 0x000a  #linefeed
 
 	li $s0, 0x10000000	#base address of memory
 	li $s1, 0x11000000	#upper address of memory 
@@ -217,8 +217,8 @@ boot_memory_test_fail:
 	move $a0, $s3
         jal libplp_uart_write
 	ori $a0, $zero, 0x000d  #newline
-        #jal libplp_uart_write
-        #ori $a0, $zero, 0x000a  #linefeed
+        jal libplp_uart_write
+        ori $a0, $zero, 0x000a  #linefeed
 
 	j boot_memory_test_read_loop_fail_done
 	nop
