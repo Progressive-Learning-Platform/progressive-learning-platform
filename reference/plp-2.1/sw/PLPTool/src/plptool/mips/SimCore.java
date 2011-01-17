@@ -1047,7 +1047,11 @@ public class SimCore extends PLPSimCore {
                         case 0x21: return a + b;
                         case 0x23: return a - b;
                         case 0x2A:
-                        case 0x2B: return a - b;
+                            int a_signed = (int) a;
+                            int b_signed = (int) b;
+                            return (a_signed < b_signed) ? 1 : 0;
+                        case 0x2B:
+                            return (a < b) ? 1 : 0;
                         case 0x00: return a << b;
                         case 0x02: return a >> b;
                     }
@@ -1058,7 +1062,11 @@ public class SimCore extends PLPSimCore {
                 case 0x0d: return a | b;
                 case 0x0f: return b << 16;
                 case 0x0A:
-                case 0x0B: return a - b;
+                    int a_signed = (int) a;
+                    int b_signed = (int) b;
+                    return (a_signed < b_signed) ? 1 : 0;
+                case 0x0B:
+                    return (a < b) ? 1 : 0;
                 case 0x08:
                 case 0x09:
                 case 0x23:
