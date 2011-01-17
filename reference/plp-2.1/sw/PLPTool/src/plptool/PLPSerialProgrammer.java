@@ -11,8 +11,9 @@ package plptool;
  * @author wira
  */
 public abstract class PLPSerialProgrammer {
+    
+
     abstract public int connect(String portName, int baudRate) throws Exception;
     abstract public int close();
-    abstract public int programWithPLPFile(String PLPFilePath) throws Exception;
     abstract public int programWithAsm(PLPAsm asm) throws Exception;
 }

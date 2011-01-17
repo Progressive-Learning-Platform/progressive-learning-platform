@@ -48,9 +48,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
         initComponents();
 
-        // Take over console output
-        plptool.PLPMsg.output = simCLOutput;
-
         renderer.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         tblRegFile.setDefaultRenderer(tblRegFile.getColumnClass(2), renderer);
 
@@ -142,6 +139,23 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SimCoreGUI.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameActivated(evt);
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
@@ -569,6 +583,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         simCLOutput.append("\n");
         simCLConsole.setText("");
         updateComponents();
+        plptool.PLPMsg.output = backend.g_dev.getOutput();
 }//GEN-LAST:event_simCLExecActionPerformed
 
     private void simCLConsoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_simCLConsoleKeyPressed
@@ -578,6 +593,9 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         else if(simCLConsole.getText().equals("") && evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
             simCLConsole.setText(lastCLCommand);
 }//GEN-LAST:event_simCLConsoleKeyPressed
+
+    private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
+    }//GEN-LAST:event_formInternalFrameActivated
 
     public final void updateComponents() {
         long pc = ((SimCore)sim).id_stage.i_instrAddr;

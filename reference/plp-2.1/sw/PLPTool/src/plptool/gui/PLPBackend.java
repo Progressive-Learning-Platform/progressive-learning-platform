@@ -412,6 +412,27 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
+    public int program(String port, int baudRate) {
+
+        try {
+
+        if(arch.equals("plpmips") && asm != null && asm.isAssembled()) {
+            prg = new plptool.mips.SerialProgrammer();
+            prg.connect(port, baudRate);
+            prg.programWithAsm(asm);
+            prg.close();
+        } else
+            return PLPMsg.E("No assembled sources.",
+                            Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
+
+        } catch(Exception e) {
+            return PLPMsg.E("Programming failed.\n" + e,
+                            Constants.PLP_GENERIC_ERROR, this);
+        }
+
+        return Constants.PLP_OK;
+    }
+
     public PLPAsmSource getAsm(int index) {
         if(asms == null || index < 0 || index >= asms.size()) {
             PLPMsg.E("updateAsm: Invalid index.",

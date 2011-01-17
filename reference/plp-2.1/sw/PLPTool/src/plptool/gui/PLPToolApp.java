@@ -113,11 +113,11 @@ public class PLPToolApp extends SingleFrameApplication {
             if(args.length != 4) {
                 System.out.println("Usage: PLPTool -p <plpfile> <port> <baud>");
             } else {
-                plptool.mips.SerialProgrammer plpProg = new plptool.mips.SerialProgrammer();
                 try {
-                    plpProg.connect(args[2], Integer.parseInt(args[3]));
-                    plpProg.programWithPLPFile(args[1]);
-                    plpProg.close();
+                    PLPBackend backend = new PLPBackend(false, "plpmips");
+                    backend.openPLPFile(args[1]);
+                    backend.assemble();
+                    backend.program(args[2], Integer.parseInt(args[3]));
                 } catch(Exception e) {
                     
                 }
