@@ -109,6 +109,34 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
+    public int newPLPFile(String asmPath) {
+        modified = true;
+        plpfile = "Unsaved Project";
+
+        asms = new ArrayList<plptool.PLPAsmSource>();
+        if(importAsm(asmPath) != Constants.PLP_OK) {
+            asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
+        }
+        open_asm = 0;
+        main_asm = 0;
+
+        meta =  "PLP-2.1\n";
+        meta += "START=0x0\n";
+        meta += "DIRTY=1\n\n";
+        meta += "MAINSRC=0";
+
+        PLPMsg.I("New project initialized.", null);
+
+        if(g) {
+            refreshProjectView(false);
+            g_simsh.destroySimulation();
+            g_simsh.setVisible(false);
+            g_dev.disableSimControls();
+        }
+
+        return Constants.PLP_OK;
+    }
+
     public int savePLPFile() {
 
         // commit changes of currently open source file
@@ -391,6 +419,7 @@ public class PLPBackend {
 
         if(arch.equals("plpmips")) {
             sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
+            sim.setStartAddr(asm.getAddrTable()[0]);
             sim.reset();
 
             if(g) {

@@ -378,6 +378,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         scrollPos.setName("scrollPos"); // NOI18N
 
         lblPosition.setEditable(false);
+        lblPosition.setFont(resourceMap.getFont("lblPosition.font")); // NOI18N
         lblPosition.setName("lblPosition"); // NOI18N
         scrollPos.setViewportView(lblPosition);
 
@@ -457,7 +458,7 @@ public class PLPDevelop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
         );
 
         splitter.setRightComponent(jPanel1);

@@ -99,10 +99,10 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 if(i < objCode.length - 1) {
                     if(addrTable[i + 1] != addrTable[i] + 4) {
                         out.write('a');
-                        out.write((int) (addrTable[i] >> 24));
-                        out.write((int) (addrTable[i] >> 16));
-                        out.write((int) (addrTable[i] >> 8));
-                        out.write((int) (addrTable[i]));
+                        out.write((byte) (addrTable[i] >> 24));
+                        out.write((byte) (addrTable[i] >> 16));
+                        out.write((byte) (addrTable[i] >> 8));
+                        out.write((byte) (addrTable[i]));
                         inData = (byte) in.read();
                         if(inData != 'f')
                             return PLPMsg.E("Programming failed, no acknowledgement received.",
@@ -110,10 +110,10 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     }
                 }
                 out.write('d');
-                out.write((int) (objCode[i] >> 24));
-                out.write((int) (objCode[i] >> 16));
-                out.write((int) (objCode[i] >> 8));
-                out.write((int) (objCode[i]));
+                out.write((byte) (objCode[i] >> 24));
+                out.write((byte) (objCode[i] >> 16));
+                out.write((byte) (objCode[i] >> 8));
+                out.write((byte) (objCode[i]));
                 inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
@@ -121,10 +121,10 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             }
 
             out.write('a');
-            out.write(0);
-            out.write(0);
-            out.write(0);
-            out.write(0);
+            out.write((byte) (addrTable[0] >> 24));
+            out.write((byte) (addrTable[0] >> 16));
+            out.write((byte) (addrTable[0] >> 8));
+            out.write((byte) (addrTable[0]));
             inData = (byte) in.read();
             if(inData != 'f')
                 return PLPMsg.E("Programming failed, no acknowledgement received.",

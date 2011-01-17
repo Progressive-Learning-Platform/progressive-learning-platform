@@ -29,6 +29,11 @@ import plptool.mods.MemModule;
 public abstract class PLPSimCore {
 
     /**
+     * Start address for reset.
+     */
+    protected long startAddr;
+
+    /**
      * Simulation flags. This flag is used by various modules to indicate
      * whether certain events have occured.
      */
@@ -81,5 +86,12 @@ public abstract class PLPSimCore {
      */
     public int getinstrcount() {
         return instructionCount;
+    }
+
+    /**
+     * Set starting address
+     */
+    public void setStartAddr(long addr) {
+        startAddr = addr;
     }
 }

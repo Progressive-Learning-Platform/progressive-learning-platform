@@ -377,6 +377,7 @@
             <Component class="javax.swing.JTextPane" name="lblPosition">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="font" type="java.awt.Font" resourceKey="lblPosition.font"/>
                 <Property name="name" type="java.lang.String" value="lblPosition" noResource="true"/>
               </Properties>
             </Component>
@@ -442,7 +443,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="txtCurFile" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollerEditor" pref="265" max="32767" attributes="0"/>
+                      <Component id="scrollerEditor" pref="262" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

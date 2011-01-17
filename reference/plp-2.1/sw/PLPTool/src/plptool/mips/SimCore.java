@@ -111,6 +111,8 @@ public class SimCore extends PLPSimCore {
         if(RAMsize <= 0)
             RAMsize = (long) Math.pow(2, 31);
 
+        startAddr = 0;
+
         memory = new MemModule(0, RAMsize, Constants.FLAGS_ALIGNED_MEMORY);
         regfile = new MemModule(0, 32, false);
         pc = new PLPSimRegModule(0); // pc=0 on reset
@@ -155,7 +157,7 @@ public class SimCore extends PLPSimCore {
 
         loadProgram(asm);
 
-        pc.reset(0);
+        pc.reset(startAddr);
         instructionCount = 0;
         sim_flags = (long) 0;
         ex_stall = false;
@@ -174,7 +176,7 @@ public class SimCore extends PLPSimCore {
      * @see reset()
      */
     public int softreset() {
-        pc.reset(0);
+        pc.reset(startAddr);
         flushpipeline();
 
         ex_stall = false;
