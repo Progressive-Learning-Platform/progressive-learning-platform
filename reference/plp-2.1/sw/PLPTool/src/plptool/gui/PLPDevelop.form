@@ -282,6 +282,9 @@
     <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowGainedFocus" listener="java.awt.event.WindowFocusListener" parameters="java.awt.event.WindowEvent" handler="formWindowGainedFocus"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="2"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
@@ -430,7 +433,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="scrollerEditor" alignment="0" max="32767" attributes="0"/>
+                  <Component id="scrollerEditor" alignment="0" pref="676" max="32767" attributes="0"/>
                   <Component id="txtCurFile" alignment="0" pref="676" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
@@ -439,7 +442,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="txtCurFile" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollerEditor" pref="262" max="32767" attributes="0"/>
+                      <Component id="scrollerEditor" pref="265" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
