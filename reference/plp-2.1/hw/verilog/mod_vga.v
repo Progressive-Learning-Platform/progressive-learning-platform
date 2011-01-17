@@ -35,7 +35,7 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
 
 	wire [7:0] eff_rgb;
 	wire [10:0] hcount, vcount;
-	wire blank, fb_write;
+	wire blank;
 
 	reg enable = 0 ;
 	reg [31:0] fb_pointer;
@@ -145,19 +145,19 @@ module vga_sram_bypass (clk, enable, fb_addr, hcount, vcount, rgb, sram_data, sr
 		     buffer_3[hcount>>2];
 
 	assign sram_addr = fb_addr + (vcount_current * 640) + pos;
-	assign sram_read = 0; //(pos != 640 && enable);
+	assign sram_read = (pos != 640 && enable);
 
-	always @(negedge clk) begin
+	always @(posedge clk) begin
 		if (vcount_current != vcount) begin /* a new line is starting, let's refill our buffer */
 			vcount_current <= vcount;
 			pos <= 0;
 		end
 		if (pos != 640 && sram_rdy) begin
 			pos <= pos + 4;
-			buffer_0[pos>>0] <= sram_data[31:24];
-			buffer_1[pos>>0] <= sram_data[23:16];
-			buffer_2[pos>>0] <= sram_data[15:8];
-			buffer_3[pos>>0] <= sram_data[7:0];
+			buffer_0[pos>>2] <= sram_data[31:24];
+			buffer_1[pos>>2] <= sram_data[23:16];
+			buffer_2[pos>>2] <= sram_data[15:8];
+			buffer_3[pos>>2] <= sram_data[7:0];
 		end
 	end
 endmodule
