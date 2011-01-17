@@ -1,0 +1,14 @@
+GPLCVER_1.20a of 06/01/04 (Linux-elf).
+Copyright (c) 1991-2004 Pragmatic C Software Corp.
+  All Rights reserved.  Licensed under the GNU General Public License (GPL).
+  See the 'COPYING' file for details.  NO WARRANTY provided.
+Today is Tue Jun  1 16:28:09 2004.
+Compiling source file "lofptst.v"
+Highest level modules:
+test
+
+** WARN** [614] no pending statements or events after initialization - nothing to do
+0 simulation events and 0 declarative immediate assigns processed.
+  Times (in sec.):  Translate 0.0, load/optimize 0.1, simulation 0.1.
+  There were 0 error(s), 1 warning(s), and 29 inform(s).
+End of GPLCVER_1.20a at Tue Jun  1 16:28:09 2004 (elapsed 0.0 seconds).

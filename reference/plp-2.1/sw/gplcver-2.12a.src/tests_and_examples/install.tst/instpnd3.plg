@@ -1,0 +1,46 @@
+**instpnd3.v(17) WARN** [602] x1(level1$$15) input port i (line **instpnd3.v(3)) width 16 mismatch with 2 * i width 32
+**instpnd3.v(18) WARN** [602] x2(level1) input port i (line **instpnd3.v(3)) width 17 mismatch with (2 * i) + 1 width 32
+**instpnd3.v(25) WARN** [602] x1(level2$$7) input port i (line **instpnd3.v(13)) width 25 mismatch with 3 * i width 32
+**instpnd3.v(26) WARN** [602] x2(level2) input port i (line **instpnd3.v(13)) width 25 mismatch with (3 * i) + 1 width 32
+**instpnd3.v(33) WARN** [602] x1(level3$$3) input port i (line **instpnd3.v(21)) width 25 mismatch with 4 * i width 32
+**instpnd3.v(34) WARN** [602] x2(level3) input port i (line **instpnd3.v(21)) width 25 mismatch with (4 * i) + 1 width 32
+**instpnd3.v(41) WARN** [602] x1(level4$$1) input port i (line **instpnd3.v(29)) width 25 mismatch with 4 * i width 32
+**instpnd3.v(42) WARN** [602] x2(level4) input port i (line **instpnd3.v(29)) width 25 mismatch with (4 * i) + 1 width 32
+**instpnd3.v(49) WARN** [602] t1(level5) input port i (line **instpnd3.v(37)) width 25 mismatch with i width 32
+**instpnd3.v(33) WARN** [602] x1(level3$$1) input port i (line **instpnd3.v(21)) width 25 mismatch with 4 * i width 32
+**instpnd3.v(34) WARN** [602] x2(level3$$2) input port i (line **instpnd3.v(21)) width 25 mismatch with (4 * i) + 1 width 32
+**instpnd3.v(25) WARN** [602] x1(level2$$5) input port i (line **instpnd3.v(13)) width 25 mismatch with 3 * i width 32
+**instpnd3.v(26) WARN** [602] x2(level2$$6) input port i (line **instpnd3.v(13)) width 25 mismatch with (3 * i) + 1 width 32
+**instpnd3.v(25) WARN** [602] x1(level2$$3) input port i (line **instpnd3.v(13)) width 25 mismatch with 3 * i width 32
+**instpnd3.v(26) WARN** [602] x2(level2$$4) input port i (line **instpnd3.v(13)) width 25 mismatch with (3 * i) + 1 width 32
+**instpnd3.v(25) WARN** [602] x1(level2$$1) input port i (line **instpnd3.v(13)) width 25 mismatch with 3 * i width 32
+**instpnd3.v(26) WARN** [602] x2(level2$$2) input port i (line **instpnd3.v(13)) width 25 mismatch with (3 * i) + 1 width 32
+**instpnd3.v(17) WARN** [602] x1(level1$$13) input port i (line **instpnd3.v(3)) width 10 mismatch with 2 * i width 32
+**instpnd3.v(18) WARN** [602] x2(level1$$14) input port i (line **instpnd3.v(3)) width 11 mismatch with (2 * i) + 1 width 32
+**instpnd3.v(17) WARN** [602] x1(level1$$11) input port i (line **instpnd3.v(3)) width 12 mismatch with 2 * i width 32
+**instpnd3.v(18) WARN** [602] x2(level1$$12) input port i (line **instpnd3.v(3)) width 13 mismatch with (2 * i) + 1 width 32
+**instpnd3.v(17) WARN** [602] x1(level1$$9) input port i (line **instpnd3.v(3)) width 6 mismatch with 2 * i width 32
+**instpnd3.v(18) WARN** [602] x2(level1$$10) input port i (line **instpnd3.v(3)) width 7 mismatch with (2 * i) + 1 width 32
+**instpnd3.v(17) WARN** [602] x1(level1$$7) input port i (line **instpnd3.v(3)) width 8 mismatch with 2 * i width 32
+**instpnd3.v(18) WARN** [602] x2(level1$$8) input port i (line **instpnd3.v(3)) width 9 mismatch with (2 * i) + 1 width 32
+**instpnd3.v(18) WARN** [602] x2(level1$$6) input port i (line **instpnd3.v(3)) width 3 mismatch with (2 * i) + 1 width 32
+**instpnd3.v(17) WARN** [602] x1(level1$$3) input port i (line **instpnd3.v(3)) width 4 mismatch with 2 * i width 32
+**instpnd3.v(18) WARN** [602] x2(level1$$4) input port i (line **instpnd3.v(3)) width 5 mismatch with (2 * i) + 1 width 32
+**instpnd3.v(17) WARN** [602] x1(level1$$1) input port i (line **instpnd3.v(3)) width 14 mismatch with 2 * i width 32
+**instpnd3.v(18) WARN** [602] x2(level1$$2) input port i (line **instpnd3.v(3)) width 15 mismatch with (2 * i) + 1 width 32
+i=         0,h=         31,p1=          1,p2=          0
+i=1,h=          2,p1=          2,p2=          0
+i= 2,h=          3,p1=          3,p2=          0
+i= 3,h=          4,p1=          4,p2=          0
+i= 6,h=          5,p1=          5,p2=          0
+i=  7,h=          6,p1=          6,p2=          0
+i=  8,h=          7,p1=          7,p2=          0
+i=  9,h=          8,p1=          8,p2=          0
+i=  24,h=          9,p1=          9,p2=          0
+i=  25,h=         10,p1=         10,p2=          0
+i=  26,h=         11,p1=         11,p2=          0
+i=  27,h=         12,p1=         12,p2=          0
+i=   30,h=         13,p1=         13,p2=          0
+i=   31,h=         14,p1=         14,p2=          0
+i=   32,h=         15,p1=         15,p2=          0
+i=    33,h=         16,p1=         16,p2=          0
