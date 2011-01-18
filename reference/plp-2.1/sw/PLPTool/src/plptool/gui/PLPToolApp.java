@@ -48,6 +48,7 @@ public class PLPToolApp extends SingleFrameApplication {
         backend.g_desktop = simUI.getSimDesktop();
         backend.g_about = new PLPToolAboutBox(backend.g_dev);
         backend.g_opts = new PLPOptions(backend);
+        backend.g_prg = new plptool.gui.PLPSerialProgrammer(backend, backend.g_dev, true);
         simUI.getSimDesktop().add(backend.g_ioreg);
 
         backend.g_dev.setVisible(true);
@@ -118,9 +119,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     backend.openPLPFile(args[1]);
                     backend.assemble();
                     backend.program(args[2], Integer.parseInt(args[3]));
-                } catch(Exception e) {
-                    
-                }
+                } catch(Exception e) { }
             }
         }
         else  if(args.length > 0 && args[0].equals("-plp")) {

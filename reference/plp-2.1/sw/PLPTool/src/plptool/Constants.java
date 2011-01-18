@@ -78,6 +78,7 @@ public static final String versionString = "2.1";
     public static final int PLP_PRG_INVALID_IMAGE_FILE           = 518;
     public static final int PLP_PRG_IMAGE_OUT_OF_DATE            = 519;
     public static final int PLP_PRG_UNABLE_TO_CLOSE_PORT         = 520;
+    public static final int PLP_PRG_TIMEOUT                      = 521;
 
     // Backend errors
     public static final int PLP_BACKEND_PLP_OPEN_ERROR           = 1024;
