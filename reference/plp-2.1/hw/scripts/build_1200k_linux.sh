@@ -3,6 +3,9 @@
 #assumes that you've already sourced the xilinx shrc file. on the buildbot system, it goes something like:
 # source /opt/Xilinx/12.3/ISE_DS/settings64.sh 
 
+#for the vga bug
+export XIL_PAR_KEEP_BRAM_MULT_APART=1
+
 cd build
 cp -R build_1200k_skeleton build_1200k_volatile
 cd build_1200k_volatile
