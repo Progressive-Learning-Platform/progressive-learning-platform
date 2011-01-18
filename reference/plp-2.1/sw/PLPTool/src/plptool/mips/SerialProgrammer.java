@@ -20,6 +20,7 @@ package plptool.mips;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
+import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 
 import java.io.File;
@@ -40,7 +41,8 @@ import plptool.Constants;
  * @author wira
  */
 public class SerialProgrammer extends plptool.PLPSerialProgrammer {
-    public SerialProgrammer() {
+    public SerialProgrammer(plptool.gui.PLPBackend backend) {
+        super(backend);
     }
     
     private SerialPort serialPort;
@@ -81,6 +83,8 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         try {
             in.close();
             out.close();
+            serialPort.close();
+            commPort.close();
 
             return Constants.PLP_OK;
         } catch(Exception e) {
@@ -89,13 +93,25 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         }
     }
 
-    public int programWithAsm(plptool.PLPAsm asm) throws Exception {
-        if(asm.isAssembled()) {
-            long objCode[] = asm.getObjectCode();
-            long addrTable[] = asm.getAddrTable();
+    public int programWithAsm() throws Exception {
+        if(backend.asm.isAssembled()) {
+            long objCode[] = backend.asm.getObjectCode();
+            long addrTable[] = backend.asm.getAddrTable();
             byte inData;
 
+            PLPMsg.M("Write out first address.");
+            out.write('a');
+            out.write((byte) (addrTable[0] >> 24));
+            out.write((byte) (addrTable[0] >> 16));
+            out.write((byte) (addrTable[0] >> 8));
+            out.write((byte) (addrTable[0]));
+            inData = (byte) in.read();
+            if(inData != 'f')
+                return PLPMsg.E("Programming failed, no acknowledgement received.",
+                                Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+
             for(int i = 0; i < objCode.length; i++) {
+                progress = i;
                 if(i < objCode.length - 1) {
                     if(addrTable[i + 1] != addrTable[i] + 4) {
                         out.write('a');
@@ -140,6 +156,8 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             return PLPMsg.E("Source is not assembled.",
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
         }
+
+        PLPMsg.I("programWithAsm(): done!", this);
 
         return Constants.PLP_OK;
     }

@@ -61,6 +61,7 @@ public class PLPBackend {
     public plptool.gui.PLPErrorFrame           g_err;      // Error frame
     public plptool.gui.PLPToolAboutBox         g_about;    // About frame
     public plptool.gui.PLPOptions              g_opts;     // Options frame
+    public plptool.gui.PLPSerialProgrammer     g_prg;      // Programming dialog
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -285,10 +286,18 @@ public class PLPBackend {
 
             if(entry.getName().equals("plp.metafile")) {
                 meta = metaStr;
+                Scanner metaScanner;
 
-                Scanner metaScanner = new Scanner(meta);
-                metaScanner.findWithinHorizon("MAINSRC=", 0);
-                main_asm = metaScanner.nextInt();
+                String lines[] = meta.split("\\r?\\n");
+                if(lines[0].equals("PLP-2.1"))  {
+                    metaScanner = new Scanner(meta);
+                    metaScanner.findWithinHorizon("MAINSRC=", 0);
+                    main_asm = metaScanner.nextInt();
+                } else {
+                    PLPMsg.I("WARNING: This is not a PLP-2.1 project file.", this);
+                    main_asm = 0;
+                }
+
                 metaScanner = new Scanner(meta);
                 metaScanner.findWithinHorizon("DIRTY=", 0);
                 if(metaScanner.nextInt() == 0)
@@ -443,13 +452,46 @@ public class PLPBackend {
 
     public int program(String port, int baudRate) {
 
+        int timeoutCounter = 0;
+        int oldProgress = 0;
+
         try {
 
         if(arch.equals("plpmips") && asm != null && asm.isAssembled()) {
-            prg = new plptool.mips.SerialProgrammer();
+            prg = new plptool.mips.SerialProgrammer(this);
             prg.connect(port, baudRate);
-            prg.programWithAsm(asm);
-            prg.close();
+
+            if(g) {
+                g_prg.getProgressBar().setMinimum(0);
+                g_prg.getProgressBar().setMaximum(asm.getObjectCode().length - 1);
+            }
+
+            prg.start();
+
+            while(prg.isAlive() && timeoutCounter != 1000) {
+                if(prg.progress == oldProgress)
+                    timeoutCounter++;
+                else
+                    timeoutCounter = 0;
+
+                oldProgress = prg.progress;
+
+                if(g) {
+                    g_prg.getProgressBar().setValue(prg.progress);
+                    g_prg.getStatusField().setText(prg.progress + ": " +
+                            String.format("0x%08x", asm.getAddrTable()[prg.progress]) + " " +
+                            String.format("0x%08x", asm.getObjectCode()[prg.progress]));
+                }
+
+                Thread.sleep(5);
+            }
+
+            if(timeoutCounter == 1000) {
+                prg.stop();
+                return PLPMsg.E("Programming timed out.",
+                                Constants.PLP_PRG_TIMEOUT, this);
+            }
+
         } else
             return PLPMsg.E("No assembled sources.",
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
@@ -584,6 +626,10 @@ public class PLPBackend {
         g_sim.updateComponents();
         g_dev.updateComponents();
         ioreg.gui_eval();
+    }
+
+    public boolean g() {
+        return g;
     }
 
     @Override

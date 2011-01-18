@@ -290,7 +290,7 @@ public class PLPDevelop extends javax.swing.JFrame {
     }
 
     public void about() {
-        backend.app.show(backend.g_about);
+        backend.g_about.setVisible(true);
     }
 
     /** This method is called from within the constructor to
@@ -644,6 +644,11 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         menuProgram.setText(resourceMap.getString("menuProgram.text")); // NOI18N
         menuProgram.setName("menuProgram"); // NOI18N
+        menuProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuProgramActionPerformed(evt);
+            }
+        });
         rootmenuProject.add(menuProgram);
 
         jSeparator1.setName("jSeparator1"); // NOI18N
@@ -793,6 +798,8 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
             backend.plpfile = fc.getSelectedFile().getAbsolutePath();
+            if(!backend.plpfile.endsWith(".plp"))
+                backend.plpfile += ".plp";
             backend.savePLPFile();
             backend.openPLPFile(backend.plpfile);
         }
@@ -883,6 +890,10 @@ public class PLPDevelop extends javax.swing.JFrame {
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
         PLPMsg.output = txtOutput;
     }//GEN-LAST:event_formWindowGainedFocus
+
+    private void menuProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
+        backend.g_prg.setVisible(true);
+    }//GEN-LAST:event_menuProgramActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbout;

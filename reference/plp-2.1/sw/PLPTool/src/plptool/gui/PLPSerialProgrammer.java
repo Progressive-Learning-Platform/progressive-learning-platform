@@ -17,10 +17,25 @@ package plptool.gui;
  */
 public class PLPSerialProgrammer extends javax.swing.JDialog {
 
+    PLPBackend backend;
+
     /** Creates new form PLPSerialProgrammer */
-    public PLPSerialProgrammer(java.awt.Frame parent, boolean modal) {
+    public PLPSerialProgrammer(PLPBackend backend, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+
+        this.backend = backend;
+
+        cmbPort.removeAllItems();
+        cmbPort.addItem("/dev/ttyUSB0");
+    }
+
+    public javax.swing.JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public javax.swing.JTextField getStatusField() {
+        return txtStatus;
     }
 
     /** This method is called from within the constructor to
@@ -36,6 +51,8 @@ public class PLPSerialProgrammer extends javax.swing.JDialog {
         lblSerialPort = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
         btnDownloadProgram = new javax.swing.JButton();
+        btnClose = new javax.swing.JButton();
+        txtStatus = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPSerialProgrammer.class);
@@ -44,6 +61,7 @@ public class PLPSerialProgrammer extends javax.swing.JDialog {
         setName("Form"); // NOI18N
         setResizable(false);
 
+        cmbPort.setEditable(true);
         cmbPort.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbPort.setName("cmbPort"); // NOI18N
 
@@ -54,6 +72,23 @@ public class PLPSerialProgrammer extends javax.swing.JDialog {
 
         btnDownloadProgram.setText(resourceMap.getString("btnDownloadProgram.text")); // NOI18N
         btnDownloadProgram.setName("btnDownloadProgram"); // NOI18N
+        btnDownloadProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDownloadProgramActionPerformed(evt);
+            }
+        });
+
+        btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
+        btnClose.setName("btnClose"); // NOI18N
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+
+        txtStatus.setEditable(false);
+        txtStatus.setText(resourceMap.getString("txtStatus.text")); // NOI18N
+        txtStatus.setName("txtStatus"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -62,12 +97,16 @@ public class PLPSerialProgrammer extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(progressBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                    .addComponent(progressBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lblSerialPort)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
                         .addComponent(cmbPort, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnDownloadProgram, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(txtStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnClose)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDownloadProgram)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -79,36 +118,33 @@ public class PLPSerialProgrammer extends javax.swing.JDialog {
                     .addComponent(lblSerialPort))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnDownloadProgram)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnDownloadProgram)
+                    .addComponent(btnClose))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                PLPSerialProgrammer dialog = new PLPSerialProgrammer(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+    private void btnDownloadProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadProgramActionPerformed
+        backend.program((String) cmbPort.getSelectedItem(), 9600);
+    }//GEN-LAST:event_btnDownloadProgramActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCloseActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClose;
     private javax.swing.JButton btnDownloadProgram;
     private javax.swing.JComboBox cmbPort;
     private javax.swing.JLabel lblSerialPort;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JTextField txtStatus;
     // End of variables declaration//GEN-END:variables
 
 }
