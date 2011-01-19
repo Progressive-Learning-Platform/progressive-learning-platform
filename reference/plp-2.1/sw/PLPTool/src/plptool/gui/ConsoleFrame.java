@@ -15,10 +15,10 @@ package plptool.gui;
  *
  * @author wira
  */
-public class PLPConsole extends javax.swing.JFrame {
+public class ConsoleFrame extends javax.swing.JFrame {
 
     /** Creates new form PLPConsole */
-    public PLPConsole() {
+    public ConsoleFrame() {
         initComponents();
     }
 

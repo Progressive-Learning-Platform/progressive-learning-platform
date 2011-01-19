@@ -29,7 +29,7 @@ import plptool.mods.IORegistry;
  */
 public class PLPToolApp extends SingleFrameApplication {
     
-    PLPSimShell simUI;
+    SimShell simUI;
     static String plpFilePath = null;
     static boolean open = false;
 
@@ -37,25 +37,25 @@ public class PLPToolApp extends SingleFrameApplication {
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        PLPBackend backend = new PLPBackend(true, "plpmips"); // default to plpmips for now
-        backend.app = this;
-        backend.ioreg = new IORegistry();
-        backend.g_err = new PLPErrorFrame();
-        backend.g_dev = new PLPDevelop(backend);
-        backend.g_ioreg = new PLPIORegistry(backend);
-        simUI = new PLPSimShell(backend);
-        backend.g_simsh = simUI;
-        backend.g_desktop = simUI.getSimDesktop();
-        backend.g_about = new PLPToolAboutBox(backend.g_dev);
-        backend.g_opts = new PLPOptions(backend);
-        backend.g_prg = new plptool.gui.PLPSerialProgrammer(backend, backend.g_dev, true);
-        simUI.getSimDesktop().add(backend.g_ioreg);
+        ProjectDriver plp = new ProjectDriver(true, "plpmips"); // default to plpmips for now
+        plp.app = this;
+        plp.ioreg = new IORegistry();
+        plp.g_err = new SimErrorFrame();
+        plp.g_dev = new Develop(plp);
+        plp.g_ioreg = new IORegistryFrame(plp);
+        simUI = new SimShell(plp);
+        plp.g_simsh = simUI;
+        plp.g_desktop = simUI.getSimDesktop();
+        plp.g_about = new AboutBoxDialog(plp.g_dev);
+        plp.g_opts = new OptionsFrame(plp);
+        plp.g_prg = new plptool.gui.ProgrammerDialog(plp, plp.g_dev, true);
+        simUI.getSimDesktop().add(plp.g_ioreg);
 
-        backend.g_dev.setVisible(true);
+        plp.g_dev.setVisible(true);
 
-        PLPMsg.output = backend.g_dev.getOutput();
+        PLPMsg.output = plp.g_dev.getOutput();
         if(plpFilePath != null)
-            backend.openPLPFile(plpFilePath);
+            plp.open(plpFilePath);
         // show(mainWindow);
     }
 
@@ -115,15 +115,15 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -p <plpfile> <port> <baud>");
             } else {
                 try {
-                    PLPBackend backend = new PLPBackend(false, "plpmips");
-                    backend.openPLPFile(args[1]);
-                    backend.assemble();
-                    backend.program(args[2], Integer.parseInt(args[3]));
+                    ProjectDriver plp = new ProjectDriver(false, "plpmips");
+                    plp.open(args[1]);
+                    plp.assemble();
+                    plp.program(args[2], Integer.parseInt(args[3]));
                 } catch(Exception e) { }
             }
         }
         else  if(args.length > 0 && args[0].equals("-plp")) {
-            PLPFileManipulator.CLI(args);
+            ProjectFileManipulator.CLI(args);
         }
         else if(args.length == 1) {
             open = true;

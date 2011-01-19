@@ -36,13 +36,13 @@ import plptool.PLPMsg;
 import plptool.Constants;
 
 /**
- * PLPTool serial programmer backend.
+ * PLPTool serial programmer plp.
  *
  * @author wira
  */
 public class SerialProgrammer extends plptool.PLPSerialProgrammer {
-    public SerialProgrammer(plptool.gui.PLPBackend backend) {
-        super(backend);
+    public SerialProgrammer(plptool.gui.ProjectDriver plp) {
+        super(plp);
     }
     
     private SerialPort serialPort;
@@ -94,9 +94,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     public int programWithAsm() throws Exception {
-        if(backend.asm.isAssembled()) {
-            long objCode[] = backend.asm.getObjectCode();
-            long addrTable[] = backend.asm.getAddrTable();
+        if(plp.asm.isAssembled()) {
+            long objCode[] = plp.asm.getObjectCode();
+            long addrTable[] = plp.asm.getAddrTable();
             byte inData;
 
             PLPMsg.M("Write out first address.");

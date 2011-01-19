@@ -32,16 +32,16 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
-    private plptool.gui.PLPBackend backend;
+    private plptool.gui.ProjectDriver plp;
     private long old_pc;
     private String lastCLCommand = "";
 
     /** Creates new form PLPMIPSCoreGUI */
-    public SimCoreGUI(plptool.gui.PLPBackend backend) {
+    public SimCoreGUI(plptool.gui.ProjectDriver plp) {
         super();
-        this.sim = backend.sim;
-        this.backend = backend;
-        plptool.mips.SimCLI.errFrame = backend.g_err;
+        this.sim = plp.sim;
+        this.plp = plp;
+        plptool.mips.SimCLI.errFrame = plp.g_err;
 
         sim.bus.enableAllModules();
         sim.bus.eval();
@@ -575,7 +575,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         SimCLI.init_core = true;
         lastCLCommand = simCLConsole.getText();
         simCLOutput.append("exec: " + simCLConsole.getText() + "\n");
-        SimCLI.simCLCommand(simCLConsole.getText(), (SimCore) sim, backend.ioreg);
+        SimCLI.simCLCommand(simCLConsole.getText(), (SimCore) sim, plp.ioreg);
         if(simCLConsole.getText().trim().startsWith("asm")) {
             clearProgramMemoryTable();
             fillProgramMemoryTable();
@@ -583,7 +583,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         simCLOutput.append("\n");
         simCLConsole.setText("");
         updateComponents();
-        plptool.PLPMsg.output = backend.g_dev.getOutput();
+        plptool.PLPMsg.output = plp.g_dev.getOutput();
 }//GEN-LAST:event_simCLExecActionPerformed
 
     private void simCLConsoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_simCLConsoleKeyPressed
@@ -624,7 +624,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         }
         tblMemMap.setModel(memMap);
 
-        backend.ioreg.gui_eval();
+        plp.ioreg.gui_eval();
 
         updateProgramMemoryTablePC();
     }

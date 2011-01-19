@@ -28,16 +28,16 @@ import javax.swing.table.DefaultTableModel;
  * @see IORegistry
  * @author wira
  */
-public class PLPIORegistry extends javax.swing.JInternalFrame {
+public class IORegistryFrame extends javax.swing.JInternalFrame {
 
     Object[][] modInfo;
-    PLPBackend backend;
+    ProjectDriver plp;
 
     /** Creates new form PLPIORegistry */
-    public PLPIORegistry(PLPBackend backend) {
+    public IORegistryFrame(ProjectDriver plp) {
 
-        this.backend = backend;
-        IORegistry ioRegistry = backend.ioreg;
+        this.plp = plp;
+        IORegistry ioRegistry = plp.ioreg;
         modInfo = ioRegistry.getAvailableModulesInformation();
 
         initComponents();
@@ -83,7 +83,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setIconifiable(true);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPIORegistry.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(IORegistryFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
 
@@ -344,14 +344,14 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
 
         if(addr != plptool.Constants.PLP_NUMBER_ERROR && size > 0) {
             if(!(Boolean) modInfo[modIndex][4] || (addr % 4 == 0)) {
-                backend.ioreg.attachModuleToBus(modIndex, addr, size, backend.sim, backend.g_simsh.getSimDesktop());
+                plp.ioreg.attachModuleToBus(modIndex, addr, size, plp.sim, plp.g_simsh.getSimDesktop());
                 refreshModulesTable();
             }
         } else {
             plptool.PLPMsg.M("ERROR");
         }
         
-        backend.updateComponents();
+        plp.updateComponents();
         refreshModulesTable();
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -360,16 +360,16 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
                 tblMods.getSelectedRow() > -1)  {
 
             int index = (Integer) tblMods.getModel().getValueAt(tblMods.getSelectedRow(), 1);
-            backend.ioreg.removeModule(index, backend.sim);
+            plp.ioreg.removeModule(index, plp.sim);
             refreshModulesTable();
-            backend.updateComponents();
+            plp.updateComponents();
         }
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        backend.ioreg.removeAllModules(backend.sim);
+        plp.ioreg.removeAllModules(plp.sim);
         refreshModulesTable();
-        backend.updateComponents();
+        plp.updateComponents();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnLoadPresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadPresetActionPerformed
@@ -380,8 +380,8 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             Long[] startAddresses = (Long[]) Presets.presets[index][2];
             Long[] sizes = (Long[]) Presets.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
-                backend.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], backend.sim, backend.g_simsh.getSimDesktop());
-            backend.updateComponents();
+                plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, plp.g_simsh.getSimDesktop());
+            plp.updateComponents();
             refreshModulesTable();
         }
     }//GEN-LAST:event_btnLoadPresetActionPerformed
@@ -390,7 +390,7 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
         DefaultTableModel mods = (DefaultTableModel) tblMods.getModel();
         Object[] modules;
 
-        modules = backend.ioreg.getAttachedModules();
+        modules = plp.ioreg.getAttachedModules();
 
         while(mods.getRowCount() > 0)
             mods.removeRow(0);
@@ -399,9 +399,9 @@ public class PLPIORegistry extends javax.swing.JInternalFrame {
             Object[] row = new Object[]
             { modules[i].toString(),
               i,
-              backend.ioreg.getPositionInBus(i),
-              String.format("0x%08x", backend.ioreg.getModule(i).startAddr()),
-              String.format("0x%08x", backend.ioreg.getModule(i).endAddr())
+              plp.ioreg.getPositionInBus(i),
+              String.format("0x%08x", plp.ioreg.getModule(i).startAddr()),
+              String.format("0x%08x", plp.ioreg.getModule(i).endAddr())
             };
             mods.addRow(row);
         }

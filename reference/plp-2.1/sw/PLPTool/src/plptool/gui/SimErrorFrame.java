@@ -30,10 +30,10 @@ import java.awt.Color;
  *
  * @author wira
  */
-public class PLPErrorFrame extends javax.swing.JInternalFrame {
+public class SimErrorFrame extends javax.swing.JInternalFrame {
 
     /** Creates new form PLPErrorFrame */
-    public PLPErrorFrame() {
+    public SimErrorFrame() {
         initComponents();
     }
 
@@ -68,7 +68,7 @@ public class PLPErrorFrame extends javax.swing.JInternalFrame {
         lblError = new javax.swing.JLabel();
 
         setIconifiable(true);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPErrorFrame.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SimErrorFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
 

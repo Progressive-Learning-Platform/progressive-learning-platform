@@ -23,7 +23,7 @@ import java.io.BufferedReader;
 import plptool.PLPMsg;
 import plptool.PLPSimCore;
 import plptool.PLPToolbox;
-import plptool.gui.PLPErrorFrame;
+import plptool.gui.SimErrorFrame;
 import plptool.Constants;
 
 /**
@@ -41,7 +41,7 @@ public class SimCLI {
     static boolean init_core = false;
     static boolean silent = false;
     static BufferedReader stdIn;
-    static PLPErrorFrame errFrame = null;
+    static SimErrorFrame errFrame = null;
     static plptool.mods.IORegistry ioRegistry;
 
     public static void simCLCommand(String input, SimCore core, plptool.mods.IORegistry ioReg) {

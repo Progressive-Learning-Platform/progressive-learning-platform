@@ -27,9 +27,9 @@ import java.io.*;
  *
  * @author wira
  */
-public class PLPFileManipulator {
+public class ProjectFileManipulator {
     public static void CLI(String[] args) {
-        PLPBackend backend = new PLPBackend(false, "plpmips");
+        ProjectDriver plp = new ProjectDriver(false, "plpmips");
 	
         if(args == null || args.length < 2) 
             return;
@@ -37,15 +37,15 @@ public class PLPFileManipulator {
         File plpHandler = new File(args[1]);
 	
 	if(plpHandler.exists())
-            backend.openPLPFile(args[1]);
+            plp.open(args[1]);
         else {
-            backend.newPLPFile();
-            backend.plpfile = args[1];
-            if(backend.savePLPFile() != Constants.PLP_OK)
+            plp.create();
+            plp.plpfile = args[1];
+            if(plp.save() != Constants.PLP_OK)
                 return;
         }
         
-        if(backend.plpfile == null || args.length <= 2)
+        if(plp.plpfile == null || args.length <= 2)
             return;
 
         if(args[2].equals("-importasm") || args[2].equals("-i")) {
@@ -54,8 +54,8 @@ public class PLPFileManipulator {
                 return;
             }
 
-            backend.importAsm(args[3]);
-            backend.savePLPFile();
+            plp.importAsm(args[3]);
+            plp.save();
         }
         else if(args[2].equals("-importdir") || args[2].equals("-d")) {
             if(!(args.length == 4)) {
@@ -68,8 +68,8 @@ public class PLPFileManipulator {
             String files[] = dir.list();
 
             for(int i = 0; i < files.length; i++)
-                backend.importAsm(dir.getAbsolutePath() + "/" + files[i]);
-            backend.savePLPFile();
+                plp.importAsm(dir.getAbsolutePath() + "/" + files[i]);
+            plp.save();
         }
         else if((args[2].equals("-setmain") || args[2].equals("-s"))) {
             if(!(args.length == 4)) {
@@ -78,10 +78,10 @@ public class PLPFileManipulator {
             }
 
             int main_index = Integer.parseInt(args[3]);
-            if(main_index < 0 || main_index >= backend.asms.size())
+            if(main_index < 0 || main_index >= plp.asms.size())
                 return;
-            backend.main_asm = main_index;
-            backend.savePLPFile();
+            plp.main_asm = main_index;
+            plp.save();
         }
         else if(args[2].equals("-v")) {
             if(!(args.length == 4)) {
@@ -90,13 +90,13 @@ public class PLPFileManipulator {
             }
 
             int index = Integer.parseInt(args[3]);
-            if(index < 0 || index >= backend.asms.size())
+            if(index < 0 || index >= plp.asms.size())
                 return;
-            PLPMsg.M(backend.getAsm(index).getAsmString());
+            PLPMsg.M(plp.getAsm(index).getAsmString());
         }
 
         else if(args[2].equals("-m")) {
-            PLPMsg.I("MAINSRC=" + backend.main_asm, null);
+            PLPMsg.I("MAINSRC=" + plp.main_asm, null);
 	}
         else if((args[2].equals("-r"))) {
             if(!(args.length == 4)) {
@@ -105,8 +105,8 @@ public class PLPFileManipulator {
             }
 
             int index = Integer.parseInt(args[3]);
-            backend.removeAsm(index);
-            backend.savePLPFile();
+            plp.removeAsm(index);
+            plp.save();
         }
         else if((args[2].equals("-e"))) {
             if(!(args.length == 5)) {
@@ -115,7 +115,7 @@ public class PLPFileManipulator {
             }
 
             int index = Integer.parseInt(args[3]);
-            backend.exportAsm(index, args[4]);
+            plp.exportAsm(index, args[4]);
         }
         else if((args[2].equals("-edit"))) {
             if(!(args.length == 4)) {
@@ -129,21 +129,21 @@ public class PLPFileManipulator {
             File temp = new File("PLPTool.temp.asm");
             if(temp.exists()) 
                 temp.delete();
-            backend.exportAsm(index, "PLPTool.temp.asm");
-            String file = backend.getAsm(index).getAsmFilePath();
+            plp.exportAsm(index, "PLPTool.temp.asm");
+            String file = plp.getAsm(index).getAsmFilePath();
             Process p = Runtime.getRuntime().exec("gedit PLPTool.temp.asm");
             p.waitFor();
             File newFile = new File(file);
             temp.renameTo(newFile);
-            backend.removeAsm(index);
-            backend.importAsm(newFile.getAbsolutePath());
+            plp.removeAsm(index);
+            plp.importAsm(newFile.getAbsolutePath());
             newFile.delete();
-            backend.savePLPFile();  
+            plp.save();
             } catch(Exception e) { e.printStackTrace(); }
         }
 
         else if(args[2].equals("-a")) {
-            backend.savePLPFile();
+            plp.save();
         }
         else {
             PLPMsg.I("Invalid option: " + args[2], null);
