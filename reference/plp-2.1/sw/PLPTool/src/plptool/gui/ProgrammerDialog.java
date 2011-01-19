@@ -15,16 +15,16 @@ package plptool.gui;
  *
  * @author wira
  */
-public class PLPSerialProgrammer extends javax.swing.JDialog {
+public class ProgrammerDialog extends javax.swing.JDialog {
 
-    PLPBackend backend;
+    ProjectDriver plp;
 
     /** Creates new form PLPSerialProgrammer */
-    public PLPSerialProgrammer(PLPBackend backend, java.awt.Frame parent, boolean modal) {
+    public ProgrammerDialog(ProjectDriver plp, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
 
-        this.backend = backend;
+        this.plp = plp;
 
         cmbPort.removeAllItems();
         cmbPort.addItem("/dev/ttyUSB0");
@@ -55,7 +55,7 @@ public class PLPSerialProgrammer extends javax.swing.JDialog {
         txtStatus = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPSerialProgrammer.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ProgrammerDialog.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setName("Form"); // NOI18N
@@ -131,7 +131,7 @@ public class PLPSerialProgrammer extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDownloadProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadProgramActionPerformed
-        backend.program((String) cmbPort.getSelectedItem(), 9600);
+        plp.program((String) cmbPort.getSelectedItem(), 9600);
     }//GEN-LAST:event_btnDownloadProgramActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed

@@ -30,5 +30,6 @@ public class PLPCfg {
     public static boolean cfgSimForwardingUnit             = true;
     public static boolean cfgSimDynamicMemoryAllocation    = false;
     public static boolean cfgRefreshGUIDuringSimRun        = true;
-    public static int cfgSimDelay                          = 100;
+    public static int     cfgSimDelay                      = 100;
+    public static boolean cfgVerbose                       = true;
 }

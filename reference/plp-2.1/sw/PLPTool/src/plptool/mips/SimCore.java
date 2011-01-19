@@ -27,7 +27,7 @@ import plptool.PLPSimCore;
 import plptool.PLPSimRegModule;
 
 /**
- * mips.SimCore is the PLP MIPS Architecture Simulator Backend. This class
+ * mips.SimCore is the PLP MIPS Architecture Simulator plp. This class
  * contains core functionality of the simulator: the CPU itself, memory
  * elements, pipeline registers, and I/O devices. Users can interact with the
  * simulation core by using typical procedures such as stepping and I/O. It's
@@ -101,7 +101,7 @@ public class SimCore extends PLPSimCore {
     Asm asm;
 
     /**
-     * Simulator backend constructor.
+     * Simulator plp constructor.
      *
      * @param RAMsize the size of main memory attached to this core
      * @param asm assembler object passed on to this simulator

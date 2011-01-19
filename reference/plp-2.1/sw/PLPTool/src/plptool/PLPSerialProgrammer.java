@@ -11,13 +11,13 @@ package plptool;
  * @author wira
  */
 public abstract class PLPSerialProgrammer extends Thread {
-    protected plptool.gui.PLPBackend backend;
+    protected plptool.gui.ProjectDriver plp;
 
     public boolean busy = false;
     public int     progress = 0;
 
-    public PLPSerialProgrammer(plptool.gui.PLPBackend backend) {
-        this.backend = backend;
+    public PLPSerialProgrammer(plptool.gui.ProjectDriver plp) {
+        this.plp = plp;
     }
 
     @Override

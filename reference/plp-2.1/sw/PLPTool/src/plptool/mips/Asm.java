@@ -276,6 +276,8 @@ public class Asm extends plptool.PLPAsm {
 
         curRegion = 0; // unmapped region / flat model
 
+        PLPMsg.D("pp(" + curActiveFile + ") splitting...", 2, this);
+
         String delimiters = ",[ ]+|,|[ ]+|[()]|\t";
         String lineDelim  = "\\r?\\n";
         String[] asmLines  = topLevelAsm.getAsmString().split(lineDelim);
@@ -292,7 +294,8 @@ public class Asm extends plptool.PLPAsm {
 
         try {
 
-        PLPMsg.D("asmIndex: " + asmIndex + " lines: " + asmLines.length, 5, this);
+        PLPMsg.D("pp(" + asmIndex + ") begin loop...", 2, this);
+        PLPMsg.D("lines: " + asmLines.length, 2, this);
 
         // Begin our preprocess cases
         while(i < asmLines.length) {
@@ -989,6 +992,6 @@ public class Asm extends plptool.PLPAsm {
      * @return Returns informative string
      */
     @Override public String toString() {
-        return "PLPAsm(" + this.curActiveFile + ")";
+        return "Asm(" + this.curActiveFile + ")";
     }
 }

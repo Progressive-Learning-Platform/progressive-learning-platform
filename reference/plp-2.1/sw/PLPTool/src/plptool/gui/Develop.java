@@ -27,14 +27,14 @@ import plptool.Constants;
  *
  * @author wira
  */
-public class PLPDevelop extends javax.swing.JFrame {
+public class Develop extends javax.swing.JFrame {
 
     boolean trackChanges = false;
-    PLPBackend backend;
+    ProjectDriver plp;
 
     /** Creates new form PLPDevelop */
-    public PLPDevelop(PLPBackend backend) {
-        this.backend = backend;
+    public Develop(ProjectDriver plp) {
+        this.plp = plp;
         initComponents();
 
         DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("No PLP Project Open");
@@ -67,13 +67,13 @@ public class PLPDevelop extends javax.swing.JFrame {
 
         txtEditor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                notifyBackendModified();
+                notifyplpModified();
             }
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                notifyBackendModified();
+                notifyplpModified();
             }
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                notifyBackendModified();
+                notifyplpModified();
             }
         });
 
@@ -87,10 +87,10 @@ public class PLPDevelop extends javax.swing.JFrame {
 
     }
 
-    public void notifyBackendModified() {
+    public void notifyplpModified() {
         if(trackChanges) {
-            backend.modified = true;
-            backend.updateWindowTitle();
+            plp.modified = true;
+            plp.updateWindowTitle();
         }
     }
 
@@ -162,7 +162,7 @@ public class PLPDevelop extends javax.swing.JFrame {
             case 2:
                 return;
             default:
-                backend.newPLPFile();
+                plp.create();
         }
     }
 
@@ -180,13 +180,13 @@ public class PLPDevelop extends javax.swing.JFrame {
                 int retVal = fc.showOpenDialog(null);
 
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-                    backend.openPLPFile(fc.getSelectedFile().getAbsolutePath());
+                    plp.open(fc.getSelectedFile().getAbsolutePath());
                 }
         }
     }
 
     public int askSaveFirst(String action, String capAction) {
-        if(backend.modified) {
+        if(plp.modified) {
             Object[] options = {"Save and " + action,
                     capAction + " without saving",
                     "Cancel"};
@@ -201,7 +201,7 @@ public class PLPDevelop extends javax.swing.JFrame {
                 options[2]);
 
             if(n == 0)
-                backend.savePLPFile();
+                plp.save();
 
             return n;
         }
@@ -220,7 +220,7 @@ public class PLPDevelop extends javax.swing.JFrame {
 
             if(nodeStr.endsWith("asm")) {
 
-                if(backend.asms.size() <= 1) {
+                if(plp.asms.size() <= 1) {
                     PLPMsg.E("Can not delete last source file.",
                              Constants.PLP_GENERIC_ERROR, null);
 
@@ -230,12 +230,12 @@ public class PLPDevelop extends javax.swing.JFrame {
                 String[] tokens = nodeStr.split("::");
 
                 int remove_asm = Integer.parseInt(tokens[0]);
-                if(remove_asm == backend.open_asm) {
-                    backend.open_asm = 0;
-                    backend.refreshProjectView(false);
+                if(remove_asm == plp.open_asm) {
+                    plp.open_asm = 0;
+                    plp.refreshProjectView(false);
                 }
 
-                backend.removeAsm(remove_asm);
+                plp.removeAsm(remove_asm);
             }
         }
 
@@ -252,7 +252,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         int retVal = fc.showOpenDialog(null);
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            backend.importAsm(fc.getSelectedFile().getAbsolutePath());
+            plp.importAsm(fc.getSelectedFile().getAbsolutePath());
         }
 
         return Constants.PLP_OK;
@@ -283,14 +283,14 @@ public class PLPDevelop extends javax.swing.JFrame {
             int retVal = fc.showSaveDialog(null);
 
             if(retVal == javax.swing.JFileChooser.APPROVE_OPTION)
-                backend.exportAsm(indexToExport, fc.getSelectedFile().getAbsolutePath());
+                plp.exportAsm(indexToExport, fc.getSelectedFile().getAbsolutePath());
         }
 
         return Constants.PLP_OK;
     }
 
     public void about() {
-        backend.g_about.setVisible(true);
+        plp.g_about.setVisible(true);
     }
 
     /** This method is called from within the constructor to
@@ -353,7 +353,7 @@ public class PLPDevelop extends javax.swing.JFrame {
         menuAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPDevelop.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Develop.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage("resources/plp.png"));
         setName("Form"); // NOI18N
@@ -757,8 +757,8 @@ public class PLPDevelop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuOpenActionPerformed
 
     private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
-        if(backend.asm.isAssembled())
-            backend.simulate();
+        if(plp.asm.isAssembled())
+            plp.simulate();
     }//GEN-LAST:event_menuSimulateActionPerformed
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
@@ -770,21 +770,21 @@ public class PLPDevelop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuAboutActionPerformed
 
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
-        backend.savePLPFile();
+        plp.save();
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
         PLPMsg.output = txtOutput;
 
-        if(backend.plpfile != null)
-            backend.assemble();
+        if(plp.plpfile != null)
+            plp.assemble();
 }//GEN-LAST:event_menuAssembleActionPerformed
 
     private void menuAssembleActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
         PLPMsg.output = txtOutput;
 
-        if(backend.plpfile != null)
-            backend.assemble();
+        if(plp.plpfile != null)
+            plp.assemble();
     }//GEN-LAST:event_menuAssembleActionPerformed1
 
     private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
@@ -797,11 +797,11 @@ public class PLPDevelop extends javax.swing.JFrame {
         int retVal = fc.showSaveDialog(null);
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            backend.plpfile = fc.getSelectedFile().getAbsolutePath();
-            if(!backend.plpfile.endsWith(".plp"))
-                backend.plpfile += ".plp";
-            backend.savePLPFile();
-            backend.openPLPFile(backend.plpfile);
+            plp.plpfile = fc.getSelectedFile().getAbsolutePath();
+            if(!plp.plpfile.endsWith(".plp"))
+                plp.plpfile += ".plp";
+            plp.save();
+            plp.open(plp.plpfile);
         }
     }//GEN-LAST:event_menuSaveAsActionPerformed
 
@@ -818,9 +818,9 @@ public class PLPDevelop extends javax.swing.JFrame {
     }//GEN-LAST:event_rootmenuProjectActionPerformed
 
     private void menuSetMainProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
-        backend.main_asm = backend.open_asm;
-        backend.modified = true;
-        backend.refreshProjectView(true);
+        plp.main_asm = plp.open_asm;
+        plp.modified = true;
+        plp.refreshProjectView(true);
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
 
     private void treeProjectMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMousePressed
@@ -839,9 +839,9 @@ public class PLPDevelop extends javax.swing.JFrame {
 
                     PLPMsg.I("Opening " + nodeStr, null);
 
-                    backend.updateAsm(backend.open_asm, txtEditor.getText());
-                    backend.open_asm = Integer.parseInt(tokens[0]);
-                    backend.refreshProjectView(false);
+                    plp.updateAsm(plp.open_asm, txtEditor.getText());
+                    plp.open_asm = Integer.parseInt(tokens[0]);
+                    plp.refreshProjectView(false);
                 }
             }
         }
@@ -858,13 +858,13 @@ public class PLPDevelop extends javax.swing.JFrame {
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
         PLPMsg.output = txtOutput;
 
-        if(backend.plpfile != null)
-            backend.assemble();
+        if(plp.plpfile != null)
+            plp.assemble();
     }//GEN-LAST:event_btnAssembleActionPerformed
 
     private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
-        if(backend.asm.isAssembled())
-            backend.simulate();
+        if(plp.asm.isAssembled())
+            plp.simulate();
     }//GEN-LAST:event_btnSimulateActionPerformed
 
     private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
@@ -892,7 +892,7 @@ public class PLPDevelop extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void menuProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
-        backend.g_prg.setVisible(true);
+        plp.g_prg.setVisible(true);
     }//GEN-LAST:event_menuProgramActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

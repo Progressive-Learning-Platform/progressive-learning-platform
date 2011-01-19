@@ -26,33 +26,33 @@ import plptool.PLPCfg;
  *
  * @author wira
  */
-public class PLPSimRunner extends Thread {
+public class SimRunner extends Thread {
 
     private PLPSimCore sim;
-    private PLPBackend backend;
+    private ProjectDriver plp;
     public int stepCount;
     private int startInstr;
     private long startTime;
 
-    public PLPSimRunner(PLPBackend backend) {
-        this.sim = backend.sim;
-        this.backend = backend;
+    public SimRunner(ProjectDriver plp) {
+        this.sim = plp.sim;
+        this.plp = plp;
         stepCount = 1;
     }
 
     @Override
     public void run() {
         PLPMsg.lastError = 0;
-        backend.g_err.clearError();
+        plp.g_err.clearError();
         startInstr = sim.getinstrcount();
         startTime = System.currentTimeMillis();
 
         while(stepCount > 0) {
             sim.step();
             if(PLPCfg.cfgRefreshGUIDuringSimRun)
-                backend.updateComponents();
+                plp.updateComponents();
             if(PLPMsg.lastError != 0) {
-                backend.g_err.setError(PLPMsg.lastError);
+                plp.g_err.setError(PLPMsg.lastError);
                 break;
             }
             try {
@@ -64,6 +64,6 @@ public class PLPSimRunner extends Thread {
         PLPMsg.m("SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
         PLPMsg.M("in " + time + " milliseconds of real time.");
 
-        backend.g_simsh.unselectTglRun();
+        plp.g_simsh.unselectTglRun();
     }
 }

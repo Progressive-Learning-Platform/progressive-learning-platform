@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 package plptool.gui;
@@ -28,7 +41,7 @@ import javax.swing.tree.*;
  *
  * @author wira
  */
-public class PLPBackend {
+public class ProjectDriver {
 
     public SingleFrameApplication              app;        // App
 
@@ -55,13 +68,13 @@ public class PLPBackend {
     public plptool.PLPSimCoreGUI               g_sim;      // Sim Core GUI
 
     // PLP GUI Windows
-    public plptool.gui.PLPSimShell             g_simsh;    // PLP Simulator Frontend
-    public plptool.gui.PLPIORegistry           g_ioreg;    // I/O registry GUI
-    public plptool.gui.PLPDevelop              g_dev;      // IDE GUI
-    public plptool.gui.PLPErrorFrame           g_err;      // Error frame
-    public plptool.gui.PLPToolAboutBox         g_about;    // About frame
-    public plptool.gui.PLPOptions              g_opts;     // Options frame
-    public plptool.gui.PLPSerialProgrammer     g_prg;      // Programming dialog
+    public plptool.gui.SimShell                g_simsh;    // PLP Simulator Frontend
+    public plptool.gui.IORegistryFrame         g_ioreg;    // I/O registry GUI
+    public plptool.gui.Develop                 g_dev;      // IDE GUI
+    public plptool.gui.SimErrorFrame           g_err;      // Error frame
+    public plptool.gui.AboutBoxDialog          g_about;    // About frame
+    public plptool.gui.OptionsFrame            g_opts;     // Options frame
+    public plptool.gui.ProgrammerDialog        g_prg;      // Programming dialog
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -70,7 +83,7 @@ public class PLPBackend {
     // Architecture
     private String                             arch;
 
-    public PLPBackend(boolean g, String arch) {
+    public ProjectDriver(boolean g, String arch) {
         this.g = g;
         this.arch = arch;
 
@@ -84,7 +97,7 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
-    public int newPLPFile() {
+    public int create() {
         modified = true;
         plpfile = "Unsaved Project";
 
@@ -110,7 +123,7 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
-    public int newPLPFile(String asmPath) {
+    public int create(String asmPath) {
         modified = true;
         plpfile = "Unsaved Project";
 
@@ -138,7 +151,7 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
-    public int savePLPFile() {
+    public int save() {
 
         // commit changes of currently open source file
         if(g) updateAsm(open_asm, g_dev.getEditorText());
@@ -253,7 +266,7 @@ public class PLPBackend {
         return Constants.PLP_OK;
     }
 
-    public int openPLPFile(String path) {
+    public int open(String path) {
         File plpFile = new File(path);
         boolean dirty = true;
 
@@ -294,7 +307,7 @@ public class PLPBackend {
                     metaScanner.findWithinHorizon("MAINSRC=", 0);
                     main_asm = metaScanner.nextInt();
                 } else {
-                    PLPMsg.I("WARNING: This is not a PLP-2.1 project file.", this);
+                    PLPMsg.I("WARNING: This is not a PLP-2.1 project file. Opening anyways.", this);
                     main_asm = 0;
                 }
 
@@ -433,7 +446,7 @@ public class PLPBackend {
 
             if(g) {
                 g_simsh.destroySimulation();
-                g_ioreg = new PLPIORegistry(this);
+                g_ioreg = new IORegistryFrame(this);
 
                 g_sim = new plptool.mips.SimCoreGUI(this);
                 g_simsh.getSimDesktop().add(g_sim);
@@ -634,6 +647,6 @@ public class PLPBackend {
 
     @Override
     public String toString() {
-        return "PLPBackend(" + plpfile + ")";
+        return "PLP(" + plpfile + ")";
     }
 }

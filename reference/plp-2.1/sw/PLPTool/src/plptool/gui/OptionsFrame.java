@@ -17,17 +17,17 @@ import plptool.PLPCfg;
  *
  * @author wira
  */
-public class PLPOptions extends javax.swing.JFrame {
+public class OptionsFrame extends javax.swing.JFrame {
 
-    private PLPBackend backend = null;
+    private ProjectDriver plp = null;
 
     /** Creates new form PLPOptions */
-    public PLPOptions() {
+    public OptionsFrame() {
         initComponents();
     }
 
-    public PLPOptions(PLPBackend backend) {
-        this.backend = backend;
+    public OptionsFrame(ProjectDriver plp) {
+        this.plp = plp;
         initComponents();
     }
 
@@ -47,7 +47,7 @@ public class PLPOptions extends javax.swing.JFrame {
         btnApply = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPOptions.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(OptionsFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
         setResizable(false);
@@ -79,7 +79,7 @@ public class PLPOptions extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                     .addComponent(jLabel1))
                 .addContainerGap())
         );
@@ -90,7 +90,7 @@ public class PLPOptions extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sSimSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(322, Short.MAX_VALUE))
+                .addContainerGap(291, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
