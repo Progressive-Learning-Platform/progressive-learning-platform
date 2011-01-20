@@ -24,7 +24,7 @@ package plptool;
  */
 public class Constants {
 public static final String versionString = "2.1";
-    public static final int debugLevel = 0;
+    public static final int debugLevel = 1;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
 
     // Assembler 1st Pass Errors

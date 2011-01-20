@@ -276,7 +276,7 @@ public class Asm extends plptool.PLPAsm {
 
         curRegion = 0; // unmapped region / flat model
 
-        PLPMsg.D("pp(" + curActiveFile + ") splitting...", 2, this);
+        PLPMsg.D("preprocess: splitting...", 2, this);
 
         String delimiters = ",[ ]+|,|[ ]+|[()]|\t";
         String lineDelim  = "\\r?\\n";
@@ -521,7 +521,7 @@ public class Asm extends plptool.PLPAsm {
                             Constants.PLP_GENERIC_ERROR, this);
         }
 
-        PLPMsg.D("First pass completed.", 1, this);
+        PLPMsg.D("preprocess: First pass completed.", 1, this);
 
         return 0;
     }
@@ -542,6 +542,8 @@ public class Asm extends plptool.PLPAsm {
         String delimiters = ",[ ]+|,|[ ]+|[()]";
         String lineDelim  = "\\r?\\n";
 
+        PLPMsg.D("assemble(): 1/2...", 1, this);
+
         String[] asmLines  = this.preprocessedAsm.split(lineDelim);
         String[] asmTokens;
         String[] stripComments;
@@ -558,6 +560,8 @@ public class Asm extends plptool.PLPAsm {
         PLPMsg.lastError = 0;
 
         try {
+
+        PLPMsg.D("assemble(): 2/2...", 1, this);
 
         while(i < asmLines.length) {
             stripComments = asmLines[i].split("#");
@@ -825,7 +829,7 @@ public class Asm extends plptool.PLPAsm {
             i++;
         }
 
-        PLPMsg.D("Assembly completed.", 1, this);
+        PLPMsg.D("assemble(): Assembly completed.", 1, this);
         assembled = true;
         
         } catch(Exception e) {
