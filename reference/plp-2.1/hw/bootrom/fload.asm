@@ -91,6 +91,9 @@ switches:
 	ori $s0, $zero, 2
 	beq $s0, $v0, boot_memory_test
 	nop
+	ori $s0, $zero, 3
+	beq $s0, $v0, vga_memory_test
+	nop
 	j shiny
 	nop
 
@@ -167,6 +170,15 @@ boot_uart_version:
 	nop
 	j boot_uart_run
 	nop
+
+#does the memory test, but enables the vga module first
+vga_memory_test:
+	li $t0, 0x10000000 #ram
+	li $t1, 1	   #vga module enable
+	li $t2, 0xf0400000 #vga module
+	sw $t0, 4($t2)
+	sw $t1, 0($t2)
+	#and we just fall into the memory test now
 
 #walk across memory and make sure we can read/write to all locations
 boot_memory_test:
