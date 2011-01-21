@@ -31,7 +31,8 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
         assign iout = idata;
         assign dout = ddata;
 
-        assign idata = 32'h00000000;
+	assign idata = 32'h00000000;
+	assign ddata = daddr == 32'h00000000 ? {31'h00000000,enable} : fb_pointer; 
 
 	wire [7:0] eff_rgb;
 	wire [10:0] hcount, vcount;
