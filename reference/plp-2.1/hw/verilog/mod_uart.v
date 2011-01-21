@@ -65,8 +65,8 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
-        assign iout = ie ? idata : 32'hzzzzzzzz;
-        assign dout = de ? ddata : 32'hzzzzzzzz;
+        assign iout = idata;
+        assign dout = ddata;
 
 	/* hopefully the machine never tries to execute off of the uart, so we'll zero the idata line */
 	assign idata = 32'h00000000;

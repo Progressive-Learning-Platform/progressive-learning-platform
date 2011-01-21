@@ -38,8 +38,8 @@ module mod_sseg(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, sseg_an, s
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
-        assign iout = ie ? idata : 32'hzzzzzzzz;
-        assign dout = de ? ddata : 32'hzzzzzzzz;
+        assign iout = idata;
+        assign dout = ddata;
 
 	/* the seven segment register */
 	reg [31:0] sseg;
