@@ -79,14 +79,14 @@ NET "mod_sram_addr<21>" LOC = "k3";
 NET "mod_sram_addr<22>" LOC = "d1";
 NET "mod_sram_addr<23>" LOC = "k6";
 
-NET "mod_vga_rgb<0>" LOC = "u4";
-NET "mod_vga_rgb<1>" LOC = "u5";
-NET "mod_vga_rgb<2>" LOC = "p6";
+NET "mod_vga_rgb<0>" LOC = "u5";
+NET "mod_vga_rgb<1>" LOC = "u4";
+NET "mod_vga_rgb<2>" LOC = "n8";
 NET "mod_vga_rgb<3>" LOC = "p8";
-NET "mod_vga_rgb<4>" LOC = "n8";
-NET "mod_vga_rgb<5>" LOC = "r8";
+NET "mod_vga_rgb<4>" LOC = "p6";
+NET "mod_vga_rgb<5>" LOC = "r9";
 NET "mod_vga_rgb<6>" LOC = "t8";
-NET "mod_vga_rgb<7>" LOC = "r9";
+NET "mod_vga_rgb<7>" LOC = "r8";
 NET "mod_vga_hs" LOC = "t4";
 NET "mod_vga_vs" LOC = "u3";
 
