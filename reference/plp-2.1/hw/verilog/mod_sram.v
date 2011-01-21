@@ -54,8 +54,8 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         reg [31:0] idata, ddata;
-        assign iout = ie ? idata : 32'hzzzzzzzz;
-        assign dout = de ? ddata : 32'hzzzzzzzz;
+        assign iout = idata;
+        assign dout = ddata;
 
 	/* 
 	 * there are six possible scenarios

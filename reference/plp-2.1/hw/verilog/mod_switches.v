@@ -40,8 +40,8 @@ module mod_switches(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, switch
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
-        assign iout = ie ? idata : 32'hzzzzzzzz;
-        assign dout = de ? ddata : 32'hzzzzzzzz;
+        assign iout = idata;
+        assign dout = ddata;
 
 	assign idata = 32'h00000000;
 	assign ddata = {24'h000000,switches};
