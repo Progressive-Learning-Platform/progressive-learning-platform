@@ -297,7 +297,7 @@ module inferred_rom(clka, clkb, ena, enb, addra, addrb, doa, dob);
 		RAM[275] = 32'h34100002;
 		RAM[276] = 32'h1202004a;
 		RAM[277] = 32'h00000000;
-		RAM[278] = 32'h34100003;
+		RAM[278] = 32'h34100004;
 		RAM[279] = 32'h1202003f;
 		RAM[280] = 32'h00000000;
 		RAM[281] = 32'h080000f5;

@@ -91,7 +91,7 @@ switches:
 	ori $s0, $zero, 2
 	beq $s0, $v0, boot_memory_test
 	nop
-	ori $s0, $zero, 3
+	ori $s0, $zero, 4
 	beq $s0, $v0, vga_memory_test
 	nop
 	j shiny
