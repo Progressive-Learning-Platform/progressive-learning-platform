@@ -97,7 +97,7 @@ module uart_baud_generator(clk,baud,baud16,rst);
 	output baud;
 	output baud16;
 	
-	parameter b_rate = 9600;
+	parameter b_rate = 57600;
 	parameter c_rate = 25000000; /* 25 Mhz */
 	parameter divider = c_rate / b_rate;
 	parameter divider16 = c_rate / (16 * b_rate); /* 16 times faster! */
