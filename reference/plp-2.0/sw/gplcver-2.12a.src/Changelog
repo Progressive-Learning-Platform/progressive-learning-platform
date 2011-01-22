@@ -1,0 +1,306 @@
+Tue Jun  1 15:42:34 CDT 2004
+
+  Initial release 200a of Cver with Verilog 2001 Support.  
+
+  This is a beta release.  See file NEW.CVER.2001.RELEASE.NOTES
+  for more information.  All bug fixes in 110i of Thu May 27 16:06:09
+  CDT 2004 are in 200a.
+
+Fri Jun 18 13:30:16 CDT 2004
+
+  Release 200b made with fixes to compiler directives to allow correct
+  compilation on all supported platforms.  200a contained some incorrectly 
+  placed compiler directives. Cygwin's lack of support for d_type in 
+  dirent structs was corrected using stat().
+
+Wed Aug 18 12:32:10 CDT 2004
+
+  Bug fix Release 2.00c.  2.00c is much more stable than 2.00b.
+
+1. Fixed wrong syntax error when @* was used instead of @(*).
+
+2. Changed port declaration code for both new ANSI style port headers
+   and old style port headers to add the completed port definition concept,
+   i.e. new style port declarations are completed in the header.  Now,
+   for old style declarations, once the range and/or net type are given, the
+   port's definition is completed, and it is a syntax error to redeclare
+   the port.
+
+   There is still a possible minor problem because the wire declaration
+   continuous assignment form can't be used with new ANSI style port
+   declarations as specified in LRM.  Only assign keyword is allowed for
+   port wire continuous assigns.
+
+3. Fixed problem with tf_strgetp.  It was wrongly trimming the input
+   string's leading zeros.       
+
+4. Removed incorrect bit and part select warning when @(*) was used and
+   the implicit event list needs to build bit part select elements where
+   ranges where not <high>:0 form.
+
+5. Fixed problem with both delay controls and event controls in modules
+   that require splitting because of per instance pound or def params.
+   The new implicit event control and event control list code would
+   sometimes overwrite the delay or event control expression with a 
+   different wrong expression.  Main symptom was that delays controls
+   delayed for the wrong amount of time in 200b.
+
+6. Fixed incorrect handling of the new Verilog 2001 file descriptors
+   in the vpi_ file I/O routines. 
+
+Thu Sep 16 09:50:08 CDT 2004
+
+  Bug fix Release 2.00d.  Some bugs in signed wide arithmetic fixed.
+
+1. Fixed bug in wide signed operations when one operand was signed
+   and another was unsigned (or 0).  The wide negate routines were
+   incorrectly setting bits higher than 32.
+
+2. Fixed bug in hold and hold part of setuphold.  Was wrongly
+   emitting timing check for 0 width pulse.
+
+3. Fixed bug in printing of signed values.  Smallest negative number
+   was printing as "-0" instead of its negative value.
+
+4. Fixed bug that caused "./[file]" form when used in `include directives 
+   to be treated as absolute path.  It is now correctly treated as
+   a relative path.
+ 
+Tue Oct 12 14:52:37 CDT 2004
+
+  Major release that adds more Verilog 2001 features, fixes problems
+related to new FPGA libraries that use Verilog 2001 features, and changes
+to explicitly sized C types so compile and run in 32 bit mode works
+on 64 bit Linux systems.
+
+1. Added support for initializing variable declaration assignments (see 2001
+   LRM section 6.2.1).  Example is: "integer i = 3;".   Following the LRM
+   the assignment is made at the beginning of time 0, so the initial value
+   will not be passed to declaration constructs until time 0.
+
+2. Fixed bug in wider than 32 bit arithmetic right shift.  This bug was
+   causing new FPGA designs using wide signed libraries to get wrong answers.
+
+3. Changed so that all types used in Cver source contain their explicit
+   size, i.e. int32, word32, word64 etc.  Change allows Cver to compile
+   and run in 32 bit mode on 64 bit Linux systems.
+
+4. Changed behavior of unsized number widening to follow Verilog 2001.
+   Now instead of widening unsized and unsigned constants where the high
+   order bit is x/z to 32 bits of x/z and then zeroing any high bits,
+   the number is x/z extended to the size of the expression containing
+   the number.  See Note at the bottom of the first page of section 2.5.1.
+   for discussion of the change.  This change is not backward compatible
+   with Verilog 1995 so if needed, we could put in a switch to turn it off.
+
+5. Fixed bug in signed mult and add and other binary operators whose
+   result width is determined by the operands.  The operation was wrongly
+   being evaluated as unsigned.
+
+6. Constant folding was wrongly removing signs.
+
+7. Multi-word widening was sometimes not sign extending or wrongly setting
+   some bits to x/z.  For very wide vector sign extends, the widening
+   would also sometimes core dump.  This happened for both signed and
+   unsigned widening.
+
+8. Fix bug in timing checks that was causing spurious and wrong extra 
+   timing violations to be detected and printed.  Problem was that
+   sometimes the data event was being recorded as the reference event.
+   It happened when a second data event edge occurred within on time tick.
+
+9. Fixed parameter problem when a per instance value was set by a pound
+   or defparam and a design contained many constants.  The symptom was
+   a core dump during the second elaboration pass.
+
+Thu Feb  3 14:30:50 CST 2005
+
+  Minor release that fixes a a few problems involving not matching the LRM
+  (and other simulators).  Also a few changes to simplify code.
+
+1. Rewrote acc_next_load PLI routine algorithm to better match XL.  This
+   acc_ PLI routines requires matching XL port collapsing algorithm.  The new
+   version handles vectors and part selects better.
+
+2. Added support for function and task references that are upward relative,
+   but do not have any module name qualifier.  This is required by the LRM.
+   Result is that using a function or task name before declaration
+   causes searching both declarations later in the given module and
+   all function declarations in every declared module.  The scope rules are
+   then used to select the declaration in the current scope if declared later
+   or the the first declaration in a module above the current instance in the
+   instance tree.
+
+3. Fixed bug in $dumpvars.  When the scope form of $dumpvars was used,
+   an extra $upscope was generated at the end.
+
+4. Fixed problem with pound parameter over-rides for parameters that
+   were assigned values of other parameters in the parameter definition 
+   statement.  The over-riding parameter was not inhibiting assignments
+   when a right hand side parameter was changed.
+
+5. Fixed bug that sometimes caused internal error when printing hierarchical
+   part select names using PLI print routines.
+
+6. Fixed wrong error message when complex edge expressions were used
+   in modules that were resolved from library or config processing.
+
+Mon Feb 28 12:47:20 CST 2005
+
+  Minor release that mainly fixes a problem that caused some designs
+using Xilinx libraries to leak memory. 
+
+1. Fixed problem with shared constant table that caused non blocking 
+   assignments with left hand side variable indices to continually
+   allocate new constant indices during simulation.  Unfortunately,
+   this problem occurs in Xilinx libraries.  Memory leak would eventually
+   cause correct designs to run out of memory.
+
+2. Fixed some memory allocation and variable initialization problems that
+   caused configs to incorrectly fail.
+
+3. Fixed bug in vpi_ that results in incorrect error messages (and 
+   incorrect behavior) when bits of a vector were forced or released using 
+   vpi_.  Problem was a wrong error when vpi_ is used to force or release
+   anything but an entire vector.
+
+4. Fixed problem with unary not (~) not propagating left hand side
+   width down to operands of unary not following LRM rule.  This example
+   was previously not evaluating the ~ operator using left hand side
+   context "cg = ~(a << b);" 
+
+Tue Jul  5 13:53:17 CDT 2005
+
+  Major release 2.11a that hopefully fixes the problems simulating Xilinx
+libraries.  A number of problems that resulted in core dumps involving the
+combination of pound params and defparams are fixed.  Arrays of instances
+and gates had a significant problem that is fixed.  The non blocking
+scheduling algorithm has been changed to process non blocking events
+after all #0 events are processed following XL.  
+
+1. Changed the non blocking assignment algorithm to process all non blocking
+   assignments only after all #0 events have been processed.  Use the
+   new +no_separate_nb_queue to match old Cver behavior that combined
+   #0 and non blocking events into the same queue.
+
+2. Combinations of defparams and pound params often did not work but instead 
+   core dumped.  The Xilinx library used the pattern that caused the error.
+   Cver parameter handling should now be more solid.
+
+3. Fixed a number of signed arithmetic bugs.   Most bugs involved signed
+   shift or multiply.
+
+4. Implicit event control (@*) sometimes core dumped when there were
+   no implicit events to add to the event control list in the guarded block.
+
+5. Cver now recognizes and emits an error for generate keyword, but generate
+   is not supported still.  Elaboration syncs to the endgenerate keyword
+   so at least the rest of a design can be checked for syntax errors. 
+
+6. Arrays of instances core dumped when instances of the module containing
+   arrays of instances or gates were used in hierarchical references. 
+   The core dump did not occur if realloc did not move the memory area.
+   Arrays of instances and gates should now work.
+
+7. Declaration of local events in tasks and named blocks did not work.
+
+8. Continuous assigns with right hand side concatenates that needed widening
+   resulted in widening to z instead of 0.
+
+9. `include `[macro] now works.
+
+==========================================
+Tue May 29 20:08:56 EDT 2007
+
+  Major release 2.12a with bug fixes and some new features.  This documents
+bug fixes and new features not included in the new commerical CVC compiler.
+
+1. Added support for localparam.  Needed to run some Xilinx libraries.
+
+2. Fixed problem with initial values of driven wires not matching XL.
+   Cver previously always initialized wires to 'z'.  Now wires with
+   drivers are initialized to 'x' following XL and wires with no
+   drivers are initialized to 'z'.  This change eliminated a number of
+   extra and wrong edges at time 0.
+
+3. Fixed part select bug where a change was recorded but the change
+   really did not happen.  This resulted in extra wrong edges in
+   dumpvars files and $monitor output.
+
+4. Changed $random functionality to match XL.  Now $random and
+   $random([seed]); use independent pseudo random sequences.  Previously,
+   mixing the non seed and seed forms changed the sequence.  When
+   $random is called with a [seed] argument, the global seed is not
+   changed.
+
+5. Fixed problem with PLI 1.0 tf_propagate routine.  The assigned
+   user passed value's width was wrong (too narrow).
+
+6. Rewrote the vpi_ call back code to work more rationally.  Previously
+   when a cbValueChange call back was removed (using vpi_remove_cb) inside
+   the user C code callback service routine, Cver core dumped.  This is 
+   now allowed and works.  It is also now legal (it has mostly worked in the
+   past) to assign a new value to the net that caused the call back in the
+   change routine that processes the net change.  The new change value will
+   not cause another cbChangeValue callback.  The Cver extension to allow
+   users to turn on and off call backs without removing the call back
+   works as before and is allowed in the user C code that processes the
+   callback.
+
+7. There was a bug in stren model port assignments (except for inouts)
+   when the port sink left hand side was wider than the right hand
+   side.  The required strength widening by adding z's often did not
+   happen, or the amount of widening was too narrow.
+
+8. Previously following old XL, Cver did not allow vpi_put_value to
+   array words (vpiMemoryWord).  That access path is now supported.
+
+9. Fixed bug that caused core dumping when $readmemb or $readmemh were
+   used to read wide memories. 
+
+10. Fixed problem that resulted in core dump with $fclose when designs used
+    both new stdio type File I/O and old file descriptor 32 bit mask I/O. 
+
+11. Fixed problem when time values were converted to reals in complex
+    expressions.  The conversion was producing the wrong real value.
+
+12. Legal Verilog code "always @({sig1,sig2,sig3}) ..."  now runs.  Previously,
+    a wrong syntax error was emitted.  It is the same as
+    "always @(sig1, sig2, sig3) ..." or always @(sig1 or sig2 or sig3) ...".
+   
+13. Repeat form right hand side delay controls inside a block with a 
+    guarding normal delay control would sometimes core dump or not delay
+    the right amount of time.  Something like this would fail:
+
+     @(clk) r = repeat (2) @(clk) r + 1;
+
+14. Changed behavior of parallel (=>) path delays to not emit an error
+    when the source and destination of a delay path had different widths.
+    Now Cver does not emit an error for "(posedge aclr => dataout) = <delay>;"
+    when dataout is vector.  The path delay is only put on the low bit.
+    We think this should be an error because in this case there will be
+    no path delay on the higher bits.  The path should use the full delay
+    form (*>) so that a delay is put on every bit of the path destination
+    bus.  The change was needed because Altera libraries use the parallel
+    path delay form for this case.
+
+15. Fixed problem with cross module reference delay controls.
+    Something like @(i1.regs) would sometime try to access regs in the
+    referencing module rather than in the defining module.
+
+16. Fixed bug involving interaction between value change call backs and
+    $dumpvars.  If within one time tick, first a value change call back
+    was registered and then dump vars was turned on for the same variable,
+    Cver would core dump.
+
+17. Fixed many more new bugs involving signed operators especially signed
+    shifts.  There are too many fixes to describe in detail.
+
+18. $dumpvars dump file was sometimes wrong.  If high bit was x or z would 
+    wrongly propagate a 0 to the result.
+
+19. Fixed a bug involving the interaction between arrays of gates and
+    cross module references.
+
+20. If you are using +no_separate_nb_queue, you should stop using it because
+    it has been deprecated and will be removed soon. 
