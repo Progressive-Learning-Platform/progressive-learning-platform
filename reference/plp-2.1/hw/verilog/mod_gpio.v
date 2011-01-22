@@ -37,8 +37,8 @@ module mod_gpio(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, gpio);
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
-        assign iout = ie ? idata : 32'hzzzzzzzz;
-        assign dout = de ? ddata : 32'hzzzzzzzz;
+        assign iout = idata;
+        assign dout = ddata;
 
 	/* direction bits = 0 = input */
 	reg [15:0] direction = 16'h0000;
