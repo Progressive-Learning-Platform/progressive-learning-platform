@@ -46,8 +46,8 @@ module mod_gpio(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, gpio);
 
 	assign idata = 32'h00000000;
 	assign ddata = (daddr == 32'h00000000) ? {16'h0000, direction} : /* tristate register */
-		       (daddr == 32'h00000004) ? {24'h000000, gpio_a} :  /* block a */
-		       (daddr == 32'h00000008) ? {24'h000000, gpio_b} : 0;
+		       (daddr == 32'h00000004) ? {24'h000000, gpio[7:0]} :  /* block a */
+		       (daddr == 32'h00000008) ? {24'h000000, gpio[15:8]} : 0;
 
 	assign gpio[0]  = (direction[0])  ? gpio_a[0] : 1'bz;
 	assign gpio[1]  = (direction[1])  ? gpio_a[1] : 1'bz;
