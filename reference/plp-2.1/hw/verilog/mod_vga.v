@@ -32,7 +32,6 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
         assign dout = ddata;
 
 	assign idata = 32'h00000000;
-	assign ddata = daddr == 32'h00000000 ? {31'h00000000,enable} : fb_pointer; 
 
 	wire [7:0] eff_rgb;
 	wire [10:0] hcount, vcount;
@@ -41,6 +40,8 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
 	reg enable = 0 ;
 	reg [31:0] fb_pointer;
 	
+	assign ddata = daddr == 32'h00000000 ? {31'h00000000,enable} : fb_pointer; 
+
 	/* the vga controller */
 	vga_controller vga(clk, rst, hs, vs, blank, hcount, vcount);
 	vga_sram_bypass bypass(clk, enable, fb_pointer, hcount, vcount, eff_rgb, sram_data, sram_addr, sram_read, sram_rdy);
