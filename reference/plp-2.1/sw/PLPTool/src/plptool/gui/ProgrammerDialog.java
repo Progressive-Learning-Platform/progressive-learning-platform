@@ -131,7 +131,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDownloadProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadProgramActionPerformed
-        plp.program((String) cmbPort.getSelectedItem(), 9600);
+        plp.program((String) cmbPort.getSelectedItem(), 57600);
     }//GEN-LAST:event_btnDownloadProgramActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
