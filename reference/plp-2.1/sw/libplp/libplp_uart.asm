@@ -93,3 +93,15 @@ libplp_uart_write_one:
 	nop
 	j libplp_uart_write_value_b2_loop
 	nop
+
+libplp_uart_newline:
+	move $t9, $ra #save the return address
+	ori $a0, $zero, 0x000d	#newline
+	jal libplp_uart_write
+	nop
+	ori $a0, $zero, 0x000a  #linefeed
+	jal libplp_uart_write
+	nop
+	jr $t9
+	nop
+
