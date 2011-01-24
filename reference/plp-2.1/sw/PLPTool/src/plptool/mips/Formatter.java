@@ -203,7 +203,7 @@ public class Formatter {
                             Constants.PLP_OUT_FILE_EXISTS, null);
         }
 
-        metafileStr += "PLP-2.0\n";
+        metafileStr += "PLP-2.1\n";
 
         PLPMsg.I("genPLP(): Assembling " + input + ".", null);
         if(asm.preprocess(0) == Constants.PLP_OK)
