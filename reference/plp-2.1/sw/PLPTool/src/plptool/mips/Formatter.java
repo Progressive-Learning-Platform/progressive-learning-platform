@@ -118,13 +118,15 @@ public class Formatter {
 
     // Output hex to be imported to verilog
     public static String writeVerilogHex(long[] objectCode) {
-        String out = "";
+        StringBuilder outStr = new StringBuilder(objectCode.length * 32);
 
         for(int i = 0; i < objectCode.length; i++) {
-            out += "32'h" + String.format("%08x", (int) objectCode[i]) + "\n";
+           outStr.append("32'h");
+           outStr.append(String.format("%08x", (int) objectCode[i]));
+           outStr.append("\n");
         }
-        
-        return out;
+
+        return  outStr.toString();
     }
 
     // 32-bit binary string padder
@@ -184,7 +186,7 @@ public class Formatter {
         return ret;
     }
 
-    // Generate PLP file
+    // Generate PLP file DEPRECATED
     public static int genPLP(String input, String output, boolean forceWrite) {
         ArrayList<PLPAsmSource> sourceList;
         Asm asm = new Asm(null, input);
@@ -203,7 +205,7 @@ public class Formatter {
                             Constants.PLP_OUT_FILE_EXISTS, null);
         }
 
-        metafileStr += "PLP-2.1\n";
+        metafileStr += "PLP-2.0\n";
 
         PLPMsg.I("genPLP(): Assembling " + input + ".", null);
         if(asm.preprocess(0) == Constants.PLP_OK)

@@ -48,8 +48,6 @@ public class Asm extends plptool.PLPAsm {
     private static HashMap<String, Byte>        funct;
     private static HashMap<String, Byte>        regs;
 
-
-
     /**
      * Current active region being populated
      */
@@ -286,6 +284,9 @@ public class Asm extends plptool.PLPAsm {
         String tempLabel;
 
         int prevAsmIndex;
+
+        if(pass1Str == null)
+            pass1Str = new StringBuilder(asmLines.length * 80);
 
         if(lineNumMap == null) {
             lineNumMap = new int[asmLines.length];
@@ -544,6 +545,7 @@ public class Asm extends plptool.PLPAsm {
 
         PLPMsg.D("assemble(): 1/2...", 1, this);
 
+        preprocessedAsm = pass1Str.toString();
         String[] asmLines  = this.preprocessedAsm.split(lineDelim);
         String[] asmTokens;
         String[] stripComments;

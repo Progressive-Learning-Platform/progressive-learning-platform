@@ -38,7 +38,8 @@ public abstract class PLPAsm {
     protected int[]       lineNumMap;
     protected int[]       asmFileMap;
 
-    protected String      preprocessedAsm;
+    protected StringBuilder pass1Str;
+    protected String        preprocessedAsm;
 
     public PLPAsm(String strAsm, String strFilePath) {
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
@@ -127,7 +128,8 @@ public abstract class PLPAsm {
         asmFileMap[mapperIndex] = asmIndex;
         if(newline)
             mapperIndex++;
-        preprocessedAsm += str + (newline ? "\n" : "");
+        pass1Str.append(str);
+        pass1Str.append((newline ? "\n" : ""));
     }
 
     /**

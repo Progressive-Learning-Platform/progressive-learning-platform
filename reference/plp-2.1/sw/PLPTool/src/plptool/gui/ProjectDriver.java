@@ -97,6 +97,10 @@ public class ProjectDriver {
         return Constants.PLP_OK;
     }
 
+    public String getArch() {
+        return arch;
+    }
+
     public int create() {
         modified = true;
         plpfile = "Unsaved Project";
@@ -175,6 +179,7 @@ public class ProjectDriver {
 
         if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
+            PLPMsg.D("Creating verilog hex code...", 2, this);
             verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
             if(objCode.length > 0)
                 meta += "START=" + asm.getAddrTable()[0] + "\n";
@@ -199,6 +204,7 @@ public class ProjectDriver {
         // Create plpfile (a tar archive)
         TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
 
+        PLPMsg.D("Writing plp.metafile...", 2, this);
         TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
         entry.setSize(meta.length());
         tOut.putArchiveEntry(entry);
@@ -209,6 +215,7 @@ public class ProjectDriver {
 
         for(i = 0; i < sourceList.size(); i++) {
             PLPAsmSource asmFile = sourceList.get(i);
+            PLPMsg.D("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
             entry = new TarArchiveEntry(asmFile.getAsmFilePath());
             entry.setSize(asmFile.getAsmString().length());
             tOut.putArchiveEntry(entry);
@@ -223,6 +230,7 @@ public class ProjectDriver {
 
         if(asm != null && asm.isAssembled() && objCode != null) {
             // Write hex image
+            PLPMsg.D("Writing out verilog hex code...", 2, this);
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(verilogHex.length());
             tOut.putArchiveEntry(entry);
@@ -235,6 +243,7 @@ public class ProjectDriver {
             tOut.closeArchiveEntry();
 
             // Write binary image, 4-byte big-endian packs
+            PLPMsg.D("Writing out binary image...", 2, this);
             entry = new TarArchiveEntry("plp.image");
             entry.setSize(objCode.length * 4);
             tOut.putArchiveEntry(entry);
