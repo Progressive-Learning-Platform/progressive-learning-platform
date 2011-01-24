@@ -90,15 +90,15 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -a <asm> <out>");
                 System.exit(-1);
             } else {
-                plptool.mips.Formatter.genPLP(args[1], args[2], false);
-            }
-        }
-        else if(args.length > 0 && args[0].equals("-af")) {
-            if(args.length != 3) {
-                System.out.println("Usage: PLPTool -af <asm> <out>");
-                System.exit(-1);
-            } else {
-                plptool.mips.Formatter.genPLP(args[1], args[2], true);
+                ProjectDriver plp = new ProjectDriver(false, "plpmips");
+                plp.create(args[1]);
+                plp.plpfile = args[2];
+                plp.save();
+                if(plp.asm.isAssembled()) {
+                    plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
+                    System.out.println();
+                    plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
+                }
             }
         }
         else if(args.length > 0 && args[0].equals("-s")) {
@@ -141,10 +141,7 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println();
             System.out.println("Non-GUI options:\n");
             System.out.println("  -a  <asm> <out>");
-            System.out.println("      Assemble <asm> and write plp output to <out>.plp.");
-            System.out.println();
-            System.out.println("  -af <asm> <out>");
-            System.out.println("      Like -a, but overwrite existing output file without prompting.");
+            System.out.println("      Assemble <asm> and write plp output to <out>.");
             System.out.println();
             System.out.println("  -p  <plpfile> <port> <baud>");
             System.out.println("      Program PLP target board with <plpfile> using serial port <port>");

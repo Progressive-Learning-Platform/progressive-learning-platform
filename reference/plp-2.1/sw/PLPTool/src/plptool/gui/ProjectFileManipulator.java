@@ -38,12 +38,13 @@ public class ProjectFileManipulator {
 	
 	if(plpHandler.exists())
             plp.open(args[1]);
-        else {
+        else if(args.length == 2) {
             plp.create();
             plp.plpfile = args[1];
             if(plp.save() != Constants.PLP_OK)
                 return;
-        }
+        } else
+            plp.plpfile = args[1];
         
         if(plp.plpfile == null || args.length <= 2)
             return;
@@ -55,6 +56,16 @@ public class ProjectFileManipulator {
             }
 
             plp.importAsm(args[3]);
+            plp.save();
+        }
+        else if(args[2].equals("-c")) {
+            if(!(args.length == 4)) {
+                PLPMsg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+
+            plp.create(args[3]);
+            plp.plpfile = args[1];
             plp.save();
         }
         else if(args[2].equals("-importdir") || args[2].equals("-d")) {
@@ -96,7 +107,8 @@ public class ProjectFileManipulator {
         }
 
         else if(args[2].equals("-m")) {
-            PLPMsg.I("MAINSRC=" + plp.main_asm, null);
+            PLPMsg.I("Metafile contents:", null);
+            PLPMsg.M(plp.meta);
 	}
         else if((args[2].equals("-r"))) {
             if(!(args.length == 4)) {
@@ -144,6 +156,11 @@ public class ProjectFileManipulator {
 
         else if(args[2].equals("-a")) {
             plp.save();
+            if(plp.asm.isAssembled() && plp.getArch().equals("plpmips")) {
+                plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
+                PLPMsg.M("");
+                plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
+            }
         }
         else {
             PLPMsg.I("Invalid option: " + args[2], null);
