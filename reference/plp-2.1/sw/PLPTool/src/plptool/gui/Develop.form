@@ -199,6 +199,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="menuNewASM.text"/>
                 <Property name="name" type="java.lang.String" value="menuNewASM" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuNewASMActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuImportASM">
               <Properties>
@@ -446,7 +449,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="txtCurFile" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollerEditor" pref="262" max="32767" attributes="0"/>
+                      <Component id="scrollerEditor" pref="265" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

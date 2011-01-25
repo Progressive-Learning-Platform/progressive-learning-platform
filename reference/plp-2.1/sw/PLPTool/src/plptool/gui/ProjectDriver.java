@@ -75,6 +75,7 @@ public class ProjectDriver {
     public plptool.gui.AboutBoxDialog          g_about;    // About frame
     public plptool.gui.OptionsFrame            g_opts;     // Options frame
     public plptool.gui.ProgrammerDialog        g_prg;      // Programming dialog
+    public plptool.gui.AsmNameDialog           g_fname;    // ASM Name dialog
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -563,6 +564,16 @@ public class ProjectDriver {
             modified = true;
 
         asms.get(index).setAsmString(newStr);
+
+        return Constants.PLP_OK;
+    }
+
+    public int newAsm(String name) {
+        asms.add(new PLPAsmSource("# New ASM File", name, asms.size()));
+
+        modified = true;
+
+        if(g) refreshProjectView(true);
 
         return Constants.PLP_OK;
     }

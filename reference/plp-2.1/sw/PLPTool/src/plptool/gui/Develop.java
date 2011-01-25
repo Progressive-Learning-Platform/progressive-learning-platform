@@ -458,7 +458,7 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
+                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
         );
 
         splitter.setRightComponent(jPanel1);
@@ -656,6 +656,11 @@ public class Develop extends javax.swing.JFrame {
 
         menuNewASM.setText(resourceMap.getString("menuNewASM.text")); // NOI18N
         menuNewASM.setName("menuNewASM"); // NOI18N
+        menuNewASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuNewASMActionPerformed(evt);
+            }
+        });
         rootmenuProject.add(menuNewASM);
 
         menuImportASM.setText(resourceMap.getString("menuImportASM.text")); // NOI18N
@@ -894,6 +899,11 @@ public class Develop extends javax.swing.JFrame {
     private void menuProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
         plp.g_prg.setVisible(true);
     }//GEN-LAST:event_menuProgramActionPerformed
+
+    private void menuNewASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewASMActionPerformed
+        plp.g_fname.setMode(false);
+        plp.g_fname.setVisible(true);
+    }//GEN-LAST:event_menuNewASMActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbout;
