@@ -79,11 +79,13 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
-        System.out.println("\nPLP Java Tool");
-        System.out.println("Copyright 2010 David Fritz, Brian Gordon, Wira Mulia");
-        System.out.println(Constants.versionString + "\n");
-        System.out.println("This software is licensed under GPLv3.");
-        System.out.println();
+        System.out.println("\n" + Constants.copyrightString);
+
+        java.io.File fileToOpen = null;
+
+        if(args.length == 1) {
+            fileToOpen = new java.io.File(args[0]);
+        }
 
         if(args.length > 0 && args[0].equals("-a")) {
             if(args.length != 3) {
@@ -102,13 +104,15 @@ public class PLPToolApp extends SingleFrameApplication {
             }
         }
         else if(args.length > 0 && args[0].equals("-s")) {
-            if(args.length == 1) {
-                plptool.mips.SimCLI.simCL(null, null, null);
+            if(args.length != 2) {
+                System.out.println("Usage: PLPTool -s <plpfile>");
+            } else {
+                ProjectDriver plp = new ProjectDriver(false, "plpmips");
+                plp.open(args[1]);
+                plp.assemble();
+                if(plp.asm.isAssembled())
+                    plptool.mips.SimCLI.simCL(plp);
             }
-            else if(args.length != 2) {
-                System.out.println("Usage: PLPTool -s <asm>");
-            } else
-                plptool.mips.SimCLI.simCL(null, args[1], null);
         }
         else if(args.length > 0 && args[0].equals("-p")) {
             if(args.length != 4) {
@@ -118,14 +122,14 @@ public class PLPToolApp extends SingleFrameApplication {
                     ProjectDriver plp = new ProjectDriver(false, "plpmips");
                     plp.open(args[1]);
                     plp.assemble();
-                    plp.program(args[2], Integer.parseInt(args[3]));
+                    plp.program(args[2]);
                 } catch(Exception e) { }
             }
         }
         else  if(args.length > 0 && args[0].equals("-plp")) {
             ProjectFileManipulator.CLI(args);
         }
-        else if(args.length == 1) {
+        else if(args.length == 1 && fileToOpen != null && fileToOpen.exists()) {
             open = true;
             plpFilePath = args[0];
             launch(PLPToolApp.class, args);
@@ -147,8 +151,8 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("      Program PLP target board with <plpfile> using serial port <port>");
             System.out.println("      and baud rate of <baud>.");
             System.out.println();
-            System.out.println("  -s  <asm>");
-            System.out.println("      Launches the command line emulator to simulate <asm>.");
+            System.out.println("  -s  <plpfile>");
+            System.out.println("      Launches the command line simulator to simulate <plpfile>.");
             System.out.println();
         }
     }

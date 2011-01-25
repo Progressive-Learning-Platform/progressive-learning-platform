@@ -67,6 +67,10 @@ public class SimShell extends javax.swing.JFrame {
         tglRun.setSelected(false);
     }
 
+    public javax.swing.JTextField getFlagsField() {
+        return txtFlags;
+    }
+
     public void destroySimulation() {
         if(plp.sim != null) {
             if(plp.g_sim != null)

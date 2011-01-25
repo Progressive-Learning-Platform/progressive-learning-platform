@@ -44,7 +44,7 @@ public class SimCLI {
     static SimErrorFrame errFrame = null;
     static plptool.mods.IORegistry ioRegistry;
 
-    public static void simCLCommand(String input, SimCore core, plptool.mods.IORegistry ioReg) {
+    public static void simCLCommand(String input, SimCore core, Asm asm, plptool.mods.IORegistry ioReg) {
         if(errFrame != null)
             errFrame.clearError();
 
@@ -418,106 +418,29 @@ public class SimCLI {
                              " sim > ");
     }
 
-    public static void initSimCL(String asmStr, String asmFile, javax.swing.JTextField inComp) {
-        stdIn = new BufferedReader(new InputStreamReader((System.in)));
-
+    public static void simCL(plptool.gui.ProjectDriver plp) {
         try {
 
-        PLPMsg.M("PLPTool Command Line Simulator");
-        if(asmFile != null) {
-            PLPMsg.m("Assembling " + asmFile + " ...");
-            asm = new Asm(null, asmFile);
-            if(asm.preprocess(0) == Constants.PLP_OK)
-                asm.assemble();
+        stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            if(!asm.isAssembled()) {
-                PLPMsg.M("");
-                PLPMsg.E("Assembly failed.", Constants.PLP_ERROR_RETURN, asm);
-                System.exit(Constants.PLP_ERROR_RETURN);
-            }
-            PLPMsg.M(" OK");
-        }
-        else if(asmStr != null) {
-            PLPMsg.m("Assembling in-line ...");
-            asm = new Asm(asmStr, "In-line");
-            if(asm.preprocess(0) == Constants.PLP_OK)
-                asm.assemble();
+        plp.ioreg = new plptool.mods.IORegistry();
+        plp.sim = new SimCore((plptool.mips.Asm) plp.asm, -1);
+        plp.sim.setStartAddr(plp.asm.getAddrTable()[0]);
+        plp.sim.reset();
+        init_core = true;
+        addMods(plp.sim);
+        ((plptool.mips.SimCore)plp.sim).printfrontend();
+        plp.sim.bus.enableAllModules();
+        PLPMsg.M("Simulation core initialized with nigh-infinite RAM.");
+        PLPMsg.M("Reset vector: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
+        PLPMsg.m(String.format("\n%08x", plp.sim.getFlags()) +
+                             " " + plp.sim.getinstrcount() +
+                             " sim > ");
 
-            if(!asm.isAssembled()) {
-                PLPMsg.M("");
-                PLPMsg.E("Assembly failed.", Constants.PLP_ERROR_RETURN, asm);
-                System.exit(Constants.PLP_ERROR_RETURN);
-            }
-            PLPMsg.M(" OK");
-
-        } else {
-            asm = new Asm("nop", "empty");
-            if(asm.preprocess(0) == Constants.PLP_OK)
-                asm.assemble();
-        }
-
-        ioRegistry = new plptool.mods.IORegistry();
-        PLPMsg.m("sim > ");
-
-        } catch(Exception e) {
-            System.err.println(e);
-        }
-
-
-    }
-
-    public static void simCL(String asmStr, String asmFile, javax.swing.JTextField inComp) {
-        try {
-            
-        initSimCL(asmStr, asmFile, inComp);
-        
-        if(inComp == null) {
-            while(!(input = stdIn.readLine().trim()).equals("q")) {
-                tokens = input.split(" ");
-                if(tokens[0].equals("i")) {
-                    if(tokens.length == 1) {
-                        x_core = new SimCore(asm, -1);
-                        x_core.reset();
-                        init_core = true;
-                        addMods(x_core);
-                        x_core.printfrontend();
-                        x_core.bus.enableAllModules();
-                        PLPMsg.M("Simulation core initialized with nigh-infinite RAM.");
-                    }
-                    else if(tokens.length != 2) {
-                        PLPMsg.M("Usage: i <ram size in bytes>");
-                    }
-                    else {
-                        try {
-                        ram_size = PLPToolbox.parseNum(tokens[1]);
-
-                        if(ram_size % 4 != 0)
-                            PLPMsg.M("RAM size has to be in multiples of 4");
-                        else {
-                            x_core = new SimCore(asm, ram_size);
-                            x_core.reset();
-                            init_core = true;
-                            addMods(x_core);
-                            x_core.printfrontend();
-                            x_core.bus.enableAllModules();
-                            PLPMsg.M("Simulation core initialized.");
-                        }
-                        } catch(Exception e) {
-                            PLPMsg.M("" + e);
-                            PLPMsg.M("Usage: i <ram size in bytes>");
-                        }
-                    }
-                }
-                if(init_core)
-                    simCLCommand(input, x_core, ioRegistry);
-                else
-                    PLPMsg.m("Run i to initialize simulation core with default RAM size.\n" +
-                                       "Run i <ram size in bytes> to specify RAM size.\n" +
-                                       "Run q to quit.\nsim >");
-
-            }
-            PLPMsg.M("See ya!");
-        }
+        while(!(input = stdIn.readLine().trim()).equals("q"))
+           simCLCommand(input, (plptool.mips.SimCore) plp.sim, (plptool.mips.Asm) plp.asm, plp.ioreg);
+ 
+        PLPMsg.M("See ya!");
 
         } catch(Exception e) {
             System.err.println(e);
@@ -538,7 +461,6 @@ public class SimCLI {
 
             case 1:
                 PLPMsg.M("\nGeneral Simulation Control.");
-                PLPMsg.M("\n i <RAM size in bytes> ..or.. i\n\tInit core with RAM size in bytes. Set RAM size to 2^62 if no argument is given.");
                 PLPMsg.M("\n s <steps> ..or.. s\n\tAdvance <steps> number of cycles. Step 1 cycle if no argument is given.");
                 PLPMsg.M("\n r\n\tReset simulated CPU (clears memory elements and reloads program).");
                 PLPMsg.M("\n wpc <address>\n\tOverwrite program counter with <address>.");
