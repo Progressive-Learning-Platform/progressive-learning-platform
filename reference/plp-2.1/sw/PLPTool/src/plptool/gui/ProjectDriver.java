@@ -483,9 +483,6 @@ public class ProjectDriver {
 
         int timeoutCounter = 0;
         int oldProgress = 0;
-        int progressDivision = asm.getObjectCode().length / 10;
-        int progressPercentage;
-        int oldProgressPercentage = -1;
 
         try {
 
@@ -500,7 +497,7 @@ public class ProjectDriver {
 
             prg.start();
 
-            while(prg.isAlive() && timeoutCounter != 1000) {
+            while(prg.isAlive() && timeoutCounter != 20) {
                 if(prg.progress == oldProgress)
                     timeoutCounter++;
                 else
@@ -515,18 +512,10 @@ public class ProjectDriver {
                             String.format("0x%08x", asm.getObjectCode()[prg.progress]));
                 }
 
-                progressPercentage = prg.progress / progressDivision;
-                
-                if(progressPercentage != oldProgressPercentage &&
-                   prg.progress % progressDivision == 0)
-                    PLPMsg.D(progressPercentage * 10 + "%...", 1, this);
-
-                oldProgressPercentage = progressPercentage;
-
-                Thread.sleep(5);
+                Thread.sleep(50);
             }
 
-            if(timeoutCounter == 1000) {
+            if(timeoutCounter == 20) {
                 prg.stop();
                 return PLPMsg.E("Programming timed out.",
                                 Constants.PLP_PRG_TIMEOUT, this);

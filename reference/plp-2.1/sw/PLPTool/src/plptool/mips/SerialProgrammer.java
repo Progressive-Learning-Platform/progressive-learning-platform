@@ -99,7 +99,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             long addrTable[] = plp.asm.getAddrTable();
             byte inData;
 
-            PLPMsg.M("Write out first address.");
+            PLPMsg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
             out.write('a');
             out.write((byte) (addrTable[0] >> 24));
             out.write((byte) (addrTable[0] >> 16));
@@ -112,6 +112,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             for(int i = 0; i < objCode.length; i++) {
                 progress = i;
+                PLPMsg.D(progress + " out of " + (objCode.length - 1), 3, this);
                 if(i < objCode.length - 1) {
                     if(addrTable[i + 1] != addrTable[i] + 4) {
                         out.write('a');
@@ -160,5 +161,10 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         PLPMsg.I("programWithAsm(): done!", this);
 
         return Constants.PLP_OK;
+    }
+
+    @Override
+    public String toString() {
+        return "plptool.mips.SerialProgrammer";
     }
 }
