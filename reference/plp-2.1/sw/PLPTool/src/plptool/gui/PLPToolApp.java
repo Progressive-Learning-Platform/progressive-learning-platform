@@ -48,7 +48,8 @@ public class PLPToolApp extends SingleFrameApplication {
         plp.g_desktop = simUI.getSimDesktop();
         plp.g_about = new AboutBoxDialog(plp.g_dev);
         plp.g_opts = new OptionsFrame(plp);
-        plp.g_prg = new plptool.gui.ProgrammerDialog(plp, plp.g_dev, true);
+        plp.g_prg = new ProgrammerDialog(plp, plp.g_dev, true);
+        plp.g_fname = new AsmNameDialog(plp, plp.g_dev, true);
         simUI.getSimDesktop().add(plp.g_ioreg);
 
         plp.g_dev.setVisible(true);
@@ -144,15 +145,38 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("Run PLPTool with no command line arguments to launch GUI tool.");
             System.out.println();
             System.out.println("Non-GUI options:\n");
-            System.out.println("  -a  <asm> <out>");
-            System.out.println("      Assemble <asm> and write plp output to <out>.");
+            System.out.println("  -a   <asm> <out>");
+            System.out.println("       Assemble <asm> and write plp output to <out>.");
             System.out.println();
-            System.out.println("  -p  <plpfile> <port> <baud>");
-            System.out.println("      Program PLP target board with <plpfile> using serial port <port>");
-            System.out.println("      and baud rate of <baud>.");
+            System.out.println("  -s   <plpfile>");
+            System.out.println("       Launches the command line simulator to simulate <plpfile>.");
             System.out.println();
-            System.out.println("  -s  <plpfile>");
-            System.out.println("      Launches the command line simulator to simulate <plpfile>.");
+            System.out.println("  -plp <plpfile>");
+            System.out.println("       Prints out the list of source files contained in <plpfile>.");
+            System.out.println("       Creates <plpfile> if it does not exist with main.asm as source file.");
+            System.out.println();
+            System.out.println("  Other options WITH -plp <plpfile>...");
+            System.out.println();
+            System.out.println("  -c <asm>");
+            System.out.println("       Create a PLP project <plpfile> and import <asm> into the project.");
+            System.out.println();
+            System.out.println("  -p <port>");
+            System.out.println("       Program PLP target board with <plpfile> using serial port <port>.");
+            System.out.println();
+            System.out.println("  -a");
+            System.out.println("       Assemble <plpfile>.");
+            System.out.println();
+            System.out.println("  -i <asm>");
+            System.out.println("       Import <asm> into <plpfile>.");
+            System.out.println();
+            System.out.println("  -d <directory>");
+            System.out.println("       Import all files within <directory> into <plpfile>.");
+            System.out.println();
+            System.out.println("  -e <index> <file>");
+            System.out.println("       Export source file with <index> as <file>.");
+            System.out.println();
+            System.out.println("  -r <index>");
+            System.out.println("       Remove source file with <index> from <plpfile>.");
             System.out.println();
         }
     }
