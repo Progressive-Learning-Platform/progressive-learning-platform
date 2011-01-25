@@ -41,12 +41,16 @@ public class PLPAsmSource {
 
         try {
         if(strAsm == null) {
-            Scanner fScan = new Scanner(new File(strFilePath));
-            asmString = new String();
-            while(fScan.hasNextLine()) {
-                asmString += fScan.nextLine() + "\n";
-            }
-            fScan.close();
+            java.io.File fHandler = new java.io.File(strFilePath);
+            java.io.FileReader fReader = new java.io.FileReader(fHandler);
+            //Scanner fScan = new Scanner(new File(strFilePath));
+            char[] readBuffer = new char[(int) fHandler.length()];
+            fReader.read(readBuffer, 0, readBuffer.length);
+            asmString = String.copyValueOf(readBuffer);
+            //while(fScan.hasNextLine()) {
+            //    asmString += fScan.nextLine() + "\n";
+            //}
+            fReader.close();
         } else {
             asmString = strAsm;
         }
