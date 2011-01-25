@@ -578,7 +578,7 @@ public class Asm extends plptool.PLPAsm {
             asmTokens = stripComments[0].split(delimiters);
             skip = false;
             PLPMsg.D("assemble(file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
-                     " line " + lineNumMap[i]  + "): " + asmLines[i], 3, this);
+                     " line " + lineNumMap[i]  + "): " + asmLines[i], 4, this);
 
             // resolve symbols
             String tSymbol;

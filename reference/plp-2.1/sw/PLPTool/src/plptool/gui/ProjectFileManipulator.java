@@ -178,6 +178,7 @@ public class ProjectFileManipulator {
             plp.assemble();
             if(plp.asm != null && plp.asm.isAssembled())
                 plp.program(args[3]);
+            System.exit(-1);
         }
 
         else {
