@@ -55,10 +55,14 @@ public class ProjectFileManipulator {
                 return;
             }
 
+            String temp = plp.plpfile;
+
             if(!plpHandler.exists())
                 plp.create(args[3]);
             else
                 plp.importAsm(args[3]);
+
+            plp.plpfile = temp;
             plp.save();
         }
         else if(args[2].equals("-c")) {
