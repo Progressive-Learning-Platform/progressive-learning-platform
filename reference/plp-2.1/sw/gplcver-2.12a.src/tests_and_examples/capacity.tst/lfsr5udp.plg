@@ -1,0 +1,109 @@
+CVER_2.42_0a of 01/03/02 (Linux-elf).
+Copyright (c) 1991-2002 Pragmatic C Software Corp.
+  Licensed software containing confidential and proprietary
+  information belonging to Pragmatic C Software Corp.
+Today is Thu Jan  3 22:41:47 2002.
+  Verbose mode is on.
+  Invoked by: "/tmp/cver".
+  SDF annotation tracing verbose mode is on.
+  Design content tables will be written.
+  Begin Translation:
+Compiling source file "lfsr5udp.v"
+  Begin pass 2:
+  Approximately 396822 bytes storage allocated (excluding udps).
+Highest level modules:
+test
++++ Printing Design Statistics +++
+  Verbose mode statistics:
+  178 source lines read (includes -v/-y library files).
+  Design contains 7 module types.
+  1 instantiated udp tables of total size less than 1 million bytes.
+
+  Design Module Table: 7 modules (1 top level):
+Module            Level Cells-in Insts-in Primitives  Assigns    Nets  Insts-of
+fd2xl                 0        0        0          3        0       6      5000
+EN                    0        0        0          1        0       3       500
+lfsr                  1        0       11          0        0      24       500
+lfsr10                2        0       10          0        0      13        50
+lfsr100               3        0       10          0        0      13         5
+lfsr500               4        0        5          0        0       8         1
+test                  5        0        1          3        0       8         1
+                          ------   ------     ------   ------  ------    ------
+Static Total:                  0       37          7        0      75
+Flat Total:                    0     6056      15503        0   44231      6057
+
+  Per Module Wiring Table (Task Variables Excluded):
+Module           Ports(Bits)   Wires(Bits) Registers(Bits) Memory(Cells, Bits)
+fd2xl                   5(5)          1(1)                                    
+EN                      3(3)                                                  
+lfsr                    4(4)        20(20)                                    
+lfsr10                  4(4)          9(9)                                    
+lfsr100                 4(4)          9(9)                                    
+lfsr500                 4(4)          4(4)                                    
+test                                  4(4)           4(39)                    
+                ------------ ------------- --------------- -------------------
+Flat total:     28724(28724)  15503(15503)           4(39)                    
+
+  Design Usage Table:
+Type                      Class  Static   Flat   Location
+                                 Number  Number
+fd2xl                     module     10    5000  lfsr5udp.v:12
+EN                        module      1     500  lfsr5udp.v:42
+lfsr                      module     10     500  lfsr5udp.v:53
+lfsr10                    module     10      50  lfsr5udp.v:74
+lfsr100                   module      5       5  lfsr5udp.v:93
+lfsr500                   module      1       1  lfsr5udp.v:113
+test                      top         0       0  lfsr5udp.v:128
+xl_fd2                    udp         1    5000  lfsr5udp.v:22
+and                       gate        1       1
+buf                       gate        2    5001
+not                       gate        2    5001
+xnor                      gate        1     500
+
+  Flattened Design: 6056 instances, 5000 udps, 10503 gates and 0 assigns.
++++ End of Design Statistics +++
+  Variable storage in bytes: 88460 for scalars, 16 for vectors and 0 for reals.
+  Begin load/optimize:
+  Approximately 592391 bytes storage allocated (excluding udps).
+  Begin simulation:
+  Approximately 1610239 bytes storage allocated (excluding udps).
+
+
+
+Results display
+                3200 00000000 00111111 10001111 00000010 
+                6400 00111011 00000111 00110000 01010011 
+                9600 01001101 10110111 11111101 11111011 
+               12800 01110111 11001101 10010111 10110101 
+               16000 01111000 01010001 01001001 00111111 
+               19200 11001111 10010011 00111101 01001010 
+               22400 00111001 00000011 10111000 01100001 
+               25600 00100101 11111101 01111010 01010101 
+               28800 11000001 00001101 10100111 11011001 
+               32000 10111010 11100100 10001111 11000011 
+               35200 10001000 00001101 11100111 01001000 
+               38400 10111100 10101001 10000110 10010011 
+               41600 01111101 11011011 00111111 01001110 
+               44800 10110001 00110001 11010000 00101011 
+               48000 10100010 01010011 11001100 10010101 
+               51200 11110001 01100001 01100101 01101100 
+               54400 01111100 00011000 11001000 01011101 
+               57600 01010010 00001111 01100010 11100010 
+               60800 10000010 01011011 11011110 10110101 
+               64000 00111000 11000000 01001111 01110010 
+               67200 11000110 11000011 11001000 10011100 
+               70400 11100001 00000101 10110101 11111001 
+               73600 01110011 01000101 10100101 11011101 
+               76800 00110010 11010110 11100111 10001001 
+               80000 00001111 10100011 01010001 10001000 
+               83200 10001100 11000101 01000100 00100110 
+               86400 10111011 00100111 01111000 11010000 
+               89600 01101011 00110011 01010101 10000001 
+               92800 10011100 10100001 10010100 10110011 
+               96000 10110100 01111010 00010101 01010000 
+               99200 00001011 11101010 11010000 11101010 
+Halted at location **lfsr5udp.v(152) time 100000 from call to $finish.
+2773498 simulation events and 22838561 declarative immediate assigns processed.
+4074 behavioral statements executed (1007 procedural suspends).
+  Times (in sec.):  Translate 0.0, load/optimize 0.1, simulation 24.2.
+  There were 0 error(s), 0 warning(s), and 63 inform(s).

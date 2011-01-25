@@ -1,0 +1,33 @@
+
+               RUNNING THE GPL CVER CONFIG V2001 TEST
+
+First run Cver without any arguments to make sure Cver binary is
+correctly installed.  Type "../../../bin/cver" or if you have installed cver
+somewhere on your shell PATH just type "cver".  The first line output
+Cver version number must match the version of your release directory.  If
+version number does not match, you probably have your shell PATH environment
+variable set to execute an old version.
+
+If you are running on Unix/Linux based platforms, run the shell command
+script by typing:
+
+config_tst.sh 
+
+Correct installation is indicated by the following message with no diff
+command output lines before the message:
+
+>>>> Config test completed (this should be only printed message).
+
+-------------------------------------------------------------------------
+
+To run the config files:
+
+ cver +config [config.file]
+
+to use config1.map
+
+ cver +config config1.map
+
+with library verbose option
+
+ cver +config config1.map +libverbose
