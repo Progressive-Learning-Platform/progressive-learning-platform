@@ -492,6 +492,13 @@ public class Asm extends plptool.PLPAsm {
                 curAddr += 4;
             }
 
+            // branch always
+            else if(asmTokens[0].equals("b")) {
+                appendPreprocessedAsm("beq $0,$0," + asmTokens[1], i, true);
+                regionMap.add(curRegion);
+                curAddr += 4;
+            }
+
             // load-immediate
             else if(asmTokens[0].equals("li")) {
                 appendPreprocessedAsm("lui " + asmTokens[1] + ",$_hi:" + asmTokens[2], i, true);

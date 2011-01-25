@@ -415,8 +415,12 @@ public class ProjectDriver {
 
         PLPMsg.I("Assembling...", null);
 
-        if(g) g_dev.disableSimControls();
+        boolean wasAssembled = false;
 
+        if(asm != null)
+            wasAssembled = asm.isAssembled();
+
+        if(g) g_dev.disableSimControls();
         if(g) asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
 
         if(asms == null || asms.isEmpty())
@@ -432,7 +436,8 @@ public class ProjectDriver {
         }
 
         if(g && asm != null && asm.isAssembled()) {
-            modified = true;
+            if(!wasAssembled)
+                modified = true;
             g_dev.enableSimControls();
         }
 
@@ -472,7 +477,8 @@ public class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    public int program(String port, int baudRate) {
+    public int program(String port) {
+        PLPMsg.I("Programming to " + port, this);
 
         int timeoutCounter = 0;
         int oldProgress = 0;
@@ -481,7 +487,7 @@ public class ProjectDriver {
 
         if(arch.equals("plpmips") && asm != null && asm.isAssembled()) {
             prg = new plptool.mips.SerialProgrammer(this);
-            prg.connect(port, baudRate);
+            prg.connect(port, Constants.PLP_BAUDRATE);
 
             if(g) {
                 g_prg.getProgressBar().setMinimum(0);
@@ -523,6 +529,7 @@ public class ProjectDriver {
                             Constants.PLP_GENERIC_ERROR, this);
         }
 
+        PLPMsg.I("Done.", this);
         return Constants.PLP_OK;
     }
 

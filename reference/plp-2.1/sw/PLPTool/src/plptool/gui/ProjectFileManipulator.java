@@ -55,7 +55,10 @@ public class ProjectFileManipulator {
                 return;
             }
 
-            plp.importAsm(args[3]);
+            if(!plpHandler.exists())
+                plp.create(args[3]);
+            else
+                plp.importAsm(args[3]);
             plp.save();
         }
         else if(args[2].equals("-c")) {
@@ -162,6 +165,17 @@ public class ProjectFileManipulator {
                 plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
             }
         }
+        else if(args[2].equals("-p")) {
+            if(!(args.length == 4)) {
+                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+
+            plp.assemble();
+            if(plp.asm != null && plp.asm.isAssembled())
+                plp.program(args[3]);
+        }
+
         else {
             PLPMsg.I("Invalid option: " + args[2], null);
             return;

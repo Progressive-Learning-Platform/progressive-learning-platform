@@ -23,9 +23,16 @@ package plptool;
  * @author wira
  */
 public class Constants {
-public static final String versionString = "2.1";
+    public static final String versionString = "2.1";
+    public static final String copyrightString =
+            "PLP Java Tool version " + versionString + "\n" +
+            "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
+            "This software is licensed under GPLv3.\n";
+
     public static final int debugLevel = 1;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
+
+    public static final int PLP_BAUDRATE                         = 57600;
 
     // Assembler 1st Pass Errors
     public static final int PLP_ASM_INVALID_TOKEN                = 16;
