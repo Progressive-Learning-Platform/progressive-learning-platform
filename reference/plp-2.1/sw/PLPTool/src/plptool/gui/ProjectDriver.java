@@ -482,6 +482,9 @@ public class ProjectDriver {
 
         int timeoutCounter = 0;
         int oldProgress = 0;
+        int progressDivision = asm.getObjectCode().length / 10;
+        int progressPercentage;
+        int oldProgressPercentage = -1;
 
         try {
 
@@ -510,6 +513,14 @@ public class ProjectDriver {
                             String.format("0x%08x", asm.getAddrTable()[prg.progress]) + " " +
                             String.format("0x%08x", asm.getObjectCode()[prg.progress]));
                 }
+
+                progressPercentage = prg.progress / progressDivision;
+                
+                if(progressPercentage != oldProgressPercentage &&
+                   prg.progress % progressDivision == 0)
+                    PLPMsg.D(progressPercentage * 10 + "%...", 1, this);
+
+                oldProgressPercentage = progressPercentage;
 
                 Thread.sleep(5);
             }
