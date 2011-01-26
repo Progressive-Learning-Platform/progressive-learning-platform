@@ -8,10 +8,10 @@ run
 -p xc3s1200e-4-fg320
 -top top
 -opt_mode Speed
--opt_level 1
+-opt_level 2
 -iuc NO
 -keep_hierarchy Yes
--netlist_hierarchy As_Optimized
+-netlist_hierarchy Rebuilt
 -rtlview Yes
 -glob_opt AllClockNets
 -read_cores YES
@@ -24,7 +24,7 @@ run
 -bram_utilization_ratio 100
 -verilog2001 YES
 -fsm_extract YES -fsm_encoding Auto
--safe_implementation No
+-safe_implementation Yes
 -fsm_style LUT
 -ram_extract Yes
 -ram_style Auto
@@ -38,19 +38,22 @@ run
 -rom_style Auto
 -auto_bram_packing NO
 -mux_extract Yes
--resource_sharing Yes
+-resource_sharing NO
 -async_to_sync NO
 -mult_style Auto
 -iobuf YES
 -max_fanout 500
 -bufg 24
--register_duplication Yes
--register_balancing No
+-register_duplication YES
+-register_balancing YES
+-move_first_stage YES
+-move_last_stage YES
 -slice_packing YES
--optimize_primitives No
+-optimize_primitives YES
 -use_clock_enable Yes
 -use_sync_set Yes
 -use_sync_reset Yes
 -iob Auto
--equivalent_register_removal Yes
+-equivalent_register_removal YES
 -slice_utilization_ratio_maxmargin 5
+
