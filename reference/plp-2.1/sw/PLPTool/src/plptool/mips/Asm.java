@@ -941,6 +941,9 @@ public class Asm extends plptool.PLPAsm {
             number = number.substring(2);
             return Long.parseLong(number, 2) & 0xFFFF;
         }
+        else if (number.startsWith("'") && number.endsWith("'") && number.length()==3) {
+            return number.charAt(1);
+        }
         else
             return Long.parseLong(number) & 0xFFFF;
 
@@ -971,6 +974,9 @@ public class Asm extends plptool.PLPAsm {
         else if(number.startsWith("0b")) {
             number = number.substring(2);
             return Long.parseLong(number, 2) & 0xFFFFFFFF;
+        }
+        else if (number.startsWith("'") && number.endsWith("'") && number.length()==3) {
+            return number.charAt(1);
         }
         else
             return Long.parseLong(number) & 0xFFFFFFFF;
