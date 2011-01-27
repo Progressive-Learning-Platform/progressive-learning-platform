@@ -27,7 +27,7 @@ import plptool.PLPSimCore;
 import plptool.PLPSimRegModule;
 
 /**
- * mips.SimCore is the PLP MIPS Architecture Simulator plp. This class
+ * mips.SimCore is the PLP MIPS Architecture Simulator. This class
  * contains core functionality of the simulator: the CPU itself, memory
  * elements, pipeline registers, and I/O devices. Users can interact with the
  * simulation core by using typical procedures such as stepping and I/O. It's

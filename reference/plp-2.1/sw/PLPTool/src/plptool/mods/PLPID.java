@@ -18,59 +18,48 @@
 
 package plptool.mods;
 
-import plptool.Constants;
+import java.awt.Color;
 import plptool.PLPSimBusModule;
-import plptool.PLPMsg;
+import plptool.Constants;
 
 /**
- * Trace module, outputs bus activity to file
+ * PLPID is a module that returns the version string and board frequency
+ * of the system.
  *
- * @see PLPSimBusModule
- * @author fritz
+ * @author wira
  */
-public class FTracer extends PLPSimBusModule {
+public class PLPID extends PLPSimBusModule {
 
-    public FTracer(long addr, long size) {
-        super(addr, addr + size, true);
-        PLPMsg.M("TRACER Registered");
+    public PLPID(long addr) {
+        super(addr, addr + 4, true);
     }
 
     public int eval() {
-        //nothing to do here...
+        // No need to eval every cycle
         return Constants.PLP_OK;
     }
 
     public int gui_eval(Object x) {
-        //nothing to see here...
+	// No GUI
         return Constants.PLP_OK;
-    }
-
-    public String introduce() {
-        return "Tracer";
-    }
-
-    @Override
-    public int write(long addr, Object data, boolean isInstr) {
-        //trace!
-        if (!isInstr)
-            PLPMsg.M(String.format("[TRACE] W %08x %08x", addr, data ));
-        return super.writeReg(addr, data, isInstr);
     }
 
     @Override
     public Object read(long addr) {
-        Object ret = super.readReg(addr);
+        if(addr == startAddr)
+            return new Long((long) 0xdeadbee << 4 | 0xf);
+        else if(addr == startAddr + 4)
+            return new Long(0x02faf080);
 
-        //trace ret
-        char rType = super.isInstr(addr) ? 'I' : 'R';
+        return null;
+    }
 
-        PLPMsg.M(String.format("[TRACE] %c %08x %08x", rType, addr, (Long)ret));
-
-        return ret;
+    public String introduce() {
+        return "PLPID";
     }
 
     @Override
     public String toString() {
-        return "Tracer";
+        return "PLPID";
     }
 }
