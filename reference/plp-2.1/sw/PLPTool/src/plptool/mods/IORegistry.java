@@ -58,7 +58,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 4;
+    private final int NUMBER_OF_MODULES = 6;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -137,6 +137,28 @@ public class IORegistry {
         mods[3][4] = true;
         mods[3][5] = false;
 
+        /* ********************************************************************/
+        // PLPID
+
+        mods[4][0] = "PLPID";
+        mods[4][1] = false;
+        mods[4][2] = 2;
+        mods[4][3] = "This module always returns the board ID and frequency "
+                   + "when the first and second registers are read, "
+                   + "respectively.";
+        mods[4][4] = true;
+        mods[4][5] = false;
+        
+        /* ********************************************************************/
+        // DummyMemory
+
+        mods[5][0] = "Dummy Memory";
+        mods[5][1] = true;
+        mods[5][2] = 1;
+        mods[5][3] = "This module always returns zero, no init required.";
+        mods[5][4] = true;
+        mods[5][5] = false;
+
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -194,6 +216,18 @@ public class IORegistry {
             // FTrace is requested, he doesn't respond to summons
             case 3:
                 module = new FTracer(addr, size);
+                break;
+
+            /******************************************************************/
+            // PLPID is summoned
+            case 4:
+                module = new PLPID(addr);
+                break;
+
+            /******************************************************************/
+            // DummyMemory is summoned
+            case 5:
+                module = new DummyMemory(addr, size, true);
                 break;
 
             // ADD YOUR MODULE INITIALIZATION HERE
