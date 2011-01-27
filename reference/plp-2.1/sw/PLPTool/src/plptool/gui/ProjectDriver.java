@@ -454,6 +454,10 @@ public class ProjectDriver {
             return PLPMsg.E("simulate(): The project is not assembled.",
                             Constants.PLP_BACKEND_NO_ASSEMBLED_OBJECT, this);
 
+        if(asm.getObjectCode().length == 0)
+            return PLPMsg.E("simulate(): Empty program.",
+                            Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
+
         if(arch.equals("plpmips")) {
             sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
             sim.setStartAddr(asm.getAddrTable()[0]);

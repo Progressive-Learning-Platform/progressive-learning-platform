@@ -99,8 +99,12 @@ public class PLPToolApp extends SingleFrameApplication {
                 plp.save();
                 if(plp.asm.isAssembled()) {
                     plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
-                    System.out.println();
+                    PLPMsg.M("");
                     plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
+                    PLPMsg.M("");
+                    PLPMsg.M("Build timestamp: " + (new java.util.Date()).toString());
+                    PLPMsg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
+                    PLPMsg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
                 }
             }
         }

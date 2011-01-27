@@ -31,7 +31,8 @@ public class Develop extends javax.swing.JFrame {
 
     boolean trackChanges = false;
     ProjectDriver plp;
-
+    javax.swing.undo.UndoManager undoManager;
+    
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
         this.plp = plp;
@@ -80,6 +81,9 @@ public class Develop extends javax.swing.JFrame {
 
         this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
 
+        undoManager = new javax.swing.undo.UndoManager();
+        txtEditor.getDocument().addUndoableEditListener(undoManager);
+
         PLPMsg.M("Welcome to Progressive Learning Platform Software Tool version " + Constants.versionString);
     }
 
@@ -106,6 +110,7 @@ public class Develop extends javax.swing.JFrame {
         trackChanges = false;
         txtEditor.setText(str);
         trackChanges = true;
+        undoManager.discardAllEdits();
     }
 
     public String getEditorText() {
@@ -458,7 +463,7 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
         );
 
         splitter.setRightComponent(jPanel1);
@@ -576,16 +581,34 @@ public class Develop extends javax.swing.JFrame {
         rootmenuEdit.setText(resourceMap.getString("rootmenuEdit.text")); // NOI18N
         rootmenuEdit.setName("rootmenuEdit"); // NOI18N
 
+        menuCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         menuCopy.setText(resourceMap.getString("menuCopy.text")); // NOI18N
         menuCopy.setName("menuCopy"); // NOI18N
+        menuCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCopyActionPerformed(evt);
+            }
+        });
         rootmenuEdit.add(menuCopy);
 
+        menuCut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
         menuCut.setText(resourceMap.getString("menuCut.text")); // NOI18N
         menuCut.setName("menuCut"); // NOI18N
+        menuCut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCutActionPerformed(evt);
+            }
+        });
         rootmenuEdit.add(menuCut);
 
+        menuPaste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
         menuPaste.setText(resourceMap.getString("menuPaste.text")); // NOI18N
         menuPaste.setName("menuPaste"); // NOI18N
+        menuPaste.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPasteActionPerformed(evt);
+            }
+        });
         rootmenuEdit.add(menuPaste);
 
         menuSeparator4.setName("menuSeparator4"); // NOI18N
@@ -602,12 +625,25 @@ public class Develop extends javax.swing.JFrame {
         menuSeparator5.setName("menuSeparator5"); // NOI18N
         rootmenuEdit.add(menuSeparator5);
 
+        menuUndo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
         menuUndo.setText(resourceMap.getString("menuUndo.text")); // NOI18N
         menuUndo.setName("menuUndo"); // NOI18N
+        menuUndo.setName("menuUndo"); // NOI18N
+        menuUndo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuUndoActionPerformed(evt);
+            }
+        });
         rootmenuEdit.add(menuUndo);
 
+        menuRedo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
         menuRedo.setText(resourceMap.getString("menuRedo.text")); // NOI18N
         menuRedo.setName("menuRedo"); // NOI18N
+        menuRedo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuRedoActionPerformed(evt);
+            }
+        });
         rootmenuEdit.add(menuRedo);
 
         jMenuBar1.add(rootmenuEdit);
@@ -904,6 +940,28 @@ public class Develop extends javax.swing.JFrame {
         plp.g_fname.setMode(false);
         plp.g_fname.setVisible(true);
     }//GEN-LAST:event_menuNewASMActionPerformed
+
+    private void menuCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCopyActionPerformed
+        txtEditor.copy();
+    }//GEN-LAST:event_menuCopyActionPerformed
+
+    private void menuCutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCutActionPerformed
+        txtEditor.cut();
+    }//GEN-LAST:event_menuCutActionPerformed
+
+    private void menuPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPasteActionPerformed
+        txtEditor.paste();
+    }//GEN-LAST:event_menuPasteActionPerformed
+
+    private void menuUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUndoActionPerformed
+        if(undoManager.canUndo())
+            undoManager.undo();
+    }//GEN-LAST:event_menuUndoActionPerformed
+
+    private void menuRedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRedoActionPerformed
+        if(undoManager.canRedo())
+            undoManager.redo();
+    }//GEN-LAST:event_menuRedoActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbout;
