@@ -55,6 +55,8 @@ public class Develop extends javax.swing.JFrame {
         menuSave.setEnabled(false);
         menuSaveAs.setEnabled(false);
         btnAssemble.setEnabled(false);
+        menuFind.setEnabled(false);
+        menuFindAndReplace.setEnabled(false);
         disableSimControls();
 
         treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -463,11 +465,12 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
+                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
         );
 
         splitter.setRightComponent(jPanel1);
 
+        toolbar.setFloatable(false);
         toolbar.setRollover(true);
         toolbar.setName("toolbar"); // NOI18N
 
@@ -627,7 +630,6 @@ public class Develop extends javax.swing.JFrame {
 
         menuUndo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
         menuUndo.setText(resourceMap.getString("menuUndo.text")); // NOI18N
-        menuUndo.setName("menuUndo"); // NOI18N
         menuUndo.setName("menuUndo"); // NOI18N
         menuUndo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

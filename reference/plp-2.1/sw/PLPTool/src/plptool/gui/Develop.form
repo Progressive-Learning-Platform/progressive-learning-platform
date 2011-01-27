@@ -156,7 +156,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuUndo.text"/>
                 <Property name="name" type="java.lang.String" value="menuUndo" noResource="true"/>
-                <Property name="name" type="java.lang.String" value="menuUndo" noResource="true"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuUndoActionPerformed"/>
@@ -480,7 +479,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="txtCurFile" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollerEditor" pref="262" max="32767" attributes="0"/>
+                      <Component id="scrollerEditor" pref="260" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -530,6 +529,7 @@
     </Container>
     <Container class="javax.swing.JToolBar" name="toolbar">
       <Properties>
+        <Property name="floatable" type="boolean" value="false"/>
         <Property name="rollover" type="boolean" value="true"/>
         <Property name="name" type="java.lang.String" value="toolbar" noResource="true"/>
       </Properties>

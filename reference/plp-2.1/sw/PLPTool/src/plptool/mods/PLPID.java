@@ -47,7 +47,7 @@ public class PLPID extends PLPSimBusModule {
     @Override
     public Object read(long addr) {
         if(addr == startAddr)
-            return new Long((long) 0xdeadbee << 4 | 0xf);
+            return new Long(0x201);
         else if(addr == startAddr + 4)
             return new Long(0x02faf080);
 
