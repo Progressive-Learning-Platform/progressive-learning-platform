@@ -20,6 +20,8 @@ package plptool.gui;
 
 import javax.swing.tree.*;
 
+import java.io.File;
+
 import plptool.PLPMsg;
 import plptool.Constants;
 
@@ -183,10 +185,12 @@ public class Develop extends javax.swing.JFrame {
                 final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
                 fc.setFileFilter(new PlpFilter());
                 fc.setAcceptAllFileFilterUsed(false);
+                fc.setCurrentDirectory(new File(plp.curdir));
 
                 int retVal = fc.showOpenDialog(null);
 
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                    plp.curdir = fc.getSelectedFile().getParent();
                     plp.open(fc.getSelectedFile().getAbsolutePath());
                 }
         }
@@ -255,6 +259,7 @@ public class Develop extends javax.swing.JFrame {
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setFileFilter(new AsmFilter());
         fc.setAcceptAllFileFilterUsed(false);
+        fc.setCurrentDirectory(new File(plp.curdir));
 
         int retVal = fc.showOpenDialog(null);
 
@@ -286,6 +291,7 @@ public class Develop extends javax.swing.JFrame {
             final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
             fc.setFileFilter(new AsmFilter());
             fc.setAcceptAllFileFilterUsed(false);
+            fc.setCurrentDirectory(new File(plp.curdir));
 
             int retVal = fc.showSaveDialog(null);
 
@@ -836,11 +842,13 @@ public class Develop extends javax.swing.JFrame {
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setFileFilter(new PlpFilter());
         fc.setAcceptAllFileFilterUsed(false);
+        fc.setCurrentDirectory(new File(plp.curdir));
 
         int retVal = fc.showSaveDialog(null);
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
             plp.plpfile = fc.getSelectedFile().getAbsolutePath();
+            plp.curdir = fc.getSelectedFile().getParent();
             if(!plp.plpfile.endsWith(".plp"))
                 plp.plpfile += ".plp";
             plp.save();

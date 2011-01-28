@@ -51,6 +51,7 @@ public class PLPToolApp extends SingleFrameApplication {
         plp.g_prg = new ProgrammerDialog(plp, plp.g_dev, true);
         plp.g_fname = new AsmNameDialog(plp, plp.g_dev, true);
         simUI.getSimDesktop().add(plp.g_ioreg);
+        plp.curdir = (new java.io.File(".")).getAbsolutePath();
 
         plp.g_dev.setVisible(true);
 

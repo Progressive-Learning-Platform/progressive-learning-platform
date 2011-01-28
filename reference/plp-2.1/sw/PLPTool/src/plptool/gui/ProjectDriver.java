@@ -49,6 +49,7 @@ public class ProjectDriver {
     public boolean                             modified;
     public int                                 open_asm;   // current open ASM
     public int                                 main_asm;   // main program
+    public String                              curdir;     // current workiing dir
 
     public plptool.PLPCfg                      cfg;        // Configuration
     public plptool.PLPMsg                      msg;        // Messaging class
