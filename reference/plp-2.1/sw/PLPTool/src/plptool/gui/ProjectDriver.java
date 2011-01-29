@@ -506,6 +506,7 @@ public class ProjectDriver {
                 g_sim.updateComponents();
                 g_sim.setVisible(true);
                 g_err.setVisible(true);
+                ioreg.loadPreset(0, this);
 
                 g_simsh.setVisible(true);
             }
