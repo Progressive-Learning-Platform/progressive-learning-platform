@@ -353,4 +353,21 @@ public class IORegistry {
     public Object[] getAttachedModules() {
         return modules.toArray();
     }
+
+    /**
+     * Loads a preset
+     *
+     * @param index Index of the preset
+     */
+    public int loadPreset(int index, plptool.gui.ProjectDriver plp) {
+        Integer[] modsType = (Integer[]) Presets.presets[index][1];
+        Long[] startAddresses = (Long[]) Presets.presets[index][2];
+        Long[] sizes = (Long[]) Presets.presets[index][3];
+        for(int i = 0; i < modsType.length; i++)
+            plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, plp.g_simsh.getSimDesktop());
+        plp.updateComponents();
+        plp.g_ioreg.refreshModulesTable();
+        
+        return Constants.PLP_OK;
+    }
 }
