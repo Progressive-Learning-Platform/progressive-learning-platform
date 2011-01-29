@@ -28,6 +28,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
 
         cmbPort.removeAllItems();
         cmbPort.addItem("/dev/ttyUSB0");
+        this.setLocationRelativeTo(null);
     }
 
     public javax.swing.JProgressBar getProgressBar() {

@@ -45,7 +45,6 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         super(plp);
     }
     
-    private SerialPort serialPort;
     private CommPort commPort;
     private CommPortIdentifier portIdentifier;
     private InputStream in;
@@ -53,6 +52,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
     public int connect(String portName, int baudRate) throws Exception {
         portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+
         if ( portIdentifier.isCurrentlyOwned() )
         {
             return PLPMsg.E("Serial port " + portName + " is in use.",
@@ -62,13 +62,13 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             commPort = portIdentifier.open(this.getClass().getName(),2000);
 
             if ( commPort instanceof SerialPort ) {
-                serialPort = (SerialPort) commPort;
-                serialPort.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
+                plp.p_port = (SerialPort) commPort;
+                plp.p_port.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
                                                SerialPort.STOPBITS_1,
                                                SerialPort.PARITY_NONE);
 
-                in = serialPort.getInputStream();
-                out = serialPort.getOutputStream();
+                in = plp.p_port.getInputStream();
+                out = plp.p_port.getOutputStream();
             }
             else {
                 return PLPMsg.E(portName + " is not a serial port.",
@@ -83,7 +83,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         try {
             in.close();
             out.close();
-            serialPort.close();
+            plp.p_port.close();
             commPort.close();
 
             return Constants.PLP_OK;
@@ -97,15 +97,14 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         if(plp.asm.isAssembled()) {
             long objCode[] = plp.asm.getObjectCode();
             long addrTable[] = plp.asm.getAddrTable();
-            byte inData;
+            byte inData = '\0';
 
             PLPMsg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
-            out.write('a');
             out.write((byte) (addrTable[0] >> 24));
             out.write((byte) (addrTable[0] >> 16));
             out.write((byte) (addrTable[0] >> 8));
             out.write((byte) (addrTable[0]));
-            inData = (byte) in.read();
+            if(busy) inData = (byte) in.read();
             if(inData != 'f')
                 return PLPMsg.E("Programming failed, no acknowledgement received.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
@@ -120,7 +119,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                         out.write((byte) (addrTable[i] >> 16));
                         out.write((byte) (addrTable[i] >> 8));
                         out.write((byte) (addrTable[i]));
-                        inData = (byte) in.read();
+                        if(busy) inData = (byte) in.read();
                         if(inData != 'f')
                             return PLPMsg.E("Programming failed, no acknowledgement received.",
                                             Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
@@ -131,7 +130,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 out.write((byte) (objCode[i] >> 16));
                 out.write((byte) (objCode[i] >> 8));
                 out.write((byte) (objCode[i]));
-                inData = (byte) in.read();
+                if(busy) inData = (byte) in.read();
                 if(inData != 'f')
                     return PLPMsg.E("Programming failed, no acknowledgement received.",
                                     Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
@@ -142,13 +141,13 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             out.write((byte) (addrTable[0] >> 16));
             out.write((byte) (addrTable[0] >> 8));
             out.write((byte) (addrTable[0]));
-            inData = (byte) in.read();
+            if(busy) inData = (byte) in.read();
             if(inData != 'f')
                 return PLPMsg.E("Programming failed, no acknowledgement received.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
             out.write('j');
-            inData = (byte) in.read();
+            if(busy) inData = (byte) in.read();
             if(inData != 'f')
                 return PLPMsg.E("Programming failed, no acknowledgement received.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);

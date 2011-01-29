@@ -48,6 +48,11 @@ public class PLPMsg {
     public static int markCounter = 0;
 
     /**
+     * Error counter.
+     */
+    public static int errorCounter = 0;
+
+    /**
      * This function either prints out an error message to stdout or the
      * specified JTextArea in the output pointer.
      *
@@ -86,16 +91,16 @@ public class PLPMsg {
     public static void I(String infoStr, Object objIdentifier) {
         if(objIdentifier != null)
             if(output == null)
-                System.out.println("[I] " + objIdentifier.toString() + ": " + infoStr);
+                System.out.println(objIdentifier.toString() + ": " + infoStr);
             else {
-                output.append("[I] " + objIdentifier.toString() + ": " + infoStr + "\n");
+                output.append(objIdentifier.toString() + ": " + infoStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
         else
             if(output == null)
-                System.out.println("[I] " + infoStr);
+                System.out.println(infoStr);
             else {
-                output.append("[I] " + infoStr + "\n");
+                output.append(infoStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
     }

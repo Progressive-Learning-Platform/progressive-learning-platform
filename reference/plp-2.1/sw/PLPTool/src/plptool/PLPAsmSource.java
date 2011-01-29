@@ -57,7 +57,7 @@ public class PLPAsmSource {
 
         } catch(Exception e) {
             PLPMsg.E("Error reading file",
-                            Constants.PLP_GENERIC_ERROR, null);
+                            Constants.PLP_GENERIC_ERROR, this);
         }
     }
 

@@ -51,6 +51,10 @@ public class ProjectDriver {
     public int                                 main_asm;   // main program
     public String                              curdir;     // current workiing dir
 
+    private String                             arch;       // architecture
+    public byte[]                              binimage;   // binary image
+    public String                              hexstring;  // hex string
+
     public plptool.PLPCfg                      cfg;        // Configuration
     public plptool.PLPMsg                      msg;        // Messaging class
 
@@ -82,8 +86,8 @@ public class ProjectDriver {
     // Desktop
     public javax.swing.JDesktopPane            g_desktop;  // Desktop pane
 
-    // Architecture
-    private String                             arch;
+    // Programmer
+    public gnu.io.SerialPort                   p_port;
 
     public ProjectDriver(boolean g, String arch) {
         this.g = g;
@@ -259,6 +263,22 @@ public class ProjectDriver {
             tOut.write(data);
             tOut.flush();
             tOut.closeArchiveEntry();
+        } else if(binimage != null) {
+            PLPMsg.D("Writing out old (dirty) verilog hex code...", 2, this);
+            entry = new TarArchiveEntry("plp.hex");
+            entry.setSize(hexstring.length());
+            tOut.putArchiveEntry(entry);
+            tOut.write(hexstring.getBytes());
+            tOut.flush();
+            tOut.closeArchiveEntry();
+            
+            PLPMsg.D("Writing out old (dirty) binary image...", 2, this);
+            entry = new TarArchiveEntry("plp.image");
+            entry.setSize(binimage.length);
+            tOut.putArchiveEntry(entry);
+            tOut.write(binimage);
+            tOut.flush();
+            tOut.closeArchiveEntry();
         }
 
         tOut.close();
@@ -269,7 +289,7 @@ public class ProjectDriver {
 
         } catch(Exception e) {
             if(Constants.debugLevel >= 10) e.printStackTrace();
-            return PLPMsg.E("savePLPFile: Unable to write to " + plpfile + "\n" +
+            return PLPMsg.E("save(): Unable to write to " + plpfile + "\n" +
                      e, Constants.PLP_FILE_SAVE_ERROR, this);
         }
 
@@ -284,7 +304,7 @@ public class ProjectDriver {
         PLPMsg.I("Opening " + path, null);
 
         if(!plpFile.exists())
-            return PLPMsg.E("openPLPFile(" + path + "): File not found.",
+            return PLPMsg.E("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
         asms = new ArrayList<plptool.PLPAsmSource>();
@@ -304,11 +324,13 @@ public class ProjectDriver {
 
             if(entry.getName().endsWith("asm")) {
                 asms.add(new plptool.PLPAsmSource(metaStr, entry.getName(), asmIndex));
-                PLPMsg.I(" - ASM file [" + asmIndex + "]: " + entry.getName(), null);
+                PLPMsg.I(asmIndex + ": " 
+                         + entry.getName()
+                         + " (" + entry.getSize() + " bytes)", null);
                 asmIndex++;
             }
 
-            if(entry.getName().equals("plp.metafile")) {
+            else if(entry.getName().equals("plp.metafile")) {
                 meta = metaStr;
                 Scanner metaScanner;
 
@@ -326,19 +348,27 @@ public class ProjectDriver {
                 metaScanner.findWithinHorizon("DIRTY=", 0);
                 if(metaScanner.nextInt() == 0)
                     dirty = false;
-                
+            }
+
+            else if(entry.getName().equals("plp.image")) {
+                binimage = new byte[(int) entry.getSize()];
+                binimage = image;
+            }
+
+            else if(entry.getName().equals("plp.hex")) {
+                hexstring = new String(image);
             }
         }
         
         if(asmIndex == 0) {
-            return PLPMsg.E("openPLPFile(" + path + "): no .asm files found.",
+            return PLPMsg.E("open(" + path + "): no .asm files found.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
         }
         catch(Exception e) {
             e.printStackTrace();
-            return PLPMsg.E("openPLPFile(" + path + "): Invalid PLP archive.",
+            return PLPMsg.E("open(" + path + "): Invalid PLP archive.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
@@ -416,6 +446,7 @@ public class ProjectDriver {
     public int assemble() {
 
         PLPMsg.I("Assembling...", null);
+        PLPMsg.errorCounter = 0;
 
         boolean wasAssembled = false;
 
@@ -521,9 +552,13 @@ public class ProjectDriver {
             }
 
             if(timeoutCounter == 20) {
-                prg.stop();
-                return PLPMsg.E("Programming timed out.",
-                                Constants.PLP_PRG_TIMEOUT, this);
+                PLPMsg.E("Programming timed out, killing programmer thread.",
+                         Constants.PLP_PRG_TIMEOUT, this);
+                p_port.getInputStream().close();
+                prg.interrupt();
+                p_port.close();
+                prg.busy = false;
+                return Constants.PLP_PRG_TIMEOUT;
             }
 
         } else
@@ -531,6 +566,7 @@ public class ProjectDriver {
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
 
         } catch(Exception e) {
+            e.printStackTrace();
             return PLPMsg.E("Programming failed.\n" + e,
                             Constants.PLP_GENERIC_ERROR, this);
         }

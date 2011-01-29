@@ -22,6 +22,7 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.PLPMsg;
 import plptool.Constants;
+import plptool.PLPCfg;
 import plptool.mods.IORegistry;
 
 /**
@@ -52,6 +53,14 @@ public class PLPToolApp extends SingleFrameApplication {
         plp.g_fname = new AsmNameDialog(plp, plp.g_dev, true);
         simUI.getSimDesktop().add(plp.g_ioreg);
         plp.curdir = (new java.io.File(".")).getAbsolutePath();
+
+        java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        plp.g_dev.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
+                          (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
+        plp.g_dev.setLocationRelativeTo(null);
+        plp.g_simsh.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
+                          (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
+        plp.g_simsh.setLocationRelativeTo(null);
 
         plp.g_dev.setVisible(true);
 
@@ -95,7 +104,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.exit(-1);
             } else {
                 ProjectDriver plp = new ProjectDriver(false, "plpmips");
-                plp.create(args[1]);
+                if(!(plp.create(args[1]) == Constants.PLP_OK)) return;
                 plp.plpfile = args[2];
                 plp.save();
                 if(plp.asm.isAssembled()) {
@@ -114,19 +123,19 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -s <plpfile>");
             } else {
                 ProjectDriver plp = new ProjectDriver(false, "plpmips");
-                plp.open(args[1]);
+                if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
                 plp.assemble();
                 if(plp.asm.isAssembled())
                     plptool.mips.SimCLI.simCL(plp);
             }
         }
         else if(args.length > 0 && args[0].equals("-p")) {
-            if(args.length != 4) {
-                System.out.println("Usage: PLPTool -p <plpfile> <port> <baud>");
+            if(args.length != 3) {
+                System.out.println("Usage: PLPTool -p <plpfile> <port>");
             } else {
                 try {
                     ProjectDriver plp = new ProjectDriver(false, "plpmips");
-                    plp.open(args[1]);
+                    if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
                     plp.assemble();
                     plp.program(args[2]);
                 } catch(Exception e) { }
@@ -140,14 +149,18 @@ public class PLPToolApp extends SingleFrameApplication {
             plpFilePath = args[0];
             launch(PLPToolApp.class, args);
         }
-
         else if(args.length == 0) {
             launch(PLPToolApp.class, args);
         }
         else {
             PLPMsg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
             System.out.println();
-            System.out.println("Run PLPTool with no command line arguments to launch GUI tool.");
+            System.out.println("Usage:\n");
+            System.out.println("  java -jar PLPTool.jar");
+            System.out.println("       Launch PLP Tool GUI");
+            System.out.println();
+            System.out.println("  java -jar PLPTool.jar <plpfile>");
+            System.out.println("       Launch PLP Tool GUI and open <plpfile>");
             System.out.println();
             System.out.println("Non-GUI options:\n");
             System.out.println("  -a   <asm> <out>");
@@ -160,28 +173,8 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("       Prints out the list of source files contained in <plpfile>.");
             System.out.println("       Creates <plpfile> if it does not exist with main.asm as source file.");
             System.out.println();
-            System.out.println("  Other options WITH -plp <plpfile>...");
-            System.out.println();
-            System.out.println("  -c <asm>");
-            System.out.println("       Create a PLP project <plpfile> and import <asm> into the project.");
-            System.out.println();
-            System.out.println("  -p <port>");
-            System.out.println("       Program PLP target board with <plpfile> using serial port <port>.");
-            System.out.println();
-            System.out.println("  -a");
-            System.out.println("       Assemble <plpfile>.");
-            System.out.println();
-            System.out.println("  -i <asm>");
-            System.out.println("       Import <asm> into <plpfile>.");
-            System.out.println();
-            System.out.println("  -d <directory>");
-            System.out.println("       Import all files within <directory> into <plpfile>.");
-            System.out.println();
-            System.out.println("  -e <index> <file>");
-            System.out.println("       Export source file with <index> as <file>.");
-            System.out.println();
-            System.out.println("  -r <index>");
-            System.out.println("       Remove source file with <index> from <plpfile>.");
+            System.out.println("  -plp");
+            System.out.println("       Prints out command-line plp file manipulator commands.");
             System.out.println();
         }
     }
