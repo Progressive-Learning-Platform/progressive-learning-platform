@@ -31,13 +31,13 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="progressBar" alignment="1" pref="474" max="32767" attributes="0"/>
+                  <Component id="progressBar" alignment="1" pref="491" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="lblSerialPort" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="187" max="32767" attributes="0"/>
                       <Component id="cmbPort" min="-2" pref="231" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="txtStatus" alignment="0" pref="474" max="32767" attributes="0"/>
+                  <Component id="txtStatus" alignment="0" pref="491" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="btnClose" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>

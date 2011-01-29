@@ -32,4 +32,7 @@ public class PLPCfg {
     public static boolean cfgRefreshGUIDuringSimRun        = true;
     public static int     cfgSimDelay                      = 100;
     public static boolean cfgVerbose                       = true;
+
+    public static double  relativeDefaultWindowWidth       = 0.8;
+    public static double  relativeDefaultWindowHeight      = 0.8;
 }

@@ -24,11 +24,13 @@ public class OptionsFrame extends javax.swing.JFrame {
     /** Creates new form PLPOptions */
     public OptionsFrame() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     public OptionsFrame(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /** This method is called from within the constructor to

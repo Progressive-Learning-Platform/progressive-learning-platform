@@ -31,8 +31,10 @@ public class ProjectFileManipulator {
     public static void CLI(String[] args) {
         ProjectDriver plp = new ProjectDriver(false, "plpmips");
 	
-        if(args == null || args.length < 2) 
+        if(args == null || args.length < 2) {
+            helpMessage();
             return;
+        }
 
         File plpHandler = new File(args[1]);
 	
@@ -50,17 +52,30 @@ public class ProjectFileManipulator {
             return;
 
         if(args[2].equals("-importasm") || args[2].equals("-i")) {
-            if(!(args.length == 4)) {
+            if((args.length < 4)) {
                 PLPMsg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
             String temp = plp.plpfile;
 
-            if(!plpHandler.exists())
-                plp.create(args[3]);
-            else
-                plp.importAsm(args[3]);
+            for(int i = 3; i < args.length; i++)
+                if(!plpHandler.exists()) {
+                    if(args[i].endsWith(".plp")) {
+                        ProjectDriver tempPlp = new ProjectDriver(false, "plpmips");
+                        tempPlp.open(args[i]);
+                    }
+                    else if(i == 3)
+                        plp.create(args[i]);
+                    else
+                        plp.importAsm(args[i]);
+                }
+                else {
+                    if(args[i].endsWith(".plp")) {
+                    }
+                    else
+                    plp.importAsm(args[i]);
+                }
 
             plp.plpfile = temp;
             plp.save();
@@ -102,7 +117,7 @@ public class ProjectFileManipulator {
             plp.save();
         }
         else if(args[2].equals("-v")) {
-            if(!(args.length == 4)) {
+            if(!(args.length == 4 || args.length == 5)) {
                 PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
@@ -110,7 +125,14 @@ public class ProjectFileManipulator {
             int index = Integer.parseInt(args[3]);
             if(index < 0 || index >= plp.asms.size())
                 return;
-            PLPMsg.M(plp.getAsm(index).getAsmString());
+            String asmStr = plp.getAsm(index).getAsmString();
+            if(args.length == 4)
+                PLPMsg.M(asmStr);
+            else  {
+                String[] splitStr = asmStr.split("\\r?\\n");
+                int lineNum = Integer.parseInt(args[4]);
+                PLPMsg.M(lineNum + "\t: " + splitStr[lineNum - 1]);
+            }
         }
 
         else if(args[2].equals("-m")) {
@@ -190,5 +212,31 @@ public class ProjectFileManipulator {
             PLPMsg.I("Invalid option: " + args[2], null);
             return;
         }         
+    }
+
+    public static void helpMessage() {
+        System.out.println("  PLP project file manipulator commands, to be run with -plp <plpfile> [options]");
+        System.out.println();
+        System.out.println("  -c <asm>");
+        System.out.println("       Create a PLP project <plpfile> and import <asm> into the project.");
+        System.out.println();
+        System.out.println("  -p <port>");
+        System.out.println("       Program PLP target board with <plpfile> using serial port <port>.");
+        System.out.println();
+        System.out.println("  -a");
+        System.out.println("       Assemble <plpfile>.");
+        System.out.println();
+        System.out.println("  -i <asm 1> <asm 2> ...");
+        System.out.println("       Import <asm-x> into <plpfile>.");
+        System.out.println();
+        System.out.println("  -d <directory>");
+        System.out.println("       Import all files within <directory> into <plpfile>.");
+        System.out.println();
+        System.out.println("  -e <index> <file>");
+        System.out.println("       Export source file with <index> as <file>.");
+        System.out.println();
+        System.out.println("  -r <index>");
+        System.out.println("       Remove source file with <index> from <plpfile>.");
+        System.out.println();
     }
 }

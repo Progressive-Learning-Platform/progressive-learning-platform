@@ -33,6 +33,7 @@ public class AsmNameDialog extends javax.swing.JDialog {
         initComponents();
         this.plp = plp;
         txtName.setText("");
+        this.setLocationRelativeTo(null);
     }
 
     public javax.swing.JDialog getDialog() {

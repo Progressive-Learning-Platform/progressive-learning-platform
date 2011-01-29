@@ -51,6 +51,7 @@ public class SimShell extends javax.swing.JFrame {
         this.plp = plp;
 
         initComponents();
+        this.setLocationRelativeTo(null);
         PLPMsg.M("PLPTool Simulator GUI Loaded\n");
     }
 

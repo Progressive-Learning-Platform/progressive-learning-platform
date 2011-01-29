@@ -342,8 +342,11 @@ public class Asm extends plptool.PLPAsm {
                 asmIndex = prevAsmIndex;
                 directiveOffset++;
 
-                if(recursionRetVal != 0)
+                if(recursionRetVal != 0) {
+                    PLPMsg.errorCounter++;
                     return recursionRetVal;
+                }
+
             }
 
             // .org directive

@@ -88,6 +88,8 @@ public class Develop extends javax.swing.JFrame {
         undoManager = new javax.swing.undo.UndoManager();
         txtEditor.getDocument().addUndoableEditListener(undoManager);
 
+        this.setLocationRelativeTo(null);
+
         PLPMsg.M("Welcome to Progressive Learning Platform Software Tool version " + Constants.versionString);
     }
 

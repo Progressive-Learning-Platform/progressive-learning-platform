@@ -14,6 +14,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         super(parent);
         initComponents();
         getRootPane().setDefaultButton(closeButton);
+        this.setLocationRelativeTo(null);
     }
 
     @Action public void closeAboutBox() {
