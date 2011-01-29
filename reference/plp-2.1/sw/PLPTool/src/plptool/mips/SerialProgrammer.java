@@ -104,7 +104,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             out.write((byte) (addrTable[0] >> 16));
             out.write((byte) (addrTable[0] >> 8));
             out.write((byte) (addrTable[0]));
-            if(busy) inData = (byte) in.read();
+            inData = (byte) in.read();
             if(inData != 'f')
                 return PLPMsg.E("Programming failed, no acknowledgement received.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
