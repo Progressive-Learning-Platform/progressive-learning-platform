@@ -29,7 +29,7 @@ public class Constants {
             "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
             "This software is licensed under GPLv3.\n";
 
-    public static final int debugLevel = 3;
+    public static final int debugLevel = 1;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
 
     public static final int PLP_BAUDRATE                         = 57600;
