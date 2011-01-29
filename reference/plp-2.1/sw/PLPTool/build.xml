@@ -72,6 +72,13 @@
 
     -->
 
+    <target name="-pre-jar">
+        <copy file="native-libs/rxtxSerial32.dll" todir="dist" />
+        <copy file="native-libs/rxtxSerial64.dll" todir="dist" />
+        <copy file="runscripts/PLPToolWin32.bat" todir="dist" />
+        <copy file="runscripts/PLPToolWin64.bat" todir="dist" />
+    </target>
+
     <target name="package-for-store" depends="jar">
 
         <!-- Change the value of this property to be the name of your JAR,
@@ -104,6 +111,11 @@
             <zipfileset src="${store.dir}/temp_final.jar"
             excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
         </zip>
+
+        <copy file="native-libs/rxtxSerial32.dll" todir="${store.dir}" />
+        <copy file="native-libs/rxtxSerial64.dll" todir="${store.dir}" />
+        <copy file="runscripts/PLPToolStaticWin32.bat" tofile="${store.dir}/PLPToolWin32.bat" />
+        <copy file="runscripts/PLPToolStaticWin64.bat" tofile="${store.dir}/PLPToolWin64.bat" />
 
         <delete file="${store.dir}/temp_final.jar"/>
 
