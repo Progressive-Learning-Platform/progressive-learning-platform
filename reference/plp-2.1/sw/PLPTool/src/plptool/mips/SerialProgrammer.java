@@ -100,6 +100,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             byte inData = '\0';
 
             PLPMsg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
+            out.write('a');
             out.write((byte) (addrTable[0] >> 24));
             out.write((byte) (addrTable[0] >> 16));
             out.write((byte) (addrTable[0] >> 8));
