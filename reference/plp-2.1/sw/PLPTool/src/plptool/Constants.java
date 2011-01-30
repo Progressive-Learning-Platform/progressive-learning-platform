@@ -27,9 +27,9 @@ public class Constants {
     public static final String copyrightString =
             "PLP Java Tool version " + versionString + "\n" +
             "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
-            "This software is licensed under GPLv3.\n";
+            "This software is licensed under GPLv3.";
 
-    public static final int debugLevel = 1;
+    public static int debugLevel = 0;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
 
     public static final int PLP_BAUDRATE                         = 57600;
@@ -125,6 +125,14 @@ public class Constants {
 
     public static final int PLP_LONG_SIM                         = 100;
 
+    // OS Constants
+    public static final int PLP_OS_UNKNOWN                       = 0;
+    public static final int PLP_OS_LINUX_32                      = 1;
+    public static final int PLP_OS_LINUX_64                      = 2;
+    public static final int PLP_OS_WIN_32                        = 4;
+    public static final int PLP_OS_WIN_64                        = 8;
+    public static final int PLP_OS_MACOSX                        = 16;
+    
     // Flags
     public static final boolean FLAGS_ALIGNED_MEMORY             = true;
 }

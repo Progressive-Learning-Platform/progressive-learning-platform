@@ -25,7 +25,8 @@ public abstract class PLPSerialProgrammer extends Thread {
         try {
 
         busy = true;
-        programWithAsm();
+        if(plp.p_port != null)
+            programWithAsm();
         close();
         
         } catch(Exception e) {

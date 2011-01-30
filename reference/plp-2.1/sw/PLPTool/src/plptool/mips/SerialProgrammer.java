@@ -98,6 +98,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             long objCode[] = plp.asm.getObjectCode();
             long addrTable[] = plp.asm.getAddrTable();
             byte inData = '\0';
+            plp.p_port.enableReceiveTimeout(500);
 
             PLPMsg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
             out.write('a');
@@ -106,13 +107,26 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             out.write((byte) (addrTable[0] >> 8));
             out.write((byte) (addrTable[0]));
             if(busy) inData = (byte) in.read();
-            if(inData != 'f')
-                return PLPMsg.E("Programming failed, no acknowledgement received. " +
-                                "Received: " + String.format("0x%x", inData),
+            if(inData != 'f') {
+                PLPMsg.D("Acknowledgement byte: " +
+                         String.format("0x%x", inData), 2, this);
+                return PLPMsg.E("Programming failed, no/invalid acknowledgement received. " +
+                                "Check if the board is in programming mode.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+            }
 
             for(int i = 0; i < objCode.length; i++) {
                 progress = i;
+                plp.p_progress = i;
+
+                if(plp.g()) {
+                    plp.g_prg.getProgressBar().setValue(progress);
+                    plp.g_prg.getStatusField().setText(progress + ": " +
+                            String.format("0x%08x", addrTable[progress]) + " " +
+                            String.format("0x%08x", objCode[progress]));
+                    plp.g_prg.repaint();
+                }
+
                 PLPMsg.D(progress + " out of " + (objCode.length - 1), 3, this);
                 if(i < objCode.length - 1) {
                     if(addrTable[i + 1] != addrTable[i] + 4) {
