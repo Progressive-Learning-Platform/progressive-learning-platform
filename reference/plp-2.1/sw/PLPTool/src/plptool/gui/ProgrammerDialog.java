@@ -11,6 +11,9 @@
 
 package plptool.gui;
 
+import plptool.Constants;
+import plptool.PLPToolbox;
+
 /**
  *
  * @author wira
@@ -27,7 +30,23 @@ public class ProgrammerDialog extends javax.swing.JDialog {
         this.plp = plp;
 
         cmbPort.removeAllItems();
-        cmbPort.addItem("/dev/ttyUSB0");
+        if(PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_32 ||
+           PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_64) {
+            cmbPort.addItem("/dev/ttyUSB0");
+            cmbPort.addItem("/dev/ttyUSB1");
+            cmbPort.addItem("/dev/ttyS0");
+            cmbPort.addItem("/dev/ttyS1");
+        }
+        if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
+           PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
+            cmbPort.addItem("COM1");
+            cmbPort.addItem("COM2");
+            cmbPort.addItem("COM3");
+            cmbPort.addItem("COM4");
+        }
+        else
+            cmbPort.addItem("Specify your serial port here.");
+        
         this.setLocationRelativeTo(null);
     }
 
@@ -37,6 +56,10 @@ public class ProgrammerDialog extends javax.swing.JDialog {
 
     public javax.swing.JTextField getStatusField() {
         return txtStatus;
+    }
+
+    private void program() {
+        plp.program((String) cmbPort.getSelectedItem());
     }
 
     /** This method is called from within the constructor to
@@ -132,7 +155,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDownloadProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadProgramActionPerformed
-        plp.program((String) cmbPort.getSelectedItem());
+        program();
     }//GEN-LAST:event_btnDownloadProgramActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed

@@ -92,7 +92,23 @@ public class PLPToolApp extends SingleFrameApplication {
     public static void main(String[] args) {
         System.out.println("\n" + Constants.copyrightString);
 
+        if(Constants.debugLevel >= 1)
+            plptool.PLPToolbox.getOS(true);
+
+        System.out.println();
+
         java.io.File fileToOpen = null;
+
+        if(args.length >= 2 && args[0].equals("-d")) {
+            Constants.debugLevel = Integer.parseInt(args[1]);
+            System.out.println("Debug level set to " + Constants.debugLevel);
+            if(args.length > 2) {
+                String[] newargs = new String[args.length - 2];
+                System.arraycopy(args, 2, newargs, 0, newargs.length);
+                args = newargs;
+            } else
+                args = new String[0];
+        }
 
         if(args.length == 1) {
             fileToOpen = new java.io.File(args[0]);

@@ -88,6 +88,8 @@ public class ProjectDriver {
 
     // Programmer
     public gnu.io.SerialPort                   p_port;
+    public int                                 p_progress;
+    public TimeoutWatcher                      p_watchdog;
 
     public ProjectDriver(boolean g, String arch) {
         this.g = g;
@@ -518,49 +520,23 @@ public class ProjectDriver {
     public int program(String port) {
         PLPMsg.I("Programming to " + port, this);
 
-        int timeoutCounter = 0;
-        int oldProgress = 0;
-
         try {
 
         if(arch.equals("plpmips") && asm != null && asm.isAssembled()) {
             prg = new plptool.mips.SerialProgrammer(this);
             prg.connect(port, Constants.PLP_BAUDRATE);
+            p_progress = 0;
+            p_watchdog = new TimeoutWatcher(this);
 
             if(g) {
                 g_prg.getProgressBar().setMinimum(0);
                 g_prg.getProgressBar().setMaximum(asm.getObjectCode().length - 1);
             }
 
+            PLPMsg.D("Starting worker threads", 2, this);
             prg.start();
-
-            while(prg.isAlive() && timeoutCounter != 20) {
-                if(prg.progress == oldProgress)
-                    timeoutCounter++;
-                else
-                    timeoutCounter = 0;
-
-                oldProgress = prg.progress;
-
-                if(g) {
-                    g_prg.getProgressBar().setValue(prg.progress);
-                    g_prg.getStatusField().setText(prg.progress + ": " +
-                            String.format("0x%08x", asm.getAddrTable()[prg.progress]) + " " +
-                            String.format("0x%08x", asm.getObjectCode()[prg.progress]));
-                }
-
-                Thread.sleep(50);
-            }
-
-            if(timeoutCounter == 20) {
-                PLPMsg.E("Programming timed out, killing programmer thread.",
-                         Constants.PLP_PRG_TIMEOUT, this);
-                p_port.getInputStream().close();
-                prg.interrupt();
-                p_port.close();
-                prg.busy = false;
-                return Constants.PLP_PRG_TIMEOUT;
-            }
+            p_watchdog.start();
+            return Constants.PLP_OK;
 
         } else
             return PLPMsg.E("No assembled sources.",
@@ -571,9 +547,6 @@ public class ProjectDriver {
             return PLPMsg.E("Programming failed.\n" + e,
                             Constants.PLP_GENERIC_ERROR, this);
         }
-
-        PLPMsg.I("Done.", this);
-        return Constants.PLP_OK;
     }
 
     public PLPAsmSource getAsm(int index) {

@@ -58,4 +58,26 @@ public class PLPToolbox {
 
         return tStr;
     }
+
+    public static int getOS(boolean print) {
+        String osIdentifier = System.getProperty("os.name");
+        String osArch = System.getProperty("os.arch");
+
+        if(print) PLPMsg.M(osIdentifier + " " + osArch);
+
+        if(osIdentifier.equals("Linux")) {
+            if(osArch.equals("x86") || osArch.equals("i386"))
+                return Constants.PLP_OS_LINUX_32;
+            else if(osArch.equals("x86_64"))
+                return Constants.PLP_OS_LINUX_64;
+        }
+        else if(osIdentifier.startsWith("Windows")) {
+            if(osArch.equals("x86") || osArch.equals("i386"))
+                return Constants.PLP_OS_WIN_32;
+            else if(osArch.equals("x86_64"))
+                return Constants.PLP_OS_WIN_64;
+        }
+
+        return Constants.PLP_OS_UNKNOWN;
+    }
 }
