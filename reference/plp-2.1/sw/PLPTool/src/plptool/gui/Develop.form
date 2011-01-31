@@ -470,8 +470,8 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="scrollerEditor" alignment="0" pref="676" max="32767" attributes="0"/>
                   <Component id="txtCurFile" alignment="0" pref="676" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="676" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -479,15 +479,23 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="txtCurFile" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollerEditor" pref="260" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="259" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JScrollPane" name="scrollerEditor">
+            <Component class="javax.swing.JTextField" name="txtCurFile">
               <Properties>
-                <Property name="name" type="java.lang.String" value="scrollerEditor" noResource="true"/>
+                <Property name="background" type="java.awt.Color" resourceKey="txtCurFile.background"/>
+                <Property name="editable" type="boolean" value="false"/>
+                <Property name="text" type="java.lang.String" resourceKey="txtCurFile.text"/>
+                <Property name="name" type="java.lang.String" value="txtCurFile" noResource="true"/>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="jScrollPane1" noResource="true"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -495,7 +503,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JEditorPane" name="txtEditor">
+                <Component class="javax.swing.JTextPane" name="txtEditor">
                   <Properties>
                     <Property name="font" type="java.awt.Font" resourceKey="txtEditor.font"/>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -515,14 +523,6 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JTextField" name="txtCurFile">
-              <Properties>
-                <Property name="background" type="java.awt.Color" resourceKey="txtCurFile.background"/>
-                <Property name="editable" type="boolean" value="false"/>
-                <Property name="text" type="java.lang.String" resourceKey="txtCurFile.text"/>
-                <Property name="name" type="java.lang.String" value="txtCurFile" noResource="true"/>
-              </Properties>
-            </Component>
           </SubComponents>
         </Container>
       </SubComponents>

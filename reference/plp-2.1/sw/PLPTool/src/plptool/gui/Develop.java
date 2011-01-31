@@ -22,6 +22,13 @@ import javax.swing.tree.*;
 
 import java.io.File;
 
+//For Syntax Highlighting
+import javax.swing.text.*;
+import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import plptool.PLPMsg;
 import plptool.Constants;
 
@@ -30,10 +37,24 @@ import plptool.Constants;
  * @author wira
  */
 public class Develop extends javax.swing.JFrame {
+    final static int RTYPE = 0;
+    final static int ITYPE = 1;
+    final static int BRANCH = 2;
+    final static int JUMP = 3;
+    final static int MEMTYPE = 4;
+    final static int NOP = 5;
+    final static int REG = 6;
+    final static int IMM = 7;
+    final static int LABEL = 8;
+    final static int COMMENT = 9;
+    final static int SYS = 10;
 
     boolean trackChanges = false;
     ProjectDriver plp;
     javax.swing.undo.UndoManager undoManager;
+
+    int lastline = 0;
+    boolean nothighlighting = true;
     
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
@@ -99,8 +120,10 @@ public class Develop extends javax.swing.JFrame {
 
     public void notifyplpModified() {
         if(trackChanges) {
-            plp.modified = true;
-            plp.updateWindowTitle();
+            if(nothighlighting) {
+                plp.modified = true;
+                plp.updateWindowTitle();
+            }
         }
     }
 
@@ -308,6 +331,127 @@ public class Develop extends javax.swing.JFrame {
         plp.g_about.setVisible(true);
     }
 
+    private void syntaxHighlight() {
+        nothighlighting = false;
+        int currpos = 0;
+        int doclength = txtEditor.getText().split("\n").length;
+        SimpleAttributeSet[] styles = setupHighlighting();
+        for(int i=0;i<doclength;i++) {
+            String currline = txtEditor.getText().split("\n")[i];
+            syntaxHighlight(currline, currpos, styles);
+            currpos += txtEditor.getText().split("\n")[i].length() + 1;
+        }
+        nothighlighting = true;
+    }
+
+    public void syntaxHighlight(int line) {
+        nothighlighting = false;
+        String currline = txtEditor.getText().split("\n")[line];
+        int currpos = 0;
+        for(int i=0;i<line;i++) {
+            currpos += txtEditor.getText().split("\n")[i].length() + 1;
+        }
+        syntaxHighlight(currline, currpos, setupHighlighting());
+        nothighlighting = true;
+    }
+
+    //Do not call this class without setting highlighting to true
+    private void syntaxHighlight(String text, int position, SimpleAttributeSet[] styles) {
+        StyledDocument doc = txtEditor.getStyledDocument();
+        int currentposition = 0;
+        int startposition = 0;
+        int texttype = -1;
+        String currtext = "";
+        while (currentposition < text.length()) {
+            StringBuilder currtextbuffer = new StringBuilder();
+            while (currentposition < text.length() && (text.charAt(currentposition) == '\t' || text.charAt(currentposition) == ' ' || text.charAt(currentposition) == ',')) {
+                    currentposition++;
+            }
+            startposition = currentposition;
+            while (currentposition < text.length() && (text.charAt(currentposition) != '\t' && text.charAt(currentposition) != ' ')) {
+                    currtextbuffer.append(text.charAt(currentposition));
+                    currentposition++;
+            }
+            currtext = currtextbuffer.toString();
+
+            if(texttype == COMMENT || currtext.contains("#")) {
+                    texttype = COMMENT;
+            } else if (texttype == SYS || currtext.contains(".")) {
+                    texttype = SYS;
+            } else if(currtext.contains(":")) {
+                    texttype = LABEL;
+            } else if(currtext.contains("$")) {
+                    texttype = REG;
+            } else if(isimmediate(currtext)) {
+                    texttype = IMM;
+            } else if(currtext.equals("nop")) {
+                    texttype = NOP;
+            } else if (texttype == -1) {
+                if(currtext.contains("w")) {
+                        texttype = MEMTYPE;
+                } else if(currtext.contains("j")) {
+                        texttype = JUMP;
+                } else if(currtext.contains("b")) {
+                        texttype = BRANCH;
+                } else if(currtext.contains("i")) {
+                        texttype = ITYPE;
+                } else {
+                        texttype = RTYPE;
+                }
+            } else {
+                texttype = LABEL;
+            }
+
+            try {
+                doc.remove(startposition+position,currentposition-startposition);
+            } catch (BadLocationException ble) {
+                System.err.println("Deletion error   position:" + position + "," + currtext.length());
+            }
+
+            try {
+                doc.insertString(startposition+position,currtext,styles[texttype]);
+            } catch (BadLocationException ble) {
+                System.err.println("Insertion error   position:" + position);
+            }
+            
+            currentposition++;
+        }
+    }
+
+    private boolean isimmediate(String num) {
+        Pattern pattern0 = Pattern.compile("-?[0-9]*");
+        Matcher matcher0 = pattern0.matcher(num);
+        Pattern pattern1 = Pattern.compile("0x[0-9a-fA-F]*");
+        Matcher matcher1 = pattern1.matcher(num);
+        return (matcher0.matches() || matcher1.matches());
+    }
+
+    private SimpleAttributeSet[] setupHighlighting() {
+        Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+        StyleConstants.setFontFamily(def,"Monospaced");
+        StyleConstants.setFontSize(def,11);
+        SimpleAttributeSet[] styles = new SimpleAttributeSet[11];
+        styles[RTYPE] = new SimpleAttributeSet(def);
+        StyleConstants.setForeground(styles[0],Color.blue);
+        styles[ITYPE] = new SimpleAttributeSet(styles[RTYPE]);
+        styles[BRANCH] = new SimpleAttributeSet(styles[RTYPE]);
+        styles[JUMP] = new SimpleAttributeSet(styles[RTYPE]);
+        styles[MEMTYPE] = new SimpleAttributeSet(styles[RTYPE]);
+        styles[NOP] = new SimpleAttributeSet(styles[RTYPE]);
+        StyleConstants.setForeground(styles[NOP],Color.gray);
+        styles[REG] = new SimpleAttributeSet(def);
+        StyleConstants.setForeground(styles[REG], Color.red);
+        styles[IMM] = new SimpleAttributeSet(def);
+        StyleConstants.setForeground(styles[IMM], Color.orange);
+        styles[LABEL] = new SimpleAttributeSet(def);
+        StyleConstants.setBold(styles[LABEL], true);
+        styles[COMMENT] = new SimpleAttributeSet(def);
+        StyleConstants.setForeground(styles[COMMENT], Color.green);
+        styles[SYS] = new SimpleAttributeSet(def);
+        StyleConstants.setForeground(styles[SYS], Color.pink);
+        return styles;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -326,9 +470,9 @@ public class Develop extends javax.swing.JFrame {
         scrollerTree = new javax.swing.JScrollPane();
         treeProject = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
-        scrollerEditor = new javax.swing.JScrollPane();
-        txtEditor = new javax.swing.JEditorPane();
         txtCurFile = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtEditor = new javax.swing.JTextPane();
         toolbar = new javax.swing.JToolBar();
         btnAssemble = new javax.swing.JButton();
         btnSimulate = new javax.swing.JButton();
@@ -432,7 +576,12 @@ public class Develop extends javax.swing.JFrame {
 
         jPanel1.setName("jPanel1"); // NOI18N
 
-        scrollerEditor.setName("scrollerEditor"); // NOI18N
+        txtCurFile.setBackground(resourceMap.getColor("txtCurFile.background")); // NOI18N
+        txtCurFile.setEditable(false);
+        txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
+        txtCurFile.setName("txtCurFile"); // NOI18N
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
 
         txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
         txtEditor.setMinimumSize(new java.awt.Dimension(1, 1));
@@ -454,26 +603,21 @@ public class Develop extends javax.swing.JFrame {
                 txtEditorKeyReleased(evt);
             }
         });
-        scrollerEditor.setViewportView(txtEditor);
-
-        txtCurFile.setBackground(resourceMap.getColor("txtCurFile.background")); // NOI18N
-        txtCurFile.setEditable(false);
-        txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
-        txtCurFile.setName("txtCurFile"); // NOI18N
+        jScrollPane1.setViewportView(txtEditor);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
             .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollerEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE))
         );
 
         splitter.setRightComponent(jPanel1);
@@ -805,6 +949,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         openPLPFile();
+        syntaxHighlight();
     }//GEN-LAST:event_menuOpenActionPerformed
 
     private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
@@ -822,6 +967,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
         plp.save();
+        syntaxHighlight();
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
@@ -872,7 +1018,9 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSetMainProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
         plp.main_asm = plp.open_asm;
-        plp.modified = true;
+        if(nothighlighting) {
+            plp.modified = true;
+        }
         plp.refreshProjectView(true);
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
 
@@ -900,14 +1048,6 @@ public class Develop extends javax.swing.JFrame {
         }
 }//GEN-LAST:event_treeProjectMousePressed
 
-    private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
-        int caretPos = txtEditor.getCaretPosition();
-
-        int line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
-
-        lblPosition.setText(caretPos + " line: " + line);
-}//GEN-LAST:event_txtEditorCaretUpdate
-
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
         PLPMsg.output = txtOutput;
 
@@ -920,21 +1060,9 @@ public class Develop extends javax.swing.JFrame {
             plp.simulate();
     }//GEN-LAST:event_btnSimulateActionPerformed
 
-    private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
-        
-    }//GEN-LAST:event_txtEditorKeyReleased
-
-    private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-
-    }//GEN-LAST:event_txtEditorKeyTyped
-
     private void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
         about();
     }//GEN-LAST:event_btnAboutActionPerformed
-
-    private void txtEditorKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyPressed
-
-    }//GEN-LAST:event_txtEditorKeyPressed
 
     private void menuExportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExportASMActionPerformed
         exportASM();
@@ -975,6 +1103,37 @@ public class Develop extends javax.swing.JFrame {
             undoManager.redo();
     }//GEN-LAST:event_menuRedoActionPerformed
 
+    private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
+        int caretPos = txtEditor.getCaretPosition();
+
+        int line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
+
+        if (line != lastline) {
+            //Would rather use invokeAndWait, but there are some issues concerning
+            //calling from within this method
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    syntaxHighlight(lastline);
+                }
+            });
+            lastline = line;
+        }
+
+        lblPosition.setText(caretPos + " line: " + line);
+    }//GEN-LAST:event_txtEditorCaretUpdate
+
+    private void txtEditorKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEditorKeyPressed
+
+    private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEditorKeyReleased
+
+    private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEditorKeyTyped
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnAssemble;
@@ -982,6 +1141,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPanel devMainPane;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
@@ -1017,13 +1177,12 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuProject;
     private javax.swing.JScrollPane scrollOutput;
     private javax.swing.JScrollPane scrollPos;
-    private javax.swing.JScrollPane scrollerEditor;
     private javax.swing.JScrollPane scrollerTree;
     private javax.swing.JSplitPane splitter;
     private javax.swing.JToolBar toolbar;
     private javax.swing.JTree treeProject;
     private javax.swing.JTextField txtCurFile;
-    private javax.swing.JEditorPane txtEditor;
+    private javax.swing.JTextPane txtEditor;
     private javax.swing.JTextArea txtOutput;
     // End of variables declaration//GEN-END:variables
 
