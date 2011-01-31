@@ -1107,7 +1107,8 @@ public class SimCore extends PLPSimCore {
             int mem_instrType = Asm.lookupInstrType(Asm.lookupInstrOpcode(mem_opcode));
             byte ex_opcode =   MIPSInstr.opcode(ex_stage.instruction);
             int ex_instrType = Asm.lookupInstrType(Asm.lookupInstrOpcode(ex_opcode));
-            
+
+            long mem_rd =       MIPSInstr.rd(mem_stage.instruction);
             long mem_rt =       MIPSInstr.rt(mem_stage.instruction);
             long id_rt =        MIPSInstr.rt(id_stage.instruction);
             long id_rs =        MIPSInstr.rs(id_stage.instruction);
@@ -1127,15 +1128,25 @@ public class SimCore extends PLPSimCore {
                 }
 
                 // MEM->EX forward
+                if(mem_rd == id_rt && mem_rd != 0 && id_rt != 0 && !mem_instr_is_branch) {
+                    ex_stage.i_data_rt = (mem_stage.ctl_memread == 0) ?
+                        mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_RTYPE;
+                }
+                if(mem_rd == id_rs && mem_rd != 0 && id_rs != 0 && !mem_instr_is_branch) {
+                    ex_stage.i_data_alu_in = (mem_stage.ctl_memread == 0) ?
+                        mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_RTYPE;
+                }
                 if(mem_rt == id_rt && mem_rt != 0 && id_rt != 0 && !mem_instr_is_branch) {
                     ex_stage.i_data_rt = (mem_stage.ctl_memread == 0) ?
                         mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_ITYPE;
                 }
                 if(mem_rt == id_rs && mem_rt != 0 && id_rs != 0 && !mem_instr_is_branch) {
                     ex_stage.i_data_alu_in = (mem_stage.ctl_memread == 0) ?
                         mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_ITYPE;
                 }
 
                 // MEM->EX Load Word, stall

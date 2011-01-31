@@ -68,13 +68,13 @@ public class PLPToolbox {
         if(osIdentifier.equals("Linux")) {
             if(osArch.equals("x86") || osArch.equals("i386"))
                 return Constants.PLP_OS_LINUX_32;
-            else if(osArch.equals("x86_64"))
+            else if(osArch.equals("x86_64") || osArch.equals("amd64"))
                 return Constants.PLP_OS_LINUX_64;
         }
         else if(osIdentifier.startsWith("Windows")) {
             if(osArch.equals("x86") || osArch.equals("i386"))
                 return Constants.PLP_OS_WIN_32;
-            else if(osArch.equals("x86_64"))
+            else if(osArch.equals("x86_64") || osArch.equals("amd64"))
                 return Constants.PLP_OS_WIN_64;
         }
 
