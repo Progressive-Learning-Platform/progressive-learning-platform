@@ -35,4 +35,6 @@ public class PLPCfg {
 
     public static double  relativeDefaultWindowWidth       = 0.8;
     public static double  relativeDefaultWindowHeight      = 0.8;
+
+    public static boolean cfgSyntaxHighlighting            = false;
 }

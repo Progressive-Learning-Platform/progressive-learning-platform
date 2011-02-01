@@ -41,7 +41,7 @@ import javax.swing.tree.*;
  *
  * @author wira
  */
-public class ProjectDriver {
+public class ProjectDriver extends Thread {
 
     public SingleFrameApplication              app;        // App
 
@@ -81,6 +81,7 @@ public class ProjectDriver {
     public plptool.gui.OptionsFrame            g_opts;     // Options frame
     public plptool.gui.ProgrammerDialog        g_prg;      // Programming dialog
     public plptool.gui.AsmNameDialog           g_fname;    // ASM Name dialog
+    public plptool.gui.SimRunner               g_simrun;   // SimRunner thread
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -690,5 +691,45 @@ public class ProjectDriver {
     @Override
     public String toString() {
         return "PLP(" + plpfile + ")";
+    }
+
+    // ******************************************************************
+    // Asynchronous project driver
+
+    public int command = 0;
+    public String strArg = null;
+    public int intArg = -1;
+    public boolean busy = false;
+
+    @Override
+    public void run() {
+        try {
+        busy = false;
+
+        while(command != -1) {
+
+            this.wait();
+            busy = true;
+            switch(command) {
+                case 1:
+                    this.assemble();
+                    break;
+                case 2:
+                    this.create();
+                    break;
+                case 3:
+                    this.create(strArg);
+                    break;
+            }
+
+            busy = false;
+        }
+
+        PLPMsg.I("ProjectDriver thread exiting", this);
+        
+        } catch(Exception e) {
+            PLPMsg.E("ProjectDriver thread quits unexpectedly",
+                    Constants.PLP_BACKEND_THREAD_EXCEPTION, this);
+        }
     }
 }
