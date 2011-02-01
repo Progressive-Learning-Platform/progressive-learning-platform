@@ -43,7 +43,6 @@ public class SimShell extends javax.swing.JFrame {
     static final int MAX_STEPS = 60000;
     ProjectDriver plp;
 
-    private SimRunner        simRunner;
     private OptionsFrame          opts;
 
     /** Creates new form PLPSimShell */
@@ -80,8 +79,8 @@ public class SimShell extends javax.swing.JFrame {
             plp.ioreg.removeAllModules(plp.sim);
         }
 
-        if(simRunner != null) {
-            simRunner.stepCount = 0;
+        if(plp.g_simrun != null) {
+            plp.g_simrun.stepCount = 0;
         }
 
         simDesktop.removeAll();
@@ -226,8 +225,8 @@ public class SimShell extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
-        if(simRunner != null)
-            simRunner.stepCount = 0;
+        if(plp.g_simrun != null)
+            plp.g_simrun.stepCount = 0;
         plp.g_err.clearError();
 
         try {
@@ -249,20 +248,20 @@ public class SimShell extends javax.swing.JFrame {
 
     private void tglRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglRunActionPerformed
         if(tglRun.isSelected()) {
-            simRunner = new SimRunner(plp);
-            simRunner.start();
+            plp.g_simrun = new SimRunner(plp);
+            plp.g_simrun.start();
         } else {
-            if(simRunner != null) {
+            if(plp.g_simrun != null) {
                 try {
-                    simRunner.stepCount = 0;
+                    plp.g_simrun.stepCount = 0;
                 } catch(Exception e) {}
             }
         }
     }//GEN-LAST:event_tglRunActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        if(simRunner != null)
-            simRunner.stepCount = 0;
+        if(plp.g_simrun != null)
+            plp.g_simrun.stepCount = 0;
         plp.sim.reset();
         plp.g_sim.updateComponents();
         plp.g_err.clearError();

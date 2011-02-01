@@ -98,6 +98,7 @@ public class Constants {
     public static final int PLP_BACKEND_DELETING_LAST_ASM_ERROR  = 1031;
     public static final int PLP_BACKEND_IMPORT_CONFLICT          = 1032;
     public static final int PLP_BACKEND_EMPTY_PROGRAM            = 1033;
+    public static final int PLP_BACKEND_THREAD_EXCEPTION         = 1034;
 
     // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFE0;

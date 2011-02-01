@@ -25,6 +25,7 @@
 package plptool.mips;
 
 import javax.swing.table.DefaultTableCellRenderer;
+import plptool.PLPToolbox;
 
 /**
  *
@@ -110,6 +111,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         coreRegFilePane = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblRegFile = new javax.swing.JTable();
+        btnModifyRegisters = new javax.swing.JButton();
         coreProgramPane = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblProgram = new javax.swing.JTable();
@@ -250,6 +252,11 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         tblRegFile.setColumnSelectionAllowed(true);
         tblRegFile.setName("tblRegFile"); // NOI18N
         tblRegFile.getTableHeader().setReorderingAllowed(false);
+        tblRegFile.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tblRegFileKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblRegFile);
         tblRegFile.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblRegFile.getColumnModel().getColumn(0).setResizable(false);
@@ -257,20 +264,32 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         tblRegFile.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblRegFile.columnModel.title1")); // NOI18N
         tblRegFile.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblRegFile.columnModel.title2")); // NOI18N
 
+        btnModifyRegisters.setText(resourceMap.getString("btnModifyRegisters.text")); // NOI18N
+        btnModifyRegisters.setName("btnModifyRegisters"); // NOI18N
+        btnModifyRegisters.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModifyRegistersActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout coreRegFilePaneLayout = new javax.swing.GroupLayout(coreRegFilePane);
         coreRegFilePane.setLayout(coreRegFilePaneLayout);
         coreRegFilePaneLayout.setHorizontalGroup(
             coreRegFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(coreRegFilePaneLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, coreRegFilePaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
+                .addGroup(coreRegFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
+                    .addComponent(btnModifyRegisters))
                 .addContainerGap())
         );
         coreRegFilePaneLayout.setVerticalGroup(
             coreRegFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, coreRegFilePaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnModifyRegisters)
                 .addContainerGap())
         );
 
@@ -362,6 +381,14 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         });
         tblMemMap.setName("tblMemMap"); // NOI18N
         tblMemMap.getTableHeader().setReorderingAllowed(false);
+        tblMemMap.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblMemMapMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblMemMapMousePressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(tblMemMap);
         tblMemMap.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title0")); // NOI18N
         tblMemMap.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title1")); // NOI18N
@@ -597,6 +624,40 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
     }//GEN-LAST:event_formInternalFrameActivated
 
+    private void tblRegFileKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblRegFileKeyPressed
+
+    }//GEN-LAST:event_tblRegFileKeyPressed
+
+    private void btnModifyRegistersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModifyRegistersActionPerformed
+        updateRegisters();
+    }//GEN-LAST:event_btnModifyRegistersActionPerformed
+
+    private void tblMemMapMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMemMapMousePressed
+
+    }//GEN-LAST:event_tblMemMapMousePressed
+
+    private void tblMemMapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMemMapMouseClicked
+        for(int row = 0; row < tblMemMap.getRowCount(); row++) {
+            if((Boolean) tblMemMap.getModel().getValueAt(row, 4))
+                plp.sim.bus.enableMod(row);
+            else
+                plp.sim.bus.disableMod(row);
+        }
+    }//GEN-LAST:event_tblMemMapMouseClicked
+
+    private void updateRegisters() {
+
+        for(int regIndex = 0; regIndex < 32; regIndex++) {
+            String val = (String) tblRegFile.getModel().getValueAt(regIndex, 2);
+            plptool.PLPMsg.lastError = 0;
+            long longVal = PLPToolbox.parseNum(val);
+            if(plptool.PLPMsg.lastError == plptool.Constants.PLP_OK)
+                ((SimCore) plp.sim).regfile.write(regIndex, longVal, false);
+        }
+
+        updateComponents();
+    }
+
     public final void updateComponents() {
         long pc = ((SimCore)sim).id_stage.i_instrAddr;
         if(pc >= 0) {
@@ -608,7 +669,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         }
 
         for(int i = 0; i < 32; i++) {
-            tblRegFile.setValueAt(((SimCore)sim).regfile.read(i), i, 2);
+            tblRegFile.setValueAt(((SimCore)sim).regfile.read(i).toString(), i, 2);
             tblRegFile.setValueAt(String.format("0x%08x", ((SimCore)sim).regfile.read(i)), i, 1);
         }
 
@@ -686,8 +747,11 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                 else
                     program.setValueAt("", i, 0);
 
-                if(PC.getText().equals(program.getValueAt(i, 2)) && !((SimCore)sim).if_stall)
+                if(PC.getText().equals(program.getValueAt(i, 2)) && !((SimCore)sim).if_stall) {
                     program.setValueAt("IF>>>", i, 0);
+                    if(((Boolean) program.getValueAt(i, 1)) == true)
+                        plp.g_simrun.stepCount = -1;
+                }
             }
 
             tblProgram.setModel(program);
@@ -700,6 +764,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField PC;
+    private javax.swing.JButton btnModifyRegisters;
     private javax.swing.JCheckBox chkEXEXFwd;
     private javax.swing.JCheckBox chkMEMEXFwd;
     private javax.swing.JPanel coreConsolePane;

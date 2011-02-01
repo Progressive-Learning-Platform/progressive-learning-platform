@@ -58,7 +58,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 6;
+    private final int NUMBER_OF_MODULES = 7;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -159,6 +159,17 @@ public class IORegistry {
         mods[5][4] = true;
         mods[5][5] = false;
 
+        /* ********************************************************************/
+        // VGA
+
+        mods[6][0] = "VGA";
+        mods[6][1] = false;
+        mods[6][2] = 2;
+        mods[6][3] = "640x480 VGA module. Consists of two registers, refer"
+                   + " to the manual for usage.";
+        mods[6][4] = true;
+        mods[6][5] = true;
+
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -228,6 +239,13 @@ public class IORegistry {
             // DummyMemory is summoned
             case 5:
                 module = new DummyMemory(addr, size, true);
+                break;
+
+            /******************************************************************/
+            // VGA is summoned
+            case 6:
+                module = new VGA(addr, sim.memory);
+                moduleFrame = new VGAFrame();
                 break;
 
             // ADD YOUR MODULE INITIALIZATION HERE

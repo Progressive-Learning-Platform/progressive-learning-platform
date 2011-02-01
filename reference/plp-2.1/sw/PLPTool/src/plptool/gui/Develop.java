@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 
 import plptool.PLPMsg;
 import plptool.Constants;
+import plptool.PLPCfg;
 
 /**
  *
@@ -334,22 +335,22 @@ public class Develop extends javax.swing.JFrame {
     private void syntaxHighlight() {
         nothighlighting = false;
         int currpos = 0;
-        int doclength = txtEditor.getText().split("\n").length;
+        int doclength = txtEditor.getText().split("\\r?\\n").length;
         SimpleAttributeSet[] styles = setupHighlighting();
         for(int i=0;i<doclength;i++) {
-            String currline = txtEditor.getText().split("\n")[i];
+            String currline = txtEditor.getText().split("\\r?\\n")[i];
             syntaxHighlight(currline, currpos, styles);
-            currpos += txtEditor.getText().split("\n")[i].length() + 1;
+            currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
         }
         nothighlighting = true;
     }
 
     public void syntaxHighlight(int line) {
         nothighlighting = false;
-        String currline = txtEditor.getText().split("\n")[line];
+        String currline = txtEditor.getText().split("\\r?\\n")[line];
         int currpos = 0;
         for(int i=0;i<line;i++) {
-            currpos += txtEditor.getText().split("\n")[i].length() + 1;
+            currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
         }
         syntaxHighlight(currline, currpos, setupHighlighting());
         nothighlighting = true;
@@ -949,7 +950,8 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         openPLPFile();
-        syntaxHighlight();
+        if(PLPCfg.cfgSyntaxHighlighting)
+            syntaxHighlight();
     }//GEN-LAST:event_menuOpenActionPerformed
 
     private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
@@ -967,7 +969,8 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
         plp.save();
-        syntaxHighlight();
+        if(PLPCfg.cfgSyntaxHighlighting)
+            syntaxHighlight();
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
@@ -1105,18 +1108,19 @@ public class Develop extends javax.swing.JFrame {
 
     private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
         int caretPos = txtEditor.getCaretPosition();
-
         int line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
 
-        if (line != lastline) {
-            //Would rather use invokeAndWait, but there are some issues concerning
-            //calling from within this method
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    syntaxHighlight(lastline);
-                }
-            });
-            lastline = line;
+        if(PLPCfg.cfgSyntaxHighlighting) {
+            if (line != lastline) {
+                //Would rather use invokeAndWait, but there are some issues concerning
+                //calling from within this method
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        syntaxHighlight(lastline);
+                    }
+                });
+                lastline = line;
+            }
         }
 
         lblPosition.setText(caretPos + " line: " + line);
