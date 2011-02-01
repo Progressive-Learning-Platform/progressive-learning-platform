@@ -244,8 +244,11 @@ public class IORegistry {
             /******************************************************************/
             // VGA is summoned
             case 6:
-                module = new VGA(addr, sim.memory);
                 moduleFrame = new VGAFrame();
+                module = new VGA(addr, sim.bus, (VGAFrame) moduleFrame);
+                module.threaded = false; // slated for 2.2
+                module.stop = false;
+                //module.start();
                 break;
 
             // ADD YOUR MODULE INITIALIZATION HERE
@@ -337,6 +340,12 @@ public class IORegistry {
     public void removeModule(int index, PLPSimCore sim) {
         sim.bus.remove(positionInBus.get(index));
         positionInBus.remove(index);
+
+        if(modules.get(index).threaded && modules.get(index).isAlive()) {
+            modules.get(index).stop = true;
+            modules.get(index).notify();
+        }
+
         modules.remove(index);
         if(moduleFrames.get(index) != null && moduleFrames.get(index) instanceof JInternalFrame)
             ((JInternalFrame) moduleFrames.get(index)).dispose();
@@ -354,7 +363,13 @@ public class IORegistry {
      */
     public void gui_eval() {
         for(int index = 0; index < getNumOfModsAttached(); index++)
-            modules.get(index).gui_eval(moduleFrames.get(index));
+            if(!modules.get(index).threaded)
+                modules.get(index).gui_eval(moduleFrames.get(index));
+            else if(modules.get(index).isAlive()) {
+                try {
+                modules.get(index).notify();
+                } catch(Exception e) {}
+            }
     }
 
     /**

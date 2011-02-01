@@ -74,6 +74,7 @@ public class Constants {
     public static final int PLP_SIM_BUS_MAPPING_ERROR            = 265;
     public static final int PLP_SIM_INVALID_MODULE               = 266;
     public static final int PLP_SIM_WRITE_TO_READONLY_MODULE     = 267;
+    public static final int PLP_SIM_EVAL_ON_THREADED_MODULE      = 268;
 
     // Programmer errors
     public static final int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;

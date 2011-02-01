@@ -19,19 +19,26 @@
 package plptool.mods;
 
 import plptool.PLPSimBusModule;
+import plptool.PLPSimBus;
 import plptool.Constants;
 import plptool.PLPMsg;
 
 /**
+ * PLP VGA module. The VGA module takes the simulation bus as an argument as it
+ * draws a contiguous region a memory, starting by the address pointed by the
+ * frame pointer. gui_eval(x) is only executed when the control register is
+ * set to one.
  *
  * @author wira
  */
 public class VGA extends PLPSimBusModule {
-    MemModule RAM;
+    private PLPSimBus bus;
+    private VGAFrame frame;
 
-    public VGA(long addr, MemModule RAM) {
+    public VGA(long addr, PLPSimBus bus, VGAFrame frame) {
         super(addr, addr + 4, true);
-        this.RAM = RAM;
+        this.bus = bus;
+        this.frame = frame;
     }
 
     public int eval() {
@@ -40,6 +47,13 @@ public class VGA extends PLPSimBusModule {
     }
 
     public int gui_eval(Object x) {
+        if(!super.threaded)
+            return draw();
+        
+        return Constants.PLP_SIM_EVAL_ON_THREADED_MODULE;
+    }
+    
+    private int draw() {
         if(!enabled)
             return Constants.PLP_OK;
 
@@ -53,38 +67,60 @@ public class VGA extends PLPSimBusModule {
         long framePointer = (Long) super.read(startAddr + 4);
         PLPMsg.D("Framepointer is at " + String.format("0x%08x", framePointer), 4, this);
 
+        // the image is a 640x480 int array (each color is 8-bit, most significant
+        // 8-bit is ignored (we're using INT_RGB_TYPE for BufferedImage).
         int[][] image = new int[640][480];
 
         for(int y_coord = 0; y_coord < 480; y_coord++) {
             for(int x_coord = 0; x_coord < 160; x_coord++) {
+                // Each word is packed with 4 pixel data
                 long addr = framePointer + (y_coord * 640) + (x_coord * 4);
+
+                // default data to 0
                 long data = 0;
-                if(RAM.isInitialized(addr)) {
-                    data = RAM.read(addr);
+                if(bus.read(addr) != null) {
+                    data = (Long) bus.read(addr);
                     PLPMsg.D("Initialized pixel at " + String.format("0x%08x", addr), 4, this);
                 }
-                if(data == 0)
-                    for(int i = 0; i < 4; i++)
-                        image[x_coord * 4 + i][y_coord] = 0;
-                else {
-                    for(int i = 0; i < 4; i++) {
-                        int pixel = (((int) data) >> i * 8) & 0xff;
-                        int red = ((int) pixel & 0xE0);
-                        red = (red == 0xE0) ? 0xFF : red;
-                        int green = ((int) pixel & 0x1C) << 3;
-                        green = (green == 0xE0) ? 0xFF : green;
-                        int blue = ((int) pixel & 0x03) << 6;
-                        blue = (blue == 0xC0) ? 0xFF : blue;
-                        PLPMsg.D("Colors: " + red + " " + green + " " + blue, 4, this);
-                        image[x_coord * 4 + i][y_coord] = (red << 16) | (green << 8) | (blue);
-                    }
+
+                // unpack pixels from the word and populate the image array.
+                for(int i = 0; i < 4; i++) {
+                    int pixel = (((int) data) >> i * 8) & 0xff;
+
+                    // 3 bits of red
+                    int red = ((int) pixel & 0xE0);
+                    red = (red == 0xE0) ? 0xFF : red; // write 0xff if data is 0b111
+                                                      // so we can have a white
+
+                    // 3 bits of green
+                    int green = ((int) pixel & 0x1C) << 3;
+                    green = (green == 0xE0) ? 0xFF : green;
+
+                    // 2 bits of blue
+                    int blue = ((int) pixel & 0x03) << 6;
+                    blue = (blue == 0xC0) ? 0xFF : blue;
+
+                    PLPMsg.D("Colors: " + red + " " + green + " " + blue, 4, this);
+                    image[x_coord * 4 + i][y_coord] = (red << 16) | (green << 8) | (blue);
                 }
             }
         }
 
-        ((VGAFrame)x).draw(image);
+        // draw image to frame
+        frame.draw(image);
 
         return Constants.PLP_OK;
+    }
+
+    // this module can be made multi-threaded
+    @Override
+    public void run() {
+        try {
+        while(!stop) {
+            this.draw();
+            Thread.sleep(plptool.PLPCfg.threadedModRefreshRate);
+        }
+        } catch (Exception e) { }
     }
 
     public String introduce() {
