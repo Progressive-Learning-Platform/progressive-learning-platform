@@ -193,7 +193,13 @@ public class PLPSimBus {
     public int gui_eval(int index, Object x) {
         Object[] modules = bus_modules.toArray();
         try {
-        return ((PLPSimBusModule)modules[index]).gui_eval(x);
+        if(!((PLPSimBusModule)modules[index]).threaded)
+            return ((PLPSimBusModule)modules[index]).gui_eval(x);
+        else {
+            ((PLPSimBusModule)modules[index]).notify();
+            return Constants.PLP_OK;
+        }
+
 
         } catch(Exception e) {
             return PLPMsg.E("eval(" + index + "): error: " + e,
