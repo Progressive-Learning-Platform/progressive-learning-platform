@@ -236,6 +236,16 @@ public class SimCore extends PLPSimCore {
         
         // Evaluate modules attached to the bus
         ret += bus.eval();
+
+        // See if we're stalled on EX
+        if(ex_stall) {
+            ex_stage.instruction = 0;
+            mem_stage.i_instruction = 0;
+            ex_stall = false;
+            mem_stage.hot = true;
+            ex_stage.hot = true;
+            id_stage.hot = true;
+        }
         
         // Engage forwarding unit
         if(PLPCfg.cfgSimForwardingUnit)
@@ -253,14 +263,6 @@ public class SimCore extends PLPSimCore {
             pc.write(ex_stage.ctl_jumptarget);
         else if(!if_stall)
             pc.write(pc.eval() + 4);
-
-        // See if we're stalled on EX in the last cycle
-        if(ex_stall && !if_stall) {
-            ex_stall = false;
-            mem_stage.hot = true;
-            ex_stage.hot = true;
-            id_stage.hot = true;
-        }
 
         // We're stalled in this cycle, do not fetch new instruction
         if(if_stall) {
@@ -1119,6 +1121,7 @@ public class SimCore extends PLPSimCore {
             long ex_rd =        MIPSInstr.rd(ex_stage.instruction);
 
             boolean mem_instr_is_branch = (mem_instrType == 3) ? true : false;
+            boolean id_instr_is_branch = (id_instrType == 3) ? true : false;
             boolean ex_instr_is_itype =
                     (ex_instrType >= 3 && ex_instrType <= 6) ? true : false;
             boolean id_instr_is_itype =
@@ -1154,21 +1157,18 @@ public class SimCore extends PLPSimCore {
                 }
 
                 // MEM->EX Load Word, stall
-                if(mem_rt == ex_rt && mem_rt != 0 && ex_rt != 0 && mem_stage.ctl_memread == 1
-                        && ex_stage.fwd_ctl_memwrite == 0 && !ex_instr_is_itype) {
-                    mem_stage.i_instruction = 0;
-                    mem_stage.i_instrAddr = -1;
-                    ex_stage.data_rt = wb_stage.i_data_memreaddata;
+                if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.fwd_ctl_memread == 1
+                        && id_opcode != 0x2B && (!id_instr_is_itype || id_instr_is_branch)) {
+                    ex_stage.i_data_rt = wb_stage.i_data_memreaddata;
                     ex_stage.hot = false;
                     id_stage.hot = false;
                     if_stall = true;
                     ex_stall = true;
                     sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_LW;
                 }
-                if(mem_rt == ex_rs && mem_rt != 0 && ex_rs != 0 && mem_stage.ctl_memread == 1 && ex_stage.fwd_ctl_memwrite == 0) {
-                    mem_stage.i_instruction = 0;
-                    mem_stage.i_instrAddr = -1;
-                    ex_stage.data_alu_in = wb_stage.i_data_memreaddata;
+                if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.fwd_ctl_memread == 1
+                        && id_opcode != 0x2B) {
+                    ex_stage.i_data_alu_in = wb_stage.i_data_memreaddata;
                     ex_stage.hot = false;
                     id_stage.hot = false;
                     if_stall = true;
