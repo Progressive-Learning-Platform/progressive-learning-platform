@@ -40,11 +40,9 @@ r_type:
 	}
 	;
 
-r2_li:
-	WORD REG REG NEWLINE | WORD REG WORD NEWLINE | WORD REG IMM NEWLINE
-	{
-		plp_handle_r2li($1,$2,$3);
-	}
+r2_li	: WORD REG REG NEWLINE  {plp_handle_r2li($1,$2,$3);}
+	| WORD REG WORD NEWLINE {plp_handle_r2li($1,$2,$3);}
+	| WORD REG IMM NEWLINE  {plp_handle_r2li($1,$2,$3);}
 	;
 
 i_type:
@@ -82,11 +80,8 @@ label:
 	}
 	;
 
-jump:
-	WORD REG NEWLINE | WORD WORD NEWLINE
-	{
-		plp_hanlde_jump($1,$2);
-	}
+jump	: WORD REG NEWLINE  {plp_handle_jump($1,$2);}
+	| WORD WORD NEWLINE {plp_handle_jump($1,$2);}
 	;
 
 newline:

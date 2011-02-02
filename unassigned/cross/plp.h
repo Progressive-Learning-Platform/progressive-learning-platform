@@ -8,11 +8,17 @@
 #define LOG_INST  2
 #define LOG_INFO  1
 
+void log_i(int level, char *str, int opt);
+void log_s(int level, char *str, char *str2);
+
 static int glevel = 0;
 static char *inFile = NULL;
 static char *outFile = NULL;
 static FILE *iFile = NULL;
 static FILE *oFile = NULL;
+static char buf[1024];
+
+void output(char *);
 
 /* handlers */
 void plp_handle_rtype(char *a, char *b, char *c, char *d);
@@ -22,8 +28,6 @@ void plp_handle_lwsw(char *a, char *b, char *c);
 void plp_handle_branch(char *a, char *b, char *c, char *d);
 void plp_handle_directive(char *a);
 void plp_handle_label(char *a);
-void plp_hanlde_jump(char *a, char *b);
-
-
+void plp_handle_jump(char *a, char *b);
 
 #endif
