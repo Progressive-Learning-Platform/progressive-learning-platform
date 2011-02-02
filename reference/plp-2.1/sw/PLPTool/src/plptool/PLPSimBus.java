@@ -151,6 +151,25 @@ public class PLPSimBus {
         else
             return Constants.PLP_OK;
     }
+    
+    /**
+     * Check if the specified address is mapped to a module AND it is
+     * initialized.
+     *
+     * @param addr Address to read from
+     * @return true if the specified address is valid and initialized
+     */
+    public boolean isInitialized(long addr) {
+        Object[] modules = bus_modules.toArray();
+        for(int i = modules.length - 1; i >= 0; i--) {
+            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
+               addr <= ((PLPSimBusModule)modules[i]).endAddr() &&
+               ((PLPSimBusModule)modules[i]).isInitialized(addr))
+               return true;
+        }
+
+        return false;
+    }
 
     /**
      * Evaluates all modules attached to the bus.
