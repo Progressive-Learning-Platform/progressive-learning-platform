@@ -1,0 +1,108 @@
+
+                INSTRUCTIONS FOR RUNNING VCDDIFF
+
+
+Vcddiff is a program similar to the Unix diff command for Verilog VCD files.
+It produces differences of two VCD files passed to it.  It has the ability
+to map different identifiers to their respective hierarchical names.
+
+Producing VCD files using Cver:
+
+When $dumpvars (see LRM for more VCD information) is used in a Verilog source 
+file ran with Cver, it will produce a VCD file with the default name 
+"verilog.dump".
+
+
+To run type:
+  vcddiff [options] file1 file2
+
+Options
+=======
+ --state 
+ -s        
+         Will print out the state values instead of the default edge values.  
+         Prints just the current values without edges.         
+ --wrap  
+ -w
+         Wraps the edge print message, 11 edges per line.  This
+         option can only be used when the default edge is used, 
+         may not be used with the --state option.
+ --help 
+ -h     
+         Prints the help message, explanation of current options 
+
+========
+
+If a particular signal is defined in one and not the other VCD file a warning 
+message is omitted, and the signal is ignored.  Signals are also ignored if 
+they have different variable types ('reg' vs 'real', etc.) or sizes.
+
+If a signal matches at the current time no message is omitted.  Otherwise if 
+the files simply have different states for a signal at a given time a  
+message of the form is printed:
+
+VARNAME (IDENTIFIER) differs at time TIME 
+	(0-)    /* edge value of file one */
+	(01)    /* edge value of file two */
+
+Sample output:
+
+top.var (!) differs at time 30
+	(0-)
+	(01)
+
+Where 'top.var' is the signal name, and '!' is the identifier.  If the second
+file had a different identifier say '$' (still for top.var) the output 
+would be:  
+
+top.var (!, $) differs at time 30
+	(0-)
+	(01)
+
+This shows that at time 30 reg top.var had different values. The output is an 
+example of the edge print value, which is the default option.  The (0-) 
+indicates no edge change, in other words, its previous value was 0 as well, 
+therefore '-' indicates no change in the first file.  The second value is the 
+second file's edge change value. It went from 0 to 1.  If the value was 
+unknown or uninitialized a '?' is displayed. For example if time 30 was the 
+first value change for top.var in file two (?1) would be printed.  See the
+Verilog LRM section 8 on user defined primitives for more information on
+edge values.  
+
+If the state option ('-s' or '--state' ) was selected the output would be:
+
+top.var (!) differs at time 30
+	0
+	1
+
+Since at time 30 the first file has a 0 value for top.var and the second file
+has a 1 value.  Both style outputs are the same for vectors.  Edges are split 
+per bit, and state values are printed as a continuous string.  If one value is 
+narrower than the other they are right aligned at low bit side.
+
+If a signal is defined at a time in one file and not the other a search is 
+performed to locate the next occurrence. Where the arrows in the message
+are used to distinguish which file the mismatched occurred in.  
+For instance:
+
+< top.var (!) at time 5 next occurrence at time 10
+< #5 	(-1)
+< #10 	(10)
+
+This message indicates that at time 5, an extra value change of top.var 
+occurred in the second file, so a search was performed on the first file, where 
+the next change was found at time 10. The '<' indicates which file the search 
+was performed on, in this case the first file ('>' for a search in file two).   
+The program will then start back at time 5 for the changes on the next 
+identifier. If both files also differ at time 10, a same time difference 
+message is printed as well. 
+
+The wrap option ('-w' or '--wrap') is used to help prevent clutter of large
+vector values when printing edges by displaying only 11 edges per line, 
+indicated by a '\' at the end of each line.  The file edges are separated by
+a blank line to distinguish their respective values.  
+
+See examples.vcddiff for example dump files to run through vcddiff.
+
+For bug reports or suggestions email: avanvick@pragmatic-c.com.
+Latest release can be downloaded at: www.pragmatic-c.com/download.htm

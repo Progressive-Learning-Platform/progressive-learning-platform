@@ -1,0 +1,24 @@
+# Make file for creating a CVER DLL and create
+# an executable using the DLL
+#
+
+SHELL=/bin/bash
+
+CC=gcc
+
+DLLOBJS=cver.o v_acc.o v_cnv.o v_dbg.o v_dbg2.o v_del.o \
+			v_ex.o v_ex2.o v_ex3.o v_ex4.o v_fx.o v_fx2.o \
+			v_fx3.o v_ms.o v_prp.o v_prp2.o v_sdf.o v_sim.o \
+			v_src.o v_src2.o v_src3.o v_tf.o v_trch.o \
+			v_vpi.o v_vpi2.o v_vpi3.o
+
+EXEOBJS=dig_main.o
+
+
+dll: $(DLLOBJS)
+	$(CC) -shared -o libcver.dll -Wl,--out-implib=libcver.dll.a \
+		-Wl,--export-all -Wl,--enable-auto-image-base \
+		-Wl,--export-dynamic -Wl,--output-def=libcver.def $(DLLOBJS)
+
+exe: $(EXEOBJS)
+	$(CC) -o cver.exe $(EXEOBJS) -L./ -lcver -lm -lcygwin
