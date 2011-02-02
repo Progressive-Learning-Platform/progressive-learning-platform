@@ -1468,34 +1468,230 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 75 "parser.y"
-    {craft(4,"addu",(yyvsp[(1) - (5)]),(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]));;}
+    {craft(4,"addu",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 10:
+
+/* Line 1455 of yacc.c  */
+#line 76 "parser.y"
+    {craft(4,"subu",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 11:
+
+/* Line 1455 of yacc.c  */
+#line 77 "parser.y"
+    {craft(4,"and",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 12:
+
+/* Line 1455 of yacc.c  */
+#line 78 "parser.y"
+    {craft(4,"or",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 13:
+
+/* Line 1455 of yacc.c  */
+#line 79 "parser.y"
+    {craft(4,"nor",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 14:
+
+/* Line 1455 of yacc.c  */
+#line 80 "parser.y"
+    {craft(4,"slt",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 15:
+
+/* Line 1455 of yacc.c  */
+#line 81 "parser.y"
+    {craft(4,"sltu",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 16:
+
+/* Line 1455 of yacc.c  */
+#line 82 "parser.y"
+    {craft(4,"sll",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 17:
+
+/* Line 1455 of yacc.c  */
+#line 83 "parser.y"
+    {craft(4,"srl",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 18:
+
+/* Line 1455 of yacc.c  */
+#line 84 "parser.y"
+    {craft(2,"jr",(yyvsp[(2) - (3)]));;}
+    break;
+
+  case 19:
+
+/* Line 1455 of yacc.c  */
+#line 85 "parser.y"
+    {craft(3,"jalr",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 20:
+
+/* Line 1455 of yacc.c  */
+#line 86 "parser.y"
+    {craft(4,"beq",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 21:
+
+/* Line 1455 of yacc.c  */
+#line 87 "parser.y"
+    {craft(4,"bne",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 22:
+
+/* Line 1455 of yacc.c  */
+#line 88 "parser.y"
+    {craft(4,"addiu",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 23:
+
+/* Line 1455 of yacc.c  */
+#line 89 "parser.y"
+    {craft(4,"andi",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 24:
+
+/* Line 1455 of yacc.c  */
+#line 90 "parser.y"
+    {craft(4,"ori",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 25:
+
+/* Line 1455 of yacc.c  */
+#line 91 "parser.y"
+    {craft(4,"slti",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 26:
+
+/* Line 1455 of yacc.c  */
+#line 92 "parser.y"
+    {craft(4,"sltiu",(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));;}
+    break;
+
+  case 27:
+
+/* Line 1455 of yacc.c  */
+#line 93 "parser.y"
+    {craft(3,"lui",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 28:
+
+/* Line 1455 of yacc.c  */
+#line 94 "parser.y"
+    {craft(3,"lw",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 29:
+
+/* Line 1455 of yacc.c  */
+#line 95 "parser.y"
+    {craft(3,"sw",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 30:
+
+/* Line 1455 of yacc.c  */
+#line 96 "parser.y"
+    {craft(2,"j",(yyvsp[(2) - (3)]));;}
+    break;
+
+  case 31:
+
+/* Line 1455 of yacc.c  */
+#line 97 "parser.y"
+    {craft(2,"jal",(yyvsp[(2) - (3)]));;}
+    break;
+
+  case 32:
+
+/* Line 1455 of yacc.c  */
+#line 98 "parser.y"
+    {craft(1,"nop");;}
+    break;
+
+  case 33:
+
+/* Line 1455 of yacc.c  */
+#line 99 "parser.y"
+    {craft(2,"b",(yyvsp[(2) - (3)]));;}
+    break;
+
+  case 34:
+
+/* Line 1455 of yacc.c  */
+#line 100 "parser.y"
+    {craft(3,"move",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 35:
+
+/* Line 1455 of yacc.c  */
+#line 101 "parser.y"
+    {craft(3,"li",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 36:
+
+/* Line 1455 of yacc.c  */
+#line 102 "parser.y"
+    {craft(3,"li",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 37:
+
+/* Line 1455 of yacc.c  */
+#line 103 "parser.y"
+    {craft(1,(yyvsp[(1) - (2)]));;}
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
 #line 107 "parser.y"
-    {printf("unsupported jump\n");;}
+    {craft(2,"jr",(yyvsp[(2) - (3)]));;}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
 #line 108 "parser.y"
-    {printf("unsupported la\n");;}
+    {craft(3,"li",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
 #line 109 "parser.y"
-    {printf("unsupported la\n");;}
+    {craft(3,"li",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1499 "parser.tab.c"
+#line 1695 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
