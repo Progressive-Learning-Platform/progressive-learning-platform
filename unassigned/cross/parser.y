@@ -4,7 +4,7 @@
 #include "plp.h"
 
 void yyerror(const char *str) {
-	fprintf(stderr, "error: %s\n", str);
+	fprintf(stderr, "[e] %d : %s\n", yyget_lineno(), str);
 }
 
 int yywrap() {
@@ -14,7 +14,7 @@ int yywrap() {
 %}
 
 %error-verbose
-
+/* special tokens */
 %token LABEL
 %token IMM
 %token REG
@@ -23,71 +23,91 @@ int yywrap() {
 %token DIRECTIVE
 %token NEWLINE
 
+/* supported instructions */
+%token ADDU
+%token SUBU
+%token AND
+%token OR
+%token NOR
+%token SLT
+%token SLTU
+%token SLL
+%token SRL
+%token JR
+%token JALR
+%token BEQ
+%token BNE
+%token ADDIU
+%token ANDI
+%token ORI
+%token SLTI
+%token SLTIU
+%token LUI
+%token LW
+%token SW
+%token J
+%token JAL
+%token NOP
+%token B
+%token MOVE
+%token LI
+
+/* unsupported instructions */
+%token LA
+
 %%
 
-commands:
+commands 
+	:
 	| commands command
 	;
 
-command:
-	r_type | i_type | directive | label | lwsw | branch | r2_li | jump | newline
+command 
+	: supported_instruction | unsupported_instruction | junk
 	;
 
-r_type:
-	WORD REG REG REG NEWLINE
-	{
-		plp_handle_rtype($1,$2,$3,$4);
-	}
+junk    
+	: DIRECTIVE	{/* do nothing */}
+	| NEWLINE	{/* do nothing */}
 	;
 
-r2_li	: WORD REG REG NEWLINE  {plp_handle_r2li($1,$2,$3);}
-	| WORD REG WORD NEWLINE {plp_handle_r2li($1,$2,$3);}
-	| WORD REG IMM NEWLINE  {plp_handle_r2li($1,$2,$3);}
+supported_instruction
+	: ADDU  REG REG REG NEWLINE		{craft(4,"addu",$1,$2,$3);}
+	| SUBU  REG REG REG NEWLINE
+	| AND   REG REG REG NEWLINE
+	| OR    REG REG REG NEWLINE
+	| NOR   REG REG REG NEWLINE
+	| SLT   REG REG REG NEWLINE
+	| SLTU  REG REG REG NEWLINE
+	| SLL   REG REG IMM NEWLINE
+	| SRL   REG REG IMM NEWLINE
+	| JR    REG NEWLINE
+	| JALR  REG WORD NEWLINE
+	| BEQ   REG REG WORD NEWLINE
+	| BNE   REG REG WORD NEWLINE
+	| ADDIU REG REG IMM NEWLINE
+	| ANDI  REG REG IMM NEWLINE 
+	| ORI   REG REG IMM NEWLINE
+	| SLTI  REG REG IMM NEWLINE
+	| SLTIU REG REG IMM NEWLINE
+	| LUI   REG IMM NEWLINE
+	| LW    REG BASEOFFSET NEWLINE
+	| SW    REG BASEOFFSET NEWLINE
+	| J     WORD NEWLINE
+	| JAL   WORD NEWLINE
+	| NOP   NEWLINE
+	| B     WORD NEWLINE
+	| MOVE  REG REG NEWLINE
+	| LI    REG WORD NEWLINE
+	| LI	REG IMM NEWLINE
+	| LABEL NEWLINE
 	;
 
-i_type:
-	WORD REG REG IMM NEWLINE
-	{	
-		plp_handle_itype($1,$2,$3,$4);
-	}
+unsupported_instruction
+	: J	REG NEWLINE		{printf("unsupported jump\n");}
+	| LA	REG WORD NEWLINE	{printf("unsupported la\n");}
+	| LA	REG REG NEWLINE		{printf("unsupported la\n");}
 	;
-
-lwsw:
-	WORD REG BASEOFFSET NEWLINE
-	{
-		plp_handle_lwsw($1,$2,$3);
-	}
-	;
-
-branch:
-	WORD REG REG WORD NEWLINE
-	{
-		plp_handle_branch($1,$2,$3,$4);
-	}
-	;
-
-directive:
-	DIRECTIVE NEWLINE
-	{
-		plp_handle_directive($1);
-	}
-	;
-
-label:
-	LABEL NEWLINE
-	{
-		plp_handle_label($1);
-	}
-	;
-
-jump	: WORD REG NEWLINE  {plp_handle_jump($1,$2);}
-	| WORD WORD NEWLINE {plp_handle_jump($1,$2);}
-	;
-
-newline:
-	NEWLINE
-	{};
-
 
 %%
 

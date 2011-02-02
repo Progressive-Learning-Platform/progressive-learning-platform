@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "plp.h"
+#include <stdarg.h>
 #include "parser.tab.h"
 #include "lex.yy.c"
 
@@ -71,14 +72,28 @@ void handle_opts(int argc, char* argv[]) {
 	}
 }
 
-void output(char *s) {
-        log_s(LOG_ALL,"WRITING:",s);
-        if (oFile != NULL)
-                fprintf(oFile,"%s\n",s);
-        else {
-                printf("[e] output file not open!\n");
-                exit(1);
-        }
+void output(char *prod) {
+	fprintf(oFile,"%s\n",prod);
+}
+
+void craft(int n_args, ...) {
+	va_list ap;
+	int i;
+	char prod[1024];
+
+	va_start(ap, n_args);
+	for (i=0; i < n_args; i++) {
+		char *word = va_arg(ap, char*);
+		if (i==0) /* opcode */
+			sprintf(prod,"%s\t",word);
+		else if (i+1 == n_args) /* last word */
+			sprintf(prod,"%s%s",prod,word);
+		else /* some word in the middle */
+			sprintf(prod,"%s%s,",prod,word);
+	}
+	va_end(ap);
+	log_s(LOG_INST,"crafted instruction:",prod);
+	output(prod);
 }
 
 int main(int argc, char *argv[]) {
