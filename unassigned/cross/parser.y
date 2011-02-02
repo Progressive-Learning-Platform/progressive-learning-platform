@@ -72,41 +72,41 @@ junk
 	;
 
 supported_instruction
-	: ADDU  REG REG REG NEWLINE		{craft(4,"addu",$1,$2,$3);}
-	| SUBU  REG REG REG NEWLINE
-	| AND   REG REG REG NEWLINE
-	| OR    REG REG REG NEWLINE
-	| NOR   REG REG REG NEWLINE
-	| SLT   REG REG REG NEWLINE
-	| SLTU  REG REG REG NEWLINE
-	| SLL   REG REG IMM NEWLINE
-	| SRL   REG REG IMM NEWLINE
-	| JR    REG NEWLINE
-	| JALR  REG WORD NEWLINE
-	| BEQ   REG REG WORD NEWLINE
-	| BNE   REG REG WORD NEWLINE
-	| ADDIU REG REG IMM NEWLINE
-	| ANDI  REG REG IMM NEWLINE 
-	| ORI   REG REG IMM NEWLINE
-	| SLTI  REG REG IMM NEWLINE
-	| SLTIU REG REG IMM NEWLINE
-	| LUI   REG IMM NEWLINE
-	| LW    REG BASEOFFSET NEWLINE
-	| SW    REG BASEOFFSET NEWLINE
-	| J     WORD NEWLINE
-	| JAL   WORD NEWLINE
-	| NOP   NEWLINE
-	| B     WORD NEWLINE
-	| MOVE  REG REG NEWLINE
-	| LI    REG WORD NEWLINE
-	| LI	REG IMM NEWLINE
-	| LABEL NEWLINE
+	: ADDU  REG REG REG NEWLINE		{craft(4,"addu",$2,$3,$4);}
+	| SUBU  REG REG REG NEWLINE		{craft(4,"subu",$2,$3,$4);}
+	| AND   REG REG REG NEWLINE		{craft(4,"and",$2,$3,$4);}
+	| OR    REG REG REG NEWLINE		{craft(4,"or",$2,$3,$4);}
+	| NOR   REG REG REG NEWLINE		{craft(4,"nor",$2,$3,$4);}
+	| SLT   REG REG REG NEWLINE		{craft(4,"slt",$2,$3,$4);}
+	| SLTU  REG REG REG NEWLINE		{craft(4,"sltu",$2,$3,$4);}
+	| SLL   REG REG IMM NEWLINE		{craft(4,"sll",$2,$3,$4);}
+	| SRL   REG REG IMM NEWLINE		{craft(4,"srl",$2,$3,$4);}
+	| JR    REG NEWLINE			{craft(2,"jr",$2);}
+	| JALR  REG WORD NEWLINE		{craft(3,"jalr",$2,$3);}
+	| BEQ   REG REG WORD NEWLINE		{craft(4,"beq",$2,$3,$4);}
+	| BNE   REG REG WORD NEWLINE		{craft(4,"bne",$2,$3,$4);}
+	| ADDIU REG REG IMM NEWLINE		{craft(4,"addiu",$2,$3,$4);}
+	| ANDI  REG REG IMM NEWLINE	 	{craft(4,"andi",$2,$3,$4);}
+	| ORI   REG REG IMM NEWLINE		{craft(4,"ori",$2,$3,$4);}
+	| SLTI  REG REG IMM NEWLINE		{craft(4,"slti",$2,$3,$4);}
+	| SLTIU REG REG IMM NEWLINE		{craft(4,"sltiu",$2,$3,$4);}
+	| LUI   REG IMM NEWLINE			{craft(3,"lui",$2,$3);}
+	| LW    REG BASEOFFSET NEWLINE		{craft(3,"lw",$2,$3);}
+	| SW    REG BASEOFFSET NEWLINE		{craft(3,"sw",$2,$3);}
+	| J     WORD NEWLINE			{craft(2,"j",$2);}
+	| JAL   WORD NEWLINE			{craft(2,"jal",$2);}
+	| NOP   NEWLINE				{craft(1,"nop");}
+	| B     WORD NEWLINE			{craft(2,"b",$2);}
+	| MOVE  REG REG NEWLINE			{craft(3,"move",$2,$3);}
+	| LI    REG WORD NEWLINE		{craft(3,"li",$2,$3);}
+	| LI	REG IMM NEWLINE			{craft(3,"li",$2,$3);}
+	| LABEL NEWLINE				{craft(1,$1);}
 	;
 
 unsupported_instruction
-	: J	REG NEWLINE		{printf("unsupported jump\n");}
-	| LA	REG WORD NEWLINE	{printf("unsupported la\n");}
-	| LA	REG REG NEWLINE		{printf("unsupported la\n");}
+	: J	REG NEWLINE		{craft(2,"jr",$2);}
+	| LA	REG WORD NEWLINE	{craft(3,"li",$2,$3);}
+	| LA	REG REG NEWLINE		{craft(3,"li",$2,$3);}
 	;
 
 %%
