@@ -428,8 +428,8 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    28,    28,    29,    33,    33,    33,    33,    33,    33,
-      33,    33,    33,    37,    44,    44,    44,    51,    58,    65,
-      72,    79,    86,    86,    93
+      33,    33,    33,    37,    43,    44,    45,    49,    56,    63,
+      70,    77,    83,    84,    88
 };
 #endif
 
@@ -1352,19 +1352,31 @@ yyreduce:
 	;}
     break;
 
+  case 14:
+
+/* Line 1455 of yacc.c  */
+#line 43 "parser.y"
+    {plp_handle_r2li((yyvsp[(1) - (4)]),(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
+  case 15:
+
+/* Line 1455 of yacc.c  */
+#line 44 "parser.y"
+    {plp_handle_r2li((yyvsp[(1) - (4)]),(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    break;
+
   case 16:
 
 /* Line 1455 of yacc.c  */
 #line 45 "parser.y"
-    {
-		plp_handle_r2li((yyvsp[(1) - (4)]),(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));
-	;}
+    {plp_handle_r2li((yyvsp[(1) - (4)]),(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 52 "parser.y"
+#line 50 "parser.y"
     {	
 		plp_handle_itype((yyvsp[(1) - (5)]),(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));
 	;}
@@ -1373,7 +1385,7 @@ yyreduce:
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 59 "parser.y"
+#line 57 "parser.y"
     {
 		plp_handle_lwsw((yyvsp[(1) - (4)]),(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));
 	;}
@@ -1382,7 +1394,7 @@ yyreduce:
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 66 "parser.y"
+#line 64 "parser.y"
     {
 		plp_handle_branch((yyvsp[(1) - (5)]),(yyvsp[(2) - (5)]),(yyvsp[(3) - (5)]),(yyvsp[(4) - (5)]));
 	;}
@@ -1391,7 +1403,7 @@ yyreduce:
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 73 "parser.y"
+#line 71 "parser.y"
     {
 		plp_handle_directive((yyvsp[(1) - (2)]));
 	;}
@@ -1400,32 +1412,37 @@ yyreduce:
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 80 "parser.y"
+#line 78 "parser.y"
     {
 		plp_handle_label((yyvsp[(1) - (2)]));
 	;}
     break;
 
+  case 22:
+
+/* Line 1455 of yacc.c  */
+#line 83 "parser.y"
+    {plp_handle_jump((yyvsp[(1) - (3)]),(yyvsp[(2) - (3)]));;}
+    break;
+
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 87 "parser.y"
-    {
-		plp_hanlde_jump((yyvsp[(1) - (3)]),(yyvsp[(2) - (3)]));
-	;}
+#line 84 "parser.y"
+    {plp_handle_jump((yyvsp[(1) - (3)]),(yyvsp[(2) - (3)]));;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 94 "parser.y"
+#line 89 "parser.y"
     {;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1429 "parser.tab.c"
+#line 1446 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1637,7 +1654,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 97 "parser.y"
+#line 92 "parser.y"
 
 
 

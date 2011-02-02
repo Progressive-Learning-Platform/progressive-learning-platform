@@ -71,6 +71,16 @@ void handle_opts(int argc, char* argv[]) {
 	}
 }
 
+void output(char *s) {
+        log_s(LOG_ALL,"WRITING:",s);
+        if (oFile != NULL)
+                fprintf(oFile,"%s\n",s);
+        else {
+                printf("[e] output file not open!\n");
+                exit(1);
+        }
+}
+
 int main(int argc, char *argv[]) {
 	
 
