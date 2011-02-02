@@ -1,6 +1,9 @@
 %{
+#include "plp.h"
 #include "parser.tab.h"
 %}
+
+%option yylineno
 
 /* regexes */
 delim	[ \t,]
@@ -23,6 +26,38 @@ comment		\#.+
 
 %%
 
+ /* supported instructions */
+addu		return ADDU;
+subu		return SUBU;
+and		return AND;
+or		return OR;
+nor		return NOR;
+slt		return SLT;
+sltu		return SLTU;
+sll		return SLL;
+srl		return SRL;
+jr		return JR;
+jalr		return JALR;
+beq		return BEQ;
+bne		return BNE;
+addiu		return ADDIU;
+andi		return ANDI;
+ori		return ORI;
+slti		return SLTI;
+sltiu		return SLTIU;
+lui		return LUI;
+lw		return LW;
+sw		return SW;
+j		return J;
+jal		return JAL;
+nop		return NOP;
+b		return B;
+move		return MOVE;
+li		return LI;
+
+ /* unsupported instructions */
+la		return LA;
+
 {ws}		{/*nothing, it's whitespace...*/}
 {label}		yylval=strdup(yytext); return LABEL;
 {imm}		yylval=strdup(yytext); return IMM;
@@ -32,6 +67,8 @@ comment		\#.+
 {directive}	yylval=strdup(yytext); return DIRECTIVE;
 {comment}	/* nothing, strip comments */
 {newline}	return NEWLINE;
-%%
 
+. printf("[e] %d: bad input '%s'\n",yylineno,yytext);
+
+%%
 
