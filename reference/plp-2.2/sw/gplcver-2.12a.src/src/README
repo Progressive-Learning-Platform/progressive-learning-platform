@@ -1,0 +1,80 @@
+
+       INSTRUCTIONS FOR MAKING CVER BINARY AND PLI OBJECT
+
+
+  The following instructions assume you are compiling with gcc on either
+a X86 Linux, Sparc Solaris, or Mac OSX, Cygwin (here gcc must be named cc).  
+If not, see instructions below. 
+
+  For X86 Linux, type: 
+
+     make -f makefile.lnx all
+
+  For Solaris running Sparc type:
+
+     make -f makefile.sparc-gcc all
+
+  For Apple OSX type:
+
+     make -f makefile.osx all
+
+  For Cygwin:
+
+     make -f makefile.cygwin all
+
+  These commands will build binary cver in ../bin director.  If you type
+"../bin/cver", Cver will print its start up message and then terminate with
+an error saying no Verilog input files specified.  Next step is to run
+install tests in tests_and examples directory.  See README file in top level
+directory and in tests_and_examples directory for instructions.
+
+   To make just Cver type "make -f makefile.[OS]  cver".  Type
+"make -f makefile.[OS] clean" to remove files so you can remake everything.
+
+A. MAKING CVER ON OTHER SYSTEM
+
+   The makefile.lnx make file should work on any non X86 system running
+Linux.  If you are using a different compiler, just edit the various
+compiler , library and LD make variables and options around line 20 of the
+makefile.lnx file.  If you are not linking with GNU ld, you will need to look
+up your linker's partial link options and edit the cverobj dependency line
+linking action.
+
+   For other systems, you will probably need to deal with differences in
+include files and libraries.  There are only five areas that usually
+require changes:
+
+   1) Cver uses dlopen/dlsym dynamic linking to load user PLI dynamic
+      libraries using either the +load_pli1= or +load_vpi= options. 
+      The programming interface to dynamic linking loading varies
+      between system.  Therefore to port to another system, you will
+      probably need to add ifdefs that include your system's dlopen and
+      dlsym calls.  Your system will probably follow either the unix
+      (sparc/linux) conventions or the Apple OSX (??) conventions.
+      All dynmaic linking code is at the top of v_vpi.c file
+      mostly in the __process_pli_dynamic_libs routine.
+
+   2) Some of the wide math code depends on byte order of your system. See
+      the definitions of ENDIAN in the v.h file.  It appears that different
+      systems define different ENDIAN constants in different include files.
+      Currently, ifdefs are set up for Linux, Apple OSX and Sparc Solaris.
+
+   3) Signals are needed for Cver debugger.  Do a grep for SIGINT and
+      signal calls to find possible problem areas.
+
+   4) The debugger allows escaping to shell script using fork.  Look
+      at the __escape_to_shell routines in v_dbg.c.  One quick fix for
+      this is to just make __escape_to_shell a dummy empty routine since
+      user can always start a shell script in another window.
+
+   5) Cver has been ported to many systems so it should not be too hard
+      to port to other systems although you may need to add a number of
+      ifdefs for your system.
+
+B. MAKING CVER FOR DEBUGGING
+
+   To make a debugging version of either Cver, you need to edit the make
+   file or make copy of the make file and edit that.  Change your makefile
+   around line 35 to comment out the CFLAGS line that compiles without
+   optimization and uncomment the line thatturns on -g.  Then type "gdb cver"
+   and use gdb run command with normal Cver command line options.
