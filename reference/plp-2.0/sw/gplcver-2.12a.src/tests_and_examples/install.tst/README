@@ -1,0 +1,176 @@
+
+               RUNNING THE GPL CVER INSTALLATION TEST
+
+First run Cver without any arguments to make sure Cver binary is
+correctly installed.  Type "../../bin/cver" or if you have installed cver
+somewhere on your shell PATH just type "cver".  The first line output
+Cver version number must match the version of your release directory.  If
+version number does not match, you probably have your shell PATH environment
+variable set to execute an old version.
+
+If you are running on Unix/Linux based platforms, run the shell command
+script by typing:
+
+inst_tst.sh 
+
+Correct installation is indicated by the following message with no diff
+command output lines before the message:
+
+>>>> Install test completed (this should be only printed message).
+
+The inst_tst.sh test script must either be in a directory on your PATH or in
+your current working directory.  The inst_tst.sh script assumes you are
+running this test from the original Cver distribution directory tree.
+If you have already installed cver somewhere accessible from your OS
+shell PATH, edit the inst_tst.sh script and change:
+
+CVER="../../bin/cver -q " 
+
+to 
+
+CVER="cver -q"
+
+By convention the expected output files end with .plg suffix.
+
+-------------------------------------------------------------------------
+
+The installation script contains the following Verilog designs:
+
+minisim.v - the minisim model from the Thomas Moorby book used with
+    permission.  This is a rather complicated behavioral model with
+    expected output supplied by Thomas/Moorby.
+
+instid.v - a test of defparam module customization (copying because Cver
+    does not flatten but rather uses improved non flattened based
+    addressing algorithm).
+
+aspike1.v - a test circuit that has a possibly questionable pulse/glitch
+    because it involves stL and stX.  Five versions are run: 1) default
+    case with no pulse/glitch warnings or showing of X, 2) case that uses
+    +warn_canceled_e to cause warning messages to be emitted for pulses 
+    (transitions that occur more frequently that gate or path delay),
+    3) case that uses +show_canceled_e to cause transition to X (showing of X) 
+    at default leading edge of pulse.  Output stays at X until next gate
+    transition because for pulses, a gate (or path) may or may not switch.
+    4) case that uses +show_canceled_e and +pulse_e_style_on_detect to test
+    transition to X (showing of X) when a pulse is detected instead of the
+    default at leading edge of pulse/glitch.  5) case that turns on event
+    tracing but does not use pulse/glitch analysis.  The trace output
+    messages can also be used to detect potential pulse problems.
+
+    This example illustrates use of the various P1364 pulse analysis
+    options. 
+
+    Notice because Cver scheduler is based on the more accurate Tegas
+    scheduler (c.f. various old papers by Syzgenda et. al.
+    - papers on www.pragmatic-c.com web site contains references),
+    spike analysis works for both path delays and gate delays.
+    
+
+updjkff.v - a test using 2, 6 state udps from the Vcmp Valid SIM library.
+
+xx2bdel.v,xx2bpth.v,xx2bpth2.v - three variations on a small hierarchical
+    circuit.  xx2bdel.v illustrates the new $openscanf, $scanf, and
+    $isetdelay distributed primitive delay annotation method.  Unfortunately,
+    these system tasks do not follow the new Verilog 2000 P1364 file I/O
+    standard - we are working on changing to P1364 standard.  xx2bpth.v uses
+    path delays instead of gate delays and xx2bpth2.v is encoded in terms of
+    a module that implements a not gate with a path delay.
+
+c880.v - flattened 700 gate level circuit from ISCAS.
+
+force01.v - force/release example 11.2 from OVI LRM 2.0 (p. 11-4).  This
+    also tests interactive mode.
+
+vermemfil.v - example of how to use $scanf added system function (again
+    not yet same as Verilog 2000 File I/O options) to fill a memory using
+    just Cver functions.  See the plimemfil.v (and .c) files for an example
+    of how to use PLI tf_strdelputp to fill a memory and plimemfil2.v for an
+    example of how to use PLI tf_propagatep to fill a memory.
+
+gatenots.v - a 13.8k gate hierarchical circuit.  Since all outputs are
+    monitored at some time, it tests unoptimizable circuit.   This
+    type of inverter chain circuit is used to bring up new ASIC processes.
+    Only a few patterns are run.
+
+The +printstats and +verbose statistics for this circuit are: 
+
+-----------------------------------------------------------------------------
++++ Printing Design Statistics +++
+  Verbose mode statistics:
+  Design contains 3 module types.
+  112 (2300 flattened) ports collapsed.
+  9 gates (5400 flat) and 0 assigns (0 flat) disconnected by gate eater.
+  109 nets (5500 flat) disconnected by gate eater.
+
+  Design Module Table: 3 modules (1 top level):
+Module          Level Cells-in Insts-in Primitives  Assigns    Nets  Insts-of
+example_2b          2        0       10          0        1     653         1
+mod1                1        0       60          0        0     110        10
+dmod                0        0        0         23        0      24       600
+                        ------   ------     ------   ------  ------    ------
+Static Total:                0       70         23        1     787
+Flat Total:                  0      610      13800        1   16153       611
+
+  Per Module Wiring Table (Task Variables Excluded):
+Module           Ports(Bits)   Wires(Bits) Registers(Bits) Memory(Cells, Bits)
+example_2b                        650(650)           2(82)          1(10, 500)
+mod1                110(110)                                                  
+dmod                    2(2)        22(22)                                    
+                ------------ ------------- --------------- -------------------
+Flat total:       2300(2300)  13850(13850)           2(82)          1(10, 500)
+
+  Design Usage Table:
+Type                      Class  Static   Flat   Location
+                                 Number  Number
+example_2b                top         0       0  gatenots.v:1
+mod1                      module     10      10  gatenots.v:312
+dmod                      module     60     600  gatenots.v:357
+not                       gate       23   13800
+wide-assign               assign      1       1
+
+  Flattened Design: 610 instances, 0 udps, 13800 gates and 1 assigns.
++++ End of Design Statistics +++
+  Verbose mode statistics:
+  Design contains 3 module types.
+  112 (2300 flattened) ports collapsed.
+  9 gates (5400 flat) and 0 assigns (0 flat) disconnected by gate eater.
+  109 nets (5500 flat) disconnected by gate eater.
+
+  Begin load/optimize:
+  Approximately 396636 bytes storage allocated (excluding udps).
+  Begin simulation:
+  Approximately 718978 bytes storage allocated (excluding udps).
+  Verilog memories require 160 bytes (0.02% of total).
+-----------------------------------------------------------------------------
+
+arms_sim.v and armscnt.v - behavioral arms counter with large time scale
+    to test time scales.  The circuit was part of the bench marks presented
+    by S. Coumeri from CMU at the 1994 IVC conference.
+
+dfpsetd.v - simple flip flop test, but shows SDF delay annotation using both 
+    top level (no +[context]) +sdfannotate option and another file with
+    context.  The dfpsetv.c PLI 2.0 model in examples.vpi uses the same
+    circuit but sets same delays using PLI vpi_put_delays and vpi_put_value
+    calls.  SDF annotation also illustrates how assignment to defparams and
+    specparams used in delay expressions works.  This example shows the
+    command line method for specifying SDF file.  See systasks man page
+    for documentation on how to use $sdf_annotate system task to specify
+    SDF files. 
+
+mipdnot1.v - simple not gate circuit that show how SDF MIPD delays work.
+
+sdfia04.v - example of use of instance and gate arrays with SDF back 
+    annotation.   
+
+dffn.v - pipeline pound parameters example from 1995 P1364 LRM section 7.1.6
+
+xplipnd.v - version of instid.v (above) that is changed to illustrate 
+    new Verilog 2001 named pound parameter feature.  Feature allows 
+    passing only pound parameters to instances that need to be overridden. 
+
+defsplt1.v - small example to test new parameter setting algorithm.   
+    Example if difficult and it requires splitting module types because
+    vectors widths different between instance and re-evaluating parameters
+    because right hand side parameter definition expressions are set by 
+    defparams.  This example will fail in older versions of GPL Cver.
