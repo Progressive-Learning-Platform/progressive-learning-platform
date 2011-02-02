@@ -25,7 +25,7 @@ import plptool.PLPMsg;
 
 /**
  * PLP VGA module. The VGA module takes the simulation bus as an argument as it
- * draws a contiguous region a memory, starting by the address pointed by the
+ * draws a contiguous region from memory, starting by the address pointed by the
  * frame pointer. gui_eval(x) is only executed when the control register is
  * set to one.
  *
@@ -78,7 +78,7 @@ public class VGA extends PLPSimBusModule {
 
                 // default data to 0
                 long data = 0;
-                if(bus.read(addr) != null) {
+                if(bus.isInitialized(addr)) {
                     data = (Long) bus.read(addr);
                     PLPMsg.D("Initialized pixel at " + String.format("0x%08x", addr), 4, this);
                 }
