@@ -435,7 +435,12 @@ public class SimCore extends PLPSimCore {
                                    0 : (Long) regfile.read(addr_read_1);
 
             long imm_field = MIPSInstr.imm(instruction);
-            ex_reg.i_data_imm_signExtended = imm_field;
+
+            // sign extend on all instructions except for andi and ori
+            if(opcode != 0x0C && opcode != 0x0D)
+                ex_reg.i_data_imm_signExtended = (short) imm_field & ((long) 0xfffffff << 4 | 0xf);
+            else
+                ex_reg.i_data_imm_signExtended = imm_field;
 
             ex_reg.i_ctl_rd_addr = MIPSInstr.rd(instruction); // rd
             ex_reg.i_ctl_rt_addr = addr_read_0;
@@ -704,7 +709,7 @@ public class SimCore extends PLPSimCore {
             internal_alu_out =
                 exAlu.eval(data_alu_in,
                            ((ctl_aluSrc == 1) ? data_imm_signExtended : data_rt),
-                           ctl_aluOp);
+                           ctl_aluOp) & (((long) 0xfffffff << 4) | 0xf);
             
             mem_reg.i_fwd_data_alu_result = internal_alu_out;
 
