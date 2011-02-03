@@ -356,8 +356,10 @@ public class SimCLI {
                 PLPMsg.M("PLP_SIM_FWD_EX_EX_ITYPE");
             if((f & Constants.PLP_SIM_FWD_EX_EX_RTYPE) == Constants.PLP_SIM_FWD_EX_EX_RTYPE)
                 PLPMsg.M("PLP_SIM_FWD_EX_EX_RTYPE");
-            if((f & Constants.PLP_SIM_FWD_MEM_EX) == Constants.PLP_SIM_FWD_MEM_EX)
-                PLPMsg.M("PLP_SIM_FWD_MEM_EX");
+            if((f & Constants.PLP_SIM_FWD_MEM_EX_RTYPE) == Constants.PLP_SIM_FWD_MEM_EX_RTYPE)
+                PLPMsg.M("PLP_SIM_FWD_MEM_EX_RTYPE");
+            if((f & Constants.PLP_SIM_FWD_MEM_EX_ITYPE) == Constants.PLP_SIM_FWD_MEM_EX_ITYPE)
+                PLPMsg.M("PLP_SIM_FWD_MEM_EX_ITYPE");
             if((f & Constants.PLP_SIM_FWD_MEM_EX_LW) == Constants.PLP_SIM_FWD_MEM_EX_LW)
                 PLPMsg.M("PLP_SIM_FWD_MEM_EX_LW");
             if((f & Constants.PLP_SIM_FWD_MEM_MEM) == Constants.PLP_SIM_FWD_MEM_MEM)
