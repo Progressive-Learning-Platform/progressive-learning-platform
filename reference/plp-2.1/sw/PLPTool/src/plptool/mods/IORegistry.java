@@ -246,9 +246,9 @@ public class IORegistry {
             case 6:
                 moduleFrame = new VGAFrame();
                 module = new VGA(addr, sim.bus, (VGAFrame) moduleFrame);
-                module.threaded = true; // slated for 2.2
+                module.threaded = false; // slated for 2.2
                 module.stop = false;
-                module.start();
+                //module.start();
                 break;
 
             // ADD YOUR MODULE INITIALIZATION HERE
