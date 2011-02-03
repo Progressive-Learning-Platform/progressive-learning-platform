@@ -268,7 +268,7 @@ public class SimCore extends PLPSimCore {
         if(if_stall) {
             if_stall = false;
             id_stage.i_instruction = 0;
-            id_stage.i_instrAddr = old_pc;
+            id_stage.i_instrAddr = -1;
 
             return Constants.PLP_OK;
         }
@@ -1127,6 +1127,8 @@ public class SimCore extends PLPSimCore {
 
             boolean mem_instr_is_branch = (mem_instrType == 3) ? true : false;
             boolean id_instr_is_branch = (id_instrType == 3) ? true : false;
+            boolean mem_instr_is_itype =
+                    (mem_instrType >= 3 && mem_instrType <= 6) ? true : false;
             boolean ex_instr_is_itype =
                     (ex_instrType >= 3 && ex_instrType <= 6) ? true : false;
             boolean id_instr_is_itype =
@@ -1140,25 +1142,29 @@ public class SimCore extends PLPSimCore {
                 }
 
                 // MEM->EX forward
-                if(mem_rd == id_rt && mem_rd != 0 && id_rt != 0 && mem_stage.fwd_ctl_regwrite == 1 && id_opcode != 0x2B) {
+                if(mem_rd == id_rt && mem_rd != 0 && id_rt != 0 &&
+                        mem_stage.fwd_ctl_regwrite == 1 && id_opcode != 0x2B &&
+                        !mem_instr_is_itype) {
                     ex_stage.i_data_rt = (mem_stage.ctl_memread == 0) ?
                         mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_RTYPE;
                 }
-                if(mem_rd == id_rs && mem_rd != 0 && id_rs != 0 && mem_stage.fwd_ctl_regwrite == 1) {
+                if(mem_rd == id_rs && mem_rd != 0 && id_rs != 0 &&
+                        mem_stage.fwd_ctl_regwrite == 1 &&
+                        !mem_instr_is_itype) {
                     ex_stage.i_data_alu_in = (mem_stage.ctl_memread == 0) ?
                         mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_RTYPE;
                 }
                 if(mem_rt == id_rt && mem_rt != 0 && id_rt != 0 && !mem_instr_is_branch) {
                     ex_stage.i_data_rt = (mem_stage.ctl_memread == 0) ?
                         mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_ITYPE;
                 }
                 if(mem_rt == id_rs && mem_rt != 0 && id_rs != 0 && !mem_instr_is_branch) {
                     ex_stage.i_data_alu_in = (mem_stage.ctl_memread == 0) ?
                         mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX;
+                    sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_ITYPE;
                 }
 
                 // MEM->EX Load Word, stall
@@ -1184,11 +1190,11 @@ public class SimCore extends PLPSimCore {
 
             if(mem_stage.hot) {
                 // EX->EX
-                if(ex_rd == id_rs && ex_rd != 0 && id_rs != 0) {
+                if(ex_rd == id_rs && ex_rd != 0 && id_rs != 0 && !ex_instr_is_itype) {
                     ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }
-                if(ex_rd == id_rt && ex_rd != 0 && id_rt != 0) {
+                if(ex_rd == id_rt && ex_rd != 0 && id_rt != 0 && !ex_instr_is_itype) {
                     ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
                     sim_flags |= Constants.PLP_SIM_FWD_EX_EX_RTYPE;
                 }

@@ -107,8 +107,9 @@ public class Constants {
     public static final long PLP_SIM_FWD_EX_EX_ITYPE             = 0x00000002;
     public static final long PLP_SIM_FWD_EX_RF                   = 0x00000004;
     public static final long PLP_SIM_FWD_MEM_MEM                 = 0x00000008;
-    public static final long PLP_SIM_FWD_MEM_EX                  = 0x00000010;
-    public static final long PLP_SIM_FWD_MEM_EX_LW               = 0x00000020;
+    public static final long PLP_SIM_FWD_MEM_EX_RTYPE            = 0x00000010;
+    public static final long PLP_SIM_FWD_MEM_EX_ITYPE            = 0x00000020;
+    public static final long PLP_SIM_FWD_MEM_EX_LW               = 0x00000040;
     public static final long PLP_SIM_IF_STALL_SET                = 0x00000100;
     public static final long PLP_SIM_ID_STALL_SET                = 0x00000200;
     public static final long PLP_SIM_EX_STALL_SET                = 0x00000400;
