@@ -276,7 +276,7 @@ public class Asm extends plptool.PLPAsm {
 
         PLPMsg.D("preprocess: splitting...", 2, this);
 
-        String delimiters = ",[ ]+|,|[ ]+|[()]|\t";
+        String delimiters = "[ ,\t]+|[()]";
         String lineDelim  = "\\r?\\n";
         String[] asmLines  = topLevelAsm.getAsmString().split(lineDelim);
         String[] asmTokens;
@@ -550,7 +550,7 @@ public class Asm extends plptool.PLPAsm {
         int s = 0;              // assembler directive line offsets
         curRegion = 0;          // reset to default region
         
-        String delimiters = ",[ ]+|,|[ ]+|[()]";
+        String delimiters = "[ ,\t]+|[()]";
         String lineDelim  = "\\r?\\n";
 
         PLPMsg.D("assemble(): 1/2...", 1, this);
