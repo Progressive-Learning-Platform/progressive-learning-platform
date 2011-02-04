@@ -9,6 +9,7 @@
 delim	[ \t,]
 newline \n
 letter	[A-Za-z]
+special [-_]
 digit	[0-9]
 number	-?{digit}+
 alpha	[a-fA-f]
@@ -16,13 +17,13 @@ hextail	({digit}|{alpha})+
 hex	0[xX]{hextail}
 
 ws		{delim}+
-label		\$?{letter}({letter}|{digit})*\:
+directive	[.].+
+label		{word}+\:
 imm		({number}|{hex})
-reg		\$({letter}|{digit})+
-word		{letter}+
+reg		\$(([0-2]?[0-9]|3[0-1])|zero|at|v[0-1]|a[0-3]|t[0-9]|s[0-8]|k[0-1]|gp|sp|fp|ra)
 baseoffset	{number}\({reg}\)
-directive	\..+
 comment		\#.+
+word		({special}|{letter}|{digit}|\$L)+
 
 %%
 
@@ -61,16 +62,17 @@ sb		return SB;
 lb		return LB;
 
 {ws}		{/*nothing, it's whitespace...*/}
+{directive}	yylval=strdup(yytext); return DIRECTIVE;
 {label}		yylval=strdup(yytext); return LABEL;
 {imm}		yylval=strdup(yytext); return IMM;
 {reg}		yylval=strdup(yytext); return REG;
-{word}		yylval=strdup(yytext); return WORD;
 {baseoffset}	yylval=strdup(yytext); return BASEOFFSET;
-{directive}	yylval=strdup(yytext); return DIRECTIVE;
 {comment}	/* nothing, strip comments */
 {newline}	return NEWLINE;
+{word}		yylval=strdup(yytext); return WORD;
 
 . printf("[e] %d: bad input '%s'\n",yylineno,yytext);
 
 %%
+ 
 

@@ -1462,14 +1462,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 72 "parser.y"
-    {/* do nothing */;}
+    {log_s(LOG_ALL,"[i] directive: ",(yyvsp[(1) - (1)]));;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
 #line 73 "parser.y"
-    {/* do nothing */;}
+    {log_s(LOG_ALL,"[i] newline","");;}
     break;
 
   case 9:

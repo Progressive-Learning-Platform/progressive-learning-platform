@@ -69,8 +69,8 @@ command
 	;
 
 junk    
-	: DIRECTIVE	{/* do nothing */}
-	| NEWLINE	{/* do nothing */}
+	: DIRECTIVE	{log_s(LOG_ALL,"[i] directive: ",$1);}
+	| NEWLINE	{log_s(LOG_ALL,"[i] newline","");}
 	;
 
 supported_instruction

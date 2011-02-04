@@ -11,12 +11,12 @@
 
 void log_i(int level, char *str, int opt) {
 	if (level <= glevel)
-		printf("[i] %s %d\n",str, opt);	
+		printf("[i] %d: %s %d\n",yyget_lineno(), str, opt);	
 }
 
 void log_s(int level, char *str, char *str2) {
 	if (level <= glevel)
-		printf("[i] %s %s\n",str, str2);
+		printf("[i] %d: %s %s\n",yyget_lineno(), str, str2);
 }
 
 void handle_opts(int argc, char* argv[]) {
@@ -85,7 +85,7 @@ void craft(int n_args, ...) {
 	for (i=0; i < n_args; i++) {
 		char *word = va_arg(ap, char*);
 		if (i==0) /* opcode */
-			sprintf(prod,"%s\t",word);
+			sprintf(prod,"%s ",word);
 		else if (i+1 == n_args) /* last word */
 			sprintf(prod,"%s%s",prod,word);
 		else /* some word in the middle */
