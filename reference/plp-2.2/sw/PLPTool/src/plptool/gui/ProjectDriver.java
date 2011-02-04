@@ -494,25 +494,29 @@ public class ProjectDriver extends Thread {
                             Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
 
         if(arch.equals("plpmips")) {
-            sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm, -1);
+            if(g && g_simsh != null)
+                g_simsh.destroySimulation();
+
+            sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm,
+                    asm.getAddrTable()[0], PLPCfg.cfgDefaultRAMSize);
             sim.setStartAddr(asm.getAddrTable()[0]);
+            ioreg.loadPreset(0, this);
             sim.reset();
 
             if(g) {
-                g_simsh.destroySimulation();
                 g_ioreg = new IORegistryFrame(this);
-
                 g_sim = new plptool.mips.SimCoreGUI(this);
                 g_simsh.getSimDesktop().add(g_sim);
                 g_simsh.getSimDesktop().add(g_err);
                 g_simsh.getSimDesktop().add(g_ioreg);
+                g_ioreg.refreshModulesTable();
                 g_sim.updateComponents();
                 g_sim.setVisible(true);
                 g_err.setVisible(true);
-                ioreg.loadPreset(0, this);
-
                 g_simsh.setVisible(true);
             }
+
+            sim.reset();
         }
 
         return Constants.PLP_OK;

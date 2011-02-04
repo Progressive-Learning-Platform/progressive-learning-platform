@@ -45,6 +45,7 @@ public class VGAFrame extends javax.swing.JInternalFrame {
         container.setSize(new Dimension(640, 480));
         this.add(container);
         container.add("Canvas", canvas);
+        this.setSize(new Dimension(660, 500));
         this.pack();
     }
 

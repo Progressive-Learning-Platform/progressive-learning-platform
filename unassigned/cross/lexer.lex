@@ -57,6 +57,8 @@ li		return LI;
 
  /* unsupported instructions */
 la		return LA;
+sb		return SB;
+lb		return LB;
 
 {ws}		{/*nothing, it's whitespace...*/}
 {label}		yylval=strdup(yytext); return LABEL;
