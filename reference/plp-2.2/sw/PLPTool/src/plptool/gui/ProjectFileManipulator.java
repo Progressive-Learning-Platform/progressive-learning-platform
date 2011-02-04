@@ -111,9 +111,9 @@ public class ProjectFileManipulator {
             }
 
             int main_index = Integer.parseInt(args[3]);
-            if(main_index < 0 || main_index >= plp.asms.size())
+            if(main_index <= 0 || main_index >= plp.asms.size())
                 return;
-            plp.main_asm = main_index;
+            plp.setMainAsm(main_index);
             plp.save();
         }
         else if(args[2].equals("-v")) {

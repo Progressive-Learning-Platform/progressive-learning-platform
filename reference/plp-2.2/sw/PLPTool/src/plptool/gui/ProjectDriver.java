@@ -48,7 +48,6 @@ public class ProjectDriver extends Thread {
     public String                              plpfile;    // current PLP file
     public boolean                             modified;
     public int                                 open_asm;   // current open ASM
-    public int                                 main_asm;   // main program
     public String                              curdir;     // current workiing dir
 
     private String                             arch;       // architecture
@@ -117,12 +116,10 @@ public class ProjectDriver extends Thread {
         asms = new ArrayList<plptool.PLPAsmSource>();
         asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
         open_asm = 0;
-        main_asm = 0;
 
-        meta =  "PLP-2.1\n";
+        meta =  "PLP-2.2\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
-        meta += "MAINSRC=0";
 
         PLPMsg.I("New project initialized.", null);
 
@@ -145,12 +142,10 @@ public class ProjectDriver extends Thread {
             asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
         }
         open_asm = 0;
-        main_asm = 0;
 
-        meta =  "PLP-2.1\n";
+        meta =  "PLP-2.2\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
-        meta += "MAINSRC=0";
 
         PLPMsg.I("New project initialized.", null);
 
@@ -200,7 +195,6 @@ public class ProjectDriver extends Thread {
             meta += "DIRTY=1\n";
         }
 
-        meta += "MAINSRC=" + main_asm + "\n";
         meta += "\n";
 
         sourceList = asms;
@@ -339,12 +333,10 @@ public class ProjectDriver extends Thread {
 
                 String lines[] = meta.split("\\r?\\n");
                 if(lines[0].equals("PLP-2.2"))  {
-                    metaScanner = new Scanner(meta);
-                    metaScanner.findWithinHorizon("MAINSRC=", 0);
-                    main_asm = metaScanner.nextInt();
+
                 } else {
                     PLPMsg.I("WARNING: This is not a PLP-2.2 project file. Opening anyways.", this);
-                    main_asm = 0;
+
                 }
 
                 metaScanner = new Scanner(meta);
@@ -377,7 +369,7 @@ public class ProjectDriver extends Thread {
 
         plpfile = path;
         modified = false;
-        open_asm = main_asm;
+        open_asm = 0;
 
         if(g) {
             refreshProjectView(false);
@@ -413,14 +405,12 @@ public class ProjectDriver extends Thread {
         root.add(srcRoot);
         root.add(metaRoot);
         for(int i = 0; i < asms.size(); i++)
-            srcRoot.add(new DefaultMutableTreeNode(i + "::" + asms.get(i).getAsmFilePath()));
+            srcRoot.add(new DefaultMutableTreeNode(i + ": " + asms.get(i).getAsmFilePath()));
 
         Scanner metaScanner = new Scanner(meta);
         metaScanner.findWithinHorizon("DIRTY=", 0);
         int meta_dirty =  metaScanner.nextInt();
         metaRoot.add(new DefaultMutableTreeNode("meta.DIRTY=" + meta_dirty));
-        metaRoot.add(new DefaultMutableTreeNode("meta.MAINSRC=" + main_asm));
-        
 
         g_dev.getProjectTree().setModel(new DefaultTreeModel(root));
         for(int i = 0; i < g_dev.getProjectTree().getRowCount(); i++)
@@ -433,7 +423,7 @@ public class ProjectDriver extends Thread {
 
         String header = asms.get(open_asm).getAsmFilePath();
 
-        if(main_asm == open_asm)
+        if(open_asm == 0)
             header += " <main program>";
 
         g_dev.setCurFile(header);
@@ -467,7 +457,7 @@ public class ProjectDriver extends Thread {
         if(arch.equals("plpmips")) {
             asm = new plptool.mips.Asm(asms);
 
-            if(asm.preprocess(main_asm) == Constants.PLP_OK)
+            if(asm.preprocess(0) == Constants.PLP_OK)
                 asm.assemble();
         }
 
@@ -659,8 +649,7 @@ public class ProjectDriver extends Thread {
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         modified = true;
-        if(index == main_asm)
-            main_asm = 0;
+
         if(index < open_asm) {
             if(g) updateAsm(open_asm, g_dev.getEditorText());
             open_asm--;
@@ -673,6 +662,24 @@ public class ProjectDriver extends Thread {
         PLPMsg.I("Removing " + asms.get(index).getAsmFilePath(), null);
         asms.remove(index);
         if(g) refreshProjectView(false);
+
+        return Constants.PLP_OK;
+    }
+
+    public int setMainAsm(int index) {
+        if(asms == null || index <= 0 || index >= asms.size())
+            return PLPMsg.E("setMainAsm: Invalid index: " + index,
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+
+        asms.add(0, asms.get(index));
+        asms.remove(index + 1);
+        
+        modified = true;
+        
+        if(open_asm == index)
+            open_asm = 0;
+
+        if(g) refreshProjectView(true);
 
         return Constants.PLP_OK;
     }

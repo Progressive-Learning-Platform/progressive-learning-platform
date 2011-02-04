@@ -887,7 +887,7 @@ public class SimCore extends PLPSimCore {
 
             if(ctl_memread == 1) {
                 if(bus.read(fwd_data_alu_result) == null)
-                    return PLPMsg.E("Attempted to read from unititialized memory.",
+                    return PLPMsg.E("Attempted to read from uninitialized memory.",
                                     Constants.PLP_SIM_EVALUATION_FAILED, this);
                 wb_reg.i_data_memreaddata = (Long) bus.read(fwd_data_alu_result);
             }

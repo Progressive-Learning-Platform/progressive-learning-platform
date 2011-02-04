@@ -111,12 +111,9 @@ public class Develop extends javax.swing.JFrame {
         undoManager = new javax.swing.undo.UndoManager();
         txtEditor.getDocument().addUndoableEditListener(undoManager);
 
-        popupProject = new javax.swing.JPopupMenu();
-        popupProject.add(menuNewASM);
-        popupProject.add(menuImportASM);
-        popupProject.add(menuExportASM);
-        popupProject.add(menuDeleteASM);
+        initPopupMenus();
 
+        
         this.setLocationRelativeTo(null);
 
         PLPMsg.M("Welcome to Progressive Learning Platform Software Tool version " + Constants.versionString);
@@ -291,7 +288,7 @@ public class Develop extends javax.swing.JFrame {
                     return Constants.PLP_GENERIC_ERROR;
                 }
 
-                String[] tokens = nodeStr.split("::");
+                String[] tokens = nodeStr.split(": ");
 
                 int remove_asm = Integer.parseInt(tokens[0]);
                 if(remove_asm == plp.open_asm) {
@@ -335,7 +332,7 @@ public class Develop extends javax.swing.JFrame {
             String nodeStr = (String) node.getUserObject();
 
             if(nodeStr.endsWith("asm")) {
-                String[] tokens = nodeStr.split("::");
+                String[] tokens = nodeStr.split(": ");
                 indexToExport = Integer.parseInt(tokens[0]);
             }
         }
@@ -588,16 +585,21 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
         txtEditor.setEnabled(false);
         txtEditor.setName("txtEditor"); // NOI18N
+        txtEditor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                txtEditorMousePressed(evt);
+            }
+        });
         txtEditor.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 txtEditorCaretUpdate(evt);
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         jScrollPane3.setViewportView(txtEditor);
@@ -608,15 +610,15 @@ public class Develop extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile)
-                .addContainerGap(888, Short.MAX_VALUE))
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 963, Short.MAX_VALUE)
+                .addContainerGap(942, Short.MAX_VALUE))
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1018, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -648,7 +650,7 @@ public class Develop extends javax.swing.JFrame {
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblPosition)
                 .addContainerGap())
@@ -1027,11 +1029,8 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_rootmenuProjectActionPerformed
 
     private void menuSetMainProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
-        plp.main_asm = plp.open_asm;
-        if(nothighlighting) {
-            plp.modified = true;
-        }
-        plp.refreshProjectView(true);
+        if(plp.open_asm != 0)
+            plp.setMainAsm(plp.open_asm);
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
 
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
@@ -1105,7 +1104,7 @@ public class Develop extends javax.swing.JFrame {
 
                 if(nodeStr.endsWith("asm")) {
 
-                    String[] tokens = nodeStr.split("::");
+                    String[] tokens = nodeStr.split(": ");
 
                     PLPMsg.I("Opening " + nodeStr, null);
 
@@ -1146,6 +1145,82 @@ public class Develop extends javax.swing.JFrame {
 
     private void rootmenuProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rootmenuProjectMouseClicked
     }//GEN-LAST:event_rootmenuProjectMouseClicked
+
+    private void txtEditorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEditorMousePressed
+        if(plp.plpfile != null && evt.isPopupTrigger()) {
+            popupEdit.show(txtEditor, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_txtEditorMousePressed
+
+    private void initPopupMenus() {
+        popupmenuNewASM = new javax.swing.JMenuItem();
+        popupmenuNewASM.setText("New ASM file..."); // NOI18N
+        popupmenuNewASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuNewASMActionPerformed(evt);
+            }
+        });
+
+        popupmenuImportASM = new javax.swing.JMenuItem();
+        popupmenuImportASM.setText("Import ASM file..."); // NOI18N
+        popupmenuImportASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuImportASMActionPerformed(evt);
+            }
+        });
+
+        popupmenuExportASM = new javax.swing.JMenuItem();
+        popupmenuExportASM.setText("Export selected ASM file..."); // NOI18N
+        popupmenuExportASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuExportASMActionPerformed(evt);
+            }
+        });
+
+        popupmenuDeleteASM = new javax.swing.JMenuItem();
+        popupmenuDeleteASM.setText("Remove selected ASM file"); // NOI18N
+        popupmenuDeleteASM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDeleteASMActionPerformed(evt);
+            }
+        });
+
+        popupProject = new javax.swing.JPopupMenu();
+        popupProject.add(popupmenuNewASM);
+        popupProject.add(popupmenuImportASM);
+        popupProject.add(popupmenuExportASM);
+        popupProject.add(popupmenuDeleteASM);
+
+
+        popupmenuCopy = new javax.swing.JMenuItem();
+        popupmenuCopy.setText("Copy"); // NOI18N
+        popupmenuCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCopyActionPerformed(evt);
+            }
+        });
+
+        popupmenuCut = new javax.swing.JMenuItem();
+        popupmenuCut.setText("Cut"); // NOI18N
+        popupmenuCut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCutActionPerformed(evt);
+            }
+        });
+
+        popupmenuPaste = new javax.swing.JMenuItem();
+        popupmenuPaste.setText("Paste"); // NOI18N
+        popupmenuPaste.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPasteActionPerformed(evt);
+            }
+        });
+
+        popupEdit = new javax.swing.JPopupMenu();
+        popupEdit.add(popupmenuCopy);
+        popupEdit.add(popupmenuCut);
+        popupEdit.add(popupmenuPaste);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbout;
@@ -1198,6 +1273,18 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JTextPane txtEditor;
     private javax.swing.JTextArea txtOutput;
     // End of variables declaration//GEN-END:variables
+
+    //popup menu items
+    private javax.swing.JMenuItem popupmenuDeleteASM;
+    private javax.swing.JMenuItem popupmenuExportASM;
+    private javax.swing.JMenuItem popupmenuImportASM;
+    private javax.swing.JMenuItem popupmenuNewASM;
+
+    private javax.swing.JMenuItem popupmenuCopy;
+    private javax.swing.JMenuItem popupmenuCut;
+    private javax.swing.JMenuItem popupmenuPaste;
+
+    private javax.swing.JPopupMenu popupEdit;
 
 }
 
