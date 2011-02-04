@@ -430,19 +430,22 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="chkMEMEXFwdLW" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkMEMEXFwdI" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkMEMEXFwdR" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkEXEXFwdI" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblArchOpts" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkEXEXFwdR" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="rdioBrRandom" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="rdioBrLast" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="rdioBrNever" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkMEMEXFwd" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="lblArchOpts" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkEXEXFwd" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lblBranchPrdction" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="rdioBrAlways" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="482" max="32767" attributes="0"/>
+                      <EmptySpace pref="354" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -452,9 +455,15 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="lblArchOpts" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="chkEXEXFwd" min="-2" max="-2" attributes="0"/>
+                      <Component id="chkEXEXFwdR" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="chkMEMEXFwd" min="-2" max="-2" attributes="0"/>
+                      <Component id="chkEXEXFwdI" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="chkMEMEXFwdR" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="chkMEMEXFwdI" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="chkMEMEXFwdLW" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="lblBranchPrdction" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -465,7 +474,7 @@
                       <Component id="rdioBrLast" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rdioBrRandom" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="257" max="32767" attributes="0"/>
+                      <EmptySpace pref="188" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -477,17 +486,25 @@
                 <Property name="name" type="java.lang.String" value="lblArchOpts" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="chkEXEXFwd">
+            <Component class="javax.swing.JCheckBox" name="chkEXEXFwdR">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="chkEXEXFwd.text"/>
-                <Property name="name" type="java.lang.String" value="chkEXEXFwd" noResource="true"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="chkEXEXFwdR.text"/>
+                <Property name="name" type="java.lang.String" value="chkEXEXFwdR" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="chkEXEXFwdRStateChanged"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="chkMEMEXFwd">
+            <Component class="javax.swing.JCheckBox" name="chkMEMEXFwdR">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="chkMEMEXFwd.text"/>
-                <Property name="name" type="java.lang.String" value="chkMEMEXFwd" noResource="true"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="chkMEMEXFwdR.text"/>
+                <Property name="name" type="java.lang.String" value="chkMEMEXFwdR" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="chkMEMEXFwdRStateChanged"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lblBranchPrdction">
               <Properties>
@@ -498,26 +515,61 @@
             <Component class="javax.swing.JRadioButton" name="rdioBrAlways">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="rdioBrAlways.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="rdioBrAlways" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="rdioBrNever">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" resourceKey="rdioBrNever.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="rdioBrNever" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="rdioBrLast">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="rdioBrLast.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="rdioBrLast" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="rdioBrRandom">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="rdioBrRandom.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="rdioBrRandom" noResource="true"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="chkEXEXFwdI">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="chkEXEXFwdI.text"/>
+                <Property name="name" type="java.lang.String" value="chkEXEXFwdI" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="chkEXEXFwdIStateChanged"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="chkMEMEXFwdI">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="chkMEMEXFwdI.text"/>
+                <Property name="name" type="java.lang.String" value="chkMEMEXFwdI" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="chkMEMEXFwdIStateChanged"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="chkMEMEXFwdLW">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="chkMEMEXFwdLW.text"/>
+                <Property name="name" type="java.lang.String" value="chkMEMEXFwdLW" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="chkMEMEXFwdLWStateChanged"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

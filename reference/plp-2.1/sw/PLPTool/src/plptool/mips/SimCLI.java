@@ -21,9 +21,7 @@ package plptool.mips;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import plptool.PLPMsg;
-import plptool.PLPSimCore;
 import plptool.PLPToolbox;
-import plptool.gui.SimErrorFrame;
 import plptool.Constants;
 
 /**
@@ -33,26 +31,20 @@ import plptool.Constants;
  */
 public class SimCLI {
     
-    static Asm asm;
-    static SimCore x_core = null;
-    static String input = "";
-    static String tokens[];
-    static long ram_size;
-    static boolean init_core = false;
     static boolean silent = false;
-    static BufferedReader stdIn;
-    static SimErrorFrame errFrame = null;
-    static plptool.mods.IORegistry ioRegistry;
 
-    public static void simCLCommand(String input, SimCore core, Asm asm, plptool.mods.IORegistry ioReg) {
-        if(errFrame != null)
-            errFrame.clearError();
+    public static void simCLCommand(String input, plptool.gui.ProjectDriver plp) {
+        if(plp.g())
+            plp.g_err.clearError();
 
-        tokens = input.split(" ");
+        SimCore core = (SimCore) plp.sim;
+        Asm asm = (Asm) plp.asm;
+        plptool.mods.IORegistry ioReg = plp.ioreg;
+
+        String tokens[] = input.split(" ");
         if(input.equals("version")) {
             PLPMsg.M(plptool.Constants.versionString);
         }
-        if(init_core) {
         if(input.equals("i")) {
         }
         else if(input.equals("s")) {
@@ -75,7 +67,7 @@ public class SimCLI {
                 PLPMsg.M("Usage: s <number of instructions>");
             }
             else {
-                int steps = Integer.parseInt(tokens[1]);
+                int steps = PLPToolbox.parseNumInt(tokens[1]);
                 long time = 0;
                 if(steps > Constants.PLP_LONG_SIM) {
                     if(!silent) {
@@ -270,6 +262,21 @@ public class SimCLI {
                         " - position in bus: " + ioReg.getPositionInBus(i));
             }
         }
+        else if(input.equals("listpresets")) {
+            PLPMsg.M("Registered presets:");
+            Object[][] presets = plptool.mods.Presets.presets;
+            for(int i = 0; i < presets.length; i++) {
+                PLPMsg.M(i + ": " + presets[i][0]);
+            }
+        }
+        else if(tokens[0].equals("loadpreset")) {
+            if(tokens.length != 2) {
+                PLPMsg.M("Usage: loadpreset <index>");
+            }
+            else {
+                plptool.mods.IORegistry.loadPreset(PLPToolbox.parseNumInt(tokens[1]), plp);
+            }
+        }
         else if(tokens[0].equals("addmod")) {
             if(tokens.length != 4) {
                 PLPMsg.M("Usage: addmod <mod ID> <address> <register file size>");
@@ -350,6 +357,13 @@ public class SimCLI {
                 PLPMsg.M("Silent mode on.");
             }
         }
+        else if(input.equals("mod_forwarding")) {
+            PLPMsg.M("EX->EX R-type: " + core.forwarding.ex_ex_rtype);
+            PLPMsg.M("EX->EX I-type: " + core.forwarding.ex_ex_itype);
+            PLPMsg.M("MEM->EX R-type: " + core.forwarding.mem_ex_rtype);
+            PLPMsg.M("MEM->EX I-type: " + core.forwarding.mem_ex_itype);
+            PLPMsg.M("MEM->EX LW-use: " + core.forwarding.mem_ex_lw);
+        }
         else if(input.equals("flags")) {
             long f = core.getFlags();
             if((f & Constants.PLP_SIM_FWD_EX_EX_ITYPE) == Constants.PLP_SIM_FWD_EX_EX_ITYPE)
@@ -404,18 +418,10 @@ public class SimCLI {
 
         PLPMsg.M("");
 
+        if(PLPMsg.lastError != 0 && plp.g())
+            plp.g_err.setError(PLPMsg.lastError);
 
-        } else {
-            PLPMsg.M("Simulation core is not initialiazed. Try running the command 'i'.\n");
-        }
-
-        if(PLPMsg.lastError != 0 && errFrame != null)
-            errFrame.setError(PLPMsg.lastError);
-
-        if(!init_core)
-            PLPMsg.m("sim > ");
-        else
-            PLPMsg.m(String.format("%08x", core.getFlags()) +
+        PLPMsg.m(String.format("%08x", core.getFlags()) +
                              " " + core.getinstrcount() +
                              " sim > ");
     }
@@ -423,14 +429,13 @@ public class SimCLI {
     public static void simCL(plptool.gui.ProjectDriver plp) {
         try {
 
-        stdIn = new BufferedReader(new InputStreamReader(System.in));
+        String input;
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
         plp.ioreg = new plptool.mods.IORegistry();
-        plp.sim = new SimCore((plptool.mips.Asm) plp.asm, -1);
+        plp.sim = new SimCore((plptool.mips.Asm) plp.asm, plp.asm.getAddrTable()[0], 0x1000000);
         plp.sim.setStartAddr(plp.asm.getAddrTable()[0]);
         plp.sim.reset();
-        init_core = true;
-        addMods(plp.sim);
         ((plptool.mips.SimCore)plp.sim).printfrontend();
         plp.sim.bus.enableAllModules();
         PLPMsg.M("Simulation core initialized with nigh-infinite RAM.");
@@ -440,8 +445,9 @@ public class SimCLI {
                              " sim > ");
 
         while(!(input = stdIn.readLine().trim()).equals("q"))
-           simCLCommand(input, (plptool.mips.SimCore) plp.sim, (plptool.mips.Asm) plp.asm, plp.ioreg);
- 
+           simCLCommand(input, plp);
+
+        plp.ioreg.removeAllModules(plp.sim);
         PLPMsg.M("See ya!");
 
         } catch(Exception e) {
@@ -512,9 +518,5 @@ public class SimCLI {
 
                 break;
         }
-    }
-
-    public static void addMods(PLPSimCore core) {
-        
     }
 }

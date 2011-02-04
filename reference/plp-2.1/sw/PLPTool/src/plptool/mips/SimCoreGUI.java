@@ -42,7 +42,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         super();
         this.sim = plp.sim;
         this.plp = plp;
-        plptool.mips.SimCLI.errFrame = plp.g_err;
 
         sim.bus.enableAllModules();
         sim.bus.eval();
@@ -120,13 +119,16 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         tblMemMap = new javax.swing.JTable();
         coreSimOptsPane = new javax.swing.JPanel();
         lblArchOpts = new javax.swing.JLabel();
-        chkEXEXFwd = new javax.swing.JCheckBox();
-        chkMEMEXFwd = new javax.swing.JCheckBox();
+        chkEXEXFwdR = new javax.swing.JCheckBox();
+        chkMEMEXFwdR = new javax.swing.JCheckBox();
         lblBranchPrdction = new javax.swing.JLabel();
         rdioBrAlways = new javax.swing.JRadioButton();
         rdioBrNever = new javax.swing.JRadioButton();
         rdioBrLast = new javax.swing.JRadioButton();
         rdioBrRandom = new javax.swing.JRadioButton();
+        chkEXEXFwdI = new javax.swing.JCheckBox();
+        chkMEMEXFwdI = new javax.swing.JCheckBox();
+        chkMEMEXFwdLW = new javax.swing.JCheckBox();
         coreConsolePane = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         simCLOutput = new javax.swing.JTextArea();
@@ -420,26 +422,70 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         lblArchOpts.setText(resourceMap.getString("lblArchOpts.text")); // NOI18N
         lblArchOpts.setName("lblArchOpts"); // NOI18N
 
-        chkEXEXFwd.setText(resourceMap.getString("chkEXEXFwd.text")); // NOI18N
-        chkEXEXFwd.setName("chkEXEXFwd"); // NOI18N
+        chkEXEXFwdR.setSelected(true);
+        chkEXEXFwdR.setText(resourceMap.getString("chkEXEXFwdR.text")); // NOI18N
+        chkEXEXFwdR.setName("chkEXEXFwdR"); // NOI18N
+        chkEXEXFwdR.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                chkEXEXFwdRStateChanged(evt);
+            }
+        });
 
-        chkMEMEXFwd.setText(resourceMap.getString("chkMEMEXFwd.text")); // NOI18N
-        chkMEMEXFwd.setName("chkMEMEXFwd"); // NOI18N
+        chkMEMEXFwdR.setSelected(true);
+        chkMEMEXFwdR.setText(resourceMap.getString("chkMEMEXFwdR.text")); // NOI18N
+        chkMEMEXFwdR.setName("chkMEMEXFwdR"); // NOI18N
+        chkMEMEXFwdR.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                chkMEMEXFwdRStateChanged(evt);
+            }
+        });
 
         lblBranchPrdction.setText(resourceMap.getString("lblBranchPrdction.text")); // NOI18N
         lblBranchPrdction.setName("lblBranchPrdction"); // NOI18N
 
         rdioBrAlways.setText(resourceMap.getString("rdioBrAlways.text")); // NOI18N
+        rdioBrAlways.setEnabled(false);
         rdioBrAlways.setName("rdioBrAlways"); // NOI18N
 
+        rdioBrNever.setSelected(true);
         rdioBrNever.setText(resourceMap.getString("rdioBrNever.text")); // NOI18N
+        rdioBrNever.setEnabled(false);
         rdioBrNever.setName("rdioBrNever"); // NOI18N
 
         rdioBrLast.setText(resourceMap.getString("rdioBrLast.text")); // NOI18N
+        rdioBrLast.setEnabled(false);
         rdioBrLast.setName("rdioBrLast"); // NOI18N
 
         rdioBrRandom.setText(resourceMap.getString("rdioBrRandom.text")); // NOI18N
+        rdioBrRandom.setEnabled(false);
         rdioBrRandom.setName("rdioBrRandom"); // NOI18N
+
+        chkEXEXFwdI.setSelected(true);
+        chkEXEXFwdI.setText(resourceMap.getString("chkEXEXFwdI.text")); // NOI18N
+        chkEXEXFwdI.setName("chkEXEXFwdI"); // NOI18N
+        chkEXEXFwdI.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                chkEXEXFwdIStateChanged(evt);
+            }
+        });
+
+        chkMEMEXFwdI.setSelected(true);
+        chkMEMEXFwdI.setText(resourceMap.getString("chkMEMEXFwdI.text")); // NOI18N
+        chkMEMEXFwdI.setName("chkMEMEXFwdI"); // NOI18N
+        chkMEMEXFwdI.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                chkMEMEXFwdIStateChanged(evt);
+            }
+        });
+
+        chkMEMEXFwdLW.setSelected(true);
+        chkMEMEXFwdLW.setText(resourceMap.getString("chkMEMEXFwdLW.text")); // NOI18N
+        chkMEMEXFwdLW.setName("chkMEMEXFwdLW"); // NOI18N
+        chkMEMEXFwdLW.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                chkMEMEXFwdLWStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout coreSimOptsPaneLayout = new javax.swing.GroupLayout(coreSimOptsPane);
         coreSimOptsPane.setLayout(coreSimOptsPaneLayout);
@@ -448,15 +494,18 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             .addGroup(coreSimOptsPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(coreSimOptsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chkMEMEXFwdLW)
+                    .addComponent(chkMEMEXFwdI)
+                    .addComponent(chkMEMEXFwdR)
+                    .addComponent(chkEXEXFwdI)
+                    .addComponent(lblArchOpts)
+                    .addComponent(chkEXEXFwdR)
                     .addComponent(rdioBrRandom)
                     .addComponent(rdioBrLast)
                     .addComponent(rdioBrNever)
-                    .addComponent(chkMEMEXFwd)
-                    .addComponent(lblArchOpts)
-                    .addComponent(chkEXEXFwd)
                     .addComponent(lblBranchPrdction)
                     .addComponent(rdioBrAlways))
-                .addContainerGap(482, Short.MAX_VALUE))
+                .addContainerGap(354, Short.MAX_VALUE))
         );
         coreSimOptsPaneLayout.setVerticalGroup(
             coreSimOptsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -464,9 +513,15 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                 .addContainerGap()
                 .addComponent(lblArchOpts)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chkEXEXFwd)
+                .addComponent(chkEXEXFwdR)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chkMEMEXFwd)
+                .addComponent(chkEXEXFwdI)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMEMEXFwdR)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMEMEXFwdI)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkMEMEXFwdLW)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblBranchPrdction)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -477,7 +532,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                 .addComponent(rdioBrLast)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rdioBrRandom)
-                .addContainerGap(257, Short.MAX_VALUE))
+                .addContainerGap(188, Short.MAX_VALUE))
         );
 
         coreMainPane.addTab(resourceMap.getString("coreSimOptsPane.TabConstraints.tabTitle"), coreSimOptsPane); // NOI18N
@@ -599,10 +654,9 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     private void simCLExecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simCLExecActionPerformed
         plptool.PLPMsg.output = simCLOutput;
-        SimCLI.init_core = true;
         lastCLCommand = simCLConsole.getText();
         simCLOutput.append("exec: " + simCLConsole.getText() + "\n");
-        SimCLI.simCLCommand(simCLConsole.getText(), (SimCore) sim, (Asm) plp.asm, plp.ioreg);
+        SimCLI.simCLCommand(simCLConsole.getText(), plp);
         if(simCLConsole.getText().trim().startsWith("asm")) {
             clearProgramMemoryTable();
             fillProgramMemoryTable();
@@ -614,7 +668,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 }//GEN-LAST:event_simCLExecActionPerformed
 
     private void simCLConsoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_simCLConsoleKeyPressed
-        // TODO add your handling code here:
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
             simCLExecActionPerformed(null);
         else if(simCLConsole.getText().equals("") && evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP)
@@ -644,6 +697,41 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                 plp.sim.bus.disableMod(row);
         }
     }//GEN-LAST:event_tblMemMapMouseClicked
+
+    private void chkEXEXFwdRStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkEXEXFwdRStateChanged
+        if(chkEXEXFwdR.isSelected())
+            ((SimCore) plp.sim).forwarding.ex_ex_rtype = true;
+        else
+            ((SimCore) plp.sim).forwarding.ex_ex_rtype = false;
+    }//GEN-LAST:event_chkEXEXFwdRStateChanged
+
+    private void chkEXEXFwdIStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkEXEXFwdIStateChanged
+        if(chkEXEXFwdI.isSelected())
+            ((SimCore) plp.sim).forwarding.ex_ex_itype = true;
+        else
+            ((SimCore) plp.sim).forwarding.ex_ex_itype = false;
+    }//GEN-LAST:event_chkEXEXFwdIStateChanged
+
+    private void chkMEMEXFwdRStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkMEMEXFwdRStateChanged
+        if(chkMEMEXFwdR.isSelected())
+            ((SimCore) plp.sim).forwarding.mem_ex_rtype = true;
+        else
+            ((SimCore) plp.sim).forwarding.mem_ex_rtype = false;
+    }//GEN-LAST:event_chkMEMEXFwdRStateChanged
+
+    private void chkMEMEXFwdIStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkMEMEXFwdIStateChanged
+        if(chkMEMEXFwdI.isSelected())
+            ((SimCore) plp.sim).forwarding.mem_ex_itype = true;
+        else
+            ((SimCore) plp.sim).forwarding.mem_ex_itype = false;
+    }//GEN-LAST:event_chkMEMEXFwdIStateChanged
+
+    private void chkMEMEXFwdLWStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkMEMEXFwdLWStateChanged
+        if(chkMEMEXFwdLW.isSelected())
+            ((SimCore) plp.sim).forwarding.mem_ex_lw = true;
+        else
+            ((SimCore) plp.sim).forwarding.mem_ex_lw = false;
+    }//GEN-LAST:event_chkMEMEXFwdLWStateChanged
 
     private void updateRegisters() {
 
@@ -765,8 +853,11 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField PC;
     private javax.swing.JButton btnModifyRegisters;
-    private javax.swing.JCheckBox chkEXEXFwd;
-    private javax.swing.JCheckBox chkMEMEXFwd;
+    private javax.swing.JCheckBox chkEXEXFwdI;
+    private javax.swing.JCheckBox chkEXEXFwdR;
+    private javax.swing.JCheckBox chkMEMEXFwdI;
+    private javax.swing.JCheckBox chkMEMEXFwdLW;
+    private javax.swing.JCheckBox chkMEMEXFwdR;
     private javax.swing.JPanel coreConsolePane;
     private javax.swing.JTabbedPane coreMainPane;
     private javax.swing.JPanel coreMemMapPane;
