@@ -39,7 +39,8 @@ public class PLPCfg {
     public static int     threadedModRefreshRate           = 100;
     public static boolean threadedModEnabled               = true;
 
-    public static boolean cfgSyntaxHighlighting            = false;
+    public static boolean cfgSyntaxHighlighting            = true;
+    public static boolean nothighlighting                  = true;
 
     public static long    cfgDefaultRAMSize                = 0x1000000;
 }

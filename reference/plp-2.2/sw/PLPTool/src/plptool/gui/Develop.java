@@ -52,11 +52,10 @@ public class Develop extends javax.swing.JFrame {
 
     boolean trackChanges = false;
     private ProjectDriver plp;
-    private javax.swing.undo.UndoManager undoManager;
+    private PlpUndoManager undoManager;
     private javax.swing.JPopupMenu popupProject;
 
     int lastline = 0;
-    boolean nothighlighting = true;
     
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
@@ -108,7 +107,7 @@ public class Develop extends javax.swing.JFrame {
 
         this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
 
-        undoManager = new javax.swing.undo.UndoManager();
+        undoManager = new PlpUndoManager();
         txtEditor.getDocument().addUndoableEditListener(undoManager);
 
         initPopupMenus();
@@ -125,7 +124,7 @@ public class Develop extends javax.swing.JFrame {
 
     public void notifyplpModified() {
         if(trackChanges) {
-            if(nothighlighting) {
+            if(PLPCfg.nothighlighting) {
                 plp.modified = true;
                 plp.updateWindowTitle();
             }
@@ -357,7 +356,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     private void syntaxHighlight() {
-        nothighlighting = false;
+        PLPCfg.nothighlighting = false;
         int currpos = 0;
         int doclength = txtEditor.getText().split("\\r?\\n").length;
         SimpleAttributeSet[] styles = setupHighlighting();
@@ -366,18 +365,21 @@ public class Develop extends javax.swing.JFrame {
             syntaxHighlight(currline, currpos, styles);
             currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
         }
-        nothighlighting = true;
+        PLPCfg.nothighlighting = true;
     }
 
     public void syntaxHighlight(int line) {
-        nothighlighting = false;
-        String currline = txtEditor.getText().split("\\r?\\n")[line];
-        int currpos = 0;
-        for(int i=0;i<line;i++) {
-            currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
+        PLPCfg.nothighlighting = false;
+        try {
+            String currline = txtEditor.getText().split("\\r?\\n")[line];
+            int currpos = 0;
+            for(int i=0;i<line;i++) {
+                currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
+            }
+            syntaxHighlight(currline, currpos, setupHighlighting());
+        } catch (java.lang.ArrayIndexOutOfBoundsException aioobe) {
         }
-        syntaxHighlight(currline, currpos, setupHighlighting());
-        nothighlighting = true;
+        PLPCfg.nothighlighting = true;
     }
 
     //Do not call this class without setting highlighting to true
