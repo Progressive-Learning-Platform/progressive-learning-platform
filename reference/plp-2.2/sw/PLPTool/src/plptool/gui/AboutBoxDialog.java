@@ -14,6 +14,8 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         super(parent);
         initComponents();
         getRootPane().setDefaultButton(closeButton);
+        lblVersion.setText(plptool.Constants.versionString);
+        this.setTitle("About: PLP Tool " + plptool.Constants.versionString);
         this.setLocationRelativeTo(null);
     }
 
@@ -31,13 +33,13 @@ public class AboutBoxDialog extends javax.swing.JDialog {
 
         closeButton = new javax.swing.JButton();
         javax.swing.JLabel appTitleLabel = new javax.swing.JLabel();
-        javax.swing.JLabel appVersionLabel = new javax.swing.JLabel();
         javax.swing.JLabel appVendorLabel = new javax.swing.JLabel();
         javax.swing.JLabel appHomepageLabel = new javax.swing.JLabel();
         javax.swing.JLabel appDescLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        lblVersion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(AboutBoxDialog.class);
@@ -53,9 +55,6 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         appTitleLabel.setFont(appTitleLabel.getFont().deriveFont(appTitleLabel.getFont().getStyle() | java.awt.Font.BOLD, appTitleLabel.getFont().getSize()+4));
         appTitleLabel.setText(resourceMap.getString("Application.title")); // NOI18N
         appTitleLabel.setName("appTitleLabel"); // NOI18N
-
-        appVersionLabel.setText(resourceMap.getString("Application.version")); // NOI18N
-        appVersionLabel.setName("appVersionLabel"); // NOI18N
 
         appVendorLabel.setText(resourceMap.getString("Application.vendor")); // NOI18N
         appVendorLabel.setName("appVendorLabel"); // NOI18N
@@ -91,33 +90,40 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
         jLabel3.setName("jLabel3"); // NOI18N
 
+        lblVersion.setFont(resourceMap.getFont("lblVersion.font")); // NOI18N
+        lblVersion.setText(resourceMap.getString("lblVersion.text")); // NOI18N
+        lblVersion.setName("lblVersion"); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(appTitleLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(appVersionLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                         .addComponent(appDescLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(closeButton)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(10, 10, 10)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(closeButton)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addGap(10, 10, 10))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(lblVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(67, 67, 67)))
                         .addComponent(jLabel3))))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(appHomepageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(appVendorLabel))
+                .addComponent(appVendorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,15 +131,16 @@ public class AboutBoxDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(appTitleLabel)
-                    .addComponent(appDescLabel)
-                    .addComponent(appVersionLabel))
+                    .addComponent(appDescLabel))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(1, 1, 1)
                         .addComponent(appHomepageLabel)
                         .addGap(3, 3, 3)
                         .addComponent(appVendorLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblVersion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
@@ -173,6 +180,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel lblVersion;
     // End of variables declaration//GEN-END:variables
     
 }

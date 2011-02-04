@@ -172,7 +172,7 @@ public class ProjectDriver extends Thread {
 
         if(plpfile == null || plpfile.equals("Unsaved Project"))
             return PLPMsg.E("No PLP project file is open. Use Save As.",
-                            Constants.PLP_FILE_SAVE_ERROR, null);
+                            Constants.PLP_FILE_USE_SAVE_AS, null);
 
         ArrayList<PLPAsmSource> sourceList;
         String verilogHex = "";
@@ -184,7 +184,7 @@ public class ProjectDriver extends Thread {
 
         File outFile = new File(plpfile);
 
-        meta = "PLP-2.1\n";
+        meta = "PLP-2.2\n";
 
         if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
@@ -338,12 +338,12 @@ public class ProjectDriver extends Thread {
                 Scanner metaScanner;
 
                 String lines[] = meta.split("\\r?\\n");
-                if(lines[0].equals("PLP-2.1"))  {
+                if(lines[0].equals("PLP-2.2"))  {
                     metaScanner = new Scanner(meta);
                     metaScanner.findWithinHorizon("MAINSRC=", 0);
                     main_asm = metaScanner.nextInt();
                 } else {
-                    PLPMsg.I("WARNING: This is not a PLP-2.1 project file. Opening anyways.", this);
+                    PLPMsg.I("WARNING: This is not a PLP-2.2 project file. Opening anyways.", this);
                     main_asm = 0;
                 }
 
@@ -500,7 +500,7 @@ public class ProjectDriver extends Thread {
             sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm,
                     asm.getAddrTable()[0], PLPCfg.cfgDefaultRAMSize);
             sim.setStartAddr(asm.getAddrTable()[0]);
-            ioreg.loadPreset(0, this);
+            plptool.mods.IORegistry.loadPreset(0, this);
             sim.reset();
 
             if(g) {
@@ -556,7 +556,7 @@ public class ProjectDriver extends Thread {
 
     public PLPAsmSource getAsm(int index) {
         if(asms == null || index < 0 || index >= asms.size()) {
-            PLPMsg.E("updateAsm: Invalid index.",
+            PLPMsg.E("updateAsm: Invalid index: " + index,
                      Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
             return null;
         }
@@ -566,7 +566,7 @@ public class ProjectDriver extends Thread {
 
     public int updateAsm(int index, String newStr) {
         if(asms == null || index < 0 || index >= asms.size())
-            return PLPMsg.E("updateAsm: Invalid index.",
+            return PLPMsg.E("updateAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(!asms.get(index).getAsmString().equals(newStr))
@@ -624,7 +624,7 @@ public class ProjectDriver extends Thread {
                  " to " + path, null);
 
         if(asms == null || index < 0 || index >= asms.size())
-            return PLPMsg.E("exportAsm: Invalid index.",
+            return PLPMsg.E("exportAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(asmFile.exists()) {
@@ -655,7 +655,7 @@ public class ProjectDriver extends Thread {
         }
 
         if(asms == null || index < 0 || index >= asms.size())
-            return  PLPMsg.E("removeAsm: Invalid index.",
+            return  PLPMsg.E("removeAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         modified = true;

@@ -23,7 +23,7 @@ package plptool;
  * @author wira
  */
 public class Constants {
-    public static final String versionString = "2.1";
+    public static final String versionString = "2.2";
     public static final String copyrightString =
             "PLP Java Tool version " + versionString + "\n" +
             "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
@@ -103,7 +103,7 @@ public class Constants {
     public static final int PLP_BACKEND_THREAD_EXCEPTION         = 1034;
 
     // Simulator flags
-    public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFFE0;
+    public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFF80;
     public static final long PLP_SIM_FWD_EX_EX_RTYPE             = 0x00000001;
     public static final long PLP_SIM_FWD_EX_EX_ITYPE             = 0x00000002;
     public static final long PLP_SIM_FWD_EX_RF                   = 0x00000004;
@@ -123,6 +123,7 @@ public class Constants {
     public static final int PLP_TOOLAPP_ERROR                    = 2;
     public static final int PLP_FILE_OPEN_ERROR                  = 3;
     public static final int PLP_FILE_SAVE_ERROR                  = 4;
+    public static final int PLP_FILE_USE_SAVE_AS                 = 5;
 
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;

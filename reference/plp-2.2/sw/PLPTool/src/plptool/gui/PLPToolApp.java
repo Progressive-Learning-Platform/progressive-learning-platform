@@ -62,6 +62,7 @@ public class PLPToolApp extends SingleFrameApplication {
                           (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
         plp.g_simsh.setLocationRelativeTo(null);
 
+        plp.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
         plp.g_dev.setVisible(true);
 
         PLPMsg.output = plp.g_dev.getOutput();
@@ -122,16 +123,18 @@ public class PLPToolApp extends SingleFrameApplication {
                 ProjectDriver plp = new ProjectDriver(false, "plpmips");
                 if(!(plp.create(args[1]) == Constants.PLP_OK)) return;
                 plp.plpfile = args[2];
+                String timestamp = (new java.util.Date()).toString();
                 plp.save();
                 if(plp.asm.isAssembled()) {
                     plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
                     PLPMsg.M("");
                     plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
                     PLPMsg.M("");
-                    PLPMsg.M("Build timestamp: " + (new java.util.Date()).toString());
+                    PLPMsg.M("Build timestamp: " + timestamp);
                     PLPMsg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
                     PLPMsg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
-                }
+                } else
+                    PLPMsg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
             }
         }
         else if(args.length > 0 && args[0].equals("-s")) {
