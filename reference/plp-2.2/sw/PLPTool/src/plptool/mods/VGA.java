@@ -112,7 +112,7 @@ public class VGA extends PLPSimBusModule {
         return Constants.PLP_OK;
     }
 
-    // this module can be made multi-threaded
+    // this module can be made a thread
     @Override
     public void run() {
         try {
@@ -120,6 +120,9 @@ public class VGA extends PLPSimBusModule {
             this.draw();
             Thread.sleep(plptool.PLPCfg.threadedModRefreshRate);
         }
+
+        PLPMsg.M("VGA module thread exiting.");
+
         } catch (Exception e) { }
     }
 

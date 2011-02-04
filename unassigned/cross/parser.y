@@ -54,6 +54,8 @@ int yywrap() {
 
 /* unsupported instructions */
 %token LA
+%token SB
+%token LB
 
 %%
 
@@ -81,10 +83,10 @@ supported_instruction
 	| SLTU  REG REG REG NEWLINE		{craft(4,"sltu",$2,$3,$4);}
 	| SLL   REG REG IMM NEWLINE		{craft(4,"sll",$2,$3,$4);}
 	| SRL   REG REG IMM NEWLINE		{craft(4,"srl",$2,$3,$4);}
-	| JR    REG NEWLINE			{craft(2,"jr",$2);}
-	| JALR  REG WORD NEWLINE		{craft(3,"jalr",$2,$3);}
-	| BEQ   REG REG WORD NEWLINE		{craft(4,"beq",$2,$3,$4);}
-	| BNE   REG REG WORD NEWLINE		{craft(4,"bne",$2,$3,$4);}
+	| JR    REG NEWLINE			{craft(2,"jr",$2); craft(1,"nop");}
+	| JALR  REG WORD NEWLINE		{craft(3,"jalr",$2,$3); craft(1,"nop");}
+	| BEQ   REG REG WORD NEWLINE		{craft(4,"beq",$2,$3,$4); craft(1,"nop");}
+	| BNE   REG REG WORD NEWLINE		{craft(4,"bne",$2,$3,$4); craft(1,"nop");}
 	| ADDIU REG REG IMM NEWLINE		{craft(4,"addiu",$2,$3,$4);}
 	| ANDI  REG REG IMM NEWLINE	 	{craft(4,"andi",$2,$3,$4);}
 	| ORI   REG REG IMM NEWLINE		{craft(4,"ori",$2,$3,$4);}
@@ -93,10 +95,11 @@ supported_instruction
 	| LUI   REG IMM NEWLINE			{craft(3,"lui",$2,$3);}
 	| LW    REG BASEOFFSET NEWLINE		{craft(3,"lw",$2,$3);}
 	| SW    REG BASEOFFSET NEWLINE		{craft(3,"sw",$2,$3);}
-	| J     WORD NEWLINE			{craft(2,"j",$2);}
-	| JAL   WORD NEWLINE			{craft(2,"jal",$2);}
+	| J     WORD NEWLINE			{craft(2,"j",$2); craft(1,"nop");}
+	| JAL   WORD NEWLINE			{craft(2,"jal",$2); craft(1,"nop");}
 	| NOP   NEWLINE				{craft(1,"nop");}
-	| B     WORD NEWLINE			{craft(2,"b",$2);}
+	| B     WORD NEWLINE			{craft(2,"b",$2); craft(1,"nop");}
+	| B	REG NEWLINE			{craft(2,"b",$2); craft(1,"nop");}
 	| MOVE  REG REG NEWLINE			{craft(3,"move",$2,$3);}
 	| LI    REG WORD NEWLINE		{craft(3,"li",$2,$3);}
 	| LI	REG IMM NEWLINE			{craft(3,"li",$2,$3);}
@@ -104,9 +107,11 @@ supported_instruction
 	;
 
 unsupported_instruction
-	: J	REG NEWLINE		{craft(2,"jr",$2);}
+	: J	REG NEWLINE		{craft(2,"jr",$2); craft(1,"nop");}
 	| LA	REG WORD NEWLINE	{craft(3,"li",$2,$3);}
 	| LA	REG REG NEWLINE		{craft(3,"li",$2,$3);}
+	| SB	REG BASEOFFSET NEWLINE  {craft(3,"sw",$2,$3);}
+	| LB	REG BASEOFFSET NEWLINE  {craft(3,"lw",$2,$3);}
 	;
 
 %%

@@ -31,13 +31,13 @@ public class Presets {
 
             new Integer[]{0, 1, 2, 4, 6},
 
-            new Long[]{(long) 0x10000000,
+            new Long[]{(long) 0x0,
                        (long) 0xf020000 << 4,
                        (long) 0xf010000 << 4,
                        (long) 0xf050000 << 4,
                        (long) 0xf040000 << 4},
 
-            new Long[]{(long) 0x1000000,
+            new Long[]{(long) 0x10000000,
                        (long) 1,
                        (long) 1,
                        (long) 2,

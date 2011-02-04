@@ -44,6 +44,27 @@ public class PLPToolbox {
         }
     }
 
+    public static int parseNumInt(String number) {
+        try {
+
+        if(number.startsWith("0x") || number.startsWith("0h")) {
+            number = number.substring(2);
+            return Integer.parseInt(number, 16);
+        }
+        else if(number.startsWith("0b")) {
+            number = number.substring(2);
+            return Integer.parseInt(number, 2);
+        }
+        else
+            return Integer.parseInt(number);
+
+        } catch(Exception e) {
+            PLPMsg.lastError = -1;
+            return PLPMsg.E("parseNum(): Argument is not a valid number\n" + e,
+                            Constants.PLP_NUMBER_ERROR, null);
+        }
+    }
+
     // Convert 32-bit word to printable ASCII
     public static String asciiWord(long word) {
         String tStr = "";
