@@ -27,6 +27,34 @@ public class Presets {
     public final static Object[][] presets = new Object[][]{
         /**********************************************************************/
         {
+            "PLP 2.2 I/O Configuration",
+
+            new Integer[]{0, 1, 2, 4},
+
+            new Long[]{(long) 0x0,
+                       (long) 0xf020000 << 4,
+                       (long) 0xf010000 << 4,
+                       (long) 0xf050000 << 4},
+
+            new Long[]{(long) 0x10000000,
+                       (long) 1,
+                       (long) 1,
+                       (long) 2}
+        },
+
+        /**********************************************************************/
+        {
+            "PLP VGA Module at 0xf0400000",
+
+            new Integer[]{6},
+
+            new Long[]{(long) 0xf040000 << 4},
+
+            new Long[]{(long) 2}
+        },
+
+        /**********************************************************************/
+        {
             "PLP 2.1 I/O Configuration",
 
             new Integer[]{0, 1, 2, 4, 6},

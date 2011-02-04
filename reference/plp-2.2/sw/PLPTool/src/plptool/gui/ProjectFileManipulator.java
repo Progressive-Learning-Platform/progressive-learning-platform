@@ -184,17 +184,18 @@ public class ProjectFileManipulator {
         }
 
         else if(args[2].equals("-a")) {
+            String timestamp = (new java.util.Date()).toString();
             plp.save();
             if(plp.asm.isAssembled() && plp.getArch().equals("plpmips")) {
                 plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
                 PLPMsg.M("");
                 plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
                 PLPMsg.M("");
-                PLPMsg.M("Build timestamp: " + (new java.util.Date()).toString());
+                PLPMsg.M("Build timestamp: " + timestamp);
                 PLPMsg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
                 PLPMsg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
             } else
-                PLPMsg.M("BUILD FAILED.");
+                PLPMsg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
         }
         else if(args[2].equals("-p")) {
             if(!(args.length == 4)) {

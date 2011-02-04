@@ -51,8 +51,9 @@ public class Develop extends javax.swing.JFrame {
     final static int SYS = 10;
 
     boolean trackChanges = false;
-    ProjectDriver plp;
-    javax.swing.undo.UndoManager undoManager;
+    private ProjectDriver plp;
+    private javax.swing.undo.UndoManager undoManager;
+    private javax.swing.JPopupMenu popupProject;
 
     int lastline = 0;
     boolean nothighlighting = true;
@@ -66,10 +67,10 @@ public class Develop extends javax.swing.JFrame {
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
         treeProject.setModel(treeModel);
         
-        splitter.setDividerLocation(0.25);
+        splitterH.setDividerLocation(0.25);
         
         PLPMsg.output = txtOutput;
-        txtEditor.setEnabled(false);
+        jScrollPane3.setEnabled(false);
         txtOutput.setEditable(false);
         rootmenuProject.setEnabled(false);
         menuImportASM.setEnabled(false);
@@ -109,6 +110,12 @@ public class Develop extends javax.swing.JFrame {
 
         undoManager = new javax.swing.undo.UndoManager();
         txtEditor.getDocument().addUndoableEditListener(undoManager);
+
+        popupProject = new javax.swing.JPopupMenu();
+        popupProject.add(menuNewASM);
+        popupProject.add(menuImportASM);
+        popupProject.add(menuExportASM);
+        popupProject.add(menuDeleteASM);
 
         this.setLocationRelativeTo(null);
 
@@ -219,6 +226,26 @@ public class Develop extends javax.swing.JFrame {
                     plp.curdir = fc.getSelectedFile().getParent();
                     plp.open(fc.getSelectedFile().getAbsolutePath());
                 }
+        }
+    }
+
+    public void savePLPFileAs() {
+        PLPMsg.output = txtOutput;
+
+        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileFilter(new PlpFilter());
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setCurrentDirectory(new File(plp.curdir));
+
+        int retVal = fc.showSaveDialog(null);
+
+        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+            plp.plpfile = fc.getSelectedFile().getAbsolutePath();
+            plp.curdir = fc.getSelectedFile().getParent();
+            if(!plp.plpfile.endsWith(".plp"))
+                plp.plpfile += ".plp";
+            plp.save();
+            plp.open(plp.plpfile);
         }
     }
 
@@ -463,17 +490,17 @@ public class Develop extends javax.swing.JFrame {
     private void initComponents() {
 
         devMainPane = new javax.swing.JPanel();
-        scrollOutput = new javax.swing.JScrollPane();
-        txtOutput = new javax.swing.JTextArea();
-        scrollPos = new javax.swing.JScrollPane();
-        lblPosition = new javax.swing.JTextPane();
-        splitter = new javax.swing.JSplitPane();
-        scrollerTree = new javax.swing.JScrollPane();
+        lblPosition = new javax.swing.JLabel();
+        splitterV = new javax.swing.JSplitPane();
+        splitterH = new javax.swing.JSplitPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         treeProject = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
-        txtCurFile = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        txtCurFile = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JTextPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtOutput = new javax.swing.JTextArea();
         toolbar = new javax.swing.JToolBar();
         btnAssemble = new javax.swing.JButton();
         btnSimulate = new javax.swing.JButton();
@@ -527,20 +554,84 @@ public class Develop extends javax.swing.JFrame {
 
         devMainPane.setName("devMainPane"); // NOI18N
 
-        scrollOutput.setName("scrollOutput"); // NOI18N
+        lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
+        lblPosition.setName("lblPosition"); // NOI18N
+
+        splitterV.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        splitterV.setResizeWeight(0.7);
+        splitterV.setName("splitterV"); // NOI18N
+
+        splitterH.setName("splitterH"); // NOI18N
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        treeProject.setName("treeProject"); // NOI18N
+        treeProject.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                treeProjectMousePressed(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                treeProjectMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(treeProject);
+
+        splitterH.setLeftComponent(jScrollPane2);
+
+        jPanel1.setName("jPanel1"); // NOI18N
+
+        txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
+        txtCurFile.setName("txtCurFile"); // NOI18N
+
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
+        txtEditor.setEnabled(false);
+        txtEditor.setName("txtEditor"); // NOI18N
+        txtEditor.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txtEditorCaretUpdate(evt);
+            }
+        });
+        txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+                txtEditorCaretPositionChanged(evt);
+            }
+        });
+        jScrollPane3.setViewportView(txtEditor);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(txtCurFile)
+                .addContainerGap(888, Short.MAX_VALUE))
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 963, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(txtCurFile)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
+        );
+
+        splitterH.setRightComponent(jPanel1);
+
+        splitterV.setTopComponent(splitterH);
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
 
         txtOutput.setColumns(20);
         txtOutput.setFont(resourceMap.getFont("txtOutput.font")); // NOI18N
         txtOutput.setRows(5);
         txtOutput.setName("txtOutput"); // NOI18N
-        scrollOutput.setViewportView(txtOutput);
+        jScrollPane1.setViewportView(txtOutput);
 
-        scrollPos.setName("scrollPos"); // NOI18N
-
-        lblPosition.setEditable(false);
-        lblPosition.setFont(resourceMap.getFont("lblPosition.font")); // NOI18N
-        lblPosition.setName("lblPosition"); // NOI18N
-        scrollPos.setViewportView(lblPosition);
+        splitterV.setRightComponent(jScrollPane1);
 
         javax.swing.GroupLayout devMainPaneLayout = new javax.swing.GroupLayout(devMainPane);
         devMainPane.setLayout(devMainPaneLayout);
@@ -548,80 +639,22 @@ public class Develop extends javax.swing.JFrame {
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPos, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(scrollOutput, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
+                .addGroup(devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(splitterV, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1048, Short.MAX_VALUE)
+                    .addComponent(lblPosition, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1048, Short.MAX_VALUE))
+                .addContainerGap())
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(devMainPaneLayout.createSequentialGroup()
-                .addComponent(scrollOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPos, javax.swing.GroupLayout.PREFERRED_SIZE, 23, Short.MAX_VALUE))
+                .addComponent(lblPosition)
+                .addContainerGap())
         );
 
-        splitter.setDividerLocation(100);
-        splitter.setName("splitter"); // NOI18N
-        splitter.setPreferredSize(new java.awt.Dimension(150, 342));
-
-        scrollerTree.setName("scrollerTree"); // NOI18N
-
-        treeProject.setName("treeProject"); // NOI18N
-        treeProject.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                treeProjectMousePressed(evt);
-            }
-        });
-        scrollerTree.setViewportView(treeProject);
-
-        splitter.setLeftComponent(scrollerTree);
-
-        jPanel1.setName("jPanel1"); // NOI18N
-
-        txtCurFile.setBackground(resourceMap.getColor("txtCurFile.background")); // NOI18N
-        txtCurFile.setEditable(false);
-        txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
-        txtCurFile.setName("txtCurFile"); // NOI18N
-
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
-
-        txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
-        txtEditor.setMinimumSize(new java.awt.Dimension(1, 1));
-        txtEditor.setName("txtEditor"); // NOI18N
-        txtEditor.setPreferredSize(new java.awt.Dimension(1, 1));
-        txtEditor.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                txtEditorCaretUpdate(evt);
-            }
-        });
-        txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtEditorKeyTyped(evt);
-            }
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtEditorKeyPressed(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtEditorKeyReleased(evt);
-            }
-        });
-        jScrollPane1.setViewportView(txtEditor);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txtCurFile, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(txtCurFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE))
-        );
-
-        splitter.setRightComponent(jPanel1);
+        getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
 
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
@@ -670,6 +703,8 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         toolbar.add(btnAbout);
+
+        getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
@@ -805,6 +840,11 @@ public class Develop extends javax.swing.JFrame {
 
         rootmenuProject.setText(resourceMap.getString("rootmenuProject.text")); // NOI18N
         rootmenuProject.setName("rootmenuProject"); // NOI18N
+        rootmenuProject.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rootmenuProjectMouseClicked(evt);
+            }
+        });
         rootmenuProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rootmenuProjectActionPerformed(evt);
@@ -833,6 +873,7 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuProject.add(menuSimulate);
 
+        menuProgram.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F7, 0));
         menuProgram.setText(resourceMap.getString("menuProgram.text")); // NOI18N
         menuProgram.setName("menuProgram"); // NOI18N
         menuProgram.addActionListener(new java.awt.event.ActionListener() {
@@ -919,24 +960,6 @@ public class Develop extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(devMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(toolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
-            .addComponent(splitter, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(splitter, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(devMainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -968,7 +991,8 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuAboutActionPerformed
 
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
-        plp.save();
+        if(plp.save() == Constants.PLP_FILE_USE_SAVE_AS)
+            savePLPFileAs();
         if(PLPCfg.cfgSyntaxHighlighting)
             syntaxHighlight();
     }//GEN-LAST:event_menuSaveActionPerformed
@@ -988,23 +1012,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuAssembleActionPerformed1
 
     private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
-        PLPMsg.output = txtOutput;
-
-        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-        fc.setFileFilter(new PlpFilter());
-        fc.setAcceptAllFileFilterUsed(false);
-        fc.setCurrentDirectory(new File(plp.curdir));
-
-        int retVal = fc.showSaveDialog(null);
-
-        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            plp.plpfile = fc.getSelectedFile().getAbsolutePath();
-            plp.curdir = fc.getSelectedFile().getParent();
-            if(!plp.plpfile.endsWith(".plp"))
-                plp.plpfile += ".plp";
-            plp.save();
-            plp.open(plp.plpfile);
-        }
+        savePLPFileAs();
     }//GEN-LAST:event_menuSaveAsActionPerformed
 
     private void menuImportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuImportASMActionPerformed
@@ -1016,7 +1024,6 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuDeleteASMActionPerformed
 
     private void rootmenuProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuProjectActionPerformed
-
     }//GEN-LAST:event_rootmenuProjectActionPerformed
 
     private void menuSetMainProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
@@ -1026,30 +1033,6 @@ public class Develop extends javax.swing.JFrame {
         }
         plp.refreshProjectView(true);
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
-
-    private void treeProjectMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMousePressed
-        if(evt.getClickCount() == 2) { // user double clicked the project tree
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
-
-            if(node == null)
-                return;
-
-            if(node.isLeaf()) {
-                String nodeStr = (String) node.getUserObject();
-
-                if(nodeStr.endsWith("asm")) {
-
-                    String[] tokens = nodeStr.split("::");
-
-                    PLPMsg.I("Opening " + nodeStr, null);
-
-                    plp.updateAsm(plp.open_asm, txtEditor.getText());
-                    plp.open_asm = Integer.parseInt(tokens[0]);
-                    plp.refreshProjectView(false);
-                }
-            }
-        }
-}//GEN-LAST:event_treeProjectMousePressed
 
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
         PLPMsg.output = txtOutput;
@@ -1106,9 +1089,40 @@ public class Develop extends javax.swing.JFrame {
             undoManager.redo();
     }//GEN-LAST:event_menuRedoActionPerformed
 
+    private void txtEditorCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtEditorCaretPositionChanged
+
+    }//GEN-LAST:event_txtEditorCaretPositionChanged
+
+    private void treeProjectMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMousePressed
+        if(evt.getClickCount() == 2) { // user double clicked the project tree
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
+
+            if(node == null)
+                return;
+
+            if(node.isLeaf()) {
+                String nodeStr = (String) node.getUserObject();
+
+                if(nodeStr.endsWith("asm")) {
+
+                    String[] tokens = nodeStr.split("::");
+
+                    PLPMsg.I("Opening " + nodeStr, null);
+
+                    plp.updateAsm(plp.open_asm, txtEditor.getText());
+                    plp.open_asm = Integer.parseInt(tokens[0]);
+                    plp.refreshProjectView(false);
+                }
+            }
+        } else if(plp.plpfile != null && evt.isPopupTrigger()) {
+            popupProject.show(treeProject, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_treeProjectMousePressed
+
     private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
         int caretPos = txtEditor.getCaretPosition();
-        int line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
+        int line;
+        line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
 
         if(PLPCfg.cfgSyntaxHighlighting) {
             if (line != lastline) {
@@ -1126,17 +1140,12 @@ public class Develop extends javax.swing.JFrame {
         lblPosition.setText(caretPos + " line: " + line);
     }//GEN-LAST:event_txtEditorCaretUpdate
 
-    private void txtEditorKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEditorKeyPressed
+    private void treeProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMouseClicked
 
-    private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEditorKeyReleased
+    }//GEN-LAST:event_treeProjectMouseClicked
 
-    private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEditorKeyTyped
+    private void rootmenuProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rootmenuProjectMouseClicked
+    }//GEN-LAST:event_rootmenuProjectMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbout;
@@ -1146,10 +1155,12 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
-    private javax.swing.JTextPane lblPosition;
+    private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
     private javax.swing.JMenuItem menuCopy;
@@ -1179,13 +1190,11 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuFile;
     private javax.swing.JMenu rootmenuHelp;
     private javax.swing.JMenu rootmenuProject;
-    private javax.swing.JScrollPane scrollOutput;
-    private javax.swing.JScrollPane scrollPos;
-    private javax.swing.JScrollPane scrollerTree;
-    private javax.swing.JSplitPane splitter;
+    private javax.swing.JSplitPane splitterH;
+    private javax.swing.JSplitPane splitterV;
     private javax.swing.JToolBar toolbar;
     private javax.swing.JTree treeProject;
-    private javax.swing.JTextField txtCurFile;
+    private javax.swing.JLabel txtCurFile;
     private javax.swing.JTextPane txtEditor;
     private javax.swing.JTextArea txtOutput;
     // End of variables declaration//GEN-END:variables
