@@ -10,9 +10,9 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "O brave new world that has such people in it. Let's start at once."
+	.asciiz "All that is solid melts into air..."
 version_string:
-	.asciiz "plp2.1"
+	.asciiz "plp2.2"
 memory_test:
 	.asciiz "starting memory test..."
 memory_done:
@@ -76,7 +76,7 @@ flash_leds_loop2:
 
 #more seven segment
 sseg_version:
-	li $a0, 0x24f9ffff
+	li $a0, 0x24a4ffff
 	jal libplp_sseg_write_raw
 	nop
 	j flash_leds_loop2
