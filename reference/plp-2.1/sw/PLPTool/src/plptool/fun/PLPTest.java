@@ -33,7 +33,7 @@ public class PLPTest {
             System.exit(-1);
 
         
-        SimCore sim = new SimCore(asm, 8000);
+        SimCore sim = new SimCore(asm, 0, 8000);
         PLPSimMods mods = new PLPSimMods(sim);
         sim.bus.add(mods.io_leds);
         sim.bus.enableAllModules();
