@@ -29,17 +29,19 @@ public class Presets {
         {
             "PLP 2.2 I/O Configuration",
 
-            new Integer[]{0, 1, 2, 4},
+            new Integer[]{0, 1, 2, 4, 7},
 
             new Long[]{(long) 0x0,
                        (long) 0xf020000 << 4,
                        (long) 0xf010000 << 4,
-                       (long) 0xf050000 << 4},
+                       (long) 0xf050000 << 4,
+                       (long) 0xf060000 << 4},
 
             new Long[]{(long) 0x10000000,
                        (long) 1,
                        (long) 1,
-                       (long) 2}
+                       (long) 2,
+                       (long) 1}
         },
 
         /**********************************************************************/
