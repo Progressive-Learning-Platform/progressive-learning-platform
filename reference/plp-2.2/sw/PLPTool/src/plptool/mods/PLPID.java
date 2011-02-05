@@ -18,7 +18,6 @@
 
 package plptool.mods;
 
-import java.awt.Color;
 import plptool.PLPSimBusModule;
 import plptool.Constants;
 
@@ -30,8 +29,14 @@ import plptool.Constants;
  */
 public class PLPID extends PLPSimBusModule {
 
+    long frequency = 20;
+
     public PLPID(long addr) {
         super(addr, addr + 4, true);
+    }
+
+    public void updateFrequency(long f) {
+        frequency = f;
     }
 
     public int eval() {
@@ -40,16 +45,15 @@ public class PLPID extends PLPSimBusModule {
     }
 
     public int gui_eval(Object x) {
-	// No GUI
-        return Constants.PLP_OK;
+	return Constants.PLP_OK;
     }
 
     @Override
     public Object read(long addr) {
         if(addr == startAddr)
-            return new Long(0x201);
+            return new Long(0x202);
         else if(addr == startAddr + 4)
-            return new Long(0x02faf080);
+            return frequency;
 
         return null;
     }

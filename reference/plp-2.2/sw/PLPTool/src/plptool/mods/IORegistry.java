@@ -147,7 +147,7 @@ public class IORegistry {
                    + "when the first and second registers are read, "
                    + "respectively.";
         mods[4][4] = true;
-        mods[4][5] = false;
+        mods[4][5] = true;
         
         /* ********************************************************************/
         // DummyMemory
@@ -233,6 +233,7 @@ public class IORegistry {
             // PLPID is summoned
             case 4:
                 module = new PLPID(addr);
+                moduleFrame = new PLPIDFrame((PLPID) module);
                 break;
 
             /******************************************************************/
