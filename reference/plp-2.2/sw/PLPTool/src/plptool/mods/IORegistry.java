@@ -58,7 +58,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 7;
+    private final int NUMBER_OF_MODULES = 8;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -170,6 +170,15 @@ public class IORegistry {
         mods[6][4] = true;
         mods[6][5] = true;
 
+        /* ********************************************************************/
+        // Timer
+
+        mods[7][0] = "Timer";
+        mods[7][1] = false;
+        mods[7][2] = 1;
+        mods[7][3] = "Timer module";
+        mods[7][4] = true;
+        mods[7][5] = false;
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -253,6 +262,12 @@ public class IORegistry {
                     module.start();
                 break;
 
+            /******************************************************************/
+            // Timer is summoned
+            case 7:
+                module = new Timer(addr);
+                break;
+                
             // ADD YOUR MODULE INITIALIZATION HERE
 
                             // ...3rd party code...//

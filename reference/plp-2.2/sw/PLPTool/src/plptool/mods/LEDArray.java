@@ -26,7 +26,7 @@ import plptool.Constants;
  * An example of a bus module utilizing the gui_eval function. When evaluated,
  * this module lights up the correct LEDs on the LEDArrayFrame class.
  *
- * @author wira
+ * @author wiraPLPID
  */
 public class LEDArray extends PLPSimBusModule {
 
