@@ -53,7 +53,7 @@ public class Develop extends javax.swing.JFrame {
     private PlpUndoManager undoManager;
     private javax.swing.JPopupMenu popupProject;
 
-    int lastline = 0;
+    public SimpleAttributeSet[] styles = setupHighlighting();
     
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
@@ -357,7 +357,6 @@ public class Develop extends javax.swing.JFrame {
         PLPCfg.nothighlighting = false;
         int currpos = 0;
         int doclength = txtEditor.getText().split("\\r?\\n").length;
-        SimpleAttributeSet[] styles = setupHighlighting();
         for(int i=0;i<doclength;i++) {
             String currline = txtEditor.getText().split("\\r?\\n")[i];
             syntaxHighlight(currline, currpos, styles);
@@ -451,18 +450,19 @@ public class Develop extends javax.swing.JFrame {
         return (matcher0.matches() || matcher1.matches());
     }
 
+    //Called whenever syntax styles change
     private SimpleAttributeSet[] setupHighlighting() {
         Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
         StyleConstants.setFontFamily(def,"Monospaced");
         StyleConstants.setFontSize(def,11);
-        SimpleAttributeSet[] styles = new SimpleAttributeSet[11];
+        SimpleAttributeSet[] styleSetup = new SimpleAttributeSet[11];
         for(int i=0;i<11;i++) {
-            styles[i] = new SimpleAttributeSet(def);
-            StyleConstants.setForeground(styles[i],PLPCfg.syntaxColors[i]);
-            StyleConstants.setBold(styles[i], PLPCfg.syntaxBold[i]);
-            StyleConstants.setItalic(styles[i], PLPCfg.syntaxItalic[i]);
+            styleSetup[i] = new SimpleAttributeSet(def);
+            StyleConstants.setForeground(styleSetup[i],PLPCfg.syntaxColors[i]);
+            StyleConstants.setBold(styleSetup[i], PLPCfg.syntaxBold[i]);
+            StyleConstants.setItalic(styleSetup[i], PLPCfg.syntaxItalic[i]);
         }
-        return styles;
+        return styleSetup;
     }
 
     /** This method is called from within the constructor to
@@ -1135,9 +1135,11 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEditorMousePressed
 
     private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
+        int caretPos = txtEditor.getCaretPosition();
         if(PLPCfg.cfgSyntaxHighlighting) {
-            syntaxHighlight(txtEditor.getText().substring(0, txtEditor.getCaretPosition()).split("\\r?\\n").length-1);
+            syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
         }
+        txtEditor.setCaretPosition(caretPos);
     }//GEN-LAST:event_txtEditorKeyReleased
 
     private void initPopupMenus() {
