@@ -16,12 +16,16 @@ package plptool.mods;
  * @author fritz
  */
 public class UARTFrame extends javax.swing.JInternalFrame {
-
+    UART u;
+    
     /** Creates new form UARTFrame */
     public UARTFrame() {
         initComponents();
     }
 
+    public void setUART(UART f) {
+        u = f;
+    }
     public void addText(long d) {
         txtUART.append(String.format("%c",(char)d));
     }
@@ -52,6 +56,11 @@ public class UARTFrame extends javax.swing.JInternalFrame {
         txtUART.setRows(5);
         txtUART.setDisabledTextColor(resourceMap.getColor("txtUART.disabledTextColor")); // NOI18N
         txtUART.setName("txtUART"); // NOI18N
+        txtUART.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtUARTKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtUART);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -67,12 +76,16 @@ public class UARTFrame extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtUARTKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUARTKeyTyped
+         u.receivedData(evt.getKeyChar());
+    }//GEN-LAST:event_txtUARTKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
