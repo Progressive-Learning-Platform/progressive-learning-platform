@@ -537,15 +537,18 @@ public class Develop extends javax.swing.JFrame {
             }
         });
 
+        devMainPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         devMainPane.setName("devMainPane"); // NOI18N
 
         lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
         lblPosition.setName("lblPosition"); // NOI18N
 
+        splitterV.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         splitterV.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         splitterV.setResizeWeight(0.7);
         splitterV.setName("splitterV"); // NOI18N
 
+        splitterH.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         splitterH.setName("splitterH"); // NOI18N
 
         jScrollPane2.setName("jScrollPane2"); // NOI18N
@@ -570,6 +573,7 @@ public class Develop extends javax.swing.JFrame {
 
         jScrollPane3.setName("jScrollPane3"); // NOI18N
 
+        txtEditor.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
         txtEditor.setEnabled(false);
         txtEditor.setName("txtEditor"); // NOI18N
@@ -584,10 +588,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -601,17 +605,18 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 644, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(txtCurFile)
-                .addContainerGap(932, Short.MAX_VALUE))
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1018, Short.MAX_VALUE)
+                .addContainerGap(577, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -635,15 +640,14 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(splitterV, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1048, Short.MAX_VALUE)
-                    .addComponent(lblPosition, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1048, Short.MAX_VALUE))
+                    .addComponent(splitterV, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+                    .addComponent(lblPosition, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE))
                 .addContainerGap())
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblPosition)
                 .addContainerGap())
@@ -651,6 +655,7 @@ public class Develop extends javax.swing.JFrame {
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
 
+        toolbar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
         toolbar.setName("toolbar"); // NOI18N
@@ -1109,7 +1114,7 @@ public class Develop extends javax.swing.JFrame {
                 }
             }
         } else if(plp.plpfile != null && evt.isPopupTrigger()) {
-            popupProject.show(treeProject, evt.getX(), evt.getY());
+            popupProject.show(null, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_treeProjectMousePressed
 
@@ -1130,7 +1135,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void txtEditorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEditorMousePressed
         if(plp.plpfile != null && evt.isPopupTrigger()) {
-            popupEdit.show(txtEditor, evt.getX(), evt.getY());
+            popupEdit.show(null, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_txtEditorMousePressed
 
