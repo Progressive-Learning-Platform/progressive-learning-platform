@@ -24,8 +24,6 @@ import java.io.File;
 
 //For Syntax Highlighting
 import javax.swing.text.*;
-import javax.swing.SwingUtilities;
-import java.awt.Color;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -458,24 +456,12 @@ public class Develop extends javax.swing.JFrame {
         StyleConstants.setFontFamily(def,"Monospaced");
         StyleConstants.setFontSize(def,11);
         SimpleAttributeSet[] styles = new SimpleAttributeSet[11];
-        styles[RTYPE] = new SimpleAttributeSet(def);
-        StyleConstants.setForeground(styles[0],Color.blue);
-        styles[ITYPE] = new SimpleAttributeSet(styles[RTYPE]);
-        styles[BRANCH] = new SimpleAttributeSet(styles[RTYPE]);
-        styles[JUMP] = new SimpleAttributeSet(styles[RTYPE]);
-        styles[MEMTYPE] = new SimpleAttributeSet(styles[RTYPE]);
-        styles[NOP] = new SimpleAttributeSet(styles[RTYPE]);
-        StyleConstants.setForeground(styles[NOP],Color.gray);
-        styles[REG] = new SimpleAttributeSet(def);
-        StyleConstants.setForeground(styles[REG], Color.red);
-        styles[IMM] = new SimpleAttributeSet(def);
-        StyleConstants.setForeground(styles[IMM], Color.orange);
-        styles[LABEL] = new SimpleAttributeSet(def);
-        StyleConstants.setBold(styles[LABEL], true);
-        styles[COMMENT] = new SimpleAttributeSet(def);
-        StyleConstants.setForeground(styles[COMMENT], Color.green);
-        styles[SYS] = new SimpleAttributeSet(def);
-        StyleConstants.setForeground(styles[SYS], Color.pink);
+        for(int i=0;i<11;i++) {
+            styles[i] = new SimpleAttributeSet(def);
+            StyleConstants.setForeground(styles[i],PLPCfg.syntaxColors[i]);
+            StyleConstants.setBold(styles[i], PLPCfg.syntaxBold[i]);
+            StyleConstants.setItalic(styles[i], PLPCfg.syntaxItalic[i]);
+        }
         return styles;
     }
 
@@ -598,10 +584,15 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
             }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+        });
+        txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtEditorKeyReleased(evt);
             }
         });
         jScrollPane3.setViewportView(txtEditor);
@@ -612,7 +603,7 @@ public class Develop extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile)
-                .addContainerGap(942, Short.MAX_VALUE))
+                .addContainerGap(932, Short.MAX_VALUE))
             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1018, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -620,7 +611,7 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -652,7 +643,7 @@ public class Develop extends javax.swing.JFrame {
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblPosition)
                 .addContainerGap())
@@ -988,6 +979,8 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
         newPLPFile();
+        if(PLPCfg.cfgSyntaxHighlighting)
+            syntaxHighlight();
     }//GEN-LAST:event_menuNewActionPerformed
 
     private void menuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
@@ -1125,19 +1118,6 @@ public class Develop extends javax.swing.JFrame {
         int line;
         line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
 
-        if(PLPCfg.cfgSyntaxHighlighting) {
-            if (line != lastline) {
-                //Would rather use invokeAndWait, but there are some issues concerning
-                //calling from within this method
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        syntaxHighlight(lastline);
-                    }
-                });
-                lastline = line;
-            }
-        }
-
         lblPosition.setText(caretPos + " line: " + line);
     }//GEN-LAST:event_txtEditorCaretUpdate
 
@@ -1153,6 +1133,12 @@ public class Develop extends javax.swing.JFrame {
             popupEdit.show(txtEditor, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_txtEditorMousePressed
+
+    private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
+        if(PLPCfg.cfgSyntaxHighlighting) {
+            syntaxHighlight(txtEditor.getText().substring(0, txtEditor.getCaretPosition()).split("\\r?\\n").length-1);
+        }
+    }//GEN-LAST:event_txtEditorKeyReleased
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
