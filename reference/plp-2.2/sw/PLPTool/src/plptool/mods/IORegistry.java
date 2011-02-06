@@ -58,7 +58,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 8;
+    private final int NUMBER_OF_MODULES = 9;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -179,6 +179,16 @@ public class IORegistry {
         mods[7][3] = "Timer module";
         mods[7][4] = true;
         mods[7][5] = false;
+
+        /* ********************************************************************/
+        // UART
+
+        mods[8][0] = "UART";
+        mods[8][1] = false;
+        mods[8][2] = 4;
+        mods[8][3] = "UART module";
+        mods[8][4] = true;
+        mods[8][5] = true;
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -266,6 +276,14 @@ public class IORegistry {
             // Timer is summoned
             case 7:
                 module = new Timer(addr);
+                break;
+
+            /******************************************************************/
+            // UART is summoned
+            case 8:
+                module = new UART(addr);
+                moduleFrame = new UARTFrame();
+                ((UART)module).setFrame(moduleFrame);
                 break;
                 
             // ADD YOUR MODULE INITIALIZATION HERE
