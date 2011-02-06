@@ -1135,11 +1135,11 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEditorMousePressed
 
     private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
-        int caretPos = txtEditor.getCaretPosition();
         if(PLPCfg.cfgSyntaxHighlighting) {
+            int caretPos = txtEditor.getCaretPosition();
             syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
+            txtEditor.setCaretPosition(caretPos);
         }
-        txtEditor.setCaretPosition(caretPos);
     }//GEN-LAST:event_txtEditorKeyReleased
 
     private void initPopupMenus() {
