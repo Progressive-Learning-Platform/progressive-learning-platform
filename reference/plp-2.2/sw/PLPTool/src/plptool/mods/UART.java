@@ -7,6 +7,8 @@ package plptool.mods;
 import plptool.PLPSimBusModule;
 import plptool.Constants;
 import plptool.PLPMsg;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /*
  * UART registers:
@@ -22,17 +24,29 @@ import plptool.PLPMsg;
  */
 public class UART extends PLPSimBusModule {
     long receiveB, sendB;
-    boolean ready;
+    boolean ready = false;
     UARTFrame frame;
+    Queue rb = new LinkedList();
 
     public UART(long addr) {
         super(addr, addr+12, true);
     }
 
+    public void receivedData(char c) {
+        rb.add(new Long(c));
+    }
+
     public void setFrame(Object x) {
         frame = (UARTFrame)x;
+        frame.setUART(this);
     }
     public int eval() {
+        /* handle new data received from the host */
+        if (!ready && rb.size() != 0) {
+            ready = true;
+            receiveB = (Long)rb.remove();
+        }
+
         return Constants.PLP_OK;
     }
 
