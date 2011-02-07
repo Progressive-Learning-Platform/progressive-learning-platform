@@ -22,6 +22,7 @@ int yywrap() {
 %token BASEOFFSET
 %token DIRECTIVE
 %token NEWLINE
+%token STRING
 
 /* supported instructions */
 %token ADDU
@@ -51,6 +52,7 @@ int yywrap() {
 %token B
 %token MOVE
 %token LI
+%token ASCII
 
 /* unsupported instructions */
 %token LA
@@ -104,6 +106,13 @@ supported_instruction
 	| LI    REG WORD NEWLINE		{craft(3,"li",$2,$3);}
 	| LI	REG IMM NEWLINE			{craft(3,"li",$2,$3);}
 	| LABEL NEWLINE				{craft(1,$1);}
+	| ASCII STRING NEWLINE			{char *d; 
+						 char *s = strndup($2,strlen($2)-5);
+						 d = malloc(strlen(s)+2);
+						 sprintf(d,"%s\"",s);
+						 craft(2,".asciiz",d);
+						 free(s); free(d);
+						 } 
 	;
 
 unsupported_instruction
