@@ -380,6 +380,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     //Do not call this class without setting highlighting to true
+    //Or without recording selected text
     private void syntaxHighlight(String text, int position, SimpleAttributeSet[] styles) {
         StyledDocument doc = txtEditor.getStyledDocument();
         int currentposition = 0;
@@ -1074,7 +1075,16 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuCutActionPerformed
 
     private void menuPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPasteActionPerformed
+        int caretPos1 = txtEditor.getCaretPosition();
+        int line1 = txtEditor.getText().substring(0, caretPos1).split("\\r?\\n").length;
         txtEditor.paste();
+        int caretPos2 = txtEditor.getCaretPosition();
+        int line2 = txtEditor.getText().substring(0, caretPos2).split("\\r?\\n").length;
+        for(int i=line1;i<=line2; i++) {
+            syntaxHighlight(i);
+        }
+        txtEditor.setCaretPosition(caretPos2);
+        System.out.println(caretPos1 + " " + caretPos2);
     }//GEN-LAST:event_menuPasteActionPerformed
 
     private void menuUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUndoActionPerformed
@@ -1139,7 +1149,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEditorMousePressed
 
     private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
-        if(PLPCfg.cfgSyntaxHighlighting) {
+        if(PLPCfg.cfgSyntaxHighlighting && evt.getKeyChar() != java.awt.event.KeyEvent.CHAR_UNDEFINED) {
             int caretPos = txtEditor.getCaretPosition();
             syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
             txtEditor.setCaretPosition(caretPos);
