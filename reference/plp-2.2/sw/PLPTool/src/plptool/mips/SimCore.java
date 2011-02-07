@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -402,7 +402,7 @@ public class SimCore extends PLPSimCore {
 
         public void printnextvars() {
             PLPMsg.M("ID next vars");
-            PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction));
+            PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
             PLPMsg.M("\ti_instrAddr: " + String.format("%08x", i_instrAddr));
             PLPMsg.M("\ti_ctl_pcplus4: " + String.format("%08x", i_ctl_pcplus4));
         }
@@ -659,7 +659,7 @@ public class SimCore extends PLPSimCore {
 
         public void printnextvars() {
             PLPMsg.M("EX next vars");
-            PLPMsg.M("\ti_instruction: " + String.format("%08x",i_instruction));
+            PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
             PLPMsg.M("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
 
             // EX stage pipeline registers
@@ -851,7 +851,7 @@ public class SimCore extends PLPSimCore {
 
         public void printnextvars() {
             PLPMsg.M("MEM next vars");
-            PLPMsg.M("\ti_instruction: " + String.format("%08x",i_instruction));
+            PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
             PLPMsg.M("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
 
             // MEM stage pipeline registers
@@ -993,7 +993,7 @@ public class SimCore extends PLPSimCore {
 
         public void printnextvars() {
             PLPMsg.M("WB next vars");
-            PLPMsg.M("\ti_instruction: " + String.format("%08x",i_instruction));
+            PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
             PLPMsg.M("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
 
             // WB stage pipeline registers

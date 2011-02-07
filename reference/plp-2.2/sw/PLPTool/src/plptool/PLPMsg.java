@@ -83,6 +83,30 @@ public class PLPMsg {
     }
 
     /**
+     * This function either prints out an warning message to stdout or the
+     * specified JTextArea in the output pointer.
+     *
+     * @param warningStr Error string to print.
+     * @param objIdentifier A reference to the offending object.
+     */
+    public static void W(String warningStr, Object objIdentifier) {
+        if(objIdentifier != null)
+            if(output == null)
+                System.out.println("[W] #" + " " + objIdentifier.toString() + ": " + warningStr);
+            else {
+                output.append("[W] #" + " " + objIdentifier.toString() + ": " + warningStr + "\n");
+                output.setCaretPosition(output.getText().length() - 1);
+            }
+        else
+            if(output == null)
+                System.out.println("[W] #" + " " + warningStr);
+            else {
+                output.append("[W] #" + " " + warningStr + "\n");
+                output.setCaretPosition(output.getText().length() - 1);
+            }
+    }
+
+    /**
      * Prints an informative message to the current output object.
      *
      * @param infoStr Information string to print out.
