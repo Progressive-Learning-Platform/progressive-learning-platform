@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,7 +37,11 @@ import java.util.ArrayList;
 import javax.swing.tree.*;
 
 /**
- * This is the PLPTool application project backend.
+ * This is the PLPTool application project backend. This class handles
+ * manipulation of the PLP project file and drives the workflow of a
+ * PLP tool user. This includes creating, opening, and saving project files.
+ * Driving workflow functions such as assembling, simulating, and
+ * programming the board.
  *
  * @author wira
  */
@@ -45,21 +49,39 @@ public class ProjectDriver extends Thread {
 
     public SingleFrameApplication              app;        // App
 
-    public String                              plpfile;    // current PLP file
+    /**
+     * These variables hold some project file information for this driver.
+     * plpfile      - the path to the plpfile ProjectDriver will work with
+     * modified     - denotes whether the plpfile is modified since opening
+     * open_asm     - current open ASM file in the gui
+     * curdir       - current working directory for the project
+     * arch         - active ISA for this project
+     */
+    public String                              plpfile;
     public boolean                             modified;
-    public int                                 open_asm;   // current open ASM
-    public String                              curdir;     // current workiing dir
+    public int                                 open_asm;
+    public String                              curdir;
+    private String                             arch;    
 
-    private String                             arch;       // architecture
+    /**
+     * These variables hold data and information loaded from
+     * the plp project file.
+     */
     public byte[]                              binimage;   // binary image
     public String                              hexstring;  // hex string
+    public String                              meta;       // Meta String
 
+    /**
+     * References to PLP configuration and messaging classes
+     */
     public plptool.PLPCfg                      cfg;        // Configuration
     public plptool.PLPMsg                      msg;        // Messaging class
 
     public ArrayList<plptool.PLPAsmSource>     asms;       // Assembly files
-    public String                              meta;       // Meta String
-
+    
+    /**
+     * References to the workflow framework objects
+     */
     public plptool.PLPAsm                      asm;        // Assembler
     public plptool.PLPAsm[]                    asm_array;  // Asm array
     public plptool.PLPLinker                   lnkr;       // Linker
@@ -67,11 +89,11 @@ public class ProjectDriver extends Thread {
 
     public plptool.PLPSimCore                  sim;        // Simulation core
     public plptool.mods.IORegistry             ioreg;      // I/O registry
-
-    // GUI Members
     public plptool.PLPSimCoreGUI               g_sim;      // Sim Core GUI
 
-    // PLP GUI Windows
+    /**
+     * PLP GUI Windows
+     */
     public plptool.gui.SimShell                g_simsh;    // PLP Simulator Frontend
     public plptool.gui.IORegistryFrame         g_ioreg;    // I/O registry GUI
     public plptool.gui.Develop                 g_dev;      // IDE GUI
@@ -91,6 +113,12 @@ public class ProjectDriver extends Thread {
     public int                                 p_progress;
     public TimeoutWatcher                      p_watchdog;
 
+    /**
+     * The constructor for the project driver.
+     *
+     * @param g Speficies whether we are driving a GUI or not
+     * @param arch The ISA to use for this project
+     */
     public ProjectDriver(boolean g, String arch) {
         this.g = g;
         this.arch = arch;
@@ -99,16 +127,31 @@ public class ProjectDriver extends Thread {
         plpfile = null;
     }
 
+    /**
+     * Set a new architecture for the project
+     *
+     * @param arch
+     * @return
+     */
     public int setArch(String arch) {
         this.arch = arch;
 
         return Constants.PLP_OK;
     }
 
+    /**
+     *
+     * @return the current active ISA for the project
+     */
     public String getArch() {
         return arch;
     }
 
+    /**
+     * Initializes plp project data structures
+     *
+     * @return PLP_OK
+     */
     public int create() {
         modified = true;
         plpfile = "Unsaved Project";
@@ -133,6 +176,13 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Initializes project data structures and attempt to import the specified
+     * assembly source file into the project.
+     *
+     * @param asmPath Path to ASM file to import
+     * @return PLP_OK
+     */
     public int create(String asmPath) {
         modified = true;
         plpfile = "Unsaved Project";
@@ -159,6 +209,11 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Saves current project state to the file specified by plpfile.
+     *
+     * @return PLP_OK on successful save, error code otherwise
+     */
     public int save() {
 
         // commit changes of currently open source file
@@ -294,6 +349,12 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Opens plp file specified by path.
+     *
+     * @param path Path to project file to load.
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int open(String path) {
         File plpFile = new File(path);
         boolean dirty = true;
@@ -335,7 +396,7 @@ public class ProjectDriver extends Thread {
                 if(lines[0].equals("PLP-2.2"))  {
 
                 } else {
-                    PLPMsg.I("WARNING: This is not a PLP-2.2 project file. Opening anyways.", this);
+                    PLPMsg.W("WARNING: This is not a PLP-2.2 project file. Opening anyways.", this);
 
                 }
 
@@ -384,6 +445,11 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * GUI: update window title of the develop window
+     *
+     * @return PLP_OK;
+     */
     public int updateWindowTitle() {
         File fHandler = new File(plpfile);
         String windowTitle = fHandler.getName() + ((modified) ? "*" : "") +
@@ -393,6 +459,14 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * GUI: update the develop window to reflect the current state of the
+     * project driver (open file, etc.)
+     *
+     * @param commitCurrentAsm Whether to commit currently open asm file
+     * in the editor before refreshing.
+     * @return PLP_OK
+     */
     public int refreshProjectView(boolean commitCurrentAsm) {
         if(commitCurrentAsm)
             updateAsm(open_asm, g_dev.getEditorText());
@@ -431,11 +505,22 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Link all assembly objects
+     *
+     * @return
+     */
     public int link() {
 
         return Constants.PLP_OK;
     }
 
+    /**
+     * Assemble the source files attached to this project, starting from
+     * the main program (index 0)
+     *
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int assemble() {
 
         PLPMsg.I("Assembling...", null);
@@ -472,6 +557,11 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Drive a simulation of assembly objects attached to this project.
+     *
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int simulate() {
         PLPMsg.I("Starting simulation...", null);
 
@@ -512,6 +602,13 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Program the board with the object code produced by the assembler to
+     * the specified port
+     *
+     * @param port Programming port to use
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int program(String port) {
         PLPMsg.I("Programming to " + port, this);
 
@@ -544,6 +641,12 @@ public class ProjectDriver extends Thread {
         }
     }
 
+    /**
+     * Getter function for the asm source file with the specified index
+     *
+     * @param index Index of source file to get
+     * @return PLPAsmSource object that corresponds to index
+     */
     public PLPAsmSource getAsm(int index) {
         if(asms == null || index < 0 || index >= asms.size()) {
             PLPMsg.E("updateAsm: Invalid index: " + index,
@@ -554,6 +657,13 @@ public class ProjectDriver extends Thread {
         return asms.get(index);
     }
 
+    /**
+     * Update PLPAsmSource specified by index with new string.
+     *
+     * @param index Index of the source file to update
+     * @param newStr New string to store
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int updateAsm(int index, String newStr) {
         if(asms == null || index < 0 || index >= asms.size())
             return PLPMsg.E("updateAsm: Invalid index: " + index,
@@ -567,6 +677,12 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Create a new source file for the project
+     *
+     * @param name Identifier for the source file
+     * @return PLP_OK
+     */
     public int newAsm(String name) {
         asms.add(new PLPAsmSource("# New ASM File", name, asms.size()));
 
@@ -577,6 +693,12 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Import specified source file into the project
+     *
+     * @param path The path to the source file to import
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int importAsm(String path) {
         File asmFile = new File(path);
 
@@ -607,6 +729,14 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Export the source file specified by index and save it to the specified
+     * output path.
+     *
+     * @param index Index of the source file to export
+     * @param path The path of export destination
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int exportAsm(int index, String path) {
         File asmFile = new File(path);
 
@@ -638,6 +768,12 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Remove the source file specified by index from the project.
+     *
+     * @param index Index of the source file to remove
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int removeAsm(int index) {
         if(asms.size() <= 1) {
             return  PLPMsg.E("removeAsm: Can not delete last source file.",
@@ -666,6 +802,13 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Move the specified source file to index 0, making it the top level
+     * source file.
+     *
+     * @param index Index of the source file to be set as main program
+     * @return PLP_OK on successful operation, error code otherwise
+     */
     public int setMainAsm(int index) {
         if(asms == null || index <= 0 || index >= asms.size())
             return PLPMsg.E("setMainAsm: Invalid index: " + index,
@@ -689,12 +832,20 @@ public class ProjectDriver extends Thread {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Update GUI components
+     */
     public void updateComponents() {
         g_sim.updateComponents();
         g_dev.updateComponents();
         ioreg.gui_eval();
     }
 
+    /**
+     * Denotes whether the project driver is driving GUI or not
+     *
+     * @return true if a GUI is active, false otherwise
+     */
     public boolean g() {
         return g;
     }
@@ -705,7 +856,7 @@ public class ProjectDriver extends Thread {
     }
 
     // ******************************************************************
-    // Asynchronous project driver
+    // Asynchronous project driver EXPERIMENTAL
 
     public int command = 0;
     public String strArg = null;
