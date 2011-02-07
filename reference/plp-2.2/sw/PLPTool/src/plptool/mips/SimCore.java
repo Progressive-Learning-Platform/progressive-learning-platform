@@ -1203,7 +1203,7 @@ public class SimCore extends PLPSimCore {
                 }
             }
 
-            if(wb_stage.hot && mem_ex_lw) {
+            if(mem_stage.hot && mem_ex_lw) {
                 // MEM->EX Load Word, stall
                 if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.fwd_ctl_memread == 1
                         && (id_opcode == 0x2B || !id_instr_is_itype || id_instr_is_branch)) {
