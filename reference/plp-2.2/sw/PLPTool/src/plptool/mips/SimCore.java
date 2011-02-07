@@ -1083,8 +1083,8 @@ public class SimCore extends PLPSimCore {
                             return (a_signed < b_signed) ? 1 : 0;
                         case 0x2B:
                             return (a < b) ? 1 : 0;
-                        case 0x00: return a << b;
-                        case 0x02: return a >> b;
+                        case 0x00: return b << MIPSInstr.sa(instr);
+                        case 0x02: return b >>> MIPSInstr.sa(instr);
                     }
 
                 case 0x04: return (a - b == 0) ? 1 : 0;
