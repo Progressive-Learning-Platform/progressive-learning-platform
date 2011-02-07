@@ -492,6 +492,7 @@ public class ProjectDriver extends Thread {
         
         g_dev.setEditorText(asms.get(open_asm).getAsmString());
         g_dev.getEditor().setEnabled(true);
+        g_dev.getEditor().setVisible(true);
         g_dev.getEditor().setCaretPosition(0);
         g_dev.enableBuildControls();
 

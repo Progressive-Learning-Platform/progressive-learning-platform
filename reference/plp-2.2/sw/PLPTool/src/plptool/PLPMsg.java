@@ -92,16 +92,16 @@ public class PLPMsg {
     public static void W(String warningStr, Object objIdentifier) {
         if(objIdentifier != null)
             if(output == null)
-                System.out.println("[W] #" + " " + objIdentifier.toString() + ": " + warningStr);
+                System.out.println("[W] " + objIdentifier.toString() + ": " + warningStr);
             else {
-                output.append("[W] #" + " " + objIdentifier.toString() + ": " + warningStr + "\n");
+                output.append("[W] " + objIdentifier.toString() + ": " + warningStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
         else
             if(output == null)
-                System.out.println("[W] #" + " " + warningStr);
+                System.out.println("[W] " + warningStr);
             else {
-                output.append("[W] #" + " " + warningStr + "\n");
+                output.append("[W] " + warningStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
     }

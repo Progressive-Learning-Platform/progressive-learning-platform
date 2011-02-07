@@ -360,18 +360,16 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="splitterV" alignment="0" pref="677" max="32767" attributes="0"/>
-                      <Component id="lblPosition" alignment="0" pref="677" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="lblPosition" pref="673" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
+              <Component id="splitterV" alignment="0" pref="697" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="splitterV" pref="438" max="32767" attributes="0"/>
+                  <Component id="splitterV" pref="433" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lblPosition" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -456,11 +454,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" alignment="0" pref="644" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" alignment="0" pref="663" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="577" max="32767" attributes="0"/>
+                              <EmptySpace pref="576" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -469,7 +467,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane3" pref="321" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="327" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
