@@ -1114,7 +1114,7 @@ public class Develop extends javax.swing.JFrame {
                 }
             }
         } else if(plp.plpfile != null && evt.isPopupTrigger()) {
-            popupProject.show(null, evt.getX(), evt.getY());
+            popupProject.show(treeProject, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_treeProjectMousePressed
 
@@ -1135,7 +1135,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void txtEditorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEditorMousePressed
         if(plp.plpfile != null && evt.isPopupTrigger()) {
-            popupEdit.show(null, evt.getX(), evt.getY());
+            popupEdit.show(txtEditor, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_txtEditorMousePressed
 
