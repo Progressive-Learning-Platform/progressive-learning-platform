@@ -774,7 +774,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         tblMemMap.setModel(memMap);
 
         plp.ioreg.gui_eval();
-        plp.g_simsh.getFlagsField().setText(String.format("0x%08x",sim.getFlags()));
 
         updateProgramMemoryTablePC();
     }

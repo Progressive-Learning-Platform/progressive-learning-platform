@@ -67,10 +67,6 @@ public class SimShell extends javax.swing.JFrame {
         tglRun.setSelected(false);
     }
 
-    public javax.swing.JTextField getFlagsField() {
-        return txtFlags;
-    }
-
     public void destroySimulation() {
         if(plp.sim != null) {
             if(plp.g_sim != null)
@@ -109,9 +105,24 @@ public class SimShell extends javax.swing.JFrame {
         btnReset = new javax.swing.JButton();
         tglRun = new javax.swing.JToggleButton();
         tglIODisplay = new javax.swing.JToggleButton();
-        txtFlags = new javax.swing.JTextField();
         btnOpts = new javax.swing.JButton();
         simDesktop = new javax.swing.JDesktopPane();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        rootmenuSim = new javax.swing.JMenu();
+        menuReset = new javax.swing.JMenuItem();
+        menuStep = new javax.swing.JMenuItem();
+        cmenuRun = new javax.swing.JCheckBoxMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        menuClose = new javax.swing.JMenuItem();
+        rootmenuTools = new javax.swing.JMenu();
+        menuIOReg = new javax.swing.JMenuItem();
+        menuPresets = new javax.swing.JMenu();
+        menuRemoveIO = new javax.swing.JMenu();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        menuNewWatcher = new javax.swing.JMenuItem();
+        rootmenuWindow = new javax.swing.JMenu();
+        menuTile = new javax.swing.JMenuItem();
+        menuRestore = new javax.swing.JMenuItem();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SimShell.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -155,10 +166,6 @@ public class SimShell extends javax.swing.JFrame {
             }
         });
 
-        txtFlags.setEditable(false);
-        txtFlags.setText(resourceMap.getString("txtFlags.text")); // NOI18N
-        txtFlags.setName("txtFlags"); // NOI18N
-
         btnOpts.setText(resourceMap.getString("btnOpts.text")); // NOI18N
         btnOpts.setName("btnOpts"); // NOI18N
         btnOpts.addActionListener(new java.awt.event.ActionListener() {
@@ -183,10 +190,8 @@ public class SimShell extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(tglIODisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtFlags, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(btnOpts, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(328, Short.MAX_VALUE))
         );
         simControlsLayout.setVerticalGroup(
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,7 +203,6 @@ public class SimShell extends javax.swing.JFrame {
                     .addComponent(tglRun)
                     .addComponent(btnReset)
                     .addComponent(tglIODisplay)
-                    .addComponent(txtFlags, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnOpts))
                 .addContainerGap())
         );
@@ -206,17 +210,86 @@ public class SimShell extends javax.swing.JFrame {
         simDesktop.setBackground(resourceMap.getColor("simDesktop.background")); // NOI18N
         simDesktop.setName("simDesktop"); // NOI18N
 
+        jMenuBar1.setName("jMenuBar1"); // NOI18N
+
+        rootmenuSim.setText(resourceMap.getString("rootmenuSim.text")); // NOI18N
+        rootmenuSim.setName("rootmenuSim"); // NOI18N
+
+        menuReset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        menuReset.setText(resourceMap.getString("menuReset.text")); // NOI18N
+        menuReset.setName("menuReset"); // NOI18N
+        rootmenuSim.add(menuReset);
+
+        menuStep.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
+        menuStep.setText(resourceMap.getString("menuStep.text")); // NOI18N
+        menuStep.setName("menuStep"); // NOI18N
+        rootmenuSim.add(menuStep);
+
+        cmenuRun.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        cmenuRun.setText(resourceMap.getString("cmenuRun.text")); // NOI18N
+        cmenuRun.setName("cmenuRun"); // NOI18N
+        rootmenuSim.add(cmenuRun);
+
+        jSeparator1.setName("jSeparator1"); // NOI18N
+        rootmenuSim.add(jSeparator1);
+
+        menuClose.setText(resourceMap.getString("menuClose.text")); // NOI18N
+        menuClose.setName("menuClose"); // NOI18N
+        rootmenuSim.add(menuClose);
+
+        jMenuBar1.add(rootmenuSim);
+
+        rootmenuTools.setText(resourceMap.getString("rootmenuTools.text")); // NOI18N
+        rootmenuTools.setName("rootmenuTools"); // NOI18N
+
+        menuIOReg.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
+        menuIOReg.setName("menuIOReg"); // NOI18N
+        rootmenuTools.add(menuIOReg);
+
+        menuPresets.setText(resourceMap.getString("menuPresets.text")); // NOI18N
+        menuPresets.setName("menuPresets"); // NOI18N
+        rootmenuTools.add(menuPresets);
+
+        menuRemoveIO.setText(resourceMap.getString("menuRemoveIO.text")); // NOI18N
+        menuRemoveIO.setName("menuRemoveIO"); // NOI18N
+        rootmenuTools.add(menuRemoveIO);
+
+        jSeparator2.setName("jSeparator2"); // NOI18N
+        rootmenuTools.add(jSeparator2);
+
+        menuNewWatcher.setText(resourceMap.getString("menuNewWatcher.text")); // NOI18N
+        menuNewWatcher.setName("menuNewWatcher"); // NOI18N
+        rootmenuTools.add(menuNewWatcher);
+
+        jMenuBar1.add(rootmenuTools);
+
+        rootmenuWindow.setText(resourceMap.getString("rootmenuWindow.text")); // NOI18N
+        rootmenuWindow.setName("rootmenuWindow"); // NOI18N
+
+        menuTile.setText(resourceMap.getString("menuTile.text")); // NOI18N
+        menuTile.setName("menuTile"); // NOI18N
+        rootmenuWindow.add(menuTile);
+
+        menuRestore.setText(resourceMap.getString("menuRestore.text")); // NOI18N
+        menuRestore.setName("menuRestore"); // NOI18N
+        rootmenuWindow.add(menuRestore);
+
+        jMenuBar1.add(rootmenuWindow);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(simControls, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
+            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 858, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(simControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -288,11 +361,26 @@ public class SimShell extends javax.swing.JFrame {
     private javax.swing.JButton btnOpts;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnStep;
+    private javax.swing.JCheckBoxMenuItem cmenuRun;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JMenuItem menuClose;
+    private javax.swing.JMenuItem menuIOReg;
+    private javax.swing.JMenuItem menuNewWatcher;
+    private javax.swing.JMenu menuPresets;
+    private javax.swing.JMenu menuRemoveIO;
+    private javax.swing.JMenuItem menuReset;
+    private javax.swing.JMenuItem menuRestore;
+    private javax.swing.JMenuItem menuStep;
+    private javax.swing.JMenuItem menuTile;
+    private javax.swing.JMenu rootmenuSim;
+    private javax.swing.JMenu rootmenuTools;
+    private javax.swing.JMenu rootmenuWindow;
     private javax.swing.JPanel simControls;
     private javax.swing.JDesktopPane simDesktop;
     private javax.swing.JToggleButton tglIODisplay;
     private javax.swing.JToggleButton tglRun;
-    private javax.swing.JTextField txtFlags;
     private javax.swing.JTextField txtSteps;
     // End of variables declaration//GEN-END:variables
 
