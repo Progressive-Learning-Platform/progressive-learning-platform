@@ -75,9 +75,10 @@
      MOVE = 291,
      LI = 292,
      ASCII = 293,
-     LA = 294,
-     SB = 295,
-     LB = 296
+     WORD_DIRECTIVE = 294,
+     LA = 295,
+     SB = 296,
+     LB = 297
    };
 #endif
 

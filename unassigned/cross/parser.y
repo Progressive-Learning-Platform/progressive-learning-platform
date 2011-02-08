@@ -53,6 +53,7 @@ int yywrap() {
 %token MOVE
 %token LI
 %token ASCII
+%token WORD_DIRECTIVE
 
 /* unsupported instructions */
 %token LA
@@ -113,6 +114,7 @@ supported_instruction
 						 craft(2,".asciiz",d);
 						 free(s); free(d);
 						 } 
+	| WORD_DIRECTIVE IMM NEWLINE		{craft(2,".word",$2);}
 	;
 
 unsupported_instruction

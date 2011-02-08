@@ -64,6 +64,7 @@ lb		return LB;
 
 {ws}		{/*nothing, it's whitespace...*/}
 [.]ascii/{ws}\".+\".*		return ASCII;
+[.]word/{ws}{number}.*		return WORD_DIRECTIVE;
 {directive}	yylval=strdup(yytext); return DIRECTIVE;
 {label}		yylval=strdup(yytext); return LABEL;
 {imm}		yylval=strdup(yytext); return IMM;
