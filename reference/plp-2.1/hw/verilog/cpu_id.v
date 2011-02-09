@@ -70,7 +70,7 @@ module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
 	wire [31:0] rfb = rf_rt == 0 ? 0 : rf[rf_rt];
 
 	/* hazard logic */
-	wire stall = ((p_c_alucontrol == 6'h23) & ((p_rt == rf_rs) | (p_rt == rf_rt)) & (p_rt != 0) & (opcode != 6'h2b));
+	wire stall = (p_c_rfw & (p_c_alucontrol == 6'h23) & ((p_rt == rf_rs) | (p_rt == rf_rt)) & (p_rt != 0) & (opcode != 6'h2b));
 	assign c_stall = stall;
 
 	/* control logic */
