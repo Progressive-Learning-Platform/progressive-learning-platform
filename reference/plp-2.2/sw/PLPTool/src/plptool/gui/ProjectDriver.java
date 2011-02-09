@@ -650,7 +650,7 @@ public class ProjectDriver extends Thread {
      */
     public PLPAsmSource getAsm(int index) {
         if(asms == null || index < 0 || index >= asms.size()) {
-            PLPMsg.E("updateAsm: Invalid index: " + index,
+            PLPMsg.E("getAsm: Invalid index: " + index,
                      Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
             return null;
         }
