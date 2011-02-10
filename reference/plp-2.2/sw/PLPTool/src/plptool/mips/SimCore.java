@@ -447,7 +447,7 @@ public class SimCore extends PLPSimCore {
 
             ex_reg.i_ctl_aluOp = instruction;
 
-            ex_reg.i_fwd_ctl_linkaddr = ctl_pcplus4;
+            ex_reg.i_fwd_ctl_linkaddr = ctl_pcplus4 + 4;
 
             // control logic
             ex_reg.i_fwd_ctl_memtoreg = 0;
