@@ -113,7 +113,7 @@ public class UART extends PLPSimBusModule {
         } else if (addr == startAddr + 8) { /* receive buffer */
             PLPMsg.M(String.format("[UART] invalid write to receive buffer: %d", d));
         } else if (addr == startAddr + 12) { /* send buffer */
-            sendB = d;
+            sendB = d & 0x000000ff;
         } else {
             PLPMsg.M("[UART] invalid register");
         }
