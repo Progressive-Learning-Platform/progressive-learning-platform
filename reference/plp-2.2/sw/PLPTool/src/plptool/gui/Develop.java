@@ -79,6 +79,7 @@ public class Develop extends javax.swing.JFrame {
         btnAssemble.setEnabled(false);
         menuFind.setEnabled(false);
         menuFindAndReplace.setEnabled(false);
+        btnSave.setEnabled(false);
         disableSimControls();
 
         treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -165,6 +166,7 @@ public class Develop extends javax.swing.JFrame {
         btnAssemble.setEnabled(true);
         menuDeleteASM.setEnabled(true);
         menuExportASM.setEnabled(true);
+        btnSave.setEnabled(true);
     }
 
     public final void disableSimControls() {
@@ -488,6 +490,10 @@ public class Develop extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtOutput = new javax.swing.JTextArea();
         toolbar = new javax.swing.JToolBar();
+        btnNew = new javax.swing.JButton();
+        btnOpen = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
         btnAssemble = new javax.swing.JButton();
         btnSimulate = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
@@ -617,7 +623,7 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -659,6 +665,48 @@ public class Develop extends javax.swing.JFrame {
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
         toolbar.setName("toolbar"); // NOI18N
+
+        btnNew.setIcon(resourceMap.getIcon("btnNew.icon")); // NOI18N
+        btnNew.setText(resourceMap.getString("btnNew.text")); // NOI18N
+        btnNew.setFocusable(false);
+        btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNew.setName("btnNew"); // NOI18N
+        btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnNew);
+
+        btnOpen.setIcon(resourceMap.getIcon("btnOpen.icon")); // NOI18N
+        btnOpen.setText(resourceMap.getString("btnOpen.text")); // NOI18N
+        btnOpen.setFocusable(false);
+        btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnOpen.setName("btnOpen"); // NOI18N
+        btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnOpen);
+
+        btnSave.setIcon(resourceMap.getIcon("btnSave.icon")); // NOI18N
+        btnSave.setText(resourceMap.getString("btnSave.text")); // NOI18N
+        btnSave.setFocusable(false);
+        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSave.setName("btnSave"); // NOI18N
+        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnSave);
+
+        jSeparator4.setName("jSeparator4"); // NOI18N
+        toolbar.add(jSeparator4);
 
         btnAssemble.setIcon(resourceMap.getIcon("btnAssemble.icon")); // NOI18N
         btnAssemble.setText(resourceMap.getString("btnAssemble.text")); // NOI18N
@@ -712,6 +760,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuFile.setName("rootmenuFile"); // NOI18N
 
         menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setIcon(resourceMap.getIcon("menuNew.icon")); // NOI18N
         menuNew.setText(resourceMap.getString("menuNew.text")); // NOI18N
         menuNew.setName("menuNew"); // NOI18N
         menuNew.addActionListener(new java.awt.event.ActionListener() {
@@ -725,6 +774,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuFile.add(menuSeparator1);
 
         menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setIcon(resourceMap.getIcon("menuOpen.icon")); // NOI18N
         menuOpen.setText(resourceMap.getString("menuOpen.text")); // NOI18N
         menuOpen.setName("menuOpen"); // NOI18N
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -735,6 +785,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuFile.add(menuOpen);
 
         menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setIcon(resourceMap.getIcon("menuSave.icon")); // NOI18N
         menuSave.setText(resourceMap.getString("menuSave.text")); // NOI18N
         menuSave.setName("menuSave"); // NOI18N
         menuSave.addActionListener(new java.awt.event.ActionListener() {
@@ -1156,6 +1207,18 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtEditorKeyReleased
 
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        menuNewActionPerformed(evt);
+    }//GEN-LAST:event_btnNewActionPerformed
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        menuOpenActionPerformed(evt);
+    }//GEN-LAST:event_btnOpenActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        menuSaveActionPerformed(evt);
+    }//GEN-LAST:event_btnSaveActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -1229,6 +1292,9 @@ public class Develop extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnAssemble;
+    private javax.swing.JButton btnNew;
+    private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSimulate;
     private javax.swing.JPanel devMainPane;
     private javax.swing.JMenuBar jMenuBar1;
@@ -1239,6 +1305,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
