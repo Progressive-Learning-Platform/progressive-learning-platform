@@ -53,6 +53,9 @@ public class Develop extends javax.swing.JFrame {
     private PlpUndoManager undoManager;
     private javax.swing.JPopupMenu popupProject;
 
+    /** Records number of non character keys pressed */
+    int nonTextKeyPressed = 0;
+
     public SimpleAttributeSet[] styles = setupHighlighting();
     
     /** Creates new form PLPDevelop */
@@ -602,8 +605,8 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtEditorKeyReleased(evt);
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtEditorKeyTyped(evt);
             }
         });
         jScrollPane3.setViewportView(txtEditor);
@@ -616,14 +619,14 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addContainerGap(576, Short.MAX_VALUE))
+                .addContainerGap(565, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtCurFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -653,7 +656,7 @@ public class Develop extends javax.swing.JFrame {
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
-                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblPosition)
                 .addContainerGap())
@@ -1171,6 +1174,9 @@ public class Develop extends javax.swing.JFrame {
                     plp.updateAsm(plp.open_asm, txtEditor.getText());
                     plp.open_asm = Integer.parseInt(tokens[0]);
                     plp.refreshProjectView(false);
+                    if (PLPCfg.cfgSyntaxHighlighting) {
+                        syntaxHighlight();
+                    }
                 }
             }
         } else if(plp.plpfile != null && evt.isPopupTrigger()) {
@@ -1199,14 +1205,6 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtEditorMousePressed
 
-    private void txtEditorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyReleased
-        if(PLPCfg.cfgSyntaxHighlighting && evt.getKeyChar() != java.awt.event.KeyEvent.CHAR_UNDEFINED) {
-            int caretPos = txtEditor.getCaretPosition();
-            syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
-            txtEditor.setCaretPosition(caretPos);
-        }
-    }//GEN-LAST:event_txtEditorKeyReleased
-
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         menuNewActionPerformed(evt);
     }//GEN-LAST:event_btnNewActionPerformed
@@ -1218,6 +1216,14 @@ public class Develop extends javax.swing.JFrame {
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         menuSaveActionPerformed(evt);
     }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
+        if(PLPCfg.cfgSyntaxHighlighting) {
+            int caretPos = txtEditor.getCaretPosition();
+            syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
+            txtEditor.setCaretPosition(caretPos);
+        }
+    }//GEN-LAST:event_txtEditorKeyTyped
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
