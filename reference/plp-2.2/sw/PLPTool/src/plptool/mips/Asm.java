@@ -933,9 +933,7 @@ public class Asm extends plptool.PLPAsm {
      * @param Number to be sanitized in String
      * @see sanitize32bits(String)
      */
-    public static long sanitize16bits(String number) {
-        try {
-
+    public static long sanitize16bits(String number) throws Exception {
         if(number.startsWith("0x") || number.startsWith("0h")) {
             number = number.substring(2);
             return Long.parseLong(number, 16) & 0xFFFF;
@@ -949,11 +947,6 @@ public class Asm extends plptool.PLPAsm {
         }
         else
             return Long.parseLong(number) & 0xFFFF;
-
-        } catch(Exception e) {
-            return PLPMsg.E("sanitize16bits(): Argument is not a valid number\n" + e,
-                            Constants.PLP_NUMBER_ERROR, null);
-        }
     }
 
     /**
@@ -967,9 +960,7 @@ public class Asm extends plptool.PLPAsm {
      * @param Number to be sanitized in String
      * @see sanitize16bits(String)
      */
-    public static long sanitize32bits(String number) {
-        try {
-
+    public static long sanitize32bits(String number) throws Exception {
         if(number.startsWith("0x") || number.startsWith("0h")) {
             number = number.substring(2);
             return Long.parseLong(number, 16) & 0xFFFFFFFF;
@@ -983,11 +974,6 @@ public class Asm extends plptool.PLPAsm {
         }
         else
             return Long.parseLong(number) & 0xFFFFFFFF;
-
-        } catch(Exception e) {
-            return PLPMsg.E("sanitize32bits(): Argument is not a valid number\n" + e,
-                            Constants.PLP_NUMBER_ERROR, null);
-        }
     }
 
     /**
