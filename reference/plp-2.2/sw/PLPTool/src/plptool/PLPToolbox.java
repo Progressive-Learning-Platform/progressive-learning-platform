@@ -85,7 +85,7 @@ public class PLPToolbox {
         String osIdentifier = System.getProperty("os.name");
         String osArch = System.getProperty("os.arch");
 
-        if(print) PLPMsg.M(osIdentifier + " " + osArch);
+        if(print) System.out.println(osIdentifier + " " + osArch);
 
         if(osIdentifier.equals("Linux")) {
             if(osArch.equals("x86") || osArch.equals("i386"))
