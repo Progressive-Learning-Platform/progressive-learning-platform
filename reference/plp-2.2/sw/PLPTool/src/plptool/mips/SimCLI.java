@@ -160,7 +160,7 @@ public class SimCLI {
             }
             else {
                 core.softreset();
-                core.pc.write(Asm.sanitize32bits(tokens[1]));
+                core.pc.write(PLPToolbox.parseNum(tokens[1]));
                 core.printfrontend();
             }
         }
@@ -169,9 +169,9 @@ public class SimCLI {
                 PLPMsg.M("Usage: w <address> <data>");
             }
             else {
-                if(core.memory.write(Asm.sanitize32bits(tokens[1]),
-                                  Asm.sanitize32bits(tokens[2]), false) == Constants.PLP_OK)
-                  core.memory.print(Asm.sanitize32bits(tokens[1]));
+                if(core.memory.write(PLPToolbox.parseNum(tokens[1]),
+                                  PLPToolbox.parseNum(tokens[2]), false) == Constants.PLP_OK)
+                  core.memory.print(PLPToolbox.parseNum(tokens[1]));
             }
         }
         else if(tokens[0].equals("wbus")) {
@@ -179,8 +179,8 @@ public class SimCLI {
                 PLPMsg.M("Usage: wbus <address> <data>");
             }
             else {
-                core.bus.write(Asm.sanitize32bits(tokens[1]),
-                                  Asm.sanitize32bits(tokens[2]), false);
+                core.bus.write(PLPToolbox.parseNum(tokens[1]),
+                                  PLPToolbox.parseNum(tokens[2]), false);
             }
         }
         else if(tokens[0].equals("rbus")) {
@@ -188,7 +188,7 @@ public class SimCLI {
                 PLPMsg.M("Usage: rbus <address>");
             }
             else {
-                long addr = Asm.sanitize32bits(tokens[1]);
+                long addr = PLPToolbox.parseNum(tokens[1]);
                 Object ret = core.bus.read(addr);
                 if(ret != null) {
                     long value = (Long) ret;
@@ -302,7 +302,7 @@ public class SimCLI {
                 PLPMsg.M("Usage: j <address>");
             }
             else {
-                core.pc.write(Asm.sanitize32bits(tokens[1]));
+                core.pc.write(PLPToolbox.parseNum(tokens[1]));
                 core.printfrontend();
             }
         }
