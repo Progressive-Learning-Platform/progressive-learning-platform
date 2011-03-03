@@ -92,10 +92,6 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {
         System.out.println("\n" + Constants.copyrightString);
-
-        if(Constants.debugLevel >= 1)
-            plptool.PLPToolbox.getOS(true);
-
         System.out.println();
 
         java.io.File fileToOpen = null;
@@ -110,6 +106,9 @@ public class PLPToolApp extends SingleFrameApplication {
             } else
                 args = new String[0];
         }
+
+        if(Constants.debugLevel >= 1)
+            plptool.PLPToolbox.getOS(true);
 
         if(args.length == 1) {
             fileToOpen = new java.io.File(args[0]);
