@@ -88,13 +88,13 @@ public class PLPAsmSource {
     }
 
     public String getAsmLine(int lineNum) {
-        if(lineNum >= asmLines.length) {
+        if(lineNum > asmLines.length || lineNum <= 0) {
             PLPMsg.E("Invalid line number: " + lineNum,
                      Constants.PLP_ASM_INVALID_LINENUM, this);
             return null;
         }
 
-        return asmLines[lineNum];
+        return asmLines[lineNum - 1];
     }
 
     @Override public String toString() {

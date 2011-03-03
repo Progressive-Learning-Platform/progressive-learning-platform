@@ -21,7 +21,7 @@ package plptool;
 import java.util.ArrayList;
 
 /**
- * PLPTool Linker. Slated for PLP 2.1.
+ * PLPTool Linker. Slated for PLP 2.3.
  *
  * @author wira
  */
