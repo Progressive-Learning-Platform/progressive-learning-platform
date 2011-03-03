@@ -58,7 +58,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 9;
+    private final int NUMBER_OF_MODULES = 10;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -189,6 +189,17 @@ public class IORegistry {
         mods[8][3] = "UART module";
         mods[8][4] = true;
         mods[8][5] = true;
+
+        /* ********************************************************************/
+        // SevenSegments
+
+        mods[9][0] = "Seven Segment LEDs";
+        mods[9][1] = false;
+        mods[9][2] = 1;
+        mods[9][3] = "Simulated seven segments LED.";
+        mods[9][4] = true;
+        mods[9][5] = true;
+
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -284,6 +295,14 @@ public class IORegistry {
                 module = new UART(addr);
                 moduleFrame = new UARTFrame();
                 ((UART)module).setFrame(moduleFrame);
+                break;
+
+            /******************************************************************/
+            // LEDArray is summoned
+            case 9:
+                module = new SevenSegments(addr);
+                moduleFrame = new SevenSegmentsFrame();
+
                 break;
                 
             // ADD YOUR MODULE INITIALIZATION HERE
