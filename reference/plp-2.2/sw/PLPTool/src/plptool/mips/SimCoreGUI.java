@@ -762,8 +762,10 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         }
 
         javax.swing.table.DefaultTableModel memMap = (javax.swing.table.DefaultTableModel) tblMemMap.getModel();
+        
         while(memMap.getRowCount() > 0)
                 memMap.removeRow(0);
+
         for(int i = 0; i < sim.bus.getNumOfMods(); i++) {
             Object row[] = new Object[] {i, sim.bus.getRefMod(i),
                                          String.format("0x%08x", sim.bus.getModStartAddress(i)),
@@ -772,8 +774,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             memMap.addRow(row);
         }
         tblMemMap.setModel(memMap);
-
-        plp.ioreg.gui_eval();
 
         updateProgramMemoryTablePC();
     }

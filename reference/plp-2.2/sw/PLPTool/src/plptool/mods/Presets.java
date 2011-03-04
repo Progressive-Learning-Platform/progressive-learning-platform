@@ -31,21 +31,21 @@ public class Presets {
 
             new Integer[]{0, 1, 2, 4, 7, 9, 8},
 
-            new Long[]{(long) 0x0,
-                       (long) 0xf020000 << 4,
-                       (long) 0xf010000 << 4,
-                       (long) 0xf050000 << 4,
-                       (long) 0xf060000 << 4,
-                       (long) 0xf0a0000 << 4,
-                       (long) 0xf000000 << 4},
+            new Long[]{0x0L,
+                       0xf0200000L,
+                       0xf0100000L,
+                       0xf0500000L,
+                       0xf0600000L,
+                       0xf0a00000L,
+                       0xf0000000L},
 
-            new Long[]{(long) 0x10000000,
-                       (long) 1,
-                       (long) 1,
-                       (long) 2,
-                       (long) 1,
-                       (long) 1,
-                       (long) 4,}
+            new Long[]{0x10000000L,
+                       1L,
+                       1L,
+                       2L,
+                       1L,
+                       1L,
+                       4L,}
         },
 
         /**********************************************************************/
@@ -54,9 +54,9 @@ public class Presets {
 
             new Integer[]{6},
 
-            new Long[]{(long) 0xf040000 << 4},
+            new Long[]{0xf0400000L},
 
-            new Long[]{(long) 2}
+            new Long[]{2L}
         },
 
         /**********************************************************************/
@@ -65,17 +65,17 @@ public class Presets {
 
             new Integer[]{0, 1, 2, 4, 6},
 
-            new Long[]{(long) 0x0,
-                       (long) 0xf020000 << 4,
-                       (long) 0xf010000 << 4,
-                       (long) 0xf050000 << 4,
-                       (long) 0xf040000 << 4},
+            new Long[]{0x0L,
+                       0xf0200000L,
+                       0xf0100000L,
+                       0xf0500000L,
+                       0xf0400000L},
 
-            new Long[]{(long) 0x10000000,
-                       (long) 1,
-                       (long) 1,
-                       (long) 2,
-                       (long) 2}
+            new Long[]{0x10000000L,
+                       1L,
+                       1L,
+                       2L,
+                       2L}
         },
         /**********************************************************************/
         {
@@ -83,11 +83,11 @@ public class Presets {
 
             new Integer[]{1, 1},
 
-            new Long[]{(long) 0x4000,
-                       (long) 0x4004},
+            new Long[]{0x4000L,
+                       0x4004L},
 
-            new Long[]{(long) 1,
-                       (long) 1}
+            new Long[]{1L,
+                       1L}
         },
         /**********************************************************************/
         {
@@ -95,9 +95,9 @@ public class Presets {
 
             new Integer[]{3},
 
-            new Long[]{(long) 0x0},
+            new Long[]{0x0L},
 
-            new Long[]{(long) 0xfffffff << 4 | 0xf}
+            new Long[]{0xffffffffL}
         }
     };
 

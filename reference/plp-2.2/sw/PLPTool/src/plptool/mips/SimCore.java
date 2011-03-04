@@ -1207,7 +1207,6 @@ public class SimCore extends PLPSimCore {
                 // MEM->EX Load Word, stall
                 if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.fwd_ctl_memread == 1
                         && (id_opcode == 0x2B || !id_instr_is_itype || id_instr_is_branch)) {
-                    ex_stage.i_data_rt = wb_stage.i_data_memreaddata;
                     ex_stage.hot = false;
                     id_stage.hot = false;
                     if_stall = true;
@@ -1215,7 +1214,6 @@ public class SimCore extends PLPSimCore {
                     sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_LW;
                 }
                 if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.fwd_ctl_memread == 1) {
-                    ex_stage.i_data_alu_in = wb_stage.i_data_memreaddata;
                     ex_stage.hot = false;
                     id_stage.hot = false;
                     if_stall = true;
