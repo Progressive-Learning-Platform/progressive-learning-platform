@@ -33,7 +33,7 @@ this is as basic as it gets:
 	unified, single level
 */
 
-module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_addr, sram_data, cpu_stall);
+module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy);
 	input rst;
 	input clk;
 	input ie, de;
