@@ -33,6 +33,7 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.awt.Color;
+import javax.swing.JTextField;
 
 /**
  *
@@ -88,6 +89,10 @@ public class SimShell extends javax.swing.JFrame {
 
     public javax.swing.JDesktopPane getSimDesktop() {
         return simDesktop;
+    }
+
+    public javax.swing.JTextField getTxtSteps() {
+        return txtSteps;
     }
 
     /** This method is called from within the constructor to
@@ -180,7 +185,7 @@ public class SimShell extends javax.swing.JFrame {
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(simControlsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtSteps, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtSteps, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnStep, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -191,7 +196,7 @@ public class SimShell extends javax.swing.JFrame {
                 .addComponent(tglIODisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnOpts, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(328, Short.MAX_VALUE))
+                .addContainerGap(270, Short.MAX_VALUE))
         );
         simControlsLayout.setVerticalGroup(
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
