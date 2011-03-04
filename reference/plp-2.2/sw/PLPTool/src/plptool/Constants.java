@@ -34,6 +34,8 @@ public class Constants {
 
     public static final int PLP_BAUDRATE                         = 57600;
 
+    public static final int PLP_MAX_STEPS                        = 1000000;
+
     // Assembler 1st Pass Errors
     public static final int PLP_ASM_INVALID_TOKEN                = 16;
     public static final int PLP_ASM_INVALID_REFSOURCE            = 17;

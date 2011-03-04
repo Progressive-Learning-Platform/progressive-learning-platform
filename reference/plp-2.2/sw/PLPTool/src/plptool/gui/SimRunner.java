@@ -48,7 +48,15 @@ public class SimRunner extends Thread {
         startTime = System.currentTimeMillis();
 
         while(stepCount > 0) {
-            sim.step();
+            int steps = Integer.parseInt(plp.g_simsh.getTxtSteps().getText());
+            if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
+                for(int i = 0; i < steps; i++)
+                    plp.sim.step();
+                plp.g_sim.updateComponents();
+            } else {
+                plp.g_simsh.getTxtSteps().setText("1");
+                steps = 1;
+            }
             if(PLPCfg.cfgRefreshGUIDuringSimRun)
                 plp.updateComponents();
             if(PLPMsg.lastError != 0) {
