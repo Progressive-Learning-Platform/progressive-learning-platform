@@ -33,7 +33,7 @@ this is as basic as it gets:
 	unified, single level
 */
 
-module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_addr, sram_datai, cpu_stall);
+module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_addr, sram_data, cpu_stall);
 	input rst;
 	input clk;
 	input ie, de;
@@ -112,9 +112,9 @@ endmodule
 
 /* inferred dual port ram as indicated by the xilinx xst guide */
 module cache_memory(clk, wea, web, addra, addrb, dia, dib, doa, dob);
-	#parameter ADDR_WIDTH = 0;
-	#parameter DATA_WIDTH = 0;
-	#parameter DEPTH = 1 << ADDR_WIDTH;
+	parameter ADDR_WIDTH = 0;
+	parameter DATA_WIDTH = 0;
+	parameter DEPTH = 1 << ADDR_WIDTH;
 
 	input clk;
 	input wea, web;
