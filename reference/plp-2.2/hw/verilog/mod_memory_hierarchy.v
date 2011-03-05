@@ -60,7 +60,7 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	
 
 	/* cache */
-	cache_memory #(11, 32) data_array(clk, clk, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, cache_iin, cachedin, cache_iout, cache_dout);
+	cache_memory #(11, 32) data_array(clk, clk, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, cache_iin, cache_din, cache_iout, cache_dout);
 	cache_memory #(11, 22) tag_array(clk, clk, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, tag_iin, tag_din, tag_iout, tag_dout);
 	
 	/* sram */
@@ -74,11 +74,11 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	 *	101 - servicing data write
 	 *	111 - servicing data write and instruction miss
 	*/
-	reg 	[2:0] state;
+	reg 	[2:0] state = 3'b000;
 	wire 	[2:0] next_state;
 	wire	      ihit, dhit;
 
-	assign cpu_stall    = state != 3'b000;
+	assign cpu_stall    = next_state != 3'b000;
 	assign cache_iwrite = (state & 3'b010);
 	assign cache_dwrite = (state & 3'b001);
 	assign cache_iaddr  = iaddr[10:0];
@@ -98,15 +98,18 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	assign ihit	    = tag_iout == iaddr[31:11];
 	assign dhit	    = tag_dout == daddr[31:11];
 	assign next_state   =
-			state == 3'b000 && ihit && !dhit && !drw  ? 3'b001 : /* data miss */
-			state == 3'b000 && !ihit && dhit && !drw  ? 3'b010 : /* instruction miss */
-			state == 3'b000 && !ihit && !dhit && !drw ? 3'b011 : /* instruction and data miss */
-			state == 3'b000 && ihit && drw            ? 3'b101 : /* data write */
-			state == 3'b000 && !ihit && drw		  ? 3'b111 : /* instruction miss and data write */
-			state != 3'b000 && sram_rdy		  ? 3'b000 : 0; /* returning from sram */
+		state == 3'b000 && ihit && !dhit && !drw && ie        ? 3'b001 : /* data miss */
+		state == 3'b000 && !ihit && dhit && !drw && de        ? 3'b010 : /* instruction miss */
+		state == 3'b000 && !ihit && !dhit && !drw && ie && de ? 3'b011 : /* instruction and data miss */
+		state == 3'b000 && ihit && drw && de                  ? 3'b101 : /* data write */
+		state == 3'b000 && !ihit && drw && de && ie           ? 3'b111 : /* instruction miss and data write */
+		state != 3'b000 && sram_rdy		  	      ? 3'b000 : 0; /* returning from sram */
 
 	always @(posedge clk) begin
-		state <= next_state;	
+		if (rst)
+			state <= 3'b000;
+		else
+			state <= next_state;	
 	end
 endmodule
 
