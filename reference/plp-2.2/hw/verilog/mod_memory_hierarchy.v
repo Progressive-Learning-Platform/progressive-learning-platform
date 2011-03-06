@@ -54,14 +54,14 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 
 	wire          cache_iwrite, cache_dwrite;
 	wire   [10:0] cache_iaddr, cache_daddr;
-	wire   [31:0] cache_iin, cache_din, cache_iout, cache_dout, tag_iin, tag_din, tag_iout, tag_dout;
+	wire   [31:0] cache_iin, cache_din, cache_iout, cache_dout;
 	wire	      sram_rdy, sram_ie, sram_de, sram_drw;
 	wire   [31:0] sram_iaddr, sram_daddr, sram_din, sram_iout, sram_dout;
-	
+	wire   [21:0] tag_iin, tag_din, tag_iout, tag_dout;
 
 	/* cache */
-	cache_memory #(11, 32) data_array(clk, clk, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, cache_iin, cache_din, cache_iout, cache_dout);
-	cache_memory #(11, 22) tag_array(clk, clk, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, tag_iin, tag_din, tag_iout, tag_dout);
+	cache_memory #(11, 32) data_array(clk, clk, 1'b1, 1'b1, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, cache_iin, cache_din, cache_iout, cache_dout);
+	cache_memory #(11, 22) tag_array(clk, clk, 1'b1, 1'b1, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, tag_iin, tag_din, tag_iout, tag_dout);
 	
 	/* sram */
 	mod_sram sram_t(rst, clk, sram_ie, sram_de, sram_iaddr, sram_daddr, sram_drw, sram_din, sram_iout, sram_dout, sram_rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy);
@@ -78,7 +78,7 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	wire 	[2:0] next_state;
 	wire	      ihit, dhit;
 
-	assign cpu_stall    = state != 3'b000 && (ie & !ihit) && (de & !dhit);
+	assign cpu_stall    = next_state != 3'b000;
 	assign cache_iwrite = (state & 3'b010);
 	assign cache_dwrite = (state & 3'b001);
 	assign cache_iaddr  = iaddr[10:0];
@@ -95,15 +95,15 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	assign sram_iaddr   = iaddr;
 	assign sram_daddr   = daddr;
 	assign sram_din	    = din;
-	assign ihit	    = tag_iout == iaddr[31:11];
-	assign dhit	    = tag_dout == daddr[31:11];
+	assign ihit	    = tag_iout[20:0] == iaddr[31:11] && tag_iout[21];
+	assign dhit	    = tag_dout[20:0] == daddr[31:11] && tag_dout[21];
 	assign next_state   =
 		state == 3'b000 && ihit && !dhit && !drw && ie        ? 3'b001 : /* data miss */
 		state == 3'b000 && !ihit && dhit && !drw && de        ? 3'b010 : /* instruction miss */
 		state == 3'b000 && !ihit && !dhit && !drw && ie && de ? 3'b011 : /* instruction and data miss */
 		state == 3'b000 && ihit && drw && de                  ? 3'b101 : /* data write */
 		state == 3'b000 && !ihit && drw && de && ie           ? 3'b111 : /* instruction miss and data write */
-		state != 3'b000 && sram_rdy		  	      ? 3'b000 : 0; /* returning from sram */
+		state != 3'b000 && sram_rdy		  	      ? 3'b000 : state; /* returning from sram */
 
 	always @(posedge clk) begin
 		if (rst)
@@ -114,13 +114,13 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 endmodule
 
 /* inferred dual port ram as indicated by the xilinx xst guide */
-module cache_memory(clka, clkb, wea, web, addra, addrb, dia, dib, doa, dob);
+module cache_memory(clka, clkb, ena, enb, wea, web, addra, addrb, dia, dib, doa, dob);
 	parameter ADDR_WIDTH = 0;
 	parameter DATA_WIDTH = 0;
 	parameter DEPTH = 1 << ADDR_WIDTH;
 
 	input clka, clkb;
-	input wea, web;
+	input wea, web, ena, enb;
 	input [ADDR_WIDTH-1:0] addra, addrb;
 	input [DATA_WIDTH-1:0] dia, dib;
 	output reg [DATA_WIDTH-1:0] doa, dob;
@@ -128,14 +128,18 @@ module cache_memory(clka, clkb, wea, web, addra, addrb, dia, dib, doa, dob);
 	reg [DATA_WIDTH-1:0] RAM [DEPTH-1:0];
 
 	always @(negedge clka) begin
-		if (wea)
-			RAM[addra] <= dia;
-		doa <= RAM[addra];
+		if (ena) begin
+			if (wea)
+				RAM[addra] <= dia;
+			doa <= RAM[addra];
+		end
 	end
 
 	always @(negedge clkb) begin
-		if (web)
-			RAM[addrb] <= dib;
-		dob <= RAM[addrb];
+		if (enb) begin
+			if (web)
+				RAM[addrb] <= dib;
+			dob <= RAM[addrb];
+		end
 	end
 endmodule
