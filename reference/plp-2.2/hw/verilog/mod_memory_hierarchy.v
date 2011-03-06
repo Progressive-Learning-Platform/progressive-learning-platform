@@ -78,7 +78,7 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	wire 	[2:0] next_state;
 	wire	      ihit, dhit;
 
-	assign cpu_stall    = next_state != 3'b000;
+	assign cpu_stall    = state != 3'b000 && (ie & !ihit) && (de & !dhit);
 	assign cache_iwrite = (state & 3'b010);
 	assign cache_dwrite = (state & 3'b001);
 	assign cache_iaddr  = iaddr[10:0];
