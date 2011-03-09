@@ -60,8 +60,8 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	wire   [21:0] tag_iin, tag_din, tag_iout, tag_dout;
 
 	/* cache */
-	cache_memory #(11, 32) data_array(clk, clk, 1'b1, 1'b1, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, cache_iin, cache_din, cache_iout, cache_dout);
-	cache_memory #(11, 22) tag_array(clk, clk, 1'b1, 1'b1, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, tag_iin, tag_din, tag_iout, tag_dout);
+	cache_memory #(11, 32) data_array(clk, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, cache_iin, cache_din, cache_iout, cache_dout);
+	cache_memory #(11, 32) tag_array (clk, cache_iwrite, cache_dwrite, cache_iaddr, cache_daddr, tag_iin,   tag_din,   tag_iout,   tag_dout);
 	
 	/* sram */
 	mod_sram sram_t(rst, clk, sram_ie, sram_de, sram_iaddr, sram_daddr, sram_drw, sram_din, sram_iout, sram_dout, sram_rdy, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy);
@@ -80,15 +80,15 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 
 	assign cpu_stall    = next_state != 3'b000;
 	assign cache_iwrite = (state & 3'b010);
-	assign cache_dwrite = (state & 3'b001);
+	assign cache_dwrite = (state & 3'b001) && (!cache_iwrite || cache_iaddr != cache_daddr);
 	assign cache_iaddr  = iaddr[10:0];
 	assign cache_daddr  = daddr[10:0];
 	assign cache_iin    = sram_iout;
 	assign cache_din    = (state & 3'b100) ? din : sram_dout;
 	assign tag_iin 	    = {1'b1, iaddr[31:11]};
 	assign tag_din	    = {1'b1, daddr[31:11]};
-	assign iout	    = cache_iout;
-	assign dout	    = cache_dout;
+	assign iout	    = sram_ie ? cache_iout : sram_iout;
+	assign dout	    = sram_de ? cache_dout : sram_dout;
 	assign sram_ie	    = (state & 3'b010);
 	assign sram_de	    = (state & 3'b001);
 	assign sram_drw	    = drw;
@@ -114,32 +114,28 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 endmodule
 
 /* inferred dual port ram as indicated by the xilinx xst guide */
-module cache_memory(clka, clkb, ena, enb, wea, web, addra, addrb, dia, dib, doa, dob);
+module cache_memory(clk, wea, web, addra, addrb, dia, dib, doa, dob);
 	parameter ADDR_WIDTH = 0;
 	parameter DATA_WIDTH = 0;
 	parameter DEPTH = 1 << ADDR_WIDTH;
 
-	input clka, clkb;
-	input wea, web, ena, enb;
+	input clk;
+	input wea, web;
 	input [ADDR_WIDTH-1:0] addra, addrb;
 	input [DATA_WIDTH-1:0] dia, dib;
 	output reg [DATA_WIDTH-1:0] doa, dob;
 
 	reg [DATA_WIDTH-1:0] RAM [DEPTH-1:0];
 
-	always @(negedge clka) begin
-		if (ena) begin
-			if (wea)
-				RAM[addra] <= dia;
-			doa <= RAM[addra];
-		end
+	always @(negedge clk) begin
+		if (wea)
+			RAM[addra] <= dia;
+		doa <= RAM[addra];
 	end
 
-	always @(negedge clkb) begin
-		if (enb) begin
-			if (web)
-				RAM[addrb] <= dib;
-			dob <= RAM[addrb];
-		end
+	always @(negedge clk) begin
+		if (web)
+			RAM[addrb] <= dib;
+		dob <= RAM[addrb];
 	end
 endmodule
