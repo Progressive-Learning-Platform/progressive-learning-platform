@@ -45,6 +45,7 @@ public class Constants {
     public static final int PLP_ASM_DUPLICATE_LABEL              = 21;
     public static final int PLP_ASM_INVALID_STRING               = 22;
     public static final int PLP_ASM_INVALID_LINENUM              = 23;
+    public static final int PLP_ASM_PREPROCESS_FAILED            = 24;
 
     // Assembler 2nd Pass Errors
     public static final int PLP_ASM_GENERAL_SYNTAX_ERROR         = 64;
@@ -57,6 +58,7 @@ public class Constants {
     public static final int PLP_ASM_INVALID_BRANCH_TARGET        = 71;
     public static final int PLP_ASM_INVALID_JUMP_TARGET          = 72;
     public static final int PLP_ASM_INVALID_POINTER              = 73;
+    public static final int PLP_ASM_ASSEMBLE_FAILED              = 74;
 
     // Formatter Errors
     public static final int PLP_OUT_UNHANDLED_ERROR              = 128;

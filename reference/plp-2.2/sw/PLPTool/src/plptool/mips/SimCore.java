@@ -92,6 +92,7 @@ public class SimCore extends PLPSimCore {
      */
     boolean if_stall;
     boolean ex_stall;
+    boolean ex_continue;
 
     /**
      * The assembler object passed to the simulator.
@@ -161,6 +162,7 @@ public class SimCore extends PLPSimCore {
         pc.reset(startAddr);
         instructionCount = 0;
         sim_flags = (long) 0;
+        ex_continue = false;
         ex_stall = false;
         if_stall = false;
         flushpipeline();
@@ -180,6 +182,7 @@ public class SimCore extends PLPSimCore {
         pc.reset(startAddr);
         flushpipeline();
 
+        ex_continue = false;
         ex_stall = false;
         if_stall = false;
 
@@ -246,16 +249,6 @@ public class SimCore extends PLPSimCore {
         // Evaluate modules attached to the bus
         ret += bus.eval();
 
-        // See if we're stalled on EX
-        if(ex_stall) {
-            ex_stage.instruction = 0;
-            mem_stage.i_instruction = 0;
-            ex_stall = false;
-            mem_stage.hot = true;
-            ex_stage.hot = true;
-            id_stage.hot = true;
-        }
-        
         // Engage forwarding unit
         if(PLPCfg.cfgSimForwardingUnit)
             forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
@@ -274,12 +267,35 @@ public class SimCore extends PLPSimCore {
             pc.write(pc.eval() + 4);
 
         // We're stalled in this cycle, do not fetch new instruction
-        if(if_stall) {
+        if(if_stall && !ex_continue) {
             if_stall = false;
             id_stage.i_instruction = 0;
-            //id_stage.i_instrAddr = -1;
+            id_stage.i_instrAddr = -1;
+            id_stage.hot = true;
 
             return Constants.PLP_OK;
+        }
+        else if(ex_stall) { // ex_stall, clear id/ex register
+            ex_stall = false;
+            ex_continue = true;
+            ex_stage.i_instruction = 0;
+            ex_stage.i_instrAddr = -1;
+            ex_stage.i_fwd_ctl_memwrite = 0;
+            ex_stage.i_fwd_ctl_regwrite = 0;
+            ex_stage.i_ctl_branch = 0;
+            ex_stage.i_ctl_jump = 0;
+            ex_stage.hot = true;
+            ret = fetch();
+            id_stage.hot = false;
+            pc.write(old_pc + 4);
+
+            return ret;
+        }
+        else if(ex_continue) { // resume from ex_stall, turn on id/ex register
+            ex_stage.hot = true;
+            ex_continue = false;
+
+            return fetch();
         }
         else {
             return fetch();
@@ -320,7 +336,7 @@ public class SimCore extends PLPSimCore {
     public int flushpipeline() {
         // Zero out everything
         id_stage.i_instruction = 0;
-        id_stage.i_instrAddr = 0;
+        id_stage.i_instrAddr = -1;
         id_stage.clock();
         id_stage.eval();
         ex_stage.clock();
@@ -339,7 +355,7 @@ public class SimCore extends PLPSimCore {
      * Print front end states.
      */
     public void printfrontend() {
-        PLPMsg.M("if:   " + String.format("%08x", id_stage.i_instrAddr) +
+        PLPMsg.M("if:   " + ((id_stage.i_instrAddr == -1) ? "--------" : String.format("%08x", id_stage.i_instrAddr)) +
             " instr: " + String.format("%08x", id_stage.i_instruction) +
             " : " + MIPSInstr.format(id_stage.i_instruction) +
             "\ni_pc: "  + String.format("%08x", pc.input()));
@@ -396,19 +412,19 @@ public class SimCore extends PLPSimCore {
         public void printvars() {
             PLPMsg.M("ID vars");
             PLPMsg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            PLPMsg.M("\tinstrAddr: " + String.format("%08x", instrAddr));
+            PLPMsg.M("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
             PLPMsg.M("\tctl_pcplus4: " + String.format("%08x", ctl_pcplus4));
         }
 
         public void printnextvars() {
             PLPMsg.M("ID next vars");
             PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            PLPMsg.M("\ti_instrAddr: " + String.format("%08x", i_instrAddr));
+            PLPMsg.M("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
             PLPMsg.M("\ti_ctl_pcplus4: " + String.format("%08x", i_ctl_pcplus4));
         }
 
         public void printinstr() {
-            PLPMsg.M("id:   " + String.format("%08x", instrAddr) +
+            PLPMsg.M("id:   " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)) +
                      " instr: " + String.format("%08x", instruction) +
                      " : " + MIPSInstr.format(instruction));
         }
@@ -630,7 +646,7 @@ public class SimCore extends PLPSimCore {
         public void printvars() {
             PLPMsg.M("EX vars");
             PLPMsg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            PLPMsg.M("\tinstrAddr: " + String.format("%08x",instrAddr));
+            PLPMsg.M("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
 
             // EX stage pipeline registers
             PLPMsg.M("\tfwd_ctl_memtoreg: " + fwd_ctl_memtoreg);
@@ -660,7 +676,7 @@ public class SimCore extends PLPSimCore {
         public void printnextvars() {
             PLPMsg.M("EX next vars");
             PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            PLPMsg.M("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
+            PLPMsg.M("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
 
             // EX stage pipeline registers
             PLPMsg.M("\ti_fwd_ctl_memtoreg: " + i_fwd_ctl_memtoreg);
@@ -684,7 +700,7 @@ public class SimCore extends PLPSimCore {
         }
 
         public void printinstr() {
-            PLPMsg.M("ex:   " + String.format("%08x", instrAddr) +
+            PLPMsg.M("ex:   " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)) +
                      " instr: " + String.format("%08x", instruction) +
                      " : " + MIPSInstr.format(instruction));
         }
@@ -832,7 +848,7 @@ public class SimCore extends PLPSimCore {
         public void printvars() {
             PLPMsg.M("MEM vars");
             PLPMsg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            PLPMsg.M("\tinstrAddr: " + String.format("%08x",instrAddr));
+            PLPMsg.M("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
 
             // MEM stage pipeline registers
             PLPMsg.M("\tfwd_ctl_memtoreg: " + fwd_ctl_memtoreg);
@@ -852,7 +868,7 @@ public class SimCore extends PLPSimCore {
         public void printnextvars() {
             PLPMsg.M("MEM next vars");
             PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            PLPMsg.M("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
+            PLPMsg.M("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
 
             // MEM stage pipeline registers
             PLPMsg.M("\ti_fwd_ctl_memtoreg: " + i_fwd_ctl_memtoreg);
@@ -870,7 +886,7 @@ public class SimCore extends PLPSimCore {
         }
 
         public void printinstr() {
-            PLPMsg.M("mem:  " + String.format("%08x", instrAddr) +
+            PLPMsg.M("mem:  " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)) +
                      " instr: " + String.format("%08x", instruction) +
                      " : " + MIPSInstr.format(instruction));
         }
@@ -978,7 +994,7 @@ public class SimCore extends PLPSimCore {
         public void printvars() {
             PLPMsg.M("WB vars");
             PLPMsg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            PLPMsg.M("\tinstrAddr: " + String.format("%08x",instrAddr));
+            PLPMsg.M("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
 
             // WB stage pipeline registers
             PLPMsg.M("\tctl_memtoreg: " + ctl_memtoreg);
@@ -994,7 +1010,7 @@ public class SimCore extends PLPSimCore {
         public void printnextvars() {
             PLPMsg.M("WB next vars");
             PLPMsg.M("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            PLPMsg.M("\ti_instrAddr: " + String.format("%08x",i_instrAddr));
+            PLPMsg.M("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
 
             // WB stage pipeline registers
             PLPMsg.M("\ti_ctl_memtoreg: " + i_ctl_memtoreg);
@@ -1008,7 +1024,7 @@ public class SimCore extends PLPSimCore {
         }
 
         public void printinstr() {
-            PLPMsg.M("wb:   " + String.format("%08x", instrAddr) +
+            PLPMsg.M("wb:   " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)) +
                      " instr: " + String.format("%08x", instruction) +
                      " : " + MIPSInstr.format(instruction));
         }
@@ -1207,16 +1223,10 @@ public class SimCore extends PLPSimCore {
                 // MEM->EX Load Word, stall
                 if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.fwd_ctl_memread == 1
                         && (id_opcode == 0x2B || !id_instr_is_itype || id_instr_is_branch)) {
-                    ex_stage.hot = false;
-                    id_stage.hot = false;
-                    if_stall = true;
                     ex_stall = true;
                     sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_LW;
                 }
                 if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.fwd_ctl_memread == 1) {
-                    ex_stage.hot = false;
-                    id_stage.hot = false;
-                    if_stall = true;
                     ex_stall = true;
                     sim_flags |= Constants.PLP_SIM_FWD_MEM_EX_LW;
                 }
