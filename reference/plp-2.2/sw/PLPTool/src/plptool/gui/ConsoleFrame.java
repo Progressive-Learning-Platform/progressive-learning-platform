@@ -17,8 +17,11 @@ package plptool.gui;
  */
 public class ConsoleFrame extends javax.swing.JFrame {
 
+    ProjectDriver plp;
+
     /** Creates new form PLPConsole */
-    public ConsoleFrame() {
+    public ConsoleFrame(ProjectDriver plp) {
+        this.plp = plp;
         initComponents();
     }
 
@@ -31,24 +34,117 @@ public class ConsoleFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        cmd = new javax.swing.JTextField();
+        scrOut = new javax.swing.JScrollPane();
+        out = new javax.swing.JTextArea();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ConsoleFrame.class);
+        setTitle(resourceMap.getString("Form.title")); // NOI18N
+        setAlwaysOnTop(true);
+        setBackground(resourceMap.getColor("Form.background")); // NOI18N
         setName("Form"); // NOI18N
+        setResizable(false);
+
+        cmd.setBackground(resourceMap.getColor("cmd.background")); // NOI18N
+        cmd.setForeground(resourceMap.getColor("cmd.foreground")); // NOI18N
+        cmd.setText(resourceMap.getString("cmd.text")); // NOI18N
+        cmd.setBorder(null);
+        cmd.setName("cmd"); // NOI18N
+        cmd.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                cmdKeyPressed(evt);
+            }
+        });
+
+        scrOut.setBorder(null);
+        scrOut.setName("scrOut"); // NOI18N
+
+        out.setBackground(resourceMap.getColor("out.background")); // NOI18N
+        out.setColumns(20);
+        out.setFont(resourceMap.getFont("out.font")); // NOI18N
+        out.setForeground(resourceMap.getColor("out.foreground")); // NOI18N
+        out.setLineWrap(true);
+        out.setRows(5);
+        out.setBorder(null);
+        out.setName("out"); // NOI18N
+        scrOut.setViewportView(out);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(cmd, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+            .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(cmd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cmdKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cmdKeyPressed
+        try {
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            String command = cmd.getText();
+            String tokens[] = command.split(" ", 2);
+            
+            if(command.equals("q")) {
+                System.exit(0);
+            }
+            else if(command.equals("reset")) {
+                plp.g_dev.dispose();
+                plp.g_simsh.dispose();
+                plp = new ProjectDriver(true, "plpmips");
+                plp.g_dev.setVisible(true);
+            }
+            else if(command.equals("dark")) {
+                plptool.PLPCfg.devBackground = java.awt.Color.BLACK;
+                plptool.PLPCfg.devForeground = java.awt.Color.lightGray;
+                plp.g_dev.changeFormatting();
+            }
+            else if(command.equals("defcolor")) {
+                plptool.PLPCfg.devBackground = java.awt.Color.WHITE;
+                plptool.PLPCfg.devForeground = java.awt.Color.BLACK;
+                plp.g_dev.changeFormatting();
+            }
+            else if(command.equals("hloff")) {
+                plptool.PLPCfg.cfgSyntaxHighlighting = false;
+            }
+            else if(command.equals("hlon")) {
+                plptool.PLPCfg.cfgSyntaxHighlighting = true;
+            }
+            else if(tokens.length > 1) {
+                if(tokens[0].equals("font")) {
+                    plptool.PLPCfg.devFont = tokens[1];
+                    plp.g_dev.changeFormatting();
+                }
+                if(tokens[0].equals("fontsize")) {
+                    plptool.PLPCfg.devFontSize = Integer.parseInt(tokens[1]);
+                    plp.g_dev.changeFormatting();
+                }
+            }
+            else {
+                cmd.setText(":(");
+                return;
+            }
+            cmd.setText("");
+        }
+        } catch(Exception e) {
+            out.setText(e.toString());
+        }
+    }//GEN-LAST:event_cmdKeyPressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField cmd;
+    private javax.swing.JTextArea out;
+    private javax.swing.JScrollPane scrOut;
     // End of variables declaration//GEN-END:variables
 
 }
+

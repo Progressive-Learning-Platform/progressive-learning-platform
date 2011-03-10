@@ -22,8 +22,6 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.PLPMsg;
 import plptool.Constants;
-import plptool.PLPCfg;
-import plptool.mods.IORegistry;
 
 /**
  * The main class of the application.
@@ -33,38 +31,21 @@ public class PLPToolApp extends SingleFrameApplication {
     SimShell simUI;
     static String plpFilePath = null;
     static boolean open = false;
+    ConsoleFrame con;
 
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
+
+
         ProjectDriver plp = new ProjectDriver(true, "plpmips"); // default to plpmips for now
+        if(Constants.debugLevel > 0) {
+            con = new ConsoleFrame(plp);
+            con.setVisible(true);
+        }
         plp.app = this;
-        plp.ioreg = new IORegistry();
-        plp.g_err = new SimErrorFrame();
-        plp.g_dev = new Develop(plp);
-        plp.g_ioreg = new IORegistryFrame(plp);
-        simUI = new SimShell(plp);
-        plp.g_simsh = simUI;
-        plp.g_desktop = simUI.getSimDesktop();
-        plp.g_about = new AboutBoxDialog(plp.g_dev);
-        plp.g_opts = new OptionsFrame(plp);
-        plp.g_prg = new ProgrammerDialog(plp, plp.g_dev, true);
-        plp.g_fname = new AsmNameDialog(plp, plp.g_dev, true);
-        simUI.getSimDesktop().add(plp.g_ioreg);
-        plp.curdir = (new java.io.File(".")).getAbsolutePath();
-
-        java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        plp.g_dev.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
-                          (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
-        plp.g_dev.setLocationRelativeTo(null);
-        plp.g_simsh.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
-                          (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
-        plp.g_simsh.setLocationRelativeTo(null);
-
-        plp.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
-        plp.g_dev.setVisible(true);
-
+        
         PLPMsg.output = plp.g_dev.getOutput();
         if(plpFilePath != null)
             plp.open(plpFilePath);

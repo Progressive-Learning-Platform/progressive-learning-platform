@@ -530,9 +530,9 @@ public class Asm extends plptool.PLPAsm {
             // Instructions
             else {
                 if(instrMap.containsKey(asmTokens[0]) == false) {
-                    error += PLPMsg.E("preprocess(" + curActiveFile + ":" + i +"): "
-                                      + "Unable to process token " + asmTokens[0],
-                                      Constants.PLP_ASM_INVALID_TOKEN, this);
+                    error ++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i +"): "
+                                       + "Unable to process token " + asmTokens[0],
+                                       Constants.PLP_ASM_INVALID_TOKEN, this);
                 }
                 PLPMsg.D("exit i: " + i, 5, this);
                 regionMap.add(curRegion);
@@ -905,7 +905,7 @@ public class Asm extends plptool.PLPAsm {
         }
 
         if(error > 0)
-            PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + "): " +
+            PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i - 1]).getAsmFilePath() + "): " +
                      error + " error(s).", Constants.PLP_ASM_ASSEMBLE_FAILED, this);
 
         return (error == 0) ? Constants.PLP_OK : Constants.PLP_ASM_ASSEMBLE_FAILED;

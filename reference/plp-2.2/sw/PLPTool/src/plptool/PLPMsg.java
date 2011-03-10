@@ -64,16 +64,16 @@ public class PLPMsg {
     public static int E(String errStr, int errorCode, Object objIdentifier) {
         if(objIdentifier != null)
             if(output == null)
-                System.out.println("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
+                System.out.println("[ERROR] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
             else {
-                output.append("[E] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr + "\n");
+                output.append("[ERROR] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
         else
             if(output == null)
-                System.out.println("[E] #" + errorCode + " " + errStr);
+                System.out.println("[ERROR] #" + errorCode + " " + errStr);
             else {
-                output.append("[E] #" + errorCode + " " + errStr + "\n");
+                output.append("[ERROR] #" + errorCode + " " + errStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
 
@@ -92,16 +92,16 @@ public class PLPMsg {
     public static void W(String warningStr, Object objIdentifier) {
         if(objIdentifier != null)
             if(output == null)
-                System.out.println("[W] " + objIdentifier.toString() + ": " + warningStr);
+                System.out.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr);
             else {
-                output.append("[W] " + objIdentifier.toString() + ": " + warningStr + "\n");
+                output.append("[WARNING] " + objIdentifier.toString() + ": " + warningStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
         else
             if(output == null)
-                System.out.println("[W] " + warningStr);
+                System.out.println("[WARNING] " + warningStr);
             else {
-                output.append("[W] " + warningStr + "\n");
+                output.append("[WARNING] " + warningStr + "\n");
                 output.setCaretPosition(output.getText().length() - 1);
             }
     }
@@ -141,16 +141,16 @@ public class PLPMsg {
         if(requestedDebugLevel <= Constants.debugLevel)
             if(objIdentifier != null)
                 if(output == null)
-                    System.out.println("[D] " + objIdentifier.toString() + ": " + debugStr);
+                    System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
                 else {
-                    output.append("[D] " + objIdentifier.toString() + ": " + debugStr + "\n");
+                    output.append("[DEBUG] " + objIdentifier.toString() + ": " + debugStr + "\n");
                     output.setCaretPosition(output.getText().length() - 1);
                 }
             else
                 if(output == null)
-                    System.out.println("[D] " + debugStr);
+                    System.out.println("[DEBUG] " + debugStr);
                 else {
-                    output.append("[D] " + debugStr + "\n");
+                    output.append("[DEBUG] " + debugStr + "\n");
                     output.setCaretPosition(output.getText().length() - 1);
                 }
     }
@@ -188,9 +188,9 @@ public class PLPMsg {
      */
     public static void mark() {
         if(output == null)
-            System.out.println("[D] " + markCounter + " We're here!");
+            System.out.println("[DEBUG] " + markCounter + " We're here!");
         else
-            output.append("[D] " + markCounter + " We're here!" + "\n");
+            output.append("[DEBUG] " + markCounter + " We're here!" + "\n");
         markCounter++;
     }
 }

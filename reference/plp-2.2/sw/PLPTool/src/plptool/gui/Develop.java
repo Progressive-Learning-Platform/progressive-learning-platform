@@ -18,6 +18,7 @@
 
 package plptool.gui;
 
+import java.awt.Color;
 import javax.swing.tree.*;
 
 import java.io.File;
@@ -117,11 +118,18 @@ public class Develop extends javax.swing.JFrame {
         
         this.setLocationRelativeTo(null);
 
-        PLPMsg.M("Welcome to Progressive Learning Platform Software Tool version " + Constants.versionString);
+        PLPMsg.M(Constants.copyrightString);
     }
 
     public void updateComponents() {
 
+    }
+
+    public void changeFormatting() {
+        java.awt.Font newFont = new java.awt.Font(PLPCfg.devFont, java.awt.Font.PLAIN, PLPCfg.devFontSize);
+        txtEditor.setFont(newFont);
+        txtEditor.setBackground(PLPCfg.devBackground);
+        txtEditor.setForeground(PLPCfg.devForeground);
     }
 
     public void notifyplpModified() {
@@ -481,7 +489,6 @@ public class Develop extends javax.swing.JFrame {
     private void initComponents() {
 
         devMainPane = new javax.swing.JPanel();
-        lblPosition = new javax.swing.JLabel();
         splitterV = new javax.swing.JSplitPane();
         splitterH = new javax.swing.JSplitPane();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -490,6 +497,7 @@ public class Develop extends javax.swing.JFrame {
         txtCurFile = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JTextPane();
+        lblPosition = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtOutput = new javax.swing.JTextArea();
         toolbar = new javax.swing.JToolBar();
@@ -524,6 +532,7 @@ public class Develop extends javax.swing.JFrame {
         menuAssemble = new javax.swing.JMenuItem();
         menuSimulate = new javax.swing.JMenuItem();
         menuProgram = new javax.swing.JMenuItem();
+        menuQuickProgram = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuNewASM = new javax.swing.JMenuItem();
         menuImportASM = new javax.swing.JMenuItem();
@@ -549,9 +558,6 @@ public class Develop extends javax.swing.JFrame {
 
         devMainPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         devMainPane.setName("devMainPane"); // NOI18N
-
-        lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
-        lblPosition.setName("lblPosition"); // NOI18N
 
         splitterV.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         splitterV.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -598,10 +604,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -611,22 +617,30 @@ public class Develop extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(txtEditor);
 
+        lblPosition.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
+        lblPosition.setName("lblPosition"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addContainerGap(565, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 468, Short.MAX_VALUE)
+                .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(txtCurFile)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCurFile)
+                    .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -635,8 +649,10 @@ public class Develop extends javax.swing.JFrame {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
+        txtOutput.setBackground(resourceMap.getColor("txtOutput.background")); // NOI18N
         txtOutput.setColumns(20);
         txtOutput.setFont(resourceMap.getFont("txtOutput.font")); // NOI18N
+        txtOutput.setForeground(resourceMap.getColor("txtOutput.foreground")); // NOI18N
         txtOutput.setRows(5);
         txtOutput.setName("txtOutput"); // NOI18N
         jScrollPane1.setViewportView(txtOutput);
@@ -647,19 +663,11 @@ public class Develop extends javax.swing.JFrame {
         devMainPane.setLayout(devMainPaneLayout);
         devMainPaneLayout.setHorizontalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblPosition, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
-                .addContainerGap())
             .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devMainPaneLayout.createSequentialGroup()
-                .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPosition)
-                .addContainerGap())
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -936,6 +944,16 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuProject.add(menuProgram);
+
+        menuQuickProgram.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
+        menuQuickProgram.setText(resourceMap.getString("menuQuickProgram.text")); // NOI18N
+        menuQuickProgram.setName("menuQuickProgram"); // NOI18N
+        menuQuickProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuQuickProgramActionPerformed(evt);
+            }
+        });
+        rootmenuProject.add(menuQuickProgram);
 
         jSeparator1.setName("jSeparator1"); // NOI18N
         rootmenuProject.add(jSeparator1);
@@ -1225,6 +1243,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtEditorKeyTyped
 
+    private void menuQuickProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuickProgramActionPerformed
+        plp.g_prg.program();
+        plp.g_prg.setVisible(true);
+    }//GEN-LAST:event_menuQuickProgramActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -1328,6 +1351,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuOpen;
     private javax.swing.JMenuItem menuPaste;
     private javax.swing.JMenuItem menuProgram;
+    private javax.swing.JMenuItem menuQuickProgram;
     private javax.swing.JMenuItem menuRedo;
     private javax.swing.JMenuItem menuSave;
     private javax.swing.JMenuItem menuSaveAs;
