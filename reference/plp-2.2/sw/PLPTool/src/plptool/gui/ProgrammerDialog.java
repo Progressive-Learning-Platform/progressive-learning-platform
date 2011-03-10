@@ -58,7 +58,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
         return txtStatus;
     }
 
-    private void program() {
+    public void program() {
         plp.program((String) cmbPort.getSelectedItem());
     }
 

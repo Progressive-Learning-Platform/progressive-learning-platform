@@ -52,7 +52,7 @@ public class SimShell extends javax.swing.JFrame {
 
         initComponents();
         this.setLocationRelativeTo(null);
-        PLPMsg.M("PLPTool Simulator GUI Loaded\n");
+        PLPMsg.M("SimShell Loaded\n");
     }
 
     public void plpMsgRouteBack() {

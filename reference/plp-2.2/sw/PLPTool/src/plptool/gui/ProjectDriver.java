@@ -49,7 +49,7 @@ public class ProjectDriver extends Thread {
 
     public SingleFrameApplication              app;        // App
 
-    /**
+    /*
      * These variables hold some project file information for this driver.
      * plpfile      - the path to the plpfile ProjectDriver will work with
      * modified     - denotes whether the plpfile is modified since opening
@@ -57,31 +57,35 @@ public class ProjectDriver extends Thread {
      * curdir       - current working directory for the project
      * arch         - active ISA for this project
      */
+
     public String                              plpfile;
     public boolean                             modified;
     public int                                 open_asm;
     public String                              curdir;
     private String                             arch;    
 
-    /**
+    /*
      * These variables hold data and information loaded from
      * the plp project file.
      */
+
     public byte[]                              binimage;   // binary image
     public String                              hexstring;  // hex string
     public String                              meta;       // Meta String
 
-    /**
+    /*
      * References to PLP configuration and messaging classes
      */
+
     public plptool.PLPCfg                      cfg;        // Configuration
     public plptool.PLPMsg                      msg;        // Messaging class
 
     public ArrayList<plptool.PLPAsmSource>     asms;       // Assembly files
     
-    /**
+    /*
      * References to the workflow framework objects
      */
+
     public plptool.PLPAsm                      asm;        // Assembler
     public plptool.PLPAsm[]                    asm_array;  // Asm array
     public plptool.PLPLinker                   lnkr;       // Linker
@@ -91,7 +95,7 @@ public class ProjectDriver extends Thread {
     public plptool.mods.IORegistry             ioreg;      // I/O registry
     public plptool.PLPSimCoreGUI               g_sim;      // Sim Core GUI
 
-    /**
+    /*
      * PLP GUI Windows
      */
     public plptool.gui.SimShell                g_simsh;    // PLP Simulator Frontend
@@ -125,6 +129,33 @@ public class ProjectDriver extends Thread {
 
         modified = false;
         plpfile = null;
+
+        this.ioreg = new plptool.mods.IORegistry();
+        this.curdir = (new java.io.File(".")).getAbsolutePath();
+        
+        if(g) {
+            this.g_err = new SimErrorFrame();
+            this.g_dev = new Develop(this);
+            this.g_ioreg = new IORegistryFrame(this);
+            this.g_simsh = new SimShell(this);
+            this.g_simsh.getSimDesktop().add(this.g_ioreg);
+            this.g_desktop = this.g_simsh.getSimDesktop();
+            this.g_about = new AboutBoxDialog(this.g_dev);
+            this.g_opts = new OptionsFrame(this);
+            this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
+            this.g_fname = new AsmNameDialog(this, this.g_dev, true);
+            
+            java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+            this.g_dev.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
+                              (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
+            this.g_dev.setLocationRelativeTo(null);
+            this.g_simsh.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
+                              (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
+            this.g_simsh.setLocationRelativeTo(null);
+
+            this.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
+            this.g_dev.setVisible(true);
+        }
     }
 
     /**
@@ -396,7 +427,7 @@ public class ProjectDriver extends Thread {
                 if(lines[0].equals("PLP-2.2"))  {
 
                 } else {
-                    PLPMsg.W("WARNING: This is not a PLP-2.2 project file. Opening anyways.", this);
+                    PLPMsg.W("This is not a PLP-2.2 project file. Opening anyways.", this);
 
                 }
 
