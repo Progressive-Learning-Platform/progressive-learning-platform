@@ -23,6 +23,10 @@ public class ConsoleFrame extends javax.swing.JFrame {
     public ConsoleFrame(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
+        String outText = "os_code: " + plptool.PLPToolbox.getOS(false) + "\n";
+        outText += "plpfile: " + plp.plpfile + "\n";
+        outText += "arch: " + plp.getArch() + "\n";
+        out.setText(outText);
     }
 
     /** This method is called from within the constructor to
@@ -44,12 +48,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
         setAlwaysOnTop(true);
         setBackground(resourceMap.getColor("Form.background")); // NOI18N
         setName("Form"); // NOI18N
-        setResizable(false);
 
         cmd.setBackground(resourceMap.getColor("cmd.background")); // NOI18N
         cmd.setForeground(resourceMap.getColor("cmd.foreground")); // NOI18N
         cmd.setText(resourceMap.getString("cmd.text")); // NOI18N
-        cmd.setBorder(null);
+        cmd.setBorder(javax.swing.BorderFactory.createLineBorder(resourceMap.getColor("cmd.border.lineColor"))); // NOI18N
         cmd.setName("cmd"); // NOI18N
         cmd.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -74,15 +77,15 @@ public class ConsoleFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(cmd, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
-            .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+            .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+            .addComponent(cmd, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(cmd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmd, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
+                .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
         );
 
         pack();
@@ -93,6 +96,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             String command = cmd.getText();
             String tokens[] = command.split(" ", 2);
+            out.setText(":)");
             
             if(command.equals("q")) {
                 System.exit(0);
@@ -119,6 +123,16 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("hlon")) {
                 plptool.PLPCfg.cfgSyntaxHighlighting = true;
             }
+            else if(command.equals("simcore")) {
+                out.setText(plp.sim.toString());
+            }
+            else if(command.equals("assemble")) {
+                    plp.assemble();
+                }
+            else if(command.equals("simulate")) {
+                    plp.simulate();
+            }
+
             else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
                     plptool.PLPCfg.devFont = tokens[1];
@@ -128,14 +142,27 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plptool.PLPCfg.devFontSize = Integer.parseInt(tokens[1]);
                     plp.g_dev.changeFormatting();
                 }
+                if(tokens[0].equals("hl")) {
+                    plptool.PLPCfg.cfgSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
+                    out.setText("cfgSyntaxHighlighting " + plptool.PLPCfg.cfgSyntaxHighlighting);
+                }
+                if(tokens[0].equals("open")) {
+                    plp.open(tokens[1]);
+                }
+                if(tokens[0].equals("program")) {
+                    plp.program(tokens[1]);
+                }
+
             }
             else {
-                cmd.setText(":(");
+                out.setText(":(");
+                cmd.setText("");
                 return;
             }
             cmd.setText("");
         }
         } catch(Exception e) {
+            cmd.setText("");
             out.setText(e.toString());
         }
     }//GEN-LAST:event_cmdKeyPressed
