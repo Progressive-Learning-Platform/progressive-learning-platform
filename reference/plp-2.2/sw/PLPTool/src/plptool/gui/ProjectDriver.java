@@ -571,12 +571,10 @@ public class ProjectDriver extends Thread {
                             Constants.PLP_BACKEND_EMPTY_ASM_LIST, this);
 
         // ...assemble asm objects... //
-        if(arch.equals("plpmips")) {
-            asm = new plptool.mips.Asm(asms);
+        asm = ArchRegistry.createAssembler(this, asms);
 
-            if(asm.preprocess(0) == Constants.PLP_OK)
-                asm.assemble();
-        }
+        if(asm.preprocess(0) == Constants.PLP_OK)
+            asm.assemble();
 
         if(g && asm != null && asm.isAssembled()) {
             if(!wasAssembled)
@@ -605,31 +603,27 @@ public class ProjectDriver extends Thread {
             return PLPMsg.E("simulate(): Empty program.",
                             Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
 
-        if(arch.equals("plpmips")) {
-            if(g && g_simsh != null)
-                g_simsh.destroySimulation();
+        if(g && g_simsh != null)
+            g_simsh.destroySimulation();
 
-            sim = (plptool.mips.SimCore) new plptool.mips.SimCore((plptool.mips.Asm) asm,
-                    asm.getAddrTable()[0], PLPCfg.cfgDefaultRAMSize);
-            sim.setStartAddr(asm.getAddrTable()[0]);
-            plptool.mods.IORegistry.loadPreset(0, this);
-            sim.reset();
+        sim = ArchRegistry.createSimCore(this);
 
-            if(g) {
-                g_ioreg = new IORegistryFrame(this);
-                g_sim = new plptool.mips.SimCoreGUI(this);
-                g_simsh.getSimDesktop().add(g_sim);
-                g_simsh.getSimDesktop().add(g_err);
-                g_simsh.getSimDesktop().add(g_ioreg);
-                g_ioreg.refreshModulesTable();
-                g_sim.updateComponents();
-                g_sim.setVisible(true);
+        plptool.mods.IORegistry.loadPreset(0, this);
+        sim.reset();
+
+        if(g) {
+            g_ioreg = new IORegistryFrame(this);
+            g_sim = ArchRegistry.createSimCoreGUI(this);
+            g_simsh.getSimDesktop().add(g_ioreg);
+            g_ioreg.refreshModulesTable();
+            g_sim.updateComponents();
+            g_sim.setVisible(true);
+            if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
-                g_simsh.setVisible(true);
-            }
-
-            sim.reset();
+            g_simsh.setVisible(true);
         }
+
+        sim.reset();
 
         return Constants.PLP_OK;
     }
@@ -646,8 +640,8 @@ public class ProjectDriver extends Thread {
 
         try {
 
-        if(arch.equals("plpmips") && asm != null && asm.isAssembled()) {
-            prg = new plptool.mips.SerialProgrammer(this);
+        if(asm != null && asm.isAssembled()) {
+            prg = ArchRegistry.createProgrammer(this);
             prg.connect(port, Constants.PLP_BAUDRATE);
             p_progress = 0;
             p_watchdog = new TimeoutWatcher(this);

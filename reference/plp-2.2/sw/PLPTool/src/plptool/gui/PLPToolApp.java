@@ -108,7 +108,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 if(plp.asm.isAssembled()) {
                     plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
                     PLPMsg.M("");
-                    plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
+                    plptool.mips.Formatter.prettyPrint(plp.asm);
                     PLPMsg.M("");
                     PLPMsg.M("Build timestamp: " + timestamp);
                     PLPMsg.M("Binary size: " + plp.asm.getObjectCode().length + " words");

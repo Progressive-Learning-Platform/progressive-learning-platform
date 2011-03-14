@@ -30,7 +30,7 @@ import java.awt.Color;
  *
  * @author wira
  */
-public class SimErrorFrame extends javax.swing.JInternalFrame {
+public class SimErrorFrame extends javax.swing.JFrame {
 
     /** Creates new form PLPErrorFrame */
     public SimErrorFrame() {
@@ -67,7 +67,6 @@ public class SimErrorFrame extends javax.swing.JInternalFrame {
         lblPerson = new javax.swing.JTextField();
         lblError = new javax.swing.JLabel();
 
-        setIconifiable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SimErrorFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
@@ -98,7 +97,7 @@ public class SimErrorFrame extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblError, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addComponent(lblPerson, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );

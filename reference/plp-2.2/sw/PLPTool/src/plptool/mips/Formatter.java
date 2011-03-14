@@ -41,7 +41,7 @@ import plptool.Constants;
 public class Formatter {
 
     // Print to stdout, prettily.
-    public static int prettyPrint(Asm asm) {
+    public static int prettyPrint(plptool.PLPAsm asm) {
         String label;
         long addrTable[] = asm.getAddrTable();
         long objectCode[] = asm.getObjectCode();

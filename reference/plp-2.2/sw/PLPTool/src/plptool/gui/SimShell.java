@@ -53,6 +53,13 @@ public class SimShell extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         PLPMsg.M("SimShell Loaded\n");
+
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent we) {
+                destroySimulation();
+            }
+        });
     }
 
     public void plpMsgRouteBack() {
@@ -85,6 +92,7 @@ public class SimShell extends javax.swing.JFrame {
             plp.g_ioreg.dispose();
         plp.g_ioreg = null;
         tglIODisplay.setSelected(false);
+        this.setVisible(false);
     }
 
     public javax.swing.JDesktopPane getSimDesktop() {
@@ -129,6 +137,7 @@ public class SimShell extends javax.swing.JFrame {
         menuTile = new javax.swing.JMenuItem();
         menuRestore = new javax.swing.JMenuItem();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SimShell.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
@@ -289,7 +298,7 @@ public class SimShell extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(simControls, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 858, Short.MAX_VALUE)
+            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 860, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
