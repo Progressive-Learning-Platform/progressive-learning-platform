@@ -597,7 +597,7 @@ public class ProjectDriver extends Thread {
     public int simulate() {
         PLPMsg.I("Starting simulation...", null);
 
-        if(!asm.isAssembled())
+        if(asm == null || !asm.isAssembled())
             return PLPMsg.E("simulate(): The project is not assembled.",
                             Constants.PLP_BACKEND_NO_ASSEMBLED_OBJECT, this);
 
