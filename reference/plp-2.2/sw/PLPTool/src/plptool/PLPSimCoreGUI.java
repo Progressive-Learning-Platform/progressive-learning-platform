@@ -9,7 +9,7 @@ package plptool;
  *
  * @author wira
  */
-public abstract class PLPSimCoreGUI extends javax.swing.JInternalFrame {
+public abstract class PLPSimCoreGUI extends javax.swing.JFrame {
 
     protected PLPSimCore sim;
 
