@@ -1,0 +1,278 @@
+diff -uNrp plp_vanilla/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf plp/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf
+--- plp_vanilla/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf	2011-03-13 21:43:40.714309530 -0500
++++ plp/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf	2011-03-13 21:42:08.362335441 -0500
+@@ -106,3 +106,8 @@ NET "mod_gpio_gpio<12>" LOC = "p17";
+ NET "mod_gpio_gpio<13>" LOC = "r16";
+ NET "mod_gpio_gpio<14>" LOC = "t18";
+ NET "mod_gpio_gpio<15>" LOC = "u18";
++
++NET "mod_i2s_sdout" LOC = "g15";
++NET "mod_i2s_sclk"  LOC = "j16";
++NET "mod_i2s_lrck"  LOC = "g13";
++NET "mod_i2s_mclk"  LOC = "h16";
+diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v plp/reference/plp-2.2/hw//verilog/arbiter.v
+--- plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v	2011-03-13 21:43:40.722309359 -0500
++++ plp/reference/plp-2.2/hw//verilog/arbiter.v	2011-03-13 21:38:26.262332436 -0500
+@@ -17,7 +17,7 @@
+  */
+ 
+ 
+-module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches, mod_sseg_an, mod_sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs, mod_gpio_gpio);
++module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iaddr, bus_cpu_inst, mod_leds_leds, mod_uart_txd, mod_uart_rxd, mod_switches_switches, mod_sseg_an, mod_sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs, mod_gpio_gpio, mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk);
+ 	input clk, rst;
+ 
+ 	/* cpu i/o */
+@@ -39,6 +39,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_
+ 	output [7:0] mod_vga_rgb;
+ 	output mod_vga_hs, mod_vga_vs;
+ 	inout [15:0] mod_gpio_gpio;
++	output mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk;
+ 
+ 	/* inter-module interconnect */
+ 	wire [31:0] mod_vga_sram_addr;
+@@ -63,6 +64,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_
+ 	wire mod7_ie = imod == 7;
+ 	wire mod8_ie = imod == 8;
+ 	wire mod9_ie = imod == 9;
++	wire moda_ie = imod == a;
+ 
+ 	wire mod0_de = dmod == 0;
+ 	wire mod1_de = dmod == 1;
+@@ -74,6 +76,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_
+ 	wire mod7_de = dmod == 7;
+ 	wire mod8_de = dmod == 8;
+ 	wire mod9_de = dmod == 9;
++	wire moda_de = dmod == a;
+ 
+ 	/* the bus muxes */
+ 	wire [31:0] mod0_inst, mod0_data;
+@@ -86,6 +89,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_
+ 	wire [31:0] mod7_inst, mod7_data;
+ 	wire [31:0] mod8_inst, mod8_data;
+ 	wire [31:0] mod9_inst, mod9_data;
++	wire [31:0] moda_inst, moda_data;
+ 
+ 	assign bus_cpu_inst = 
+ 		mod0_ie ? mod0_inst :
+@@ -97,7 +101,8 @@ module arbiter(rst, clk, cpu_daddr, cpu_
+ 		mod6_ie ? mod6_inst :
+ 		mod7_ie ? mod7_inst :
+ 		mod8_ie ? mod8_inst :
+-		mod9_ie ? mod9_inst : 0;
++		mod9_ie ? mod9_inst : 
++		moda_ie ? moda_inst : 0;
+ 
+ 	assign bus_cpu_data = 
+ 		mod0_de ? mod0_data :
+@@ -109,7 +114,8 @@ module arbiter(rst, clk, cpu_daddr, cpu_
+ 		mod6_de ? mod6_data :
+ 		mod7_de ? mod7_data :
+ 		mod8_de ? mod8_data :
+-		mod9_de ? mod9_data : 0;
++		mod9_de ? mod9_data : 
++		moda_de ? moda_data : 0;
+ 
+ 	/* module instantiations */
+ 	/* 0 */ mod_rom		rom_t		(rst, clk, mod0_ie, mod0_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod0_inst, mod0_data);
+@@ -122,4 +128,6 @@ module arbiter(rst, clk, cpu_daddr, cpu_
+ 	/* 7 */ mod_plpid	plpid_t   	(rst, clk, mod7_ie, mod7_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod7_inst, mod7_data);
+ 	/* 8 */ mod_timer	timer_t	  	(rst, clk, mod8_ie, mod8_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod8_inst, mod8_data);
+ 	/* 9 */ mod_sseg	sseg_t		(rst, clk, mod9_ie, mod9_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod9_inst, mod9_data, mod_sseg_an, mod_sseg_display);
++	/* a */ mod_i2s		i2s_t		(rst, clk, moda_ie, moda_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, moda_inst, moda_data, mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk);
++
+ endmodule
+diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mm.v plp/reference/plp-2.2/hw//verilog/mm.v
+--- plp_vanilla/reference/plp-2.2/hw//verilog/mm.v	2011-03-13 21:43:40.726319645 -0500
++++ plp/reference/plp-2.2/hw//verilog/mm.v	2011-03-13 21:37:21.158337452 -0500
+@@ -36,6 +36,7 @@ memory map module
+ 0xf0500000      8               PLPID
+ 0xf0600000      4               timer
+ 0xf0a00000	4		sseg
++0xf0b00000	2048		i2s
+ */
+ 
+ 
+@@ -55,6 +56,7 @@ module mm(addr, mod, eff_addr);
+ 		     (addr[31:20] == 12'hf05) ? 7 : /* mod_plpid */
+ 		     (addr[31:20] == 12'hf06) ? 8 : /* mod_timer */
+ 		     (addr[31:20] == 12'hf0a) ? 9 : /* mod_sseg */
++		     (addr[31:20] == 12'hf0b) ? a : /* mod_i2s */
+ 		     0;
+ 	assign eff_addr = (mod == 8'h01) ? {8'h00,addr[23:0]} : {12'h000,addr[19:0]};
+ endmodule
+diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v plp/reference/plp-2.2/hw//verilog/mod_i2s.v
+--- plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v	1969-12-31 18:00:00.000000000 -0600
++++ plp/reference/plp-2.2/hw//verilog/mod_i2s.v	2011-03-14 19:27:47.091650242 -0500
+@@ -0,0 +1,142 @@
++/*
++    Copyright 2011 David Fritz, Wira Mulia
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++ */
++
++
++/* 
++David Fritz
++
++i2s module. Built for the stero audio decoder PMOD from Digilent
++
++2011.3.13
++*/
++
++/*
++*
++* data format is
++* 8 bits per channel
++* 11khz
++*
++* memory mapped at 0xf0b00000
++* 0xf0b00000 - read-only memory position (0-255)
++* 0xf0b00100 - 0xf0b001ff - memory (0-255, 1kb total buffer)
++*/
++
++module mod_i2s(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk);
++        input rst;
++        input clk;
++        input ie,de;
++        input [31:0] iaddr, daddr;
++        input drw;
++        input [31:0] din;
++        output [31:0] iout, dout;
++	output reg mod_i2s_sdout, mod_i2s_lrck, mod_i2s_mclk;
++	output mod_i2s_sclk;
++
++	parameter c_rate  = 25000000; /* clock rate */
++	parameter s_rate  = 11025;    /* sample frequency */
++	parameter lr_div  = c_rate / (2*s_rate);    /* left right channel selector divider */
++	parameter mc_div  = c_rate / (2*256*s_rate); /* mclk divider (256 X s_rate) */
++	parameter bit_div = c_rate / (32*s_rate); /* bit clock */
++
++        wire [31:0] idata, ddata;
++        assign iout = idata;
++        assign dout = ddata;
++
++	/* nothing is ever read from this module */
++	assign idata = 32'h00000000;
++
++	assign mod_i2s_sclk = 0; /* allow the mclk and lrck ratio to determine the sample rate */
++	reg [31:0] lrcount, mccount, bitcount; 
++	reg [7:0] i2s_addr;
++	reg [5:0] word_count;
++	wire [31:0] i2s_data;
++	wire eff_drw;
++	wire [31:0] eff_data;
++
++	i2s_ram r(clk, clk, 1'b1, 1'b1, eff_drw, daddr[7:0], i2s_addr, din, eff_ddata, i2s_data);
++
++	/* user interface */
++	assign eff_drw = daddr[8] & drw;
++	assign ddata = daddr[8] ? eff_ddata : {24'h000000,i2s_addr};
++
++	wire [63:0] word = {i2s_data[31:24],8'h00,i2s_data[23:16],8'h00,i2s_data[15:8],8'h00,i2s_data[7:0],8'h00};
++	assign mod_i2s_sdout = word[word_count];
++
++	/* all data bus activity is negative edge triggered */
++	always @(negedge clk) begin
++		if (drw && de && !rst) begin
++			if (lrcount == lr_div-1) begin
++				lrcount <= 0;
++				mod_i2s_lrck <= ~mod_i2s_lrck;
++			end else begin
++				lrcount <= lrcount + 1;
++			end
++
++			if (mccount == mv_div-1) begin
++				mccount <= 0;
++				mod_i2s_mclk <= ~mod_i2s_mclk;
++			end else begin
++				mccount <= mccount + 1;
++			end
++
++			if (bitcount == bit_div-1) begin
++				bitcount <= 0;
++				word_count <= word_count - 1;
++				if (word_count == 8'h00)
++					i2s_addr <= i2s_addr + 1;
++			end else begin
++				bitcount <= bitcount + 1;
++			end
++		end else if (rst) begin
++			lrcount <= 0;
++			mccount <= 0;
++			bitcount <= 0;
++			mod_i2s_lrck <= 0;
++			mod_i2s_mclk <= 0;
++			i2s_addr <= 0;
++			word_count <= 8'h00;
++			i2s_addr <= 8'h00;
++		end
++	end
++endmodule
++
++module i2s_ram(clka, clkb, ena, enb, wea, addra, addrb, dia, doa, dob);
++        input clka, clkb;
++        input wea;
++        input ena, enb;
++        input [7:0] addra, addrb;
++        input [31:0] dia;
++        output reg [31:0] doa, dob;
++        reg [31:0] RAM [255:0];
++
++        always @(posedge clka) begin
++                if (ena) begin
++                        if (wea) begin
++                                RAM[addra] <= dia;
++                        end
++                        doa <= RAM[addra];
++                end
++        end
++
++        always @(posedge clkb) begin
++                if (enb) begin
++                        dob <= RAM[addrb];
++                end
++        end
++endmodule
++
+diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/top.v plp/reference/plp-2.2/hw//verilog/top.v
+--- plp_vanilla/reference/plp-2.2/hw//verilog/top.v	2011-03-13 21:43:40.730309328 -0500
++++ plp/reference/plp-2.2/hw//verilog/top.v	2011-03-13 21:39:09.009375840 -0500
+@@ -25,7 +25,7 @@ top level module for mips design
+ 2.6.2010
+ */
+ 
+-module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs, mod_gpio_gpio);
++module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs, mod_gpio_gpio, mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk);
+ 	input clk;
+ 	output [7:0] leds;
+ 	input rst,rxd;
+@@ -39,6 +39,7 @@ module top(clk,leds,rst,txd,rxd,switches
+ 	output [7:0] mod_vga_rgb;
+ 	output mod_vga_hs, mod_vga_vs;
+ 	inout [15:0] mod_gpio_gpio;
++	output mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk
+ 
+ 	wire [31:0] daddr, dout, din, iaddr, iin;
+ 	wire drw;
+@@ -46,7 +47,8 @@ module top(clk,leds,rst,txd,rxd,switches
+ 
+ 	clock c_t(clk, c);
+ 	cpu cpu_t(rst, c, cpu_stall, daddr, dout, din, drw, iaddr, iin);
+-        arbiter arbiter_t(rst, c, daddr, dout, din, drw, iaddr, iin, leds, txd, rxd, switches, sseg_an, sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs, mod_gpio_gpio);
++        arbiter arbiter_t(rst, c, daddr, dout, din, drw, iaddr, iin, leds, txd, rxd, switches, sseg_an, sseg_display, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_rgb, mod_vga_hs, mod_vga_vs, mod_gpio_gpio, mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk);
++
+ endmodule
+ 	
+ 
