@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 	struct chunk_fmt* cf  = malloc(sizeof(struct chunk_fmt));
 	struct chunk_data* cd = malloc(sizeof(struct chunk_data));
 	int ret = 0;
-	char *d = NULL;
+	unsigned char *d = NULL;
 	int i;
 
 	printf("[i] wav2asm - fritz\n");
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
 	printf("[i] outputting asm data\n");
 	fprintf(outfile, "audio_data:\n");
 	for (i=0; i<cd->cksize; i=i+4)
-		fprintf(outfile, ".word 0x%08x\n", d[i]);
+		fprintf(outfile, ".word 0x%02x%02x%02x%02x\n", d[i],d[i+1],d[i+2],d[i+3]);
 	
 	printf("[i] done.\n");
 
