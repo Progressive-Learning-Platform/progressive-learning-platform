@@ -113,8 +113,8 @@ int main(int argc, char *argv[]) {
 
 	printf("[i] outputting asm data\n");
 	fprintf(outfile, "audio_data:\n");
-	for (i=0; i<cd->cksize; i=i+2)
-		fprintf(outfile, ".word 0x%02x%02x%02x%02x\n", d[i],0,d[i+1],0);
+	for (i=0; i<cd->cksize; i=i+4)
+		fprintf(outfile, ".word 0x%02x%02x%02x%02x\n", d[i],d[i+1],d[i+2],d[i+3]);
 	
 	printf("[i] done.\n");
 
