@@ -1,18 +1,20 @@
 diff -uNrp plp_vanilla/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf plp/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf
---- plp_vanilla/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf	2011-03-13 21:43:40.714309530 -0500
-+++ plp/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf	2011-03-13 21:42:08.362335441 -0500
-@@ -106,3 +106,8 @@ NET "mod_gpio_gpio<12>" LOC = "p17";
+--- plp_vanilla/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf	2011-03-16 20:37:54.290770004 -0500
++++ plp/reference/plp-2.2/hw//build/build_500k_skeleton/top.ucf	2011-03-16 19:42:08.640770012 -0500
+@@ -106,3 +106,10 @@ NET "mod_gpio_gpio<12>" LOC = "p17";
  NET "mod_gpio_gpio<13>" LOC = "r16";
  NET "mod_gpio_gpio<14>" LOC = "t18";
  NET "mod_gpio_gpio<15>" LOC = "u18";
 +
-+NET "mod_i2s_sdout" LOC = "g15";
-+NET "mod_i2s_sclk"  LOC = "j16";
-+NET "mod_i2s_lrck"  LOC = "g13";
-+NET "mod_i2s_mclk"  LOC = "h16";
++/* pins are backwards as defined by digilent */
++
++NET "mod_i2s_sdout" LOC = "h16";
++NET "mod_i2s_sclk"  LOC = "g13";
++NET "mod_i2s_lrck"  LOC = "j16";
++NET "mod_i2s_mclk"  LOC = "g15";
 diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v plp/reference/plp-2.2/hw//verilog/arbiter.v
---- plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v	2011-03-13 21:43:40.722309359 -0500
-+++ plp/reference/plp-2.2/hw//verilog/arbiter.v	2011-03-13 21:38:26.262332436 -0500
+--- plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v	2011-03-16 20:37:54.290770004 -0500
++++ plp/reference/plp-2.2/hw//verilog/arbiter.v	2011-03-14 19:43:13.470770031 -0500
 @@ -17,7 +17,7 @@
   */
  
@@ -34,7 +36,7 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v plp/reference/plp
  	wire mod7_ie = imod == 7;
  	wire mod8_ie = imod == 8;
  	wire mod9_ie = imod == 9;
-+	wire moda_ie = imod == a;
++	wire moda_ie = imod == 10;
  
  	wire mod0_de = dmod == 0;
  	wire mod1_de = dmod == 1;
@@ -42,7 +44,7 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v plp/reference/plp
  	wire mod7_de = dmod == 7;
  	wire mod8_de = dmod == 8;
  	wire mod9_de = dmod == 9;
-+	wire moda_de = dmod == a;
++	wire moda_de = dmod == 10;
  
  	/* the bus muxes */
  	wire [31:0] mod0_inst, mod0_data;
@@ -82,8 +84,8 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/arbiter.v plp/reference/plp
 +
  endmodule
 diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mm.v plp/reference/plp-2.2/hw//verilog/mm.v
---- plp_vanilla/reference/plp-2.2/hw//verilog/mm.v	2011-03-13 21:43:40.726319645 -0500
-+++ plp/reference/plp-2.2/hw//verilog/mm.v	2011-03-13 21:37:21.158337452 -0500
+--- plp_vanilla/reference/plp-2.2/hw//verilog/mm.v	2011-03-16 20:37:54.290770004 -0500
++++ plp/reference/plp-2.2/hw//verilog/mm.v	2011-03-14 19:43:24.090770009 -0500
 @@ -36,6 +36,7 @@ memory map module
  0xf0500000      8               PLPID
  0xf0600000      4               timer
@@ -96,14 +98,14 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mm.v plp/reference/plp-2.2/
  		     (addr[31:20] == 12'hf05) ? 7 : /* mod_plpid */
  		     (addr[31:20] == 12'hf06) ? 8 : /* mod_timer */
  		     (addr[31:20] == 12'hf0a) ? 9 : /* mod_sseg */
-+		     (addr[31:20] == 12'hf0b) ? a : /* mod_i2s */
++		     (addr[31:20] == 12'hf0b) ? 10 : /* mod_i2s */
  		     0;
  	assign eff_addr = (mod == 8'h01) ? {8'h00,addr[23:0]} : {12'h000,addr[19:0]};
  endmodule
 diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v plp/reference/plp-2.2/hw//verilog/mod_i2s.v
 --- plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v	1969-12-31 18:00:00.000000000 -0600
-+++ plp/reference/plp-2.2/hw//verilog/mod_i2s.v	2011-03-14 19:27:47.091650242 -0500
-@@ -0,0 +1,142 @@
++++ plp/reference/plp-2.2/hw//verilog/mod_i2s.v	2011-03-16 20:23:24.520770001 -0500
+@@ -0,0 +1,159 @@
 +/*
 +    Copyright 2011 David Fritz, Wira Mulia
 +
@@ -138,8 +140,7 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v plp/reference/plp
 +* 11khz
 +*
 +* memory mapped at 0xf0b00000
-+* 0xf0b00000 - read-only memory position (0-255)
-+* 0xf0b00100 - 0xf0b001ff - memory (0-255, 1kb total buffer)
++* 0xf0b00000 - on read displays amount of free buffer, on write consumes one buffer spot
 +*/
 +
 +module mod_i2s(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk);
@@ -150,73 +151,91 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v plp/reference/plp
 +        input drw;
 +        input [31:0] din;
 +        output [31:0] iout, dout;
-+	output reg mod_i2s_sdout, mod_i2s_lrck, mod_i2s_mclk;
-+	output mod_i2s_sclk;
++	output reg mod_i2s_lrck, mod_i2s_sclk, mod_i2s_mclk;
++	output mod_i2s_sdout;
 +
++	/* module i/o */
++	wire [31:0] idata, ddata;
++	assign iout = idata;
++	assign dout = ddata;
++	assign idata = 0; /* no instruction port on this module */
++
++	/* i2s clock signals */
 +	parameter c_rate  = 25000000; /* clock rate */
 +	parameter s_rate  = 11025;    /* sample frequency */
-+	parameter lr_div  = c_rate / (2*s_rate);    /* left right channel selector divider */
-+	parameter mc_div  = c_rate / (2*256*s_rate); /* mclk divider (256 X s_rate) */
-+	parameter bit_div = c_rate / (32*s_rate); /* bit clock */
++	parameter mclk_div = c_rate / (256*2*s_rate); /* mclk */
 +
-+        wire [31:0] idata, ddata;
-+        assign iout = idata;
-+        assign dout = ddata;
++	/* mclk */
++	reg [31:0] mclk_count;
++	wire [31:0] next_mclk_count = mclk_count == mclk_div-1 ? 0 : mclk_count + 1;
++	wire next_mod_i2s_mclk = next_mclk_count == 0 ? ~mod_i2s_mclk : mod_i2s_mclk;
 +
-+	/* nothing is ever read from this module */
-+	assign idata = 32'h00000000;
++	/* sclk */
++	reg [1:0] bclk_count;
++	wire [1:0] next_bclk_count = mod_i2s_mclk & !next_mod_i2s_mclk ? bclk_count + 1 : bclk_count;
++	wire next_mod_i2s_sclk = bclk_count == 3 && next_bclk_count == 0 ? ~mod_i2s_sclk : mod_i2s_sclk;
 +
-+	assign mod_i2s_sclk = 0; /* allow the mclk and lrck ratio to determine the sample rate */
-+	reg [31:0] lrcount, mccount, bitcount; 
++	/* lrck */
++	reg [3:0] lrclk_count;
++	wire [3:0] next_lrclk_count = mod_i2s_sclk & !next_mod_i2s_sclk ? lrclk_count + 1 : lrclk_count;
++	wire next_mod_i2s_lrck = lrclk_count == 15 && next_lrclk_count == 0 ? ~mod_i2s_lrck : mod_i2s_lrck;
++
++	/* buffer interface */
 +	reg [7:0] i2s_addr;
-+	reg [5:0] word_count;
++	reg [7:0] buffer_pos; /* buffer_pos always points to the next position to write to */
 +	wire [31:0] i2s_data;
 +	wire eff_drw;
-+	wire [31:0] eff_data;
++	wire [31:0] eff_ddata;
 +
-+	i2s_ram r(clk, clk, 1'b1, 1'b1, eff_drw, daddr[7:0], i2s_addr, din, eff_ddata, i2s_data);
++	i2s_ram r(clk, clk, 1'b1, 1'b1, eff_drw, buffer_pos, i2s_addr, din, eff_ddata, i2s_data);
 +
-+	/* user interface */
-+	assign eff_drw = daddr[8] & drw;
-+	assign ddata = daddr[8] ? eff_ddata : {24'h000000,i2s_addr};
++	wire [7:0] free_buffer = i2s_addr - buffer_pos;
++	assign eff_drw = drw & de;
++	wire [7:0] next_buffer_pos = eff_drw ? buffer_pos + 1 : buffer_pos;
++	assign ddata = {24'h000000,free_buffer};
 +
-+	wire [63:0] word = {i2s_data[31:24],8'h00,i2s_data[23:16],8'h00,i2s_data[15:8],8'h00,i2s_data[7:0],8'h00};
++	/* i2s data expansion and shift */
++	/* 
++	 * data is shifted msb->lsb. data is 16-bit, but we're using 8-bit with zero padding.
++	 * this gives us 2, 2-channel samples per word 
++	 */
++	reg [5:0] word_count;
++	wire [5:0] next_word_count;
++	wire [7:0] next_i2s_addr;
++	reg offset;
++	wire [63:0] word = {1'b0,i2s_data[31:24],8'h00,i2s_data[23:16],8'h00,i2s_data[15:8],8'h00,i2s_data[7:0],7'h00};
++	wire new_word = mod_i2s_lrck & !next_mod_i2s_lrck;
++	wire new_bit  = mod_i2s_sclk & !next_mod_i2s_sclk;
++	wire next_offset = new_word ? ~offset : offset;
++	wire new_addr = offset & !next_offset; 
 +	assign mod_i2s_sdout = word[word_count];
++	assign next_word_count = new_addr            ? 63 :
++				 new_bit & !new_addr ? word_count - 1 : word_count;
++	assign next_i2s_addr = new_addr && (free_buffer != 255) ? i2s_addr + 1 : i2s_addr;
 +
-+	/* all data bus activity is negative edge triggered */
 +	always @(negedge clk) begin
-+		if (drw && de && !rst) begin
-+			if (lrcount == lr_div-1) begin
-+				lrcount <= 0;
-+				mod_i2s_lrck <= ~mod_i2s_lrck;
-+			end else begin
-+				lrcount <= lrcount + 1;
-+			end
-+
-+			if (mccount == mv_div-1) begin
-+				mccount <= 0;
-+				mod_i2s_mclk <= ~mod_i2s_mclk;
-+			end else begin
-+				mccount <= mccount + 1;
-+			end
-+
-+			if (bitcount == bit_div-1) begin
-+				bitcount <= 0;
-+				word_count <= word_count - 1;
-+				if (word_count == 8'h00)
-+					i2s_addr <= i2s_addr + 1;
-+			end else begin
-+				bitcount <= bitcount + 1;
-+			end
++		if (!rst) begin
++			lrclk_count <= next_lrclk_count;
++			bclk_count  <= next_bclk_count;
++			mod_i2s_lrck <= next_mod_i2s_lrck;
++			mod_i2s_sclk <= next_mod_i2s_sclk;
++			word_count <= next_word_count;
++			i2s_addr <= next_i2s_addr;
++			offset <= next_offset;
++			mod_i2s_mclk <= next_mod_i2s_mclk;
++			mclk_count <= next_mclk_count;
++			buffer_pos <= next_buffer_pos;
 +		end else if (rst) begin
-+			lrcount <= 0;
-+			mccount <= 0;
-+			bitcount <= 0;
++			lrclk_count <= 0;
++			bclk_count <= 0;
 +			mod_i2s_lrck <= 0;
-+			mod_i2s_mclk <= 0;
++			mod_i2s_sclk <= 0;
 +			i2s_addr <= 0;
-+			word_count <= 8'h00;
-+			i2s_addr <= 8'h00;
++			word_count <= 0;
++			offset <= 0;
++			mod_i2s_mclk <= 0;
++			mclk_count <= 0;
++			buffer_pos <= 0;
 +		end
 +	end
 +endmodule
@@ -230,7 +249,7 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v plp/reference/plp
 +        output reg [31:0] doa, dob;
 +        reg [31:0] RAM [255:0];
 +
-+        always @(posedge clka) begin
++        always @(negedge clka) begin
 +                if (ena) begin
 +                        if (wea) begin
 +                                RAM[addra] <= dia;
@@ -239,7 +258,7 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v plp/reference/plp
 +                end
 +        end
 +
-+        always @(posedge clkb) begin
++        always @(negedge clkb) begin
 +                if (enb) begin
 +                        dob <= RAM[addrb];
 +                end
@@ -247,8 +266,8 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/mod_i2s.v plp/reference/plp
 +endmodule
 +
 diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/top.v plp/reference/plp-2.2/hw//verilog/top.v
---- plp_vanilla/reference/plp-2.2/hw//verilog/top.v	2011-03-13 21:43:40.730309328 -0500
-+++ plp/reference/plp-2.2/hw//verilog/top.v	2011-03-13 21:39:09.009375840 -0500
+--- plp_vanilla/reference/plp-2.2/hw//verilog/top.v	2011-03-16 20:37:54.290770004 -0500
++++ plp/reference/plp-2.2/hw//verilog/top.v	2011-03-14 19:42:16.670770003 -0500
 @@ -25,7 +25,7 @@ top level module for mips design
  2.6.2010
  */
@@ -262,7 +281,7 @@ diff -uNrp plp_vanilla/reference/plp-2.2/hw//verilog/top.v plp/reference/plp-2.2
  	output [7:0] mod_vga_rgb;
  	output mod_vga_hs, mod_vga_vs;
  	inout [15:0] mod_gpio_gpio;
-+	output mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk
++	output mod_i2s_sdout, mod_i2s_sclk, mod_i2s_lrck, mod_i2s_mclk;
  
  	wire [31:0] daddr, dout, din, iaddr, iin;
  	wire drw;
