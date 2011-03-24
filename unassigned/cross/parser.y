@@ -122,7 +122,7 @@ unsupported_instruction
 	| LA	REG WORD NEWLINE	{craft(3,"li",$2,$3);}
 	| LA	REG REG NEWLINE		{craft(3,"li",$2,$3);}
 	| SB	REG BASEOFFSET NEWLINE  {craft(3,"sw",$2,$3);}
-	| LB	REG BASEOFFSET NEWLINE  {craft(3,"lw",$2,$3);}
+	| LB	REG BASEOFFSET NEWLINE  {printf("UNSUPPORTED INSTRUCTION! LB\n"); exit(-1);}
 	;
 
 %%
