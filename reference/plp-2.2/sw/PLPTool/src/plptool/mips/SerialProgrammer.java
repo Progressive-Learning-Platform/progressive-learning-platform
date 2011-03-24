@@ -32,7 +32,7 @@ import java.util.Scanner;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.Constants;
 
 /**
@@ -55,7 +55,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
         if ( portIdentifier.isCurrentlyOwned() )
         {
-            return PLPMsg.E("Serial port " + portName + " is in use.",
+            return Msg.E("Serial port " + portName + " is in use.",
                                     Constants.PLP_PRG_PORT_IN_USE, this);
         }
         else {
@@ -71,7 +71,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 out = plp.p_port.getOutputStream();
             }
             else {
-                return PLPMsg.E(portName + " is not a serial port.",
+                return Msg.E(portName + " is not a serial port.",
                                     Constants.PLP_PRG_NOT_A_SERIAL_PORT, this);
             }
         }
@@ -88,7 +88,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             return Constants.PLP_OK;
         } catch(Exception e) {
-            return PLPMsg.E("Can not close serial port.",
+            return Msg.E("Can not close serial port.",
                     Constants.PLP_PRG_UNABLE_TO_CLOSE_PORT, null);
         }
     }
@@ -100,7 +100,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             byte inData = '\0';
             plp.p_port.enableReceiveTimeout(500);
 
-            PLPMsg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
+            Msg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
             out.write('a');
             out.write((byte) (addrTable[0] >> 24));
             out.write((byte) (addrTable[0] >> 16));
@@ -108,9 +108,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             out.write((byte) (addrTable[0]));
             if(busy) inData = (byte) in.read();
             if(inData != 'f') {
-                PLPMsg.D("Acknowledgement byte: " +
+                Msg.D("Acknowledgement byte: " +
                          String.format("0x%x", inData), 2, this);
-                return PLPMsg.E("Programming failed, no/invalid acknowledgement received. " +
+                return Msg.E("Programming failed, no/invalid acknowledgement received. " +
                                 "Check if the board is in programming mode.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
             }
@@ -127,7 +127,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     plp.g_prg.repaint();
                 }
 
-                PLPMsg.D(progress + " out of " + (objCode.length - 1), 3, this);
+                Msg.D(progress + " out of " + (objCode.length - 1), 3, this);
                 if(i < objCode.length - 1) {
                     if(addrTable[i + 1] != addrTable[i] + 4) {
                         out.write('a');
@@ -137,7 +137,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                         out.write((byte) (addrTable[i]));
                         if(busy) inData = (byte) in.read();
                         if(inData != 'f')
-                            return PLPMsg.E("Programming failed, no acknowledgement received.",
+                            return Msg.E("Programming failed, no acknowledgement received.",
                                             Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                     }
                 }
@@ -148,7 +148,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 out.write((byte) (objCode[i]));
                 if(busy) inData = (byte) in.read();
                 if(inData != 'f')
-                    return PLPMsg.E("Programming failed, no acknowledgement received.",
+                    return Msg.E("Programming failed, no acknowledgement received.",
                                     Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
             }
 
@@ -159,21 +159,21 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             out.write((byte) (addrTable[0]));
             if(busy) inData = (byte) in.read();
             if(inData != 'f')
-                return PLPMsg.E("Programming failed, no acknowledgement received.",
+                return Msg.E("Programming failed, no acknowledgement received.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
             out.write('j');
             if(busy) inData = (byte) in.read();
             if(inData != 'f')
-                return PLPMsg.E("Programming failed, no acknowledgement received.",
+                return Msg.E("Programming failed, no acknowledgement received.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                     
         } else {
-            return PLPMsg.E("Source is not assembled.",
+            return Msg.E("Source is not assembled.",
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
         }
 
-        PLPMsg.I("programWithAsm(): done!", this);
+        Msg.I("programWithAsm(): done!", this);
 
         return Constants.PLP_OK;
     }

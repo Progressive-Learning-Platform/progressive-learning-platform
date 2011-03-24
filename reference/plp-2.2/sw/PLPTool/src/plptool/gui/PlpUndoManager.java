@@ -17,7 +17,7 @@
  */
 
 package plptool.gui;
-import plptool.PLPCfg;
+import plptool.Config;
 
 /**
  * Extends UndoManager to ignore changes during syntax highlighting
@@ -28,7 +28,7 @@ public class PlpUndoManager extends javax.swing.undo.UndoManager{
 
     @Override
     public boolean addEdit(javax.swing.undo.UndoableEdit anEdit) {
-            if(PLPCfg.nothighlighting) {
+            if(Config.nothighlighting) {
                 return super.addEdit(anEdit);
             }
             return false;

@@ -110,7 +110,7 @@ public class ArchRegistry {
          **********************************************************************/
         else if(arch.equals("plpmips")) {
             PLPSimCore sim = new plptool.mips.SimCore((plptool.mips.Asm) plp.asm,
-                                    plp.asm.getAddrTable()[0], PLPCfg.cfgDefaultRAMSize);
+                                    plp.asm.getAddrTable()[0], Config.cfgDefaultRAMSize);
             sim.setStartAddr(plp.asm.getAddrTable()[0]);
             return sim;
         }

@@ -28,9 +28,9 @@ import javax.swing.text.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.Constants;
-import plptool.PLPCfg;
+import plptool.Config;
 
 /**
  *
@@ -70,7 +70,7 @@ public class Develop extends javax.swing.JFrame {
         
         splitterH.setDividerLocation(0.25);
         
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
         jScrollPane3.setEnabled(false);
         txtOutput.setEditable(false);
         rootmenuProject.setEnabled(false);
@@ -118,7 +118,7 @@ public class Develop extends javax.swing.JFrame {
         
         this.setLocationRelativeTo(null);
 
-        PLPMsg.M(Constants.copyrightString);
+        Msg.M(Constants.copyrightString);
     }
 
     public void updateComponents() {
@@ -126,15 +126,15 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void changeFormatting() {
-        java.awt.Font newFont = new java.awt.Font(PLPCfg.devFont, java.awt.Font.PLAIN, PLPCfg.devFontSize);
+        java.awt.Font newFont = new java.awt.Font(Config.devFont, java.awt.Font.PLAIN, Config.devFontSize);
         txtEditor.setFont(newFont);
-        txtEditor.setBackground(PLPCfg.devBackground);
-        txtEditor.setForeground(PLPCfg.devForeground);
+        txtEditor.setBackground(Config.devBackground);
+        txtEditor.setForeground(Config.devForeground);
     }
 
     public void notifyplpModified() {
         if(trackChanges) {
-            if(PLPCfg.nothighlighting) {
+            if(Config.nothighlighting) {
                 plp.modified = true;
                 plp.updateWindowTitle();
             }
@@ -220,7 +220,7 @@ public class Develop extends javax.swing.JFrame {
             case 2:
                 return;
             default:
-                PLPMsg.output = txtOutput;
+                Msg.output = txtOutput;
 
                 final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
                 fc.setFileFilter(new PlpFilter());
@@ -237,7 +237,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void savePLPFileAs() {
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
 
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setFileFilter(new PlpFilter());
@@ -292,7 +292,7 @@ public class Develop extends javax.swing.JFrame {
             if(nodeStr.endsWith("asm")) {
 
                 if(plp.asms.size() <= 1) {
-                    PLPMsg.E("Can not delete last source file.",
+                    Msg.E("Can not delete last source file.",
                              Constants.PLP_GENERIC_ERROR, null);
 
                     return Constants.PLP_GENERIC_ERROR;
@@ -314,7 +314,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public int importASM() {
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
 
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setFileFilter(new AsmFilter());
@@ -331,7 +331,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public int exportASM() {
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
         int indexToExport = -1;
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
 
@@ -367,7 +367,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     private void syntaxHighlight() {
-        PLPCfg.nothighlighting = false;
+        Config.nothighlighting = false;
         int currpos = 0;
         int doclength = txtEditor.getText().split("\\r?\\n").length;
         for(int i=0;i<doclength;i++) {
@@ -375,11 +375,11 @@ public class Develop extends javax.swing.JFrame {
             syntaxHighlight(currline, currpos, styles);
             currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
         }
-        PLPCfg.nothighlighting = true;
+        Config.nothighlighting = true;
     }
 
     public void syntaxHighlight(int line) {
-        PLPCfg.nothighlighting = false;
+        Config.nothighlighting = false;
         try {
             String currline = txtEditor.getText().split("\\r?\\n")[line];
             int currpos = 0;
@@ -389,7 +389,7 @@ public class Develop extends javax.swing.JFrame {
             syntaxHighlight(currline, currpos, setupHighlighting());
         } catch (java.lang.ArrayIndexOutOfBoundsException aioobe) {
         }
-        PLPCfg.nothighlighting = true;
+        Config.nothighlighting = true;
     }
 
     //Do not call this class without setting highlighting to true
@@ -472,9 +472,9 @@ public class Develop extends javax.swing.JFrame {
         SimpleAttributeSet[] styleSetup = new SimpleAttributeSet[11];
         for(int i=0;i<11;i++) {
             styleSetup[i] = new SimpleAttributeSet(def);
-            StyleConstants.setForeground(styleSetup[i],PLPCfg.syntaxColors[i]);
-            StyleConstants.setBold(styleSetup[i], PLPCfg.syntaxBold[i]);
-            StyleConstants.setItalic(styleSetup[i], PLPCfg.syntaxItalic[i]);
+            StyleConstants.setForeground(styleSetup[i],Config.syntaxColors[i]);
+            StyleConstants.setBold(styleSetup[i], Config.syntaxBold[i]);
+            StyleConstants.setItalic(styleSetup[i], Config.syntaxItalic[i]);
         }
         return styleSetup;
     }
@@ -1045,7 +1045,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         openPLPFile();
-        if(PLPCfg.cfgSyntaxHighlighting)
+        if(Config.cfgSyntaxHighlighting)
             syntaxHighlight();
     }//GEN-LAST:event_menuOpenActionPerformed
 
@@ -1056,7 +1056,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
         newPLPFile();
-        if(PLPCfg.cfgSyntaxHighlighting)
+        if(Config.cfgSyntaxHighlighting)
             syntaxHighlight();
     }//GEN-LAST:event_menuNewActionPerformed
 
@@ -1067,19 +1067,19 @@ public class Develop extends javax.swing.JFrame {
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
         if(plp.save() == Constants.PLP_FILE_USE_SAVE_AS)
             savePLPFileAs();
-        if(PLPCfg.cfgSyntaxHighlighting)
+        if(Config.cfgSyntaxHighlighting)
             syntaxHighlight();
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
 
         if(plp.plpfile != null)
             plp.assemble();
 }//GEN-LAST:event_menuAssembleActionPerformed
 
     private void menuAssembleActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
 
         if(plp.plpfile != null)
             plp.assemble();
@@ -1106,7 +1106,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
 
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
 
         if(plp.plpfile != null)
             plp.assemble();
@@ -1126,7 +1126,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuExportASMActionPerformed
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        PLPMsg.output = txtOutput;
+        Msg.output = txtOutput;
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void menuProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
@@ -1187,12 +1187,12 @@ public class Develop extends javax.swing.JFrame {
 
                     String[] tokens = nodeStr.split(": ");
 
-                    PLPMsg.I("Opening " + nodeStr, null);
+                    Msg.I("Opening " + nodeStr, null);
 
                     plp.updateAsm(plp.open_asm, txtEditor.getText());
                     plp.open_asm = Integer.parseInt(tokens[0]);
                     plp.refreshProjectView(false);
-                    if (PLPCfg.cfgSyntaxHighlighting) {
+                    if (Config.cfgSyntaxHighlighting) {
                         syntaxHighlight();
                     }
                 }
@@ -1236,7 +1236,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-        if(PLPCfg.cfgSyntaxHighlighting) {
+        if(Config.cfgSyntaxHighlighting) {
             int caretPos = txtEditor.getCaretPosition();
             syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
             txtEditor.setCaretPosition(caretPos);

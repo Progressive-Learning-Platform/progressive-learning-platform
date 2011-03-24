@@ -19,7 +19,7 @@
 package plptool.mods;
 import plptool.PLPSimBusModule;
 import plptool.Constants;
-import plptool.PLPMsg;
+import plptool.Msg;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -107,15 +107,15 @@ public class UART extends PLPSimBusModule {
             } else if (d == 2) /* clear rdy */
                 ready = false;
             else
-                PLPMsg.M(String.format("[UART] invalid write to command register: %d", d));
+                Msg.M(String.format("[UART] invalid write to command register: %d", d));
         } else if (addr == startAddr + 4) { /* status register */
-            PLPMsg.M(String.format("[UART] invalid write to status register: %d ", d));
+            Msg.M(String.format("[UART] invalid write to status register: %d ", d));
         } else if (addr == startAddr + 8) { /* receive buffer */
-            PLPMsg.M(String.format("[UART] invalid write to receive buffer: %d", d));
+            Msg.M(String.format("[UART] invalid write to receive buffer: %d", d));
         } else if (addr == startAddr + 12) { /* send buffer */
             sendB = d & 0x000000ff;
         } else {
-            PLPMsg.M("[UART] invalid register");
+            Msg.M("[UART] invalid register");
         }
 
         return Constants.PLP_OK;

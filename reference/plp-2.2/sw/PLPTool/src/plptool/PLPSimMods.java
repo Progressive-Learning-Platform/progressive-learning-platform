@@ -80,17 +80,17 @@ public class PLPSimMods {
 
             long value = (Long) super.read(startAddr);
 
-            PLPMsg.m(this + ": ");
+            Msg.m(this + ": ");
 
             // Combinational logic
             for(int i = 7; i >= 0; i--) {
                 if((value & (long) Math.pow(2, i)) == (long) Math.pow(2, i))
-                    PLPMsg.m("* ");
+                    Msg.m("* ");
                 else
-                    PLPMsg.m(". ");
+                    Msg.m(". ");
             }
 
-            PLPMsg.M("");
+            Msg.M("");
 
             return Constants.PLP_OK;
         }

@@ -21,7 +21,7 @@ package plptool.mods;
 import plptool.PLPSimCore;
 import plptool.PLPSimBusModule;
 import plptool.Constants;
-import plptool.PLPMsg;
+import plptool.Msg;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JInternalFrame;
@@ -277,7 +277,7 @@ public class IORegistry {
             case 6:
                 moduleFrame = new VGAFrame();
                 module = new VGA(addr, sim.bus, (VGAFrame) moduleFrame);
-                module.threaded = plptool.PLPCfg.threadedModEnabled;
+                module.threaded = plptool.Config.threadedModEnabled;
                 module.stop = false;
                 if(module.threaded)
                     module.start();
@@ -312,7 +312,7 @@ public class IORegistry {
             /** DO NOT EDIT ANYTHING BELOW THIS **/
 
             default:
-                return PLPMsg.E("attachModuleToBus(): invalid module ID.",
+                return Msg.E("attachModuleToBus(): invalid module ID.",
                                 Constants.PLP_SIM_INVALID_MODULE, this);
         }
 
@@ -349,7 +349,7 @@ public class IORegistry {
      */
     public PLPSimBusModule getModule(int index) {
         if(index >= modules.size() || index < 0) {
-            PLPMsg.E("getModule: invalid index:" + index,
+            Msg.E("getModule: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return null;
         }
@@ -363,7 +363,7 @@ public class IORegistry {
      */
     public int getPositionInBus(int index) {
         if(index >= modules.size() || index < 0) {
-            PLPMsg.E("getPositionInBus: invalid index: " + index,
+            Msg.E("getPositionInBus: invalid index: " + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return -1;
         }
@@ -377,7 +377,7 @@ public class IORegistry {
      */
     public Object getModuleFrame(int index) {
         if(index >= modules.size() || index < 0) {
-            PLPMsg.E("getModuleFrame: invalid index:" + index,
+            Msg.E("getModuleFrame: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return null;
         }
@@ -415,7 +415,7 @@ public class IORegistry {
      */
     public int removeModule(int index, PLPSimCore sim) {
         if(index >= modules.size() || index < 0) {
-            return PLPMsg.E("removeModule: invalid index:" + index,
+            return Msg.E("removeModule: invalid index:" + index,
                        Constants.PLP_GENERIC_ERROR, null);
         }
 
@@ -478,7 +478,7 @@ public class IORegistry {
      */
     public static int loadPreset(int index, plptool.gui.ProjectDriver plp) {
         if(index >= Presets.presets.length || index < 0)
-            return PLPMsg.E("loadPreset: invalid index: " + index,
+            return Msg.E("loadPreset: invalid index: " + index,
                             Constants.PLP_GENERIC_ERROR, null);
 
         Integer[] modsType = (Integer[]) Presets.presets[index][1];

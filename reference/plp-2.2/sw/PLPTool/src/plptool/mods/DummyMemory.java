@@ -19,7 +19,7 @@
 package plptool.mods;
 
 import plptool.Constants;
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.PLPSimBusModule;
 import plptool.PLPToolbox;
 

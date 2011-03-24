@@ -6,7 +6,7 @@
 package plptool.fun;
 
 import plptool.PLPSimBusModule;
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.Constants;
 
 /**

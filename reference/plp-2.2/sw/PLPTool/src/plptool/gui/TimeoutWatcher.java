@@ -19,7 +19,7 @@
 
 package plptool.gui;
 
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.Constants;
 
 /**
@@ -53,18 +53,18 @@ public class TimeoutWatcher extends Thread {
         }
 
         if(timeoutCounter == 20) {
-            PLPMsg.E("Programming timed out, killing programmer thread.",
+            Msg.E("Programming timed out, killing programmer thread.",
                      Constants.PLP_PRG_TIMEOUT, this);
             //plp.p_port.getInputStream().close();
             //plp.prg.interrupt();
             //plp.p_port.close();
             plp.prg.busy = false;
             plp.prg.stop();
-            PLPMsg.I("Watchdog quitting.", this);
+            Msg.I("Watchdog quitting.", this);
         }
 
         } catch(Exception e) {
-            PLPMsg.E("Uh oh I crashed.", Constants.PLP_OOPS, this);
+            Msg.E("Uh oh I crashed.", Constants.PLP_OOPS, this);
         }
     }
 

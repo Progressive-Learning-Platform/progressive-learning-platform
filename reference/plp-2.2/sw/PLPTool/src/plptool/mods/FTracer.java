@@ -20,7 +20,7 @@ package plptool.mods;
 
 import plptool.Constants;
 import plptool.PLPSimBusModule;
-import plptool.PLPMsg;
+import plptool.Msg;
 
 /**
  * Trace module, outputs bus activity to file
@@ -32,7 +32,7 @@ public class FTracer extends PLPSimBusModule {
 
     public FTracer(long addr, long size) {
         super(addr, addr + size, true);
-        PLPMsg.M("TRACER Registered");
+        Msg.M("TRACER Registered");
     }
 
     public int eval() {
@@ -53,7 +53,7 @@ public class FTracer extends PLPSimBusModule {
     public int write(long addr, Object data, boolean isInstr) {
         //trace!
         if (!isInstr)
-            PLPMsg.M(String.format("[TRACE] W %08x %08x", addr, data ));
+            Msg.M(String.format("[TRACE] W %08x %08x", addr, data ));
         return super.writeReg(addr, data, isInstr);
     }
 
@@ -64,7 +64,7 @@ public class FTracer extends PLPSimBusModule {
         //trace ret
         char rType = super.isInstr(addr) ? 'I' : 'R';
 
-        PLPMsg.M(String.format("[TRACE] %c %08x %08x", rType, addr, (Long)ret));
+        Msg.M(String.format("[TRACE] %c %08x %08x", rType, addr, (Long)ret));
 
         return ret;
     }

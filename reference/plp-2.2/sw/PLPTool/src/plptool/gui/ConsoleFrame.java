@@ -108,20 +108,20 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 plp.g_dev.setVisible(true);
             }
             else if(command.equals("dark")) {
-                plptool.PLPCfg.devBackground = java.awt.Color.BLACK;
-                plptool.PLPCfg.devForeground = java.awt.Color.lightGray;
+                plptool.Config.devBackground = java.awt.Color.BLACK;
+                plptool.Config.devForeground = java.awt.Color.lightGray;
                 plp.g_dev.changeFormatting();
             }
             else if(command.equals("defcolor")) {
-                plptool.PLPCfg.devBackground = java.awt.Color.WHITE;
-                plptool.PLPCfg.devForeground = java.awt.Color.BLACK;
+                plptool.Config.devBackground = java.awt.Color.WHITE;
+                plptool.Config.devForeground = java.awt.Color.BLACK;
                 plp.g_dev.changeFormatting();
             }
             else if(command.equals("hloff")) {
-                plptool.PLPCfg.cfgSyntaxHighlighting = false;
+                plptool.Config.cfgSyntaxHighlighting = false;
             }
             else if(command.equals("hlon")) {
-                plptool.PLPCfg.cfgSyntaxHighlighting = true;
+                plptool.Config.cfgSyntaxHighlighting = true;
             }
             else if(command.equals("simcore")) {
                 out.setText(plp.sim.toString());
@@ -135,16 +135,16 @@ public class ConsoleFrame extends javax.swing.JFrame {
 
             else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
-                    plptool.PLPCfg.devFont = tokens[1];
+                    plptool.Config.devFont = tokens[1];
                     plp.g_dev.changeFormatting();
                 }
                 if(tokens[0].equals("fontsize")) {
-                    plptool.PLPCfg.devFontSize = Integer.parseInt(tokens[1]);
+                    plptool.Config.devFontSize = Integer.parseInt(tokens[1]);
                     plp.g_dev.changeFormatting();
                 }
                 if(tokens[0].equals("hl")) {
-                    plptool.PLPCfg.cfgSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
-                    out.setText("cfgSyntaxHighlighting " + plptool.PLPCfg.cfgSyntaxHighlighting);
+                    plptool.Config.cfgSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
+                    out.setText("cfgSyntaxHighlighting " + plptool.Config.cfgSyntaxHighlighting);
                 }
                 if(tokens[0].equals("open")) {
                     plp.open(tokens[1]);

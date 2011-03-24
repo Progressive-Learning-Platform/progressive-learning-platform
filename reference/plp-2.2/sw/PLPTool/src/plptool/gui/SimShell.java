@@ -52,7 +52,7 @@ public class SimShell extends javax.swing.JFrame {
 
         initComponents();
         this.setLocationRelativeTo(null);
-        PLPMsg.M("SimShell Loaded\n");
+        Msg.M("SimShell Loaded\n");
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -63,7 +63,7 @@ public class SimShell extends javax.swing.JFrame {
     }
 
     public void plpMsgRouteBack() {
-        PLPMsg.output = null;
+        Msg.output = null;
     }
 
     public void summonFrame(javax.swing.JInternalFrame frame) {
@@ -329,8 +329,8 @@ public class SimShell extends javax.swing.JFrame {
             txtSteps.setText("1");
         }
 
-        if(PLPMsg.lastError != 0)
-            plp.g_err.setError(PLPMsg.lastError);
+        if(Msg.lastError != 0)
+            plp.g_err.setError(Msg.lastError);
     }//GEN-LAST:event_btnStepActionPerformed
 
     private void tglRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglRunActionPerformed
