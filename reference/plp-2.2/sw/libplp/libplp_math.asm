@@ -5,7 +5,7 @@
 # 2011.3.9
 #
 
-# this library requires the stack to be used, with the current stack pointer in # $sp
+# this library requires the stack to be used, with the current stack pointer in $sp
 
 #
 # libplp_math_imult
@@ -27,12 +27,6 @@ libplp_math_imult_skip:
 libplp_math_imult_done:
 	jr $ra
 	nop
-
-#libplp_math_idiv
-
-#libplp_math_imod
-
-#libplp_math_pow
 
 #
 # libplp_math_abs

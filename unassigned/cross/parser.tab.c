@@ -1743,7 +1743,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 125 "parser.y"
-    {craft(3,"lw",(yyvsp[(2) - (4)]),(yyvsp[(3) - (4)]));;}
+    {printf("UNSUPPORTED INSTRUCTION! LB\n"); exit(-1);;}
     break;
 
 
