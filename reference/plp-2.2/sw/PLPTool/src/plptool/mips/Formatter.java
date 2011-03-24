@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import plptool.PLPAsmSource;
-import plptool.PLPCfg;
-import plptool.PLPMsg;
+import plptool.Config;
+import plptool.Msg;
 import plptool.Constants;
 
 /**
@@ -47,30 +47,30 @@ public class Formatter {
         long objectCode[] = asm.getObjectCode();
         long tVal;
 
-        PLPMsg.M("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII");
-        PLPMsg.M("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----");
+        Msg.M("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII");
+        Msg.M("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----");
 
         for(int i = 0; i < addrTable.length; i++) {
             if((label = asm.lookupLabel(addrTable[i])) != null) {
-                PLPMsg.m(label + "\n\t\t");
+                Msg.m(label + "\n\t\t");
             } else {
-                PLPMsg.m("\t\t");
+                Msg.m("\t\t");
             }
 
-            PLPMsg.m("0x" + String.format("%07x", addrTable[i]) + "\t");
-            PLPMsg.m(String.format("%08x", (int) objectCode[i]) + "\t");
-            PLPMsg.m(mipsBinFormat(intBinPadder((int) objectCode[i], 32)) + "\t");
+            Msg.m("0x" + String.format("%07x", addrTable[i]) + "\t");
+            Msg.m(String.format("%08x", (int) objectCode[i]) + "\t");
+            Msg.m(mipsBinFormat(intBinPadder((int) objectCode[i], 32)) + "\t");
 
             for(int j = 3; j >= 0; j--) {
                 tVal = objectCode[i] >> (8 * j);
                 tVal &= 0xFF;
                 if(tVal >= 0x21 && tVal <= 0x7E)
-                    PLPMsg.m((char) tVal + " ");
+                    Msg.m((char) tVal + " ");
                 else
-                    PLPMsg.m(". ");
+                    Msg.m(". ");
             }
 
-            PLPMsg.M("");
+            Msg.M("");
         }
 
         return Constants.PLP_OK;
@@ -87,7 +87,7 @@ public class Formatter {
             out.close();
 
         } catch(Exception e) {
-            return PLPMsg.E("writeBin(): Unable to write to " + outputFileName,
+            return Msg.E("writeBin(): Unable to write to " + outputFileName,
                      Constants.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
         }
 
@@ -144,7 +144,7 @@ public class Formatter {
         return ret;
 
         } catch(Exception e) {
-            PLPMsg.E("intBinpadder(): can't convert " + number,
+            Msg.E("intBinpadder(): can't convert " + number,
                      Constants.PLP_OUT_UNHANDLED_ERROR, null);
             return null;
         }
@@ -201,13 +201,13 @@ public class Formatter {
         File outFile = new File(output + ".plp");
 
         if(outFile.exists() && !forceWrite) {
-            return PLPMsg.E("genPLP(): " + output + ".plp already exists. Use -af to overwrite.",
+            return Msg.E("genPLP(): " + output + ".plp already exists. Use -af to overwrite.",
                             Constants.PLP_OUT_FILE_EXISTS, null);
         }
 
         metafileStr += "PLP-2.0\n";
 
-        PLPMsg.I("genPLP(): Assembling " + input + ".", null);
+        Msg.I("genPLP(): Assembling " + input + ".", null);
         if(asm.preprocess(0) == Constants.PLP_OK)
             asm.assemble();
 
@@ -216,11 +216,11 @@ public class Formatter {
             verilogHex = writeVerilogHex(objCode);
             metafileStr += "START=" + asm.getAddrTable()[0] + "\n";
             metafileStr += "DIRTY=0\n\n";
-            PLPMsg.I("genPLP(): Assembly completed.", null);
+            Msg.I("genPLP(): Assembly completed.", null);
         }
         else {
             metafileStr += "DIRTY=1\n\n";
-            PLPMsg.I("genPLP(): Assembly failed.", null);
+            Msg.I("genPLP(): Assembly failed.", null);
         }
 
         sourceList = asm.getAsmList();
@@ -297,18 +297,18 @@ public class Formatter {
 
         tOut.close();
 
-        PLPMsg.I("genPLP(): " + output + ".plp written", null);
+        Msg.I("genPLP(): " + output + ".plp written", null);
 
        
         symTablePrettyPrint(asm.getSymTable());
-        PLPMsg.M("");
+        Msg.M("");
         prettyPrint(asm);
 
         if(Constants.debugLevel >= 10)
-            PLPMsg.M(writeCOE(asm.getObjectCode()));
+            Msg.M(writeCOE(asm.getObjectCode()));
 
         } catch(Exception e) {
-            return PLPMsg.E("genPLP(): Unable to write to <" + output + ".plp>\n" +
+            return Msg.E("genPLP(): Unable to write to <" + output + ".plp>\n" +
                      e, Constants.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
         }
 
@@ -319,7 +319,7 @@ public class Formatter {
     public static int symTablePrettyPrint(HashMap symTable) {
         String key, value;
 
-        PLPMsg.M("\nSymbol Table" +
+        Msg.M("\nSymbol Table" +
                            "\n============");
         Iterator iterator = symTable.keySet().iterator();
 
@@ -327,7 +327,7 @@ public class Formatter {
             key = iterator.next().toString();
             value = String.format("0x%08x", symTable.get(key));
 
-            PLPMsg.M(value + "\t:\t" + key);
+            Msg.M(value + "\t:\t" + key);
         }
 
         return 0;
@@ -419,7 +419,7 @@ class MIPSInstr {
                 break;
         }
 
-        if(PLPCfg.cfgInstrPretty && instr == 0)
+        if(Config.cfgInstrPretty && instr == 0)
             return "nop";
 
         return ret;

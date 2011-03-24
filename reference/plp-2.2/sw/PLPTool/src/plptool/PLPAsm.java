@@ -121,7 +121,7 @@ public abstract class PLPAsm {
             System.arraycopy(asmFileMap, 0, newAsmFileMap, 0, asmFileMap.length);
             asmFileMap = newAsmFileMap;
 
-            PLPMsg.D("new lineNumMap length: " + lineNumMap.length, 5, this);
+            Msg.D("new lineNumMap length: " + lineNumMap.length, 5, this);
         }
 
         lineNumMap[mapperIndex] = lineNum;

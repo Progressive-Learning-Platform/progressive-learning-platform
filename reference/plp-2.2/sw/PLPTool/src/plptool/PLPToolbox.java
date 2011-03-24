@@ -38,8 +38,8 @@ public class PLPToolbox {
             return Long.parseLong(number);
 
         } catch(Exception e) {
-            PLPMsg.lastError = -1;
-            return PLPMsg.E("parseNum(): Argument is not a valid number\n" + e,
+            Msg.lastError = -1;
+            return Msg.E("parseNum(): Argument is not a valid number\n" + e,
                             Constants.PLP_NUMBER_ERROR, null);
         }
     }
@@ -59,8 +59,8 @@ public class PLPToolbox {
             return Integer.parseInt(number);
 
         } catch(Exception e) {
-            PLPMsg.lastError = -1;
-            return PLPMsg.E("parseNum(): Argument is not a valid number\n" + e,
+            Msg.lastError = -1;
+            return Msg.E("parseNum(): Argument is not a valid number\n" + e,
                             Constants.PLP_NUMBER_ERROR, null);
         }
     }

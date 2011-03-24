@@ -21,7 +21,7 @@ package plptool.mods;
 import plptool.PLPSimBusModule;
 import plptool.PLPSimBus;
 import plptool.Constants;
-import plptool.PLPMsg;
+import plptool.Msg;
 
 /**
  * PLP VGA module. The VGA module takes the simulation bus as an argument as it
@@ -65,7 +65,7 @@ public class VGA extends PLPSimBusModule {
             return Constants.PLP_SIM_MODULE_DISABLED;
 
         long framePointer = (Long) super.read(startAddr + 4);
-        PLPMsg.D("Framepointer is at " + String.format("0x%08x", framePointer), 4, this);
+        Msg.D("Framepointer is at " + String.format("0x%08x", framePointer), 4, this);
 
         // the image is a 640x480 int array (each color is 8-bit, most significant
         // 8-bit is ignored (we're using INT_RGB_TYPE for BufferedImage).
@@ -80,7 +80,7 @@ public class VGA extends PLPSimBusModule {
                 long data = 0;
                 if(bus.isInitialized(addr)) {
                     data = (Long) bus.read(addr);
-                    PLPMsg.D("Initialized pixel at " + String.format("0x%08x", addr), 4, this);
+                    Msg.D("Initialized pixel at " + String.format("0x%08x", addr), 4, this);
                 }
 
                 // unpack pixels from the word and populate the image array.
@@ -100,7 +100,7 @@ public class VGA extends PLPSimBusModule {
                     int blue = ((int) pixel & 0x03) << 6;
                     blue = (blue == 0xC0) ? 0xFF : blue;
 
-                    PLPMsg.D("Colors: " + red + " " + green + " " + blue, 4, this);
+                    Msg.D("Colors: " + red + " " + green + " " + blue, 4, this);
                     image[x_coord * 4 + i][y_coord] = (red << 16) | (green << 8) | (blue);
                 }
             }
@@ -118,10 +118,10 @@ public class VGA extends PLPSimBusModule {
         try {
         while(!stop) {
             this.draw();
-            Thread.sleep(plptool.PLPCfg.threadedModRefreshRate);
+            Thread.sleep(plptool.Config.threadedModRefreshRate);
         }
 
-        PLPMsg.M("VGA module thread exiting.");
+        Msg.M("VGA module thread exiting.");
 
         } catch (Exception e) { }
     }

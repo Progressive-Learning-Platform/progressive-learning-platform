@@ -20,7 +20,7 @@ package plptool.gui;
 
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.Constants;
 
 /**
@@ -46,7 +46,7 @@ public class PLPToolApp extends SingleFrameApplication {
         }
         plp.app = this;
         
-        PLPMsg.output = plp.g_dev.getOutput();
+        Msg.output = plp.g_dev.getOutput();
         if(plpFilePath != null)
             plp.open(plpFilePath);
         // show(mainWindow);
@@ -107,14 +107,14 @@ public class PLPToolApp extends SingleFrameApplication {
                 plp.save();
                 if(plp.asm.isAssembled()) {
                     plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
-                    PLPMsg.M("");
+                    Msg.M("");
                     plptool.mips.Formatter.prettyPrint(plp.asm);
-                    PLPMsg.M("");
-                    PLPMsg.M("Build timestamp: " + timestamp);
-                    PLPMsg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
-                    PLPMsg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
+                    Msg.M("");
+                    Msg.M("Build timestamp: " + timestamp);
+                    Msg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
+                    Msg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
                 } else
-                    PLPMsg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
+                    Msg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
             }
         }
         else if(args.length > 0 && args[0].equals("-s")) {
@@ -152,7 +152,7 @@ public class PLPToolApp extends SingleFrameApplication {
             launch(PLPToolApp.class, args);
         }
         else {
-            PLPMsg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
+            Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
             System.out.println();
             System.out.println("Usage:\n");
             System.out.println("  java -jar PLPTool.jar");

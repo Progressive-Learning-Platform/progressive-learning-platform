@@ -19,7 +19,7 @@
 package plptool.gui;
 
 import plptool.Constants;
-import plptool.PLPMsg;
+import plptool.Msg;
 
 import java.io.*;
 
@@ -53,7 +53,7 @@ public class ProjectFileManipulator {
 
         if(args[2].equals("-importasm") || args[2].equals("-i")) {
             if((args.length < 4)) {
-                PLPMsg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -82,7 +82,7 @@ public class ProjectFileManipulator {
         }
         else if(args[2].equals("-c")) {
             if(!(args.length == 4)) {
-                PLPMsg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -92,7 +92,7 @@ public class ProjectFileManipulator {
         }
         else if(args[2].equals("-importdir") || args[2].equals("-d")) {
             if(!(args.length == 4)) {
-                PLPMsg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -106,7 +106,7 @@ public class ProjectFileManipulator {
         }
         else if((args[2].equals("-setmain") || args[2].equals("-s"))) {
             if(!(args.length == 4)) {
-                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -118,7 +118,7 @@ public class ProjectFileManipulator {
         }
         else if(args[2].equals("-v")) {
             if(!(args.length == 4 || args.length == 5)) {
-                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -127,21 +127,21 @@ public class ProjectFileManipulator {
                 return;
             String asmStr = plp.getAsm(index).getAsmString();
             if(args.length == 4)
-                PLPMsg.M(asmStr);
+                Msg.M(asmStr);
             else  {
                 String[] splitStr = asmStr.split("\\r?\\n");
                 int lineNum = Integer.parseInt(args[4]);
-                PLPMsg.M(lineNum + "\t: " + splitStr[lineNum - 1]);
+                Msg.M(lineNum + "\t: " + splitStr[lineNum - 1]);
             }
         }
 
         else if(args[2].equals("-m")) {
-            PLPMsg.I("Metafile contents:", null);
-            PLPMsg.M(plp.meta);
+            Msg.I("Metafile contents:", null);
+            Msg.M(plp.meta);
 	}
         else if((args[2].equals("-r"))) {
             if(!(args.length == 4)) {
-                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -151,7 +151,7 @@ public class ProjectFileManipulator {
         }
         else if((args[2].equals("-e"))) {
             if(!(args.length == 5)) {
-                PLPMsg.E("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -160,7 +160,7 @@ public class ProjectFileManipulator {
         }
         else if((args[2].equals("-edit"))) {
             if(!(args.length == 4)) {
-                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
  
@@ -188,18 +188,18 @@ public class ProjectFileManipulator {
             plp.save();
             if(plp.asm.isAssembled() && plp.getArch().equals("plpmips")) {
                 plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
-                PLPMsg.M("");
+                Msg.M("");
                 plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
-                PLPMsg.M("");
-                PLPMsg.M("Build timestamp: " + timestamp);
-                PLPMsg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
-                PLPMsg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
+                Msg.M("");
+                Msg.M("Build timestamp: " + timestamp);
+                Msg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
+                Msg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
             } else
-                PLPMsg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
+                Msg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
         }
         else if(args[2].equals("-p")) {
             if(!(args.length == 4)) {
-                PLPMsg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
 
@@ -212,7 +212,7 @@ public class ProjectFileManipulator {
         }
 
         else {
-            PLPMsg.I("Invalid option: " + args[2], null);
+            Msg.I("Invalid option: " + args[2], null);
             return;
         }         
     }

@@ -19,7 +19,7 @@
 package plptool.mods;
 
 import plptool.Constants;
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.PLPSimBusModule;
 import plptool.PLPToolbox;
 
@@ -70,14 +70,14 @@ public class MemModule extends PLPSimBusModule {
      */
     public void printAll(long highlight) {
         long addr;
-        PLPMsg.M("->\taddress\t\tcontents\tASCII");
-        PLPMsg.M("--\t-------\t\t--------\t-----");
+        Msg.M("->\taddress\t\tcontents\tASCII");
+        Msg.M("--\t-------\t\t--------\t-----");
         Object[][] valueSet = super.getValueSet();
         for(int i = 0; i < valueSet.length; i++) {
             addr = (Long) valueSet[i][0];
             if(addr == highlight)
                 System.out.print(">>>");
-            PLPMsg.M(String.format("\t%08x\t%08x\t",
+            Msg.M(String.format("\t%08x\t%08x\t",
                                    addr, super.values.get(addr)) +
                                    PLPToolbox.asciiWord((Long) super.values.get(addr)));
         }
@@ -90,7 +90,7 @@ public class MemModule extends PLPSimBusModule {
      */
     public void print(long addr) {
         if(super.isInitialized(addr)) {
-            PLPMsg.M(String.format("%08x\t%08x\t",addr, super.read(addr)) +
+            Msg.M(String.format("%08x\t%08x\t",addr, super.read(addr)) +
                                    PLPToolbox.asciiWord((Long) super.read(addr)));
         }
     }

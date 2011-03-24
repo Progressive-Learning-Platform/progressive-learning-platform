@@ -634,7 +634,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 }//GEN-LAST:event_simCLClearActionPerformed
 
     private void simCLExecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simCLExecActionPerformed
-        plptool.PLPMsg.output = simCLOutput;
+        plptool.Msg.output = simCLOutput;
         lastCLCommand = simCLConsole.getText();
         simCLOutput.append("exec: " + simCLConsole.getText() + "\n");
         SimCLI.simCLCommand(simCLConsole.getText(), plp);
@@ -645,7 +645,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         simCLOutput.append("\n");
         simCLConsole.setText("");
         updateComponents();
-        plptool.PLPMsg.output = plp.g_dev.getOutput();
+        plptool.Msg.output = plp.g_dev.getOutput();
 }//GEN-LAST:event_simCLExecActionPerformed
 
     private void simCLConsoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_simCLConsoleKeyPressed
@@ -718,9 +718,9 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
         for(int regIndex = 0; regIndex < 32; regIndex++) {
             String val = (String) tblRegFile.getModel().getValueAt(regIndex, 2);
-            plptool.PLPMsg.lastError = 0;
+            plptool.Msg.lastError = 0;
             long longVal = PLPToolbox.parseNum(val);
-            if(plptool.PLPMsg.lastError == plptool.Constants.PLP_OK)
+            if(plptool.Msg.lastError == plptool.Constants.PLP_OK)
                 ((SimCore) plp.sim).regfile.write(regIndex, longVal, false);
         }
 

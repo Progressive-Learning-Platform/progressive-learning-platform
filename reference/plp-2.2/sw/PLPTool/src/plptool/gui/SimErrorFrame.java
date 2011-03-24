@@ -40,15 +40,15 @@ public class SimErrorFrame extends javax.swing.JFrame {
     public void setError(int errNum) {
         lblError.setBackground(new Color((float) 0.5, (float) 0.0, (float) 0.0));
         lblError.setText("" + errNum);
-        if(plptool.PLPMsg.lastPartyResponsible != null)
-            lblPerson.setText(plptool.PLPMsg.lastPartyResponsible.toString());
+        if(plptool.Msg.lastPartyResponsible != null)
+            lblPerson.setText(plptool.Msg.lastPartyResponsible.toString());
         else
             lblPerson.setText("Static class.");
         this.setTitle("Error!");
     }
     
     public void clearError() {
-        plptool.PLPMsg.lastError = 0;
+        plptool.Msg.lastError = 0;
         lblError.setBackground(new Color((float) 0.0, (float) 0.4, (float) 0.2));
         lblError.setText("" + 0);
         lblPerson.setText("Nobody");

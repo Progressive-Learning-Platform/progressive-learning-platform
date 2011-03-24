@@ -56,7 +56,7 @@ public class PLPAsmSource {
         recursionLevel = intLevel;
 
         } catch(Exception e) {
-            PLPMsg.E("Error reading file",
+            Msg.E("Error reading file",
                             Constants.PLP_GENERIC_ERROR, this);
         }
     }
@@ -89,7 +89,7 @@ public class PLPAsmSource {
 
     public String getAsmLine(int lineNum) {
         if(lineNum > asmLines.length || lineNum <= 0) {
-            PLPMsg.E("Invalid line number: " + lineNum,
+            Msg.E("Invalid line number: " + lineNum,
                      Constants.PLP_ASM_INVALID_LINENUM, this);
             return null;
         }

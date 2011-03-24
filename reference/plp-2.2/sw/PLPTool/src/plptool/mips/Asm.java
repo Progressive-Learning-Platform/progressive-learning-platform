@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import plptool.PLPAsmSource;
-import plptool.PLPMsg;
+import plptool.Msg;
 import plptool.Constants;
 
 
@@ -275,7 +275,7 @@ public class Asm extends plptool.PLPAsm {
 
         curRegion = 0; // unmapped region / flat model
 
-        PLPMsg.D("preprocess: splitting...", 2, this);
+        Msg.D("preprocess: splitting...", 2, this);
 
         String delimiters = "[ ,\t]+|[()]";
         String lineDelim  = "\\r?\\n";
@@ -296,8 +296,8 @@ public class Asm extends plptool.PLPAsm {
 
         try {
 
-        PLPMsg.D("pp(" + asmIndex + ") begin loop...", 2, this);
-        PLPMsg.D("lines: " + asmLines.length, 2, this);
+        Msg.D("pp(" + asmIndex + ") begin loop...", 2, this);
+        Msg.D("lines: " + asmLines.length, 2, this);
 
         // Begin our preprocess cases
         while(i < asmLines.length) {
@@ -305,16 +305,16 @@ public class Asm extends plptool.PLPAsm {
             asmLines[i] = asmLines[i].trim();
             asmTokens = asmLines[i].split(delimiters);
 
-            PLPMsg.D(i + ": " + asmLines[i] + " tl: " +
+            Msg.D(i + ": " + asmLines[i] + " tl: " +
                      asmTokens.length, 5, this);
-            PLPMsg.D("<<<" + asmTokens[0] + ">>>", 5, this);
+            Msg.D("<<<" + asmTokens[0] + ">>>", 5, this);
 
             i++;
 
             // Include statement
             if(asmTokens[0].equals(".include")) {
                 if(asmTokens.length < 2) {
-                   error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
@@ -345,7 +345,7 @@ public class Asm extends plptool.PLPAsm {
                 directiveOffset++;
 
                 if(recursionRetVal != 0) {
-                    PLPMsg.errorCounter++;
+                    Msg.errorCounter++;
                     return recursionRetVal;
                 }
                 }
@@ -354,7 +354,7 @@ public class Asm extends plptool.PLPAsm {
             // .org directive
             else if(asmTokens[0].equals(".org")) {
                 if(asmTokens.length < 2) {
-                   error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
@@ -368,7 +368,7 @@ public class Asm extends plptool.PLPAsm {
             // .text directive
             else if(asmTokens[0].equals(".text")) {
                 if(asmTokens.length != 1) {
-                   error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
@@ -379,7 +379,7 @@ public class Asm extends plptool.PLPAsm {
             // .data directive
             else if(asmTokens[0].equals(".data")) {
                 if(asmTokens.length != 1) {
-                   error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
@@ -391,7 +391,7 @@ public class Asm extends plptool.PLPAsm {
             //   Initialize current memory address to a value
             else if(asmTokens[0].equals(".word")) {
                 if(asmTokens.length < 2) {
-                   error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
@@ -406,7 +406,7 @@ public class Asm extends plptool.PLPAsm {
             //   argument
             else if(asmTokens[0].equals(".space")) {
                 if(asmTokens.length < 2) {
-                   error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
@@ -431,7 +431,7 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].charAt(asmTokens[0].length() - 1) == ':') {
                 tempLabel = asmTokens[0].substring(0, asmTokens[0].length() - 1);
                 if(symTable.containsKey(tempLabel)) {
-                    error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                       "label \"" + tempLabel + "\" already defined.",
                                       Constants.PLP_ASM_DUPLICATE_LABEL, this);
                 } else {
@@ -444,34 +444,34 @@ public class Asm extends plptool.PLPAsm {
             // Text handler
             else if(asmTokens[0].equals(".ascii") || asmTokens[0].equals(".asciiz")) {
                 if(asmTokens.length < 2) {
-                   error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
 
                 String tString[] = asmLines[i - 1].split("[ ]+", 2);
 
-                PLPMsg.D("l: " + tString.length + " :" + tString[tString.length - 1], 5, this);
+                Msg.D("l: " + tString.length + " :" + tString[tString.length - 1], 5, this);
                 
                 if(tString[1].charAt(0) == '\"') {
                     tString[1] = tString[1].substring(1, tString[1].length());
 
                     if(tString[1].charAt(tString[1].length() - 1) != '\"') {
-                        error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): "
+                        error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): "
                                           + "Invalid string literal.",
                                           Constants.PLP_ASM_INVALID_STRING, this);
                     }
 
                     tString[1] = tString[1].substring(0, tString[1].length() - 1);
                 }
-                PLPMsg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
+                Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
 
                 int strLen = tString[1].length() + ((asmTokens[0].equals(".asciiz")) ? 1 : 0);
 
                 if(strLen > tString[1].length())
                     tString[1] += '\0';
 
-                PLPMsg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
+                Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
 
                 if(strLen % 4 != 0) {
                     strLen = strLen + 4 - (strLen % 4);
@@ -493,7 +493,7 @@ public class Asm extends plptool.PLPAsm {
                     }
                 }
 
-                PLPMsg.D("pr: " + tString[1], 5, this);
+                Msg.D("pr: " + tString[1], 5, this);
                 }
             }
 
@@ -530,30 +530,30 @@ public class Asm extends plptool.PLPAsm {
             // Instructions
             else {
                 if(instrMap.containsKey(asmTokens[0]) == false) {
-                    error ++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i +"): "
+                    error ++; Msg.E("preprocess(" + curActiveFile + ":" + i +"): "
                                        + "Unable to process token " + asmTokens[0],
                                        Constants.PLP_ASM_INVALID_TOKEN, this);
                 }
-                PLPMsg.D("exit i: " + i, 5, this);
+                Msg.D("exit i: " + i, 5, this);
                 regionMap.add(curRegion);
                 curAddr += 4;
                 appendPreprocessedAsm(asmLines[i - 1], i, true);
             }
 
-            PLPMsg.D("pr:\n" + preprocessedAsm + ">>>", 30, this);
+            Msg.D("pr:\n" + preprocessedAsm + ">>>", 30, this);
 
         }
 
         } catch(Exception e) {
-            error++; PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " + e,
+            error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " + e,
                               Constants.PLP_GENERIC_ERROR, this);
         }
 
         if(error > 0)
-            PLPMsg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+            Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                      error + " error(s).", Constants.PLP_ASM_PREPROCESS_FAILED, this);
         
-        PLPMsg.D("preprocess(" + curActiveFile + "): First pass completed.", 1, this);
+        Msg.D("preprocess(" + curActiveFile + "): First pass completed.", 1, this);
 
         return (error == 0) ? 0 : Constants.PLP_ASM_PREPROCESS_FAILED;
     }
@@ -575,7 +575,7 @@ public class Asm extends plptool.PLPAsm {
         String delimiters = "[ ,\t]+|[()]";
         String lineDelim  = "\\r?\\n";
 
-        PLPMsg.D("assemble(): 1/2...", 1, this);
+        Msg.D("assemble(): 1/2...", 1, this);
 
         preprocessedAsm = pass1Str.toString();
         String[] asmLines  = this.preprocessedAsm.split(lineDelim);
@@ -591,18 +591,18 @@ public class Asm extends plptool.PLPAsm {
         curActiveFile = this.topLevelFile;
 
         // clear error
-        PLPMsg.lastError = 0;
+        Msg.lastError = 0;
 
         try {
 
-        PLPMsg.D("assemble(): 2/2...", 1, this);
+        Msg.D("assemble(): 2/2...", 1, this);
 
         while(i < asmLines.length) {
             stripComments = asmLines[i].split("#");
             stripComments[0] = stripComments[0].trim();
             asmTokens = stripComments[0].split(delimiters);
             skip = false;
-            PLPMsg.D("assemble(file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
+            Msg.D("assemble(file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
                      " line " + lineNumMap[i]  + "): " + asmLines[i], 4, this);
 
             // resolve symbols
@@ -611,11 +611,11 @@ public class Asm extends plptool.PLPAsm {
 
             for(j = 0; j < asmTokens.length; j++) {
 
-                PLPMsg.D(asmTokens[j] + " l:" + asmTokens[j].length(), 15, this);
+                Msg.D(asmTokens[j] + " l:" + asmTokens[j].length(), 15, this);
                 
                 if(asmTokens[j].length() > 4)  {
 
-                    PLPMsg.D(asmTokens[j].substring(0, 5), 15, this);
+                    Msg.D(asmTokens[j].substring(0, 5), 15, this);
 
                     if(asmTokens[j].substring(0, 5).equals("$_hi:")) {
                         tSymbol = asmTokens[j].substring(5, asmTokens[j].length());
@@ -634,7 +634,7 @@ public class Asm extends plptool.PLPAsm {
                             tValue = (int) (sanitize32bits(tSymbol) & 0xFFFF);
                         asmTokens[j] = new Integer(tValue).toString();
                     }
-                    PLPMsg.D("pr: " + Integer.toHexString(tValue), 15, this);
+                    Msg.D("pr: " + Integer.toHexString(tValue), 15, this);
                 }
             }
 
@@ -656,7 +656,7 @@ public class Asm extends plptool.PLPAsm {
                     else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
@@ -679,7 +679,7 @@ public class Asm extends plptool.PLPAsm {
                     else if(!regs.containsKey(asmTokens[1])
                             ||
                        !regs.containsKey(asmTokens[2])) {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
@@ -700,7 +700,7 @@ public class Asm extends plptool.PLPAsm {
                     }
 
                     else if(!regs.containsKey(asmTokens[1]))  {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
@@ -719,12 +719,12 @@ public class Asm extends plptool.PLPAsm {
                     }
 
                     else if(!regs.containsKey(asmTokens[1]))  {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     }
                     else if(!symTable.containsKey(asmTokens[3]))  {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid branch target \"" + asmTokens[3] + "\"",
                                           Constants.PLP_ASM_INVALID_BRANCH_TARGET, this);
                     } else {
@@ -748,7 +748,7 @@ public class Asm extends plptool.PLPAsm {
 
                     else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
@@ -769,7 +769,7 @@ public class Asm extends plptool.PLPAsm {
                     }
 
                     else if(!regs.containsKey(asmTokens[1]))  {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
@@ -790,7 +790,7 @@ public class Asm extends plptool.PLPAsm {
 
                     else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[3])) {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
@@ -811,7 +811,7 @@ public class Asm extends plptool.PLPAsm {
                     }
 
                     else if(!symTable.containsKey(asmTokens[1]))  {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid jump target \"" + asmTokens[1] + "\"",
                                           Constants.PLP_ASM_INVALID_BRANCH_TARGET, this);
                     } else {
@@ -835,7 +835,7 @@ public class Asm extends plptool.PLPAsm {
 
                     else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
-                        error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                        error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
@@ -881,7 +881,7 @@ public class Asm extends plptool.PLPAsm {
                     break;
                     
                 default:
-                    error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+                    error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                       lineNumMap[i] + "): Unhandled error.",
                                       Constants.PLP_GENERIC_ERROR, this);
             }
@@ -895,17 +895,17 @@ public class Asm extends plptool.PLPAsm {
             i++;
         }
 
-        PLPMsg.D("assemble(): Assembly completed.", 1, this);
+        Msg.D("assemble(): Assembly completed.", 1, this);
         assembled = true;
         
         } catch(Exception e) {
-            error++; PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
+            error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                               lineNumMap[i] + "): Unhandled exception: " + e,
                               Constants.PLP_GENERIC_ERROR, this);
         }
 
         if(error > 0)
-            PLPMsg.E("assemble(" + SourceList.get(asmFileMap[i - 1]).getAsmFilePath() + "): " +
+            Msg.E("assemble(" + SourceList.get(asmFileMap[i - 1]).getAsmFilePath() + "): " +
                      error + " error(s).", Constants.PLP_ASM_ASSEMBLE_FAILED, this);
 
         return (error == 0) ? Constants.PLP_OK : Constants.PLP_ASM_ASSEMBLE_FAILED;
@@ -1044,7 +1044,7 @@ public class Asm extends plptool.PLPAsm {
      */
     private boolean checkNumberOfOperands(Object iObj[], int length, String file, int lineNum) {
         if(iObj.length != length) {
-            PLPMsg.E("checkNumberOfOperands(" + file + ":" + lineNum + "): Invalid number of operands",
+            Msg.E("checkNumberOfOperands(" + file + ":" + lineNum + "): Invalid number of operands",
                             Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS, this);
             return false;
         }

@@ -18,7 +18,7 @@
 
 package plptool.mods;
 
-import plptool.PLPMsg;
+import plptool.Msg;
 
 import java.awt.Dimension;
 import java.awt.Canvas;
@@ -55,7 +55,7 @@ public class VGAFrame extends javax.swing.JInternalFrame {
         if(image[0].length == 0 || image[0].length > 480)
             return;
 
-        PLPMsg.D("We're actually drawing!", 4, this);
+        Msg.D("We're actually drawing!", 4, this);
 
         for(int x = 0; x < 640; x++)
             for(int y = 0; y < 480; y++)

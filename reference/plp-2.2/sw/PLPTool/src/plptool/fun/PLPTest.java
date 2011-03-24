@@ -8,7 +8,7 @@ package plptool.fun;
 import plptool.mips.SimCore;
 import plptool.mips.Asm;
 import plptool.PLPSimMods;
-import plptool.PLPMsg;
+import plptool.Msg;
 
 /**
  *

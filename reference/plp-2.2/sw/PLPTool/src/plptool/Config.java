@@ -25,7 +25,7 @@ import java.awt.Color;
  *
  * @author wira
  */
-public class PLPCfg {
+public class Config {
     public static boolean cfgInstrPretty                   = true;
 
     public static String  cfgArch                          = "plpmips";

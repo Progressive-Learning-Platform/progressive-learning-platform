@@ -6,7 +6,7 @@
 package plptool.mods;
 import plptool.Constants;
 import plptool.PLPSimBusModule;
-import plptool.PLPMsg;
+import plptool.Msg;
 
 /**
  * PLP Switches I/O module.
@@ -35,7 +35,7 @@ public class Switches extends PLPSimBusModule {
 
     @Override
     public int write(long addr, Object data, boolean isInstr) {
-        return PLPMsg.E("write(): Write to read only register.",
+        return Msg.E("write(): Write to read only register.",
                         Constants.PLP_SIM_WRITE_TO_READONLY_MODULE, this);
     }
 

@@ -19,8 +19,8 @@
 package plptool.gui;
 
 import plptool.PLPSimCore;
-import plptool.PLPMsg;
-import plptool.PLPCfg;
+import plptool.Msg;
+import plptool.Config;
 
 /**
  *
@@ -42,7 +42,7 @@ public class SimRunner extends Thread {
 
     @Override
     public void run() {
-        PLPMsg.lastError = 0;
+        Msg.lastError = 0;
         plp.g_err.clearError();
         startInstr = sim.getinstrcount();
         startTime = System.currentTimeMillis();
@@ -57,20 +57,20 @@ public class SimRunner extends Thread {
                 plp.g_simsh.getTxtSteps().setText("1");
                 steps = 1;
             }
-            if(PLPCfg.cfgRefreshGUIDuringSimRun)
+            if(Config.cfgRefreshGUIDuringSimRun)
                 plp.updateComponents();
-            if(PLPMsg.lastError != 0) {
-                plp.g_err.setError(PLPMsg.lastError);
+            if(Msg.lastError != 0) {
+                plp.g_err.setError(Msg.lastError);
                 break;
             }
             try {
-                this.sleep(PLPCfg.cfgSimDelay);
+                this.sleep(Config.cfgSimDelay);
             } catch(Exception e) {}
         }
 
         long time = System.currentTimeMillis() - startTime;
-        PLPMsg.m("SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
-        PLPMsg.M("in " + time + " milliseconds of real time.");
+        Msg.m("SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
+        Msg.M("in " + time + " milliseconds of real time.");
 
         plp.g_simsh.unselectTglRun();
     }

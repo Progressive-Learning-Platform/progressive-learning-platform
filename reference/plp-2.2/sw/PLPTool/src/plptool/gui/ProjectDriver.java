@@ -77,8 +77,8 @@ public class ProjectDriver extends Thread {
      * References to PLP configuration and messaging classes
      */
 
-    public plptool.PLPCfg                      cfg;        // Configuration
-    public plptool.PLPMsg                      msg;        // Messaging class
+    public plptool.Config                      cfg;        // Configuration
+    public plptool.Msg                      msg;        // Messaging class
 
     public ArrayList<plptool.PLPAsmSource>     asms;       // Assembly files
     
@@ -146,11 +146,11 @@ public class ProjectDriver extends Thread {
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
             
             java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-            this.g_dev.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
-                              (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
+            this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                              (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
             this.g_dev.setLocationRelativeTo(null);
-            this.g_simsh.setSize((int) (PLPCfg.relativeDefaultWindowWidth * screenResolution.width),
-                              (int) (PLPCfg.relativeDefaultWindowHeight * screenResolution.height));
+            this.g_simsh.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                              (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
             this.g_simsh.setLocationRelativeTo(null);
 
             this.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
@@ -195,7 +195,7 @@ public class ProjectDriver extends Thread {
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
 
-        PLPMsg.I("New project initialized.", null);
+        Msg.I("New project initialized.", null);
 
         if(g) {
             refreshProjectView(false);
@@ -228,7 +228,7 @@ public class ProjectDriver extends Thread {
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
 
-        PLPMsg.I("New project initialized.", null);
+        Msg.I("New project initialized.", null);
 
         if(g) {
             refreshProjectView(false);
@@ -252,7 +252,7 @@ public class ProjectDriver extends Thread {
         assemble();
 
         if(plpfile == null || plpfile.equals("Unsaved Project"))
-            return PLPMsg.E("No PLP project file is open. Use Save As.",
+            return Msg.E("No PLP project file is open. Use Save As.",
                             Constants.PLP_FILE_USE_SAVE_AS, null);
 
         ArrayList<PLPAsmSource> sourceList;
@@ -269,7 +269,7 @@ public class ProjectDriver extends Thread {
 
         if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
-            PLPMsg.D("Creating verilog hex code...", 2, this);
+            Msg.D("Creating verilog hex code...", 2, this);
             verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
             if(objCode.length > 0)
                 meta += "START=" + asm.getAddrTable()[0] + "\n";
@@ -293,7 +293,7 @@ public class ProjectDriver extends Thread {
         // Create plpfile (a tar archive)
         TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
 
-        PLPMsg.D("Writing plp.metafile...", 2, this);
+        Msg.D("Writing plp.metafile...", 2, this);
         TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
         entry.setSize(meta.length());
         tOut.putArchiveEntry(entry);
@@ -304,7 +304,7 @@ public class ProjectDriver extends Thread {
 
         for(i = 0; i < sourceList.size(); i++) {
             PLPAsmSource asmFile = sourceList.get(i);
-            PLPMsg.D("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
+            Msg.D("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
             entry = new TarArchiveEntry(asmFile.getAsmFilePath());
             entry.setSize(asmFile.getAsmString().length());
             tOut.putArchiveEntry(entry);
@@ -319,7 +319,7 @@ public class ProjectDriver extends Thread {
 
         if(asm != null && asm.isAssembled() && objCode != null) {
             // Write hex image
-            PLPMsg.D("Writing out verilog hex code...", 2, this);
+            Msg.D("Writing out verilog hex code...", 2, this);
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(verilogHex.length());
             tOut.putArchiveEntry(entry);
@@ -332,7 +332,7 @@ public class ProjectDriver extends Thread {
             tOut.closeArchiveEntry();
 
             // Write binary image, 4-byte big-endian packs
-            PLPMsg.D("Writing out binary image...", 2, this);
+            Msg.D("Writing out binary image...", 2, this);
             entry = new TarArchiveEntry("plp.image");
             entry.setSize(objCode.length * 4);
             tOut.putArchiveEntry(entry);
@@ -347,7 +347,7 @@ public class ProjectDriver extends Thread {
             tOut.flush();
             tOut.closeArchiveEntry();
         } else if(binimage != null) {
-            PLPMsg.D("Writing out old (dirty) verilog hex code...", 2, this);
+            Msg.D("Writing out old (dirty) verilog hex code...", 2, this);
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(hexstring.length());
             tOut.putArchiveEntry(entry);
@@ -355,7 +355,7 @@ public class ProjectDriver extends Thread {
             tOut.flush();
             tOut.closeArchiveEntry();
             
-            PLPMsg.D("Writing out old (dirty) binary image...", 2, this);
+            Msg.D("Writing out old (dirty) binary image...", 2, this);
             entry = new TarArchiveEntry("plp.image");
             entry.setSize(binimage.length);
             tOut.putArchiveEntry(entry);
@@ -368,11 +368,11 @@ public class ProjectDriver extends Thread {
 
         modified = false;
         if(g) refreshProjectView(false);
-        PLPMsg.I(plpfile + " written", null);
+        Msg.I(plpfile + " written", null);
 
         } catch(Exception e) {
             if(Constants.debugLevel >= 10) e.printStackTrace();
-            return PLPMsg.E("save(): Unable to write to " + plpfile + "\n" +
+            return Msg.E("save(): Unable to write to " + plpfile + "\n" +
                      e, Constants.PLP_FILE_SAVE_ERROR, this);
         }
 
@@ -390,10 +390,10 @@ public class ProjectDriver extends Thread {
         File plpFile = new File(path);
         boolean dirty = true;
 
-        PLPMsg.I("Opening " + path, null);
+        Msg.I("Opening " + path, null);
 
         if(!plpFile.exists())
-            return PLPMsg.E("open(" + path + "): File not found.",
+            return Msg.E("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
         asms = new ArrayList<plptool.PLPAsmSource>();
@@ -413,7 +413,7 @@ public class ProjectDriver extends Thread {
 
             if(entry.getName().endsWith("asm")) {
                 asms.add(new plptool.PLPAsmSource(metaStr, entry.getName(), asmIndex));
-                PLPMsg.I(asmIndex + ": " 
+                Msg.I(asmIndex + ": "
                          + entry.getName()
                          + " (" + entry.getSize() + " bytes)", null);
                 asmIndex++;
@@ -427,7 +427,7 @@ public class ProjectDriver extends Thread {
                 if(lines[0].equals("PLP-2.2"))  {
 
                 } else {
-                    PLPMsg.W("This is not a PLP-2.2 project file. Opening anyways.", this);
+                    Msg.W("This is not a PLP-2.2 project file. Opening anyways.", this);
 
                 }
 
@@ -448,14 +448,14 @@ public class ProjectDriver extends Thread {
         }
         
         if(asmIndex == 0) {
-            return PLPMsg.E("open(" + path + "): no .asm files found.",
+            return Msg.E("open(" + path + "): no .asm files found.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
         }
         catch(Exception e) {
             e.printStackTrace();
-            return PLPMsg.E("open(" + path + "): Invalid PLP archive.",
+            return Msg.E("open(" + path + "): Invalid PLP archive.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
@@ -555,8 +555,8 @@ public class ProjectDriver extends Thread {
      */
     public int assemble() {
 
-        PLPMsg.I("Assembling...", null);
-        PLPMsg.errorCounter = 0;
+        Msg.I("Assembling...", null);
+        Msg.errorCounter = 0;
 
         boolean wasAssembled = false;
 
@@ -567,7 +567,7 @@ public class ProjectDriver extends Thread {
         if(g) asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
 
         if(asms == null || asms.isEmpty())
-            return PLPMsg.E("assemble(): No source files are open.",
+            return Msg.E("assemble(): No source files are open.",
                             Constants.PLP_BACKEND_EMPTY_ASM_LIST, this);
 
         // ...assemble asm objects... //
@@ -582,7 +582,7 @@ public class ProjectDriver extends Thread {
             g_dev.enableSimControls();
         }
 
-        PLPMsg.I("Done.", null);
+        Msg.I("Done.", null);
 
         return Constants.PLP_OK;
     }
@@ -593,14 +593,14 @@ public class ProjectDriver extends Thread {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int simulate() {
-        PLPMsg.I("Starting simulation...", null);
+        Msg.I("Starting simulation...", null);
 
         if(asm == null || !asm.isAssembled())
-            return PLPMsg.E("simulate(): The project is not assembled.",
+            return Msg.E("simulate(): The project is not assembled.",
                             Constants.PLP_BACKEND_NO_ASSEMBLED_OBJECT, this);
 
         if(asm.getObjectCode().length == 0)
-            return PLPMsg.E("simulate(): Empty program.",
+            return Msg.E("simulate(): Empty program.",
                             Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
 
         if(g && g_simsh != null)
@@ -636,7 +636,7 @@ public class ProjectDriver extends Thread {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int program(String port) {
-        PLPMsg.I("Programming to " + port, this);
+        Msg.I("Programming to " + port, this);
 
         try {
 
@@ -651,18 +651,18 @@ public class ProjectDriver extends Thread {
                 g_prg.getProgressBar().setMaximum(asm.getObjectCode().length - 1);
             }
 
-            PLPMsg.D("Starting worker threads", 2, this);
+            Msg.D("Starting worker threads", 2, this);
             prg.start();
             p_watchdog.start();
             return Constants.PLP_OK;
 
         } else
-            return PLPMsg.E("No assembled sources.",
+            return Msg.E("No assembled sources.",
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
 
         } catch(Exception e) {
             e.printStackTrace();
-            return PLPMsg.E("Programming failed.\n" + e,
+            return Msg.E("Programming failed.\n" + e,
                             Constants.PLP_GENERIC_ERROR, this);
         }
     }
@@ -675,7 +675,7 @@ public class ProjectDriver extends Thread {
      */
     public PLPAsmSource getAsm(int index) {
         if(asms == null || index < 0 || index >= asms.size()) {
-            PLPMsg.E("getAsm: Invalid index: " + index,
+            Msg.E("getAsm: Invalid index: " + index,
                      Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
             return null;
         }
@@ -692,7 +692,7 @@ public class ProjectDriver extends Thread {
      */
     public int updateAsm(int index, String newStr) {
         if(asms == null || index < 0 || index >= asms.size())
-            return PLPMsg.E("updateAsm: Invalid index: " + index,
+            return Msg.E("updateAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(!asms.get(index).getAsmString().equals(newStr))
@@ -728,10 +728,10 @@ public class ProjectDriver extends Thread {
     public int importAsm(String path) {
         File asmFile = new File(path);
 
-        PLPMsg.I("Importing " + path, null);
+        Msg.I("Importing " + path, null);
 
         if(!asmFile.exists())
-            return PLPMsg.E("importAsm(" + path + "): file not found.",
+            return Msg.E("importAsm(" + path + "): file not found.",
                             Constants.PLP_BACKEND_ASM_IMPORT_ERROR, this);
 
         String existingPath;
@@ -740,7 +740,7 @@ public class ProjectDriver extends Thread {
 
             if(existingPath.equals(path) ||
                existingPath.equals(asmFile.getName())) {
-                return PLPMsg.E("importAsm(" + path + "): File with the same name already exists.",
+                return Msg.E("importAsm(" + path + "): File with the same name already exists.",
                                 Constants.PLP_BACKEND_IMPORT_CONFLICT, this);
             }
         }
@@ -766,15 +766,15 @@ public class ProjectDriver extends Thread {
     public int exportAsm(int index, String path) {
         File asmFile = new File(path);
 
-        PLPMsg.I("Exporting " + asms.get(index).getAsmFilePath() +
+        Msg.I("Exporting " + asms.get(index).getAsmFilePath() +
                  " to " + path, null);
 
         if(asms == null || index < 0 || index >= asms.size())
-            return PLPMsg.E("exportAsm: Invalid index: " + index,
+            return Msg.E("exportAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(asmFile.exists()) {
-            return PLPMsg.E("exportAsm: " + path + " exists.",
+            return Msg.E("exportAsm: " + path + " exists.",
                             Constants.PLP_FILE_SAVE_ERROR, this);
         }
 
@@ -786,7 +786,7 @@ public class ProjectDriver extends Thread {
 
         } catch(Exception e) {
             if(Constants.debugLevel >= 10) e.printStackTrace();
-            return PLPMsg.E("exportAsm(" + asms.get(index).getAsmFilePath() +
+            return Msg.E("exportAsm(" + asms.get(index).getAsmFilePath() +
                             "): Unable to write to " + path + "\n",
                             Constants.PLP_FILE_SAVE_ERROR, this);
         }
@@ -802,12 +802,12 @@ public class ProjectDriver extends Thread {
      */
     public int removeAsm(int index) {
         if(asms.size() <= 1) {
-            return  PLPMsg.E("removeAsm: Can not delete last source file.",
+            return  Msg.E("removeAsm: Can not delete last source file.",
                             Constants.PLP_BACKEND_DELETING_LAST_ASM_ERROR, this);
         }
 
         if(asms == null || index < 0 || index >= asms.size())
-            return  PLPMsg.E("removeAsm: Invalid index: " + index,
+            return  Msg.E("removeAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         modified = true;
@@ -821,7 +821,7 @@ public class ProjectDriver extends Thread {
         else
             if(g) updateAsm(open_asm, g_dev.getEditorText());
             
-        PLPMsg.I("Removing " + asms.get(index).getAsmFilePath(), null);
+        Msg.I("Removing " + asms.get(index).getAsmFilePath(), null);
         asms.remove(index);
         if(g) refreshProjectView(false);
 
@@ -837,7 +837,7 @@ public class ProjectDriver extends Thread {
      */
     public int setMainAsm(int index) {
         if(asms == null || index <= 0 || index >= asms.size())
-            return PLPMsg.E("setMainAsm: Invalid index: " + index,
+            return Msg.E("setMainAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         asms.add(0, asms.get(index));
@@ -913,10 +913,10 @@ public class ProjectDriver extends Thread {
             busy = false;
         }
 
-        PLPMsg.I("ProjectDriver thread exiting", this);
+        Msg.I("ProjectDriver thread exiting", this);
         
         } catch(Exception e) {
-            PLPMsg.E("ProjectDriver thread quits unexpectedly",
+            Msg.E("ProjectDriver thread quits unexpectedly",
                     Constants.PLP_BACKEND_THREAD_EXCEPTION, this);
         }
     }

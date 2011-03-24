@@ -25,10 +25,10 @@ import javax.swing.JTextArea;
  *
  * @author wira
  */
-public class PLPMsg {
+public class Msg {
 
     /**
-     * JTextArea PLPMsg should print its output to.
+     * JTextArea Msg should print its output to.
      */
     public static JTextArea output = null;
 

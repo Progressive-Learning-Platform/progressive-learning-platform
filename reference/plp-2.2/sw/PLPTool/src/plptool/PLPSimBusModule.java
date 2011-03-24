@@ -104,10 +104,10 @@ public abstract class PLPSimBusModule extends Thread {
             return Constants.PLP_SIM_MODULE_DISABLED;
 
         if(addr > endAddr || addr < startAddr)
-            return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Address is out of range.",
+            return Msg.E("write(" + String.format("0x%08x", addr) + "): Address is out of range.",
                             Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
         else if(wordAligned && addr % 4 != 0)
-            return PLPMsg.E("write(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
+            return Msg.E("write(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             Constants.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
         else {
             if(values.containsKey(addr)) {
@@ -129,24 +129,24 @@ public abstract class PLPSimBusModule extends Thread {
      */
     public Object readReg(long addr) {
         if(addr > endAddr || addr < startAddr) {
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
+            Msg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
                      Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
             return null;
         }
         else if (wordAligned && addr % 4 != 0) {
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
+            Msg.E("read(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             Constants.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
             return null;
         }
         else if(!values.containsKey(addr)) {
-            if(PLPCfg.cfgSimDynamicMemoryAllocation) {
-                PLPMsg.I("read(" + String.format("0x%08x", addr) +
+            if(Config.cfgSimDynamicMemoryAllocation) {
+                Msg.I("read(" + String.format("0x%08x", addr) +
                          "): Dynamic memory allocation.", this);
                 values.put(addr, new Long(0));
                 isInstr.put(addr, false);
                 return 0;
             }
-            PLPMsg.E("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
+            Msg.E("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
                              Constants.PLP_SIM_UNINITIALIZED_MEMORY, this);
             return null;
         }

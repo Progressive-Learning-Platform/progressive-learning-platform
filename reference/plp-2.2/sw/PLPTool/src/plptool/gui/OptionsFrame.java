@@ -11,7 +11,7 @@
 
 package plptool.gui;
 
-import plptool.PLPCfg;
+import plptool.Config;
 
 /**
  *
@@ -138,7 +138,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sSimSpeedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sSimSpeedStateChanged
-        PLPCfg.cfgSimDelay = sSimSpeed.getValue();
+        Config.cfgSimDelay = sSimSpeed.getValue();
     }//GEN-LAST:event_sSimSpeedStateChanged
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
