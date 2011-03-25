@@ -1045,7 +1045,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         openPLPFile();
-        if(Config.cfgSyntaxHighlighting)
+        if(Config.cfgSyntaxHighlighting && txtEditor.getText().split("\\r?\\n").length <= Config.filetoolarge)
             syntaxHighlight();
     }//GEN-LAST:event_menuOpenActionPerformed
 
@@ -1236,7 +1236,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-        if(Config.cfgSyntaxHighlighting) {
+        if(Config.cfgSyntaxHighlighting && txtEditor.getSelectedText() == null) {
             int caretPos = txtEditor.getCaretPosition();
             syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
             txtEditor.setCaretPosition(caretPos);
