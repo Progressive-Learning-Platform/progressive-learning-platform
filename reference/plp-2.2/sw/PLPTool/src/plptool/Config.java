@@ -43,6 +43,7 @@ public class Config {
 
     public static boolean cfgSyntaxHighlighting            = true;
     public static boolean nothighlighting                  = true;
+    public static int filetoolarge                         = 1000;
 
     public static long    cfgDefaultRAMSize                = 0x1000000;
 
