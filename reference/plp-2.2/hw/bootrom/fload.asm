@@ -10,7 +10,7 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "All that is solid melts into air..."
+	.asciiz "doubleplusungood"
 version_string:
 	.asciiz "plp2.2"
 memory_test:
