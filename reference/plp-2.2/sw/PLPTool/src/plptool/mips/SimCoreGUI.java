@@ -90,6 +90,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         fillProgramMemoryTable();
 
         updateComponents();
+        coreMainPane.setSelectedIndex(2);
     }
 
     /** This method is called from within the constructor to
@@ -727,6 +728,24 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         updateComponents();
     }
 
+    @Override
+    public final void updateBusTable() {
+        javax.swing.table.DefaultTableModel memMap = (javax.swing.table.DefaultTableModel) tblMemMap.getModel();
+
+        while(memMap.getRowCount() > 0)
+                memMap.removeRow(0);
+
+        for(int i = 0; i < sim.bus.getNumOfMods(); i++) {
+            Object row[] = new Object[] {i, sim.bus.getRefMod(i),
+                                         String.format("0x%08x", sim.bus.getModStartAddress(i)),
+                                         String.format("0x%08x", sim.bus.getModEndAddress(i)),
+                                         sim.bus.getEnabled(i) };
+            memMap.addRow(row);
+        }
+        tblMemMap.setModel(memMap);
+    }
+
+    @Override
     public final void updateComponents() {
         long pc = ((SimCore)sim).id_stage.i_instrAddr;
         if(pc >= 0) {
@@ -741,20 +760,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             tblRegFile.setValueAt(((SimCore)sim).regfile.read(i).toString(), i, 2);
             tblRegFile.setValueAt(String.format("0x%08x", ((SimCore)sim).regfile.read(i)), i, 1);
         }
-
-        javax.swing.table.DefaultTableModel memMap = (javax.swing.table.DefaultTableModel) tblMemMap.getModel();
-        
-        while(memMap.getRowCount() > 0)
-                memMap.removeRow(0);
-
-        for(int i = 0; i < sim.bus.getNumOfMods(); i++) {
-            Object row[] = new Object[] {i, sim.bus.getRefMod(i),
-                                         String.format("0x%08x", sim.bus.getModStartAddress(i)),
-                                         String.format("0x%08x", sim.bus.getModEndAddress(i)),
-                                         sim.bus.getEnabled(i) };
-            memMap.addRow(row);
-        }
-        tblMemMap.setModel(memMap);
 
         updateProgramMemoryTablePC();
     }
