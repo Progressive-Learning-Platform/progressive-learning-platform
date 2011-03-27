@@ -14,6 +14,7 @@ public abstract class PLPSimCoreGUI extends javax.swing.JFrame {
     protected PLPSimCore sim;
 
     abstract public void updateComponents();
+    abstract public void updateBusTable();
 
     public PLPSimCore getSim() {
         return sim;

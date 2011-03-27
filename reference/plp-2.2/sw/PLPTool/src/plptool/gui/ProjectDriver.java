@@ -56,9 +56,9 @@ public class ProjectDriver extends Thread {
      * open_asm     - current open ASM file in the gui
      * curdir       - current working directory for the project
      * arch         - active ISA for this project
-     */
+     */ // --
 
-    public String                              plpfile;
+    public File                                plpfile;
     public boolean                             modified;
     public int                                 open_asm;
     public String                              curdir;
@@ -67,7 +67,7 @@ public class ProjectDriver extends Thread {
     /*
      * These variables hold data and information loaded from
      * the plp project file.
-     */
+     */ // --
 
     public byte[]                              binimage;   // binary image
     public String                              hexstring;  // hex string
@@ -75,7 +75,7 @@ public class ProjectDriver extends Thread {
 
     /*
      * References to PLP configuration and messaging classes
-     */
+     */ // --
 
     public plptool.Config                      cfg;        // Configuration
     public plptool.Msg                      msg;        // Messaging class
@@ -84,7 +84,7 @@ public class ProjectDriver extends Thread {
     
     /*
      * References to the workflow framework objects
-     */
+     */ // --
 
     public plptool.PLPAsm                      asm;        // Assembler
     public plptool.PLPAsm[]                    asm_array;  // Asm array
@@ -97,7 +97,7 @@ public class ProjectDriver extends Thread {
 
     /*
      * PLP GUI Windows
-     */
+     */ // --
     public plptool.gui.SimShell                g_simsh;    // PLP Simulator Frontend
     public plptool.gui.IORegistryFrame         g_ioreg;    // I/O registry GUI
     public plptool.gui.Develop                 g_dev;      // IDE GUI
@@ -185,7 +185,7 @@ public class ProjectDriver extends Thread {
      */
     public int create() {
         modified = true;
-        plpfile = "Unsaved Project";
+        plpfile = new File("Unsaved Project");
 
         asms = new ArrayList<plptool.PLPAsmSource>();
         asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
@@ -216,7 +216,7 @@ public class ProjectDriver extends Thread {
      */
     public int create(String asmPath) {
         modified = true;
-        plpfile = "Unsaved Project";
+        plpfile = new File("Unsaved Project");
 
         asms = new ArrayList<plptool.PLPAsmSource>();
         if(importAsm(asmPath) != Constants.PLP_OK) {
@@ -251,7 +251,7 @@ public class ProjectDriver extends Thread {
         if(g) updateAsm(open_asm, g_dev.getEditorText());
         assemble();
 
-        if(plpfile == null || plpfile.equals("Unsaved Project"))
+        if(plpfile == null || plpfile.getName().equals("Unsaved Project"))
             return Msg.E("No PLP project file is open. Use Save As.",
                             Constants.PLP_FILE_USE_SAVE_AS, null);
 
@@ -263,7 +263,7 @@ public class ProjectDriver extends Thread {
 
         try {
 
-        File outFile = new File(plpfile);
+        File outFile = plpfile;
 
         meta = "PLP-2.2\n";
 
@@ -368,11 +368,11 @@ public class ProjectDriver extends Thread {
 
         modified = false;
         if(g) refreshProjectView(false);
-        Msg.I(plpfile + " written", null);
+        Msg.I(plpfile.getAbsolutePath() + " written", null);
 
         } catch(Exception e) {
             if(Constants.debugLevel >= 10) e.printStackTrace();
-            return Msg.E("save(): Unable to write to " + plpfile + "\n" +
+            return Msg.E("save(): Unable to write to " + plpfile.getAbsolutePath() + "\n" +
                      e, Constants.PLP_FILE_SAVE_ERROR, this);
         }
 
@@ -459,7 +459,7 @@ public class ProjectDriver extends Thread {
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
-        plpfile = path;
+        plpfile = new File(path);
         modified = false;
         open_asm = 0;
 
@@ -482,7 +482,7 @@ public class ProjectDriver extends Thread {
      * @return PLP_OK;
      */
     public int updateWindowTitle() {
-        File fHandler = new File(plpfile);
+        File fHandler = plpfile;
         String windowTitle = fHandler.getName() + ((modified) ? "*" : "") +
                              " - PLP Software Tool " + Constants.versionString;
         g_dev.setTitle(windowTitle);
@@ -504,7 +504,7 @@ public class ProjectDriver extends Thread {
 
         updateWindowTitle();
 
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(plpfile);
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(plpfile.getName());
         DefaultMutableTreeNode srcRoot = new DefaultMutableTreeNode("Source Files");
         DefaultMutableTreeNode metaRoot = new DefaultMutableTreeNode("Meta Information");
         root.add(srcRoot);
@@ -617,6 +617,7 @@ public class ProjectDriver extends Thread {
             g_simsh.getSimDesktop().add(g_ioreg);
             g_ioreg.refreshModulesTable();
             g_sim.updateComponents();
+            g_sim.updateBusTable();
             g_sim.setVisible(true);
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
@@ -878,7 +879,7 @@ public class ProjectDriver extends Thread {
 
     @Override
     public String toString() {
-        return "PLP(" + plpfile + ")";
+        return "PLP(" + plpfile.getName() + ")";
     }
 
     // ******************************************************************

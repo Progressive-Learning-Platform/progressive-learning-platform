@@ -102,7 +102,7 @@ public class PLPToolApp extends SingleFrameApplication {
             } else {
                 ProjectDriver plp = new ProjectDriver(false, "plpmips");
                 if(!(plp.create(args[1]) == Constants.PLP_OK)) return;
-                plp.plpfile = args[2];
+                plp.plpfile = new java.io.File(args[2]);
                 String timestamp = (new java.util.Date()).toString();
                 plp.save();
                 if(plp.asm.isAssembled()) {

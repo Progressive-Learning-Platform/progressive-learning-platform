@@ -236,7 +236,7 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
-    public void savePLPFileAs() {
+    public int savePLPFileAs() {
         Msg.output = txtOutput;
 
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
@@ -247,16 +247,20 @@ public class Develop extends javax.swing.JFrame {
         int retVal = fc.showSaveDialog(null);
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            plp.plpfile = fc.getSelectedFile().getAbsolutePath();
+            plp.plpfile = new File(fc.getSelectedFile().getAbsolutePath());
             plp.curdir = fc.getSelectedFile().getParent();
-            if(!plp.plpfile.endsWith(".plp"))
-                plp.plpfile += ".plp";
+            if(!plp.plpfile.getName().endsWith(".plp"))
+                plp.plpfile = new File(plp.plpfile.getAbsolutePath() + ".plp");
             plp.save();
-            plp.open(plp.plpfile);
+            plp.open(plp.plpfile.getAbsolutePath());
         }
+
+        return retVal;
     }
 
     public int askSaveFirst(String action, String capAction) {
+        int ret = javax.swing.JFileChooser.APPROVE_OPTION;
+
         if(plp.modified) {
             Object[] options = {"Save and " + action,
                     capAction + " without saving",
@@ -272,9 +276,15 @@ public class Develop extends javax.swing.JFrame {
                 options[2]);
 
             if(n == 0)
-                plp.save();
+                if(plp.plpfile.getName().equals("Unsaved Project"))
+                    ret = this.savePLPFileAs();
+                else
+                    plp.save();
 
-            return n;
+            if(ret == javax.swing.JFileChooser.APPROVE_OPTION)
+                return n;
+            else
+                return 2;
         }
 
         return -1;

@@ -42,11 +42,11 @@ public class ProjectFileManipulator {
             plp.open(args[1]);
         else if(args.length == 2) {
             plp.create();
-            plp.plpfile = args[1];
+            plp.plpfile = new File(args[1]);
             if(plp.save() != Constants.PLP_OK)
                 return;
         } else
-            plp.plpfile = args[1];
+            plp.plpfile = new File(args[1]);
         
         if(plp.plpfile == null || args.length <= 2)
             return;
@@ -57,7 +57,7 @@ public class ProjectFileManipulator {
                 return;
             }
 
-            String temp = plp.plpfile;
+            String temp = plp.plpfile.getAbsolutePath();
 
             for(int i = 3; i < args.length; i++)
                 if(!plpHandler.exists()) {
@@ -77,7 +77,7 @@ public class ProjectFileManipulator {
                     plp.importAsm(args[i]);
                 }
 
-            plp.plpfile = temp;
+            plp.plpfile = new File(temp);
             plp.save();
         }
         else if(args[2].equals("-c")) {
@@ -87,7 +87,7 @@ public class ProjectFileManipulator {
             }
 
             plp.create(args[3]);
-            plp.plpfile = args[1];
+            plp.plpfile = new File(args[1]);
             plp.save();
         }
         else if(args[2].equals("-importdir") || args[2].equals("-d")) {
