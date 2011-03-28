@@ -184,12 +184,14 @@ public class Develop extends javax.swing.JFrame {
         menuSimulate.setEnabled(false);
         menuProgram.setEnabled(false);
         btnSimulate.setEnabled(false);
+        btnProgram.setEnabled(false);
     }
 
     public final  void enableSimControls() {
         menuSimulate.setEnabled(true);
         menuProgram.setEnabled(true);
         btnSimulate.setEnabled(true);
+        btnProgram.setEnabled(true);
     }
 
     public int save() {
@@ -517,6 +519,7 @@ public class Develop extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JToolBar.Separator();
         btnAssemble = new javax.swing.JButton();
         btnSimulate = new javax.swing.JButton();
+        btnProgram = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         btnAbout = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -614,10 +617,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -635,11 +638,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 468, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
                 .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -650,7 +653,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -677,7 +680,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -756,6 +759,20 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         toolbar.add(btnSimulate);
+
+        btnProgram.setIcon(resourceMap.getIcon("btnProgram.icon")); // NOI18N
+        btnProgram.setText(resourceMap.getString("btnProgram.text")); // NOI18N
+        btnProgram.setToolTipText(resourceMap.getString("btnProgram.toolTipText")); // NOI18N
+        btnProgram.setFocusable(false);
+        btnProgram.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnProgram.setName("btnProgram"); // NOI18N
+        btnProgram.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProgramActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnProgram);
 
         jSeparator3.setName("jSeparator3"); // NOI18N
         toolbar.add(jSeparator3);
@@ -946,6 +963,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuProject.add(menuSimulate);
 
         menuProgram.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F7, 0));
+        menuProgram.setIcon(resourceMap.getIcon("menuProgram.icon")); // NOI18N
         menuProgram.setText(resourceMap.getString("menuProgram.text")); // NOI18N
         menuProgram.setName("menuProgram"); // NOI18N
         menuProgram.addActionListener(new java.awt.event.ActionListener() {
@@ -1258,6 +1276,10 @@ public class Develop extends javax.swing.JFrame {
         plp.g_prg.setVisible(true);
     }//GEN-LAST:event_menuQuickProgramActionPerformed
 
+    private void btnProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProgramActionPerformed
+        menuProgramActionPerformed(null);
+    }//GEN-LAST:event_btnProgramActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -1333,6 +1355,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JButton btnAssemble;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnProgram;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSimulate;
     private javax.swing.JPanel devMainPane;

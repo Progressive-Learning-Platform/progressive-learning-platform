@@ -21,6 +21,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="menuReset.text"/>
                 <Property name="name" type="java.lang.String" value="menuReset" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuResetActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuStep">
               <Properties>
@@ -30,6 +33,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="menuStep.text"/>
                 <Property name="name" type="java.lang.String" value="menuStep" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuStepActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cmenuRun">
               <Properties>
@@ -39,6 +45,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="cmenuRun.text"/>
                 <Property name="name" type="java.lang.String" value="cmenuRun" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmenuRunActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
               <Properties>
@@ -50,6 +59,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="menuClose.text"/>
                 <Property name="name" type="java.lang.String" value="menuClose" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuCloseActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -67,6 +79,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="menuIOReg.text"/>
                 <Property name="name" type="java.lang.String" value="menuIOReg" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuIORegActionPerformed"/>
+              </Events>
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="menuPresets">
               <Properties>
@@ -89,6 +104,7 @@
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="menuNewWatcher.text"/>
                 <Property name="name" type="java.lang.String" value="menuNewWatcher" noResource="true"/>
+                <Property name="name" type="java.lang.String" value="menuNewWatcher" noResource="true"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -104,12 +120,18 @@
                 <Property name="text" type="java.lang.String" resourceKey="menuTile.text"/>
                 <Property name="name" type="java.lang.String" value="menuTile" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuTileActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuRestore">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="menuRestore.text"/>
                 <Property name="name" type="java.lang.String" value="menuRestore" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuRestoreActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

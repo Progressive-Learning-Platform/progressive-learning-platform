@@ -219,6 +219,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F7"/>
                 </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="menuProgram.icon"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuProgram.text"/>
                 <Property name="name" type="java.lang.String" value="menuProgram" noResource="true"/>
               </Properties>
@@ -378,7 +379,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="478" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="482" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -457,7 +458,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="434" max="32767" attributes="0"/>
+                              <EmptySpace pref="445" max="32767" attributes="0"/>
                               <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -471,7 +472,7 @@
                                   <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane3" pref="301" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="358" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -644,6 +645,20 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimulateActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnProgram">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnProgram.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnProgram.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnProgram.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="name" type="java.lang.String" value="btnProgram" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnProgramActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JToolBar$Separator" name="jSeparator3">

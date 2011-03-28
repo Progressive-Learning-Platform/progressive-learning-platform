@@ -621,6 +621,7 @@ public class ProjectDriver extends Thread {
             g_sim.setVisible(true);
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
+            g_simsh.tileWindows();
             g_simsh.setVisible(true);
         }
 
