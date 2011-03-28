@@ -46,7 +46,6 @@ public class SimShell extends javax.swing.JFrame {
 
     private OptionsFrame          opts;
 
-    /** Creates new form PLPSimShell */
     public SimShell(ProjectDriver plp) {
         this.plp = plp;
 
@@ -60,6 +59,12 @@ public class SimShell extends javax.swing.JFrame {
                 destroySimulation();
             }
         });
+
+        for(int i = 0; i < plptool.mods.Presets.presets.length; i++)
+            menuPresets.add(new javax.swing.JMenuItem((String) plptool.mods.Presets.presets[i][0]));
+
+        cmenuRun.setSelected(false);
+        tglRun.setSelected(false);
     }
 
     public void plpMsgRouteBack() {
@@ -101,6 +106,87 @@ public class SimShell extends javax.swing.JFrame {
 
     public javax.swing.JTextField getTxtSteps() {
         return txtSteps;
+    }
+
+    private void reset() {
+        if(plp.g_simrun != null)
+            plp.g_simrun.stepCount = 0;
+        plp.sim.reset();
+        plp.g_sim.updateComponents();
+        plp.g_err.clearError();
+    }
+
+    private void step() {
+        if(plp.g_simrun != null)
+            plp.g_simrun.stepCount = 0;
+        plp.g_err.clearError();
+
+        try {
+            int steps = Integer.parseInt(txtSteps.getText());
+            if(steps <= MAX_STEPS && steps > 0) {
+                for(int i = 0; i < steps; i++)
+                    plp.sim.step();
+                plp.g_sim.updateComponents();
+            } else {
+                txtSteps.setText("1");
+            }
+        } catch(Exception e) {
+            txtSteps.setText("1");
+        }
+
+        if(Msg.lastError != 0)
+            plp.g_err.setError(Msg.lastError);
+    }
+
+    public void tileWindows() {
+        javax.swing.JInternalFrame windows[] = simDesktop.getAllFrames();
+
+        int curTallestWindow = 0;
+        int curY = 0;
+        int curX = 0;
+        
+        int W, H, X, Y;
+
+        for(int i = 0; i < windows.length; i++) {
+            if(windows[i].isVisible()) {
+                W = windows[i].getWidth();
+                H = windows[i].getHeight();
+
+                if(curX + W < simDesktop.getWidth()) {
+                    X = curX;
+                    Y = curY;
+                    curX += W;
+
+                    if(H > curTallestWindow)
+                        curTallestWindow = H;
+                }
+                else { // new row of windows
+                    if(curY + curTallestWindow > simDesktop.getHeight())
+                        curY = 0;
+                    else
+                        curY += curTallestWindow;
+
+                    X = 0;
+                    Y = curY;
+                    curX = W;
+                    curTallestWindow = H;
+                }
+
+                windows[i].setLocation(X, Y);
+            }
+        }
+    }
+
+    private void restoreWindows() {
+        javax.swing.JInternalFrame windows[] = simDesktop.getAllFrames();
+
+        try {
+
+        for(int i = 0; i < windows.length; i++) {
+            windows[i].setIcon(false);
+        }
+
+        }catch(Exception e) {}
     }
 
     /** This method is called from within the constructor to
@@ -232,16 +318,31 @@ public class SimShell extends javax.swing.JFrame {
         menuReset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         menuReset.setText(resourceMap.getString("menuReset.text")); // NOI18N
         menuReset.setName("menuReset"); // NOI18N
+        menuReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuResetActionPerformed(evt);
+            }
+        });
         rootmenuSim.add(menuReset);
 
         menuStep.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
         menuStep.setText(resourceMap.getString("menuStep.text")); // NOI18N
         menuStep.setName("menuStep"); // NOI18N
+        menuStep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStepActionPerformed(evt);
+            }
+        });
         rootmenuSim.add(menuStep);
 
         cmenuRun.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         cmenuRun.setText(resourceMap.getString("cmenuRun.text")); // NOI18N
         cmenuRun.setName("cmenuRun"); // NOI18N
+        cmenuRun.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmenuRunActionPerformed(evt);
+            }
+        });
         rootmenuSim.add(cmenuRun);
 
         jSeparator1.setName("jSeparator1"); // NOI18N
@@ -249,6 +350,11 @@ public class SimShell extends javax.swing.JFrame {
 
         menuClose.setText(resourceMap.getString("menuClose.text")); // NOI18N
         menuClose.setName("menuClose"); // NOI18N
+        menuClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCloseActionPerformed(evt);
+            }
+        });
         rootmenuSim.add(menuClose);
 
         jMenuBar1.add(rootmenuSim);
@@ -259,6 +365,11 @@ public class SimShell extends javax.swing.JFrame {
         menuIOReg.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
         menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
         menuIOReg.setName("menuIOReg"); // NOI18N
+        menuIOReg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuIORegActionPerformed(evt);
+            }
+        });
         rootmenuTools.add(menuIOReg);
 
         menuPresets.setText(resourceMap.getString("menuPresets.text")); // NOI18N
@@ -283,10 +394,20 @@ public class SimShell extends javax.swing.JFrame {
 
         menuTile.setText(resourceMap.getString("menuTile.text")); // NOI18N
         menuTile.setName("menuTile"); // NOI18N
+        menuTile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuTileActionPerformed(evt);
+            }
+        });
         rootmenuWindow.add(menuTile);
 
         menuRestore.setText(resourceMap.getString("menuRestore.text")); // NOI18N
         menuRestore.setName("menuRestore"); // NOI18N
+        menuRestore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuRestoreActionPerformed(evt);
+            }
+        });
         rootmenuWindow.add(menuRestore);
 
         jMenuBar1.add(rootmenuWindow);
@@ -312,46 +433,27 @@ public class SimShell extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
-        if(plp.g_simrun != null)
-            plp.g_simrun.stepCount = 0;
-        plp.g_err.clearError();
-
-        try {
-            int steps = Integer.parseInt(txtSteps.getText());
-            if(steps <= MAX_STEPS && steps > 0) {
-                for(int i = 0; i < steps; i++)
-                    plp.sim.step();
-                plp.g_sim.updateComponents();
-            } else {
-                txtSteps.setText("1");
-            }
-        } catch(Exception e) {
-            txtSteps.setText("1");
-        }
-
-        if(Msg.lastError != 0)
-            plp.g_err.setError(Msg.lastError);
+        step();
     }//GEN-LAST:event_btnStepActionPerformed
 
     private void tglRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglRunActionPerformed
         if(tglRun.isSelected()) {
             plp.g_simrun = new SimRunner(plp);
             plp.g_simrun.start();
+            cmenuRun.setSelected(true);
         } else {
             if(plp.g_simrun != null) {
                 try {
                     plp.g_simrun.stepCount = 0;
                 } catch(Exception e) {}
             }
+            cmenuRun.setSelected(false);
         }
     }//GEN-LAST:event_tglRunActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        if(plp.g_simrun != null)
-            plp.g_simrun.stepCount = 0;
-        plp.sim.reset();
-        plp.g_sim.updateComponents();
-        plp.g_err.clearError();
+        reset();
+
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void tglIODisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglIODisplayActionPerformed
@@ -370,6 +472,50 @@ public class SimShell extends javax.swing.JFrame {
             opts = new OptionsFrame();
         opts.setVisible(true);
     }//GEN-LAST:event_btnOptsActionPerformed
+
+    private void cmenuRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmenuRunActionPerformed
+        if(cmenuRun.isSelected()) {
+            plp.g_simrun = new SimRunner(plp);
+            plp.g_simrun.start();
+            tglRun.setSelected(true);
+        } else {
+            if(plp.g_simrun != null) {
+                try {
+                    plp.g_simrun.stepCount = 0;
+                } catch(Exception e) {}
+            }
+            tglRun.setSelected(false);
+        }
+    }//GEN-LAST:event_cmenuRunActionPerformed
+
+    private void menuResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuResetActionPerformed
+        reset();
+    }//GEN-LAST:event_menuResetActionPerformed
+
+    private void menuStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStepActionPerformed
+        step();
+    }//GEN-LAST:event_menuStepActionPerformed
+
+    private void menuCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseActionPerformed
+        destroySimulation();
+    }//GEN-LAST:event_menuCloseActionPerformed
+
+    private void menuTileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuTileActionPerformed
+        tileWindows();
+    }//GEN-LAST:event_menuTileActionPerformed
+
+    private void menuRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRestoreActionPerformed
+        restoreWindows();
+    }//GEN-LAST:event_menuRestoreActionPerformed
+
+    private void menuIORegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuIORegActionPerformed
+        if(plp.g_ioreg == null) {
+            plp.g_ioreg = new IORegistryFrame(plp);
+            simDesktop.add(plp.g_ioreg);
+        }
+        tglIODisplay.setSelected(true);
+        plp.g_ioreg.setVisible(true);
+    }//GEN-LAST:event_menuIORegActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOpts;
