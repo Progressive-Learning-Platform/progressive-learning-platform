@@ -132,7 +132,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("simulate")) {
                     plp.simulate();
             }
-
+            else if(command.equals("updategui")) {
+                if(plp.g_sim != null) {
+                    plp.updateComponents();
+                    plp.g_ioreg.refreshModulesTable();
+                }
+            }
             else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
                     plptool.Config.devFont = tokens[1];
