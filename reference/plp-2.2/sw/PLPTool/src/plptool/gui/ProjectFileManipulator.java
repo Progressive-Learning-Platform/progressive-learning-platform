@@ -241,5 +241,8 @@ public class ProjectFileManipulator {
         System.out.println("  -r <index>");
         System.out.println("       Remove source file with <index> from <plpfile>.");
         System.out.println();
+        System.out.println("  -s <index>");
+        System.out.println("       Set source file with <index> as the main program.");
+        System.out.println();
     }
 }
