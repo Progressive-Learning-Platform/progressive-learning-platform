@@ -104,7 +104,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="menuNewWatcher.text"/>
                 <Property name="name" type="java.lang.String" value="menuNewWatcher" noResource="true"/>
-                <Property name="name" type="java.lang.String" value="menuNewWatcher" noResource="true"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -198,7 +197,7 @@
                   <Component id="tglIODisplay" min="-2" pref="121" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnOpts" min="-2" pref="75" max="-2" attributes="0"/>
-                  <EmptySpace pref="270" max="32767" attributes="0"/>
+                  <EmptySpace pref="272" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

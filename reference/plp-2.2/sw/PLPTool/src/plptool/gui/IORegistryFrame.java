@@ -81,6 +81,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         cmbPresets = new javax.swing.JComboBox();
         btnLoadPreset = new javax.swing.JButton();
 
+        setClosable(true);
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setIconifiable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(IORegistryFrame.class);
@@ -187,14 +188,14 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "Name", "Registry Pos.", "Bus Position", "Start Address", "End Address"
+                "Name", "Registry Pos.", "Bus Position", "Start Address", "End Address", "Show Frame"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -207,12 +208,18 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         });
         tblMods.setName("tblMods"); // NOI18N
         tblMods.getTableHeader().setReorderingAllowed(false);
+        tblMods.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblModsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblMods);
         tblMods.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblMods.columnModel.title0")); // NOI18N
         tblMods.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMods.columnModel.title5")); // NOI18N
         tblMods.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblMods.columnModel.title1")); // NOI18N
         tblMods.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblMods.columnModel.title3")); // NOI18N
         tblMods.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblMods.columnModel.title4")); // NOI18N
+        tblMods.getColumnModel().getColumn(5).setHeaderValue(resourceMap.getString("tblMods.columnModel.title5")); // NOI18N
 
         btnRemove.setText(resourceMap.getString("btnRemove.text")); // NOI18N
         btnRemove.setName("btnRemove"); // NOI18N
@@ -390,6 +397,27 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnLoadPresetActionPerformed
 
+    private void tblModsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblModsMouseClicked
+        try {
+
+        for(int row = 0; row < tblMods.getRowCount(); row++) {
+            if((Boolean) tblMods.getModel().getValueAt(row, 5)) {
+                if(plp.ioreg.getModuleFrame(row) != null) {
+                    ((javax.swing.JInternalFrame) plp.ioreg.getModuleFrame(row)).setVisible(true);
+                }
+            }
+            else {
+                if(plp.ioreg.getModuleFrame(row) != null) {
+                    ((javax.swing.JInternalFrame) plp.ioreg.getModuleFrame(row)).setVisible(false);
+                }
+            }
+        }
+
+        } catch(Exception e) {
+
+        }
+    }//GEN-LAST:event_tblModsMouseClicked
+
     public void refreshModulesTable() {
         DefaultTableModel mods = (DefaultTableModel) tblMods.getModel();
         Object[] modules;
@@ -400,12 +428,14 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             mods.removeRow(0);
 
         for(int i = 0; i < modules.length; i++) {
-            Object[] row = new Object[]
+            javax.swing.JInternalFrame frame = (javax.swing.JInternalFrame) plp.ioreg.getModuleFrame(i);
+            Object row[] = new Object[]
             { modules[i].toString(),
               i,
               plp.ioreg.getPositionInBus(i),
               String.format("0x%08x", plp.ioreg.getModule(i).startAddr()),
-              String.format("0x%08x", plp.ioreg.getModule(i).endAddr())
+              String.format("0x%08x", plp.ioreg.getModule(i).endAddr()),
+              (frame != null) ? frame.isVisible() : false
             };
             mods.addRow(row);
         }

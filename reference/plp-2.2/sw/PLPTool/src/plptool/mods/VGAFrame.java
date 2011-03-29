@@ -76,7 +76,6 @@ public class VGAFrame extends javax.swing.JInternalFrame {
 
         container = new javax.swing.JPanel();
 
-        setIconifiable(true);
         setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(VGAFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -90,11 +89,11 @@ public class VGAFrame extends javax.swing.JInternalFrame {
         container.setLayout(containerLayout);
         containerLayout.setHorizontalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 672, Short.MAX_VALUE)
+            .addGap(0, 634, Short.MAX_VALUE)
         );
         containerLayout.setVerticalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 477, Short.MAX_VALUE)
+            .addGap(0, 454, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

@@ -175,6 +175,8 @@ public class SimShell extends javax.swing.JFrame {
                 windows[i].setLocation(X, Y);
             }
         }
+
+        plp.g_ioreg.refreshModulesTable();
     }
 
     private void restoreWindows() {
@@ -183,8 +185,10 @@ public class SimShell extends javax.swing.JFrame {
         try {
 
         for(int i = 0; i < windows.length; i++) {
-            windows[i].setIcon(false);
+            windows[i].setVisible(true);
         }
+
+        plp.g_ioreg.refreshModulesTable();
 
         }catch(Exception e) {}
     }
