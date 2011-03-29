@@ -11,6 +11,8 @@
 
 package plptool.gui;
 
+import java.awt.Color;
+
 /**
  *
  * @author wira
@@ -18,6 +20,8 @@ package plptool.gui;
 public class ConsoleFrame extends javax.swing.JFrame {
 
     ProjectDriver plp;
+    ASMExplorer asmexplorer;
+    boolean simmode = false;
 
     /** Creates new form PLPConsole */
     public ConsoleFrame(ProjectDriver plp) {
@@ -96,11 +100,26 @@ public class ConsoleFrame extends javax.swing.JFrame {
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             String command = cmd.getText();
             String tokens[] = command.split(" ", 2);
-            out.setText(":)");
             
             if(command.equals("q")) {
                 System.exit(0);
             }
+            else if(simmode) {
+                if(command.equals("simmode")) {
+                    simmode = false;
+                    cmd.setBackground(Color.white);
+                    cmd.setForeground(Color.black);
+                } else {
+                    javax.swing.JTextArea lastOutput = plptool.Msg.output;
+                    plptool.Msg.output = this.out;
+                    plptool.mips.SimCLI.simCLCommand(command, plp);
+                    plptool.Msg.output = lastOutput;
+                    if(asmexplorer != null) asmexplorer.updateTable();
+                    if(plp.g_sim != null) plp.g_sim.updateComponents();
+                    if(plp.g_simsh != null) plp.updateComponents();
+                }
+            }
+
             else if(command.equals("reset")) {
                 plp.g_dev.dispose();
                 plp.g_simsh.dispose();
@@ -138,6 +157,32 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_ioreg.refreshModulesTable();
                 }
             }
+            else if(command.equals("asmexplorer")) {
+                plp.g_dev.setVisible(false);
+                plp.g_simsh.destroySimulation();
+
+                if(asmexplorer == null) {
+                    asmexplorer = new ASMExplorer(plp);
+                }
+
+                plptool.Msg.output = this.out;
+                plp.sim = new plptool.mips.SimCore((plptool.mips.Asm) plp.asm, plp.asm.getAddrTable()[0], -1L);
+                plp.sim.reset();
+
+                asmexplorer.setVisible(true);
+                asmexplorer.updateTable();
+            }
+
+            else if(command.equals("simmode") && plp.sim != null) {
+                if(!simmode) {
+                    simmode = true;
+                    cmd.setBackground(Color.black);
+                    cmd.setForeground(Color.green);
+                }
+            }
+
+                
+
             else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
                     plptool.Config.devFont = tokens[1];
@@ -156,6 +201,14 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 }
                 if(tokens[0].equals("program")) {
                     plp.program(tokens[1]);
+                }
+
+                if(tokens[0].equals("simcl") && asmexplorer != null) {
+                    String xcmd = "";
+                    for(int i = 1; i < tokens.length; i++)
+                        xcmd += tokens[i] + ((i != tokens.length - 1) ? " " : "");
+                    plptool.mips.SimCLI.simCLCommand(xcmd, plp);
+                    asmexplorer.updateTable();
                 }
 
             }
