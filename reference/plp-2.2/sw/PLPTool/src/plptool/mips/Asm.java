@@ -588,6 +588,8 @@ public class Asm extends plptool.PLPAsm {
         objectCode = new long[asmLines.length - directiveOffset];
         addrTable = new long[asmLines.length - directiveOffset];
         entryType = new int[asmLines.length - directiveOffset];
+        objCodeFileMapper = new int[asmLines.length - directiveOffset];
+        objCodeLineNumMapper = new int[asmLines.length - directiveOffset];
         curActiveFile = this.topLevelFile;
 
         // clear error
@@ -891,6 +893,10 @@ public class Asm extends plptool.PLPAsm {
             if(!skip) {
                 addrTable[i - s] = asmPC;
                 asmPC += 4;
+
+                // update mapper
+                objCodeFileMapper[i - s] = asmFileMap[i];
+                objCodeLineNumMapper[i - s] = lineNumMap[i];
             }
             i++;
         }

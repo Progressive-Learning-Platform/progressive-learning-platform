@@ -48,7 +48,7 @@ public class Config {
     public static long    cfgDefaultRAMSize                = 0x1000000;
 
     public static String  devFont                          = "Monospaced";
-    public static int     devFontSize                      = 11;
+    public static int     devFontSize                      = 12;
     public static Color   devBackground                    = Color.WHITE;
     public static Color   devForeground                    = Color.BLACK;
 

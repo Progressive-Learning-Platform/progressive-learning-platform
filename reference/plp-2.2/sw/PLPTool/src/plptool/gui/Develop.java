@@ -479,8 +479,8 @@ public class Develop extends javax.swing.JFrame {
     //Called whenever syntax styles change
     private SimpleAttributeSet[] setupHighlighting() {
         Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-        StyleConstants.setFontFamily(def,"Monospaced");
-        StyleConstants.setFontSize(def,11);
+        StyleConstants.setFontFamily(def,Config.devFont);
+        StyleConstants.setFontSize(def,Config.devFontSize);
         SimpleAttributeSet[] styleSetup = new SimpleAttributeSet[11];
         for(int i=0;i<11;i++) {
             styleSetup[i] = new SimpleAttributeSet(def);

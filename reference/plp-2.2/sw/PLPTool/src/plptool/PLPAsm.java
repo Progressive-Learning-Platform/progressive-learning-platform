@@ -37,6 +37,8 @@ public abstract class PLPAsm {
     protected int         mapperIndex;
     protected int[]       lineNumMap;
     protected int[]       asmFileMap;
+    protected int[]       objCodeFileMapper;
+    protected int[]       objCodeLineNumMapper;
 
     protected StringBuilder pass1Str;
     protected String        preprocessedAsm;
@@ -157,6 +159,14 @@ public abstract class PLPAsm {
      */
     public HashMap getSymTable() {
         return symTable;
+    }
+
+    public int[] getFileMapper() {
+        return objCodeFileMapper;
+    }
+
+    public int[] getLineNumMapper() {
+        return objCodeLineNumMapper;
     }
 
     /**
