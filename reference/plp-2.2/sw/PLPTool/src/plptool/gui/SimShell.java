@@ -67,6 +67,12 @@ public class SimShell extends javax.swing.JFrame {
         tglRun.setSelected(false);
     }
 
+    /** release build featuers disabler **/
+    public final void disableFeatures() {
+        menuRemoveIO.setVisible(false);
+        menuPresets.setVisible(false);
+    }
+
     public void plpMsgRouteBack() {
         Msg.output = null;
     }
