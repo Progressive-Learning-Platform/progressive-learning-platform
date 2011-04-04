@@ -95,15 +95,18 @@
                 <Property name="name" type="java.lang.String" value="menuRemoveIO" noResource="true"/>
               </Properties>
             </Menu>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuWatcher">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuWatcher.text"/>
+                <Property name="name" type="java.lang.String" value="menuWatcher" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuWatcherActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
               <Properties>
                 <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuNewWatcher">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="menuNewWatcher.text"/>
-                <Property name="name" type="java.lang.String" value="menuNewWatcher" noResource="true"/>
               </Properties>
             </MenuItem>
           </SubComponents>
