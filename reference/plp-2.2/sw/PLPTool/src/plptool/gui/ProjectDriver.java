@@ -615,6 +615,7 @@ public class ProjectDriver extends Thread {
             g_ioreg = new IORegistryFrame(this);
             g_sim = ArchRegistry.createSimCoreGUI(this);
             g_simsh.getSimDesktop().add(g_ioreg);
+            g_simsh.getSimDesktop().add(g_sim);
             g_ioreg.refreshModulesTable();
             g_sim.updateComponents();
             g_sim.updateBusTable();
@@ -622,6 +623,13 @@ public class ProjectDriver extends Thread {
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
             g_simsh.tileWindows();
+
+            /** 2.2 Release- disable unimplemented features **/
+            if(arch.equals("plpmips"))
+                ((plptool.mips.SimCoreGUI)g_sim).disableFeatures();
+            g_simsh.disableFeatures();
+            /*************************************************/
+
             g_simsh.setVisible(true);
         }
 

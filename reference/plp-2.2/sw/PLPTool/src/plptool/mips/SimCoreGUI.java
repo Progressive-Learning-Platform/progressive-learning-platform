@@ -763,6 +763,11 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
         updateProgramMemoryTablePC();
     }
+
+    /** release build featuers disabler **/
+    public final void disableFeatures() {
+        coreVisPane.setVisible(false);
+    }
 /*
     public javax.swing.JTextArea getSimCLOutput() {
         return simCLOutput;
