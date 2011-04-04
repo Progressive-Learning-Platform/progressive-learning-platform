@@ -172,6 +172,23 @@ public class PLPSimBus {
     }
 
     /**
+     * Check if the specified address is mapped
+     *
+     * @param addr Address to read from
+     * @return true if the specified address is valid
+     */
+    public boolean isMapped(long addr) {
+        Object[] modules = bus_modules.toArray();
+        for(int i = modules.length - 1; i >= 0; i--) {
+            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
+               addr <= ((PLPSimBusModule)modules[i]).endAddr())
+               return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Evaluates all modules attached to the bus.
      *
      * @return PLP_OK, or error code

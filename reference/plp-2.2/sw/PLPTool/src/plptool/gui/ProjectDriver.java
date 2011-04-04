@@ -107,6 +107,7 @@ public class ProjectDriver extends Thread {
     public plptool.gui.ProgrammerDialog        g_prg;      // Programming dialog
     public plptool.gui.AsmNameDialog           g_fname;    // ASM Name dialog
     public plptool.gui.SimRunner               g_simrun;   // SimRunner thread
+    public plptool.gui.Watcher                 g_watcher;  // Watcher window
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -875,6 +876,9 @@ public class ProjectDriver extends Thread {
         g_sim.updateComponents();
         g_dev.updateComponents();
         ioreg.gui_eval();
+
+        if(g_watcher != null)
+            g_watcher.updateWatcher();
     }
 
     /**
