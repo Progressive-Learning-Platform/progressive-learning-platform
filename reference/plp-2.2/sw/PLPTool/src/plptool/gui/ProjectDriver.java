@@ -108,6 +108,7 @@ public class ProjectDriver extends Thread {
     public plptool.gui.AsmNameDialog           g_fname;    // ASM Name dialog
     public plptool.gui.SimRunner               g_simrun;   // SimRunner thread
     public plptool.gui.Watcher                 g_watcher;  // Watcher window
+    public plptool.gui.ASMSimView              g_asmview;  // ASM Sim viewer
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -624,6 +625,7 @@ public class ProjectDriver extends Thread {
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
             g_simsh.tileWindows();
+            g_simsh.resetSettings();
 
             /** 2.2 Release- disable unimplemented features **/
             if(arch.equals("plpmips"))
@@ -879,6 +881,9 @@ public class ProjectDriver extends Thread {
 
         if(g_watcher != null)
             g_watcher.updateWatcher();
+
+        if(g_asmview != null)
+            g_asmview.updatePC();
     }
 
     /**

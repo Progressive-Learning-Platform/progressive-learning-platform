@@ -18,20 +18,18 @@
 
 package plptool.gui;
 
-import plptool.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JTable;
 
 /**
  *
  * @author wira
  */
-public class ASMExplorer extends javax.swing.JFrame {
+public class ASMSimView extends javax.swing.JInternalFrame {
 
     private ProjectDriver plp;
 
-    /** Creates new form ASMExplorer */
-    public ASMExplorer(ProjectDriver plp) {
+    /** Creates new form ASMSimView */
+    public ASMSimView(ProjectDriver plp) {
         initComponents();
 
         this.plp = plp;
@@ -54,7 +52,8 @@ public class ASMExplorer extends javax.swing.JFrame {
                             : ""),
                 String.format("0x%08x", objCode[i]),
                 plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmFilePath(),
-                plp.asm.getLineNumMapper()[i],
+                String.valueOf(plp.asm.getLineNumMapper()[i]),
+                false,
                 plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmLine(plp.asm.getLineNumMapper()[i])
             };
 
@@ -62,6 +61,22 @@ public class ASMExplorer extends javax.swing.JFrame {
         }
 
         tblASM.setModel(model);
+    }
+
+    public final void updatePC() {
+        DefaultTableModel model = (DefaultTableModel) tblASM.getModel();
+
+        long[] objCode = plp.asm.getObjectCode();
+
+        for(int i = 0; i < objCode.length; i++) {
+            if(((plptool.mips.SimCore) plp.sim).pc.eval() == plp.asm.getAddrTable()[i]) {
+                if((Boolean) model.getValueAt(i, 4))
+                    plp.g_simrun.stepCount = -1;
+                model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]) + " [PC]", i, 0);
+            } else {
+                model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]), i, 0);
+            }
+        }
     }
 
     /** This method is called from within the constructor to
@@ -73,32 +88,34 @@ public class ASMExplorer extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        scrlTblASM = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
         tblASM = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMaximizable(true);
+        setResizable(true);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ASMSimView.class);
+        setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
 
-        scrlTblASM.setName("scrlTblASM"); // NOI18N
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ASMExplorer.class);
         tblASM.setFont(resourceMap.getFont("tblASM.font")); // NOI18N
         tblASM.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Addr", "Instr", "File", "Line #", "LineStr"
+                "Address", "Instruction", "Source", "Line #", "Break", "String"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -110,29 +127,38 @@ public class ASMExplorer extends javax.swing.JFrame {
             }
         });
         tblASM.setName("tblASM"); // NOI18N
-        scrlTblASM.setViewportView(tblASM);
+        tblASM.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(tblASM);
+        tblASM.getColumnModel().getColumn(0).setPreferredWidth(100);
         tblASM.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblASM.columnModel.title0")); // NOI18N
+        tblASM.getColumnModel().getColumn(1).setPreferredWidth(100);
         tblASM.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblASM.columnModel.title1")); // NOI18N
-        tblASM.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblASM.columnModel.title3")); // NOI18N
-        tblASM.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblASM.columnModel.title4")); // NOI18N
-        tblASM.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblASM.columnModel.title2")); // NOI18N
+        tblASM.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tblASM.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblASM.columnModel.title2")); // NOI18N
+        tblASM.getColumnModel().getColumn(3).setPreferredWidth(35);
+        tblASM.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblASM.columnModel.title3")); // NOI18N
+        tblASM.getColumnModel().getColumn(4).setPreferredWidth(35);
+        tblASM.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblASM.columnModel.title5")); // NOI18N
+        tblASM.getColumnModel().getColumn(5).setPreferredWidth(350);
+        tblASM.getColumnModel().getColumn(5).setHeaderValue(resourceMap.getString("tblASM.columnModel.title4")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrlTblASM, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrlTblASM, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane scrlTblASM;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblASM;
     // End of variables declaration//GEN-END:variables
 

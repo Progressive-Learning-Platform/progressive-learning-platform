@@ -66,6 +66,7 @@ public class SimShell extends javax.swing.JFrame {
         cmenuRun.setSelected(false);
         tglRun.setSelected(false);
         menuWatcher.setSelected(false);
+        menuIOReg.setSelected(false);
     }
 
     /** release build featuers disabler **/
@@ -102,14 +103,24 @@ public class SimShell extends javax.swing.JFrame {
         simDesktop.removeAll();
         if(plp.g_ioreg != null)
             plp.g_ioreg.dispose();
+
         if(plp.g_watcher != null)
             plp.g_watcher.dispose();
 
-        plp.g_watcher = null;
+        if(plp.g_asmview != null)
+            plp.g_asmview.dispose();
+
         plp.g_ioreg = null;
+        plp.g_watcher = null;
+        plp.g_asmview = null;
         
-        tglIODisplay.setSelected(false);
         this.setVisible(false);
+    }
+
+    public void resetSettings() {
+        menuASMView.setSelected(false);
+        menuWatcher.setSelected(false);
+        menuIOReg.setSelected(false);
     }
 
     public javax.swing.JDesktopPane getSimDesktop() {
@@ -124,7 +135,7 @@ public class SimShell extends javax.swing.JFrame {
         if(plp.g_simrun != null)
             plp.g_simrun.stepCount = 0;
         plp.sim.reset();
-        plp.g_sim.updateComponents();
+        plp.updateComponents();
         plp.g_err.clearError();
     }
 
@@ -138,7 +149,7 @@ public class SimShell extends javax.swing.JFrame {
             if(steps <= MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps; i++)
                     plp.sim.step();
-                plp.g_sim.updateComponents();
+                plp.updateComponents();
             } else {
                 txtSteps.setText("1");
             }
@@ -219,7 +230,6 @@ public class SimShell extends javax.swing.JFrame {
         btnStep = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         tglRun = new javax.swing.JToggleButton();
-        tglIODisplay = new javax.swing.JToggleButton();
         btnOpts = new javax.swing.JButton();
         simDesktop = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -230,10 +240,11 @@ public class SimShell extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuClose = new javax.swing.JMenuItem();
         rootmenuTools = new javax.swing.JMenu();
-        menuIOReg = new javax.swing.JMenuItem();
+        menuIOReg = new javax.swing.JCheckBoxMenuItem();
         menuPresets = new javax.swing.JMenu();
         menuRemoveIO = new javax.swing.JMenu();
         menuWatcher = new javax.swing.JCheckBoxMenuItem();
+        menuASMView = new javax.swing.JCheckBoxMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         rootmenuWindow = new javax.swing.JMenu();
         menuTile = new javax.swing.JMenuItem();
@@ -274,14 +285,6 @@ public class SimShell extends javax.swing.JFrame {
             }
         });
 
-        tglIODisplay.setText(resourceMap.getString("tglIODisplay.text")); // NOI18N
-        tglIODisplay.setName("tglIODisplay"); // NOI18N
-        tglIODisplay.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tglIODisplayActionPerformed(evt);
-            }
-        });
-
         btnOpts.setText(resourceMap.getString("btnOpts.text")); // NOI18N
         btnOpts.setName("btnOpts"); // NOI18N
         btnOpts.addActionListener(new java.awt.event.ActionListener() {
@@ -304,10 +307,8 @@ public class SimShell extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(tglIODisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(btnOpts, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(272, Short.MAX_VALUE))
+                .addContainerGap(411, Short.MAX_VALUE))
         );
         simControlsLayout.setVerticalGroup(
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,7 +319,6 @@ public class SimShell extends javax.swing.JFrame {
                     .addComponent(btnStep)
                     .addComponent(tglRun)
                     .addComponent(btnReset)
-                    .addComponent(tglIODisplay)
                     .addComponent(btnOpts))
                 .addContainerGap())
         );
@@ -378,7 +378,6 @@ public class SimShell extends javax.swing.JFrame {
         rootmenuTools.setText(resourceMap.getString("rootmenuTools.text")); // NOI18N
         rootmenuTools.setName("rootmenuTools"); // NOI18N
 
-        menuIOReg.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
         menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
         menuIOReg.setName("menuIOReg"); // NOI18N
         menuIOReg.addActionListener(new java.awt.event.ActionListener() {
@@ -404,6 +403,15 @@ public class SimShell extends javax.swing.JFrame {
             }
         });
         rootmenuTools.add(menuWatcher);
+
+        menuASMView.setText(resourceMap.getString("menuASMView.text")); // NOI18N
+        menuASMView.setName("menuASMView"); // NOI18N
+        menuASMView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuASMViewActionPerformed(evt);
+            }
+        });
+        rootmenuTools.add(menuASMView);
 
         jSeparator2.setName("jSeparator2"); // NOI18N
         rootmenuTools.add(jSeparator2);
@@ -477,17 +485,6 @@ public class SimShell extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnResetActionPerformed
 
-    private void tglIODisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglIODisplayActionPerformed
-        if(tglIODisplay.isSelected()) {
-            if(plp.g_ioreg == null) {
-                plp.g_ioreg = new IORegistryFrame(plp);
-                simDesktop.add(plp.g_ioreg);
-            }
-            plp.g_ioreg.setVisible(true);
-        } else
-            plp.g_ioreg.setVisible(false);
-    }//GEN-LAST:event_tglIODisplayActionPerformed
-
     private void btnOptsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptsActionPerformed
         if(opts == null)
             opts = new OptionsFrame();
@@ -529,15 +526,6 @@ public class SimShell extends javax.swing.JFrame {
         restoreWindows();
     }//GEN-LAST:event_menuRestoreActionPerformed
 
-    private void menuIORegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuIORegActionPerformed
-        if(plp.g_ioreg == null) {
-            plp.g_ioreg = new IORegistryFrame(plp);
-            simDesktop.add(plp.g_ioreg);
-        }
-        tglIODisplay.setSelected(true);
-        plp.g_ioreg.setVisible(true);
-    }//GEN-LAST:event_menuIORegActionPerformed
-
     private void menuWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuWatcherActionPerformed
         if(menuWatcher.isSelected()) {
             if(plp.g_watcher == null) {
@@ -552,6 +540,34 @@ public class SimShell extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuWatcherActionPerformed
 
+    private void menuASMViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuASMViewActionPerformed
+        if(menuASMView.isSelected()) {
+            if(plp.g_asmview == null) {
+                plp.g_asmview = new ASMSimView(plp);
+                plp.g_simsh.getSimDesktop().add(plp.g_asmview);
+            }
+
+            plp.g_asmview.setVisible(true);
+        } else {
+            if(plp.g_asmview != null)
+                plp.g_asmview.setVisible(false);
+        }
+    }//GEN-LAST:event_menuASMViewActionPerformed
+
+    private void menuIORegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuIORegActionPerformed
+        if(menuIOReg.isSelected()) {
+            if(plp.g_ioreg == null) {
+                plp.g_ioreg = new IORegistryFrame(plp);
+                plp.g_simsh.getSimDesktop().add(plp.g_ioreg);
+            }
+
+            plp.g_ioreg.setVisible(true);
+        } else {
+            if(plp.g_ioreg != null)
+                plp.g_ioreg.setVisible(false);
+        }
+    }//GEN-LAST:event_menuIORegActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOpts;
     private javax.swing.JButton btnReset;
@@ -560,8 +576,9 @@ public class SimShell extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JCheckBoxMenuItem menuASMView;
     private javax.swing.JMenuItem menuClose;
-    private javax.swing.JMenuItem menuIOReg;
+    private javax.swing.JCheckBoxMenuItem menuIOReg;
     private javax.swing.JMenu menuPresets;
     private javax.swing.JMenu menuRemoveIO;
     private javax.swing.JMenuItem menuReset;
@@ -574,7 +591,6 @@ public class SimShell extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuWindow;
     private javax.swing.JPanel simControls;
     private javax.swing.JDesktopPane simDesktop;
-    private javax.swing.JToggleButton tglIODisplay;
     private javax.swing.JToggleButton tglRun;
     private javax.swing.JTextField txtSteps;
     // End of variables declaration//GEN-END:variables
