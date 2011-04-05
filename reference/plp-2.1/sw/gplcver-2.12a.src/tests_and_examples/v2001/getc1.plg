@@ -1,0 +1,6 @@
+Reading files from Verilog models
+
+This file has been replaced by fileio.htm
+
+break check_veriusertf_table 
+disp __pli_dynlib_hd->dynblst->ret_veriusertf[20]
