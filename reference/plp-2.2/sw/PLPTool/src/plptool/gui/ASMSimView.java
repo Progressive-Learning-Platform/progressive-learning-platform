@@ -126,7 +126,9 @@ public class ASMSimView extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
+        tblASM.setGridColor(resourceMap.getColor("tblASM.gridColor")); // NOI18N
         tblASM.setName("tblASM"); // NOI18N
+        tblASM.setShowVerticalLines(false);
         tblASM.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tblASM);
         tblASM.getColumnModel().getColumn(0).setPreferredWidth(100);
@@ -150,7 +152,7 @@ public class ASMSimView extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
         );
 
         pack();
