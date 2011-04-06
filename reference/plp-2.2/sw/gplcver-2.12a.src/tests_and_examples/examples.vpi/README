@@ -1,0 +1,169 @@
+
+       PLI 2.0 VPI ROUTINE EXAMPLES AND INSTALLATION TEST
+
+This directory contains PLI 2.0 API vpi_ routine examples to illustrate use 
+of PLI 2.0.  To test for correct installation run the inst_pli.sh script that
+compiles vpi_ programs into .so libraries which are dynamically loaded
+using new +loadvpi= Cver command line option and run.
+
+To see an example asynchronously driven PLI 2.0 vpi_ model, look
+at async.c (and async.v) test below.  The other tests show various
+PLI 2.0 vpi_ routine capabilities but are not complete models.
+
+To learn more about PLI 2.0 capabilities, read the various examples.  To
+learn how to use a particular vpi_ routine, access method, or to get
+properties from a particular object, run "grep [object or routine name] *.c".
+
+This script assumes you are using new +loadvpi= dynamic library PLI
+execution.  If you need to statically link your PLI libraries contact
+Pragmatic C to obtain the libraries and test scripts.
+
+HOW TO RUN THE TEST SCRIPT FOR ALL SYSTEMS EXCEPT MAC OSX AND CYGWIN (below) 
+
+1) Run the shell script inst_pli.sh [OS name].  Various compiler and Verilog
+   output messages will be printed but there should be no diff command
+   differences printed.  You must pass the name of your system as the one
+   argument to the script.  Depending on your platform, names are:
+   for X86 linux (suffix lnx), Sparc (suffix sparc-gcc), 
+   X86 64-bit (suffix lnx64).
+
+   Run the shell script opt_inst_pli.sh [OS name] to test PLI using
+   optimizer (-O) incremental compiler.
+
+   By convention makefile.[OS name] assumes this test is run in release
+   directory tree with include files in pli_incs 2 directory levels up
+   and Cver binary also 2 levels up.
+
+   The commands to run Cver with dynamically loaded user PLI library
+   explicitly access the user .so library in this directory.  For your
+   PLI libraries, it is better to set the LD_LIBRARY_PATH environment
+   variables so explicit "./" is not needed
+
+2) After completing the test, run clean.sh to remove work files.
+   The inst_pli.sh script removes each PLI library .so dynamic library after
+   running the test that uses it so unless something went wrong, you
+   do not need to run clean.sh.  
+
+3) Use makefile.[your OS] as a template for your vpi_ PLI 2.0 models.
+   Notice to use the PLI1 user defined PLI system/task function interface,
+   you must use +loadpli1= option.  To use newer PLI2 vpi_ user defined PLI
+   system/task function interface you must use +loadvpi=.  You should
+   use the +loadvpi= option for all new PLI code because of the additional
+   capabilities.  +loadpli1= system tasks can't be used with new vpi_
+   system task and function access methods because +loadpli1 system tasks
+   and functions must support old behavior.
+
+HOW TO RUN THE TEST SCRIPT FOR MAC OSX
+
+1) Run the shell script inst_pli.osx.sh.  Notice you do not need the
+   OS shell argument here.  Various compiler and Verilog
+   output messages will be printed but there should be no diff command
+   differences printed.  You must run this different script for MAC OSX
+   because OSX uses .dylib suffix for dynamic libraries and uses the
+   mach dynamic library mechanism instead of normal .so and dlopen. 
+
+   By convention, makefile.osx assumes this test is run in release
+   directory tree with include files in pli_incs 2 directory levels up
+   and Cver binary is in bin directory also 2 levels up.
+
+   The commands to run Cver with dynamically loaded user PLI library
+   explicitly access the user .dylib library in this directory.  For your
+   PLI libraries, it is better to set the LD_LIBRARY_PATH environment
+   variables so explicit "./" is not needed
+
+   Mac OSX linker (from mach OS) requires that a leading '_' be added to
+   each symbol name.  Cver does this automatically but you must make
+   sure that your bootstrap routine name does not start with underscore ('_').
+
+2) After completing the test, run clean.sh to remove work files.
+   The inst_pli.osx.sh script removes each PLI library .so dynamic library
+   after running the test that uses it so unless something went wrong, you
+   do not need to run clean.sh.  
+
+3) Use makefile.osx as a template for your PLI models.  You must use
+   exactly the LFLAGS options and set and export LD_LIBRARY_PATH
+   environment variable, or your .dylib user PLI code will not load
+   properly.
+
+HOW TO RUN PLI ON CYGWIN 
+   ****IMPORTANT - as of 02/02/04 the latest version of Cygwin contains a
+       bug which doesn't run the PLI correctly.  To run the PLI you will need 
+       Cygwin version 1.5.5 or earlier.
+
+1) First, you must make a cver dll and executable.  Go to the objs directory
+   (gplcver-*/objs/), and type the following commands:
+        
+       make -f makefile.dll dll                 #makes the dll library
+       make -f makefile.dll exe                 #make the new cver.exe
+
+2) Next copy the libcver.dll library to the lib directory:
+
+       cp libcver.dll /lib/ 
+
+3) In the vpi examples directory (this one), type the following commands:
+
+       make -f makefile.cygwin dll                #compiles libvfopen1.c
+       make -f makefile.cygwin run                #runs the PLI example
+
+4) All of these should compile correctly, and 'make -f makefile.vpi run', 
+   runs the PLI example vfopen1.v after making the libvopen1 library.
+
+---------------------------------------------------------------------------
+
+Tests are:
+
+  1. async.c is asynchronously switching not gate implemented using vpi_.
+
+  2. vhello1.c and vhello2.c are "hello world" tests that also show use
+     of environment determing vpi_ routines.
+
+  3. vhelbad.c is a "hello world" test with some vpi_ errors to illustrate
+     vpi_ error checking.
+
+  4. findcaus.c is test that traverses Verilog design hierarchy.
+
+  5. vcabtsts.c is a test that registers every call back and prints a message
+     when it occurs.
+
+  6. vprtchg.c adds cbValueChange callbacks to every .v file varaibles and
+     prints a message on every change.
+
+  7. vprtchg2.c test also prints every variable change in a design
+     except it uses vpi_get_value and vpi_get_time instead of the built in
+     value change callback values.
+
+  8. vprtchg3.c prints new and old variable values using an on change call
+     back.
+
+  9. vprtdels.c accesses and prints every delay in a design.
+
+  10. vprtdel2.c illustrates vpi_ timscale handling.
+
+  11. vsetdels.c use vpi_ to set delays.
+
+  12. vsetval1.c tests various vpi_put_value uses.
+
+  13. vtimcbs.c illustrates use of various delay callbacks.
+
+  14. vfopen1.c implements $fopen built in system function using PLI 2.0.
+
+  15. vfopen2.c is  variant of the vfopen1.c test using vpi_ system task
+      instead of vpi_ system function.
+
+  16. vconta1.c tests continous assignments and non lvalue expression
+      decomposition.
+
+  17. vchkprt1.c tests most port and vpiHighConn/vpiLowConn one to one
+      and one to many iterators.  It is possible that either the .c model
+      or Cver's interpretation of the LRM are not right because Cver
+      assumes all bit iterators are LSB to MSB in terms of vpi_scan order.
+
+  18. vdrvld1.c tests vpiDriver and vpiLoad iterators for nets.
+
+  19. vdrvld2.c tests vpiDriver and vpiLoad iterators for bits of nets.
+
+  20. dfpsetd.c tests vpi_put_value to defparam and specparam during
+      cbEndOfCompile call back for delay annotation (allows delay annotation
+      to procedural delay controls and continuous assignments).  Test
+      sets same delays and produces same results using vpi_ as dfpsetd.vc
+      in install.tst directory that uses 2 SDF delay annotation files.
