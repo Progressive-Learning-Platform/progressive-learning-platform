@@ -55,7 +55,7 @@ public class IORegistry {
     private ArrayList<Long> regSize;
 
     /**
-     * This list contains the types of the module's register file
+     * This list contains the types of the modules
      */
     private ArrayList<Long> type;
 
@@ -310,7 +310,7 @@ public class IORegistry {
                 break;
 
             /******************************************************************/
-            // LEDArray is summoned
+            // Seven Segments is summoned
             case 9:
                 module = new SevenSegments(addr);
                 moduleFrame = new SevenSegmentsFrame();
@@ -417,11 +417,11 @@ public class IORegistry {
      * @param index Index of the module.
      * @return The type of the module
      */
-    public Object getType(int index) {
+    public long getType(int index) {
         if(index >= modules.size() || index < 0) {
             Msg.E("getModuleFrame: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
-            return null;
+            return -1;
         }
 
         return type.get(index);
@@ -472,7 +472,7 @@ public class IORegistry {
 
         modules.remove(index);
         regSize.remove(index);
-        type.remove(0);
+        type.remove(index);
 
         if(moduleFrames.get(index) != null && moduleFrames.get(index) instanceof JInternalFrame)
             ((JInternalFrame) moduleFrames.get(index)).dispose();

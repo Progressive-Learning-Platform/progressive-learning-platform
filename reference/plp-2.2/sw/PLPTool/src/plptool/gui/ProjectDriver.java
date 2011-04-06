@@ -507,7 +507,7 @@ public class ProjectDriver extends Thread {
                 hexstring = new String(image);
             }
 
-            /*else if(entry.getName().equals("plp.simconfig")) {
+            else if(entry.getName().equals("plp.simconfig")) {
                 String lines[] = metaStr.split("\\r?\\n");
                 int i;
                 this.smods = new plptool.mods.Preset();
@@ -524,7 +524,7 @@ public class ProjectDriver extends Thread {
                         }
                     }
                 }
-            }*/
+            }
         }
         
         if(asmIndex == 0) {
@@ -691,11 +691,12 @@ public class ProjectDriver extends Thread {
             g_simsh.destroySimulation();
 
         sim = ArchRegistry.createSimCore(this);
+        ioreg = new plptool.mods.IORegistry();
 
         if(smods == null)
             plptool.mods.IORegistry.loadPredefinedPreset(0, this);
-        else
-           plptool.mods.IORegistry.loadPreset(smods, this);
+        else if(smods != null)
+            plptool.mods.IORegistry.loadPreset(smods, this);
             
         sim.reset();
 
