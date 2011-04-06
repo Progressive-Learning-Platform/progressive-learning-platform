@@ -18,12 +18,26 @@
 
 package plptool.mods;
 
+import java.util.ArrayList;
+
 /**
  * Presets for I/O registry.
  *
  * @author wira
  */
-public class Presets {
+public class Preset {
+    
+    public ArrayList<Integer> types;
+    public ArrayList<Long> addresses;
+    public ArrayList<Long> sizes;
+
+
+    public Preset() {
+        types = new ArrayList<Integer>();
+        addresses = new ArrayList<Long>();
+        sizes = new ArrayList<Long>();
+    }
+
     public final static Object[][] presets = new Object[][]{
         /**********************************************************************/
         {

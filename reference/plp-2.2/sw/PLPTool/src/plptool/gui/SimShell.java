@@ -60,8 +60,8 @@ public class SimShell extends javax.swing.JFrame {
             }
         });
 
-        for(int i = 0; i < plptool.mods.Presets.presets.length; i++)
-            menuPresets.add(new javax.swing.JMenuItem((String) plptool.mods.Presets.presets[i][0]));
+        for(int i = 0; i < plptool.mods.Preset.presets.length; i++)
+            menuPresets.add(new javax.swing.JMenuItem((String) plptool.mods.Preset.presets[i][0]));
 
         cmenuRun.setSelected(false);
         tglRun.setSelected(false);

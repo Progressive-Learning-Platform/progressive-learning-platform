@@ -264,7 +264,7 @@ public class SimCLI {
         }
         else if(input.equals("listpresets")) {
             Msg.M("Registered presets:");
-            Object[][] presets = plptool.mods.Presets.presets;
+            Object[][] presets = plptool.mods.Preset.presets;
             for(int i = 0; i < presets.length; i++) {
                 Msg.M(i + ": " + presets[i][0]);
             }
@@ -274,7 +274,7 @@ public class SimCLI {
                 Msg.M("Usage: loadpreset <index>");
             }
             else {
-                plptool.mods.IORegistry.loadPreset(PLPToolbox.parseNumInt(tokens[1]), plp);
+                plptool.mods.IORegistry.loadPredefinedPreset(PLPToolbox.parseNumInt(tokens[1]), plp);
             }
         }
         else if(tokens[0].equals("addmod")) {
