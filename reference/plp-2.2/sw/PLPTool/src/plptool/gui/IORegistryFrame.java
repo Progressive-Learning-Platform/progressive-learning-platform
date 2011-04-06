@@ -357,7 +357,8 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         } else {
             plptool.Msg.M("ERROR");
         }
-        
+
+        plp.modified = true;
         plp.updateComponents();
         plp.g_sim.updateBusTable();
         refreshModulesTable();
@@ -370,6 +371,8 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             int index = (Integer) tblMods.getModel().getValueAt(tblMods.getSelectedRow(), 1);
             plp.ioreg.removeModule(index, plp.sim);
             refreshModulesTable();
+            plp.modified = true;
+            plp.updateWindowTitle();
             plp.updateComponents();
             plp.g_sim.updateBusTable();
         }
@@ -377,6 +380,8 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         plp.ioreg.removeAllModules(plp.sim);
+        plp.modified = true;
+        plp.updateWindowTitle();
         refreshModulesTable();
         plp.updateComponents();
         plp.g_sim.updateBusTable();
@@ -391,6 +396,8 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             Long[] sizes = (Long[]) Preset.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
                 plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, plp.g_simsh.getSimDesktop());
+            plp.modified = true;
+            plp.updateWindowTitle();
             plp.updateComponents();
             plp.g_sim.updateBusTable();
             refreshModulesTable();
