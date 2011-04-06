@@ -93,7 +93,6 @@ public class SimShell extends javax.swing.JFrame {
             if(plp.g_sim != null)
                 plp.g_sim.dispose();
             plp.g_err.dispose();
-            plp.ioreg.removeAllModules(plp.sim);
         }
 
         if(plp.g_simrun != null) {
