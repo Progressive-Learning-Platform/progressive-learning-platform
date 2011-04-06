@@ -185,6 +185,7 @@ public class Develop extends javax.swing.JFrame {
         menuProgram.setEnabled(false);
         btnSimulate.setEnabled(false);
         btnProgram.setEnabled(false);
+        menuQuickProgram.setEnabled(false);
     }
 
     public final  void enableSimControls() {
@@ -192,6 +193,7 @@ public class Develop extends javax.swing.JFrame {
         menuProgram.setEnabled(true);
         btnSimulate.setEnabled(true);
         btnProgram.setEnabled(true);
+        menuQuickProgram.setEnabled(true);
     }
 
     public int save() {

@@ -640,8 +640,10 @@ public class ProjectDriver extends Thread {
 
         boolean wasAssembled = false;
 
-        if(asm != null)
+        if(asm != null) {
             wasAssembled = asm.isAssembled();
+            asm.setAssembled(false);
+        }
 
         if(g) g_dev.disableSimControls();
         if(g) asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
@@ -653,10 +655,12 @@ public class ProjectDriver extends Thread {
         // ...assemble asm objects... //
         asm = ArchRegistry.createAssembler(this, asms);
 
-        if(asm.preprocess(0) == Constants.PLP_OK)
-            asm.assemble();
+        int ret = 0;
 
-        if(g && asm != null && asm.isAssembled()) {
+        if(asm.preprocess(0) == Constants.PLP_OK)
+            ret = asm.assemble();
+
+        if(g && asm != null && asm.isAssembled() && ret == 0) {
             if(!wasAssembled)
                 modified = true;
             g_dev.enableSimControls();

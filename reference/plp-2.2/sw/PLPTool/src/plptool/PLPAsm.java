@@ -250,4 +250,8 @@ public abstract class PLPAsm {
     public ArrayList<PLPAsmSource> getAsmList() {
         return SourceList;
     }
+
+    public void setAssembled(boolean b) {
+        assembled = b;
+    }
 }
