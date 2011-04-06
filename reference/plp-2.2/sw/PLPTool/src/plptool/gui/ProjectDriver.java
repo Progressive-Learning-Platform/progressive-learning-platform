@@ -193,6 +193,7 @@ public class ProjectDriver extends Thread {
         asms = new ArrayList<plptool.PLPAsmSource>();
         asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
         open_asm = 0;
+        ioreg = new plptool.mods.IORegistry();
 
         meta =  "PLP-2.2\n";
         meta += "START=0x0\n";
@@ -226,6 +227,7 @@ public class ProjectDriver extends Thread {
             asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
         }
         open_asm = 0;
+        ioreg = new plptool.mods.IORegistry();
 
         meta =  "PLP-2.2\n";
         meta += "START=0x0\n";
@@ -455,6 +457,7 @@ public class ProjectDriver extends Thread {
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
         asms = new ArrayList<plptool.PLPAsmSource>();
+        ioreg = new plptool.mods.IORegistry();
 
         try {
 
@@ -504,7 +507,7 @@ public class ProjectDriver extends Thread {
                 hexstring = new String(image);
             }
 
-            else if(entry.getName().equals("plp.simconfig")) {
+            /*else if(entry.getName().equals("plp.simconfig")) {
                 String lines[] = metaStr.split("\\r?\\n");
                 int i;
                 this.smods = new plptool.mods.Preset();
@@ -521,7 +524,7 @@ public class ProjectDriver extends Thread {
                         }
                     }
                 }
-            }
+            }*/
         }
         
         if(asmIndex == 0) {
