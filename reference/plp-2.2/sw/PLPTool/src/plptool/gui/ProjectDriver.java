@@ -72,6 +72,7 @@ public class ProjectDriver extends Thread {
     public byte[]                              binimage;   // binary image
     public String                              hexstring;  // hex string
     public String                              meta;       // Meta String
+    public plptool.mods.Preset                 smods;      // Saved mods information
 
     /*
      * References to PLP configuration and messaging classes
@@ -348,6 +349,61 @@ public class ProjectDriver extends Thread {
             tOut.write(data);
             tOut.flush();
             tOut.closeArchiveEntry();
+
+
+            // Write simulation configuraiton
+            Msg.D("Writing out simulation configuration...", 2, this);
+            entry = new TarArchiveEntry("plp.simconfig");
+            String str = "";
+
+
+            if(g_watcher != null) {
+                str += "WATCHER\n";
+
+                javax.swing.table.DefaultTableModel watcherTbl = g_watcher.getEntries();
+
+                for(i = 0; i < watcherTbl.getRowCount(); i++) {
+                    str += watcherTbl.getValueAt(i, 0) + "::";
+                    str += watcherTbl.getValueAt(i, 1) + "\n";
+                }
+
+                str += "END\n";
+            }
+
+            if(ioreg != null && ioreg.getNumOfModsAttached() > 0) {
+
+                str += "MODS\n";
+
+                for(i = 0; i < ioreg.getNumOfModsAttached(); i++) {
+                    PLPSimBusModule mod = ioreg.getModule(i);
+                    Object xobj_t = ioreg.getModuleFrame(i);
+                    str += ioreg.getType(i) + "::";
+                    str += mod.toString() + "::";
+                    str += mod.startAddr() + "::";
+                    str += ioreg.getRegSize(i) + "::";
+
+                    if(xobj_t != null && xobj_t instanceof javax.swing.JInternalFrame) {
+                        javax.swing.JInternalFrame xobj = (javax.swing.JInternalFrame) xobj_t;
+                        str += "frame::" ;
+                        str += xobj.isVisible() + "::";
+                        str += xobj.getX() + "::";
+                        str += xobj.getY() + "::";
+                        str += xobj.getWidth() + "::";
+                        str += xobj.getHeight();
+                    }
+
+                    str += "\n";
+                }
+
+                str += "END\n";
+            }
+
+            entry.setSize(str.length());
+            tOut.putArchiveEntry(entry);
+            tOut.write(str.getBytes());
+            tOut.flush();
+            tOut.closeArchiveEntry();
+
         } else if(binimage != null) {
             Msg.D("Writing out old (dirty) verilog hex code...", 2, this);
             entry = new TarArchiveEntry("plp.hex");
@@ -446,6 +502,25 @@ public class ProjectDriver extends Thread {
 
             else if(entry.getName().equals("plp.hex")) {
                 hexstring = new String(image);
+            }
+
+            else if(entry.getName().equals("plp.simconfig")) {
+                String lines[] = metaStr.split("\\r?\\n");
+                int i;
+                this.smods = new plptool.mods.Preset();
+
+                for(i = 0; i < lines.length; i++) {
+                    if(lines[i].equals("MODS")) {
+                        i++;
+                        while(i < lines.length && !lines[i].equals("END")) {
+                            String tokens[] = lines[i].split("::");
+                            smods.types.add(Integer.parseInt(tokens[0]));
+                            smods.addresses.add(Long.parseLong(tokens[2]));
+                            smods.sizes.add(Long.parseLong(tokens[3]));
+                            i++;
+                        }
+                    }
+                }
             }
         }
         
@@ -610,7 +685,11 @@ public class ProjectDriver extends Thread {
 
         sim = ArchRegistry.createSimCore(this);
 
-        plptool.mods.IORegistry.loadPreset(0, this);
+        if(smods == null)
+            plptool.mods.IORegistry.loadPredefinedPreset(0, this);
+        else
+           plptool.mods.IORegistry.loadPreset(smods, this);
+            
         sim.reset();
 
         if(g) {

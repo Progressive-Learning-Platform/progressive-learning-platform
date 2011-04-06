@@ -19,7 +19,7 @@
 package plptool.gui;
 
 import plptool.mods.IORegistry;
-import plptool.mods.Presets;
+import plptool.mods.Preset;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -47,8 +47,8 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             cmbModuleSelect.addItem(modInfo[i][0]);
 
         cmbPresets.removeAllItems();
-        for(int i = 0; i < Presets.presets.length; i++)
-            cmbPresets.addItem(Presets.presets[i][0]);
+        for(int i = 0; i < Preset.presets.length; i++)
+            cmbPresets.addItem(Preset.presets[i][0]);
     }
 
     /** This method is called from within the constructor to
@@ -386,9 +386,9 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         int index = cmbPresets.getSelectedIndex();
 
         if(index > -1) {
-            Integer[] modsType = (Integer[]) Presets.presets[index][1];
-            Long[] startAddresses = (Long[]) Presets.presets[index][2];
-            Long[] sizes = (Long[]) Presets.presets[index][3];
+            Integer[] modsType = (Integer[]) Preset.presets[index][1];
+            Long[] startAddresses = (Long[]) Preset.presets[index][2];
+            Long[] sizes = (Long[]) Preset.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
                 plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, plp.g_simsh.getSimDesktop());
             plp.updateComponents();

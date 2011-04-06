@@ -50,6 +50,16 @@ public class IORegistry {
     private ArrayList<Object> moduleFrames;
 
     /**
+     * This list contains the sizes of the module's register file
+     */
+    private ArrayList<Long> regSize;
+
+    /**
+     * This list contains the types of the module's register file
+     */
+    private ArrayList<Long> type;
+
+    /**
      * Stores the position of the attached modules in the simulation bus.
      */
     private LinkedList<Integer> positionInBus;
@@ -71,6 +81,8 @@ public class IORegistry {
     public IORegistry() {
         modules = new ArrayList<PLPSimBusModule>();
         moduleFrames = new ArrayList<Object>();
+        regSize = new ArrayList<Long>();
+        type = new ArrayList<Long>();
 
         // We save bus position because the simulation core may already
         // have built-in modules attached
@@ -318,6 +330,8 @@ public class IORegistry {
 
         moduleFrames.add(moduleFrame);
         modules.add(module);
+        type.add(new Long(index));
+        regSize.add(size);
         module.enable();
         positionInBus.add(sim.bus.add(module));
 
@@ -386,6 +400,34 @@ public class IORegistry {
     }
 
     /**
+     * @param index Index of the module.
+     * @return The register file size of the module
+     */
+    public Object getRegSize(int index) {
+        if(index >= modules.size() || index < 0) {
+            Msg.E("getModuleFrame: invalid index:" + index,
+                     Constants.PLP_GENERIC_ERROR, null);
+            return null;
+        }
+
+        return regSize.get(index);
+    }
+
+    /**
+     * @param index Index of the module.
+     * @return The type of the module
+     */
+    public Object getType(int index) {
+        if(index >= modules.size() || index < 0) {
+            Msg.E("getModuleFrame: invalid index:" + index,
+                     Constants.PLP_GENERIC_ERROR, null);
+            return null;
+        }
+
+        return type.get(index);
+    }
+
+    /**
      * Removes all modules attached to this registry AND removes them
      * from the simulation bus, effectively destroying all modules that
      * were attached to the simulation.
@@ -400,8 +442,10 @@ public class IORegistry {
             
             if(modules.get(0).threaded && modules.get(0).isAlive()) {
                 modules.get(0).stop = true;
-        }
+            }
             modules.remove(0);
+            regSize.remove(0);
+            type.remove(0);
             sim.bus.remove(positionInBus.remove(positionInBus.size() - 1));
         }
     }
@@ -427,6 +471,8 @@ public class IORegistry {
         }
 
         modules.remove(index);
+        regSize.remove(index);
+        type.remove(0);
 
         if(moduleFrames.get(index) != null && moduleFrames.get(index) instanceof JInternalFrame)
             ((JInternalFrame) moduleFrames.get(index)).dispose();
@@ -472,23 +518,40 @@ public class IORegistry {
     }
 
     /**
-     * Loads a preset
+     * Loads a predefined preset
      *
      * @param index Index of the preset
      */
-    public static int loadPreset(int index, plptool.gui.ProjectDriver plp) {
-        if(index >= Presets.presets.length || index < 0)
+    public static int loadPredefinedPreset(int index, plptool.gui.ProjectDriver plp) {
+        if(index >= Preset.presets.length || index < 0)
             return Msg.E("loadPreset: invalid index: " + index,
                             Constants.PLP_GENERIC_ERROR, null);
 
-        Integer[] modsType = (Integer[]) Presets.presets[index][1];
-        Long[] startAddresses = (Long[]) Presets.presets[index][2];
-        Long[] sizes = (Long[]) Presets.presets[index][3];
+        Integer[] modsType = (Integer[]) Preset.presets[index][1];
+        Long[] startAddresses = (Long[]) Preset.presets[index][2];
+        Long[] sizes = (Long[]) Preset.presets[index][3];
         for(int i = 0; i < modsType.length; i++) {
             if(plp.g())
                 plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, plp.g_simsh.getSimDesktop());
             else
                 plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, null);
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Loads a preset
+     *
+     * @param preset preset object to load
+     */
+    public static int loadPreset(Preset preset, plptool.gui.ProjectDriver plp) {
+
+        for(int i = 0; i < preset.types.size(); i++) {
+            if(plp.g())
+                plp.ioreg.attachModuleToBus(preset.types.get(i), preset.addresses.get(i), preset.sizes.get(i), plp.sim, plp.g_simsh.getSimDesktop());
+            else
+                plp.ioreg.attachModuleToBus(preset.types.get(i), preset.addresses.get(i), preset.sizes.get(i), plp.sim, null);
         }
 
         return Constants.PLP_OK;
