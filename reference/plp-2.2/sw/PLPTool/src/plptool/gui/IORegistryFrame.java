@@ -358,7 +358,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             plptool.Msg.M("ERROR");
         }
 
-        plp.modified = true;
+        plp.setModified();
         plp.updateComponents();
         plp.g_sim.updateBusTable();
         refreshModulesTable();
@@ -371,8 +371,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             int index = (Integer) tblMods.getModel().getValueAt(tblMods.getSelectedRow(), 1);
             plp.ioreg.removeModule(index);
             refreshModulesTable();
-            plp.modified = true;
-            plp.updateWindowTitle();
+            plp.setModified();
             plp.updateComponents();
             plp.g_sim.updateBusTable();
         }
@@ -380,8 +379,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         plp.ioreg.removeAllModules();
-        plp.modified = true;
-        plp.updateWindowTitle();
+        plp.setModified();
         refreshModulesTable();
         plp.updateComponents();
         plp.g_sim.updateBusTable();
@@ -396,8 +394,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             Long[] sizes = (Long[]) Preset.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
                 plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.g_simsh.getSimDesktop());
-            plp.modified = true;
-            plp.updateWindowTitle();
+            plp.setModified();
             plp.updateComponents();
             plp.g_sim.updateBusTable();
             refreshModulesTable();
@@ -406,18 +403,27 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
 
     private void tblModsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblModsMouseClicked
         try {
+        boolean changed = false;
 
         for(int row = 0; row < tblMods.getRowCount(); row++) {
+            Object frame = plp.ioreg.getModuleFrame(row);
             if((Boolean) tblMods.getModel().getValueAt(row, 5)) {
-                if(plp.ioreg.getModuleFrame(row) != null) {
-                    ((javax.swing.JInternalFrame) plp.ioreg.getModuleFrame(row)).setVisible(true);
+                if(frame != null && frame instanceof javax.swing.JInternalFrame && !((javax.swing.JInternalFrame)frame).isVisible()) {
+                    ((javax.swing.JInternalFrame) frame).setVisible(true);
+                    changed = true;
                 }
             }
             else {
-                if(plp.ioreg.getModuleFrame(row) != null) {
+                if(frame != null && frame instanceof javax.swing.JInternalFrame && ((javax.swing.JInternalFrame)frame).isVisible()) {
                     ((javax.swing.JInternalFrame) plp.ioreg.getModuleFrame(row)).setVisible(false);
+                    changed = true;
                 }
             }
+        }
+
+        if(changed) {
+            plp.setModified();
+            plp.smods = plp.ioreg.createPreset();
         }
 
         } catch(Exception e) {

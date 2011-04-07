@@ -59,7 +59,7 @@ public class ProjectDriver {
      */ // --
 
     public File                                plpfile;
-    public boolean                             modified;
+    private boolean                            modified;
     public int                                 open_asm;
     public String                              curdir;
     private String                             arch;    
@@ -110,6 +110,7 @@ public class ProjectDriver {
     public plptool.gui.SimRunner               g_simrun;   // SimRunner thread
     public plptool.gui.Watcher                 g_watcher;  // Watcher window
     public plptool.gui.ASMSimView              g_asmview;  // ASM Sim viewer
+    public plptool.gui.QuickRef                g_qref;     // Quick Reference
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -145,6 +146,7 @@ public class ProjectDriver {
             this.g_desktop = this.g_simsh.getSimDesktop();
             this.g_about = new AboutBoxDialog(this.g_dev);
             this.g_opts = new OptionsFrame(this);
+            this.g_qref = new QuickRef();
             this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
             
@@ -155,6 +157,8 @@ public class ProjectDriver {
             this.g_simsh.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
                               (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
             this.g_simsh.setLocationRelativeTo(null);
+
+            this.g_qref.setLocationRelativeTo(null);
 
             this.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
             this.g_dev.setVisible(true);
@@ -777,6 +781,23 @@ public class ProjectDriver {
             return Msg.E("Programming failed.\n" + e,
                             Constants.PLP_GENERIC_ERROR, this);
         }
+    }
+
+    /**
+     * Alert the project driver that the project state has been changed and
+     * may need saving.
+     */
+    public void setModified() {
+        modified = true;
+        this.updateWindowTitle();
+    }
+
+    /**
+     *
+     * @return boolean whether the project has been modified since opening
+     */
+    public boolean isModified() {
+        return modified;
     }
 
     /**
