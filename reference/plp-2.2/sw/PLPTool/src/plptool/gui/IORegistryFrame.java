@@ -351,7 +351,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
 
         if(addr != plptool.Constants.PLP_NUMBER_ERROR && size > 0) {
             if(!(Boolean) modInfo[modIndex][4] || (addr % 4 == 0)) {
-                plp.ioreg.attachModuleToBus(modIndex, addr, size, plp.sim, plp.g_simsh.getSimDesktop());
+                plp.ioreg.attachModuleToBus(modIndex, addr, size, plp.g_simsh.getSimDesktop());
                 refreshModulesTable();
             }
         } else {
@@ -369,7 +369,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
                 tblMods.getSelectedRow() > -1)  {
 
             int index = (Integer) tblMods.getModel().getValueAt(tblMods.getSelectedRow(), 1);
-            plp.ioreg.removeModule(index, plp.sim);
+            plp.ioreg.removeModule(index);
             refreshModulesTable();
             plp.modified = true;
             plp.updateWindowTitle();
@@ -379,7 +379,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        plp.ioreg.removeAllModules(plp.sim);
+        plp.ioreg.removeAllModules();
         plp.modified = true;
         plp.updateWindowTitle();
         refreshModulesTable();
@@ -395,7 +395,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             Long[] startAddresses = (Long[]) Preset.presets[index][2];
             Long[] sizes = (Long[]) Preset.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
-                plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, plp.g_simsh.getSimDesktop());
+                plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.g_simsh.getSimDesktop());
             plp.modified = true;
             plp.updateWindowTitle();
             plp.updateComponents();

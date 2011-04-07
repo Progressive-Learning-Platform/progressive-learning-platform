@@ -45,7 +45,7 @@ import javax.swing.tree.*;
  *
  * @author wira
  */
-public class ProjectDriver extends Thread {
+public class ProjectDriver {
 
     public SingleFrameApplication              app;        // App
 
@@ -133,7 +133,7 @@ public class ProjectDriver extends Thread {
         modified = false;
         plpfile = null;
 
-        this.ioreg = new plptool.mods.IORegistry();
+        this.ioreg = new plptool.mods.IORegistry(this);
         this.curdir = (new java.io.File(".")).getAbsolutePath();
         
         if(g) {
@@ -193,7 +193,7 @@ public class ProjectDriver extends Thread {
         asms = new ArrayList<plptool.PLPAsmSource>();
         asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
         open_asm = 0;
-        ioreg = new plptool.mods.IORegistry();
+        smods = null;
 
         meta =  "PLP-2.2\n";
         meta += "START=0x0\n";
@@ -227,7 +227,7 @@ public class ProjectDriver extends Thread {
             asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
         }
         open_asm = 0;
-        ioreg = new plptool.mods.IORegistry();
+        smods = null;
 
         meta =  "PLP-2.2\n";
         meta += "START=0x0\n";
@@ -379,19 +379,22 @@ public class ProjectDriver extends Thread {
                 for(i = 0; i < ioreg.getNumOfModsAttached(); i++) {
                     PLPSimBusModule mod = ioreg.getModule(i);
                     Object xobj_t = ioreg.getModuleFrame(i);
-                    str += ioreg.getType(i) + "::";
-                    str += mod.toString() + "::";
-                    str += mod.startAddr() + "::";
-                    str += ioreg.getRegSize(i) + "::";
+                    str += ioreg.getType(i) + "::";     //0
+                    str += mod.toString() + "::";       //1
+                    str += mod.startAddr() + "::";      //2
+                    str += ioreg.getRegSize(i) + "::";  //3
 
                     if(xobj_t != null && xobj_t instanceof javax.swing.JInternalFrame) {
                         javax.swing.JInternalFrame xobj = (javax.swing.JInternalFrame) xobj_t;
-                        str += "frame::" ;
-                        str += xobj.isVisible() + "::";
-                        str += xobj.getX() + "::";
-                        str += xobj.getY() + "::";
-                        str += xobj.getWidth() + "::";
-                        str += xobj.getHeight();
+                        str += "frame::" ;              //4
+                        str += xobj.isVisible() + "::"; //5
+                        str += xobj.getX() + "::";      //6
+                        str += xobj.getY() + "::";      //7
+                        str += xobj.getWidth() + "::";  //8
+                        str += xobj.getHeight();        //9
+                    }
+                    else {
+                        str += "noframe";
                     }
 
                     str += "\n";
@@ -457,7 +460,7 @@ public class ProjectDriver extends Thread {
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
         asms = new ArrayList<plptool.PLPAsmSource>();
-        ioreg = new plptool.mods.IORegistry();
+        smods = null;
 
         try {
 
@@ -507,7 +510,9 @@ public class ProjectDriver extends Thread {
                 hexstring = new String(image);
             }
 
+            // Restore bus modules states
             else if(entry.getName().equals("plp.simconfig")) {
+                Msg.D("simconfig:\n" + metaStr + "\n", 4, this);
                 String lines[] = metaStr.split("\\r?\\n");
                 int i;
                 this.smods = new plptool.mods.Preset();
@@ -517,9 +522,16 @@ public class ProjectDriver extends Thread {
                         i++;
                         while(i < lines.length && !lines[i].equals("END")) {
                             String tokens[] = lines[i].split("::");
-                            smods.types.add(Integer.parseInt(tokens[0]));
-                            smods.addresses.add(Long.parseLong(tokens[2]));
-                            smods.sizes.add(Long.parseLong(tokens[3]));
+                            if(tokens.length > 4 && tokens[4].equals("noframe"))
+                                smods.addModuleDefinition(Integer.parseInt(tokens[0]),
+                                        Long.parseLong(tokens[2]),
+                                        Long.parseLong(tokens[3]), false, false);
+                            else if(tokens.length > 4)
+                                smods.addModuleDefinition(Integer.parseInt(tokens[0]),
+                                        Long.parseLong(tokens[2]),
+                                        Long.parseLong(tokens[3]), true,
+                                        Boolean.parseBoolean(tokens[5]));
+
                             i++;
                         }
                     }
@@ -691,12 +703,12 @@ public class ProjectDriver extends Thread {
             g_simsh.destroySimulation();
 
         sim = ArchRegistry.createSimCore(this);
-        ioreg = new plptool.mods.IORegistry();
+        ioreg = new plptool.mods.IORegistry(this);
 
         if(smods == null)
-            plptool.mods.IORegistry.loadPredefinedPreset(0, this);
+            ioreg.loadPredefinedPreset(0);
         else if(smods != null)
-            plptool.mods.IORegistry.loadPreset(smods, this);
+            ioreg.loadPreset(smods);
             
         sim.reset();
 
@@ -984,46 +996,6 @@ public class ProjectDriver extends Thread {
 
     @Override
     public String toString() {
-        return "PLP(" + plpfile.getName() + ")";
-    }
-
-    // ******************************************************************
-    // Asynchronous project driver EXPERIMENTAL
-
-    public int command = 0;
-    public String strArg = null;
-    public int intArg = -1;
-    public boolean busy = false;
-
-    @Override
-    public void run() {
-        try {
-        busy = false;
-
-        while(command != -1) {
-
-            this.wait();
-            busy = true;
-            switch(command) {
-                case 1:
-                    this.assemble();
-                    break;
-                case 2:
-                    this.create();
-                    break;
-                case 3:
-                    this.create(strArg);
-                    break;
-            }
-
-            busy = false;
-        }
-
-        Msg.I("ProjectDriver thread exiting", this);
-        
-        } catch(Exception e) {
-            Msg.E("ProjectDriver thread quits unexpectedly",
-                    Constants.PLP_BACKEND_THREAD_EXCEPTION, this);
-        }
+        return "PLP(" + ((plpfile != null) ? plpfile.getName() : "") + ")";
     }
 }
