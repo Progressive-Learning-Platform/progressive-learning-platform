@@ -323,6 +323,43 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuQuickRefActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuManual">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuManual.text"/>
+                <Property name="name" type="java.lang.String" value="menuManual" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuManualActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="jSeparator5" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuIssues">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuIssues.text"/>
+                <Property name="name" type="java.lang.String" value="menuIssues" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuIssuesActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuIssuesPage">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuIssuesPage.text"/>
+                <Property name="name" type="java.lang.String" value="menuIssuesPage" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuIssuesPageActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator6">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="jSeparator6" noResource="true"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuAbout">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuAbout.icon"/>

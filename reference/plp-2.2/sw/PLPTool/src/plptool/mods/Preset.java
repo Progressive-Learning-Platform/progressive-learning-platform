@@ -98,6 +98,22 @@ public class Preset {
         return types.size();
     }
 
+    public int getX(int index) {
+        return frX.get(index);
+    }
+
+    public int getY(int index) {
+        return frY.get(index);
+    }
+
+    public int getW(int index) {
+        return frW.get(index);
+    }
+
+    public int getH(int index) {
+        return frW.get(index);
+    }
+
     public final static Object[][] presets = new Object[][]{
         /**********************************************************************/
         {

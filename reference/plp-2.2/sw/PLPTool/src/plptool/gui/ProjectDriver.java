@@ -376,26 +376,23 @@ public class ProjectDriver {
                 str += "END\n";
             }
 
-            if(ioreg != null && ioreg.getNumOfModsAttached() > 0) {
+            if(smods != null && smods.size() > 0) {
 
                 str += "MODS\n";
 
-                for(i = 0; i < ioreg.getNumOfModsAttached(); i++) {
-                    PLPSimBusModule mod = ioreg.getModule(i);
-                    Object xobj_t = ioreg.getModuleFrame(i);
-                    str += ioreg.getType(i) + "::";     //0
-                    str += mod.toString() + "::";       //1
-                    str += mod.startAddr() + "::";      //2
-                    str += ioreg.getRegSize(i) + "::";  //3
+                for(i = 0; i < smods.size(); i++) {
+                    str += smods.getType(i) + "::";     //0
+                    str +="RESERVED_FIELD::";       //1
+                    str += smods.getAddress(i) + "::";      //2
+                    str += smods.getSize(i) + "::";  //3
 
-                    if(xobj_t != null && xobj_t instanceof javax.swing.JInternalFrame) {
-                        javax.swing.JInternalFrame xobj = (javax.swing.JInternalFrame) xobj_t;
+                    if(smods.getHasFrame(i)) {
                         str += "frame::" ;              //4
-                        str += xobj.isVisible() + "::"; //5
-                        str += xobj.getX() + "::";      //6
-                        str += xobj.getY() + "::";      //7
-                        str += xobj.getWidth() + "::";  //8
-                        str += xobj.getHeight();        //9
+                        str += smods.getVisible(i) + "::"; //5
+                        str += smods.getX(i) + "::";      //6
+                        str += smods.getY(i) + "::";      //7
+                        str += smods.getW(i) + "::";  //8
+                        str += smods.getH(i);        //9
                     }
                     else {
                         str += "noframe";
