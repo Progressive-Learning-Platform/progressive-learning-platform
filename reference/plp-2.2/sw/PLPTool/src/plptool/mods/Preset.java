@@ -21,21 +21,57 @@ package plptool.mods;
 import java.util.ArrayList;
 
 /**
- * Presets for I/O registry.
+ * Presets for I/O registry. This class is used to preserve bus modules
+ * states on the project.
  *
  * @author wira
  */
 public class Preset {
     
-    public ArrayList<Integer> types;
-    public ArrayList<Long> addresses;
-    public ArrayList<Long> sizes;
-
+    private ArrayList<Integer> types;
+    private ArrayList<Long> addresses;
+    private ArrayList<Long> sizes;
+    private ArrayList<Boolean> hasFrame;
+    private ArrayList<Boolean> frameVisible;
 
     public Preset() {
         types = new ArrayList<Integer>();
         addresses = new ArrayList<Long>();
         sizes = new ArrayList<Long>();
+        hasFrame = new ArrayList<Boolean>();
+        frameVisible = new ArrayList<Boolean>();
+    }
+
+    public void addModuleDefinition(int type, long startAddr, long size, boolean frame, boolean visible) {
+        types.add(type);
+        addresses.add(startAddr);
+        sizes.add(size);
+        hasFrame.add(frame);
+        frameVisible.add(visible);
+    }
+
+    public int getType(int index) {
+        return types.get(index);
+    }
+
+    public long getAddress(int index) {
+        return addresses.get(index);
+    }
+
+    public long getSize(int index) {
+        return sizes.get(index);
+    }
+
+    public boolean getHasFrame(int index) {
+        return hasFrame.get(index);
+    }
+
+    public boolean getVisible(int index) {
+        return frameVisible.get(index);
+    }
+
+    public int size() {
+        return types.size();
     }
 
     public final static Object[][] presets = new Object[][]{

@@ -21,6 +21,7 @@ package plptool.mods;
 import plptool.PLPSimCore;
 import plptool.PLPSimBusModule;
 import plptool.Constants;
+import plptool.gui.ProjectDriver;
 import plptool.Msg;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -57,12 +58,17 @@ public class IORegistry {
     /**
      * This list contains the types of the modules
      */
-    private ArrayList<Long> type;
+    private ArrayList<Integer> type;
 
     /**
      * Stores the position of the attached modules in the simulation bus.
      */
     private LinkedList<Integer> positionInBus;
+
+    /**
+     * Reference to current open project
+     */
+    private ProjectDriver plp;
 
     /**********************************************************************
      * Number of modules registered. This constant needs to be incremented
@@ -78,11 +84,12 @@ public class IORegistry {
      * Module developers will have to add their module's information here
      * to be listed in the PLPTool I/O window.
      */
-    public IORegistry() {
+    public IORegistry(ProjectDriver plp) {
         modules = new ArrayList<PLPSimBusModule>();
         moduleFrames = new ArrayList<Object>();
         regSize = new ArrayList<Long>();
-        type = new ArrayList<Long>();
+        type = new ArrayList<Integer>();
+        this.plp = plp;
 
         // We save bus position because the simulation core may already
         // have built-in modules attached
@@ -232,7 +239,7 @@ public class IORegistry {
      * is specified.
      */
     public int attachModuleToBus(int index, long addr, long size,
-                                 PLPSimCore sim, javax.swing.JDesktopPane simDesktop) {
+                                 javax.swing.JDesktopPane simDesktop) {
 
         PLPSimBusModule module = null;
         Object moduleFrame = null;
@@ -288,7 +295,7 @@ public class IORegistry {
             // VGA is summoned
             case 6:
                 moduleFrame = new VGAFrame();
-                module = new VGA(addr, sim.bus, (VGAFrame) moduleFrame);
+                module = new VGA(addr, plp.sim.bus, (VGAFrame) moduleFrame);
                 module.threaded = plptool.Config.threadedModEnabled;
                 module.stop = false;
                 if(module.threaded)
@@ -330,10 +337,11 @@ public class IORegistry {
 
         moduleFrames.add(moduleFrame);
         modules.add(module);
-        type.add(new Long(index));
+        type.add(index);
         regSize.add(size);
         module.enable();
-        positionInBus.add(sim.bus.add(module));
+        positionInBus.add(plp.sim.bus.add(module));
+        plp.smods = this.createPreset();
 
         if(moduleFrame != null && simDesktop != null && moduleFrame instanceof JInternalFrame) {
             simDesktop.add((JInternalFrame) moduleFrame);
@@ -434,7 +442,7 @@ public class IORegistry {
      *
      * @param sim Simulation core that is being run.
      */
-    public void removeAllModules(PLPSimCore sim) {
+    public void removeAllModules() {
         while(!modules.isEmpty()) {
             if(moduleFrames.get(0) != null && moduleFrames.get(0) instanceof JInternalFrame)
                 ((JInternalFrame) moduleFrames.get(0)).dispose();
@@ -446,7 +454,8 @@ public class IORegistry {
             modules.remove(0);
             regSize.remove(0);
             type.remove(0);
-            sim.bus.remove(positionInBus.remove(positionInBus.size() - 1));
+            plp.sim.bus.remove(positionInBus.remove(positionInBus.size() - 1));
+            plp.smods = this.createPreset();
         }
     }
 
@@ -457,13 +466,13 @@ public class IORegistry {
      * @param index Index of the module to be removed.
      * @param sim Simulation core that is being run.
      */
-    public int removeModule(int index, PLPSimCore sim) {
+    public int removeModule(int index) {
         if(index >= modules.size() || index < 0) {
             return Msg.E("removeModule: invalid index:" + index,
                        Constants.PLP_GENERIC_ERROR, null);
         }
 
-        sim.bus.remove(positionInBus.get(index));
+        plp.sim.bus.remove(positionInBus.get(index));
         positionInBus.remove(index);
 
         if(modules.get(index).threaded && modules.get(index).isAlive()) {
@@ -484,6 +493,8 @@ public class IORegistry {
             Integer val = positionInBus.get(i);
             positionInBus.set(i, val - 1);
         }
+
+        plp.smods = this.createPreset();
 
         return Constants.PLP_OK;
     }
@@ -522,7 +533,7 @@ public class IORegistry {
      *
      * @param index Index of the preset
      */
-    public static int loadPredefinedPreset(int index, plptool.gui.ProjectDriver plp) {
+    public int loadPredefinedPreset(int index) {
         if(index >= Preset.presets.length || index < 0)
             return Msg.E("loadPreset: invalid index: " + index,
                             Constants.PLP_GENERIC_ERROR, null);
@@ -532,9 +543,9 @@ public class IORegistry {
         Long[] sizes = (Long[]) Preset.presets[index][3];
         for(int i = 0; i < modsType.length; i++) {
             if(plp.g())
-                plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, plp.g_simsh.getSimDesktop());
+                this.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.g_simsh.getSimDesktop());
             else
-                plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.sim, null);
+                this.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], null);
         }
 
         return Constants.PLP_OK;
@@ -545,15 +556,34 @@ public class IORegistry {
      *
      * @param preset preset object to load
      */
-    public static int loadPreset(Preset preset, plptool.gui.ProjectDriver plp) {
+    public int loadPreset(Preset preset) {
 
-        for(int i = 0; i < preset.types.size(); i++) {
-            if(plp.g())
-                plp.ioreg.attachModuleToBus(preset.types.get(i), preset.addresses.get(i), preset.sizes.get(i), plp.sim, plp.g_simsh.getSimDesktop());
+        for(int i = 0; i < preset.size(); i++) {
+            if(plp.g()) {
+                this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i), plp.g_simsh.getSimDesktop());
+                if(preset.getHasFrame(i))
+                    ((JInternalFrame)moduleFrames.get(i)).setVisible(preset.getVisible(i));
+            }
             else
-                plp.ioreg.attachModuleToBus(preset.types.get(i), preset.addresses.get(i), preset.sizes.get(i), plp.sim, null);
+                this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i), null);
         }
 
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Creates a preset off the currently attached modules
+     */
+    public Preset createPreset() {
+
+        Preset preset = new Preset();
+
+        for(int i = 0; i < modules.size(); i++) {
+            preset.addModuleDefinition(type.get(i), modules.get(i).startAddr(), regSize.get(i), 
+                    (moduleFrames.get(i) != null && (moduleFrames.get(i) instanceof JInternalFrame)),
+                    (moduleFrames.get(i) instanceof JInternalFrame) ? ((JInternalFrame)moduleFrames.get(i)).isVisible() : false);
+        }
+
+        return preset;
     }
 }

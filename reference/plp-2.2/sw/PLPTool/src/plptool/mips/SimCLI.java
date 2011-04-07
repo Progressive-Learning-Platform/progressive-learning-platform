@@ -274,7 +274,7 @@ public class SimCLI {
                 Msg.M("Usage: loadpreset <index>");
             }
             else {
-                plptool.mods.IORegistry.loadPredefinedPreset(PLPToolbox.parseNumInt(tokens[1]), plp);
+                plp.ioreg.loadPredefinedPreset(PLPToolbox.parseNumInt(tokens[1]));
             }
         }
         else if(tokens[0].equals("addmod")) {
@@ -285,7 +285,7 @@ public class SimCLI {
                 ioReg.attachModuleToBus((int) PLPToolbox.parseNum(tokens[1]),
                                         PLPToolbox.parseNum(tokens[2]),
                                         PLPToolbox.parseNum(tokens[3]),
-                                        core, null);
+                                        null);
             }
         }
         else if(tokens[0].equals("rmmod")) {
@@ -293,7 +293,7 @@ public class SimCLI {
                 Msg.M("Usage: rmmod <mod index in the REGISTRY>");
             }
             else {
-                ioReg.removeModule((int) PLPToolbox.parseNum(tokens[1]), core);
+                ioReg.removeModule((int) PLPToolbox.parseNum(tokens[1]));
             }
         }
 
@@ -432,7 +432,7 @@ public class SimCLI {
         String input;
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-        plp.ioreg = new plptool.mods.IORegistry();
+        plp.ioreg = new plptool.mods.IORegistry(plp);
         plp.sim = new SimCore((plptool.mips.Asm) plp.asm, plp.asm.getAddrTable()[0], 0x1000000);
         plp.sim.setStartAddr(plp.asm.getAddrTable()[0]);
         plp.sim.reset();
@@ -447,7 +447,7 @@ public class SimCLI {
         while(!(input = stdIn.readLine().trim()).equals("q"))
            simCLCommand(input, plp);
 
-        plp.ioreg.removeAllModules(plp.sim);
+        plp.ioreg.removeAllModules();
         Msg.M("See ya!");
 
         } catch(Exception e) {
