@@ -248,7 +248,7 @@ public class QuickRef extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Address", "Module"
+                "Address", "I/O Module"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -284,13 +284,12 @@ public class QuickRef extends javax.swing.JFrame {
 
         jScrollPane5.setName("jScrollPane5"); // NOI18N
 
-        tblPseudos.setFont(resourceMap.getFont("tblPseudos.font")); // NOI18N
         tblPseudos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Pseudo-op", "Equivalent Ops"
+                "Usage", "Equiv. Ops"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -304,9 +303,9 @@ public class QuickRef extends javax.swing.JFrame {
         tblPseudos.setName("tblPseudos"); // NOI18N
         jScrollPane5.setViewportView(tblPseudos);
         tblPseudos.getColumnModel().getColumn(0).setResizable(false);
-        tblPseudos.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title0")); // NOI18N
+        tblPseudos.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblPseudos.columnModel.title0")); // NOI18N
         tblPseudos.getColumnModel().getColumn(1).setResizable(false);
-        tblPseudos.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title1")); // NOI18N
+        tblPseudos.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblPseudos.columnModel.title1")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -326,8 +325,8 @@ public class QuickRef extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
                     .addComponent(btnClose)
-                    .addComponent(jScrollPane4, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5)
+                    .addComponent(jScrollPane4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
