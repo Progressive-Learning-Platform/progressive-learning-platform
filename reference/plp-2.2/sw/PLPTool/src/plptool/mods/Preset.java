@@ -33,6 +33,10 @@ public class Preset {
     private ArrayList<Long> sizes;
     private ArrayList<Boolean> hasFrame;
     private ArrayList<Boolean> frameVisible;
+    private ArrayList<Integer> frX;
+    private ArrayList<Integer> frY;
+    private ArrayList<Integer> frW;
+    private ArrayList<Integer> frH;
 
     public Preset() {
         types = new ArrayList<Integer>();
@@ -40,6 +44,22 @@ public class Preset {
         sizes = new ArrayList<Long>();
         hasFrame = new ArrayList<Boolean>();
         frameVisible = new ArrayList<Boolean>();
+        frX = new ArrayList<Integer>();
+        frY = new ArrayList<Integer>();
+        frW = new ArrayList<Integer>();
+        frH = new ArrayList<Integer>();
+    }
+
+    public void addModuleDefinition(int type, long startAddr, long size, boolean frame, boolean visible, int X, int Y, int W, int H) {
+        types.add(type);
+        addresses.add(startAddr);
+        sizes.add(size);
+        hasFrame.add(frame);
+        frameVisible.add(visible);
+        frX.add(X);
+        frY.add(Y);
+        frW.add(W);
+        frH.add(H);
     }
 
     public void addModuleDefinition(int type, long startAddr, long size, boolean frame, boolean visible) {
@@ -48,6 +68,10 @@ public class Preset {
         sizes.add(size);
         hasFrame.add(frame);
         frameVisible.add(visible);
+        frX.add(0);
+        frY.add(0);
+        frW.add(0);
+        frH.add(0);
     }
 
     public int getType(int index) {

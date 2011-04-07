@@ -535,7 +535,7 @@ public class IORegistry {
      */
     public int loadPredefinedPreset(int index) {
         if(index >= Preset.presets.length || index < 0)
-            return Msg.E("loadPreset: invalid index: " + index,
+            return Msg.E("loadPredefinedPreset: invalid index: " + index,
                             Constants.PLP_GENERIC_ERROR, null);
 
         Integer[] modsType = (Integer[]) Preset.presets[index][1];
