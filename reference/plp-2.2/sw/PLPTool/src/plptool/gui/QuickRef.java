@@ -72,15 +72,23 @@ public class QuickRef extends javax.swing.JFrame {
 
         tbl = (DefaultTableModel) tblJType.getModel();
 
-        data = new String[7][2];
+        data = new String[2][2];
 
         data[0][0] = "j     label";             data[0][1] = "PC = label";
         data[1][0] = "jal   label";             data[1][1] = "ra = PC + 4; PC = label";
-        data[2][0] = "nop";                     data[2][1] = "zero << 0";
-        data[3][0] = "b     label";             data[3][1] = "PC = label";
-        data[4][0] = "move  $rd, $rs";          data[4][1] = "rd = rs";
-        data[5][0] = "li    $rd, imm32";        data[5][1] = "rd = imm32";
-        data[6][0] = "li    $rd, label";        data[6][1] = "rd = labelAddr";
+
+        for(int i = 0; i < data.length; i++)
+            tbl.addRow(data[i]);
+
+        tbl = (DefaultTableModel) tblPseudos.getModel();
+
+        data = new String[5][2];
+
+        data[0][0] = "nop";                     data[0][1] = "sll $0, $0, 0";
+        data[1][0] = "b     label";             data[1][1] = "beq $0, $0, label";
+        data[2][0] = "move  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
+        data[3][0] = "li    $rd, imm32";        data[3][1] = "lui $rd, imm32 >> 16; ori $rd, $rd, imm & 0xffff";
+        data[4][0] = "li    $rd, label";        data[4][1] = "lui $rd, label[31:16]; ori $rd, $rd, label[15:0]";
 
         for(int i = 0; i < data.length; i++)
             tbl.addRow(data[i]);
@@ -127,8 +135,10 @@ public class QuickRef extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         tblMemMap = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tblPseudos = new javax.swing.JTable();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(QuickRef.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -260,10 +270,6 @@ public class QuickRef extends javax.swing.JFrame {
         jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
 
-        jLabel5.setIcon(resourceMap.getIcon("jLabel5.icon")); // NOI18N
-        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
-        jLabel5.setName("jLabel5"); // NOI18N
-
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
         btnClose.addActionListener(new java.awt.event.ActionListener() {
@@ -271,6 +277,36 @@ public class QuickRef extends javax.swing.JFrame {
                 btnCloseActionPerformed(evt);
             }
         });
+
+        jLabel5.setFont(resourceMap.getFont("jLabel5.font")); // NOI18N
+        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setName("jLabel5"); // NOI18N
+
+        jScrollPane5.setName("jScrollPane5"); // NOI18N
+
+        tblPseudos.setFont(resourceMap.getFont("tblPseudos.font")); // NOI18N
+        tblPseudos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Pseudo-op", "Equivalent Ops"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblPseudos.setName("tblPseudos"); // NOI18N
+        jScrollPane5.setViewportView(tblPseudos);
+        tblPseudos.getColumnModel().getColumn(0).setResizable(false);
+        tblPseudos.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title0")); // NOI18N
+        tblPseudos.getColumnModel().getColumn(1).setResizable(false);
+        tblPseudos.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title1")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -283,17 +319,16 @@ public class QuickRef extends javax.swing.JFrame {
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnClose)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                        .addComponent(jLabel5))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(btnClose)
+                    .addComponent(jScrollPane4, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,10 +338,10 @@ public class QuickRef extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -316,10 +351,12 @@ public class QuickRef extends javax.swing.JFrame {
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(btnClose))))
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnClose)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -348,9 +385,11 @@ public class QuickRef extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTable tblIType;
     private javax.swing.JTable tblJType;
     private javax.swing.JTable tblMemMap;
+    private javax.swing.JTable tblPseudos;
     private javax.swing.JTable tblRType;
     // End of variables declaration//GEN-END:variables
 

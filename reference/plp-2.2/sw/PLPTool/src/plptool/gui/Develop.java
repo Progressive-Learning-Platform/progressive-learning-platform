@@ -19,7 +19,9 @@
 package plptool.gui;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import javax.swing.tree.*;
+import java.net.URI;
 
 import java.io.File;
 
@@ -556,6 +558,11 @@ public class Develop extends javax.swing.JFrame {
         menuSetMainProgram = new javax.swing.JMenuItem();
         rootmenuHelp = new javax.swing.JMenu();
         menuQuickRef = new javax.swing.JMenuItem();
+        menuManual = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        menuIssues = new javax.swing.JMenuItem();
+        menuIssuesPage = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
         menuAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -1058,6 +1065,39 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuHelp.add(menuQuickRef);
 
+        menuManual.setText(resourceMap.getString("menuManual.text")); // NOI18N
+        menuManual.setName("menuManual"); // NOI18N
+        menuManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuManualActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuManual);
+
+        jSeparator5.setName("jSeparator5"); // NOI18N
+        rootmenuHelp.add(jSeparator5);
+
+        menuIssues.setText(resourceMap.getString("menuIssues.text")); // NOI18N
+        menuIssues.setName("menuIssues"); // NOI18N
+        menuIssues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuIssuesActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuIssues);
+
+        menuIssuesPage.setText(resourceMap.getString("menuIssuesPage.text")); // NOI18N
+        menuIssuesPage.setName("menuIssuesPage"); // NOI18N
+        menuIssuesPage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuIssuesPageActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuIssuesPage);
+
+        jSeparator6.setName("jSeparator6"); // NOI18N
+        rootmenuHelp.add(jSeparator6);
+
         menuAbout.setIcon(resourceMap.getIcon("menuAbout.icon")); // NOI18N
         menuAbout.setText(resourceMap.getString("menuAbout.text")); // NOI18N
         menuAbout.setName("menuAbout"); // NOI18N
@@ -1296,6 +1336,36 @@ public class Develop extends javax.swing.JFrame {
         plp.g_qref.setVisible(true);
     }//GEN-LAST:event_menuQuickRefActionPerformed
 
+    private void menuManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuManualActionPerformed
+        Desktop desktop = Desktop.getDesktop();
+        if(desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                URI uri = new URI(Constants.manualURI);
+                desktop.browse(uri);
+            } catch(Exception e) {}
+        }
+    }//GEN-LAST:event_menuManualActionPerformed
+
+    private void menuIssuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuIssuesActionPerformed
+        Desktop desktop = Desktop.getDesktop();
+        if(desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                URI uri = new URI(Constants.issueEntryURI);
+                desktop.browse(uri);
+            } catch(Exception e) {}
+        }
+    }//GEN-LAST:event_menuIssuesActionPerformed
+
+    private void menuIssuesPageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuIssuesPageActionPerformed
+        Desktop desktop = Desktop.getDesktop();
+        if(desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                URI uri = new URI(Constants.issueTrackerURI);
+                desktop.browse(uri);
+            } catch(Exception e) {}
+        }
+    }//GEN-LAST:event_menuIssuesPageActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -1384,6 +1454,8 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
@@ -1395,6 +1467,9 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuFind;
     private javax.swing.JMenuItem menuFindAndReplace;
     private javax.swing.JMenuItem menuImportASM;
+    private javax.swing.JMenuItem menuIssues;
+    private javax.swing.JMenuItem menuIssuesPage;
+    private javax.swing.JMenuItem menuManual;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuNewASM;
     private javax.swing.JMenuItem menuOpen;

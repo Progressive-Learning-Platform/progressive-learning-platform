@@ -28,6 +28,9 @@ public class Constants {
             "PLP Java Tool version " + versionString + "\n" +
             "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
             "This software is licensed under GPLv3.";
+    public static final String manualURI = "http://code.google.com/p/progressive-learning-platform/wiki/UserManual";
+    public static final String issueEntryURI = "http://code.google.com/p/progressive-learning-platform/issues/entry";
+    public static final String issueTrackerURI = "http://code.google.com/p/progressive-learning-platform/issues/list";
 
     public static int debugLevel = 0;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
