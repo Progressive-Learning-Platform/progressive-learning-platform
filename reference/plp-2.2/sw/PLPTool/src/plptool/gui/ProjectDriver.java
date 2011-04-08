@@ -789,6 +789,11 @@ public class ProjectDriver {
         this.updateWindowTitle();
     }
 
+    public void setUnModified() {
+        modified = false;
+        this.updateWindowTitle();
+    }
+
     /**
      *
      * @return boolean whether the project has been modified since opening
