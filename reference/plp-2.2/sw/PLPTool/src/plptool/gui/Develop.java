@@ -22,6 +22,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.awt.Desktop;
 import javax.swing.tree.*;
+import javax.swing.SwingUtilities;
 import java.net.URI;
 
 import java.io.File;
@@ -101,16 +102,13 @@ public class Develop extends javax.swing.JFrame {
 
         txtEditor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                if(undoManager.can_undo())
-                    notifyplpModified();
+                notifyplpModified();
             }
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                if(undoManager.can_undo())
-                    notifyplpModified();
+                notifyplpModified();
             }
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                if(undoManager.can_undo())
-                    notifyplpModified();
+                notifyplpModified();
             }
         });
 
@@ -141,12 +139,6 @@ public class Develop extends javax.swing.JFrame {
     public void notifyplpModified() {
         if(trackChanges) {
             plp.setModified();
-        }
-    }
-
-    public void notifyplpUnModified() {
-        if(trackChanges) {
-            plp.setUnModified();
         }
     }
 
@@ -1225,30 +1217,36 @@ public class Develop extends javax.swing.JFrame {
                 //System.out.println("Tried to add " + undoManager.undo_text() + " at " + undoManager.undo_location());
                 try {
                     doc.insertString(undoManager.undo_location(),undoManager.undo_text(), def);
-                    
+                    if(undoManager.undo_location() > -1) {
+                        txtEditor.setCaretPosition(undoManager.undo_location());
+                    }
+                    undoManager.undone();
+
                     int line1 = txtEditor.getText().substring(0, undoManager.undo_location()).split("\\r?\\n").length;
                     int line2 = txtEditor.getText().substring(0, undoManager.undo_location()+undoManager.undo_text().length()).split("\\r?\\n").length;
                     for(int i=line1;i<=line2; i++) {
                         syntaxHighlight(i);
                     }
                 } catch (BadLocationException ble) {
-                    System.err.println("Insertion error   position:" + undoManager.undo_location());
+                    //System.err.println("Insertion error   position:" + undoManager.undo_location());
                 }
             } else {
-                //System.out.println("Tried to remove " + undoManager.undo_text() + " at " + undoManager.undo_location());
-                try {
-                    doc.remove(undoManager.undo_location(),undoManager.undo_text().length());
-                } catch (BadLocationException ble) {
-                    System.err.println("Deletion error   position:" + undoManager.undo_location() + "," + undoManager.undo_text().length());
+                if(undoManager.undo_text().equals("\n")){
+                    undoManager.undone();
+                }
+                if(undoManager.can_undo()) {
+                    //System.out.println("Tried to remove " + undoManager.undo_text() + " at " + undoManager.undo_location());
+                    try {
+                        doc.remove(undoManager.undo_location(),undoManager.undo_text().length());
+                    } catch (BadLocationException ble) {
+                        //System.err.println("Deletion error   position:" + undoManager.undo_location() + "," + undoManager.undo_text().length());
+                    }
+                    if(undoManager.undo_location() > -1) {
+                        txtEditor.setCaretPosition(undoManager.undo_location());
+                    }
+                    undoManager.undone();
                 }
             }
-
-            if(undoManager.undo_location() > -1) {
-                txtEditor.setCaretPosition(undoManager.undo_location());
-            }
-            undoManager.undone();
-           if(!undoManager.can_undo())
-               notifyplpUnModified();
         }
     }//GEN-LAST:event_menuUndoActionPerformed
 
@@ -1270,18 +1268,27 @@ public class Develop extends javax.swing.JFrame {
                 } catch (BadLocationException ble) {
                     System.err.println("Insertion error   position:" + undoManager.redo_location());
                 }
+                if(undoManager.redo_location() > -1) {
+                        txtEditor.setCaretPosition(undoManager.redo_location());
+                    }
+                undoManager.redone();
             } else {
-                //System.out.println("Tried to remove " + undoManager.redo_text() + "at " + undoManager.redo_location());
-                try {
-                    doc.remove(undoManager.redo_location(),undoManager.redo_text().length());
-                } catch (BadLocationException ble) {
-                    System.err.println("Deletion error   position:" + undoManager.redo_location() + "," + undoManager.redo_text().length());
+                if(undoManager.redo_text().equals("\n")){
+                    undoManager.redone();
+                }
+                if(undoManager.can_redo()) {
+                    //System.out.println("Tried to remove " + undoManager.redo_text() + "at " + undoManager.redo_location());
+                    try {
+                        doc.remove(undoManager.redo_location(),undoManager.redo_text().length());
+                    } catch (BadLocationException ble) {
+                        System.err.println("Deletion error   position:" + undoManager.redo_location() + "," + undoManager.redo_text().length());
+                    }
+                    if(undoManager.redo_location() > -1) {
+                        txtEditor.setCaretPosition(undoManager.redo_location());
+                    }
+                    undoManager.redone();
                 }
             }
-            if(undoManager.redo_location() > -1) {
-                txtEditor.setCaretPosition(undoManager.redo_location());
-            }
-            undoManager.redone();
         }
     }//GEN-LAST:event_menuRedoActionPerformed
 
@@ -1387,7 +1394,6 @@ public class Develop extends javax.swing.JFrame {
             }
 
         }
-
 
         if(Config.cfgSyntaxHighlighting) {
             int caretPos = txtEditor.getCaretPosition();
