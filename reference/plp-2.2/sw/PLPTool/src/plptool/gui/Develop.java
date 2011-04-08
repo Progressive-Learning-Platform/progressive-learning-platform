@@ -1054,6 +1054,49 @@ public class Develop extends javax.swing.JFrame {
             }
         });
 
+        menuQuickRef.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        menuQuickRef.setText(resourceMap.getString("menuQuickRef.text")); // NOI18N
+        menuQuickRef.setName("menuQuickRef"); // NOI18N
+        menuQuickRef.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuQuickRefActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuQuickRef);
+
+        menuManual.setText(resourceMap.getString("menuManual.text")); // NOI18N
+        menuManual.setName("menuManual"); // NOI18N
+        menuManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuManualActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuManual);
+
+        jSeparator5.setName("jSeparator5"); // NOI18N
+        rootmenuHelp.add(jSeparator5);
+
+        menuIssues.setText(resourceMap.getString("menuIssues.text")); // NOI18N
+        menuIssues.setName("menuIssues"); // NOI18N
+        menuIssues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuIssuesActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuIssues);
+
+        menuIssuesPage.setText(resourceMap.getString("menuIssuesPage.text")); // NOI18N
+        menuIssuesPage.setName("menuIssuesPage"); // NOI18N
+        menuIssuesPage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuIssuesPageActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuIssuesPage);
+
+        jSeparator6.setName("jSeparator6"); // NOI18N
+        rootmenuHelp.add(jSeparator6);
+
         menuAbout.setIcon(resourceMap.getIcon("menuAbout.icon")); // NOI18N
         menuAbout.setText(resourceMap.getString("menuAbout.text")); // NOI18N
         menuAbout.setName("menuAbout"); // NOI18N
