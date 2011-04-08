@@ -33,5 +33,4 @@ public class PlpUndoManager extends javax.swing.undo.UndoManager{
             }
             return false;
     }
-
 }
