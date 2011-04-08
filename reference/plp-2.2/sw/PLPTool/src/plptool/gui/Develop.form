@@ -379,7 +379,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="485" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="478" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -454,11 +454,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" alignment="0" pref="664" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" alignment="0" pref="663" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="468" max="32767" attributes="0"/>
+                              <EmptySpace pref="434" max="32767" attributes="0"/>
                               <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -472,7 +472,7 @@
                                   <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane3" pref="362" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="301" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

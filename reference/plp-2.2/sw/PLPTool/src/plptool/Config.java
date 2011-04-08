@@ -45,6 +45,8 @@ public class Config {
     public static boolean nothighlighting                  = true;
     public static int filetoolarge                         = 1000;
 
+    public static int maxUndoLength                        = 20;
+
     public static long    cfgDefaultRAMSize                = 0x1000000;
 
     public static String  devFont                          = "Monospaced";
