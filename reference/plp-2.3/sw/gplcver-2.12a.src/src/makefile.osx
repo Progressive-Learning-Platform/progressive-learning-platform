@@ -1,0 +1,147 @@
+#
+# makefile for Linux
+#
+# by default things get put into directories one level up from src directory
+# and all rules are literal and per file so primitive makes will work
+#
+# this is good starting point for porting to other systems
+#
+
+# define location flags
+INCS=-I../pli_incs
+OBJS=../objs
+BIN=../bin
+
+# you can replace dummy main with your more complicated main
+MAINOBJ=$(OBJS)/dig_main.o
+
+# define list of object files explictly - if add must update list
+CVER_OBJS=$(OBJS)/cver.o $(OBJS)/v_src.o $(OBJS)/v_src2.o $(OBJS)/v_src3.o \
+$(OBJS)/v_fx.o $(OBJS)/v_fx2.o $(OBJS)/v_fx3.o $(OBJS)/v_cnv.o \
+$(OBJS)/v_ex.o $(OBJS)/v_ex2.o $(OBJS)/v_ex3.o $(OBJS)/v_ex4.o \
+$(OBJS)/v_trch.o $(OBJS)/v_del.o $(OBJS)/v_sdf.o $(OBJS)/v_prp.o \
+$(OBJS)/v_prp2.o $(OBJS)/v_sim.o $(OBJS)/v_dbg.o $(OBJS)/v_dbg2.o \
+$(OBJS)/v_ms.o $(OBJS)/v_tf.o $(OBJS)/v_acc.o $(OBJS)/v_vpi.o \
+$(OBJS)/v_vpi2.o $(OBJS)/v_vpi3.o 
+
+# define compilation flags
+WARNS=-Wall
+# omit frame pointer option needed for 25% speed improvment
+OPTFLGS=-fno-strength-reduce -fomit-frame-pointer
+# use this option for current Apple systems
+ARCHFLGS= -mcpu=powerpc
+
+# select one of the sets of C flags - comment out others
+
+# cflags when making optimized cver
+CFLAGS= $(ARCHFLGS) -pipe $(WARNS) $(INCS) $(OPTFLGS) -O2 
+
+# cflags when making -g debugging version 
+# CFLAGS= $(ARCHFLGS) -pipe $(WARNS) $(INCS) -g
+
+# change gcc version if needed 
+CC=cc
+
+# select loader
+LD=ld
+# needed for dynamic PLI loading
+LFLAGS=--export-dynamic
+
+# system libs
+LIBS= -lm -ldl
+
+# rule for making the cver binary
+cver:	$(MAINOBJ) $(CVER_OBJS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(MAINOBJ) $(CVER_OBJS) \
+	$(LIBS) -o $(BIN)/cver
+
+$(OBJS):	v.h systsks.h cvmacros.h 
+
+$(OBJS)/dig_main.o:	dig_main.c
+	$(CC) $(CFLAGS) -o $(OBJS)/dig_main.o -c dig_main.c
+
+# when adding source files need lines here - insures right c files used
+$(OBJS)/cver.o:	cver.c
+	$(CC) $(CFLAGS) -o $(OBJS)/cver.o -c cver.c
+
+$(OBJS)/v_src.o:	v_src.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_src.o -c v_src.c
+
+$(OBJS)/v_src2.o:	v_src2.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_src2.o -c v_src2.c
+
+$(OBJS)/v_src3.o:	v_src3.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_src3.o -c v_src3.c
+
+$(OBJS)/v_fx.o:	v_fx.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_fx.o -c v_fx.c
+
+$(OBJS)/v_fx2.o:	v_fx2.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_fx2.o -c v_fx2.c
+
+$(OBJS)/v_fx3.o:	v_fx3.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_fx3.o -c v_fx3.c
+
+$(OBJS)/v_cnv.o:	v_cnv.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_cnv.o -c v_cnv.c
+
+$(OBJS)/v_ex.o:	v_ex.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_ex.o -c v_ex.c
+
+$(OBJS)/v_ex2.o:	v_ex2.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_ex2.o -c v_ex2.c
+
+$(OBJS)/v_ex3.o:	v_ex3.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_ex3.o -c v_ex3.c
+
+$(OBJS)/v_ex4.o:	v_ex4.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_ex4.o -c v_ex4.c
+
+$(OBJS)/v_trch.o:	v_trch.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_trch.o -c v_trch.c
+
+$(OBJS)/v_del.o:	v_del.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_del.o -c v_del.c
+
+$(OBJS)/v_sdf.o:	v_sdf.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_sdf.o -c v_sdf.c
+
+$(OBJS)/v_prp.o:	v_prp.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_prp.o -c v_prp.c
+
+$(OBJS)/v_prp2.o:	v_prp2.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_prp2.o -c v_prp2.c
+
+$(OBJS)/v_sim.o:	v_sim.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_sim.o -c v_sim.c
+
+$(OBJS)/v_dbg.o:	v_dbg.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_dbg.o -c v_dbg.c
+
+$(OBJS)/v_dbg2.o:	v_dbg2.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_dbg2.o -c v_dbg2.c
+
+$(OBJS)/v_ms.o:	v_ms.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_ms.o -c v_ms.c
+
+$(OBJS)/v_tf.o:	v_tf.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_tf.o -c v_tf.c
+
+$(OBJS)/v_vpi.o:	v_vpi.c 
+	$(CC) $(CFLAGS) -o $(OBJS)/v_vpi.o -c v_vpi.c
+
+$(OBJS)/v_vpi2.o:	v_vpi2.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_vpi2.o -c v_vpi2.c 
+
+$(OBJS)/v_vpi3.o:	v_vpi3.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_vpi3.o -c v_vpi3.c 
+
+$(OBJS)/v_acc.o:	v_acc.c
+	$(CC) $(CFLAGS) -o $(OBJS)/v_acc.o -c v_acc.c 
+
+all:	cver
+	echo "done"
+
+# no make clean - just erase all .o files and binary
+clean:
+	rm -f $(OBJS)/*.o $(BIN)/cver

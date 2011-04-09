@@ -1,0 +1,22 @@
+# Make file for creating a vfopen1 VPI PLI function DLL
+#
+
+SHELL=/bin/bash
+
+CC=gcc
+CVER=../../objs/cver
+
+DLLSRCS=vfopen1.c
+DLLOBJS=vfopen1.o
+VSRCS=vfopen1.v
+
+dll: $(DLLOBJS)
+	$(CC) -shared -o libvfopen1.dll -Wl,--out-implib=libvfopen1.dll.a \
+		-Wl,--export-all -Wl,--enable-auto-image-base \
+		-Wl,--export-dynamic -Wl,--output-def=libvfopen1.def $(DLLOBJS) -lcver
+
+run: libvfopen1.dll
+	$(CVER) -q +loadvpi=./libvfopen1.dll:vpi_compat_bootstrap $(VSRCS)
+
+.c.o: $(DLLSRCS)
+	$(CC) -c -I./ -I../../pli_incs $<
