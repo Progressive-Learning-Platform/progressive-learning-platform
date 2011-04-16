@@ -516,12 +516,11 @@ public class ProjectDriver {
                 Msg.D("simconfig:\n" + metaStr + "\n", 4, this);
                 String lines[] = metaStr.split("\\r?\\n");
                 int i;
+                this.smods = new plptool.mods.Preset();
 
                 for(i = 0; i < lines.length; i++) {
                     if(lines[i].equals("MODS")) {
                         i++;
-                        this.smods = new plptool.mods.Preset();
-
                         while(i < lines.length && !lines[i].equals("END")) {
                             String tokens[] = lines[i].split("::");
                             if(tokens.length > 4 && tokens[4].equals("noframe"))
@@ -787,11 +786,6 @@ public class ProjectDriver {
      */
     public void setModified() {
         modified = true;
-        this.updateWindowTitle();
-    }
-
-    public void setUnModified() {
-        modified = false;
         this.updateWindowTitle();
     }
 

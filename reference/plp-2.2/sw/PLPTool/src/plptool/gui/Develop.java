@@ -138,8 +138,7 @@ public class Develop extends javax.swing.JFrame {
 
     public void notifyplpModified() {
         if(trackChanges) {
-            if(Config.nothighlighting)
-                plp.setModified();
+            plp.setModified();
         }
     }
 
@@ -386,7 +385,6 @@ public class Develop extends javax.swing.JFrame {
     }
 
     private void syntaxHighlight() {
-        Config.nothighlighting = false;
         int currpos = 0;
         int doclength = txtEditor.getText().split("\\r?\\n").length;
         for(int i=0;i<doclength;i++) {
@@ -394,11 +392,9 @@ public class Develop extends javax.swing.JFrame {
             syntaxHighlight(currline, currpos, styles);
             currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
         }
-        Config.nothighlighting = true;
     }
 
     public void syntaxHighlight(int line) {
-        Config.nothighlighting = false;
         try {
             String currline = txtEditor.getText().split("\\r?\\n")[line];
             int currpos = 0;
@@ -408,7 +404,6 @@ public class Develop extends javax.swing.JFrame {
             syntaxHighlight(currline, currpos, setupHighlighting());
         } catch (java.lang.ArrayIndexOutOfBoundsException aioobe) {
         }
-        Config.nothighlighting = true;
     }
 
     //Do not call this class without setting highlighting to true
@@ -1444,11 +1439,9 @@ public class Develop extends javax.swing.JFrame {
         }
 
         if(Config.cfgSyntaxHighlighting) {
-            Config.nothighlighting = false;
             int caretPos = txtEditor.getCaretPosition();
             syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
             txtEditor.setCaretPosition(caretPos);
-            Config.nothighlighting = true;
         }
     }//GEN-LAST:event_txtEditorKeyTyped
 
