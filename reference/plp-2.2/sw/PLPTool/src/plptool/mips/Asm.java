@@ -452,8 +452,7 @@ public class Asm extends plptool.PLPAsm {
                 String tString[] = asmLines[i - 1].split("[ ]+", 2);
 
                 Msg.D("l: " + tString.length + " :" + tString[tString.length - 1], 5, this);
-
-                // strip quotes
+                
                 if(tString[1].charAt(0) == '\"') {
                     tString[1] = tString[1].substring(1, tString[1].length());
 
@@ -467,16 +466,13 @@ public class Asm extends plptool.PLPAsm {
                 }
                 Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
 
-                // check if we need to append a null character for .asciiz ...
                 int strLen = tString[1].length() + ((asmTokens[0].equals(".asciiz")) ? 1 : 0);
 
-                // ... and go ahead and do that if we do
                 if(strLen > tString[1].length())
                     tString[1] += '\0';
 
                 Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
 
-                // pad with zeroes if we the string length is not word-aligned
                 if(strLen % 4 != 0) {
                     strLen = strLen + 4 - (strLen % 4);
                     
@@ -484,14 +480,12 @@ public class Asm extends plptool.PLPAsm {
                         tString[1] += '\0';
                 }
 
-                // add ASM__WORD__ 2nd pass directives and we're done
                 for(j = 0; j < strLen; j++) {
                     if(j % 4 == 0)
                         appendPreprocessedAsm("ASM__WORD__ 0x", i, false);
 
                     appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
 
-                    // advance address on every 4th byte (on next iteration)
                     if((j + 1) % 4 == 0 && j > 0) {
                         regionMap.add(curRegion);
                         curAddr += 4;
@@ -613,7 +607,7 @@ public class Asm extends plptool.PLPAsm {
             Msg.D("assemble(file " + SourceList.get(asmFileMap[i]).getAsmFilePath() +
                      " line " + lineNumMap[i]  + "): " + asmLines[i], 4, this);
 
-            // resolve symbols ($_hi and $_lo directives from 1st pass)
+            // resolve symbols
             String tSymbol;
             int   tValue = 0;
 

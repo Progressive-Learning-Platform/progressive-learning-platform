@@ -88,6 +88,17 @@ public class PLPToolApp extends SingleFrameApplication {
                 args = new String[0];
         }
 
+        if(args.length >= 2 && args[0].equals("-x")) {
+            plptool.Config.devFontSize = Integer.parseInt(args[1]);
+            System.out.println("Classroom Demo Mode");
+            if(args.length > 2) {
+                String[] newargs = new String[args.length - 2];
+                System.arraycopy(args, 2, newargs, 0, newargs.length);
+                args = newargs;
+            } else
+                args = new String[0];
+        }
+
         if(Constants.debugLevel >= 1)
             plptool.PLPToolbox.getOS(true);
 
