@@ -24,7 +24,6 @@ public class SwitchesFrame extends javax.swing.JInternalFrame {
         this.module = module;
         initComponents();
         txtAddress.setText(String.format("0x%08x", module.startAddr()));
-        eval();
     }
 
     private void eval() {

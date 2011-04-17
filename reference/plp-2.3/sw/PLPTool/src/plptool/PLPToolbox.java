@@ -18,6 +18,8 @@
 
 package plptool;
 
+import java.awt.event.ActionEvent;
+
 /**
  *
  * @author wira
@@ -101,5 +103,29 @@ public class PLPToolbox {
         }
 
         return Constants.PLP_OS_UNKNOWN;
+    }
+
+    public static void attachHideOnEscapeListener(final javax.swing.JFrame frame) {
+        javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
+        javax.swing.Action escapeAction = new javax.swing.AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+               frame.setVisible(false);
+            }
+        };
+
+        frame.getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+        frame.getRootPane().getActionMap().put("ESCAPE", escapeAction);
+    }
+
+    public static void attachHideOnEscapeListener(final javax.swing.JDialog frame) {
+        javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
+        javax.swing.Action escapeAction = new javax.swing.AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+               frame.setVisible(false);
+            }
+        };
+
+        frame.getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+        frame.getRootPane().getActionMap().put("ESCAPE", escapeAction);
     }
 }

@@ -31,6 +31,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
         outText += "plpfile: " + plp.plpfile + "\n";
         outText += "arch: " + plp.getArch() + "\n";
         out.setText(outText);
+        plptool.Msg.outputs.add(out);
     }
 
     /** This method is called from within the constructor to
@@ -43,8 +44,8 @@ public class ConsoleFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         cmd = new javax.swing.JTextField();
-        scrOut = new javax.swing.JScrollPane();
-        out = new javax.swing.JTextArea();
+        jscroll = new javax.swing.JScrollPane();
+        out = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ConsoleFrame.class);
@@ -64,32 +65,24 @@ public class ConsoleFrame extends javax.swing.JFrame {
             }
         });
 
-        scrOut.setBorder(null);
-        scrOut.setName("scrOut"); // NOI18N
+        jscroll.setName("jscroll"); // NOI18N
 
-        out.setBackground(resourceMap.getColor("out.background")); // NOI18N
-        out.setColumns(20);
-        out.setFont(resourceMap.getFont("out.font")); // NOI18N
-        out.setForeground(resourceMap.getColor("out.foreground")); // NOI18N
-        out.setLineWrap(true);
-        out.setRows(5);
-        out.setBorder(null);
         out.setName("out"); // NOI18N
-        scrOut.setViewportView(out);
+        jscroll.setViewportView(out);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
             .addComponent(cmd, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+            .addComponent(jscroll, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(cmd, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrOut, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
+                .addComponent(jscroll, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
         );
 
         pack();
@@ -110,10 +103,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     cmd.setBackground(Color.white);
                     cmd.setForeground(Color.black);
                 } else {
-                    javax.swing.JTextArea lastOutput = plptool.Msg.output;
-                    plptool.Msg.output = this.out;
                     plptool.mips.SimCLI.simCLCommand(command, plp);
-                    plptool.Msg.output = lastOutput;
                     if(asmexplorer != null) asmexplorer.updateTable();
                     if(plp.g_sim != null) plp.g_sim.updateComponents();
                     if(plp.g_simsh != null) plp.updateComponents();
@@ -165,7 +155,6 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     asmexplorer = new ASMExplorer(plp);
                 }
 
-                plptool.Msg.output = this.out;
                 plp.sim = new plptool.mips.SimCore((plptool.mips.Asm) plp.asm, plp.asm.getAddrTable()[0], -1L);
                 plp.sim.reset();
 
@@ -227,8 +216,8 @@ public class ConsoleFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cmd;
-    private javax.swing.JTextArea out;
-    private javax.swing.JScrollPane scrOut;
+    private javax.swing.JScrollPane jscroll;
+    private javax.swing.JTextPane out;
     // End of variables declaration//GEN-END:variables
 
 }

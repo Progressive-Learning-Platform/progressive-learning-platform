@@ -26,8 +26,8 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="scrOut" alignment="0" pref="389" max="32767" attributes="0"/>
           <Component id="cmd" alignment="0" pref="389" max="32767" attributes="0"/>
+          <Component id="jscroll" alignment="0" pref="389" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -35,7 +35,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="cmd" min="-2" pref="26" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="scrOut" pref="122" max="32767" attributes="0"/>
+              <Component id="jscroll" pref="122" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -59,12 +59,9 @@
         <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="cmdKeyPressed"/>
       </Events>
     </Component>
-    <Container class="javax.swing.JScrollPane" name="scrOut">
+    <Container class="javax.swing.JScrollPane" name="jscroll">
       <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="null"/>
-        </Property>
-        <Property name="name" type="java.lang.String" value="scrOut" noResource="true"/>
+        <Property name="name" type="java.lang.String" value="jscroll" noResource="true"/>
       </Properties>
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -72,17 +69,8 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextArea" name="out">
+        <Component class="javax.swing.JTextPane" name="out">
           <Properties>
-            <Property name="background" type="java.awt.Color" resourceKey="out.background"/>
-            <Property name="columns" type="int" value="20"/>
-            <Property name="font" type="java.awt.Font" resourceKey="out.font"/>
-            <Property name="foreground" type="java.awt.Color" resourceKey="out.foreground"/>
-            <Property name="lineWrap" type="boolean" value="true"/>
-            <Property name="rows" type="int" value="5"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="null"/>
-            </Property>
             <Property name="name" type="java.lang.String" value="out" noResource="true"/>
           </Properties>
         </Component>

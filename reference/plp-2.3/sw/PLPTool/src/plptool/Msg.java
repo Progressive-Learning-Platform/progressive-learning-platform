@@ -18,7 +18,12 @@
 
 package plptool;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  * PLPTool messaging utility class.
@@ -28,9 +33,14 @@ import javax.swing.JTextArea;
 public class Msg {
 
     /**
-     * JTextArea Msg should print its output to.
+     * JTextPane Msg should print its output to.
      */
-    public static JTextArea output = null;
+    public static JTextPane output = null;
+
+    /**
+     * Aux outputs
+     */
+    public static ArrayList<JTextPane> outputs = new ArrayList<JTextPane>();
 
     /**
      * Last object that was responsible for invoking an Error messsage.
@@ -66,15 +76,15 @@ public class Msg {
             if(output == null)
                 System.out.println("[ERROR] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
             else {
-                output.append("[ERROR] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr + "\n");
-                output.setCaretPosition(output.getText().length() - 1);
+                append("[ERROR] ", true, Color.RED);
+                append("#" + errorCode + " " + objIdentifier.toString() + ": " + errStr + "\n");
             }
         else
             if(output == null)
                 System.out.println("[ERROR] #" + errorCode + " " + errStr);
             else {
-                output.append("[ERROR] #" + errorCode + " " + errStr + "\n");
-                output.setCaretPosition(output.getText().length() - 1);
+                append("[ERROR] ", true, Color.RED);
+                append("#" + errorCode + " " + errStr + "\n");
             }
 
         lastError = errorCode;
@@ -94,15 +104,15 @@ public class Msg {
             if(output == null)
                 System.out.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr);
             else {
-                output.append("[WARNING] " + objIdentifier.toString() + ": " + warningStr + "\n");
-                output.setCaretPosition(output.getText().length() - 1);
+                append("[WARNING] ", true, Color.RED);
+                append(objIdentifier.toString() + ": " + warningStr + "\n");
             }
         else
             if(output == null)
                 System.out.println("[WARNING] " + warningStr);
             else {
-                output.append("[WARNING] " + warningStr + "\n");
-                output.setCaretPosition(output.getText().length() - 1);
+                append("[WARNING] ", true, Color.RED);
+                append(warningStr + "\n");
             }
     }
 
@@ -117,15 +127,13 @@ public class Msg {
             if(output == null)
                 System.out.println(objIdentifier.toString() + ": " + infoStr);
             else {
-                output.append(objIdentifier.toString() + ": " + infoStr + "\n");
-                output.setCaretPosition(output.getText().length() - 1);
+                append(objIdentifier.toString() + ": " + infoStr + "\n");
             }
         else
             if(output == null)
                 System.out.println(infoStr);
             else {
-                output.append(infoStr + "\n");
-                output.setCaretPosition(output.getText().length() - 1);
+                append(infoStr + "\n");
             }
     }
 
@@ -143,15 +151,15 @@ public class Msg {
                 if(output == null)
                     System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
                 else {
-                    output.append("[DEBUG] " + objIdentifier.toString() + ": " + debugStr + "\n");
-                    output.setCaretPosition(output.getText().length() - 1);
+                    append("[DEBUG] ", true, Color.GRAY);
+                    append(objIdentifier.toString() + ": " + debugStr + "\n", false, Color.DARK_GRAY);
                 }
             else
                 if(output == null)
                     System.out.println("[DEBUG] " + debugStr);
                 else {
-                    output.append("[DEBUG] " + debugStr + "\n");
-                    output.setCaretPosition(output.getText().length() - 1);
+                    append("[DEBUG] ", true, Color.GRAY);
+                    append(debugStr + "\n", false, Color.DARK_GRAY);
                 }
     }
 
@@ -164,8 +172,7 @@ public class Msg {
         if(output == null)
             System.out.println(msgStr);
         else {
-            output.append(msgStr + "\n");
-            output.setCaretPosition(output.getText().length() - 1);
+            append(msgStr + "\n");
         }
     }
 
@@ -178,8 +185,7 @@ public class Msg {
         if(output == null)
             System.out.print(msgStr);
         else {
-            output.append(msgStr);
-            output.setCaretPosition(output.getText().length() - 1);
+            append(msgStr);
         }
     }
 
@@ -190,7 +196,63 @@ public class Msg {
         if(output == null)
             System.out.println("[DEBUG] " + markCounter + " We're here!");
         else
-            output.append("[DEBUG] " + markCounter + " We're here!" + "\n");
+            append("[DEBUG] " + markCounter + " We're here!" + "\n");
         markCounter++;
+    }
+
+    /**
+     * Append to document with some style
+     *
+     * @param txt
+     * @param bold
+     * @param color
+     */
+    private static void append(String txt, boolean bold, Color color) {
+        try {
+        StyledDocument doc = output.getStyledDocument();
+
+        SimpleAttributeSet attrib = new SimpleAttributeSet();
+        StyleConstants.setBold(attrib, bold);
+        StyleConstants.setForeground(attrib, color);
+
+        doc.insertString(doc.getLength(), txt, attrib);
+
+        for(int i = 0; i < outputs.size(); i++) {
+            StyledDocument a_doc = outputs.get(i).getStyledDocument();
+            a_doc.insertString(a_doc.getLength(), txt, attrib);
+            outputs.get(i).setCaretPosition(doc.getLength() - 1);
+        }
+
+        output.setCaretPosition(doc.getLength() - 1);
+        } catch(Exception e) {
+            
+        }
+    }
+
+    /**
+     * Append regular text to the document
+     *
+     * @param txt
+     */
+    private static void append(String txt) {
+        try {
+        StyledDocument doc = output.getStyledDocument();
+
+        SimpleAttributeSet attrib = new SimpleAttributeSet();
+        StyleConstants.setBold(attrib, false);
+        StyleConstants.setForeground(attrib, Color.BLACK);
+
+        doc.insertString(doc.getLength(), txt, attrib);
+
+        for(int i = 0; i < outputs.size(); i++) {
+            StyledDocument a_doc = outputs.get(i).getStyledDocument();
+            a_doc.insertString(a_doc.getLength(), txt, attrib);
+            outputs.get(i).setCaretPosition(doc.getLength() - 1);
+        }
+
+        output.setCaretPosition(doc.getLength() - 1);
+        } catch(Exception e) {
+
+        }
     }
 }

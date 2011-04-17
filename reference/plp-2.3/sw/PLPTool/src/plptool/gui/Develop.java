@@ -74,7 +74,9 @@ public class Develop extends javax.swing.JFrame {
         treeProject.setModel(treeModel);
         
         splitterH.setDividerLocation(0.25);
-        
+
+        catchyPLP();
+
         Msg.output = txtOutput;
         jScrollPane3.setEnabled(false);
         txtOutput.setEditable(false);
@@ -86,8 +88,8 @@ public class Develop extends javax.swing.JFrame {
         menuSave.setEnabled(false);
         menuSaveAs.setEnabled(false);
         btnAssemble.setEnabled(false);
-        menuFind.setEnabled(false);
         menuFindAndReplace.setEnabled(false);
+        rootmenuEdit.setEnabled(false);
         btnSave.setEnabled(false);
         disableSimControls();
 
@@ -143,7 +145,7 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
-    public javax.swing.JTextArea getOutput() {
+    public javax.swing.JTextPane getOutput() {
         return txtOutput;
     }
 
@@ -152,8 +154,11 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void setEditorText(String str) {
+        txtEditor.setContentType("text");
         trackChanges = false;
         txtEditor.setText(str);
+        if(Config.cfgSyntaxHighlighting && str.length() <= Config.filetoolarge)
+            syntaxHighlight();
         trackChanges = true;
         undoManager = new DoManager();
     }
@@ -179,6 +184,8 @@ public class Develop extends javax.swing.JFrame {
         btnAssemble.setEnabled(true);
         menuDeleteASM.setEnabled(true);
         menuExportASM.setEnabled(true);
+        rootmenuEdit.setEnabled(true);
+        menuFindAndReplace.setEnabled(true);
         btnSave.setEnabled(true);
     }
 
@@ -498,6 +505,11 @@ public class Develop extends javax.swing.JFrame {
         return styleSetup;
     }
 
+    private void catchyPLP() {
+        txtEditor.setContentType("text/html");
+        txtEditor.setText("<center><h1>Progressive Learning Platform</h1></center>");
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -518,7 +530,7 @@ public class Develop extends javax.swing.JFrame {
         txtEditor = new javax.swing.JTextPane();
         lblPosition = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        txtOutput = new javax.swing.JTextArea();
+        txtOutput = new javax.swing.JTextPane();
         toolbar = new javax.swing.JToolBar();
         btnNew = new javax.swing.JButton();
         btnOpen = new javax.swing.JButton();
@@ -543,7 +555,6 @@ public class Develop extends javax.swing.JFrame {
         menuCut = new javax.swing.JMenuItem();
         menuPaste = new javax.swing.JMenuItem();
         menuSeparator4 = new javax.swing.JPopupMenu.Separator();
-        menuFind = new javax.swing.JMenuItem();
         menuFindAndReplace = new javax.swing.JMenuItem();
         menuSeparator5 = new javax.swing.JPopupMenu.Separator();
         menuUndo = new javax.swing.JMenuItem();
@@ -667,7 +678,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -676,11 +687,7 @@ public class Develop extends javax.swing.JFrame {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        txtOutput.setBackground(resourceMap.getColor("txtOutput.background")); // NOI18N
-        txtOutput.setColumns(20);
         txtOutput.setFont(resourceMap.getFont("txtOutput.font")); // NOI18N
-        txtOutput.setForeground(resourceMap.getColor("txtOutput.foreground")); // NOI18N
-        txtOutput.setRows(5);
         txtOutput.setName("txtOutput"); // NOI18N
         jScrollPane1.setViewportView(txtOutput);
 
@@ -847,7 +854,7 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuFile.add(menuSave);
 
-        menuSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        menuSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuSaveAs.setText(resourceMap.getString("menuSaveAs.text")); // NOI18N
         menuSaveAs.setName("menuSaveAs"); // NOI18N
         menuSaveAs.addActionListener(new java.awt.event.ActionListener() {
@@ -908,12 +915,14 @@ public class Develop extends javax.swing.JFrame {
         menuSeparator4.setName("menuSeparator4"); // NOI18N
         rootmenuEdit.add(menuSeparator4);
 
-        menuFind.setText(resourceMap.getString("menuFind.text")); // NOI18N
-        menuFind.setName("menuFind"); // NOI18N
-        rootmenuEdit.add(menuFind);
-
+        menuFindAndReplace.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         menuFindAndReplace.setText(resourceMap.getString("menuFindAndReplace.text")); // NOI18N
         menuFindAndReplace.setName("menuFindAndReplace"); // NOI18N
+        menuFindAndReplace.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuFindAndReplaceActionPerformed(evt);
+            }
+        });
         rootmenuEdit.add(menuFindAndReplace);
 
         menuSeparator5.setName("menuSeparator5"); // NOI18N
@@ -1130,8 +1139,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         openPLPFile();
-        if(Config.cfgSyntaxHighlighting && txtEditor.getText().split("\\r?\\n").length <= Config.filetoolarge)
-            syntaxHighlight();
+        
     }//GEN-LAST:event_menuOpenActionPerformed
 
     private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
@@ -1375,11 +1383,13 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_treeProjectMousePressed
 
     private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
-        int caretPos = txtEditor.getCaretPosition();
-        int line;
-        line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
-        String fName = plp.asms.get(plp.open_asm).getAsmFilePath();
-        txtCurFile.setText(fName + ":" + line + (plp.open_asm == 0 ? " <main program>" : ""));
+        if(plp.asms != null && plp.asms.size() > 0) {
+            int caretPos = txtEditor.getCaretPosition();
+            int line;
+            line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
+            String fName = plp.asms.get(plp.open_asm).getAsmFilePath();
+            txtCurFile.setText(fName + ":" + line + (plp.open_asm == 0 ? " <main program>" : ""));
+        }
     }//GEN-LAST:event_txtEditorCaretUpdate
 
     private void treeProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMouseClicked
@@ -1408,6 +1418,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
+        plp.setModified();
         int position;
         if(txtEditor.getSelectedText() == null) {
             position = txtEditor.getCaretPosition();
@@ -1495,6 +1506,11 @@ public class Develop extends javax.swing.JFrame {
             } catch(Exception e) {}
         }
     }//GEN-LAST:event_menuIssuesPageActionPerformed
+
+    private void menuFindAndReplaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFindAndReplaceActionPerformed
+        plp.g_find.setCurIndex(this.txtEditor.getCaretPosition());
+        plp.g_find.setVisible(true);
+    }//GEN-LAST:event_menuFindAndReplaceActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
@@ -1594,7 +1610,6 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuDeleteASM;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuExportASM;
-    private javax.swing.JMenuItem menuFind;
     private javax.swing.JMenuItem menuFindAndReplace;
     private javax.swing.JMenuItem menuImportASM;
     private javax.swing.JMenuItem menuIssues;
@@ -1627,7 +1642,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JTree treeProject;
     private javax.swing.JLabel txtCurFile;
     private javax.swing.JTextPane txtEditor;
-    private javax.swing.JTextArea txtOutput;
+    private javax.swing.JTextPane txtOutput;
     // End of variables declaration//GEN-END:variables
 
     //popup menu items

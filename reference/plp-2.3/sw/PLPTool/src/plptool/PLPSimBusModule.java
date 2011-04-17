@@ -99,16 +99,16 @@ public abstract class PLPSimBusModule extends Thread {
      * @param isInstr Denotes whether the value to be written is an instruction
      * @return PLP_OK, or error code
      */
-    public int writeReg(long addr, Object data, boolean isInstr) {
-        if(!enabled)
-            return Constants.PLP_SIM_MODULE_DISABLED;
-
+    public final int writeReg(long addr, Object data, boolean isInstr) {
         if(addr > endAddr || addr < startAddr)
             return Msg.E("write(" + String.format("0x%08x", addr) + "): Address is out of range.",
                             Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
         else if(wordAligned && addr % 4 != 0)
             return Msg.E("write(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             Constants.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
+        else if(!enabled)
+            return Msg.E("write(" + String.format("0x%08x", addr) + "): Module is disabled.",
+                            Constants.PLP_SIM_MODULE_DISABLED, this);
         else {
             if(values.containsKey(addr)) {
                 values.remove(addr);
@@ -127,7 +127,7 @@ public abstract class PLPSimBusModule extends Thread {
      * @param addr Address to read from
      * @return Data, or PLP_ERROR_RETURN
      */
-    public Object readReg(long addr) {
+    public final Object readReg(long addr) {
         if(addr > endAddr || addr < startAddr) {
             Msg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
                      Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
@@ -215,7 +215,7 @@ public abstract class PLPSimBusModule extends Thread {
      *
      * @return The width of the address space in (long)
      */
-    public long size() {
+    public final long size() {
         if(!wordAligned)
             return endAddr - startAddr + 1;
         else
@@ -227,7 +227,7 @@ public abstract class PLPSimBusModule extends Thread {
      *
      * @return Final address in (long)
      */
-    public long endAddr() {
+    public final long endAddr() {
         return endAddr;
     }
 
@@ -236,7 +236,7 @@ public abstract class PLPSimBusModule extends Thread {
      *
      * @return Starting address in (long)
      */
-    public long startAddr() {
+    public final long startAddr() {
         return startAddr;
     }
 
@@ -269,7 +269,7 @@ public abstract class PLPSimBusModule extends Thread {
      * @param addr Address to read from
      * @return Whether the specified register contains instruction or not
      */
-    public boolean isInstr(long addr) {
+    public final boolean isInstr(long addr) {
         if(isInstr.get(addr) != null)
             return isInstr.get(addr);
         else
@@ -281,7 +281,7 @@ public abstract class PLPSimBusModule extends Thread {
      *
      * @return Whether the registers of the module are word-aligned
      */
-    public boolean isWordAligned() {
+    public final boolean isWordAligned() {
         return wordAligned;
     }
 
@@ -305,7 +305,7 @@ public abstract class PLPSimBusModule extends Thread {
      * @param addr The address to lookup
      * @return Returns boolean
      */
-    public boolean isInitialized(long addr) {
+    public final boolean isInitialized(long addr) {
         return values.containsKey(addr);
     }
 
