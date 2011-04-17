@@ -665,6 +665,7 @@
               <SubComponents>
                 <Component class="javax.swing.JTextPane" name="simCLOutput">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" resourceKey="simCLOutput.font"/>
                     <Property name="name" type="java.lang.String" value="simCLOutput" noResource="true"/>
                   </Properties>
                 </Component>

@@ -467,6 +467,23 @@ public class Asm extends plptool.PLPAsm {
                 }
                 Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
 
+                // check for escaped characters
+                for(j = 0; j < tString[1].length(); j++) {
+                    if(tString[1].charAt(j) == '\\' && j != tString[1].length() - 1) {
+                        switch(tString[1].charAt(j + 1)) {
+                            case 'n':
+                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\n").toString();
+                                break;
+                            case '\\':
+                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\\").toString();
+                                break;
+                            default:
+                                Msg.W("preprocess(" + curActiveFile + ":" + i + "): "
+                                        + "Unable to escape character \\" + tString[1].charAt(j + 1), this);
+                        }
+                    }
+                }
+
                 // check if we need to append a null character for .asciiz ...
                 int strLen = tString[1].length() + ((asmTokens[0].equals(".asciiz")) ? 1 : 0);
 
