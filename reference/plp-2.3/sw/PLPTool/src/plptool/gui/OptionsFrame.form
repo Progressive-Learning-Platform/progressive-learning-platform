@@ -27,12 +27,8 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="btnClose" min="-2" pref="93" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnApply" min="-2" pref="94" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="jTabbedPane1" alignment="1" pref="417" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" pref="417" max="32767" attributes="0"/>
+                  <Component id="btnClose" alignment="1" min="-2" pref="93" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -44,10 +40,7 @@
               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               <Component id="jTabbedPane1" min="-2" pref="424" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnApply" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnClose" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="btnClose" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -161,12 +154,6 @@
         </Container>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btnApply">
-      <Properties>
-        <Property name="text" type="java.lang.String" resourceKey="btnApply.text"/>
-        <Property name="name" type="java.lang.String" value="btnApply" noResource="true"/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JButton" name="btnClose">
       <Properties>
         <Property name="text" type="java.lang.String" resourceKey="btnClose.text"/>

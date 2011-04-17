@@ -28,7 +28,7 @@ import plptool.Msg;
 public class FindAndReplace extends javax.swing.JFrame {
 
     private ProjectDriver plp;
-
+    private boolean haveTriedFromTop;
     private int curIndex;
 
     /** Creates new form FindAndReplace */
@@ -36,13 +36,14 @@ public class FindAndReplace extends javax.swing.JFrame {
         initComponents();
 
         plptool.PLPToolbox.attachHideOnEscapeListener(this);
-
+        haveTriedFromTop = false;
         this.plp = plp;
         curIndex = 0;
     }
 
     public void setCurIndex(int curIndex) {
         this.curIndex = curIndex;
+        haveTriedFromTop = false;
     }
 
     /** This method is called from within the constructor to
@@ -153,20 +154,38 @@ public class FindAndReplace extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void findAndReplaceString(int caret) {
+        plp.g_dev.getEditor().setCaretPosition(caret);
+        plp.g_dev.getEditor().setSelectionStart(caret);
+        plp.g_dev.getEditor().setSelectionEnd(caret + txtFind.getText().length());
+        curIndex = caret + txtFind.getText().length();
+
+        if(chkReplace.isSelected()) {
+            plp.setModified();
+            plp.g_dev.getEditor().replaceSelection(txtReplace.getText());
+            plp.g_dev.getEditor().setSelectionStart(caret);
+            plp.g_dev.getEditor().setSelectionEnd(caret + txtReplace.getText().length());
+        }
+    }
+
     private void btnGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoActionPerformed
         curIndex = plp.g_dev.getEditor().getCaretPosition();
 
         int caret = plp.g_dev.getEditor().getText().indexOf(txtFind.getText(), curIndex);
-        if(caret > -1) {
-            plp.g_dev.getEditor().setCaretPosition(caret);
-            plp.g_dev.getEditor().setSelectionStart(caret);
-            plp.g_dev.getEditor().setSelectionEnd(caret + txtFind.getText().length());
-            curIndex = caret + txtFind.getText().length();
 
-            if(chkReplace.isSelected()) {
-                plp.setModified();
-                plp.g_dev.getEditor().replaceSelection(txtReplace.getText());
-            }
+        if(caret > -1) {
+            haveTriedFromTop = false;
+            findAndReplaceString(caret);
+        }
+        else if(!haveTriedFromTop) {
+            haveTriedFromTop = true;
+
+            caret = plp.g_dev.getEditor().getText().indexOf(txtFind.getText(), 0);
+
+            if(caret > -1)
+                findAndReplaceString(caret);
+            else
+                Msg.M("String not found: \"" + txtFind.getText() + "\"");
         }
         else
             Msg.M("String not found: \"" + txtFind.getText() + "\"");

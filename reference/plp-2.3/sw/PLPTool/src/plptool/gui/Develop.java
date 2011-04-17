@@ -678,7 +678,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1418,7 +1418,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-        plp.setModified();
+        
         int position;
         if(txtEditor.getSelectedText() == null) {
             position = txtEditor.getCaretPosition();
@@ -1426,9 +1426,11 @@ public class Develop extends javax.swing.JFrame {
             position = txtEditor.getSelectionStart();
         }
         if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
+            plp.setModified();
             undoManager.modify("insert", Character.toString(evt.getKeyChar()), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
         } else if ((int)evt.getKeyChar() == 127) {
             try {
+                plp.setModified();
                 undoManager.modify("delete", txtEditor.getText(position, 1), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
             }
             catch (BadLocationException ble) {
@@ -1436,15 +1438,18 @@ public class Develop extends javax.swing.JFrame {
             }
         } else if ((int)evt.getKeyChar() == 8) {
             try {
+                plp.setModified();
                 undoManager.modify("backspace", txtEditor.getText(position, 1), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
             }
             catch (BadLocationException ble) {
                 System.err.println("Backspace error");
             }
         } else if ((int)evt.getKeyChar() == 24) {
+            plp.setModified();
             undoManager.modify("delete", "", txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
         } else if ((int)evt.getKeyChar() == 22) {
             try {
+                plp.setModified();
                 String paste_stuff = (String) getToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
                 undoManager.modify("paste", paste_stuff, txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
             } catch (UnsupportedFlavorException ex) {

@@ -551,6 +551,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
         jScrollPane4.setName("jScrollPane4"); // NOI18N
 
+        simCLOutput.setFont(resourceMap.getFont("simCLOutput.font")); // NOI18N
         simCLOutput.setName("simCLOutput"); // NOI18N
         jScrollPane4.setViewportView(simCLOutput);
 
