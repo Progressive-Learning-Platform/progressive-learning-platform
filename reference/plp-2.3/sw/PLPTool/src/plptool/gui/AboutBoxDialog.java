@@ -12,6 +12,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
 
     public AboutBoxDialog(java.awt.Frame parent) {
         super(parent);
+        plptool.PLPToolbox.attachHideOnEscapeListener(this);
         initComponents();
         getRootPane().setDefaultButton(closeButton);
         lblVersion.setText(plptool.Constants.versionString);

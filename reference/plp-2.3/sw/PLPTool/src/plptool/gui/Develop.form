@@ -60,7 +60,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuSaveAs">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+A"/>
+                  <KeyStroke key="Shift+Ctrl+A"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuSaveAs.text"/>
                 <Property name="name" type="java.lang.String" value="menuSaveAs" noResource="true"/>
@@ -135,17 +135,17 @@
                 <Property name="name" type="java.lang.String" value="menuSeparator4" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuFind">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="menuFind.text"/>
-                <Property name="name" type="java.lang.String" value="menuFind" noResource="true"/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuFindAndReplace">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+F"/>
+                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuFindAndReplace.text"/>
                 <Property name="name" type="java.lang.String" value="menuFindAndReplace" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuFindAndReplaceActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="menuSeparator5">
               <Properties>
@@ -521,7 +521,7 @@
                                   <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane3" pref="347" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="429" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -590,13 +590,9 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="txtOutput">
+                <Component class="javax.swing.JTextPane" name="txtOutput">
                   <Properties>
-                    <Property name="background" type="java.awt.Color" resourceKey="txtOutput.background"/>
-                    <Property name="columns" type="int" value="20"/>
                     <Property name="font" type="java.awt.Font" resourceKey="txtOutput.font"/>
-                    <Property name="foreground" type="java.awt.Color" resourceKey="txtOutput.foreground"/>
-                    <Property name="rows" type="int" value="5"/>
                     <Property name="name" type="java.lang.String" value="txtOutput" noResource="true"/>
                   </Properties>
                 </Component>

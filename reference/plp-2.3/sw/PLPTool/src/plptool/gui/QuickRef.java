@@ -32,6 +32,8 @@ public class QuickRef extends javax.swing.JFrame {
 
         this.setTitle("PLP " + plptool.Constants.versionString + " Quick Reference");
 
+        plptool.PLPToolbox.attachHideOnEscapeListener(this);
+
         DefaultTableModel tbl = (DefaultTableModel) tblRType.getModel();
 
         String[][] data = new String[11][2];
@@ -93,8 +95,8 @@ public class QuickRef extends javax.swing.JFrame {
         data[6][0] = "";                        data[6][1] = "ori $rd, $rd, label[15:0]";
         data[7][0] = "push  $rt";               data[7][1] = "sw $rt, 0($sp);";
         data[8][0] = "";                        data[8][1] = "addiu $sp, $sp, -4";
-        data[9][0] = "pop   $rt";               data[9][1] = "lw $rt, 0($sp);";
-        data[10][0] = "";                       data[10][1] = "addiu $sp, $sp, 4";
+        data[9][0] = "pop   $rt";               data[9][1] = "addiu $sp, $sp, 4;";
+        data[10][0] = "";                       data[10][1] = "lw $rt, 0($sp)";
 
         for(int i = 0; i < data.length; i++)
             tbl.addRow(data[i]);

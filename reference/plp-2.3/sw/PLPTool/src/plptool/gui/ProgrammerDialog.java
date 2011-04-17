@@ -29,6 +29,8 @@ public class ProgrammerDialog extends javax.swing.JDialog {
 
         this.plp = plp;
 
+        plptool.PLPToolbox.attachHideOnEscapeListener(this);
+
         cmbPort.removeAllItems();
         if(PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_32 ||
            PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_64) {

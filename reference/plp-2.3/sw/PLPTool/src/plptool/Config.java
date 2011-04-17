@@ -46,7 +46,7 @@ public class Config {
 
     public static boolean cfgSyntaxHighlighting            = true;
     public static boolean nothighlighting                  = true;
-    public static int     filetoolarge                     = 1000;
+    public static int     filetoolarge                     = 10000;
 
     public static int     maxUndoLength                    = 20;
 

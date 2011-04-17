@@ -574,7 +574,7 @@ public class Asm extends plptool.PLPAsm {
         }
 
         if(error > 0)
-            Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+            Msg.E("preprocess: " +
                      error + " error(s).", Constants.PLP_ASM_PREPROCESS_FAILED, this);
         
         Msg.D("preprocess(" + curActiveFile + "): First pass completed.", 1, this);
@@ -935,7 +935,7 @@ public class Asm extends plptool.PLPAsm {
         }
 
         if(error > 0)
-            Msg.E("assemble(" + SourceList.get(asmFileMap[i - 1]).getAsmFilePath() + "): " +
+            Msg.E("assemble: " +
                      error + " error(s).", Constants.PLP_ASM_ASSEMBLE_FAILED, this);
 
         return (error == 0) ? Constants.PLP_OK : Constants.PLP_ASM_ASSEMBLE_FAILED;
@@ -1088,6 +1088,6 @@ public class Asm extends plptool.PLPAsm {
      * @return Returns informative string
      */
     @Override public String toString() {
-        return "Asm(" + this.curActiveFile + ")";
+        return "Asm";
     }
 }

@@ -32,8 +32,6 @@ public class LEDArray extends PLPSimBusModule {
 
     public LEDArray(long addr) {
         super(addr, addr, true);
-
-        this.writeReg(addr, 0L, false);
     }
 
     public int eval() {

@@ -111,6 +111,7 @@ public class ProjectDriver {
     public plptool.gui.Watcher                 g_watcher;  // Watcher window
     public plptool.gui.ASMSimView              g_asmview;  // ASM Sim viewer
     public plptool.gui.QuickRef                g_qref;     // Quick Reference
+    public plptool.gui.FindAndReplace          g_find;     // Find and Replace
     private boolean                            g;          // are we driving a GUI?
 
     // Desktop
@@ -149,6 +150,7 @@ public class ProjectDriver {
             this.g_qref = new QuickRef();
             this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
+            this.g_find = new FindAndReplace(this);
             
             java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
             this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
@@ -159,6 +161,7 @@ public class ProjectDriver {
             this.g_simsh.setLocationRelativeTo(null);
 
             this.g_qref.setLocationRelativeTo(null);
+            this.g_find.setLocationRelativeTo(null);
 
             this.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
             this.g_dev.setVisible(true);
@@ -714,7 +717,7 @@ public class ProjectDriver {
         else if(smods != null)
             ioreg.loadPreset(smods);
             
-        sim.reset();
+        sim.loadProgram(asm);
 
         if(g) {
             g_ioreg = new IORegistryFrame(this);

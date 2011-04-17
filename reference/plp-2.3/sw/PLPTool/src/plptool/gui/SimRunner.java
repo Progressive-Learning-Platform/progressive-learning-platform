@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ public class SimRunner extends Thread {
         Msg.lastError = 0;
         plp.g_err.clearError();
         startInstr = sim.getinstrcount();
+        Msg.M("--- run");
         startTime = System.currentTimeMillis();
 
         while(stepCount > 0) {
@@ -69,7 +70,7 @@ public class SimRunner extends Thread {
         }
 
         long time = System.currentTimeMillis() - startTime;
-        Msg.m("SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
+        Msg.m("--- SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
         Msg.M("in " + time + " milliseconds of real time.");
 
         plp.g_simsh.unselectTglRun();
