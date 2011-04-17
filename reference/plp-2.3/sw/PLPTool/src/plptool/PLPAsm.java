@@ -232,6 +232,22 @@ public abstract class PLPAsm {
     }
 
     /**
+     * Return the index associated with the given address. Can be used to
+     * trace back an address to the source file
+     *
+     * @param addr Address to look up
+     * @return Index where that address resides in the address table
+     */
+    public int lookupAddrIndex(long addr) {
+        for(int i = 0; i < addrTable.length; i++) {
+            if(addrTable[i] == addr)
+                return i;
+        }
+
+        return -1;
+    }
+
+    /**
      * Returns whether the source files attached to this assembler have
      * been successfully assembled.
      *

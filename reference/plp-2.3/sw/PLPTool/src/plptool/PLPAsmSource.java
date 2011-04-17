@@ -81,6 +81,7 @@ public class PLPAsmSource {
 
     public void setAsmString(String newStr) {
         asmString = newStr;
+        asmLines = asmString.split("\\r?\\n");
     }
 
     public void setAsmFilePath(String newPath) {

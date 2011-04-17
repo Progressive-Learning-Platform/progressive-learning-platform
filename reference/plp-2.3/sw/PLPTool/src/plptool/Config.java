@@ -29,11 +29,14 @@ public class Config {
     public static boolean cfgInstrPretty                   = true;
 
     public static String  cfgArch                          = "plpmips";
-    public static boolean cfgSimForwardingUnit             = true;
-    public static boolean cfgSimDynamicMemoryAllocation    = false;
-    public static boolean cfgRefreshGUIDuringSimRun        = true;
-    public static int     cfgSimDelay                      = 100;
+    public static boolean simForwardingUnit                = true;
+    public static boolean simDynamicMemoryAllocation       = false;
+    public static boolean simRefreshGUIDuringSimRun        = true;
+    public static int     simRunnerDelay                   = 100;
     public static boolean cfgVerbose                       = true;
+    public static boolean simBusReturnsZeroForUninitRegs   = true;
+    public static boolean simAllowExecutionOfArbitraryMem  = true;
+    public static boolean simDumpTraceOnFailedEvaluation   = false;
 
     public static double  relativeDefaultWindowWidth       = 0.8;
     public static double  relativeDefaultWindowHeight      = 0.8;

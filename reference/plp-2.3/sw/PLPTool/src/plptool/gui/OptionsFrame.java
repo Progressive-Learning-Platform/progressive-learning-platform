@@ -46,6 +46,9 @@ public class OptionsFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         sSimSpeed = new javax.swing.JSlider();
         jLabel1 = new javax.swing.JLabel();
+        simNoExecute = new javax.swing.JCheckBox();
+        simBusReadDefaultZero = new javax.swing.JCheckBox();
+        simDumpTraceOnFailedEval = new javax.swing.JCheckBox();
         btnApply = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
@@ -74,6 +77,32 @@ public class OptionsFrame extends javax.swing.JFrame {
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
+        simNoExecute.setSelected(true);
+        simNoExecute.setText(resourceMap.getString("simNoExecute.text")); // NOI18N
+        simNoExecute.setName("simNoExecute"); // NOI18N
+        simNoExecute.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simNoExecuteActionPerformed(evt);
+            }
+        });
+
+        simBusReadDefaultZero.setSelected(true);
+        simBusReadDefaultZero.setText(resourceMap.getString("simBusReadDefaultZero.text")); // NOI18N
+        simBusReadDefaultZero.setName("simBusReadDefaultZero"); // NOI18N
+        simBusReadDefaultZero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simBusReadDefaultZeroActionPerformed(evt);
+            }
+        });
+
+        simDumpTraceOnFailedEval.setText(resourceMap.getString("simDumpTraceOnFailedEval.text")); // NOI18N
+        simDumpTraceOnFailedEval.setName("simDumpTraceOnFailedEval"); // NOI18N
+        simDumpTraceOnFailedEval.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simDumpTraceOnFailedEvalActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -81,8 +110,11 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                    .addComponent(jLabel1))
+                    .addComponent(simDumpTraceOnFailedEval)
+                    .addComponent(simNoExecute)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(simBusReadDefaultZero))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -92,7 +124,13 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sSimSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(291, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(simNoExecute)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(simBusReadDefaultZero)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(simDumpTraceOnFailedEval)
+                .addContainerGap(229, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
@@ -138,12 +176,24 @@ public class OptionsFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sSimSpeedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sSimSpeedStateChanged
-        Config.cfgSimDelay = sSimSpeed.getValue();
+        Config.simRunnerDelay = sSimSpeed.getValue();
     }//GEN-LAST:event_sSimSpeedStateChanged
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void simNoExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simNoExecuteActionPerformed
+        Config.simAllowExecutionOfArbitraryMem = simNoExecute.isSelected();
+    }//GEN-LAST:event_simNoExecuteActionPerformed
+
+    private void simBusReadDefaultZeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simBusReadDefaultZeroActionPerformed
+        Config.simBusReturnsZeroForUninitRegs = simBusReadDefaultZero.isSelected();
+    }//GEN-LAST:event_simBusReadDefaultZeroActionPerformed
+
+    private void simDumpTraceOnFailedEvalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simDumpTraceOnFailedEvalActionPerformed
+        Config.simDumpTraceOnFailedEvaluation = simDumpTraceOnFailedEval.isSelected();
+    }//GEN-LAST:event_simDumpTraceOnFailedEvalActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApply;
@@ -152,6 +202,9 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JSlider sSimSpeed;
+    private javax.swing.JCheckBox simBusReadDefaultZero;
+    private javax.swing.JCheckBox simDumpTraceOnFailedEval;
+    private javax.swing.JCheckBox simNoExecute;
     // End of variables declaration//GEN-END:variables
 
 }

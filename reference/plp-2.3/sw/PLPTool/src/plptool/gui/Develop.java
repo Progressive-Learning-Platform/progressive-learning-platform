@@ -597,11 +597,11 @@ public class Develop extends javax.swing.JFrame {
 
         treeProject.setName("treeProject"); // NOI18N
         treeProject.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                treeProjectMousePressed(evt);
-            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 treeProjectMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                treeProjectMousePressed(evt);
             }
         });
         jScrollPane2.setViewportView(treeProject);
@@ -610,6 +610,7 @@ public class Develop extends javax.swing.JFrame {
 
         jPanel1.setName("jPanel1"); // NOI18N
 
+        txtCurFile.setFont(resourceMap.getFont("txtCurFile.font")); // NOI18N
         txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
         txtCurFile.setName("txtCurFile"); // NOI18N
 
@@ -630,10 +631,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -651,11 +652,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 447, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 459, Short.MAX_VALUE)
                 .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -666,7 +667,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -693,7 +694,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1368,7 +1369,7 @@ public class Develop extends javax.swing.JFrame {
                     }
                 }
             }
-        } else if(plp.plpfile != null && evt.isPopupTrigger()) {
+        } else if(plp.plpfile != null && evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {
             popupProject.show(treeProject, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_treeProjectMousePressed
@@ -1377,8 +1378,8 @@ public class Develop extends javax.swing.JFrame {
         int caretPos = txtEditor.getCaretPosition();
         int line;
         line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
-
-        lblPosition.setText(caretPos + " line: " + line);
+        String fName = plp.asms.get(plp.open_asm).getAsmFilePath();
+        txtCurFile.setText(fName + ":" + line + (plp.open_asm == 0 ? " <main program>" : ""));
     }//GEN-LAST:event_txtEditorCaretUpdate
 
     private void treeProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMouseClicked
@@ -1389,7 +1390,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_rootmenuProjectMouseClicked
 
     private void txtEditorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEditorMousePressed
-        if(plp.plpfile != null && evt.isPopupTrigger()) {
+        if(plp.plpfile != null && evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {
             popupEdit.show(txtEditor, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_txtEditorMousePressed

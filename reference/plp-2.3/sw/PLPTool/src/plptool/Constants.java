@@ -23,7 +23,7 @@ package plptool;
  * @author wira
  */
 public class Constants {
-    public static final String versionString = "2.2";
+    public static final String versionString = "2.3";
     public static final String copyrightString =
             "PLP Java Tool version " + versionString + "\n" +
             "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
@@ -69,7 +69,7 @@ public class Constants {
     public static final int PLP_OUT_FILE_EXISTS                  = 130;
 
     // Simulator errors
-    public static final int PLP_SIM_INSTRMEM_OUT_OF_BOUNDS       = 256;
+    public static final int PLP_SIM_INSTRUCTION_FETCH_FAILED     = 256;
     public static final int PLP_SIM_UNINITIALIZED_MEMORY         = 257;
     public static final int PLP_SIM_UNHANDLED_INSTRUCTION_TYPE   = 258;
     public static final int PLP_SIM_EVALUATION_FAILED            = 259;
@@ -78,11 +78,13 @@ public class Constants {
     public static final int PLP_SIM_OUT_UNALIGNED_MEMORY         = 262;
     public static final int PLP_SIM_MODULE_DISABLED              = 263;
     public static final int PLP_SIM_BUS_ERROR                    = 264;
-    public static final int PLP_SIM_BUS_MAPPING_ERROR            = 265;
+    public static final int PLP_SIM_UNMAPPED_MEMORY_ACCESS       = 265;
     public static final int PLP_SIM_INVALID_MODULE               = 266;
     public static final int PLP_SIM_WRITE_TO_READONLY_MODULE     = 267;
     public static final int PLP_SIM_EVAL_ON_THREADED_MODULE      = 268;
     public static final int PLP_SIM_UNABLE_TO_LOAD_PROGRAM       = 269;
+    public static final int PLP_SIM_NO_EXECUTE_VIOLATION         = 270;
+    public static final int PLP_SIM_MODULE_NO_DATA_ON_READ       = 271;
 
     // Programmer errors
     public static final int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
