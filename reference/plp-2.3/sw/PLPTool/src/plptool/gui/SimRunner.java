@@ -57,14 +57,14 @@ public class SimRunner extends Thread {
                 plp.g_simsh.getTxtSteps().setText("1");
                 steps = 1;
             }
-            if(Config.cfgRefreshGUIDuringSimRun)
+            if(Config.simRefreshGUIDuringSimRun)
                 plp.updateComponents();
             if(Msg.lastError != 0) {
                 plp.g_err.setError(Msg.lastError);
                 break;
             }
             try {
-                this.sleep(Config.cfgSimDelay);
+                this.sleep(Config.simRunnerDelay);
             } catch(Exception e) {}
         }
 

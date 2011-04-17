@@ -116,10 +116,14 @@ public class PLPSimBus {
         if(value != null)
             return value;
 
-        Msg.E("read(" + String.format("0x%08x", addr) + "):" +
-                 " This address is not in any module's address space" +
-                 " or is unitialiazed.",
-                 Constants.PLP_ERROR_RETURN, this);
+        else if(value == null && this.isMapped(addr))
+            Msg.E("read(" + String.format("0x%08x", addr) + "):" +
+                 " Mapped module returned no data, check previous error.",
+                 Constants.PLP_SIM_MODULE_NO_DATA_ON_READ, this);
+        else if(!this.isMapped(addr))
+            Msg.E("read(" + String.format("0x%08x", addr) + "):" +
+                 " This address is not in any module's address space.",
+                 Constants.PLP_SIM_UNMAPPED_MEMORY_ACCESS, this);
 
         return null;
     }
@@ -135,11 +139,12 @@ public class PLPSimBus {
      */
     public int write(long addr, Object data, boolean isInstr) {
         boolean noMapping = true;
+        int ret = Constants.PLP_OK;
         Object[] modules = bus_modules.toArray();
         for(int i = modules.length - 1; i >= 0; i--) {
             if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
                addr <= ((PLPSimBusModule)modules[i]).endAddr()) {
-                ((PLPSimBusModule)modules[i]).write(addr, data, isInstr);
+                ret = ((PLPSimBusModule)modules[i]).write(addr, data, isInstr);
                 noMapping = false;
             }
         }
@@ -147,16 +152,16 @@ public class PLPSimBus {
         if(noMapping)
             return Msg.E("write(" + String.format("0x%08x", addr) + "):" +
                             " This address is not in any module's address space.",
-                            Constants.PLP_SIM_BUS_MAPPING_ERROR, this);
+                            Constants.PLP_SIM_UNMAPPED_MEMORY_ACCESS, this);
         else
-            return Constants.PLP_OK;
+            return ret;
     }
     
     /**
      * Check if the specified address is mapped to a module AND it is
      * initialized.
      *
-     * @param addr Address to read from
+     * @param addr Address to check
      * @return true if the specified address is valid and initialized
      */
     public boolean isInitialized(long addr) {
@@ -174,14 +179,33 @@ public class PLPSimBus {
     /**
      * Check if the specified address is mapped
      *
-     * @param addr Address to read from
+     * @param addr Address to check
      * @return true if the specified address is valid
      */
     public boolean isMapped(long addr) {
         Object[] modules = bus_modules.toArray();
         for(int i = modules.length - 1; i >= 0; i--) {
             if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
-               addr <= ((PLPSimBusModule)modules[i]).endAddr())
+               addr <= ((PLPSimBusModule)modules[i]).endAddr() &&
+               ((PLPSimBusModule)modules[i]).checkAlignment(addr))
+               return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the specified address is mapped and is holding an instruction
+     *
+     * @param addr Address to check
+     * @return true if the specified address contains an instruction
+     */
+    public boolean isInstr(long addr) {
+        Object[] modules = bus_modules.toArray();
+        for(int i = modules.length - 1; i >= 0; i--) {
+            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
+               addr <= ((PLPSimBusModule)modules[i]).endAddr() &&
+               ((PLPSimBusModule)modules[i]).isInstr(addr))
                return true;
         }
 
@@ -331,7 +355,8 @@ public class PLPSimBus {
     }
 
     /**
-     * Clears saved values of specified module.
+     * Clears saved values of specified module. This renders all registers
+     * of the module to be marked uninitialized
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -437,6 +462,19 @@ public class PLPSimBus {
                      Constants.PLP_SIM_BUS_ERROR, this);
 
             return null;
+        }
+    }
+
+    /**
+     * Issues bus.write(0) on all registers of the specified module
+     *
+     * @param index Index of the module
+     */
+    public void issueZeroes(int index) {
+        PLPSimBusModule module = bus_modules.get(index);
+
+        for(int i = 0; i < module.size(); i++) {
+            this.write(module.startAddr() + i * (module.isWordAligned() ? 4 : 1), new Long(0), false);
         }
     }
 

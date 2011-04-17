@@ -250,12 +250,14 @@ public class SimCore extends PLPSimCore {
         ret += bus.eval();
 
         // Engage forwarding unit
-        if(Config.cfgSimForwardingUnit)
+        if(Config.simForwardingUnit)
             forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
 
         if(ret != 0) {
-            return Msg.E("Evaluation failed.",
-                            Constants.PLP_SIM_EVALUATION_FAILED, this);
+            Msg.E("Evaluation failed. This simulation is stale.",
+                  Constants.PLP_SIM_EVALUATION_FAILED, this);
+
+            if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
         }
 
         // pc update logic (input side IF)
@@ -313,13 +315,28 @@ public class SimCore extends PLPSimCore {
     private int fetch()  {
         long addr = pc.eval();
 
-        if(!bus.isInitialized(addr))
-            return Msg.E("step(): Memory location uninitialized: addr=" +
-                            String.format("%08x", addr),
-                            Constants.PLP_SIM_UNINITIALIZED_MEMORY, this);
-
         // fetch instruction / frontend stage
-        id_stage.i_instruction = (Long) bus.read(addr);
+        if(!bus.isMapped(addr)) {
+            if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
+            return Msg.E("fetch(): PC points to unmapped address. Halt.",
+                         Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
+        }
+
+        Long ret = (Long) bus.read(addr);
+
+        if(ret == null) {
+            if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
+
+            return Msg.E("fetch(): Unable to fetch next instruction from the bus.",
+                         Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
+        }
+
+        if(!bus.isInstr(addr) && !Config.simAllowExecutionOfArbitraryMem)
+            return Msg.E("fetch(): Attempted to fetch non-executable memory: addr=" +
+                            String.format("%08x", addr),
+                            Constants.PLP_SIM_NO_EXECUTE_VIOLATION, this);
+
+        id_stage.i_instruction = ret;
         id_stage.i_instrAddr = addr;
         id_stage.i_ctl_pcplus4 = addr + 4;
 
@@ -382,6 +399,66 @@ public class SimCore extends PLPSimCore {
                                        (Long) values[i][0], (Long) values[i][1]) +
                                        MIPSInstr.format((Long) values[i][1]));
         }
+    }
+
+    /**
+     * Print out registers contents, mapped back to the source files
+     */
+    public void registersDump() {
+        Msg.I("Pipeline registers dump:", this);
+        java.util.ArrayList<plptool.PLPAsmSource> asms = asm.getAsmList();
+
+        int wb_i = asm.lookupAddrIndex(wb_stage.instrAddr);
+        if(wb_i > -1) {
+            int wb_index = asm.getFileMapper()[wb_i];
+            int wb_line = asm.getLineNumMapper()[wb_i];
+            Msg.I(" wb:  " + asms.get(wb_index).getAsmFilePath() +
+                       ":" + wb_line + " " + asms.get(wb_index).getAsmLine(wb_line), null);
+        }
+        else if(wb_i < 0)
+            Msg.I(" wb:  -- bubble --", null);
+
+
+        int mem_i = asm.lookupAddrIndex(mem_stage.instrAddr);
+        if(mem_i > -1) {
+            int mem_index = asm.getFileMapper()[mem_i];
+            int mem_line = asm.getLineNumMapper()[mem_i];
+            Msg.I(" mem: " + asms.get(mem_index).getAsmFilePath() +
+                       ":" + mem_line + " " + asms.get(mem_index).getAsmLine(mem_line), null);
+        }
+        else if(mem_i < 0)
+            Msg.I(" mem: -- bubble --", null);
+
+        int ex_i = asm.lookupAddrIndex(ex_stage.instrAddr);
+        if(ex_i > -1) {
+            int ex_index = asm.getFileMapper()[ex_i];
+            int ex_line  = asm.getLineNumMapper()[ex_i];
+            Msg.I(" ex:  " + asms.get(ex_index).getAsmFilePath() +
+                       ":" + ex_line + " " + asms.get(ex_index).getAsmLine(ex_line), null);
+        }
+        else if(ex_i < 0)
+            Msg.I(" ex:  -- bubble --", null);
+
+        int id_i = asm.lookupAddrIndex(id_stage.instrAddr);
+        if(id_i > - 1) {
+            int id_index = asm.getFileMapper()[id_i];
+            int id_line  = asm.getLineNumMapper()[id_i];
+            Msg.I(" id:  " + asms.get(id_index).getAsmFilePath() +
+                   ":" + id_line + " " + asms.get(id_index).getAsmLine(id_line), null);
+        }
+        else if(id_i < 0)
+            Msg.I(" id:  -- bubble --", null);
+
+        int pc_i = asm.lookupAddrIndex(pc.eval());
+        if(pc_i > -1) {
+            int pc_index = asm.getFileMapper()[pc_i];
+            int pc_line  = asm.getLineNumMapper()[pc_i];
+
+            Msg.I(" if:  " + asms.get(pc_index).getAsmFilePath() +
+                   ":" + pc_line + " " + asms.get(pc_index).getAsmLine(pc_line), null);
+        }
+        else if(pc_i < 0)
+            Msg.I(" if:  -- bubble --", null);
     }
 
     /**
@@ -907,13 +984,15 @@ public class SimCore extends PLPSimCore {
 
             if(ctl_memread == 1) {
                 if(bus.read(fwd_data_alu_result) == null)
-                    return Msg.E("Attempted to read from uninitialized memory.",
-                                    Constants.PLP_SIM_EVALUATION_FAILED, this);
+                    return Msg.E("The bus returned no data, check previous error.",
+                                    Constants.PLP_SIM_BUS_ERROR, this);
                 wb_reg.i_data_memreaddata = (Long) bus.read(fwd_data_alu_result);
             }
 
             if(ctl_memwrite == 1)
-                bus.write(fwd_data_alu_result, data_memwritedata, false);
+                if(bus.write(fwd_data_alu_result, data_memwritedata, false) != Constants.PLP_OK)
+                    return Msg.E("Write failed, check previous error.",
+                                    Constants.PLP_SIM_BUS_ERROR, this);;
 
             if(this.hot) {
                 this.hot = false;
@@ -1266,4 +1345,5 @@ public class SimCore extends PLPSimCore {
     }
    
 }
+
 

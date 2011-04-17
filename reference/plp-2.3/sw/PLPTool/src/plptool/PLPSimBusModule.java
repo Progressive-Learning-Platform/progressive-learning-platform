@@ -139,12 +139,8 @@ public abstract class PLPSimBusModule extends Thread {
             return null;
         }
         else if(!values.containsKey(addr)) {
-            if(Config.cfgSimDynamicMemoryAllocation) {
-                Msg.I("read(" + String.format("0x%08x", addr) +
-                         "): Dynamic memory allocation.", this);
-                values.put(addr, new Long(0));
-                isInstr.put(addr, false);
-                return 0;
+            if(Config.simBusReturnsZeroForUninitRegs) {
+                return 0L;
             }
             Msg.E("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
                              Constants.PLP_SIM_UNINITIALIZED_MEMORY, this);
@@ -274,7 +270,10 @@ public abstract class PLPSimBusModule extends Thread {
      * @return Whether the specified register contains instruction or not
      */
     public boolean isInstr(long addr) {
-        return isInstr.get(addr);
+        if(isInstr.get(addr) != null)
+            return isInstr.get(addr);
+        else
+            return false;
     }
 
     /**
@@ -282,9 +281,23 @@ public abstract class PLPSimBusModule extends Thread {
      *
      * @return Whether the registers of the module are word-aligned
      */
-    public boolean iswordAligned() {
+    public boolean isWordAligned() {
         return wordAligned;
     }
+
+    /**
+     * Check whether the address is properly aligned.
+     *
+     * @param addr Address to check
+     * @return False if alignment check fails, true otherwise
+     */
+    public boolean checkAlignment(long addr) {
+        if(wordAligned)
+            return (addr % 4 == 0);
+        else
+            return true;
+    }
+
 
     /**
      * True if the specified address is initialized. False otherwise

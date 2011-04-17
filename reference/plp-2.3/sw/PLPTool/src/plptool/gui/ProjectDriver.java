@@ -124,7 +124,7 @@ public class ProjectDriver {
     /**
      * The constructor for the project driver.
      *
-     * @param g Speficies whether we are driving a GUI or not
+     * @param g Specifies whether we are driving a GUI or not
      * @param arch The ISA to use for this project
      */
     public ProjectDriver(boolean g, String arch) {
@@ -195,7 +195,7 @@ public class ProjectDriver {
         plpfile = new File("Unsaved Project");
 
         asms = new ArrayList<plptool.PLPAsmSource>();
-        asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
+        asms.add(new plptool.PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
         open_asm = 0;
         smods = null;
 
@@ -228,7 +228,7 @@ public class ProjectDriver {
 
         asms = new ArrayList<plptool.PLPAsmSource>();
         if(importAsm(asmPath) != Constants.PLP_OK) {
-            asms.add(new plptool.PLPAsmSource("# main source file", "main.asm", 0));
+            asms.add(new plptool.PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
         }
         open_asm = 0;
         smods = null;
@@ -692,6 +692,8 @@ public class ProjectDriver {
      */
     public int simulate() {
         Msg.I("Starting simulation...", null);
+
+        this.updateAsm(open_asm, g_dev.getEditor().getText());
 
         if(asm == null || !asm.isAssembled())
             return Msg.E("simulate(): The project is not assembled.",

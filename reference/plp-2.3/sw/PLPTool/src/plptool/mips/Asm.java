@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -528,6 +528,24 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].equals("li")) {
                 appendPreprocessedAsm("lui " + asmTokens[1] + ",$_hi:" + asmTokens[2], i, true);
                 appendPreprocessedAsm("ori " + asmTokens[1] + "," + asmTokens[1] + ",$_lo:" + asmTokens[2], i, true);
+                regionMap.add(curRegion);
+                regionMap.add(curRegion);
+                curAddr += 8;
+            }
+
+            // push register onto stack
+            else if(asmTokens[0].equals("push")) {
+                appendPreprocessedAsm("sw " + asmTokens[1] + ", 0($sp)", i, true);
+                appendPreprocessedAsm("addiu $sp, $sp, -4", i, true);
+                regionMap.add(curRegion);
+                regionMap.add(curRegion);
+                curAddr += 8;
+            }
+
+            // pop register from stack
+            else if(asmTokens[0].equals("pop")) {
+                appendPreprocessedAsm("addiu $sp, $sp, 4", i, true);
+                appendPreprocessedAsm("lw " + asmTokens[1] + ", 0($sp)", i, true);
                 regionMap.add(curRegion);
                 regionMap.add(curRegion);
                 curAddr += 8;

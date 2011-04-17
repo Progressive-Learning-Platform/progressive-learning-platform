@@ -484,8 +484,8 @@
                         <Property name="name" type="java.lang.String" value="treeProject" noResource="true"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="treeProjectMousePressed"/>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="treeProjectMouseClicked"/>
+                        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="treeProjectMousePressed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -507,7 +507,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="468" max="32767" attributes="0"/>
+                              <EmptySpace pref="459" max="32767" attributes="0"/>
                               <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -521,7 +521,7 @@
                                   <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane3" pref="309" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="347" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -529,6 +529,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="txtCurFile">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" resourceKey="txtCurFile.font"/>
                         <Property name="text" type="java.lang.String" resourceKey="txtCurFile.text"/>
                         <Property name="name" type="java.lang.String" value="txtCurFile" noResource="true"/>
                       </Properties>
