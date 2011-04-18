@@ -112,6 +112,9 @@ public class SimShell extends javax.swing.JFrame {
         plp.g_ioreg = null;
         plp.g_watcher = null;
         plp.g_asmview = null;
+
+        tglRun.setSelected(false);
+        cmenuRun.setSelected(false);
         
         this.setVisible(false);
     }
@@ -244,7 +247,6 @@ public class SimShell extends javax.swing.JFrame {
         menuRemoveIO = new javax.swing.JMenu();
         menuWatcher = new javax.swing.JCheckBoxMenuItem();
         menuASMView = new javax.swing.JCheckBoxMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         rootmenuWindow = new javax.swing.JMenu();
         menuTile = new javax.swing.JMenuItem();
         menuRestore = new javax.swing.JMenuItem();
@@ -412,9 +414,6 @@ public class SimShell extends javax.swing.JFrame {
         });
         rootmenuTools.add(menuASMView);
 
-        jSeparator2.setName("jSeparator2"); // NOI18N
-        rootmenuTools.add(jSeparator2);
-
         jMenuBar1.add(rootmenuTools);
 
         rootmenuWindow.setText(resourceMap.getString("rootmenuWindow.text")); // NOI18N
@@ -485,9 +484,10 @@ public class SimShell extends javax.swing.JFrame {
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnOptsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptsActionPerformed
-        if(opts == null)
-            opts = new OptionsFrame();
-        opts.setVisible(true);
+        if(plp.g_opts == null)
+            plp.g_opts = new OptionsFrame(plp);
+        plp.g_opts.getTabs().setSelectedIndex(1);
+        plp.g_opts.setVisible(true);
     }//GEN-LAST:event_btnOptsActionPerformed
 
     private void cmenuRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmenuRunActionPerformed
@@ -574,7 +574,6 @@ public class SimShell extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem cmenuRun;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JCheckBoxMenuItem menuASMView;
     private javax.swing.JMenuItem menuClose;
     private javax.swing.JCheckBoxMenuItem menuIOReg;

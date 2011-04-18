@@ -136,6 +136,7 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.setFont(newFont);
         txtEditor.setBackground(Config.devBackground);
         txtEditor.setForeground(Config.devForeground);
+        styles = setupHighlighting();
     }
 
     public void notifyplpModified() {
@@ -157,7 +158,7 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.setContentType("text");
         trackChanges = false;
         txtEditor.setText(str);
-        if(Config.cfgSyntaxHighlighting && str.length() <= Config.filetoolarge)
+        if(Config.devSyntaxHighlighting && str.length() <= Config.filetoolarge)
             syntaxHighlight();
         trackChanges = true;
         undoManager = new DoManager();
@@ -507,7 +508,17 @@ public class Develop extends javax.swing.JFrame {
 
     private void catchyPLP() {
         txtEditor.setContentType("text/html");
-        txtEditor.setText("<center><h1>Progressive Learning Platform</h1></center>");
+        
+        String catchyStr;
+
+        catchyStr = "<center><h1>Progressive Learning Platform</h1></center>";
+
+        if(Constants.debugLevel >= 1 || plptool.Version.stamp.contains("daily"))  {
+            catchyStr += "<center><h3>Build: " + plptool.Version.stamp + "</h3></center>";
+            catchyStr += "<center><h3>OS/arch: " + plptool.PLPToolbox.getOS(false) + "</h3></center>";
+        }
+
+        txtEditor.setText(catchyStr);
     }
 
     /** This method is called from within the constructor to
@@ -571,6 +582,8 @@ public class Develop extends javax.swing.JFrame {
         menuDeleteASM = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuSetMainProgram = new javax.swing.JMenuItem();
+        rootmenuTools = new javax.swing.JMenu();
+        menuOptions = new javax.swing.JMenuItem();
         rootmenuHelp = new javax.swing.JMenu();
         menuQuickRef = new javax.swing.JMenuItem();
         menuManual = new javax.swing.JMenuItem();
@@ -642,10 +655,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -663,11 +676,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 459, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
                 .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -678,7 +691,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -701,7 +714,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1061,6 +1074,20 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuProject);
 
+        rootmenuTools.setText(resourceMap.getString("rootmenuTools.text")); // NOI18N
+        rootmenuTools.setName("rootmenuTools"); // NOI18N
+
+        menuOptions.setText(resourceMap.getString("menuOptions.text")); // NOI18N
+        menuOptions.setName("menuOptions"); // NOI18N
+        menuOptions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuOptionsActionPerformed(evt);
+            }
+        });
+        rootmenuTools.add(menuOptions);
+
+        jMenuBar1.add(rootmenuTools);
+
         rootmenuHelp.setText(resourceMap.getString("rootmenuHelp.text")); // NOI18N
         rootmenuHelp.setName("rootmenuHelp"); // NOI18N
         rootmenuHelp.addActionListener(new java.awt.event.ActionListener() {
@@ -1149,7 +1176,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
         newPLPFile();
-        if(Config.cfgSyntaxHighlighting)
+        if(Config.devSyntaxHighlighting)
             syntaxHighlight();
     }//GEN-LAST:event_menuNewActionPerformed
 
@@ -1160,7 +1187,7 @@ public class Develop extends javax.swing.JFrame {
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
         if(plp.save() == Constants.PLP_FILE_USE_SAVE_AS)
             savePLPFileAs();
-        if(Config.cfgSyntaxHighlighting)
+        if(Config.devSyntaxHighlighting)
             syntaxHighlight();
     }//GEN-LAST:event_menuSaveActionPerformed
 
@@ -1372,7 +1399,7 @@ public class Develop extends javax.swing.JFrame {
                     plp.updateAsm(plp.open_asm, txtEditor.getText());
                     plp.open_asm = Integer.parseInt(tokens[0]);
                     plp.refreshProjectView(false);
-                    if (Config.cfgSyntaxHighlighting) {
+                    if (Config.devSyntaxHighlighting) {
                         syntaxHighlight();
                     }
                 }
@@ -1460,7 +1487,7 @@ public class Develop extends javax.swing.JFrame {
 
         }
 
-        if(Config.cfgSyntaxHighlighting) {
+        if(Config.devSyntaxHighlighting) {
             Config.nothighlighting = false;
             int caretPos = txtEditor.getCaretPosition();
             syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
@@ -1516,6 +1543,11 @@ public class Develop extends javax.swing.JFrame {
         plp.g_find.setCurIndex(this.txtEditor.getCaretPosition());
         plp.g_find.setVisible(true);
     }//GEN-LAST:event_menuFindAndReplaceActionPerformed
+
+    private void menuOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOptionsActionPerformed
+        plp.g_opts.getTabs().setSelectedIndex(0);
+        plp.g_opts.setVisible(true);
+    }//GEN-LAST:event_menuOptionsActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
@@ -1623,6 +1655,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuNewASM;
     private javax.swing.JMenuItem menuOpen;
+    private javax.swing.JMenuItem menuOptions;
     private javax.swing.JMenuItem menuPaste;
     private javax.swing.JMenuItem menuProgram;
     private javax.swing.JMenuItem menuQuickProgram;
@@ -1641,6 +1674,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuFile;
     private javax.swing.JMenu rootmenuHelp;
     private javax.swing.JMenu rootmenuProject;
+    private javax.swing.JMenu rootmenuTools;
     private javax.swing.JSplitPane splitterH;
     private javax.swing.JSplitPane splitterV;
     private javax.swing.JToolBar toolbar;

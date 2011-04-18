@@ -44,7 +44,7 @@ public class Config {
     public static int     threadedModRefreshRate           = 100;
     public static boolean threadedModEnabled               = true;
 
-    public static boolean cfgSyntaxHighlighting            = true;
+    public static boolean devSyntaxHighlighting            = true;
     public static boolean nothighlighting                  = true;
     public static int     filetoolarge                     = 10000;
 

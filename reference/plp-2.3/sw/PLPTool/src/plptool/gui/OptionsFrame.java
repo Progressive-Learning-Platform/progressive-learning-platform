@@ -1,12 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
-/*
- * PLPOptions.java
- *
- * Created on Dec 7, 2010, 11:38:40 PM
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 package plptool.gui;
@@ -21,16 +28,26 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     private ProjectDriver plp = null;
 
-    /** Creates new form PLPOptions */
-    public OptionsFrame() {
-        initComponents();
-        this.setLocationRelativeTo(null);
-    }
-
     public OptionsFrame(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
         this.setLocationRelativeTo(null);
+        cmbFontSize.removeAllItems();
+        cmbFontSize.addItem(8);
+        cmbFontSize.addItem(10);
+        cmbFontSize.addItem(11);
+        cmbFontSize.addItem(12);
+        cmbFontSize.addItem(14);
+        cmbFontSize.addItem(16);
+        cmbFontSize.addItem(24);
+        cmbFontSize.addItem(36);
+        cmbFontSize.addItem(48);
+        cmbFontSize.addItem(72);
+        cmbFontSize.setSelectedIndex(3);
+    }
+
+    public javax.swing.JTabbedPane getTabs() {
+        return tabsOptions;
     }
 
     /** This method is called from within the constructor to
@@ -42,8 +59,12 @@ public class OptionsFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        tabsOptions = new javax.swing.JTabbedPane();
+        paneEditor = new javax.swing.JPanel();
+        editorSyntaxHighlighting = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
+        cmbFontSize = new javax.swing.JComboBox();
+        paneSim = new javax.swing.JPanel();
         sSimSpeed = new javax.swing.JSlider();
         jLabel1 = new javax.swing.JLabel();
         simNoExecute = new javax.swing.JCheckBox();
@@ -56,9 +77,64 @@ public class OptionsFrame extends javax.swing.JFrame {
         setName("Form"); // NOI18N
         setResizable(false);
 
-        jTabbedPane1.setName("jTabbedPane1"); // NOI18N
+        tabsOptions.setName("tabsOptions"); // NOI18N
 
-        jPanel1.setName("jPanel1"); // NOI18N
+        paneEditor.setName("paneEditor"); // NOI18N
+
+        editorSyntaxHighlighting.setSelected(true);
+        editorSyntaxHighlighting.setText(resourceMap.getString("editorSyntaxHighlighting.text")); // NOI18N
+        editorSyntaxHighlighting.setName("editorSyntaxHighlighting"); // NOI18N
+        editorSyntaxHighlighting.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editorSyntaxHighlightingActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
+
+        cmbFontSize.setModel(new javax.swing.DefaultComboBoxModel());
+        cmbFontSize.setName("cmbFontSize"); // NOI18N
+        cmbFontSize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbFontSizeActionPerformed(evt);
+            }
+        });
+        cmbFontSize.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                cmbFontSizePropertyChange(evt);
+            }
+        });
+
+        javax.swing.GroupLayout paneEditorLayout = new javax.swing.GroupLayout(paneEditor);
+        paneEditor.setLayout(paneEditorLayout);
+        paneEditorLayout.setHorizontalGroup(
+            paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneEditorLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(editorSyntaxHighlighting)
+                    .addGroup(paneEditorLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbFontSize, 0, 352, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        paneEditorLayout.setVerticalGroup(
+            paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneEditorLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(editorSyntaxHighlighting)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(318, Short.MAX_VALUE))
+        );
+
+        tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
+
+        paneSim.setName("paneSim"); // NOI18N
 
         sSimSpeed.setMajorTickSpacing(100);
         sSimSpeed.setMaximum(1000);
@@ -102,23 +178,23 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout paneSimLayout = new javax.swing.GroupLayout(paneSim);
+        paneSim.setLayout(paneSimLayout);
+        paneSimLayout.setHorizontalGroup(
+            paneSimLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneSimLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(paneSimLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(simBusReadDefaultZero))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        paneSimLayout.setVerticalGroup(
+            paneSimLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneSimLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -129,10 +205,10 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simBusReadDefaultZero)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simDumpTraceOnFailedEval)
-                .addContainerGap(229, Short.MAX_VALUE))
+                .addContainerGap(183, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+        tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
 
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
@@ -149,7 +225,7 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
+                    .addComponent(tabsOptions, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
                     .addComponent(btnClose, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -157,7 +233,7 @@ public class OptionsFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tabsOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnClose)
                 .addContainerGap(15, Short.MAX_VALUE))
@@ -186,15 +262,36 @@ public class OptionsFrame extends javax.swing.JFrame {
         Config.simDumpTraceOnFailedEvaluation = simDumpTraceOnFailedEval.isSelected();
     }//GEN-LAST:event_simDumpTraceOnFailedEvalActionPerformed
 
+    private void editorSyntaxHighlightingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editorSyntaxHighlightingActionPerformed
+        Config.devSyntaxHighlighting = editorSyntaxHighlighting.isSelected();
+        plp.g_dev.changeFormatting();
+    }//GEN-LAST:event_editorSyntaxHighlightingActionPerformed
+
+    private void cmbFontSizePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cmbFontSizePropertyChange
+        
+    }//GEN-LAST:event_cmbFontSizePropertyChange
+
+    private void cmbFontSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFontSizeActionPerformed
+        if(cmbFontSize.getItemCount() > 0) {
+            Config.devFontSize = (Integer) cmbFontSize.getItemAt(cmbFontSize.getSelectedIndex());
+            plp.g_dev.changeFormatting();
+            plp.refreshProjectView(false);
+        }
+    }//GEN-LAST:event_cmbFontSizeActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
+    private javax.swing.JComboBox cmbFontSize;
+    private javax.swing.JCheckBox editorSyntaxHighlighting;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel paneEditor;
+    private javax.swing.JPanel paneSim;
     private javax.swing.JSlider sSimSpeed;
     private javax.swing.JCheckBox simBusReadDefaultZero;
     private javax.swing.JCheckBox simDumpTraceOnFailedEval;
     private javax.swing.JCheckBox simNoExecute;
+    private javax.swing.JTabbedPane tabsOptions;
     // End of variables declaration//GEN-END:variables
 
 }
