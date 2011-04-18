@@ -365,6 +365,8 @@ public class ProjectDriver {
             entry = new TarArchiveEntry("plp.simconfig");
             String str = "";
 
+            str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
+
 
             if(g_watcher != null) {
                 str += "WATCHER\n";
@@ -378,6 +380,8 @@ public class ProjectDriver {
 
                 str += "END\n";
             }
+
+            Msg.D("-- saving mods info...", 2, this);
 
             if(smods != null && smods.size() > 0) {
 
@@ -431,7 +435,9 @@ public class ProjectDriver {
             tOut.closeArchiveEntry();
         }
 
+        Msg.D("Closing tar archive...", 2, this);
         tOut.close();
+        Msg.D("Project save completed", 2, this);
 
         modified = false;
         if(g) refreshProjectView(false);
@@ -521,12 +527,18 @@ public class ProjectDriver {
                 int i;
 
                 for(i = 0; i < lines.length; i++) {
+                    String tokens[] = lines[i].split("::");
+
+                    if(lines[i].startsWith("simRunnerDelay")) {
+                        Config.simRunnerDelay = Integer.parseInt(tokens[1]);
+                    }
+
                     if(lines[i].equals("MODS")) {
                         i++;
                         this.smods = new plptool.mods.Preset();
 
                         while(i < lines.length && !lines[i].equals("END")) {
-                            String tokens[] = lines[i].split("::");
+                            tokens = lines[i].split("::");
                             if(tokens.length > 4 && tokens[4].equals("noframe"))
                                 smods.addModuleDefinition(Integer.parseInt(tokens[0]),
                                         Long.parseLong(tokens[2]),
@@ -560,14 +572,16 @@ public class ProjectDriver {
         modified = false;
         open_asm = 0;
 
+        if(g) refreshProjectView(false);
+        if(!dirty) assemble();
+
         if(g) {
-            refreshProjectView(false);
+            g_opts.restoreSavedOpts();
             g_simsh.destroySimulation();
             g_simsh.setVisible(false);
             g_dev.disableSimControls();
-            if(!dirty)
-                assemble();
             modified = false;
+            updateWindowTitle();
         }
 
         return Constants.PLP_OK;
@@ -598,6 +612,8 @@ public class ProjectDriver {
      * @return PLP_OK
      */
     public int refreshProjectView(boolean commitCurrentAsm) {
+        Msg.D("Project view refresh...", 3, this);
+
         if(plpfile == null)
             return Constants.PLP_GENERIC_ERROR;
 
@@ -622,8 +638,10 @@ public class ProjectDriver {
         g_dev.getProjectTree().setModel(new DefaultTreeModel(root));
         for(int i = 0; i < g_dev.getProjectTree().getRowCount(); i++)
             g_dev.getProjectTree().expandRow(i);
-        
-        g_dev.setEditorText(asms.get(open_asm).getAsmString());
+
+        if(!asms.get(open_asm).getAsmString().equals(g_dev.getEditorText()))
+            g_dev.setEditorText(asms.get(open_asm).getAsmString());
+
         g_dev.getEditor().setEnabled(true);
         g_dev.getEditor().setVisible(true);
         g_dev.getEditor().setCaretPosition(0);
@@ -636,6 +654,7 @@ public class ProjectDriver {
 
         g_dev.setCurFile(header);
 
+        Msg.D("Done.", 3, this);
         return Constants.PLP_OK;
     }
 
@@ -687,6 +706,10 @@ public class ProjectDriver {
                 modified = true;
             g_dev.enableSimControls();
         }
+        else
+            asm = null;
+
+        refreshProjectView(false);
 
         Msg.I("Done.", null);
 

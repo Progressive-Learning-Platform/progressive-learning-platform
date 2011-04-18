@@ -49,6 +49,7 @@ public class PLPToolApp extends SingleFrameApplication {
         Msg.output = plp.g_dev.getOutput();
         if(plpFilePath != null)
             plp.open(plpFilePath);
+
         // show(mainWindow);
     }
 
