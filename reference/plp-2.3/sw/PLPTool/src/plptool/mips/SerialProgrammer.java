@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,18 +20,11 @@ package plptool.mips;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
-import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileInputStream;
 
-import java.util.Scanner;
-
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import plptool.Msg;
 import plptool.Constants;
 

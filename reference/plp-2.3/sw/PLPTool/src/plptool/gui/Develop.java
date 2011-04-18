@@ -589,6 +589,8 @@ public class Develop extends javax.swing.JFrame {
         menuSetMainProgram = new javax.swing.JMenuItem();
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        menuSerialTerminal = new javax.swing.JMenuItem();
         rootmenuHelp = new javax.swing.JMenu();
         menuQuickRef = new javax.swing.JMenuItem();
         menuManual = new javax.swing.JMenuItem();
@@ -696,7 +698,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -719,7 +721,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1090,6 +1092,18 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuTools.add(menuOptions);
+
+        jSeparator7.setName("jSeparator7"); // NOI18N
+        rootmenuTools.add(jSeparator7);
+
+        menuSerialTerminal.setText(resourceMap.getString("menuSerialTerminal.text")); // NOI18N
+        menuSerialTerminal.setName("menuSerialTerminal"); // NOI18N
+        menuSerialTerminal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSerialTerminalActionPerformed(evt);
+            }
+        });
+        rootmenuTools.add(menuSerialTerminal);
 
         jMenuBar1.add(rootmenuTools);
 
@@ -1552,6 +1566,13 @@ public class Develop extends javax.swing.JFrame {
         plp.g_opts.setVisible(true);
     }//GEN-LAST:event_menuOptionsActionPerformed
 
+    private void menuSerialTerminalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSerialTerminalActionPerformed
+        if(plp.term == null)
+            plp.term = new SerialTerminal();
+
+        plp.term.setVisible(true);
+    }//GEN-LAST:event_menuSerialTerminalActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -1642,6 +1663,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
@@ -1670,6 +1692,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator3;
     private javax.swing.JPopupMenu.Separator menuSeparator4;
     private javax.swing.JPopupMenu.Separator menuSeparator5;
+    private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
     private javax.swing.JMenuItem menuSimulate;
     private javax.swing.JMenuItem menuUndo;

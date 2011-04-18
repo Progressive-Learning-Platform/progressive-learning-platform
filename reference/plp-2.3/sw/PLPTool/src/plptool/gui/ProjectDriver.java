@@ -122,6 +122,9 @@ public class ProjectDriver {
     public int                                 p_progress;
     public TimeoutWatcher                      p_watchdog;
 
+    // Others
+    public plptool.gui.SerialTerminal          term;        // Serial terminal
+
     /**
      * The constructor for the project driver.
      *
