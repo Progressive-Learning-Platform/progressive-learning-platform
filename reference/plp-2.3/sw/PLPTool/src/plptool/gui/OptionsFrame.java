@@ -50,6 +50,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         return tabsOptions;
     }
 
+    public void restoreSavedOpts() {
+        sSimSpeed.setValue(Config.simRunnerDelay);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

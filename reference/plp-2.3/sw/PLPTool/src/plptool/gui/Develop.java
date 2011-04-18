@@ -141,8 +141,9 @@ public class Develop extends javax.swing.JFrame {
 
     public void notifyplpModified() {
         if(trackChanges) {
-            if(Config.nothighlighting)
+            if(Config.nothighlighting) {
                 plp.setModified();
+            }
         }
     }
 
@@ -157,9 +158,11 @@ public class Develop extends javax.swing.JFrame {
     public void setEditorText(String str) {
         txtEditor.setContentType("text");
         trackChanges = false;
-        txtEditor.setText(str);
-        if(Config.devSyntaxHighlighting && str.length() <= Config.filetoolarge)
-            syntaxHighlight();
+        if(!str.equals(txtEditor.getText())) {
+            txtEditor.setText(str);
+            if(Config.devSyntaxHighlighting && str.length() <= Config.filetoolarge)
+                syntaxHighlight();
+        }
         trackChanges = true;
         undoManager = new DoManager();
     }
@@ -396,11 +399,13 @@ public class Develop extends javax.swing.JFrame {
     private void syntaxHighlight() {
         Config.nothighlighting = false;
         int currpos = 0;
-        int doclength = txtEditor.getText().split("\\r?\\n").length;
+        String lines[] = txtEditor.getText().split("\\r?\\n");
+        int doclength = lines.length;
+
         for(int i=0;i<doclength;i++) {
-            String currline = txtEditor.getText().split("\\r?\\n")[i];
+            String currline = lines[i];
             syntaxHighlight(currline, currpos, styles);
-            currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
+            currpos += lines[i].length() + 1;
         }
         Config.nothighlighting = true;
     }
@@ -1187,8 +1192,6 @@ public class Develop extends javax.swing.JFrame {
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
         if(plp.save() == Constants.PLP_FILE_USE_SAVE_AS)
             savePLPFileAs();
-        if(Config.devSyntaxHighlighting)
-            syntaxHighlight();
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed

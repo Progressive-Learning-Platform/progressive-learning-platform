@@ -146,21 +146,20 @@ public class Msg {
      * @param objIdentifier The object invoking this call.
      */
     public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
-        if(requestedDebugLevel <= Constants.debugLevel)
+        if(requestedDebugLevel <= Constants.debugLevel) {
             if(objIdentifier != null)
-                if(output == null)
-                    System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
-                else {
+                System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
+                if(output != null) {
                     append("[DEBUG] ", true, Color.GRAY);
                     append(objIdentifier.toString() + ": " + debugStr + "\n", false, Color.DARK_GRAY);
                 }
             else
-                if(output == null)
-                    System.out.println("[DEBUG] " + debugStr);
-                else {
+                System.out.println("[DEBUG] " + debugStr);
+                if(output != null) {
                     append("[DEBUG] ", true, Color.GRAY);
                     append(debugStr + "\n", false, Color.DARK_GRAY);
                 }
+        }
     }
 
     /**
