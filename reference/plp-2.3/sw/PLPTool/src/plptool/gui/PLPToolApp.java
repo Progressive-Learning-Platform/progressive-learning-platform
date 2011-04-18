@@ -77,6 +77,11 @@ public class PLPToolApp extends SingleFrameApplication {
 
         java.io.File fileToOpen = null;
 
+        if(args.length == 1 && args[0].equals("--buildinfo")) {
+            System.out.println(plptool.Version.stamp);
+            return;
+        }
+
         if(args.length >= 2 && args[0].equals("-d")) {
             Constants.debugLevel = Integer.parseInt(args[1]);
             System.out.println("Debug level set to " + Constants.debugLevel);
