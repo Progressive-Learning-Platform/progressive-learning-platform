@@ -25,7 +25,7 @@ package plptool;
 public class Constants {
     public static final String versionString = "2.3";
     public static final String copyrightString =
-            "PLP Java Tool version " + versionString + "\n" +
+            "PLP Software Tool version " + versionString + "\n" +
             "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
             "This software is licensed under GPLv3.";
     public static final String manualURI = "http://code.google.com/p/progressive-learning-platform/wiki/UserManual";

@@ -127,10 +127,10 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 plp.g_dev.changeFormatting();
             }
             else if(command.equals("hloff")) {
-                plptool.Config.cfgSyntaxHighlighting = false;
+                plptool.Config.devSyntaxHighlighting = false;
             }
             else if(command.equals("hlon")) {
-                plptool.Config.cfgSyntaxHighlighting = true;
+                plptool.Config.devSyntaxHighlighting = true;
             }
             else if(command.equals("simcore")) {
                 out.setText(plp.sim.toString());
@@ -182,8 +182,8 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_dev.changeFormatting();
                 }
                 if(tokens[0].equals("hl")) {
-                    plptool.Config.cfgSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
-                    out.setText("cfgSyntaxHighlighting " + plptool.Config.cfgSyntaxHighlighting);
+                    plptool.Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
+                    out.setText("cfgSyntaxHighlighting " + plptool.Config.devSyntaxHighlighting);
                 }
                 if(tokens[0].equals("open")) {
                     plp.open(tokens[1]);

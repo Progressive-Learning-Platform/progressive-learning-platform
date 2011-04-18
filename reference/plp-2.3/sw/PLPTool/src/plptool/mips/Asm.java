@@ -471,12 +471,28 @@ public class Asm extends plptool.PLPAsm {
                 for(j = 0; j < tString[1].length(); j++) {
                     if(tString[1].charAt(j) == '\\' && j != tString[1].length() - 1) {
                         switch(tString[1].charAt(j + 1)) {
+
+                            // Linefeed (0xA)
                             case 'n':
                                 tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\n").toString();
                                 break;
+                                
+                            // Carriage return (0xD)
+                            case 'r':
+                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\r").toString();
+                                break;
+
+                            // Tab
+                            case 't':
+                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\t").toString();
+                                break;
+
+                            // Backslash
                             case '\\':
                                 tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\\").toString();
                                 break;
+
+                                
                             default:
                                 Msg.W("preprocess(" + curActiveFile + ":" + i + "): "
                                         + "Unable to escape character \\" + tString[1].charAt(j + 1), this);

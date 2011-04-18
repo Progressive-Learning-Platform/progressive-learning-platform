@@ -579,8 +579,10 @@ public class ProjectDriver {
      * @return PLP_OK;
      */
     public int updateWindowTitle() {
-        File fHandler = plpfile;
-        String windowTitle = fHandler.getName() + ((modified) ? "*" : "") +
+        if(plpfile == null)
+            return Constants.PLP_GENERIC_ERROR;
+
+        String windowTitle = plpfile.getName() + ((modified) ? "*" : "") +
                              " - PLP Software Tool " + Constants.versionString;
         g_dev.setTitle(windowTitle);
 
@@ -596,6 +598,9 @@ public class ProjectDriver {
      * @return PLP_OK
      */
     public int refreshProjectView(boolean commitCurrentAsm) {
+        if(plpfile == null)
+            return Constants.PLP_GENERIC_ERROR;
+
         if(commitCurrentAsm)
             updateAsm(open_asm, g_dev.getEditorText());
 
@@ -719,6 +724,8 @@ public class ProjectDriver {
             
         sim.loadProgram(asm);
 
+        sim.reset();
+
         if(g) {
             g_ioreg = new IORegistryFrame(this);
             g_sim = ArchRegistry.createSimCoreGUI(this);
@@ -741,8 +748,6 @@ public class ProjectDriver {
 
             g_simsh.setVisible(true);
         }
-
-        sim.reset();
 
         return Constants.PLP_OK;
     }
