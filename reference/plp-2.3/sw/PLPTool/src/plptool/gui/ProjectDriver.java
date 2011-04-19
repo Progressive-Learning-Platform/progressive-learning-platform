@@ -118,6 +118,7 @@ public class ProjectDriver {
     public javax.swing.JDesktopPane            g_desktop;  // Desktop pane
 
     // Programmer
+    private boolean                            serial_support;
     public gnu.io.SerialPort                   p_port;
     public int                                 p_progress;
     public TimeoutWatcher                      p_watchdog;
@@ -168,6 +169,21 @@ public class ProjectDriver {
 
             this.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
             this.g_dev.setVisible(true);
+        }
+
+        // check for rxtx native libaries
+        serial_support = true;
+
+        try {
+            gnu.io.RXTXVersion.getVersion();
+        } catch(UnsatisfiedLinkError e) {
+            Msg.W("Failed to detect native RXTX library. " +
+                  "Functionality requiring serial communication will fail.", null);
+            Msg.W("If you're running Linux, make sure that RXTX library is installed.", null);
+            Msg.W("If you're running Windows, make sure that the .dll files are in the " +
+                  "same directory and you run the batch file associated with " +
+                  "your version of Windows (32- or 64-bit)", null);
+            serial_support = false;
         }
     }
 
@@ -704,15 +720,15 @@ public class ProjectDriver {
         if(asm.preprocess(0) == Constants.PLP_OK)
             ret = asm.assemble();
 
-        if(g && asm != null && asm.isAssembled() && ret == 0) {
+        if(asm != null && asm.isAssembled() && ret == 0) {
             if(!wasAssembled)
                 modified = true;
-            g_dev.enableSimControls();
+            if(g) g_dev.enableSimControls();
         }
         else
             asm = null;
 
-        refreshProjectView(false);
+        if(g) refreshProjectView(false);
 
         Msg.I("Done.", null);
 
@@ -786,6 +802,10 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int program(String port) {
+        if(!serial_support)
+            Msg.E("No native serial libraries available.",
+                    Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, this);
+
         Msg.I("Programming to " + port, this);
 
         try {
@@ -829,6 +849,10 @@ public class ProjectDriver {
     public void setUnModified() {
         modified = false;
         this.updateWindowTitle();
+    }
+
+    public boolean isSerialSupported() {
+        return serial_support;
     }
 
     /**

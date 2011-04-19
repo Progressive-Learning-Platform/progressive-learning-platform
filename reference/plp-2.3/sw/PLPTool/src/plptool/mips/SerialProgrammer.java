@@ -44,7 +44,15 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private OutputStream out;
 
     public int connect(String portName, int baudRate) throws Exception {
-        portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+        try {
+            portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+        } catch(NoClassDefFoundError e) {
+            return Msg.E("Failed to link with native RXTX library.",
+                            Constants.PLP_GENERIC_ERROR, this);
+        } catch(UnsatisfiedLinkError e) {
+            return Msg.E("Failed to link with native RXTX library.",
+                            Constants.PLP_GENERIC_ERROR, this);
+        }
 
         if ( portIdentifier.isCurrentlyOwned() )
         {

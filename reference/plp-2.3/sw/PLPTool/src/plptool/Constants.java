@@ -110,6 +110,7 @@ public class Constants {
     public static final int PLP_BACKEND_IMPORT_CONFLICT          = 1032;
     public static final int PLP_BACKEND_EMPTY_PROGRAM            = 1033;
     public static final int PLP_BACKEND_THREAD_EXCEPTION         = 1034;
+    public static final int PLP_BACKEND_NO_NATIVE_SERIAL_LIBS    = 1035;
 
     // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFF80;
