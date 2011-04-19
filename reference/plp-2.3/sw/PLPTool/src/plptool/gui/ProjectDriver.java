@@ -598,7 +598,12 @@ public class ProjectDriver {
             g_opts.restoreSavedOpts();
             g_simsh.destroySimulation();
             g_simsh.setVisible(false);
-            g_dev.disableSimControls();
+
+            if(asm != null && asm.isAssembled())
+                g_dev.enableSimControls();
+            else
+                g_dev.disableSimControls();
+            
             modified = false;
             updateWindowTitle();
         }

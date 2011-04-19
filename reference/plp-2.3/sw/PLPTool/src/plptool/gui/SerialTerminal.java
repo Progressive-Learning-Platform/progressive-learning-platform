@@ -46,14 +46,35 @@ public class SerialTerminal extends javax.swing.JFrame {
     protected InputStream in;
     private OutputStream out;
     private SerialPort port;
+    private boolean standalone;
 
     protected boolean stop;
 
     /** Creates new form SerialTerminal */
-    public SerialTerminal() {
+    public SerialTerminal(boolean standalone) {
         initComponents();
 
+        this.standalone = standalone;
         stop = true;
+
+        if(standalone) {
+            this.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent winEvt) {
+                    System.exit(-1);
+                }
+            });
+        } else {
+            this.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent winEvt) {
+                    if(btnClose.isEnabled())
+                        btnCloseActionPerformed(null);
+                    setVisible(false);
+                }
+            });
+        }
+
 
 
         cmbBaud.removeAllItems();
@@ -136,6 +157,80 @@ public class SerialTerminal extends javax.swing.JFrame {
         } catch(Exception e) {
 
         }
+    }
+
+    public int openPort() {
+        try {
+            String portName = (String) cmbPort.getSelectedItem();
+            appendString("Opening port " + portName + ".");
+            int baudRate = (Integer) cmbBaud.getSelectedItem();
+            portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+
+            if (portIdentifier.isCurrentlyOwned()) {
+                appendString("Serial port " + portName + " is in use.");
+                return -1;
+            } else {
+                commPort = portIdentifier.open(this.getClass().getName(), 2000);
+
+                if (commPort instanceof SerialPort) {
+                    port = (SerialPort) commPort;
+                    port.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
+                            SerialPort.STOPBITS_1,
+                            SerialPort.PARITY_NONE);
+
+                    port.enableReceiveTimeout(1000);
+                    in = port.getInputStream();
+                    out = port.getOutputStream();
+
+                    btnOpen.setEnabled(false);
+                    btnClose.setEnabled(true);
+                    txtInput.setEnabled(true);
+                    btnSend.setEnabled(true);
+                    cmbBaud.setEnabled(false);
+                    cmbPort.setEnabled(false);
+                    cmbOpts.setEnabled(false);
+                    stop = false;
+
+                    (new SerialStreamReader()).start();
+                    appendString("Connected.");
+                } else {
+                    appendString(portName + " is not a serial port.");
+                    return -1;
+                }
+            }
+        } catch (Exception e) {
+            appendString("Error opening port.");
+            System.err.println(e);
+        }
+
+        return 0;
+    }
+
+    public int closePort() {
+        try {
+
+        stop = true;
+
+        in.close();
+        out.close();
+        port.close();
+        commPort.close();
+
+        btnOpen.setEnabled(true);
+        btnClose.setEnabled(false);
+        txtInput.setEnabled(false);
+        btnSend.setEnabled(false);
+        cmbBaud.setEnabled(true);
+        cmbPort.setEnabled(true);
+        cmbOpts.setEnabled(true);
+
+        appendString("Port closed.");
+
+        } catch(Exception e) {
+            appendString("Error closing port.");
+        }
+
+        return 0;
     }
 
     /** This method is called from within the constructor to
@@ -324,76 +419,11 @@ public class SerialTerminal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
-        try {
-        String portName = (String) cmbPort.getSelectedItem();
-        appendString("Opening port " + portName + ".");
-        int baudRate = (Integer) cmbBaud.getSelectedItem();
-        portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-
-        if ( portIdentifier.isCurrentlyOwned() )
-        {
-            appendString("Serial port " + portName + " is in use.");
-            return;
-        }
-        else {
-            commPort = portIdentifier.open(this.getClass().getName(),2000);
-
-            if ( commPort instanceof SerialPort ) {
-                port = (SerialPort) commPort;
-                port.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
-                                               SerialPort.STOPBITS_1,
-                                               SerialPort.PARITY_NONE);
-
-                port.enableReceiveTimeout(1000);
-                in = port.getInputStream();
-                out = port.getOutputStream();
-
-                btnOpen.setEnabled(false);
-                btnClose.setEnabled(true);
-                txtInput.setEnabled(true);
-                btnSend.setEnabled(true);
-                cmbBaud.setEnabled(false);
-                cmbPort.setEnabled(false);
-                cmbOpts.setEnabled(false);
-                stop = false;
-
-                (new SerialStreamReader()).start();
-                appendString("Connected.");
-            }
-            else {
-                appendString(portName + " is not a serial port.");
-                return;
-            }
-        }
-        } catch(Exception e) {
-            appendString("Error opening port.");
-            System.err.println(e);
-        }
+        openPort();
     }//GEN-LAST:event_btnOpenActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        try {
-
-        stop = true;
-
-        in.close();
-        out.close();
-        port.close();
-        commPort.close();
-
-        btnOpen.setEnabled(true);
-        btnClose.setEnabled(false);
-        txtInput.setEnabled(false);
-        btnSend.setEnabled(false);
-        cmbBaud.setEnabled(true);
-        cmbPort.setEnabled(true);
-        cmbOpts.setEnabled(true);
-        
-        appendString("Port closed.");
-
-        } catch(Exception e) {
-            appendString("Error closing port.");
-        }
+        closePort();
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
@@ -496,7 +526,7 @@ public class SerialTerminal extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SerialTerminal().setVisible(true);
+                new SerialTerminal(true).setVisible(true);
             }
         });
     }
