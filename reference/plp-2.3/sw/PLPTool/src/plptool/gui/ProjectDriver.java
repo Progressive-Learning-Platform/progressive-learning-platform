@@ -179,8 +179,8 @@ public class ProjectDriver {
         } catch(UnsatisfiedLinkError e) {
             Msg.W("Failed to detect native RXTX library. " +
                   "Functionality requiring serial communication will fail.", null);
-            Msg.W("If you're running Linux, make sure that RXTX library is installed.", null);
-            Msg.W("If you're running Windows, make sure that the .dll files are in the " +
+            Msg.W("If you are running Linux, make sure that RXTX library is installed.", null);
+            Msg.W("If you are running Windows, make sure that the .dll files are in the " +
                   "same directory and you run the batch file associated with " +
                   "your version of Windows (32- or 64-bit)", null);
             serial_support = false;
