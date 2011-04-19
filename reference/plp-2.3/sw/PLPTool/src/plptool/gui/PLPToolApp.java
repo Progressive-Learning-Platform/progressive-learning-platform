@@ -40,14 +40,7 @@ public class PLPToolApp extends SingleFrameApplication {
     @Override protected void startup() {
 
         if(serialTerminal) {
-            plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal();
-
-            term.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosing(java.awt.event.WindowEvent winEvt) {
-                    System.exit(-1);
-                }
-            });
+            plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
 
             term.setVisible(true);
         }

@@ -1569,7 +1569,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSerialTerminalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSerialTerminalActionPerformed
         if(plp.term == null)
-            plp.term = new SerialTerminal();
+            plp.term = new SerialTerminal(false);
 
         plp.term.setVisible(true);
     }//GEN-LAST:event_menuSerialTerminalActionPerformed

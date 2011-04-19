@@ -95,7 +95,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     public int programWithAsm() throws Exception {
-        if(plp.asm.isAssembled()) {
+        if(plp.asm.isAssembled() && out != null) {
             long objCode[] = plp.asm.getObjectCode();
             long addrTable[] = plp.asm.getAddrTable();
             byte inData = '\0';
