@@ -206,8 +206,6 @@ public class ProjectFileManipulator {
             plp.assemble();
             if(plp.asm != null && plp.asm.isAssembled())
                 plp.program(args[3]);
-            while(plp.p_watchdog.isAlive())
-                try { Thread.sleep(100); } catch(Exception e) {};
             System.exit(-1);
         }
 

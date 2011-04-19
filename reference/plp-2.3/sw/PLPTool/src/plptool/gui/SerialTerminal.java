@@ -86,17 +86,36 @@ public class SerialTerminal extends javax.swing.JFrame {
         cmbFormat.removeAllItems();
         cmbFormat.addItem("ASCII String");
         cmbFormat.addItem("1-byte raw");
-        cmbFormat.addItem("Space-delimited raw (MSB first)");
+        cmbFormat.addItem("Space-delimited raw");
+
+        this.setLocationRelativeTo(null);
+
+        try {
+            gnu.io.RXTXVersion.getVersion();
+        } catch(UnsatisfiedLinkError e) {
+            appendString("Failed to link with RXTX native library.");
+            btnOpen.setEnabled(false);
+        } catch(NoClassDefFoundError e) {
+            appendString("Failed to link with RXTX native library.");
+            btnOpen.setEnabled(false);
+        }
     }
 
-    protected void appendByte(char data) throws Exception {
+    protected void appendByte(char data, Color color) throws Exception {
         StyledDocument doc = console.getStyledDocument();
 
         SimpleAttributeSet attrib = new SimpleAttributeSet();
         StyleConstants.setBold(attrib, true);
-        StyleConstants.setForeground(attrib, Color.RED);
+        StyleConstants.setForeground(attrib, color);
 
-        doc.insertString(doc.getLength(), data + "", attrib);
+        String toWrite;
+
+        if(chkHEX.isSelected()) 
+            toWrite = String.format("0x%x ", (int) data);
+        else
+            toWrite = data + "";
+
+        doc.insertString(doc.getLength(), toWrite, attrib);
 
         console.setCaretPosition(doc.getLength() - 1);
     }
@@ -142,6 +161,8 @@ public class SerialTerminal extends javax.swing.JFrame {
         cmbFormat = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         console = new javax.swing.JTextPane();
+        chkHEX = new javax.swing.JCheckBox();
+        chkEcho = new javax.swing.JCheckBox();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SerialTerminal.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -170,6 +191,11 @@ public class SerialTerminal extends javax.swing.JFrame {
         txtInput.setText(resourceMap.getString("txtInput.text")); // NOI18N
         txtInput.setEnabled(false);
         txtInput.setName("txtInput"); // NOI18N
+        txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtInputKeyPressed(evt);
+            }
+        });
 
         btnOpen.setText(resourceMap.getString("btnOpen.text")); // NOI18N
         btnOpen.setName("btnOpen"); // NOI18N
@@ -210,9 +236,21 @@ public class SerialTerminal extends javax.swing.JFrame {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
+        console.setEditable(false);
         console.setFont(resourceMap.getFont("console.font")); // NOI18N
         console.setName("console"); // NOI18N
+        console.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                consoleKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(console);
+
+        chkHEX.setText(resourceMap.getString("chkHEX.text")); // NOI18N
+        chkHEX.setName("chkHEX"); // NOI18N
+
+        chkEcho.setText(resourceMap.getString("chkEcho.text")); // NOI18N
+        chkEcho.setName("chkEcho"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -221,7 +259,11 @@ public class SerialTerminal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(chkHEX)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkEcho))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(lblPort)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -233,17 +275,17 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblOpts)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbOpts, 0, 113, Short.MAX_VALUE))
+                        .addComponent(cmbOpts, 0, 249, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(btnOpen)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnClose)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 332, Short.MAX_VALUE)
                         .addComponent(btnClear))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSend)))
                 .addContainerGap())
@@ -265,12 +307,16 @@ public class SerialTerminal extends javax.swing.JFrame {
                     .addComponent(btnClose)
                     .addComponent(btnClear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSend)
+                    .addComponent(chkHEX)
+                    .addComponent(chkEcho))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnSend))
                 .addContainerGap())
         );
 
@@ -278,10 +324,10 @@ public class SerialTerminal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
-        String portName = (String) cmbPort.getSelectedItem();
-        int baudRate = (Integer) cmbBaud.getSelectedItem();
         try {
+        String portName = (String) cmbPort.getSelectedItem();
         appendString("Opening port " + portName + ".");
+        int baudRate = (Integer) cmbBaud.getSelectedItem();
         portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 
         if ( portIdentifier.isCurrentlyOwned() )
@@ -301,10 +347,16 @@ public class SerialTerminal extends javax.swing.JFrame {
                 port.enableReceiveTimeout(1000);
                 in = port.getInputStream();
                 out = port.getOutputStream();
+
+                btnOpen.setEnabled(false);
                 btnClose.setEnabled(true);
                 txtInput.setEnabled(true);
                 btnSend.setEnabled(true);
+                cmbBaud.setEnabled(false);
+                cmbPort.setEnabled(false);
+                cmbOpts.setEnabled(false);
                 stop = false;
+
                 (new SerialStreamReader()).start();
                 appendString("Connected.");
             }
@@ -314,7 +366,7 @@ public class SerialTerminal extends javax.swing.JFrame {
             }
         }
         } catch(Exception e) {
-            appendString("Failed.");
+            appendString("Error opening port.");
             System.err.println(e);
         }
     }//GEN-LAST:event_btnOpenActionPerformed
@@ -329,13 +381,18 @@ public class SerialTerminal extends javax.swing.JFrame {
         port.close();
         commPort.close();
 
+        btnOpen.setEnabled(true);
         btnClose.setEnabled(false);
         txtInput.setEnabled(false);
         btnSend.setEnabled(false);
+        cmbBaud.setEnabled(true);
+        cmbPort.setEnabled(true);
+        cmbOpts.setEnabled(true);
+        
         appendString("Port closed.");
 
         } catch(Exception e) {
-
+            appendString("Error closing port.");
         }
     }//GEN-LAST:event_btnCloseActionPerformed
 
@@ -346,16 +403,50 @@ public class SerialTerminal extends javax.swing.JFrame {
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
         try {
 
+        int dataout;
+
         switch(cmbFormat.getSelectedIndex()) {
             case 0:
                 out.write(txtInput.getText().getBytes());
+                if(chkEcho.isSelected())
+                    for(int i = 0; i < txtInput.getText().length(); i++)
+                        appendByte((char) txtInput.getText().charAt(i),
+                                (chkHEX.isSelected() ? Color.MAGENTA :Color.BLUE));
                 break;
 
             case 1:
-                out.write(plptool.PLPToolbox.parseNumInt(txtInput.getText()));
+                dataout = plptool.PLPToolbox.parseNumInt(txtInput.getText());
+
+                if(dataout < 0 || dataout > 255) {
+                    appendString("Invalid number.");
+                    return;
+                }
+
+                out.write(dataout);
+                if(chkEcho.isSelected())
+                    appendByte((char) dataout,
+                            (chkHEX.isSelected() ? Color.MAGENTA : Color.BLUE));
                 break;
 
             case 2:
+                String tokens[] = txtInput.getText().split("\\s+");
+
+
+                for(int i = 0; i < tokens.length; i++) {
+                    dataout = plptool.PLPToolbox.parseNumInt(tokens[i]);
+
+                    if(dataout < 0 || dataout > 255) {
+                        appendString("Invalid number.");
+                        return;
+                    }
+
+                    out.write(dataout);
+                    
+                    if(chkEcho.isSelected())
+                        appendByte((char) dataout,
+                                (chkHEX.isSelected() ? Color.MAGENTA : Color.BLUE));
+                }
+
                 break;
 
             default:
@@ -371,6 +462,33 @@ public class SerialTerminal extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnSendActionPerformed
+
+    private void txtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInputKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnSendActionPerformed(null);
+    }//GEN-LAST:event_txtInputKeyPressed
+
+    private void consoleKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_consoleKeyTyped
+        char data = evt.getKeyChar();
+
+        try {
+
+        out.write(data);
+
+        if(chkEcho.isSelected())
+            appendByte((char) data,
+                    (chkHEX.isSelected() ? Color.MAGENTA : Color.BLUE));
+
+        } catch(Exception e) {
+            try {
+
+            appendString("Send failed.");
+
+            } catch(Exception eb) {
+
+            }
+        }
+    }//GEN-LAST:event_consoleKeyTyped
 
     /**
     * @param args the command line arguments
@@ -388,6 +506,8 @@ public class SerialTerminal extends javax.swing.JFrame {
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSend;
+    private javax.swing.JCheckBox chkEcho;
+    private javax.swing.JCheckBox chkHEX;
     private javax.swing.JComboBox cmbBaud;
     private javax.swing.JComboBox cmbFormat;
     private javax.swing.JComboBox cmbOpts;
@@ -411,7 +531,7 @@ public class SerialTerminal extends javax.swing.JFrame {
             while(!stop) {
                 data = in.read();
                 if(data > -1)
-                    appendByte((char) data);
+                    appendByte((char) data, Color.RED);
             }
 
             appendString("Stream reader exiting.");

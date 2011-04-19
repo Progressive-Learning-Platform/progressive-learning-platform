@@ -31,6 +31,7 @@ public class PLPToolApp extends SingleFrameApplication {
     SimShell simUI;
     static String plpFilePath = null;
     static boolean open = false;
+    static boolean serialTerminal = false;
     ConsoleFrame con;
 
     /**
@@ -38,17 +39,30 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     @Override protected void startup() {
 
+        if(serialTerminal) {
+            plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal();
 
-        ProjectDriver plp = new ProjectDriver(true, "plpmips"); // default to plpmips for now
-        if(Constants.debugLevel > 0) {
-            con = new ConsoleFrame(plp);
-            con.setVisible(true);
+            term.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent winEvt) {
+                    System.exit(-1);
+                }
+            });
+
+            term.setVisible(true);
         }
-        plp.app = this;
-        
-        Msg.output = plp.g_dev.getOutput();
-        if(plpFilePath != null)
-            plp.open(plpFilePath);
+        else {
+            ProjectDriver plp = new ProjectDriver(true, "plpmips"); // default to plpmips for now
+            if(Constants.debugLevel > 0) {
+                con = new ConsoleFrame(plp);
+                con.setVisible(true);
+            }
+            plp.app = this;
+
+            Msg.output = plp.g_dev.getOutput();
+            if(plpFilePath != null)
+                plp.open(plpFilePath);
+        }
 
         // show(mainWindow);
     }
@@ -78,11 +92,13 @@ public class PLPToolApp extends SingleFrameApplication {
 
         java.io.File fileToOpen = null;
 
+        // Print buildinfo and quit
         if(args.length == 1 && args[0].equals("--buildinfo")) {
             System.out.println(plptool.Version.stamp);
             return;
         }
 
+        // Debug level setting
         if(args.length >= 2 && args[0].equals("-d")) {
             Constants.debugLevel = Integer.parseInt(args[1]);
             System.out.println("Debug level set to " + Constants.debugLevel);
@@ -94,6 +110,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 args = new String[0];
         }
 
+        // Classroom mode
         if(args.length >= 2 && args[0].equals("-x")) {
             plptool.Config.devFontSize = Integer.parseInt(args[1]);
             System.out.println("Classroom Demo Mode");
@@ -112,7 +129,11 @@ public class PLPToolApp extends SingleFrameApplication {
             fileToOpen = new java.io.File(args[0]);
         }
 
-        if(args.length > 0 && args[0].equals("-a")) {
+        if(args.length == 1 && args[0].equals("--serialterminal")) {
+            serialTerminal = true;
+            launch(PLPToolApp.class, args);
+        }
+        else if(args.length > 0 && args[0].equals("-a")) {
             if(args.length != 3) {
                 System.out.println("Usage: PLPTool -a <asm> <out>");
                 System.exit(-1);

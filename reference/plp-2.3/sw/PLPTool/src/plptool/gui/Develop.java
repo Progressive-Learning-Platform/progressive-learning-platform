@@ -520,7 +520,8 @@ public class Develop extends javax.swing.JFrame {
 
         if(Constants.debugLevel >= 1 || plptool.Version.stamp.contains("daily"))  {
             catchyStr += "<center><h3>Build: " + plptool.Version.stamp + "</h3></center>";
-            catchyStr += "<center><h3>OS/arch: " + plptool.PLPToolbox.getOS(false) + "</h3></center>";
+            catchyStr += "<center><h3>OS/arch: " + System.getProperty("os.name")
+                    + "/" + System.getProperty("os.arch") + "</h3></center>";
         }
 
         txtEditor.setText(catchyStr);
