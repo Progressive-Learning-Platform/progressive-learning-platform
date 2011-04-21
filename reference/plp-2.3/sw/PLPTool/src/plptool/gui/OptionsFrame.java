@@ -30,6 +30,7 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     public OptionsFrame(ProjectDriver plp) {
         this.plp = plp;
+        plptool.PLPToolbox.attachHideOnEscapeListener(this);
         initComponents();
         this.setLocationRelativeTo(null);
         cmbFontSize.removeAllItems();

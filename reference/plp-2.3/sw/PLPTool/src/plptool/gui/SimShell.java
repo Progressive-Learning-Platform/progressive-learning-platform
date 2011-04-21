@@ -242,6 +242,7 @@ public class SimShell extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuClose = new javax.swing.JMenuItem();
         rootmenuTools = new javax.swing.JMenu();
+        menuOptions = new javax.swing.JMenuItem();
         menuIOReg = new javax.swing.JCheckBoxMenuItem();
         menuPresets = new javax.swing.JMenu();
         menuRemoveIO = new javax.swing.JMenu();
@@ -379,6 +380,15 @@ public class SimShell extends javax.swing.JFrame {
         rootmenuTools.setText(resourceMap.getString("rootmenuTools.text")); // NOI18N
         rootmenuTools.setName("rootmenuTools"); // NOI18N
 
+        menuOptions.setText(resourceMap.getString("menuOptions.text")); // NOI18N
+        menuOptions.setName("menuOptions"); // NOI18N
+        menuOptions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuOptionsActionPerformed(evt);
+            }
+        });
+        rootmenuTools.add(menuOptions);
+
         menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
         menuIOReg.setName("menuIOReg"); // NOI18N
         menuIOReg.addActionListener(new java.awt.event.ActionListener() {
@@ -487,6 +497,7 @@ public class SimShell extends javax.swing.JFrame {
         if(plp.g_opts == null)
             plp.g_opts = new OptionsFrame(plp);
         plp.g_opts.getTabs().setSelectedIndex(1);
+        plp.g_opts.setVisible(false);
         plp.g_opts.setVisible(true);
     }//GEN-LAST:event_btnOptsActionPerformed
 
@@ -567,6 +578,14 @@ public class SimShell extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuIORegActionPerformed
 
+    private void menuOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOptionsActionPerformed
+         if(plp.g_opts == null)
+            plp.g_opts = new OptionsFrame(plp);
+        plp.g_opts.getTabs().setSelectedIndex(1);
+        plp.g_opts.setVisible(false);
+        plp.g_opts.setVisible(true);
+    }//GEN-LAST:event_menuOptionsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOpts;
     private javax.swing.JButton btnReset;
@@ -577,6 +596,7 @@ public class SimShell extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem menuASMView;
     private javax.swing.JMenuItem menuClose;
     private javax.swing.JCheckBoxMenuItem menuIOReg;
+    private javax.swing.JMenuItem menuOptions;
     private javax.swing.JMenu menuPresets;
     private javax.swing.JMenu menuRemoveIO;
     private javax.swing.JMenuItem menuReset;
