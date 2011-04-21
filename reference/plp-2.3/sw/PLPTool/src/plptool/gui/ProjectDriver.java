@@ -638,8 +638,14 @@ public class ProjectDriver {
     public int refreshProjectView(boolean commitCurrentAsm) {
         Msg.D("Project view refresh...", 3, this);
 
-        if(plpfile == null)
-            return Constants.PLP_GENERIC_ERROR;
+        if(plpfile == null) {
+            g_dev.disableBuildControls();
+            g_dev.catchyPLP();
+
+            g_dev.getProjectTree().setModel(new DefaultTreeModel(new DefaultMutableTreeNode("No project file open.")));
+            
+            return Constants.PLP_OK;
+        }
 
         if(commitCurrentAsm)
             updateAsm(open_asm, g_dev.getEditorText());

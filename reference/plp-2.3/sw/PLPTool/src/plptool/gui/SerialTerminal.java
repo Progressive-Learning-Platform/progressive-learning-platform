@@ -46,6 +46,7 @@ public class SerialTerminal extends javax.swing.JFrame {
     protected InputStream in;
     private OutputStream out;
     private SerialPort port;
+    private boolean streamReaderRunning;
     private boolean standalone;
 
     protected boolean stop;
@@ -56,6 +57,7 @@ public class SerialTerminal extends javax.swing.JFrame {
 
         this.standalone = standalone;
         stop = true;
+        streamReaderRunning = false;
 
         if(standalone) {
             this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -65,6 +67,19 @@ public class SerialTerminal extends javax.swing.JFrame {
                 }
             });
         } else {
+            javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
+            javax.swing.Action escapeAction = new javax.swing.AbstractAction() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if(btnClose.isEnabled())
+                        btnCloseActionPerformed(null);
+
+                    setVisible(false);
+                }
+            };
+
+            getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+            getRootPane().getActionMap().put("ESCAPE", escapeAction);
+
             this.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosing(java.awt.event.WindowEvent winEvt) {
@@ -557,6 +572,13 @@ public class SerialTerminal extends javax.swing.JFrame {
             int data;
 
             try {
+                
+            if(streamReaderRunning) {
+               appendString("Another stream reader thread is already running.");
+               return;
+            }
+
+            streamReaderRunning = true;
 
             while(!stop) {
                 data = in.read();
@@ -564,10 +586,11 @@ public class SerialTerminal extends javax.swing.JFrame {
                     appendByte((char) data, Color.RED);
             }
 
-            appendString("Stream reader exiting.");
+            streamReaderRunning = false;
+            appendString("Stream reader is stopped.");
 
             } catch(Exception e) {
-
+                streamReaderRunning = false;
             }
         }
     }
