@@ -179,11 +179,23 @@ public class ProjectDriver {
         } catch(UnsatisfiedLinkError e) {
             Msg.W("Failed to detect native RXTX library. " +
                   "Functionality requiring serial communication will fail.", null);
-            Msg.W("If you are running Linux, make sure that RXTX library is installed.", null);
-            Msg.W("If you are running Windows, make sure that the .dll files are in the " +
+            Msg.W(" - If you are running Linux, make sure that RXTX library is installed.", null);
+            Msg.W(" - If you are running Windows, make sure that the .dll files are in the " +
                   "same directory and you run the batch file associated with " +
                   "your version of Windows (32- or 64-bit)", null);
             serial_support = false;
+        }
+
+        // check for JRE version
+        
+        String tokens[] = System.getProperty("java.version").split("\\.");
+        int major = Integer.parseInt(tokens[0]);
+        int minor = Integer.parseInt(tokens[1]);
+
+        if(major == Constants.minimumJREMajorVersion && minor < Constants.minimumJREMinorVersion) {
+            Msg.W("You are running an older Java Runtime Environment version." +
+                  " Some functionalities may not work as intended. " +
+                  "Please upgrade to at least JRE version 1.5", null);
         }
     }
 

@@ -34,7 +34,11 @@ public class QuickRef extends javax.swing.JFrame {
 
         plptool.PLPToolbox.attachHideOnEscapeListener(this);
 
-        DefaultTableModel tbl = (DefaultTableModel) tblRType.getModel();
+        String str = "";
+        txtHTML.setContentType("text/html");
+
+        str += "<a name=\"r\" /><h1>R-type Instructions</h1>";
+        str += "<table border=1 width=\"100%\">";
 
         String[][] data = new String[11][2];
 
@@ -50,11 +54,16 @@ public class QuickRef extends javax.swing.JFrame {
         data[9][0] = "jr $rs";                  data[9][1] = "PC = rs";
         data[10][0] = "jalr $rd, $rs";          data[10][1] = "rd = PC + 4; PC = rs";
 
-
-        for(int i = 0; i < data.length; i++)
-            tbl.addRow(data[i]);
+        for(int i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "</tr>";
+        }
         
-        tbl = (DefaultTableModel) tblIType.getModel();
+        str += "</table>";
+
+        str += "<a name=\"i\" /><h1>I-type Instructions</h1>";
+        str += "<table border=1 width=\"100%\"";
 
         data = new String[10][2];
 
@@ -69,39 +78,57 @@ public class QuickRef extends javax.swing.JFrame {
         data[8][0] = "beq   $rt, $rs, label";   data[8][1] = "if (rt == rs) PC = PC + 4 + imm";
         data[9][0] = "bne   $rt, $rs, label";   data[9][1] = "if (rt != rs) PC = PC + 4 + imm";
 
-        for(int i = 0; i < data.length; i++)
-            tbl.addRow(data[i]);
+        for(int i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "</tr>";
+        }
 
-        tbl = (DefaultTableModel) tblJType.getModel();
+        str += "</table>";
+
+        str += "<a name=\"j\" /><h1>J-type Instructions</h1>";
+        str += "<table border=1 width=\"100%\"";
 
         data = new String[2][2];
 
         data[0][0] = "j     label";             data[0][1] = "PC = label";
         data[1][0] = "jal   label";             data[1][1] = "ra = PC + 4; PC = label";
 
-        for(int i = 0; i < data.length; i++)
-            tbl.addRow(data[i]);
+        for(int i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "</tr>";
+        }
 
-        tbl = (DefaultTableModel) tblPseudos.getModel();
+        str += "</table>";
 
-        data = new String[11][2];
+        str += "<a name=\"p\" /><h1>Pseudo-operations</h1>";
+        str += "<table border=1 width=\"100%\"";
+
+        data = new String[7][2];
 
         data[0][0] = "nop";                     data[0][1] = "sll $0, $0, 0";
         data[1][0] = "b     label";             data[1][1] = "beq $0, $0, label";
         data[2][0] = "move  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
-        data[3][0] = "li    $rd, imm32";        data[3][1] = "lui $rd, imm32 >> 16;";
-        data[4][0] = "";                        data[4][1] = "ori $rd, $rd, imm & 0xffff";
-        data[5][0] = "li    $rd, label";        data[5][1] = "lui $rd, label[31:16];";
-        data[6][0] = "";                        data[6][1] = "ori $rd, $rd, label[15:0]";
-        data[7][0] = "push  $rt";               data[7][1] = "sw $rt, 0($sp);";
-        data[8][0] = "";                        data[8][1] = "addiu $sp, $sp, -4";
-        data[9][0] = "pop   $rt";               data[9][1] = "addiu $sp, $sp, 4;";
-        data[10][0] = "";                       data[10][1] = "lw $rt, 0($sp)";
+        data[3][0] = "li    $rd, imm32";        data[3][1] = "lui $rd, imm32 >> 16;<br />";
+                                                data[3][1] += "ori $rd, $rd, imm & 0xffff";
+        data[4][0] = "li    $rd, label";        data[4][1] = "lui $rd, label[31:16];<br />";
+                                                data[4][1] += "ori $rd, $rd, label[15:0]";
+        data[5][0] = "push  $rt";               data[5][1] = "sw $rt, 0($sp);<br />";
+                                                data[5][1] += "addiu $sp, $sp, -4";
+        data[6][0] = "pop   $rt";               data[6][1] = "addiu $sp, $sp, 4;<br />";
+                                                data[6][1] += "lw $rt, 0($sp)";
 
-        for(int i = 0; i < data.length; i++)
-            tbl.addRow(data[i]);
+        for(int i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "</tr>";
+        }
 
-        tbl = (DefaultTableModel) tblMemMap.getModel();
+        str += "</table>";
+
+        str += "<a name=\"m\" /><h1>I/O Memory Map</h1>";
+        str += "<table border=1 width=\"100%\"";
 
         data = new String[10][2];
 
@@ -116,10 +143,15 @@ public class QuickRef extends javax.swing.JFrame {
         data[8][0] = "0xf0600000";              data[8][1] = "Timer";
         data[9][0] = "0xf0a00000";              data[9][1] = "Seven Segments";
 
-        for(int i = 0; i < data.length; i++)
-            tbl.addRow(data[i]);
+        for(int i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "</tr>";
+        }
 
+        str += "</table>";
 
+        txtHTML.setText(str);
     }
 
     /** This method is called from within the constructor to
@@ -131,144 +163,18 @@ public class QuickRef extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblIType = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblRType = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tblJType = new javax.swing.JTable();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        tblMemMap = new javax.swing.JTable();
-        jLabel4 = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        tblPseudos = new javax.swing.JTable();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtHTML = new javax.swing.JTextPane();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(QuickRef.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
-        setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
         });
-
-        jLabel1.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
-        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
-        jLabel1.setName("jLabel1"); // NOI18N
-
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
-
-        tblIType.setFont(resourceMap.getFont("tblJType.font")); // NOI18N
-        tblIType.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Usage", "C Equiv."
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblIType.setName("tblIType"); // NOI18N
-        jScrollPane1.setViewportView(tblIType);
-        tblIType.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblIType.columnModel.title0")); // NOI18N
-        tblIType.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblIType.columnModel.title1")); // NOI18N
-
-        jLabel2.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
-        jLabel2.setName("jLabel2"); // NOI18N
-
-        jScrollPane2.setName("jScrollPane2"); // NOI18N
-
-        tblRType.setFont(resourceMap.getFont("tblJType.font")); // NOI18N
-        tblRType.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Usage", "C Equiv."
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblRType.setName("tblRType"); // NOI18N
-        jScrollPane2.setViewportView(tblRType);
-        tblRType.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblIType.columnModel.title0")); // NOI18N
-        tblRType.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblIType.columnModel.title1")); // NOI18N
-
-        jLabel3.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
-
-        jScrollPane3.setName("jScrollPane3"); // NOI18N
-
-        tblJType.setFont(resourceMap.getFont("tblJType.font")); // NOI18N
-        tblJType.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Usage", "C Equiv."
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblJType.setName("tblJType"); // NOI18N
-        jScrollPane3.setViewportView(tblJType);
-        tblJType.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblIType.columnModel.title0")); // NOI18N
-        tblJType.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblIType.columnModel.title1")); // NOI18N
-
-        jScrollPane4.setName("jScrollPane4"); // NOI18N
-
-        tblMemMap.setFont(resourceMap.getFont("tblJType.font")); // NOI18N
-        tblMemMap.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Address", "I/O Module"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblMemMap.setName("tblMemMap"); // NOI18N
-        jScrollPane4.setViewportView(tblMemMap);
-        tblMemMap.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title0")); // NOI18N
-        tblMemMap.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMemMap.columnModel.title1")); // NOI18N
-
-        jLabel4.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
-        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
-        jLabel4.setName("jLabel4"); // NOI18N
 
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
@@ -278,33 +184,11 @@ public class QuickRef extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
-        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
-        jLabel5.setName("jLabel5"); // NOI18N
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        jScrollPane5.setName("jScrollPane5"); // NOI18N
-
-        tblPseudos.setFont(resourceMap.getFont("tblPseudos.font")); // NOI18N
-        tblPseudos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Usage", "Equiv. Ops"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblPseudos.setName("tblPseudos"); // NOI18N
-        jScrollPane5.setViewportView(tblPseudos);
-        tblPseudos.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblPseudos.columnModel.title0")); // NOI18N
-        tblPseudos.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblPseudos.columnModel.title1")); // NOI18N
+        txtHTML.setEditable(false);
+        txtHTML.setName("txtHTML"); // NOI18N
+        jScrollPane1.setViewportView(txtHTML);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -313,49 +197,17 @@ public class QuickRef extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5)
-                    .addComponent(jLabel4)
-                    .addComponent(btnClose)
-                    .addComponent(jScrollPane4)
-                    .addComponent(jLabel5))
+                    .addComponent(btnClose, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnClose)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnClose)
                 .addContainerGap())
         );
 
@@ -375,21 +227,8 @@ public class QuickRef extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTable tblIType;
-    private javax.swing.JTable tblJType;
-    private javax.swing.JTable tblMemMap;
-    private javax.swing.JTable tblPseudos;
-    private javax.swing.JTable tblRType;
+    private javax.swing.JTextPane txtHTML;
     // End of variables declaration//GEN-END:variables
 
 }
