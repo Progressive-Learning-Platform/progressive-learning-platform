@@ -1527,13 +1527,13 @@ public class Develop extends javax.swing.JFrame {
         }
         if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
-            if(deleteOccured) Msg.M("deletion event: selection replace");
+            //if(deleteOccured) Msg.M("deletion event: selection replace");
             plp.setModified();
             //undoManager.modify("insert", Character.toString(evt.getKeyChar()), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
         } else if ((int)evt.getKeyChar() == 127) {
             //try {
             deleteOccured = true;
-            if(deleteOccured) Msg.M("deletion event: delete key");
+            //if(deleteOccured) Msg.M("deletion event: delete key");
             plp.setModified();
                 //undoManager.modify("delete", txtEditor.getText(position, 1), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
             //}
@@ -1543,7 +1543,7 @@ public class Develop extends javax.swing.JFrame {
         } else if ((int)evt.getKeyChar() == 8) {
             deleteOccured = true;
             //try {
-            if(deleteOccured) Msg.M("deletion event: backspace");
+            //if(deleteOccured) Msg.M("deletion event: backspace");
             plp.setModified();
                 //undoManager.modify("backspace", txtEditor.getText(position, 1), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
             //}
@@ -1552,13 +1552,13 @@ public class Develop extends javax.swing.JFrame {
             //}
         } else if ((int)evt.getKeyChar() == 24) {
             deleteOccured = true;
-            if(deleteOccured) Msg.M("deletion event: delete key");
+            //if(deleteOccured) Msg.M("deletion event: delete key");
             plp.setModified();
             //undoManager.modify("delete", "", txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
         } else if ((int)evt.getKeyChar() == 22) {
             try {
                 deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
-                if(deleteOccured) Msg.M("deletion event: paste replace");
+                //if(deleteOccured) Msg.M("deletion event: paste replace");
                 plp.setModified();
                 String paste_stuff = (String) getToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
                 //undoManager.modify("paste", paste_stuff, txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
@@ -1836,7 +1836,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
     public DevUndoManager() {
         super();
         position = 0;
-        lastUndoPosition = -1;
+        lastUndoPosition = 0;
 
         editTypeList = new java.util.ArrayList<Boolean>();
     }
@@ -1844,7 +1844,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
     public boolean safeAddEdit(javax.swing.undo.UndoableEdit anEdit) {
             editTypeList.add(position, Config.nothighlighting);
             position++;
-            //Msg.M("++++ " + Config.nothighlighting + " undo position: " + position);
+            Msg.D("++++ " + Config.nothighlighting + " undo position: " + position, 5, this);
             return super.addEdit(anEdit);
     }
     
@@ -1870,7 +1870,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
 
         Config.devSyntaxHighlighting = oldSyntaxOption;
 
-        //Msg.M("<--- undo position: " + position);
+        Msg.D("<--- undo position: " + position, 5, this);
     }
 
     public void dumpList() {
@@ -1884,9 +1884,6 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
     public void safeRedo() {
         boolean oldSyntaxOption = Config.devSyntaxHighlighting;
         Config.devSyntaxHighlighting = false;
-
-        position = lastUndoPosition;
-        //Msg.M("---> undo position: " + position);
 
         if(position > editTypeList.size() || !super.canRedo())
             return;
@@ -1904,7 +1901,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
         
         Config.devSyntaxHighlighting = oldSyntaxOption;
 
-        //Msg.M("     undo position: " + position);
+        Msg.D("---> undo position: " + position, 5, this);
     }
 
     public void reset() {
