@@ -152,6 +152,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_dev.closeProject();
                 }
             }
+            else if(command.equals("printeditorcontents")) {
+                if(plp.g_dev != null) {
+                    plp.g_dev.getEditor().print();
+                }
+            }
             else if(command.equals("asmexplorer")) {
                 plp.g_dev.setVisible(false);
                 plp.g_simsh.destroySimulation();

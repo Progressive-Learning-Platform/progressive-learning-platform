@@ -85,6 +85,7 @@ public class Develop extends javax.swing.JFrame {
         jScrollPane3.setEnabled(false);
         txtOutput.setEditable(false);
         rootmenuProject.setEnabled(false);
+        menuPrint.setEnabled(false);
         menuImportASM.setEnabled(false);
         menuNewASM.setEnabled(false);
         menuExportASM.setEnabled(false);
@@ -205,6 +206,7 @@ public class Develop extends javax.swing.JFrame {
         menuExportASM.setEnabled(true);
         rootmenuEdit.setEnabled(true);
         menuFindAndReplace.setEnabled(true);
+        menuPrint.setEnabled(true);
         btnSave.setEnabled(true);
     }
 
@@ -220,6 +222,7 @@ public class Develop extends javax.swing.JFrame {
         disableSimControls();
         menuSave.setEnabled(false);
         menuSaveAs.setEnabled(false);
+        menuPrint.setEnabled(false);
         rootmenuProject.setEnabled(false);
         rootmenuEdit.setEnabled(false);
         txtEditor.setEnabled(false);
@@ -616,6 +619,8 @@ public class Develop extends javax.swing.JFrame {
         menuOpen = new javax.swing.JMenuItem();
         menuSave = new javax.swing.JMenuItem();
         menuSaveAs = new javax.swing.JMenuItem();
+        jSeparator8 = new javax.swing.JPopupMenu.Separator();
+        menuPrint = new javax.swing.JMenuItem();
         menuSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuExit = new javax.swing.JMenuItem();
         rootmenuEdit = new javax.swing.JMenu();
@@ -714,10 +719,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -735,11 +740,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 459, Short.MAX_VALUE)
                 .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -750,7 +755,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -773,7 +778,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -935,6 +940,19 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuFile.add(menuSaveAs);
+
+        jSeparator8.setName("jSeparator8"); // NOI18N
+        rootmenuFile.add(jSeparator8);
+
+        menuPrint.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        menuPrint.setText(resourceMap.getString("menuPrint.text")); // NOI18N
+        menuPrint.setName("menuPrint"); // NOI18N
+        menuPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPrintActionPerformed(evt);
+            }
+        });
+        rootmenuFile.add(menuPrint);
 
         menuSeparator3.setName("menuSeparator3"); // NOI18N
         rootmenuFile.add(menuSeparator3);
@@ -1644,6 +1662,14 @@ public class Develop extends javax.swing.JFrame {
         plp.term.setVisible(true);
     }//GEN-LAST:event_menuSerialTerminalActionPerformed
 
+    private void menuPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPrintActionPerformed
+        try {
+            txtEditor.print();
+        } catch(Exception e) {
+            Msg.E("Failed to print currently open file.", Constants.PLP_PRINT_ERROR, this);
+        }
+    }//GEN-LAST:event_menuPrintActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -1735,6 +1761,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
+    private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
@@ -1753,6 +1780,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuOpen;
     private javax.swing.JMenuItem menuOptions;
     private javax.swing.JMenuItem menuPaste;
+    private javax.swing.JMenuItem menuPrint;
     private javax.swing.JMenuItem menuProgram;
     private javax.swing.JMenuItem menuQuickProgram;
     private javax.swing.JMenuItem menuQuickRef;

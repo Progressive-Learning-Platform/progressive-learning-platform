@@ -32,6 +32,9 @@ public class Constants {
     public static final String issueEntryURI = "http://code.google.com/p/progressive-learning-platform/issues/entry";
     public static final String issueTrackerURI = "http://code.google.com/p/progressive-learning-platform/issues/list";
 
+    public static final int minimumJREMajorVersion               = 1;
+    public static final int minimumJREMinorVersion               = 5;
+
     public static int debugLevel = 0;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
 
@@ -134,6 +137,7 @@ public class Constants {
     public static final int PLP_FILE_OPEN_ERROR                  = 3;
     public static final int PLP_FILE_SAVE_ERROR                  = 4;
     public static final int PLP_FILE_USE_SAVE_AS                 = 5;
+    public static final int PLP_PRINT_ERROR                      = 6;
 
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;
