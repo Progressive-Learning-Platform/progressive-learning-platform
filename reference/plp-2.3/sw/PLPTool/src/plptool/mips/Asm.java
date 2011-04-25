@@ -449,7 +449,7 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
 
-                String tString[] = asmLines[i - 1].split("[ ]+", 2);
+                String tString[] = asmLines[i - 1].split("[ \t]+", 2);
 
                 Msg.D("l: " + tString.length + " :" + tString[tString.length - 1], 5, this);
 
