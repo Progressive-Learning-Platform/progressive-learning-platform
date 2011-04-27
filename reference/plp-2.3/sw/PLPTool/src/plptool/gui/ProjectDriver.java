@@ -414,6 +414,9 @@ public class ProjectDriver {
 
             Msg.D("-- saving mods info...", 2, this);
 
+            if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
+                smods = ioreg.createPreset();
+
             if(smods != null && smods.size() > 0) {
 
                 str += "MODS\n";
@@ -781,6 +784,8 @@ public class ProjectDriver {
 
         sim = ArchRegistry.createSimCore(this);
         ioreg = new plptool.mods.IORegistry(this);
+
+        Msg.D("smods is " + (smods == null ? "null" : "not null"), 3, null);
 
         if(smods == null)
             ioreg.loadPredefinedPreset(0);

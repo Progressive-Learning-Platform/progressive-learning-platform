@@ -147,18 +147,20 @@ public class Msg {
      */
     public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
         if(requestedDebugLevel <= Constants.debugLevel) {
-            if(objIdentifier != null)
+            if(objIdentifier != null) {
                 System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
                 if(output != null) {
                     append("[DEBUG] ", true, Color.GRAY);
                     append(objIdentifier.toString() + ": " + debugStr + "\n", false, Color.DARK_GRAY);
                 }
-            else
+            }
+            else {
                 System.out.println("[DEBUG] " + debugStr);
                 if(output != null) {
                     append("[DEBUG] ", true, Color.GRAY);
                     append(debugStr + "\n", false, Color.DARK_GRAY);
                 }
+            }
         }
     }
 

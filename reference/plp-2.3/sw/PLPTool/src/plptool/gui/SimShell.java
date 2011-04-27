@@ -44,8 +44,6 @@ public class SimShell extends javax.swing.JFrame {
     static final int MAX_STEPS = 60000;
     ProjectDriver plp;
 
-    private OptionsFrame          opts;
-
     public SimShell(ProjectDriver plp) {
         this.plp = plp;
 
@@ -89,6 +87,12 @@ public class SimShell extends javax.swing.JFrame {
     }
 
     public void destroySimulation() {
+        if(plp.ioreg != null && plp.ioreg.getNumOfModsAttached() > 0) {
+            plp.smods = plp.ioreg.createPreset();
+            plp.ioreg.removeAllModules();
+            plp.ioreg = null;
+        }
+
         if(plp.sim != null) {
             if(plp.g_sim != null)
                 plp.g_sim.dispose();
@@ -98,7 +102,7 @@ public class SimShell extends javax.swing.JFrame {
         if(plp.g_simrun != null) {
             plp.g_simrun.stepCount = 0;
         }
-
+        
         simDesktop.removeAll();
         if(plp.g_ioreg != null)
             plp.g_ioreg.dispose();
@@ -117,6 +121,8 @@ public class SimShell extends javax.swing.JFrame {
         cmenuRun.setSelected(false);
         
         this.setVisible(false);
+
+        Msg.D("Simulation destroyed.", 3, null);
     }
 
     public void resetSettings() {

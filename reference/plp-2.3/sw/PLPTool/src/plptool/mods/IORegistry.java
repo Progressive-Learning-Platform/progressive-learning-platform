@@ -341,9 +341,9 @@ public class IORegistry {
         regSize.add(size);
         module.enable();
         positionInBus.add(plp.sim.bus.add(module));
-        plp.smods = this.createPreset();
 
         if(moduleFrame != null && simDesktop != null && moduleFrame instanceof JInternalFrame) {
+            attachModuleFrameListeners((JInternalFrame) moduleFrame, plp);
             simDesktop.add((JInternalFrame) moduleFrame);
             ((JInternalFrame) moduleFrame).setVisible(true);
         }
@@ -455,7 +455,6 @@ public class IORegistry {
             regSize.remove(0);
             type.remove(0);
             plp.sim.bus.remove(positionInBus.remove(positionInBus.size() - 1));
-            plp.smods = this.createPreset();
         }
     }
 
@@ -494,9 +493,22 @@ public class IORegistry {
             positionInBus.set(i, val - 1);
         }
 
-        plp.smods = this.createPreset();
-
         return Constants.PLP_OK;
+    }
+
+
+    /**
+     * Stop module threads
+     */
+    public void stopThreadedMods() {
+        for(int i = 0; i < modules.size(); i++) {
+            if(modules.get(i).threaded)
+                modules.get(i).stop = true;
+        }
+    }
+
+    public void startThreadedMods() {
+
     }
 
     /**
@@ -557,6 +569,7 @@ public class IORegistry {
      * @param preset preset object to load
      */
     public int loadPreset(Preset preset) {
+        Msg.D("loading preset, # of mods: " + preset.size(), 3, null);
 
         for(int i = 0; i < preset.size(); i++) {
             if(plp.g()) {
@@ -575,6 +588,7 @@ public class IORegistry {
      * Creates a preset off the currently attached modules
      */
     public Preset createPreset() {
+        Msg.D("Adding " + modules.size() + " modules to preset.", 3, null);
 
         Preset preset = new Preset();
 
@@ -585,5 +599,21 @@ public class IORegistry {
         }
 
         return preset;
+    }
+
+    /**
+     * Attach listeners to the specified module frame x
+     *
+     * @param x Module frame to attach the listener to
+     * @param plp Current project driver instance
+     */
+    public static void attachModuleFrameListeners(final JInternalFrame x, final plptool.gui.ProjectDriver plp) {
+        x.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+                x.setVisible(false);
+                plp.g_ioreg.refreshModulesTable();
+            }
+        });
     }
 }

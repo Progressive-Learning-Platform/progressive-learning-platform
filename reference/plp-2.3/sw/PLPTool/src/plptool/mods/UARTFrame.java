@@ -21,6 +21,8 @@ public class UARTFrame extends javax.swing.JInternalFrame {
     /** Creates new form UARTFrame */
     public UARTFrame() {
         initComponents();
+
+        
     }
 
     public void setUART(UART f) {
@@ -28,6 +30,7 @@ public class UARTFrame extends javax.swing.JInternalFrame {
     }
     public void addText(long d) {
         txtUART.append(String.format("%c",(char)d));
+        txtUART.setCaretPosition(txtUART.getText().length() - 1);
     }
     /** This method is called from within the constructor to
      * initialize the form.
@@ -45,6 +48,8 @@ public class UARTFrame extends javax.swing.JInternalFrame {
         txtRawByte = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
 
+        setClosable(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(UARTFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
@@ -56,6 +61,7 @@ public class UARTFrame extends javax.swing.JInternalFrame {
         txtUART.setBackground(resourceMap.getColor("txtUART.background")); // NOI18N
         txtUART.setColumns(20);
         txtUART.setEditable(false);
+        txtUART.setFont(resourceMap.getFont("txtUART.font")); // NOI18N
         txtUART.setForeground(resourceMap.getColor("txtUART.foreground")); // NOI18N
         txtUART.setLineWrap(true);
         txtUART.setRows(5);
@@ -109,7 +115,7 @@ public class UARTFrame extends javax.swing.JInternalFrame {
                         .addComponent(txtRawByte, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSend)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 185, Short.MAX_VALUE)
                         .addComponent(btnClear)))
                 .addContainerGap())
         );
@@ -117,7 +123,7 @@ public class UARTFrame extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClear)
