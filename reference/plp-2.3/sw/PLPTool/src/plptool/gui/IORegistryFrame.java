@@ -37,13 +37,12 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
     public IORegistryFrame(ProjectDriver plp) {
 
         this.plp = plp;
-        IORegistry ioRegistry = plp.ioreg;
-        modInfo = ioRegistry.getAvailableModulesInformation();
+        modInfo = plp.ioreg.getAvailableModulesInformation();
 
         initComponents();
         cmbModuleSelect.removeAllItems();
 
-        for(int i = 0; i < ioRegistry.getNumOfMods(); i++)
+        for(int i = 0; i < plp.ioreg.getNumOfMods(); i++)
             cmbModuleSelect.addItem(modInfo[i][0]);
 
         cmbPresets.removeAllItems();
@@ -406,16 +405,16 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         boolean changed = false;
 
         for(int row = 0; row < tblMods.getRowCount(); row++) {
-            Object frame = plp.ioreg.getModuleFrame(row);
+            Object x = plp.ioreg.getModuleFrame(row);
             if((Boolean) tblMods.getModel().getValueAt(row, 5)) {
-                if(frame != null && frame instanceof javax.swing.JInternalFrame && !((javax.swing.JInternalFrame)frame).isVisible()) {
-                    ((javax.swing.JInternalFrame) frame).setVisible(true);
+                if(x != null && x instanceof javax.swing.JInternalFrame && !((javax.swing.JInternalFrame)x).isVisible()) {
+                    ((javax.swing.JInternalFrame) x).setVisible(true);
                     changed = true;
                 }
             }
             else {
-                if(frame != null && frame instanceof javax.swing.JInternalFrame && ((javax.swing.JInternalFrame)frame).isVisible()) {
-                    ((javax.swing.JInternalFrame) plp.ioreg.getModuleFrame(row)).setVisible(false);
+                if(x != null && x instanceof javax.swing.JInternalFrame && ((javax.swing.JInternalFrame)x).isVisible()) {
+                    ((javax.swing.JInternalFrame) x).setVisible(false);
                     changed = true;
                 }
             }
@@ -423,7 +422,6 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
 
         if(changed) {
             plp.setModified();
-            plp.smods = plp.ioreg.createPreset();
         }
 
         } catch(Exception e) {
