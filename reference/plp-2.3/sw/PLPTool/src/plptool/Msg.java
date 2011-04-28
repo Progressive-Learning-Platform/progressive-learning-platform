@@ -208,7 +208,7 @@ public class Msg {
      * @param bold
      * @param color
      */
-    private static void append(String txt, boolean bold, Color color) {
+    public static void append(String txt, boolean bold, Color color) {
         try {
         StyledDocument doc = output.getStyledDocument();
 
@@ -235,7 +235,7 @@ public class Msg {
      *
      * @param txt
      */
-    private static void append(String txt) {
+    public static void append(String txt) {
         try {
         StyledDocument doc = output.getStyledDocument();
 

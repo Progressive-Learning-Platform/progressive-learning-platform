@@ -147,6 +147,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_ioreg.refreshModulesTable();
                 }
             }
+            else if(command.equals("triggercriterror")) {
+                plp.triggerCriticalError();
+            }
             else if(command.equals("closeproject")) {
                 if(plp.g_dev != null) {
                     plp.g_dev.closeProject();

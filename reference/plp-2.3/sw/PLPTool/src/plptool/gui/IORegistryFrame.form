@@ -3,7 +3,7 @@
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <Properties>
     <Property name="closable" type="boolean" value="true"/>
-    <Property name="defaultCloseOperation" type="int" value="1"/>
+    <Property name="defaultCloseOperation" type="int" value="0"/>
     <Property name="iconifiable" type="boolean" value="true"/>
     <Property name="title" type="java.lang.String" resourceKey="Form.title"/>
     <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
@@ -69,7 +69,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="txtModInfoScroll" alignment="0" pref="424" max="32767" attributes="0"/>
+                          <Component id="txtModInfoScroll" alignment="0" pref="431" max="32767" attributes="0"/>
                           <Component id="btnAdd" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -79,9 +79,9 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtModuleRegfileSize" alignment="1" pref="299" max="32767" attributes="1"/>
-                                  <Component id="cmbModuleSelect" alignment="1" pref="299" max="32767" attributes="1"/>
-                                  <Component id="txtModuleAddress" alignment="1" pref="299" max="32767" attributes="1"/>
+                                  <Component id="txtModuleRegfileSize" alignment="1" pref="341" max="32767" attributes="1"/>
+                                  <Component id="cmbModuleSelect" alignment="1" pref="341" max="32767" attributes="1"/>
+                                  <Component id="txtModuleAddress" alignment="1" pref="341" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                       </Group>
@@ -108,7 +108,7 @@
                           <Component id="lblRegfileSize" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="txtModInfoScroll" pref="285" max="32767" attributes="0"/>
+                      <Component id="txtModInfoScroll" pref="316" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnAdd" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -215,7 +215,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="424" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="431" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -230,7 +230,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="384" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="401" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnRemove" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -348,7 +348,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="cmbPresets" pref="205" max="32767" attributes="0"/>
+                      <Component id="cmbPresets" pref="233" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnLoadPreset" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -364,7 +364,7 @@
                           <Component id="btnLoadPreset" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cmbPresets" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="408" max="32767" attributes="0"/>
+                      <EmptySpace pref="423" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

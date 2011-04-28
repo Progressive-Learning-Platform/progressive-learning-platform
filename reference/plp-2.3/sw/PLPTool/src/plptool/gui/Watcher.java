@@ -18,6 +18,7 @@
 
 package plptool.gui;
 
+import plptool.Constants;
 import plptool.PLPToolbox;
 import javax.swing.table.DefaultTableModel;
 
@@ -36,6 +37,8 @@ public class Watcher extends javax.swing.JInternalFrame {
 
         cmbType.addItem("Bus");
         cmbType.addItem("Register");
+
+        plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_WATCHER);
     }
 
     public DefaultTableModel getEntries() {
@@ -61,6 +64,8 @@ public class Watcher extends javax.swing.JInternalFrame {
         btnRemoveSelected = new javax.swing.JButton();
         btnRemoveAll = new javax.swing.JButton();
 
+        setClosable(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMaximizable(true);
         setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Watcher.class);
@@ -154,7 +159,7 @@ public class Watcher extends javax.swing.JInternalFrame {
                                 .addComponent(txtAddr, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAdd)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnRemoveAll)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
@@ -172,7 +177,7 @@ public class Watcher extends javax.swing.JInternalFrame {
                     .addComponent(txtAddr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAdd))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemoveSelected)
