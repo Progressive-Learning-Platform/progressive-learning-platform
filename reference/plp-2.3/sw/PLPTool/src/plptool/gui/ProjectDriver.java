@@ -400,6 +400,9 @@ public class ProjectDriver {
             String str = "";
 
             str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
+            str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
+            str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
+            str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
 
 
             if(g_watcher != null) {
