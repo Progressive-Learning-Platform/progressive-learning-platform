@@ -59,9 +59,9 @@ public class Develop extends javax.swing.JFrame {
 
     boolean trackChanges = false;
     private ProjectDriver plp;
-    //private DoManager undoManager;
     private DevUndoManager undoManager;
     private javax.swing.JPopupMenu popupProject;
+    private int oldPosition;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -80,6 +80,8 @@ public class Develop extends javax.swing.JFrame {
         splitterH.setDividerLocation(0.25);
 
         catchyPLP();
+
+        oldPosition = 0;
 
         Msg.output = txtOutput;
         jScrollPane3.setEnabled(false);
@@ -122,10 +124,9 @@ public class Develop extends javax.swing.JFrame {
 
         this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
 
-        // undoManager = new DoManager();
         undoManager = new DevUndoManager();
+        undoManager.setLimit(Config.devMaxUndoEntries);
         
-
         initPopupMenus();
 
         
@@ -171,8 +172,8 @@ public class Develop extends javax.swing.JFrame {
                 syntaxHighlight();
         }
         trackChanges = true;
-        //undoManager = new DoManager();
         undoManager = new DevUndoManager();
+        undoManager.setLimit(Config.devMaxUndoEntries);
 
         txtEditor.getDocument().addUndoableEditListener(new UndoableEditListener() {
 
@@ -1283,6 +1284,10 @@ public class Develop extends javax.swing.JFrame {
 
         if(plp.plpfile != null)
             plp.assemble();
+
+        Config.nothighlighting = false;
+        syntaxHighlight();
+        Config.nothighlighting = true;
 }//GEN-LAST:event_menuAssembleActionPerformed
 
     private void menuAssembleActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
@@ -1290,6 +1295,10 @@ public class Develop extends javax.swing.JFrame {
 
         if(plp.plpfile != null)
             plp.assemble();
+
+        Config.nothighlighting = false;
+        syntaxHighlight();
+        Config.nothighlighting = true;
     }//GEN-LAST:event_menuAssembleActionPerformed1
 
     private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
@@ -1355,114 +1364,15 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuCutActionPerformed
 
     private void menuPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPasteActionPerformed
-        //try {
-        //    String paste_stuff = (String) getToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
-            //undoManager.modify("paste", paste_stuff, txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), txtEditor.getSelectionStart(), txtEditor.getText().length());
-        //} catch (UnsupportedFlavorException ex) {
-
-        //} catch (IOException ex) {
-
-        //}
-        //int caretPos1 = txtEditor.getCaretPosition();
-        //int line1 = txtEditor.getText().substring(0, caretPos1).split("\\r?\\n").length;
         txtEditor.paste();
-        //int caretPos2 = txtEditor.getCaretPosition();
-        //int line2 = txtEditor.getText().substring(0, caretPos2).split("\\r?\\n").length;
-        //for(int i=line1;i<=line2; i++) {
-//            syntaxHighlight(i);
-        //}
-        //txtEditor.setCaretPosition(caretPos2);
-        //System.out.println(caretPos1 + " " + caretPos2);
     }//GEN-LAST:event_menuPasteActionPerformed
 
     private void menuUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUndoActionPerformed
         undo();
-        /*//System.out.println(undoManager.can_undo());
-        if(undoManager.can_undo()) {
-            if(undoManager.undo_text().equals(""))
-                undoManager.undone();
-        }
-        if(undoManager.can_undo()) {
-            StyledDocument doc = txtEditor.getStyledDocument();
-            Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-            if(undoManager.undo_action()) {
-                //System.out.println("Tried to add " + undoManager.undo_text() + " at " + undoManager.undo_location());
-                try {
-                    doc.insertString(undoManager.undo_location(),undoManager.undo_text(), def);
-                    if(undoManager.undo_location() > -1) {
-                        txtEditor.setCaretPosition(undoManager.undo_location());
-                    }
-                    undoManager.undone();
-
-                    int line1 = txtEditor.getText().substring(0, undoManager.undo_location()).split("\\r?\\n").length;
-                    int line2 = txtEditor.getText().substring(0, undoManager.undo_location()+undoManager.undo_text().length()).split("\\r?\\n").length;
-                    for(int i=line1;i<=line2; i++) {
-                        syntaxHighlight(i);
-                    }
-                } catch (BadLocationException ble) {
-                    //System.err.println("Insertion error   position:" + undoManager.undo_location());
-                }
-            } else {
-                if(undoManager.undo_text().equals("\n")){
-                    undoManager.undone();
-                }
-                if(undoManager.can_undo()) {
-                    //System.out.println("Tried to remove " + undoManager.undo_text() + " at " + undoManager.undo_location());
-                    try {
-                        doc.remove(undoManager.undo_location(),undoManager.undo_text().length());
-                    } catch (BadLocationException ble) {
-                        //System.err.println("Deletion error   position:" + undoManager.undo_location() + "," + undoManager.undo_text().length());
-                    }
-                    if(undoManager.undo_location() > -1) {
-                        txtEditor.setCaretPosition(undoManager.undo_location());
-                    }
-                    undoManager.undone();
-                }
-            }
-        }*/
     }//GEN-LAST:event_menuUndoActionPerformed
 
     private void menuRedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRedoActionPerformed
         redo();
-        /*//System.out.println(undoManager.can_redo());
-        if(undoManager.can_redo()) {
-            StyledDocument doc = txtEditor.getStyledDocument();
-            Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-            if(undoManager.redo_action()) {
-                //System.out.println("Tried to add " + undoManager.redo_text() + "at " + undoManager.redo_location());
-                try {
-                    doc.insertString(undoManager.redo_location(),undoManager.redo_text(), def);
-
-                    int line1 = txtEditor.getText().substring(0, undoManager.redo_location()).split("\\r?\\n").length;
-                    int line2 = txtEditor.getText().substring(0, undoManager.redo_location()+undoManager.redo_text().length()).split("\\r?\\n").length;
-                    for(int i=line1;i<=line2; i++) {
-                        syntaxHighlight(i);
-                    }
-                } catch (BadLocationException ble) {
-                    System.err.println("Insertion error   position:" + undoManager.redo_location());
-                }
-                if(undoManager.redo_location() > -1) {
-                        txtEditor.setCaretPosition(undoManager.redo_location());
-                    }
-                undoManager.redone();
-            } else {
-                if(undoManager.redo_text().equals("\n")){
-                    undoManager.redone();
-                }
-                if(undoManager.can_redo()) {
-                    //System.out.println("Tried to remove " + undoManager.redo_text() + "at " + undoManager.redo_location());
-                    try {
-                        doc.remove(undoManager.redo_location(),undoManager.redo_text().length());
-                    } catch (BadLocationException ble) {
-                        System.err.println("Deletion error   position:" + undoManager.redo_location() + "," + undoManager.redo_text().length());
-                    }
-                    if(undoManager.redo_location() > -1) {
-                        txtEditor.setCaretPosition(undoManager.redo_location());
-                    }
-                    undoManager.redone();
-                }
-            }
-        }*/
     }//GEN-LAST:event_menuRedoActionPerformed
 
     private void txtEditorCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtEditorCaretPositionChanged
@@ -1535,61 +1445,26 @@ public class Develop extends javax.swing.JFrame {
 
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
         
-        int position;
-
         boolean deleteOccured = false;
-        if(txtEditor.getSelectedText() == null) {
-            position = txtEditor.getCaretPosition();
-        } else {
-            position = txtEditor.getSelectionStart();
-        }
+
         if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
-            //if(deleteOccured) Msg.M("deletion event: selection replace");
             plp.setModified();
-            //undoManager.modify("insert", Character.toString(evt.getKeyChar()), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
         } else if ((int)evt.getKeyChar() == 127) {
-            //try {
             deleteOccured = true;
-            //if(deleteOccured) Msg.M("deletion event: delete key");
             plp.setModified();
-                //undoManager.modify("delete", txtEditor.getText(position, 1), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
-            //}
-            //catch (BadLocationException ble) {
-            //    System.err.println("Delete error");
-            //}
         } else if ((int)evt.getKeyChar() == 8) {
             deleteOccured = true;
-            //try {
-            //if(deleteOccured) Msg.M("deletion event: backspace");
             plp.setModified();
-                //undoManager.modify("backspace", txtEditor.getText(position, 1), txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
-            //}
-            //catch (BadLocationException ble) {
-            //    System.err.println("Backspace error");
-            //}
         } else if ((int)evt.getKeyChar() == 24) {
             deleteOccured = true;
-            //if(deleteOccured) Msg.M("deletion event: delete key");
             plp.setModified();
-            //undoManager.modify("delete", "", txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
         } else if ((int)evt.getKeyChar() == 22) {
-            try {
-                deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
-                //if(deleteOccured) Msg.M("deletion event: paste replace");
-                plp.setModified();
-                String paste_stuff = (String) getToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
-                //undoManager.modify("paste", paste_stuff, txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), position, txtEditor.getText().length());
-            } catch (UnsupportedFlavorException ex) {
-                
-            } catch (IOException ex) {
-
-            }
-
+            deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
+            plp.setModified();
         }
        
         if(Config.devSyntaxHighlighting && !deleteOccured && !evt.isControlDown()) {
-            //Msg.M("highlighting event");
             Config.nothighlighting = false;
             int caretPos = txtEditor.getCaretPosition();
             syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
@@ -1872,7 +1747,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
     public boolean safeAddEdit(javax.swing.undo.UndoableEdit anEdit) {
             editTypeList.add(position, Config.nothighlighting);
             position++;
-            Msg.D("++++ " + Config.nothighlighting + " undo position: " + position, 5, this);
+            Msg.D("++++ " + Config.nothighlighting + " undo position: " + position, 5, null);
             return super.addEdit(anEdit);
     }
     
@@ -1885,7 +1760,6 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
 
         // shed formatting events
         while(super.canUndo() && position > 0 && !editTypeList.get(position - 1)) {
-            //Msg.M("   shedding");
             position--;
             super.undo();
         }
@@ -1898,7 +1772,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
 
         Config.devSyntaxHighlighting = oldSyntaxOption;
 
-        Msg.D("<--- undo position: " + position, 5, this);
+        Msg.D("<--- undo position: " + position, 5, null);
     }
 
     public void dumpList() {
@@ -1929,7 +1803,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
         
         Config.devSyntaxHighlighting = oldSyntaxOption;
 
-        Msg.D("---> undo position: " + position, 5, this);
+        Msg.D("---> undo position: " + position, 5, null);
     }
 
     public void reset() {
