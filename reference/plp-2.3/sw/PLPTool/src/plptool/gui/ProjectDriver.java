@@ -736,14 +736,18 @@ public class ProjectDriver {
         Msg.errorCounter = 0;
 
         boolean wasAssembled = false;
+        int caretPos = -1;
 
         if(asm != null) {
             wasAssembled = asm.isAssembled();
             asm.setAssembled(false);
         }
 
-        if(g) g_dev.disableSimControls();
-        if(g) asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
+        if(g) {
+            g_dev.disableSimControls();
+            asms.get(open_asm).setAsmString(g_dev.getEditor().getText());
+            caretPos = g_dev.getEditor().getCaretPosition();
+        }
 
         if(asms == null || asms.isEmpty())
             return Msg.E("assemble(): No source files are open.",
@@ -765,7 +769,10 @@ public class ProjectDriver {
         else
             asm = null;
 
-        if(g) refreshProjectView(false);
+        if(g) { 
+            refreshProjectView(false);
+            g_dev.getEditor().setCaretPosition(caretPos);
+        }
 
         Msg.I("Done.", null);
 

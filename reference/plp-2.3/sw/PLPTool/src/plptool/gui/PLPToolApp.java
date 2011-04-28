@@ -154,7 +154,6 @@ public class PLPToolApp extends SingleFrameApplication {
             } else {
                 ProjectDriver plp = new ProjectDriver(false, "plpmips");
                 if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
-                plp.assemble();
                 if(plp.asm.isAssembled())
                     plptool.mips.SimCLI.simCL(plp);
             }
@@ -166,7 +165,6 @@ public class PLPToolApp extends SingleFrameApplication {
                 try {
                     ProjectDriver plp = new ProjectDriver(false, "plpmips");
                     if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
-                    plp.assemble();
                     plp.program(args[2]);
                 } catch(Exception e) { }
             }

@@ -582,6 +582,21 @@ public class Develop extends javax.swing.JFrame {
         return undoManager;
     }
 
+    private void assemble() {
+        Msg.output = txtOutput;
+
+        if(plp.plpfile != null)
+            plp.assemble();
+
+        if(Config.devSyntaxHighlightOnAssemble) {
+            Config.nothighlighting = false;
+            syntaxHighlight();
+            Config.nothighlighting = true;
+            Config.devSyntaxHighlightOnAssemble = false;
+        }
+    }
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -1291,14 +1306,7 @@ public class Develop extends javax.swing.JFrame {
 }//GEN-LAST:event_menuAssembleActionPerformed
 
     private void menuAssembleActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
-        Msg.output = txtOutput;
-
-        if(plp.plpfile != null)
-            plp.assemble();
-
-        Config.nothighlighting = false;
-        syntaxHighlight();
-        Config.nothighlighting = true;
+        assemble();
     }//GEN-LAST:event_menuAssembleActionPerformed1
 
     private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
@@ -1322,10 +1330,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
 
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
-        Msg.output = txtOutput;
-
-        if(plp.plpfile != null)
-            plp.assemble();
+        assemble();
     }//GEN-LAST:event_btnAssembleActionPerformed
 
     private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
@@ -1365,6 +1370,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPasteActionPerformed
         txtEditor.paste();
+        Config.devSyntaxHighlightOnAssemble = true;
     }//GEN-LAST:event_menuPasteActionPerformed
 
     private void menuUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUndoActionPerformed
@@ -1461,6 +1467,7 @@ public class Develop extends javax.swing.JFrame {
             plp.setModified();
         } else if ((int)evt.getKeyChar() == 22) {
             deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
+            Config.devSyntaxHighlightOnAssemble = true;
             plp.setModified();
         }
        

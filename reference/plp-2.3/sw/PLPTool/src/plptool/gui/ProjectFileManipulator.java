@@ -185,8 +185,7 @@ public class ProjectFileManipulator {
 
         else if(args[2].equals("-a")) {
             String timestamp = (new java.util.Date()).toString();
-            plp.save();
-            if(plp.asm.isAssembled() && plp.getArch().equals("plpmips")) {
+            if(plp.asm != null && plp.asm.isAssembled() && plp.getArch().equals("plpmips")) {
                 plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
                 Msg.M("");
                 plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
@@ -203,10 +202,8 @@ public class ProjectFileManipulator {
                 return;
             }
 
-            plp.assemble();
             if(plp.asm != null && plp.asm.isAssembled())
                 plp.program(args[3]);
-            System.exit(-1);
         }
 
         else {
