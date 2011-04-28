@@ -1,0 +1,83 @@
+
+          INSTRUCTIONS FOR BUILDING AND TESTING GPL CVER
+
+
+  Building Cver is very easy because it is a self contained application
+program with very little dependence on any OS environment.  Currently,
+Cver is build using pre-made make files for X86 Linux, Sparc Solaris
+and Apple Mac OSX, but we are working on changing build process to using
+GNU configure command.
+
+A. MAKING CVER BINARY
+
+  To make GPL Cver,  change directory to src directory and type:
+
+   make -f [name of makefile] all
+
+Where [name of makefile] is one of makefile.lnx, makefile.sparc-gcc,
+or makefile.osx.  
+
+    A number of warning messages will be output by gcc. The warning are
+expected because the -Wall option in turned on in the make files by
+default.  You can eliminate the warnings by removing -Wall from the
+CFLAGS option list.
+
+    Because GPL Cver uses dymamic linking of user PLI routines
+(+loadpli1= and +loadvpi= option), GPL Cver consists of only one executable
+called cver.
+
+    The files in the pli_incs directory are the files supplied as part
+of the IEEE P1364 standard and are required for compiling GPL Cver and
+for building user dynamic link libraries.  The pre-built make files
+access the pli_inc include files by using relative path references (-I
+gcc and ld options).   In order to develop user PLI dynamic libraries,
+either copy the include files in the pli_incs directory to /usr/include
+or provide a -I<path name to pli_incs directory> as part of CFLAGS
+argument lists passed to gcc and ld.
+
+    When make completes, the cver binary will be in the bin
+directory.  You should copy cver into a directory that is on your PATH OS
+environment variable list such as /usr/local/bin.
+
+    See the README file in the src directory for instructions on how to make
+a debugging version of cver (compiled with -g flag) and for hints on
+modifying make files for other platforms and operating systems.
+
+B. CLEANING UP THE SRC DIRECTORY
+
+   If you make a mistake or want to re-make GPL cver, you can always run
+
+     make -f [name of makefile] clean
+
+This erases all files made by "make all" including the cver binary
+in the "bin" directory and the object files in the "objs" directory.
+
+B. RUNNING INSTALLATION TESTS
+
+    We recommend that you next run the various installation tests in
+the "tests_and_examples" directory.   You should always run the
+basic functionality test in the install.tst directory by executing
+the "inst_tst.sh" script.  There should be no diff output messages
+printed.  See the README file in the install.tst directory for
+more information.  If you plan to use any of the PLI interfaces, or the 
+vcddiff VCD output file compare program, you should run the tests in the
+appropriate directory in the "tests_and_examples" directory.  The shell
+scripts in the installation directories have relative paths names built in,
+so you must not change the GPL cver release directory structure before 
+running the test shell scripts.  In particular, you must leave cver binary
+in the "bin" directory.
+
+     See the README files in each of the install directories for detailed
+instructions on running the tests.  The "capacity.tst" directory contains
+very large gate level designs.  If you think you have hardware problems,
+we suggest you run the large tests in that directory.
+
+     If you are not sure what version of cver you are running.  Execute
+the cver command with no arguments and it will print out its version.
+Type "cver -h" for a help page of cver options and features.
+
+C. OBTAINING PRECOMPILED CVER BINARY
+
+     Precompiled cver binaries for X86 Linux, Sparc Solaris and Apple
+MacOS are available from the GPL cver home page at
+http://www.pragmatic-c.com/gpl-cver
