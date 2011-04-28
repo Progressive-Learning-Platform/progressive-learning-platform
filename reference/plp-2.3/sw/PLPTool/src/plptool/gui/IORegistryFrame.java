@@ -18,6 +18,7 @@
 
 package plptool.gui;
 
+import plptool.Constants;
 import plptool.mods.IORegistry;
 import plptool.mods.Preset;
 import javax.swing.table.DefaultTableModel;
@@ -48,6 +49,8 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         cmbPresets.removeAllItems();
         for(int i = 0; i < Preset.presets.length; i++)
             cmbPresets.addItem(Preset.presets[i][0]);
+
+        plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_IOREGISTRY);
     }
 
     /** This method is called from within the constructor to
@@ -81,7 +84,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         btnLoadPreset = new javax.swing.JButton();
 
         setClosable(true);
-        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setIconifiable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(IORegistryFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -170,7 +173,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
                     .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRegfileSize))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAdd)
                 .addContainerGap())
@@ -254,7 +257,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneListLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemove)
@@ -301,7 +304,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
                     .addComponent(jLabel1)
                     .addComponent(btnLoadPreset)
                     .addComponent(cmbPresets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(413, Short.MAX_VALUE))
+                .addContainerGap(423, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("paneIOConfig.TabConstraints.tabTitle"), paneIOConfig); // NOI18N
@@ -319,7 +322,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

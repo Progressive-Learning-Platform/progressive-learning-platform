@@ -18,6 +18,7 @@
 
 package plptool.gui;
 
+import plptool.Constants;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -33,6 +34,7 @@ public class ASMSimView extends javax.swing.JInternalFrame {
         initComponents();
 
         this.plp = plp;
+        plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_ASMVIEW);
         updateTable();
     }
 
@@ -50,11 +52,11 @@ public class ASMSimView extends javax.swing.JInternalFrame {
                         " " + ((plp.sim != null) ?
                             ((((plptool.mips.SimCore) plp.sim).pc.eval() == plp.asm.getAddrTable()[i]) ? "[PC]" : "")
                             : ""),
-                String.format("0x%08x", objCode[i]),
-                plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmFilePath(),
-                String.valueOf(plp.asm.getLineNumMapper()[i]),
+                (plp.asm.lookupLabel(plp.asm.getAddrTable()[i]) != null ? plp.asm.lookupLabel(plp.asm.getAddrTable()[i]) : ""),
+                plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmLine(plp.asm.getLineNumMapper()[i]),
                 false,
-                plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmLine(plp.asm.getLineNumMapper()[i])
+                plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmFilePath(),
+                String.valueOf(plp.asm.getLineNumMapper()[i])
             };
 
             model.addRow(row);
@@ -70,11 +72,11 @@ public class ASMSimView extends javax.swing.JInternalFrame {
 
         for(int i = 0; i < objCode.length; i++) {
             if(((plptool.mips.SimCore) plp.sim).pc.eval() == plp.asm.getAddrTable()[i]) {
-                if((Boolean) model.getValueAt(i, 4))
+                if((Boolean) model.getValueAt(i, Constants.ASMVIEW_BREAKPOINT))
                     plp.g_simrun.stepCount = -1;
-                model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]) + " [PC]", i, 0);
+                model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]) + " [PC]", i, Constants.ASMVIEW_ADDR);
             } else {
-                model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]), i, 0);
+                model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]), i, Constants.ASMVIEW_ADDR);
             }
         }
     }
@@ -91,6 +93,8 @@ public class ASMSimView extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblASM = new javax.swing.JTable();
 
+        setClosable(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMaximizable(true);
         setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ASMSimView.class);
@@ -108,14 +112,14 @@ public class ASMSimView extends javax.swing.JInternalFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Address", "Instruction", "Source", "Line #", "Break", "String"
+                "Address", "Label", "String", "Break", "Source", "#"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, false
+                false, false, false, true, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -135,14 +139,14 @@ public class ASMSimView extends javax.swing.JInternalFrame {
         tblASM.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblASM.columnModel.title0")); // NOI18N
         tblASM.getColumnModel().getColumn(1).setPreferredWidth(100);
         tblASM.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblASM.columnModel.title1")); // NOI18N
-        tblASM.getColumnModel().getColumn(2).setPreferredWidth(100);
-        tblASM.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblASM.columnModel.title2")); // NOI18N
+        tblASM.getColumnModel().getColumn(2).setPreferredWidth(350);
+        tblASM.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblASM.columnModel.title4")); // NOI18N
         tblASM.getColumnModel().getColumn(3).setPreferredWidth(35);
-        tblASM.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblASM.columnModel.title3")); // NOI18N
-        tblASM.getColumnModel().getColumn(4).setPreferredWidth(35);
-        tblASM.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblASM.columnModel.title5")); // NOI18N
-        tblASM.getColumnModel().getColumn(5).setPreferredWidth(350);
-        tblASM.getColumnModel().getColumn(5).setHeaderValue(resourceMap.getString("tblASM.columnModel.title4")); // NOI18N
+        tblASM.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblASM.columnModel.title5")); // NOI18N
+        tblASM.getColumnModel().getColumn(4).setPreferredWidth(100);
+        tblASM.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblASM.columnModel.title2")); // NOI18N
+        tblASM.getColumnModel().getColumn(5).setPreferredWidth(35);
+        tblASM.getColumnModel().getColumn(5).setHeaderValue(resourceMap.getString("tblASM.columnModel.title3")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

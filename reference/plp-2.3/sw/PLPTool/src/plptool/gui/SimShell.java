@@ -592,6 +592,32 @@ public class SimShell extends javax.swing.JFrame {
         plp.g_opts.setVisible(true);
     }//GEN-LAST:event_menuOptionsActionPerformed
 
+    public javax.swing.JCheckBoxMenuItem getToolCheckboxMenu(int index) {
+        switch(index) {
+            case Constants.PLP_TOOLFRAME_IOREGISTRY:
+                return menuIOReg;
+
+            case Constants.PLP_TOOLFRAME_ASMVIEW:
+                return menuASMView;
+
+            case Constants.PLP_TOOLFRAME_WATCHER:
+                return menuWatcher;
+
+            default:
+                return null;
+        }
+    }
+    
+    public void attachOptionSynchronizer(final javax.swing.JInternalFrame frame, final int toolframe_index) {
+        frame.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+                frame.setVisible(false);
+                getToolCheckboxMenu(toolframe_index).setSelected(false);
+            }
+        });
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOpts;
     private javax.swing.JButton btnReset;

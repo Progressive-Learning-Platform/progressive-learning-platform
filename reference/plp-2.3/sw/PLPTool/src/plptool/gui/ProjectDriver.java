@@ -79,9 +79,11 @@ public class ProjectDriver {
      */ // --
 
     public plptool.Config                      cfg;        // Configuration
-    public plptool.Msg                      msg;        // Messaging class
+    public plptool.Msg                         msg;        // Messaging class
 
     public ArrayList<plptool.PLPAsmSource>     asms;       // Assembly files
+
+    private boolean                            halt;       // critical error
     
     /*
      * References to the workflow framework objects
@@ -138,6 +140,7 @@ public class ProjectDriver {
 
         modified = false;
         plpfile = null;
+        halt = false;
 
         this.ioreg = new plptool.mods.IORegistry(this);
         this.curdir = (new java.io.File(".")).getAbsolutePath();
@@ -145,8 +148,8 @@ public class ProjectDriver {
         if(g) {
             this.g_err = new SimErrorFrame();
             this.g_dev = new Develop(this);
-            this.g_ioreg = new IORegistryFrame(this);
             this.g_simsh = new SimShell(this);
+            this.g_ioreg = new IORegistryFrame(this);
             this.g_simsh.getSimDesktop().add(this.g_ioreg);
             this.g_desktop = this.g_simsh.getSimDesktop();
             this.g_about = new AboutBoxDialog(this.g_dev);
@@ -587,6 +590,11 @@ public class ProjectDriver {
                         }
                     }
                 }
+            }
+            else {
+                Msg.W("open(" + path + "): unable to process entry: " +
+                        entry.getName() + ". This file will be removed when"
+                        + " you save the project.", this);
             }
         }
         
@@ -1088,13 +1096,40 @@ public class ProjectDriver {
     public void updateComponents() {
         g_sim.updateComponents();
         g_dev.updateComponents();
-        ioreg.gui_eval();
+
+        if(ioreg != null)
+            ioreg.gui_eval();
 
         if(g_watcher != null)
             g_watcher.updateWatcher();
 
         if(g_asmview != null)
             g_asmview.updatePC();
+    }
+
+    /**
+     * Use this method for some unforeseen bug!
+     */
+    public void triggerCriticalError() {
+        halt = true;
+        System.err.println("[CRITICAL ERROR] " +
+                    "This really, really, really, should not have happened.");
+        System.err.println("[CRITICAL ERROR] " +
+                    "PLP Tool is now exiting. Please report this issue. Thanks!");
+        if(g) {
+            javax.swing.JOptionPane.showMessageDialog(g_dev,
+                    "This really, really, really, should not have happened. " +
+                    "PLP Tool is now exiting. Please report this issue. Thanks!",
+                    "CRITICAL ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+        
+        if(plpfile != null) {
+            System.err.println("Saving current open project as ./dump.plp...");
+            plpfile = new File("dump.plp");
+            this.save();
+        }
+
+        System.exit(-1);
     }
 
     /**

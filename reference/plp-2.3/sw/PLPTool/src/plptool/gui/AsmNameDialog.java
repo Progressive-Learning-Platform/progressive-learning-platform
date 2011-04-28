@@ -132,10 +132,17 @@ public class AsmNameDialog extends javax.swing.JDialog {
     private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
         if(rename)
             ;// do nothing for now
-        else if(!txtName.getText().equals(""))
-            plp.newAsm(txtName.getText());
-
-        this.setVisible(false);
+        else if(!txtName.getText().equals("")) {
+            if(txtName.getText().endsWith(".asm")) {
+                plp.newAsm(txtName.getText());
+                this.setVisible(false);
+            }
+            else {
+                txtName.setText(txtName.getText() + ".asm");
+                txtName.setSelectionStart(0);
+                txtName.setSelectionEnd(txtName.getText().length() - 1);
+            }
+        }
     }//GEN-LAST:event_btnAcceptActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

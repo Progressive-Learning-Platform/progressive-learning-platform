@@ -515,6 +515,8 @@ public class IORegistry {
      * Execute a GUI evaluation on all modules attached to this registry.
      */
     public void gui_eval() {
+        try {
+
         for(int index = 0; index < getNumOfModsAttached(); index++)
             if(!modules.get(index).threaded)
                 modules.get(index).gui_eval(moduleFrames.get(index));
@@ -523,6 +525,10 @@ public class IORegistry {
                 modules.get(index).notify();
                 } catch(Exception e) {}
             }
+
+        } catch(NullPointerException e) {
+            // modules might have been removed when this is called, ignore
+        }
     }
 
     /**

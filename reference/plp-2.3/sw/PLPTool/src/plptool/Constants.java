@@ -151,6 +151,20 @@ public class Constants {
     public static final int PLP_OS_WIN_32                        = 4;
     public static final int PLP_OS_WIN_64                        = 8;
     public static final int PLP_OS_MACOSX                        = 16;
+
+    // PLP Simulation Tool Frames IDs
+    public static final int PLP_TOOLFRAME_IOREGISTRY             = 1;
+    public static final int PLP_TOOLFRAME_ASMVIEW                = 2;
+    public static final int PLP_TOOLFRAME_WATCHER                = 3;
+
+    // ASMView Columns identifiers
+    public static final int ASMVIEW_ADDR                         = 0;
+    public static final int ASMVIEW_LABEL                        = 1;
+    public static final int ASMVIEW_STRING                       = 2;
+    public static final int ASMVIEW_BREAKPOINT                   = 3;
+    public static final int ASMVIEW_LINENUM                      = 4;
+    public static final int ASMVIEW_SOURCEFILE                   = 5;
+
     
     // Flags
     public static final boolean FLAGS_ALIGNED_MEMORY             = true;
