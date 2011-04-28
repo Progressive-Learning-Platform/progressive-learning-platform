@@ -112,11 +112,11 @@ public class QuickRef extends javax.swing.JFrame {
         data[2][0] = "move  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
         data[3][0] = "li    $rd, imm32";        data[3][1] = "lui $rd, imm32 >> 16;<br />";
                                                 data[3][1] += "ori $rd, $rd, imm & 0xffff";
-        data[4][0] = "li    $rd, label";        data[4][1] = "lui $rd, label[31:16];<br />";
+        data[4][0] = "li    $rd, label";        data[4][1] = "lui $rd, label[31:16]<br />";
                                                 data[4][1] += "ori $rd, $rd, label[15:0]";
-        data[5][0] = "push  $rt";               data[5][1] = "sw $rt, 0($sp);<br />";
+        data[5][0] = "push  $rt";               data[5][1] = "sw $rt, 0($sp)<br />";
                                                 data[5][1] += "addiu $sp, $sp, -4";
-        data[6][0] = "pop   $rt";               data[6][1] = "addiu $sp, $sp, 4;<br />";
+        data[6][0] = "pop   $rt";               data[6][1] = "addiu $sp, $sp, 4<br />";
                                                 data[6][1] += "lw $rt, 0($sp)";
 
         for(int i = 0; i < data.length; i++) {
@@ -136,7 +136,7 @@ public class QuickRef extends javax.swing.JFrame {
         data[1][0] = "<i>label</i>:";                data[1][1] = "Label current memory location as <i>label</i>";
         data[2][0] = ".word <i>value</i>";           data[2][1] = "Write 32-bit <i>value</i> to the current address";
         data[3][0] = ".ascii \"<i>string</i>\"";     data[3][1] = "Place <i>string</i> starting from the current address";
-        data[4][0] = ".asciiz \"<i>string</i>\"";    data[4][1] = "Place null-terminated <i>string</i> statring from the current address";
+        data[4][0] = ".asciiz \"<i>string</i>\"";    data[4][1] = "Place null-terminated <i>string</i> starting from the current address";
         data[5][0] = ".space <i>value</i>";          data[5][1] = "Reserve <i>value</i> words starting from the current address";
 
 
