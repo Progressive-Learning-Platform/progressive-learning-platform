@@ -127,6 +127,52 @@ public class QuickRef extends javax.swing.JFrame {
 
         str += "</table>";
 
+        str += "<a name=\"m\" /><h1>Assembler Directives</h1>";
+        str += "<table border=1 width=\"100%\"";
+
+        data = new String[6][2];
+
+        data[0][0] = ".org <i>address</i>";                data[0][1] = "Place subsequent statements starting from <i>address</i>";
+        data[1][0] = "<i>label</i>:";                data[1][1] = "Label current memory location as <i>label</i>";
+        data[2][0] = ".word <i>value</i>";           data[2][1] = "Write 32-bit <i>value</i> to the current address";
+        data[3][0] = ".ascii \"<i>string</i>\"";     data[3][1] = "Place <i>string</i> starting from the current address";
+        data[4][0] = ".asciiz \"<i>string</i>\"";    data[4][1] = "Place null-terminated <i>string</i> statring from the current address";
+        data[5][0] = ".space <i>value</i>";          data[5][1] = "Reserve <i>value</i> words starting from the current address";
+
+
+        for(int i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "</tr>";
+        }
+
+        str += "</table>";
+
+        str += "<a name=\"m\" /><h1>Registers Usage Guide</h1>";
+        str += "<table border=1 width=\"100%\"";
+
+        data = new String[11][2];
+
+        data[0][0] = "$0, $zero";               data[0][1] = "The zero register";
+        data[1][0] = "$1, $at";                 data[1][1] = "Assembler temporary";
+        data[2][0] = "$2-$3, $v0-$v1";          data[2][1] = "Return values";
+        data[3][0] = "$4-$7, $a0-$a3";          data[3][1] = "Function arguments";
+        data[4][0] = "$8-$17, $t0-$t9";         data[4][1] = "Temporaries";
+        data[5][0] = "$18-$25, $s0-$s7";        data[5][1] = "Saved temporaries";
+        data[6][0] = "$26-$27, $k0-$k1";        data[6][1] = "Kernel";
+        data[7][0] = "$28, $gp";                data[7][1] = "Global pointer";
+        data[8][0] = "$29, $sp";                data[8][1] = "Stack pointer";
+        data[9][0] = "$30, $fp";                data[9][1] = "Frame pointer";
+        data[10][0] = "$31, $ra";               data[10][1] = "Return address";
+
+        for(int i = 0; i < data.length; i++) {
+            str += "<tr>";
+            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "</tr>";
+        }
+
+        str += "</table>";
+
         str += "<a name=\"m\" /><h1>I/O Memory Map</h1>";
         str += "<table border=1 width=\"100%\"";
 
