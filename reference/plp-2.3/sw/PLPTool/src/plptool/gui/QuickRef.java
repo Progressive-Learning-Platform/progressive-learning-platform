@@ -18,7 +18,9 @@
 
 package plptool.gui;
 
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
 
 /**
  *
@@ -37,26 +39,45 @@ public class QuickRef extends javax.swing.JFrame {
         String str = "";
         txtHTML.setContentType("text/html");
 
+        txtHTML.addHyperlinkListener(new HyperlinkListener() {
+
+            public void hyperlinkUpdate(HyperlinkEvent hev) {
+                if (hev.getEventType() == EventType.ACTIVATED) {
+                    txtHTML.scrollToReference(hev.getDescription().substring(1));
+                }
+        }});
+
+        str += "<a name=\"top\" /><h1>Quick Reference Card</h1>";
+
+        str += "<p>Instructions: <a href=\"#r\">R-type</a> " +
+               "<a href=\"#i\">I-type</a> " +
+               "<a href=\"#j\">J-type</a> " +
+               "</p>";
+        str += "<p><a href=\"#p\">Pseudo Instructions</a></p>";
+        str += "<p><a href=\"#d\">Assembler Directives</a></p>";
+        str += "<p><a href=\"#regs\">Registers Usage</a></p>";
+        str += "<p><a href=\"#mmap\">I/O Memory Map</a></p>";
+
         str += "<a name=\"r\" /><h1>R-type Instructions</h1>";
         str += "<table border=1 width=\"100%\">";
 
         String[][] data = new String[11][2];
 
-        data[0][0] = "addu $rd, $rs, $rt";      data[0][1] = "rd = rs + rt";
-        data[1][0] = "subu $rd, $rs, $rt";      data[1][1] = "rd = rs - rt";
-        data[2][0] = "and  $rd, $rs, $rt";      data[2][1] = "rd = rs & rt";
-        data[3][0] = "or   $rd, $rs, $rt";      data[3][1] = "rd = rs | rt";
-        data[4][0] = "nor  $rd, $rs, $rt";      data[4][1] = "rd = ~(rs | rt)";
-        data[5][0] = "slt  $rd, $rs, $rt";      data[5][1] = "rd = (rs < rt) ? 1 : 0";
-        data[6][0] = "sltu $rd, $rs, $rt";      data[6][1] = "rd = (rs < rt) ? 1 : 0";
-        data[7][0] = "sll  $rd, $rt, shamt";    data[7][1] = "rd = rt << shamt";
-        data[8][0] = "slr  $rd, $rt, shamt";    data[8][1] = "rd = rt << shamt";
-        data[9][0] = "jr $rs";                  data[9][1] = "PC = rs";
-        data[10][0] = "jalr $rd, $rs";          data[10][1] = "rd = PC + 4; PC = rs";
+        data[0][0] = "<b>addu</b> $rd, $rs, $rt";      data[0][1] = "rd = rs + rt";
+        data[1][0] = "<b>subu</b> $rd, $rs, $rt";      data[1][1] = "rd = rs - rt";
+        data[2][0] = "<b>and</b>  $rd, $rs, $rt";      data[2][1] = "rd = rs & rt";
+        data[3][0] = "<b>or</b>   $rd, $rs, $rt";      data[3][1] = "rd = rs | rt";
+        data[4][0] = "<b>nor</b>  $rd, $rs, $rt";      data[4][1] = "rd = ~(rs | rt)";
+        data[5][0] = "<b>slt</b>  $rd, $rs, $rt";      data[5][1] = "rd = (rs < rt) ? 1 : 0";
+        data[6][0] = "<b>sltu</b> $rd, $rs, $rt";      data[6][1] = "rd = (rs < rt) ? 1 : 0";
+        data[7][0] = "<b>sll</b>  $rd, $rt, shamt";    data[7][1] = "rd = rt << shamt";
+        data[8][0] = "<b>slr</b>  $rd, $rt, shamt";    data[8][1] = "rd = rt << shamt";
+        data[9][0] = "<b>jr</b> $rs";                  data[9][1] = "PC = rs";
+        data[10][0] = "<b>jalr</b> $rd, $rs";          data[10][1] = "rd = PC + 4; PC = rs";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
-            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "<td><font face=\"monospaced\" size=\"12pt\">" + data[i][0] + "</font></td><td>" + data[i][1] + "</td>";
             str += "</tr>";
         }
         
@@ -67,20 +88,20 @@ public class QuickRef extends javax.swing.JFrame {
 
         data = new String[10][2];
 
-        data[0][0] = "addiu $rt, $rs, imm";     data[0][1] = "rt = rs + SignExtend(imm)";
-        data[1][0] = "andi  $rt, $rs, imm";     data[1][1] = "rt = rs & ZeroExtend(imm)";
-        data[2][0] = "ori   $rt, $rs, imm";     data[2][1] = "rt = rs | ZeroExtend(imm)";
-        data[3][0] = "slit  $rt, $rs, imm";     data[3][1] = "rt = (rs < SignExtend(imm)) ? 1 : 0";
-        data[4][0] = "sltiu $rt, $rs, imm";     data[4][1] = "rt = (rs < SignExtend(imm)) ? 1 : 0";
-        data[5][0] = "lui   $rt, imm";          data[5][1] = "rt = imm << 16";
-        data[6][0] = "lw    $rt, imm($rs)";     data[6][1] = "rt = mem[SignExtend(imm) + rs]";
-        data[7][0] = "sw    $rt, imm($rs)";     data[7][1] = "mem[SignExtend(imm) + rs] = rt";
-        data[8][0] = "beq   $rt, $rs, label";   data[8][1] = "if (rt == rs) PC = PC + 4 + imm";
-        data[9][0] = "bne   $rt, $rs, label";   data[9][1] = "if (rt != rs) PC = PC + 4 + imm";
+        data[0][0] = "<b>addiu</b> $rt, $rs, imm";     data[0][1] = "rt = rs + SignExtend(imm)";
+        data[1][0] = "<b>andi</b>  $rt, $rs, imm";     data[1][1] = "rt = rs & ZeroExtend(imm)";
+        data[2][0] = "<b>ori</b>   $rt, $rs, imm";     data[2][1] = "rt = rs | ZeroExtend(imm)";
+        data[3][0] = "<b>slit</b>  $rt, $rs, imm";     data[3][1] = "rt = (rs < SignExtend(imm)) ? 1 : 0";
+        data[4][0] = "<b>sltiu</b> $rt, $rs, imm";     data[4][1] = "rt = (rs < SignExtend(imm)) ? 1 : 0";
+        data[5][0] = "<b>lui</b>   $rt, imm";          data[5][1] = "rt = imm << 16";
+        data[6][0] = "<b>lw</b>    $rt, imm($rs)";     data[6][1] = "rt = mem[SignExtend(imm) + rs]";
+        data[7][0] = "<b>sw</b>    $rt, imm($rs)";     data[7][1] = "mem[SignExtend(imm) + rs] = rt";
+        data[8][0] = "<b>beq</b>   $rt, $rs, label";   data[8][1] = "if (rt == rs) PC = PC + 4 + imm";
+        data[9][0] = "<b>bne</b>   $rt, $rs, label";   data[9][1] = "if (rt != rs) PC = PC + 4 + imm";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
-            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "<td><font face=\"monospaced\" size=\"12pt\">" + data[i][0] + "</font></td><td>" + data[i][1] + "</td>";
             str += "</tr>";
         }
 
@@ -91,12 +112,12 @@ public class QuickRef extends javax.swing.JFrame {
 
         data = new String[2][2];
 
-        data[0][0] = "j     label";             data[0][1] = "PC = label";
-        data[1][0] = "jal   label";             data[1][1] = "ra = PC + 4; PC = label";
+        data[0][0] = "<b>j</b>     label";             data[0][1] = "PC = label";
+        data[1][0] = "<b>jal</b>   label";             data[1][1] = "ra = PC + 4; PC = label";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
-            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "<td><font face=\"monospaced\" size=\"12pt\">" + data[i][0] + "</font></td><td>" + data[i][1] + "</td>";
             str += "</tr>";
         }
 
@@ -107,27 +128,27 @@ public class QuickRef extends javax.swing.JFrame {
 
         data = new String[7][2];
 
-        data[0][0] = "nop";                     data[0][1] = "sll $0, $0, 0";
-        data[1][0] = "b     label";             data[1][1] = "beq $0, $0, label";
-        data[2][0] = "move  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
-        data[3][0] = "li    $rd, imm32";        data[3][1] = "lui $rd, imm32 >> 16;<br />";
-                                                data[3][1] += "ori $rd, $rd, imm & 0xffff";
-        data[4][0] = "li    $rd, label";        data[4][1] = "lui $rd, label[31:16]<br />";
+        data[0][0] = "<b>nop</b>";                     data[0][1] = "sll $0, $0, 0";
+        data[1][0] = "<b>b</b>     label";             data[1][1] = "beq $0, $0, label";
+        data[2][0] = "<b>move</b>  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
+        data[3][0] = "<b>li</b>    $rd, imm32";        data[3][1] = "lui $rd, imm32 >> 16<br />";
+                                                data[3][1] += "ori $rd, $rd, imm32 & 0xffff";
+        data[4][0] = "<b>li</b>    $rd, label";        data[4][1] = "lui $rd, label[31:16]<br />";
                                                 data[4][1] += "ori $rd, $rd, label[15:0]";
-        data[5][0] = "push  $rt";               data[5][1] = "sw $rt, 0($sp)<br />";
+        data[5][0] = "<b>push</b>  $rt";               data[5][1] = "sw $rt, 0($sp)<br />";
                                                 data[5][1] += "addiu $sp, $sp, -4";
-        data[6][0] = "pop   $rt";               data[6][1] = "addiu $sp, $sp, 4<br />";
+        data[6][0] = "<b>pop</b>   $rt";               data[6][1] = "addiu $sp, $sp, 4<br />";
                                                 data[6][1] += "lw $rt, 0($sp)";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
-            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "<td><font face=\"monospaced\" size=\"12pt\">" + data[i][0] + "</font></td><td>" + data[i][1] + "</td>";
             str += "</tr>";
         }
 
         str += "</table>";
 
-        str += "<a name=\"m\" /><h1>Assembler Directives</h1>";
+        str += "<a name=\"d\" /><h1>Assembler Directives</h1>";
         str += "<table border=1 width=\"100%\"";
 
         data = new String[6][2];
@@ -142,13 +163,13 @@ public class QuickRef extends javax.swing.JFrame {
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
-            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "<td><font face=\"monospaced\" size=\"12pt\">" + data[i][0] + "</font></td><td>" + data[i][1] + "</td>";
             str += "</tr>";
         }
 
         str += "</table>";
 
-        str += "<a name=\"m\" /><h1>Registers Usage Guide</h1>";
+        str += "<a name=\"regs\" /><h1>Registers Usage Guide</h1>";
         str += "<table border=1 width=\"100%\"";
 
         data = new String[11][2];
@@ -167,13 +188,13 @@ public class QuickRef extends javax.swing.JFrame {
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
-            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "<td><font face=\"monospaced\" size=\"12pt\">" + data[i][0] + "</font></td><td>" + data[i][1] + "</td>";
             str += "</tr>";
         }
 
         str += "</table>";
 
-        str += "<a name=\"m\" /><h1>I/O Memory Map</h1>";
+        str += "<a name=\"mmap\" /><h1>I/O Memory Map</h1>";
         str += "<table border=1 width=\"100%\"";
 
         data = new String[10][2];
@@ -191,13 +212,14 @@ public class QuickRef extends javax.swing.JFrame {
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
-            str += "<td>" + data[i][0] + "</td><td>" + data[i][1] + "</td>";
+            str += "<td><font face=\"monospaced\" size=\"12pt\">" + data[i][0] + "</font></td><td>" + data[i][1] + "</td>";
             str += "</tr>";
         }
 
         str += "</table>";
 
         txtHTML.setText(str);
+        txtHTML.setCaretPosition(0);
     }
 
     /** This method is called from within the constructor to
@@ -212,6 +234,8 @@ public class QuickRef extends javax.swing.JFrame {
         btnClose = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtHTML = new javax.swing.JTextPane();
+        btnBackToTop = new javax.swing.JButton();
+        btnPrint = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(QuickRef.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -236,6 +260,22 @@ public class QuickRef extends javax.swing.JFrame {
         txtHTML.setName("txtHTML"); // NOI18N
         jScrollPane1.setViewportView(txtHTML);
 
+        btnBackToTop.setText(resourceMap.getString("btnBackToTop.text")); // NOI18N
+        btnBackToTop.setName("btnBackToTop"); // NOI18N
+        btnBackToTop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackToTopActionPerformed(evt);
+            }
+        });
+
+        btnPrint.setText(resourceMap.getString("btnPrint.text")); // NOI18N
+        btnPrint.setName("btnPrint"); // NOI18N
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -243,7 +283,12 @@ public class QuickRef extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnClose, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnBackToTop)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnPrint)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 370, Short.MAX_VALUE)
+                        .addComponent(btnClose))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -253,7 +298,10 @@ public class QuickRef extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnClose)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClose)
+                    .addComponent(btnBackToTop)
+                    .addComponent(btnPrint))
                 .addContainerGap())
         );
 
@@ -271,8 +319,22 @@ public class QuickRef extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    private void btnBackToTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToTopActionPerformed
+        txtHTML.scrollToReference("top");
+    }//GEN-LAST:event_btnBackToTopActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        try {
+            txtHTML.print();
+        } catch(java.awt.print.PrinterException e) {
+            plptool.Msg.E("Failed to print.", plptool.Constants.PLP_GENERIC_ERROR, null);
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBackToTop;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnPrint;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane txtHTML;
     // End of variables declaration//GEN-END:variables
