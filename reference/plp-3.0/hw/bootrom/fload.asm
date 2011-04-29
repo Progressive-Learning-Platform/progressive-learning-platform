@@ -12,7 +12,7 @@ nop
 fritz_propaganda:
 	.asciiz "how do i know that enjoying life is not a delusion?"
 version_string:
-	.asciiz "plp2.3"
+	.asciiz "plp-3.0"
 memory_test:
 	.asciiz "starting memory test..."
 memory_done:
@@ -76,7 +76,7 @@ flash_leds_loop2:
 
 #more seven segment
 sseg_version:
-	li $a0, 0x24b0ffff
+	li $a0, 0x3080ffff
 	jal libplp_sseg_write_raw
 	nop
 	j flash_leds_loop2
