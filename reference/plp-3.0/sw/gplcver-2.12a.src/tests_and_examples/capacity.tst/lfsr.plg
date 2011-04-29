@@ -1,0 +1,87 @@
+CVER_2.42_0a of 01/03/02 (Linux-elf).
+Copyright (c) 1991-2002 Pragmatic C Software Corp.
+  Licensed software containing confidential and proprietary
+  information belonging to Pragmatic C Software Corp.
+Today is Thu Jan  3 23:08:12 2002.
+  Verbose mode is on.
+  Invoked by: "/tmp/cver".
+  Delay annotation values read from SDF 3.0 file "lfsr.sdf" design context.
+  Directory "lca100kgate" searched for libraries from -y option.
+  +.v suffix(es) used for -y library extensions from +libext+ options.
+  Design content tables will be written.
+  Begin Translation:
+Compiling source file "lfsr32000.v"
+  Begin pass 2:
+  Approximately 399377 bytes storage allocated (excluding udps).
+Highest level modules:
+test
++++ Printing Design Statistics +++
+  Verbose mode statistics:
+  198 source lines read (includes -v/-y library files).
+  Design contains 9 module types.
+
+  Design Module Table: 9 modules (1 top level):
+Module            Level Cells-in Insts-in Primitives  Assigns    Nets  Insts-of
+lfsr                  1       11        0          0        0      24     32000
+lfsr10                2        0       10          0        0      13      3200
+lfsr100               3        0       10          0        0      13       320
+lfsr1000              4        0       10          0        0      13        32
+lfsr10000             5        0       10          0        0      13         3
+lfsr32000             6        0        5          0        0       8         1
+test                  7        0        1          3        0       8         1
+EN(C)                 0        0        0          1        0       3     32000
+FD2(C)                0        0        0         10        0      13    320000
+                          ------   ------     ------   ------  ------    ------
+Static Total:                 11       46         14        0     108
+Flat Total:               352000    35556    3232003        0 5070231    387557
+
+  Per Module Wiring Table (Task Variables Excluded):
+Module           Ports(Bits)   Wires(Bits) Registers(Bits) Memory(Cells, Bits)
+lfsr                    4(4)        20(20)                                    
+lfsr10                  4(4)          9(9)                                    
+lfsr100                 4(4)          9(9)                                    
+lfsr1000                4(4)          9(9)                                    
+lfsr10000               4(4)          9(9)                                    
+lfsr32000               4(4)          4(4)                                    
+test                                  4(4)           4(39)                    
+EN(C)                   3(3)                                                  
+FD2(C)                  5(5)          8(8)                                    
+                ------------ ------------- --------------- -------------------
+Flat total:    1838224(1838224)3232003(3232003)           4(39)                    
+
+  Design Usage Table:
+Type                      Class  Static   Flat   Location
+                                 Number  Number
+lfsr                      module     10   32000  lfsr32000.v:8
+lfsr10                    module     10    3200  lfsr32000.v:29
+lfsr100                   module     10     320  lfsr32000.v:48
+lfsr1000                  module     12      32  lfsr32000.v:68
+lfsr10000                 module      3       3  lfsr32000.v:87
+lfsr32000                 module      1       1  lfsr32000.v:104
+test                      top         0       0  lfsr32000.v:118
+EN                        cell        1   32000  lca100kgate/EN.v:1
+FD2                       cell       10  320000  lca100kgate/FD2.v:1
+and                       gate        1       1
+buf                       gate        1       1
+nand                      gate        8 2560000
+not                       gate        3  640001
+xnor                      gate        1   32000
+
+  Flattened Design: 387556 instances (352000 of cells), 0 udps (0 in cells),
+   3232003 gates (3232000 in cells) and 0 assigns (0 in cells).
++++ End of Design Statistics +++
+  Variable storage in bytes: 10140460 for scalars, 16 for vectors and 0 for reals.
+  Begin load/optimize:
+  Approximately 25440791 bytes storage allocated (excluding udps).
+  SDF delay +sdf_annotate completed for "lfsr.sdf" context scope **design**.
+  Begin simulation:
+  Approximately 148483376 bytes storage allocated (excluding udps).
+
+
+
+Results display
+Halted at location **lfsr32000.v(143) time 1100 from call to $finish.
+24768019 simulation events and 42816038 declarative immediate assigns processed.
+56 behavioral statements executed (18 procedural suspends).
+  Times (in sec.):  Translate 0.1, load/optimize 6.2, simulation 61.1.
+  There were 0 error(s), 0 warning(s), and 89 inform(s).

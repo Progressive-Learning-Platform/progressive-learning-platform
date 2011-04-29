@@ -1,0 +1,71 @@
+To test PLI 1.0 tf_ interface:
+
+BEFORE STARTING:
+   Make a binary Cver (see INSTALL or README file in src directory) and
+   run the shell script in install.tst directory to verify correct build.
+
+   This script assumes you are using new +loadpli1= dynamic library PLI
+   execution.  If you need to statically link your PLI libraries contact
+   Pragmatic C to obtain the libraries and test scripts.
+
+HOW TO RUN THE TEST SCRIPT FOR ALL SYSTEMS EXCEPT MAC OSX
+
+1) Run the shell script inst_pli.sh [OS name].  Various compiler and Verilog
+   output messages will be printed but there should be no diff command
+   differences printed.  You must pass the name of your system as the one
+   argument to the script.  This directory contains sample make files
+   for X86 linux (suffix lnx), Sparc (suffix sparc-gcc), 
+   or X86 64-bit (lnx64).  See below for running PLI1 tf_ routine install 
+   test on MAC OSX.
+
+   Run the shell script opt_inst_pli.sh [OS name] to test PLI using
+   optimizer (-O) incremental compiler.
+
+   By convention makefile.[OS name] assumes this test is run in release
+   directory tree with include files in pli_incs 2 directory levels up
+   and cver binary is in bin directory also 2 levels up.
+
+   The commands to run Cver with dynamically loaded user PLI library
+   explicitly access the user .so library in this directory.  For your
+   PLI libraries, it is better to set the LD_LIBRARY_PATH environment
+   variables so explicit "./" is not needed
+
+2) After completing the test, run clean.sh to remove work files.
+   The inst_pli.sh script removes each PLI library .so dynamic library after
+   running the test that uses it so unless something went wrong, you
+   do not need to run clean.sh.  
+
+3) Use makefile.[your OS] as a template for your PLI models.
+
+HOW TO RUN THE TEST SCRIPT FOR MAC OSX
+
+1) Run the shell script inst_pli.osx.sh.  Notice you do not need the
+   OS shell argument here.  Various compiler and Verilog
+   output messages will be printed but there should be no diff command
+   differences printed.  You must run this different script for MAC OSX
+   because OSX uses .dylib suffix for dynamic libraries and uses the
+   mach dynamic library mechanism instead of normal .so and dlopen. 
+
+   By convention, makefile.osx assumes this test is run in release
+   directory tree with include files in pli_incs 2 directory levels up
+   and cver binary is in bin directory also 2 levels up.
+
+   The commands to run Cver with dynamically loaded user PLI library
+   explicitly access the user .dylib library in this directory.  For your
+   PLI libraries, it is better to set the LD_LIBRARY_PATH environment
+   variables so explicit "./" is not needed
+
+   Mac OSX linker (from mach OS) requires that a leading '_' be added to
+   each symbol name.  Cver does this automatically but you must make
+   sure that your bootstrap routine name does not start with underscore ('_').
+
+2) After completing the test, run clean.sh to remove work files.
+   The inst_pli.sh script removes each PLI library .so dynamic library after
+   running the test that uses it so unless something went wrong, you
+   do not need to run clean.sh.  
+
+3) Use makefile.osx as a template for your PLI models.  You must use
+   exactly the LFLAGS options and set and export LD_LIBRARY_PATH
+   environment variable, or your .dylib user PLI code will not load
+   properly.
+   
