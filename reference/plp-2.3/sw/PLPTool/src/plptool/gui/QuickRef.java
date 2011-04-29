@@ -68,10 +68,10 @@ public class QuickRef extends javax.swing.JFrame {
         data[2][0] = "<b>and</b>  $rd, $rs, $rt";      data[2][1] = "rd = rs & rt";
         data[3][0] = "<b>or</b>   $rd, $rs, $rt";      data[3][1] = "rd = rs | rt";
         data[4][0] = "<b>nor</b>  $rd, $rs, $rt";      data[4][1] = "rd = ~(rs | rt)";
-        data[5][0] = "<b>slt</b>  $rd, $rs, $rt";      data[5][1] = "rd = (rs < rt) ? 1 : 0";
-        data[6][0] = "<b>sltu</b> $rd, $rs, $rt";      data[6][1] = "rd = (rs < rt) ? 1 : 0";
-        data[7][0] = "<b>sll</b>  $rd, $rt, shamt";    data[7][1] = "rd = rt << shamt";
-        data[8][0] = "<b>slr</b>  $rd, $rt, shamt";    data[8][1] = "rd = rt << shamt";
+        data[5][0] = "<b>slt</b>  $rd, $rs, $rt";      data[5][1] = "rd = (rs &lt; rt) ? 1 : 0";
+        data[6][0] = "<b>sltu</b> $rd, $rs, $rt";      data[6][1] = "rd = (rs &lt; rt) ? 1 : 0";
+        data[7][0] = "<b>sll</b>  $rd, $rt, shamt";    data[7][1] = "rd = rt &lt;&lt; shamt";
+        data[8][0] = "<b>slr</b>  $rd, $rt, shamt";    data[8][1] = "rd = rt &gt;&gt; shamt";
         data[9][0] = "<b>jr</b> $rs";                  data[9][1] = "PC = rs";
         data[10][0] = "<b>jalr</b> $rd, $rs";          data[10][1] = "rd = PC + 4; PC = rs";
 
@@ -91,9 +91,9 @@ public class QuickRef extends javax.swing.JFrame {
         data[0][0] = "<b>addiu</b> $rt, $rs, imm";     data[0][1] = "rt = rs + SignExtend(imm)";
         data[1][0] = "<b>andi</b>  $rt, $rs, imm";     data[1][1] = "rt = rs & ZeroExtend(imm)";
         data[2][0] = "<b>ori</b>   $rt, $rs, imm";     data[2][1] = "rt = rs | ZeroExtend(imm)";
-        data[3][0] = "<b>slit</b>  $rt, $rs, imm";     data[3][1] = "rt = (rs < SignExtend(imm)) ? 1 : 0";
-        data[4][0] = "<b>sltiu</b> $rt, $rs, imm";     data[4][1] = "rt = (rs < SignExtend(imm)) ? 1 : 0";
-        data[5][0] = "<b>lui</b>   $rt, imm";          data[5][1] = "rt = imm << 16";
+        data[3][0] = "<b>slit</b>  $rt, $rs, imm";     data[3][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
+        data[4][0] = "<b>sltiu</b> $rt, $rs, imm";     data[4][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
+        data[5][0] = "<b>lui</b>   $rt, imm";          data[5][1] = "rt = imm &lt;&lt; 16";
         data[6][0] = "<b>lw</b>    $rt, imm($rs)";     data[6][1] = "rt = mem[SignExtend(imm) + rs]";
         data[7][0] = "<b>sw</b>    $rt, imm($rs)";     data[7][1] = "mem[SignExtend(imm) + rs] = rt";
         data[8][0] = "<b>beq</b>   $rt, $rs, label";   data[8][1] = "if (rt == rs) PC = PC + 4 + imm";
@@ -131,7 +131,7 @@ public class QuickRef extends javax.swing.JFrame {
         data[0][0] = "<b>nop</b>";                     data[0][1] = "sll $0, $0, 0";
         data[1][0] = "<b>b</b>     label";             data[1][1] = "beq $0, $0, label";
         data[2][0] = "<b>move</b>  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
-        data[3][0] = "<b>li</b>    $rd, imm32";        data[3][1] = "lui $rd, imm32 >> 16<br />";
+        data[3][0] = "<b>li</b>    $rd, imm32";        data[3][1] = "lui $rd, imm32 &gt;&gt; 16<br />";
                                                 data[3][1] += "ori $rd, $rd, imm32 & 0xffff";
         data[4][0] = "<b>li</b>    $rd, label";        data[4][1] = "lui $rd, label[31:16]<br />";
                                                 data[4][1] += "ori $rd, $rd, label[15:0]";
