@@ -1,0 +1,9 @@
+GPLCVER_1.20a of 06/01/04 (Linux-elf).
+Copyright (c) 1991-2004 Pragmatic C Software Corp.
+  All Rights reserved.  Licensed under the GNU General Public License (GPL).
+  See the 'COPYING' file for details.  NO WARRANTY provided.
+Today is Tue Jun  1 16:03:59 2004.
+** ERROR** [3500] cannot open config map library file config6.map - skipped
+  Unable to begin simulation.
+  There were 1 error(s), 0 warning(s), and 0 inform(s).
+End of GPLCVER_1.20a at Tue Jun  1 16:03:59 2004 (elapsed 0.0 seconds).

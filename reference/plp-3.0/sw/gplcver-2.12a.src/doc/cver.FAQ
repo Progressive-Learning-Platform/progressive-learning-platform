@@ -1,0 +1,460 @@
+Frequently Asked Questions
+==========================
+
+    * 1. What is Verilog and what is Verilog Simulation?
+    * 2. What is the history of Cver?
+    * 3. What Computers has Cver been ported to?
+    * 4. How can I tell if I have misspelled a command line option?
+    * 5. Why doesn't Cver mimic XL style port collapsing? i.e. why are some
+         nets multiply driven in XL but not in Cver?
+    * 6. What is the difference between a reg and a wire?
+    * 7. Why is Cver inform and warning suppression system so complicated?
+         How do I use it?
+    * 8. Why can't I use ` defined preprocessor values to define numbers?
+    * 9. Where are the instructions for the complicated compilation and
+         linking steps needed before simulation?
+    * 10. Why is the OS dynamic loader unable to find my .so PLI program
+          libraries? 
+    * 11. Why won't gdb let me set break points in my user PLI code?
+    * 12. How do I use gdb in conjunction with Cver ':' debugger to debug my
+          PLI code?
+    * 13. Why does value assigned by vpi_put_value to a wire disappear?  What
+          is this vpiAddDriver non standard feature anyway?
+    * 14. How does glitch (pulse) checking work in Cver?
+    * 15. Why doesn't Cver support $save/$restart?
+    * 16. Why doesn't Cver support new Verilog 2001 generate feature?
+    * 17. Why are Cver's debugger breakpoints so complicated?
+    * 18. Why aren't more Verilog 2001 features implemented?
+    * 19. What is vcddiff for?
+    * 20. Why doesn't Cver support separate assertion and test languages?
+    * 21. How do I report bugs?
+    * 22. How do I purchase the new CVC Compiler from Pragmatic C
+
+  ----------------------------------------------------------------------
+1. What is Verilog and what is Verilog Simulation?
+
+    Verilog is the name for both a language for describing electronic
+    hardware called a hardware description language (HDL) and the name 
+    of the program that simulates HDL circuit descriptions to verify
+    that described circuits will function correctly when the are constructed.
+    Verilog is used only for describing digital logic circuits.  Other
+    HDLs such as Spice are used for describing analog circuits. 
+
+    There is an IEEE standard named P1364 that standardizes the Verilog HDL
+    and the behavior of Verilog simulators.  Verilog is officially defined
+    in the IEEE P1364 Language Reference Manual (LRM) that can be purchased
+    from IEEE.  There are many good books for learning that teach the
+    Verilog HDL and/or that teach digital circuit design using Verilog.
+    See the Comp.lang.verilog usenet news group for information on Verilog
+    web resources.
+
+2. What is the history of Cver?
+
+   Pragmatic C started by developing the Vcmp Valid to Verilog translator
+   and the Tdlver Tegas to Verilog net list translators that were marketed
+   by Gateway Design Systems.  When Cadence Design purchased both Gateway
+   Design and Valid Logic, the market for those programs disappeared.
+
+   Pragmatic C then worked with Chronologic and wrote the first
+   front end elaborator for VCS but due to personality conflicts, the joint
+   development project did not work out.  After parting company with
+   Chronologic, Pragmatic C decided to develop a Verilog simulator
+   since the front end was already written.
+
+   Cver was used as the digital engine for the Antrim Design Systems
+   Verilog-AMS (analog and mixed signal) simulator in the late 1990s until
+   last year when Cadence Design purchased Antrim Design Systems. 
+   We have decided to release Cver as it existed at the time of the last
+   Antrim release under GNU Public License (GPL) because we realized that we
+   could not compete with the branding power of the large Ecad vendors.
+
+   We are selling our new Verilog compiler that compiles to X86 Linux
+   assembly language.  It is at least two times faster for accurate gate
+   level designs and much faster for procedural designs.  The new
+   commercial compiled Verilog product is called CVC.  It allows either 
+   compiling to assembly (the default) or running the interpreter 
+   (+interp option).  We will continue to support a version of Cver released 
+   under the GPL license, but new Verilog 2005 (and 2001) features will not 
+   be added to GPL Cver. 
+
+  ----------------------------------------------------------------------
+3. What Computers has Cver been ported to?
+
+   Cver has been ported to Linux X86, Sparc Solaris, Apple Mac OSX, 
+   Cygwin (a Linux-like envirnoment for Windows),  and Hewlett Packard 
+   PA-Risc HPUX systems.  The release comes with tested make files for 
+   Linux, Sparc, Apple, and Cygwin (contact Pragmatic C for the HPUX make 
+   file).  Since Cver is primarily an interpreter, it will usually just 
+   compile and run on any system that has a GNU C compiler available.  
+   The one possible problem area is that user PLI programs are dynamically 
+   linked using dlopen/dlsym program dynamic library linking system calls.  
+   It will probably be difficult to port Cver to systems that do not support 
+   dynamic linking.  See the README file in the source directory for more 
+   details.
+
+  ----------------------------------------------------------------------
+4.  How can I tell if I have misspelled a command line option?
+
+    Run Cver with the -informs command line option.  It will print a
+    message for every unrecognized option.  It will print an inform
+    message for every unrecognized + option and a warning for every
+    unrecognized - option.  Unrecognized + options may also be options
+    that are needed by PLI programs.
+
+  ----------------------------------------------------------------------
+5.  Why doesn't Cver mimic XL style port collapsing? i.e. why are some
+    nets multiply driven in XL but not in Cver?
+
+    Cver follows the P1364 LRM and treats input and output ports as no delay
+    continuous assignments and inout ports as non strength reducing
+    "virtual" tran gates.  This has the advantage that there is no need  
+    for changing wire types when wires with different types are collapsed 
+    into the same net and allows warnings to be emitted for incorrectly
+    declared ports.  A port is incorrectly declared if an input port has
+    a driver on the lowconn side or if an output port has a driver on
+    the highconn side.
+
+    Because many older designs depend on the XL port collapsing algorithm
+    which silently changes port type depending on pattern of net drivers,
+    Cver supports the +change_port_type command option that causes Cver
+    to change ports according to driving pattern to mimic the XL port 
+    collapsing algorithm.  Cver always emits a warning message if there
+    is a possibility that a port may be changed to inout by XL port
+    collapsing algorithm (messages is an inform if +change_port_type option
+    is selected).  Use +suppress_warnings+3107+3108+ to suppress the
+    warning if you intend backward direction signal flow to be blocked
+    by a port.
+
+    There are many advantages to avoiding the XL algorithm such as:
+    fewer multi driver nets, no need to distinguish simulated nets
+    in PLI and in system task output, etc.
+
+  ----------------------------------------------------------------------
+6.  What is the difference between a reg and a wire?
+
+    This distinction is a difficult one for beginners to grasp but
+    it is important for distinguishing between computer programs and
+    hardware models.  See a Verilog circuit design text book or the IEEE
+    P1364 Verilog Standard LRM.
+
+    But briefly, a reg is like a programming language value.  Once a value
+    is assigned to a reg, which can only occur in procedural Verilog
+    constructs, its value is retained until another procedural assignment
+    is made.  A wire corresponds to a circuit wire.  It has declarative
+    constructs such as gates and continuous assignments driving it and
+    has loads which are input to other declarative Verilog constructs.
+    If a wire has more than one driver, whenever a driver changes value,
+    all drivers are evaluated to determine the winning value (strongest
+    0 component and 1 component strengths).  When all driving value
+    of a wire are removed (called tristating), the value of a wire reverts
+    to the high impedance (z) value, i.e. the value does not persist.
+  
+    Reg and wire are sometimes lumped together and called nets.  Regs
+    can only be assigned to using procedural assignments.  A procedural
+    assignment can only occur in initial or always blocks, in tasks,
+    or in functions.
+
+    Also, wires are scalared (unless declaration prevents scalaring) so
+    that each bit changes and is scheduled separately.  Regs are always
+    vectored, so that changing one bit is the same as changing the entire
+    reg and events are always scheduled for an entire reg. 
+
+  ----------------------------------------------------------------------
+7.  Why is Cver inform and warning suppression system so complicated?
+    How do I use it?
+
+    There are constant bug reports complaining either that some minor
+    problem should be flagged or that some minor problem is too minor
+    to be flagged.  Cver has 3 command line options that allow user
+    customization of error message output.
+
+    By default, warning messages are enabled (printing is enabled) and 
+    inform level messages are disabled (counted but not printed).
+    Use the -informs message to enable all inform level messages.  Use the
+    -w message to turn off warning message printing (option names mimic
+    those originally used in XL).
+    
+    A finer grained messages system allows suppressing specific warning
+    and inform level messages.  Error messages are always printed and
+    if simulation has not yet started, inhibit simulation.
+
+    Easiest way to customize messages that you want to have printed is to
+    start by running with -informs option.  Then look at the printed
+    inform and warning messages. For messages that you see as tiny lint
+    particles, record the number (in square brackets) and add it to
+    a +suppress_warns+ option list.  You can use as many different
+    +suppress_warns+ messages as desired.  I normally run without -informs
+    but use "+suppress_warns+3107+3108+".
+
+    The SDF reader uses separate command options but you can still suppress
+    individual message numbers with a +suppress_warns+ message number list.
+    The SDF reader options are +sdf_log_file [file name] that directs all
+    output to a separate log file with name [file name].  If option is not
+    used, SDF reader messages go to normal log file (usually verilog.log). 
+    +sdf_noerrors inhibits emitting SDF reader error messages.  +sdf_nowarns
+    inhibits printing of SDF reader warning messages.  -informs turns on
+    printing of SDF reader informs unless +sdf_nowarns options is used.
+    SDF errors do not inhibit simulation.
+
+    There are also options to print out more verbose record of elaboration
+    and simulation progress.  +verbose prints run progress messages.
+    +libverbose prints trace of exactly how and in which order
+    unresolved symbols are resolved during -v/-y library reading.
+    +sdfverbose prints trace of exactly what delay is assigned during
+    SDF input to each object.  +switchverbose prints trace of switch 
+    (tran, tranif, inout port, etc.) channel construction needed 
+    for the undocumented (I think) XL style relaxation switch channel
+    algorithm.
+
+  ----------------------------------------------------------------------
+8.  Why can't I use ` defined preprocessor values to define numbers?
+
+    Verilog preprocessor differs from programming language (such as C)
+    preprocessor in that only tokens can be substituted not characters.
+    Therefore because sized numbers are defined as [bit width][base value],
+    it is only legal to define a number as "`WID 'd44" or "`WID `BASEVAL".
+    Assuming the following ` definitions are made:
+
+    `define NWID 32
+    `define PWID 'd3
+    `define QWID 3
+    `define RWID 32'd
+
+    The following assignments are legal: 
+      i = `NWID `PWID;
+      j = `NWID'd3;
+      k = `NWID`PWID;
+
+    But these two are illegal:
+     // l = `NWID 'd`QWID; 
+     // m = `RWID `QWID
+
+  ----------------------------------------------------------------------
+9.  Where are the instructions for the complicated compilation and
+    linking steps needed before simulation?
+
+    Cver follows XL in using a different turbo loading approach so there
+    is no separate compilation and linking phases.  No limitations
+    on when SDF files can be read and no limitations on PLI usage. 
+    No compiled simulation needed for separate elaboration and simulation
+    PLI loading.  No long (sometimes up to 30 minutes) compilation times.
+    Cver has very fast turbo compiler to byte codes for a Verilog virtual
+    that is interpreted.  SDF annotation, PLI registration, and debugger
+    commands invoked during simulation cause incremental compilation to
+    update the byte code simulation model.
+
+  ----------------------------------------------------------------------
+10.  Why is the OS dynamic loader unable to find my .so PLI program
+    libraries? 
+
+
+    When Cver is unable to find dynamic libraries that needed to be loaded
+    because they are coded as the +loadvpi=[library]:[boostrap routine]
+    or +loadpli1=[library][boostrap routine] library field, error 
+    message 1803 is emitted.  The error messages contains the reason 
+    for dynamic library load failure.  The most common reason is 
+    "No such file or directory".  The most common cause of this error 
+    is that you forgot to set the OS LD_LIBRARY_PATH environment variable.
+    Even if you keep your dynamic libraries in the same directory in which
+    you run your simulation, you must set the LD_LIBRARY_PATH environment 
+    variable to '.' (current directory).  You do not need to include
+    the .so suffix on your library name since Cver first tries name as it
+    appears and then try again with .so suffix appended.
+
+  ----------------------------------------------------------------------
+11.  Why won't gdb let me set break points in my user PLI code?
+
+    Because Cver loads user PLI libraries as dynamic (usually suffix .so)
+    libraries using +load_pii1= and +load_vpi= options, the libraries are
+    not loaded until just before start of simulation.  Therefore start cver
+    by typing "gdb cver".  Then set a break at routine __pv_sim.  All user
+    PLI libraries will have been loaded by the time that breakpoint is hit.
+    In the breakpoint you will be able to set breakpoints in user PLI code.
+    Then continue from breakpoint to start simulation and to begin debugging
+    user PLI code.  See installation directory tree, 3 PLI
+    directories in tests_and_examples directory for instructions and
+    examples of how to compile and create user PLI program dynamic libraries.
+
+  ----------------------------------------------------------------------
+12.  How do I use gdb in conjunction with Cver ':' debugger to debug my
+     PLI code?
+
+     Follow the instructions in question 9 except before starting
+     simulation type gdb command "handle 2 pass".  Then you can enter
+     gdb by pressing interrupt (usually ctrl-c) key.  You can even
+     press interrupt key within the debugger to enter gdb.  Continue
+     from gdb will return to debugger command input mode, so you will
+     need to use Verilog debugger continue ('.') command to continue
+     simulation.
+
+  ----------------------------------------------------------------------
+13.  Why does value assigned by vpi_put_value to a wire disappear?  What
+     is this vpiAddDriver non standard feature anyway?
+
+     One result of current dominance of compiled to machine code Verilog
+     simulators over flexible interpreted simulators is lack of flexibility
+     in what can be modeled using the PLI, especially the new vpi_ interface.
+     Worst problem is that there is no way to drive wires using PLI calls.
+     Using vpi_put_value to assign to a wire just creates what is
+     called a soft force, i.e. the wire is changed to vpi_put_value
+     value until next time a driver changes.
+
+     Cver supports a much better way for assigning values to wires.
+     Namely vpi_put_value can be called with reason flag vpiAddDriver.
+     The object returned is a new driver of a wire.  Then whenever
+     vpi_put_value is used to put a value to the added driver object,
+     the driving value changes.  Any assignment can be removed by
+     putting a z (high impedance) value to the driver.  Any number
+     of drivers can be added so different PLI application will not
+     conflict.  Although, final value will be determined by combining
+     all drivers using normal Verilog strength competition algorithm.
+
+     This enhancement was proposed to P1364 committee but was voted
+     down so it is currently a non standard enhancement.
+
+  ----------------------------------------------------------------------
+14.  How does glitch (pulse) checking work in Cver?
+
+     Cver pulse detection uses the normal +show_cancel_e option to
+     turn on insertion of x when a pulse occurs.  If the option is not
+     used standard Verilog inertial (latest occurring) scheduling is used.
+
+     Because Cver is intended as an accurate gate level simulator and
+     because glitch problems are the most common reason that designs
+     can not be moved between circuit type and feature sizes, the following 
+     very pessimistic pulse detection algorithm is used if the
+     +show_cancel_e option is selected: 1) if option is select, every 
+     possible pulse is detected and x's are injected. 2) Pulse checking 
+     is also used for gates as well as paths in Cver, 3) if
+     +pulse_e_style_ondetect option is used output wire stays in unknown (x)
+     state until a driver that doesn't have a glitch problem changes.  4) No
+     PATHPULSE option or specify section percentage parameters are used, i.e.
+     any pulse causes x injection. 
+
+     This algorithm was used by Tegas simulator with good results
+     in freeing designs from dependence on one particular IC type or
+     manufacturing process. 
+
+  ----------------------------------------------------------------------
+15.  Why doesn't Cver support $save/$restart?
+
+     Operating system level programs and system calls exist in modern
+     operating systems so it is better to simply stop a process and
+     restart it.  There is no need for Cver to even know it was
+     stopped and its process image saved to disk.
+
+  ----------------------------------------------------------------------
+16.  Why doesn't Cver support new Verilog 2001 generate feature?
+
+     Cver is intended to be an accurate and close to actual hardware
+     models gate level simulator.  The new Verilog generate is a feature
+     that is not preprocess Verilog into HDL source but becomes an integral
+     part of simulation data structure.  For that reason and because it is so
+     complicated that other implementations by simulators with larger
+     market share will almost certainly differ, there are no plans
+     to implement Verilog generate as currently defined.  There are
+     good Verilog source preprocessors available that provide a better
+     method (using superior Unix filter paradigm) to simplify
+     coding of regular Verilog HDL source.
+
+  ----------------------------------------------------------------------
+17.  Why are Cver's debugger statement breakpoints so complicated?
+
+     Cver supports all of the statement break point control capabilities
+     in gdb plus some additional features needed because circuits are
+     represented as instance trees.  The following types of breakpoints
+     are supported (see dbg.hlp file in doc directory or use the Cver
+     :help commands for more details): 
+ 
+     1) :breakpoint [statement ref] - break set at statement for every instance
+    
+     2) :ibreakpoint [scope reference][,statement ref] - break set at statement
+        in only the one instance determined by the [scope reference].
+ 
+     3) :tbreakpoint [statement ref] - same as :breakpoint but removed
+        after hit one time.
+ 
+     4) :tibreakpoint [statement ref] - same as :ibreakpoint but removed
+        after hit one time.
+ 
+     5) :nextb - set a :tibreak at next line in source and execute '.'
+        command to continue execution.  Because of hardware parallelism,
+        a number of different threads may execute and block on delay or
+        event controls before the next statement in source order is
+        executed.
+
+
+     The following commands take a break point number as argument and
+     modify behavior of the breakpoint.
+ 
+     a) :disable [num] and :enable [num] - disable a breakpoint from
+        triggering until :enable command re-enables the breakpoint.
+ 
+     b) :ignore [num] [count] - ignore the breakpoint until it is hit
+        exactly [count] times.  Useful for breaking after a certain number
+        of edges when the edges are controlled by procedural RTL.
+
+     c) :cond [num] [Verilog expressions] - ignore breakpoint unless
+        expression evaluates to true.  To stop after a given time use 
+        "($time > [number])" for the cond expression.  :cond command
+        expression are level not edge sensitive.
+
+     The complicated break point mechanism is needed because it is
+     quite common for wrong procedural edges to occur only in one of
+     a number of repeated instance and then only when a number of
+     different other conditions are met.
+
+  ----------------------------------------------------------------------
+  ----------------------------------------------------------------------
+18.  Why aren't more Verilog 2001 features added?
+
+     A number of new features are under development such as new file I/O
+     mechanism, configurations alternative to -y/-v options, and new signed
+     and unsigned keywords and algorithm.  Cver can't be first simulator to
+     implement new features because our interpretation of the LRM will
+     probably not match the interpretation of the simulators with larger
+     market share.  Since Cver is intended to be an accurate gate level
+     simulator, multi dimensional wire and regs will probably not be
+     implemented since they do not correspond to real hardware.  Multiple
+     dimensional arrays (formerly called memories) make sense but if only
+     multi dimensional arrays are implemented, simulator will not match
+     either 1995 or 2001 standard.
+
+     We are also working on other minor new Verilog 2001 features.
+
+  ----------------------------------------------------------------------
+19. What is vcddiff for?
+
+    vcddiff is program we have developed to assist in making sure
+    that when changes are made to a design,  the changes can be  
+    regressed back to original design.  We think that the diff style
+    output is a better way to look at changes in wide bus based designs.
+    See README file for vcddiff for more instructions.
+
+  ----------------------------------------------------------------------
+20. Why does not Cver support separate assertion and test languages?
+
+    The idea behind Cver is provide an interpreter that is so flexible
+    that whatever assertions need to be checked can be accomplished by
+    coding the checks in the Verilog HDL itself and that test scripts can
+    either be coded in Verilog or in a standard script language such as Perl,
+    Tcl, or Ruby and connected using PLI interface.  Cver follows the Unix
+    paradigm in which specialized tools are connected to construct more 
+    complex tools.
+
+  ----------------------------------------------------------------------
+21. How do I report bugs?
+
+    Send email to avanvick@pragmatic-c.com.  Before reporting a bug check
+    the known-problems.txt file to see if the problem is already known.
+    Also, make sure you are running the latest version of GPL Cver by
+    checking the http://www.pragmatic-c.com/gplcver web site for the
+    latest GPL Cver release.  Bug reports should include a small failing
+    example if possible.
+
+  ----------------------------------------------------------------------
+22. How do I purchase the new CVC Compiler from Pragmatic C
+
+    We have a stable version of our CVC compiler.  You can purchase it by
+    contacting Andrew at avanvick@pragmatic-c.com.  You can also get release 
+    notes and an evaluation copy of CVC by contacting Andrew.
