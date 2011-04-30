@@ -10,7 +10,7 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "how do i know that enjoying life is not a delusion?"
+	.asciiz "everything must end.\nthus the day tries to begin\nwith the morning bell.\nbut the long night remains,\nempty moon still in the sky."
 version_string:
 	.asciiz "plp-3.0"
 memory_test:
