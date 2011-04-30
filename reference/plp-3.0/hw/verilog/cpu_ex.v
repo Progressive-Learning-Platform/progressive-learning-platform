@@ -35,7 +35,7 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	input 		rst, clk, cpu_stall;
 	input		id_c_rfw;
 	input [1:0]	id_c_wbsource;
-	input		id_c_drw;
+	input [1:0]	id_c_drw;
 	input [5:0]	id_c_alucontrol;
 	input 		id_c_j;
 	input		id_c_b;
@@ -56,7 +56,7 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	input [4:0]	wb_waddr;
 	output reg	p_c_rfw;
 	output reg [1:0] p_c_wbsource;
-	output reg	p_c_drw;
+	output reg [1:0] p_c_drw;
 	output reg [31:0] p_alu_r;
 	output reg [31:0] p_rfb;
 	output reg [4:0] p_rf_waddr;

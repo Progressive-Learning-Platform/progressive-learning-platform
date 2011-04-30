@@ -57,7 +57,7 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
         input clk;
         input ie,de;
         input [31:0] iaddr, daddr;
-        input drw;
+        input [1:0] drw;
         input [31:0] din;
         output [31:0] iout, dout;
 	output txd;
@@ -77,8 +77,8 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
 	reg [7:0] out_buffer;
 	uart_core uart(clk,rxd,txd,in_buffer,out_buffer,data_rdy,clear,cts,send,rst);
 	
-	assign send = (de && drw && daddr == 32'h0) ? din[0] : 0;
-	assign clear = (de && drw && daddr == 32'h0) ? din[1] : 0;
+	assign send = (de && drw[0] && daddr == 32'h0) ? din[0] : 0;
+	assign clear = (de && drw[0] && daddr == 32'h0) ? din[1] : 0;
 
 	assign ddata = (daddr == 32'h0) ? 0 : /* command reg */
 			  (daddr == 32'h4) ? {30'h0,data_rdy,cts} : /* status */
@@ -87,7 +87,7 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
 	
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
-		if (de && drw && daddr == 32'hc) /* write a new byte to the output buffer */
+		if (de && drw[0] && daddr == 32'hc) /* write a new byte to the output buffer */
 			out_buffer = din[7:0];
 	end
 endmodule

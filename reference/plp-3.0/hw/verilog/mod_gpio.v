@@ -30,7 +30,7 @@ module mod_gpio(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, gpio);
         input clk;
         input ie,de;
         input [31:0] iaddr, daddr;
-        input drw;
+        input [1:0] drw;
         input [31:0] din;
         output [31:0] iout, dout;
 	inout [15:0] gpio;
@@ -68,7 +68,7 @@ module mod_gpio(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, gpio);
 
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
-		if (drw && de && !rst) begin
+		if (drw[0] && de && !rst) begin
 			if (daddr == 32'h00000000)
 				direction <= din[15:0];
 			else if (daddr == 32'h00000004)
