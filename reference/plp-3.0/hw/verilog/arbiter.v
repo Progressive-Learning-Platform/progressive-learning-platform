@@ -21,7 +21,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	input clk, rst;
 
 	/* cpu i/o */
-	input cpu_drw; /* data read/write. cpu_drw = 0 is read */
+	input [1:0] cpu_drw; /* data read/write. cpu_drw = 00 is nop, 01 is write, 10 is read */
 	input [31:0] cpu_daddr, cpu_iaddr; /* word aligned */
 	input [31:0] cpu_bus_data; /* cpu data coming from the cpu */
 	output [31:0] bus_cpu_data, bus_cpu_inst; /* cpu data going to the cpu */

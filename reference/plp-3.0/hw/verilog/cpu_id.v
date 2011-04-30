@@ -44,7 +44,7 @@ module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
 	output reg [4:0]  p_rf_waddr;
 	output reg 	  p_c_rfw;
 	output reg [1:0]  p_c_wbsource;
-	output reg 	  p_c_drw;
+	output reg [1:0]  p_c_drw;
 	output reg [5:0]  p_c_alucontrol;
 	output reg 	  p_c_j;
 	output reg	  p_c_b;
@@ -84,7 +84,8 @@ module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
 		(opcode == 6'h23) ? 2'h1 :
 		(opcode == 6'h03) ? 2'h2 :
 		(opcode == 6'h00 && func == 6'h09) ? 2'h2 : 0; 
-	wire c_drw = (opcode == 6'h2b && !stall) ? 1 : 0;
+	wire [1:0] c_drw = (opcode == 6'h2b && !stall) ? 2'b01 : 
+			   (opcode == 6'h23 && !stall) ? 2'b10 : 2'b00;	/* c_drw[1] = read, c_drw[0] = write, 00 = nop */
 	wire [5:0] c_alucontrol = opcode;
 	wire c_se = (opcode == 6'h0c || opcode == 6'h0d) ? 0 : 1;
 	wire c_rfbse = (opcode == 6'h00 || opcode == 6'h04 || opcode == 6'h05) ? 0 : 1;

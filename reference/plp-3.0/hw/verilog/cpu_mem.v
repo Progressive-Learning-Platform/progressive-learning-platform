@@ -33,7 +33,7 @@ module cpu_mem(rst, clk, cpu_stall, ex_c_rfw, ex_c_wbsource, ex_c_drw,
 	input 		rst, clk, cpu_stall;
 	input 		ex_c_rfw;
 	input [1:0]	ex_c_wbsource;
-	input 		ex_c_drw;
+	input [1:0]	ex_c_drw;
 	input [31:0]	ex_alu_r;
 	input [31:0]	ex_rfb;
 	input [4:0]	ex_rf_waddr;
@@ -47,7 +47,7 @@ module cpu_mem(rst, clk, cpu_stall, ex_c_rfw, ex_c_wbsource, ex_c_drw,
 	output reg [4:0] p_rf_waddr;
 	output reg [31:0] p_jalra;
 	output [31:0] dmem_addr;
-	output dmem_drw;
+	output [1:0] dmem_drw;
 	input [31:0]	dmem_in;
 	output reg [31:0] p_dout;
 

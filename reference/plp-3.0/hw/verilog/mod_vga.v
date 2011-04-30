@@ -16,7 +16,7 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
         input clk;
         input ie,de;
         input [31:0] iaddr, daddr;
-        input drw;
+        input [1:0] drw;
         input [31:0] din;
         output [31:0] iout, dout;
         output [7:0] rgb;
@@ -47,7 +47,7 @@ module mod_vga(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, rgb, hs, vs
 	vga_sram_bypass bypass(clk, enable, fb_pointer, hcount, vcount, eff_rgb, sram_data, sram_addr, sram_read, sram_rdy);
 
 	always @(negedge clk) begin
-		if (drw && de && !rst) begin
+		if (drw[0] && de && !rst) begin
 			if (daddr == 32'h00000000)
 				enable <= din[0];
 			else if (daddr == 32'h00000004)
