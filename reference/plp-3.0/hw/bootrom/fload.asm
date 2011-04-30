@@ -76,7 +76,7 @@ flash_leds_loop2:
 
 #more seven segment
 sseg_version:
-	li $a0, 0x3080ffff
+	li $a0, 0x30c0ffff
 	jal libplp_sseg_write_raw
 	nop
 	j flash_leds_loop2
