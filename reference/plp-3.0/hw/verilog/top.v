@@ -41,7 +41,7 @@ module top(clk,leds,rst,txd,rxd,switches,sseg_an,sseg_display, mod_sram_clk, mod
 	inout [15:0] mod_gpio_gpio;
 
 	wire [31:0] daddr, dout, din, iaddr, iin;
-	wire drw;
+	wire [1:0] drw;
 	wire cpu_c, arbiter_c, cpu_stall;
 
 	clock c_t(clk, c);

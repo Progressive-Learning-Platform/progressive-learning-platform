@@ -31,7 +31,7 @@ module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin);
 	output [31:0] daddr;
 	output [31:0] dout;
 	input [31:0] din;
-	output drw;
+	output [1:0] drw;
 	output [31:0] iaddr;
 	input [31:0] iin;
 
@@ -46,7 +46,7 @@ module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin);
 	wire	[4:0]	idex_rf_waddr;
 	wire		idex_c_rfw;
 	wire	[1:0]	idex_c_wbsource;
-	wire		idex_c_drw;
+	wire	[1:0]	idex_c_drw;
 	wire	[5:0]	idex_c_alucontrol;
 	wire		idex_c_j;
 	wire		idex_c_b;
@@ -60,7 +60,7 @@ module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin);
 
 	wire		exmem_c_rfw;
 	wire	[1:0]	exmem_c_wbsource;
-	wire		exmem_c_drw;
+	wire	[1:0]	exmem_c_drw;
 	wire	[31:0]	exmem_alu_r;
 	wire	[31:0]	exmem_rfb;
 	wire	[4:0]	exmem_rf_waddr;
