@@ -85,7 +85,7 @@ module mod_sram(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall,
 	wire [1:0] next_state = (state == 2'b00 && ie)         ? 2'b10 : /* idle to instruction read */
 				(state == 2'b00 && !ie && de && drw != 2'b00)  ? 2'b11 : /* idle to data r/w */
 				(state == 2'b10 && de && drw != 2'b00 && rdy && !bypass_state) ? 2'b11 : /* instruction read to data r/w */
-				(state == 2'b10 && !de && rdy && !bypass_state) ? 2'b00 : /* instruction read to idle */
+				(state == 2'b10 && (drw == 2'b00 || !de) && rdy && !bypass_state) ? 2'b00 : /* instruction read to idle */
 				(state == 2'b11 && rdy && !bypass_state) ? 2'b00 : /* data r/w to idle */
 				state;					 /* otherwise stay put */
 
