@@ -73,7 +73,7 @@ public class VGA extends PLPSimBusModule {
 
         for(int y_coord = 0; y_coord < 480; y_coord++) {
             for(int x_coord = 0; x_coord < 160; x_coord++) {
-                // Each word is packed with 4 pixel data
+                // Each word is packed with MSB 4 pixel data
                 long addr = framePointer + (y_coord * 640) + (x_coord * 4);
 
                 // default data to 0
@@ -101,7 +101,9 @@ public class VGA extends PLPSimBusModule {
                     blue = (blue == 0xC0) ? 0xFF : blue;
 
                     Msg.D("Colors: " + red + " " + green + " " + blue, 4, this);
-                    image[x_coord * 4 + i][y_coord] = (red << 16) | (green << 8) | (blue);
+                    
+                    // VGA module buffer is MSB, so we put the LSB last on the array
+                    image[x_coord * 4 + (3 - i)][y_coord] = (red << 16) | (green << 8) | (blue);
                 }
             }
         }
