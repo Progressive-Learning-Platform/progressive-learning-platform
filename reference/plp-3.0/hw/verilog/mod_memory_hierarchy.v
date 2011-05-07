@@ -55,7 +55,8 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	wire          cache_iwrite, cache_dwrite;
 	wire   [10:0] cache_iaddr, cache_daddr;
 	wire   [31:0] cache_iin, cache_din, cache_iout, cache_dout;
-	wire	      sram_nrdy, sram_ie, sram_de, sram_drw;
+	wire	      sram_nrdy, sram_ie, sram_de;
+	wire   [1:0]  sram_drw;
 	wire   [31:0] sram_iaddr, sram_daddr, sram_din, sram_iout, sram_dout;
 	wire   [31:0] tag_iin, tag_din, tag_iout, tag_dout;
 
