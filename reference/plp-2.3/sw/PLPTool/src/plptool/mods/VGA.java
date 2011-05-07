@@ -101,7 +101,7 @@ public class VGA extends PLPSimBusModule {
                     blue = (blue == 0xC0) ? 0xFF : blue;
 
                     Msg.D("Colors: " + red + " " + green + " " + blue, 4, this);
-                    image[x_coord * 4 + i][y_coord] = (red << 16) | (green << 8) | (blue);
+                    image[x_coord * 4 + (3 - i)][y_coord] = (red << 16) | (green << 8) | (blue);
                 }
             }
         }

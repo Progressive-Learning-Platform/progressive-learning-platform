@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011 David Fritz and Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- */
+*/
 
 
 /* 
@@ -22,7 +22,7 @@ David Fritz
 
 CACHE interface, which instantiates the SRAM interface
 
-10.2.2011
+2.5.2011
 */
 
 /* 
@@ -38,7 +38,7 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	input clk;
 	input ie, de;
 	input [31:0] iaddr, daddr;
-	input drw;
+	input [1:0] drw;
 	input [31:0] din;
 	output [31:0] iout, dout;
 	output cpu_stall;
@@ -98,12 +98,12 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	assign ihit	    = (tag_iout[18:0] == iaddr[31:13]) && tag_iout[19];
 	assign dhit	    = (tag_dout[18:0] == daddr[31:13]) && tag_dout[19];
 	assign next_state   =
-		state == 3'b000 && ((ihit && ie) || !ie) && !dhit && !drw && de ? 3'b001 : /* data miss */
-		state == 3'b000 && ((dhit && de && !drw) || !de) && !ihit && ie ? 3'b010 : /* instruction miss */
-		state == 3'b000 && !ihit && !dhit && !drw && ie && de           ? 3'b011 : /* instruction and data miss */
-		state == 3'b000 && ((ihit && ie) || !ie) && drw && de           ? 3'b101 : /* data write */
-		state == 3'b000 && !ihit && drw && de && ie                     ? 3'b111 : /* instruction miss and data write */
-		state != 3'b000 && !sram_nrdy		  	                ? 3'b000 : state; /* returning from sram */
+		state == 3'b000 && ((ihit && ie) || !ie) && !dhit && drw == 2'b10 && de ? 3'b001 : /* data miss */
+		state == 3'b000 && ((dhit && de && drw == 2'b10) || !de) && !ihit && ie ? 3'b010 : /* instruction miss */
+		state == 3'b000 && !ihit && !dhit && drw == 2'b10 && ie && de           ? 3'b011 : /* instruction and data miss */
+		state == 3'b000 && ((ihit && ie) || !ie) && drw == 2'b01 && de          ? 3'b101 : /* data write */
+		state == 3'b000 && !ihit && drw == 2'b01 && de && ie                    ? 3'b111 : /* instruction miss and data write */
+		state != 3'b000 && !sram_nrdy		  	                        ? 3'b000 : state; /* returning from sram */
 
 	always @(posedge clk) begin
 		if (rst)
