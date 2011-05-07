@@ -80,18 +80,18 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	wire	      ihit, dhit;
 
 	assign cpu_stall    = next_state != 3'b000;
-	assign cache_iwrite = (state & 3'b010);
-	assign cache_dwrite = (state & 3'b001) && (!cache_iwrite || cache_iaddr != cache_daddr);
+	assign cache_iwrite = (state & 3'b010) != 0;
+	assign cache_dwrite = ((state & 3'b001) != 0) && (!cache_iwrite || cache_iaddr != cache_daddr);
 	assign cache_iaddr  = iaddr[12:2];
 	assign cache_daddr  = daddr[12:2];
 	assign cache_iin    = sram_iout;
-	assign cache_din    = (state & 3'b100) ? din : sram_dout;
+	assign cache_din    = (state & 3'b100) != 0 ? din : sram_dout;
 	assign tag_iin 	    = {13'b0000000000001, iaddr[31:13]};
 	assign tag_din	    = {13'b0000000000001, daddr[31:13]};
 	assign iout	    = sram_ie ? cache_iout : sram_iout;
 	assign dout	    = sram_de ? cache_dout : sram_dout;
-	assign sram_ie	    = (state & 3'b010);
-	assign sram_de	    = (state & 3'b001);
+	assign sram_ie	    = (state & 3'b010) != 0;
+	assign sram_de	    = (state & 3'b001) != 0;
 	assign sram_drw	    = drw;
 	assign sram_iaddr   = iaddr;
 	assign sram_daddr   = daddr;
