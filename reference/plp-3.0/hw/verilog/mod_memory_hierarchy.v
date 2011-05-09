@@ -75,42 +75,43 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	 *	101 - servicing data write
 	 *	111 - servicing data write and instruction miss
 	*/
-	reg 	[2:0] state = 3'b000;
-	wire 	[2:0] next_state;
-	wire	      ihit, dhit;
+	reg 	[2:0]  state = 3'b000;
+	wire 	[2:0]  next_state;
+	wire	       ihit, dhit;
 
 	assign cpu_stall    = next_state != 3'b000;
-	assign cache_iwrite = (state & 3'b010) != 0;
-	assign cache_dwrite = ((state & 3'b001) != 0) && (!cache_iwrite || cache_iaddr != cache_daddr);
+	assign cache_iwrite = ((state & 3'b010) != 0);
+	assign cache_dwrite = ((state & 3'b001) != 0) && (!ie || (cache_iaddr != cache_daddr));
 	assign cache_iaddr  = iaddr[12:2];
 	assign cache_daddr  = daddr[12:2];
 	assign cache_iin    = sram_iout;
 	assign cache_din    = (state & 3'b100) != 0 ? din : sram_dout;
 	assign tag_iin 	    = {13'b0000000000001, iaddr[31:13]};
 	assign tag_din	    = {13'b0000000000001, daddr[31:13]};
-	assign iout	    = sram_ie ? cache_iout : sram_iout;
-	assign dout	    = sram_de ? cache_dout : sram_dout;
+	assign iout	    = sram_ie ? sram_iout : cache_iout;
+	assign dout	    = sram_de ? sram_dout : cache_dout;
 	assign sram_ie	    = (state & 3'b010) != 0;
 	assign sram_de	    = (state & 3'b001) != 0;
 	assign sram_drw	    = drw;
 	assign sram_iaddr   = iaddr;
 	assign sram_daddr   = daddr;
 	assign sram_din	    = din;
-	assign ihit	    = (tag_iout[18:0] == iaddr[31:13]) && tag_iout[19];
-	assign dhit	    = (tag_dout[18:0] == daddr[31:13]) && tag_dout[19];
+	assign ihit	    = tag_iout == {13'b0000000000001,iaddr[31:13]};
+	assign dhit	    = tag_dout == {13'b0000000000001,daddr[31:13]};
 	assign next_state   =
 		state == 3'b000 && ((ihit && ie) || !ie) && !dhit && drw == 2'b10 && de ? 3'b001 : /* data miss */
-		state == 3'b000 && ((dhit && de && drw == 2'b10) || !de) && !ihit && ie ? 3'b010 : /* instruction miss */
+		state == 3'b000 && ((dhit && de && drw == 2'b10) || drw == 2'b00 || !de) && !ihit && ie ? 3'b010 : /* instruction miss */
 		state == 3'b000 && !ihit && !dhit && drw == 2'b10 && ie && de           ? 3'b011 : /* instruction and data miss */
 		state == 3'b000 && ((ihit && ie) || !ie) && drw == 2'b01 && de          ? 3'b101 : /* data write */
 		state == 3'b000 && !ihit && drw == 2'b01 && de && ie                    ? 3'b111 : /* instruction miss and data write */
 		state != 3'b000 && !sram_nrdy		  	                        ? 3'b000 : state; /* returning from sram */
 
 	always @(posedge clk) begin
-		if (rst)
+		if (rst) begin
 			state <= 3'b000;
-		else
-			state <= next_state;	
+		end else begin
+			state <= next_state;
+		end
 	end
 endmodule
 
@@ -129,14 +130,20 @@ module cache_memory(clk, wea, web, addra, addrb, dia, dib, doa, dob);
 	reg [DATA_WIDTH-1:0] RAM [DEPTH-1:0];
 
 	always @(negedge clk) begin
-		if (wea)
+		if (wea) begin
 			RAM[addra] <= dia;
-		doa <= RAM[addra];
+			doa <= dia;
+		end else begin
+			doa <= RAM[addra];
+		end
 	end
 
 	always @(negedge clk) begin
-		if (web)
+		if (web) begin
 			RAM[addrb] <= dib;
-		dob <= RAM[addrb];
+			dob <= dib;
+		end else begin
+			dob <= RAM[addrb];
+		end
 	end
 endmodule
