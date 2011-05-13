@@ -10,7 +10,7 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "everything must end.\nthus the day tries to begin\nwith the morning bell.\nbut the long night remains,\nempty moon still in the sky."
+	.asciiz "there once was a man who said though\nit seems that i know that i know,\nwhat i would like to see\nis the i that knows me\nwhen i know that i know that i know"
 version_string:
 	.asciiz "plp-3.0"
 memory_test:
