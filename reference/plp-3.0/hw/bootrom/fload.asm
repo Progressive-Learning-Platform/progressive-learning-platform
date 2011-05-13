@@ -55,7 +55,7 @@ shiny:
 
 #the led routine, which waits for the switches to be non-zero
 flash_leds:
-	srl $s3, $s2, 3		#one eighth of the frequency into $a0
+	srl $s3, $s2, 4		#one eighth of the frequency into $a0
 	ori $s5, $zero, 0xff00
 	ori $s4, $zero, 16
 flash_leds_loop:		#scroll the leds through and update the sseg
