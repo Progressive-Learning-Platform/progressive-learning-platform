@@ -83,6 +83,8 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	wire cmp_signed = (x[31] == y[31]) ? x < y : x[31];
 	wire cmp_unsigned = x < y;
 
+	/* multiply */
+	wire [63:0] r_mul = {32'd0,x} * {32'd0,y};
 
 	/* alu control */
 	wire [5:0] alu_func = 
@@ -113,7 +115,9 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 		(alu_func == 6'h02) ? y >> shamt :
 		(alu_func == 6'h23) ? x - y :
 		(alu_func == 6'h04) ? x != y :
-		(alu_func == 6'h05) ? x == y : 0;
+		(alu_func == 6'h05) ? x == y :
+		(alu_func == 6'h10) ? r_mul[31:0] :
+		(alu_func == 6'h11) ? r_mul[63:32] : 0;
 
 
 	/* branch and jump logic */
