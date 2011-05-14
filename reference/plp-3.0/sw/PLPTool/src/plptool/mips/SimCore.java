@@ -606,6 +606,7 @@ public class SimCore extends PLPSimCore {
                 switch(Asm.lookupInstrType(Asm.lookupInstrFunct(funct))) {
                     case 0: // r-types
                     case 1: // shifts
+                    case 8: // multiply
                         ex_reg.i_fwd_ctl_regwrite = 1;
                         ex_reg.i_ctl_regDst = 1;
                         break;
@@ -1180,6 +1181,8 @@ public class SimCore extends PLPSimCore {
                             return (a < b) ? 1 : 0;
                         case 0x00: return b << MIPSInstr.sa(instr);
                         case 0x02: return b >>> MIPSInstr.sa(instr);
+			case 0x10: return (a * b) & 0xffffffffL;
+			case 0x11: return (a * b) >>> 32;
                     }
 
                 case 0x04: return (a - b == 0) ? 1 : 0;
