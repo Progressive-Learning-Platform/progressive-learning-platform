@@ -115,6 +115,11 @@ public class Constants {
     public static final int PLP_BACKEND_THREAD_EXCEPTION         = 1034;
     public static final int PLP_BACKEND_NO_NATIVE_SERIAL_LIBS    = 1035;
 
+    // ProjectDriver modes
+    public static final int PLP_DEFAULT                          = 0;
+    public static final int PLP_GUI_START_IDE                    = 1;
+    public static final int PLP_GUI_START_SIM                    = 2;
+
     // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFF80;
     public static final long PLP_SIM_FWD_EX_EX_RTYPE             = 0x00000001;

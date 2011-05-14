@@ -29,7 +29,7 @@ import java.io.*;
  */
 public class ProjectFileManipulator {
     public static void CLI(String[] args) {
-        ProjectDriver plp = new ProjectDriver(false, "plpmips");
+        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
 	
         if(args == null || args.length < 2) {
             helpMessage();
@@ -62,7 +62,7 @@ public class ProjectFileManipulator {
             for(int i = 3; i < args.length; i++)
                 if(!plpHandler.exists()) {
                     if(args[i].endsWith(".plp")) {
-                        ProjectDriver tempPlp = new ProjectDriver(false, "plpmips");
+                        ProjectDriver tempPlp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
                         tempPlp.open(args[i]);
                     }
                     else if(i == 3)

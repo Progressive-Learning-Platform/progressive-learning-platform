@@ -11,6 +11,8 @@
 
 package plptool.gui;
 
+import plptool.Constants;
+
 import java.awt.Color;
 
 /**
@@ -113,7 +115,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("reset")) {
                 plp.g_dev.dispose();
                 plp.g_simsh.dispose();
-                plp = new ProjectDriver(true, "plpmips");
+                plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, "plpmips");
                 plp.g_dev.setVisible(true);
             }
             else if(command.equals("dark")) {

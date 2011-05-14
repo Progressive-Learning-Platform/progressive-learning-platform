@@ -45,7 +45,7 @@ public class PLPToolApp extends SingleFrameApplication {
             term.setVisible(true);
         }
         else {
-            ProjectDriver plp = new ProjectDriver(true, "plpmips"); // default to plpmips for now
+            ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, "plpmips"); // default to plpmips for now
             if(Constants.debugLevel > 0) {
                 con = new ConsoleFrame(plp);
                 con.setVisible(true);
@@ -131,7 +131,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -a <asm> <out>");
                 System.exit(-1);
             } else {
-                ProjectDriver plp = new ProjectDriver(false, "plpmips");
+                ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
                 if(!(plp.create(args[1]) == Constants.PLP_OK)) return;
                 plp.plpfile = new java.io.File(args[2]);
                 String timestamp = (new java.util.Date()).toString();
@@ -152,7 +152,7 @@ public class PLPToolApp extends SingleFrameApplication {
             if(args.length != 2) {
                 System.out.println("Usage: PLPTool -s <plpfile>");
             } else {
-                ProjectDriver plp = new ProjectDriver(false, "plpmips");
+                ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
                 if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
                 if(plp.asm.isAssembled())
                     plptool.mips.SimCLI.simCL(plp);
@@ -163,7 +163,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -p <plpfile> <port>");
             } else {
                 try {
-                    ProjectDriver plp = new ProjectDriver(false, "plpmips");
+                    ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
                     if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
                     plp.program(args[2]);
                 } catch(Exception e) { }

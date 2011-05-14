@@ -143,9 +143,8 @@ public class Asm extends plptool.PLPAsm {
         instrMap.put("jal",  new Integer(7));
 
         // Multiply instructions
-        instrMap.put("multu", new Integer(8));
-        instrMap.put("mfhi",  new Integer(8));
-        instrMap.put("mflo",  new Integer(8));
+        instrMap.put("mulhi",  new Integer(8));
+        instrMap.put("mullo",  new Integer(8));
 
         // jalr Instruction
          instrMap.put("jalr", new Integer(9));
@@ -171,6 +170,8 @@ public class Asm extends plptool.PLPAsm {
         funct.put("srl"   , new Byte((byte) 0x02));
         //funct.put("sub"   , new Byte((byte) 0x22));
         funct.put("subu"  , new Byte((byte) 0x23));
+	funct.put("mullo" , new Byte((byte) 0x10));
+	funct.put("mulhi" , new Byte((byte) 0x11));
 
         opcode.put("_RTYPE", new Byte((byte) 0x00));
         opcode.put("addi"  , new Byte((byte) 0x08));
@@ -624,9 +625,9 @@ public class Asm extends plptool.PLPAsm {
      */
     public int assemble() {
         int i = 0, j = 0;
-        int error = 0;
-        long asmPC = 0;
-        int s = 0;              // assembler directive line offsets
+        int error = 0;		// # errors
+        long asmPC = 0;		// assembler PC address
+        int s = 0;              // assembler directive line offsets (skips)
         curRegion = 0;          // reset to default region
         
         String delimiters = "[ ,\t]+|[()]";
@@ -706,8 +707,9 @@ public class Asm extends plptool.PLPAsm {
 
             switch(instrType) {
 
-                // 3-op R-type
+                // 3-op R-type (includes multiply, case 8)
                 case 0:
+		case 8:
                     if(!checkNumberOfOperands(asmTokens, 4, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
                         error++;
                     }
@@ -735,8 +737,7 @@ public class Asm extends plptool.PLPAsm {
                         error++;
                     }
 
-                    else if(!regs.containsKey(asmTokens[1])
-                            ||
+                    else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
                         error++; Msg.E("assemble(" + SourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
                                           lineNumMap[i] + "): Invalid register(s)",
@@ -882,10 +883,6 @@ public class Asm extends plptool.PLPAsm {
 
                     break;
 
-                // Multiplication Intsructions
-                case 8:
-                    break;
-
                 // jalr Instruction
                 case 9:
                     if(!checkNumberOfOperands(asmTokens, 3, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
@@ -907,7 +904,7 @@ public class Asm extends plptool.PLPAsm {
 
                     break;
 
-                // Others
+                // 2nd pass directives
                 case 10:
                     if(asmTokens[0].equals("ASM__WORD__")) {
                         if(!checkNumberOfOperands(asmTokens, 2, SourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
@@ -951,7 +948,7 @@ public class Asm extends plptool.PLPAsm {
                 addrTable[i - s] = asmPC;
                 asmPC += 4;
 
-                // update mapper
+                // update mappers
                 objCodeFileMapper[i - s] = asmFileMap[i];
                 objCodeLineNumMapper[i - s] = lineNumMap[i];
             }

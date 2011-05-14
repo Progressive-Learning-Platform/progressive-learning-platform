@@ -134,8 +134,8 @@ public class ProjectDriver {
      * @param g Specifies whether we are driving a GUI or not
      * @param arch The ISA to use for this project
      */
-    public ProjectDriver(boolean g, String arch) {
-        this.g = g;
+    public ProjectDriver(int modes, String arch) {
+        this.g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
         this.arch = arch;
 
         modified = false;
