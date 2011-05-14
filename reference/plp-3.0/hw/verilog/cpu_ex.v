@@ -84,7 +84,7 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	wire cmp_unsigned = x < y;
 
 	/* multiply */
-	wire [63:0] r_mul = {32'd0,x} * {32'd0,y};
+	wire [63:0] r_mul = {{32{x[31]}},x} * {{32{y[31]}},y};
 
 	/* alu control */
 	wire [5:0] alu_func = 
