@@ -388,6 +388,7 @@ class MIPSInstr {
 
         switch(instrType) {
             case 0:
+            case 8:
                 ret += "$" + rd(instr) + ",$" + rs(instr) + ",$" + rt(instr);
                 break;
             case 1:
@@ -411,8 +412,6 @@ class MIPSInstr {
             case 7:
                 ret += String.format("%08x", jaddr(instr));
                 ret += " + instrAddr[31:28]";
-                break;
-            case 8:
                 break;
             case 9:
                 ret += "$" + rd(instr) + ",$" + rs(instr);
