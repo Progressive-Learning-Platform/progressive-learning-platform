@@ -1,0 +1,4 @@
+top.v top.test
+foo/foo.v foo.foo
+foo/foo.v foo.foo
+top.v adder top.adder

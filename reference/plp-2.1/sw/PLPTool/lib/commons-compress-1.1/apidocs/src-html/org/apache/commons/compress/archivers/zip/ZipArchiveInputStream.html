@@ -1,0 +1,631 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one<a name="line.2"></a>
+<FONT color="green">003</FONT>     * or more contributor license agreements.  See the NOTICE file<a name="line.3"></a>
+<FONT color="green">004</FONT>     * distributed with this work for additional information<a name="line.4"></a>
+<FONT color="green">005</FONT>     * regarding copyright ownership.  The ASF licenses this file<a name="line.5"></a>
+<FONT color="green">006</FONT>     * to you under the Apache License, Version 2.0 (the<a name="line.6"></a>
+<FONT color="green">007</FONT>     * "License"); you may not use this file except in compliance<a name="line.7"></a>
+<FONT color="green">008</FONT>     * with the License.  You may obtain a copy of the License at<a name="line.8"></a>
+<FONT color="green">009</FONT>     *<a name="line.9"></a>
+<FONT color="green">010</FONT>     * http://www.apache.org/licenses/LICENSE-2.0<a name="line.10"></a>
+<FONT color="green">011</FONT>     *<a name="line.11"></a>
+<FONT color="green">012</FONT>     * Unless required by applicable law or agreed to in writing,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * software distributed under the License is distributed on an<a name="line.13"></a>
+<FONT color="green">014</FONT>     * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY<a name="line.14"></a>
+<FONT color="green">015</FONT>     * KIND, either express or implied.  See the License for the<a name="line.15"></a>
+<FONT color="green">016</FONT>     * specific language governing permissions and limitations<a name="line.16"></a>
+<FONT color="green">017</FONT>     * under the License.<a name="line.17"></a>
+<FONT color="green">018</FONT>     */<a name="line.18"></a>
+<FONT color="green">019</FONT>    package org.apache.commons.compress.archivers.zip;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.io.ByteArrayInputStream;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.io.ByteArrayOutputStream;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.io.EOFException;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.io.IOException;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.io.InputStream;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.io.PushbackInputStream;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.util.zip.CRC32;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import java.util.zip.DataFormatException;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import java.util.zip.Inflater;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import java.util.zip.ZipException;<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.apache.commons.compress.archivers.ArchiveEntry;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.apache.commons.compress.archivers.ArchiveInputStream;<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>    /**<a name="line.35"></a>
+<FONT color="green">036</FONT>     * Implements an input stream that can read Zip archives.<a name="line.36"></a>
+<FONT color="green">037</FONT>     * &lt;p&gt;<a name="line.37"></a>
+<FONT color="green">038</FONT>     * Note that {@link ZipArchiveEntry#getSize()} may return -1 if the DEFLATE algorithm is used, as the size information<a name="line.38"></a>
+<FONT color="green">039</FONT>     * is not available from the header.<a name="line.39"></a>
+<FONT color="green">040</FONT>     * &lt;p&gt;<a name="line.40"></a>
+<FONT color="green">041</FONT>     * The {@link ZipFile} class is preferred when reading from files.<a name="line.41"></a>
+<FONT color="green">042</FONT>     *  <a name="line.42"></a>
+<FONT color="green">043</FONT>     * @see ZipFile<a name="line.43"></a>
+<FONT color="green">044</FONT>     * @NotThreadSafe<a name="line.44"></a>
+<FONT color="green">045</FONT>     */<a name="line.45"></a>
+<FONT color="green">046</FONT>    public class ZipArchiveInputStream extends ArchiveInputStream {<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        private static final int SHORT = 2;<a name="line.48"></a>
+<FONT color="green">049</FONT>        private static final int WORD = 4;<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>        /**<a name="line.51"></a>
+<FONT color="green">052</FONT>         * The zip encoding to use for filenames and the file comment.<a name="line.52"></a>
+<FONT color="green">053</FONT>         */<a name="line.53"></a>
+<FONT color="green">054</FONT>        private final ZipEncoding zipEncoding;<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        /**<a name="line.56"></a>
+<FONT color="green">057</FONT>         * Whether to look for and use Unicode extra fields.<a name="line.57"></a>
+<FONT color="green">058</FONT>         */<a name="line.58"></a>
+<FONT color="green">059</FONT>        private final boolean useUnicodeExtraFields;<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>        private final InputStream in;<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>        private final Inflater inf = new Inflater(true);<a name="line.63"></a>
+<FONT color="green">064</FONT>        private final CRC32 crc = new CRC32();<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>        private final byte[] buf = new byte[ZipArchiveOutputStream.BUFFER_SIZE];<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>        private ZipArchiveEntry current = null;<a name="line.68"></a>
+<FONT color="green">069</FONT>        private boolean closed = false;<a name="line.69"></a>
+<FONT color="green">070</FONT>        private boolean hitCentralDirectory = false;<a name="line.70"></a>
+<FONT color="green">071</FONT>        private int readBytesOfEntry = 0, offsetInBuffer = 0;<a name="line.71"></a>
+<FONT color="green">072</FONT>        private int bytesReadFromStream = 0;<a name="line.72"></a>
+<FONT color="green">073</FONT>        private int lengthOfLastRead = 0;<a name="line.73"></a>
+<FONT color="green">074</FONT>        private boolean hasDataDescriptor = false;<a name="line.74"></a>
+<FONT color="green">075</FONT>        private ByteArrayInputStream lastStoredEntry = null;<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>        private boolean allowStoredEntriesWithDataDescriptor = false;<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>        private static final int LFH_LEN = 30;<a name="line.79"></a>
+<FONT color="green">080</FONT>        /*<a name="line.80"></a>
+<FONT color="green">081</FONT>          local file header signature     4 bytes  (0x04034b50)<a name="line.81"></a>
+<FONT color="green">082</FONT>          version needed to extract       2 bytes<a name="line.82"></a>
+<FONT color="green">083</FONT>          general purpose bit flag        2 bytes<a name="line.83"></a>
+<FONT color="green">084</FONT>          compression method              2 bytes<a name="line.84"></a>
+<FONT color="green">085</FONT>          last mod file time              2 bytes<a name="line.85"></a>
+<FONT color="green">086</FONT>          last mod file date              2 bytes<a name="line.86"></a>
+<FONT color="green">087</FONT>          crc-32                          4 bytes<a name="line.87"></a>
+<FONT color="green">088</FONT>          compressed size                 4 bytes<a name="line.88"></a>
+<FONT color="green">089</FONT>          uncompressed size               4 bytes<a name="line.89"></a>
+<FONT color="green">090</FONT>          file name length                2 bytes<a name="line.90"></a>
+<FONT color="green">091</FONT>          extra field length              2 bytes<a name="line.91"></a>
+<FONT color="green">092</FONT>        */<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>        public ZipArchiveInputStream(InputStream inputStream) {<a name="line.94"></a>
+<FONT color="green">095</FONT>            this(inputStream, ZipEncodingHelper.UTF8, true);<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        /**<a name="line.98"></a>
+<FONT color="green">099</FONT>         * @param encoding the encoding to use for file names, use null<a name="line.99"></a>
+<FONT color="green">100</FONT>         * for the platform's default encoding<a name="line.100"></a>
+<FONT color="green">101</FONT>         * @param useUnicodeExtraFields whether to use InfoZIP Unicode<a name="line.101"></a>
+<FONT color="green">102</FONT>         * Extra Fields (if present) to set the file names.<a name="line.102"></a>
+<FONT color="green">103</FONT>         */<a name="line.103"></a>
+<FONT color="green">104</FONT>        public ZipArchiveInputStream(InputStream inputStream,<a name="line.104"></a>
+<FONT color="green">105</FONT>                                     String encoding,<a name="line.105"></a>
+<FONT color="green">106</FONT>                                     boolean useUnicodeExtraFields) {<a name="line.106"></a>
+<FONT color="green">107</FONT>            this(inputStream, encoding, useUnicodeExtraFields, false);<a name="line.107"></a>
+<FONT color="green">108</FONT>        }<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>        /**<a name="line.110"></a>
+<FONT color="green">111</FONT>         * @param encoding the encoding to use for file names, use null<a name="line.111"></a>
+<FONT color="green">112</FONT>         * for the platform's default encoding<a name="line.112"></a>
+<FONT color="green">113</FONT>         * @param useUnicodeExtraFields whether to use InfoZIP Unicode<a name="line.113"></a>
+<FONT color="green">114</FONT>         * Extra Fields (if present) to set the file names.<a name="line.114"></a>
+<FONT color="green">115</FONT>         * @param allowStoredEntriesWithDataDescriptor whether the stream<a name="line.115"></a>
+<FONT color="green">116</FONT>         * will try to read STORED entries that use a data descriptor<a name="line.116"></a>
+<FONT color="green">117</FONT>         * @since Apache Commons Compress 1.1<a name="line.117"></a>
+<FONT color="green">118</FONT>         */<a name="line.118"></a>
+<FONT color="green">119</FONT>        public ZipArchiveInputStream(InputStream inputStream,<a name="line.119"></a>
+<FONT color="green">120</FONT>                                     String encoding,<a name="line.120"></a>
+<FONT color="green">121</FONT>                                     boolean useUnicodeExtraFields,<a name="line.121"></a>
+<FONT color="green">122</FONT>                                     boolean allowStoredEntriesWithDataDescriptor) {<a name="line.122"></a>
+<FONT color="green">123</FONT>            zipEncoding = ZipEncodingHelper.getZipEncoding(encoding);<a name="line.123"></a>
+<FONT color="green">124</FONT>            this.useUnicodeExtraFields = useUnicodeExtraFields;<a name="line.124"></a>
+<FONT color="green">125</FONT>            in = new PushbackInputStream(inputStream, buf.length);<a name="line.125"></a>
+<FONT color="green">126</FONT>            this.allowStoredEntriesWithDataDescriptor =<a name="line.126"></a>
+<FONT color="green">127</FONT>                allowStoredEntriesWithDataDescriptor;<a name="line.127"></a>
+<FONT color="green">128</FONT>        }<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>        public ZipArchiveEntry getNextZipEntry() throws IOException {<a name="line.130"></a>
+<FONT color="green">131</FONT>            if (closed || hitCentralDirectory) {<a name="line.131"></a>
+<FONT color="green">132</FONT>                return null;<a name="line.132"></a>
+<FONT color="green">133</FONT>            }<a name="line.133"></a>
+<FONT color="green">134</FONT>            if (current != null) {<a name="line.134"></a>
+<FONT color="green">135</FONT>                closeEntry();<a name="line.135"></a>
+<FONT color="green">136</FONT>            }<a name="line.136"></a>
+<FONT color="green">137</FONT>            byte[] lfh = new byte[LFH_LEN];<a name="line.137"></a>
+<FONT color="green">138</FONT>            try {<a name="line.138"></a>
+<FONT color="green">139</FONT>                readFully(lfh);<a name="line.139"></a>
+<FONT color="green">140</FONT>            } catch (EOFException e) {<a name="line.140"></a>
+<FONT color="green">141</FONT>                return null;<a name="line.141"></a>
+<FONT color="green">142</FONT>            }<a name="line.142"></a>
+<FONT color="green">143</FONT>            ZipLong sig = new ZipLong(lfh);<a name="line.143"></a>
+<FONT color="green">144</FONT>            if (sig.equals(ZipLong.CFH_SIG)) {<a name="line.144"></a>
+<FONT color="green">145</FONT>                hitCentralDirectory = true;<a name="line.145"></a>
+<FONT color="green">146</FONT>                return null;<a name="line.146"></a>
+<FONT color="green">147</FONT>            }<a name="line.147"></a>
+<FONT color="green">148</FONT>            if (!sig.equals(ZipLong.LFH_SIG)) {<a name="line.148"></a>
+<FONT color="green">149</FONT>                return null;<a name="line.149"></a>
+<FONT color="green">150</FONT>            }<a name="line.150"></a>
+<FONT color="green">151</FONT>    <a name="line.151"></a>
+<FONT color="green">152</FONT>            int off = WORD;<a name="line.152"></a>
+<FONT color="green">153</FONT>            current = new ZipArchiveEntry();<a name="line.153"></a>
+<FONT color="green">154</FONT>    <a name="line.154"></a>
+<FONT color="green">155</FONT>            int versionMadeBy = ZipShort.getValue(lfh, off);<a name="line.155"></a>
+<FONT color="green">156</FONT>            off += SHORT;<a name="line.156"></a>
+<FONT color="green">157</FONT>            current.setPlatform((versionMadeBy &gt;&gt; ZipFile.BYTE_SHIFT)<a name="line.157"></a>
+<FONT color="green">158</FONT>                                &amp; ZipFile.NIBLET_MASK);<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>            final GeneralPurposeBit gpFlag = GeneralPurposeBit.parse(lfh, off);<a name="line.160"></a>
+<FONT color="green">161</FONT>            final boolean hasUTF8Flag = gpFlag.usesUTF8ForNames();<a name="line.161"></a>
+<FONT color="green">162</FONT>            final ZipEncoding entryEncoding =<a name="line.162"></a>
+<FONT color="green">163</FONT>                hasUTF8Flag ? ZipEncodingHelper.UTF8_ZIP_ENCODING : zipEncoding;<a name="line.163"></a>
+<FONT color="green">164</FONT>            hasDataDescriptor = gpFlag.usesDataDescriptor();<a name="line.164"></a>
+<FONT color="green">165</FONT>            current.setGeneralPurposeBit(gpFlag);<a name="line.165"></a>
+<FONT color="green">166</FONT>    <a name="line.166"></a>
+<FONT color="green">167</FONT>            off += SHORT;<a name="line.167"></a>
+<FONT color="green">168</FONT>    <a name="line.168"></a>
+<FONT color="green">169</FONT>            current.setMethod(ZipShort.getValue(lfh, off));<a name="line.169"></a>
+<FONT color="green">170</FONT>            off += SHORT;<a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>            long time = ZipUtil.dosToJavaTime(ZipLong.getValue(lfh, off));<a name="line.172"></a>
+<FONT color="green">173</FONT>            current.setTime(time);<a name="line.173"></a>
+<FONT color="green">174</FONT>            off += WORD;<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>            if (!hasDataDescriptor) {<a name="line.176"></a>
+<FONT color="green">177</FONT>                current.setCrc(ZipLong.getValue(lfh, off));<a name="line.177"></a>
+<FONT color="green">178</FONT>                off += WORD;<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>                current.setCompressedSize(ZipLong.getValue(lfh, off));<a name="line.180"></a>
+<FONT color="green">181</FONT>                off += WORD;<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>                current.setSize(ZipLong.getValue(lfh, off));<a name="line.183"></a>
+<FONT color="green">184</FONT>                off += WORD;<a name="line.184"></a>
+<FONT color="green">185</FONT>            } else {<a name="line.185"></a>
+<FONT color="green">186</FONT>                off += 3 * WORD;<a name="line.186"></a>
+<FONT color="green">187</FONT>            }<a name="line.187"></a>
+<FONT color="green">188</FONT>    <a name="line.188"></a>
+<FONT color="green">189</FONT>            int fileNameLen = ZipShort.getValue(lfh, off);<a name="line.189"></a>
+<FONT color="green">190</FONT>    <a name="line.190"></a>
+<FONT color="green">191</FONT>            off += SHORT;<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>            int extraLen = ZipShort.getValue(lfh, off);<a name="line.193"></a>
+<FONT color="green">194</FONT>            off += SHORT;<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>            byte[] fileName = new byte[fileNameLen];<a name="line.196"></a>
+<FONT color="green">197</FONT>            readFully(fileName);<a name="line.197"></a>
+<FONT color="green">198</FONT>            current.setName(entryEncoding.decode(fileName));<a name="line.198"></a>
+<FONT color="green">199</FONT>    <a name="line.199"></a>
+<FONT color="green">200</FONT>            byte[] extraData = new byte[extraLen];<a name="line.200"></a>
+<FONT color="green">201</FONT>            readFully(extraData);<a name="line.201"></a>
+<FONT color="green">202</FONT>            current.setExtra(extraData);<a name="line.202"></a>
+<FONT color="green">203</FONT>    <a name="line.203"></a>
+<FONT color="green">204</FONT>            if (!hasUTF8Flag &amp;&amp; useUnicodeExtraFields) {<a name="line.204"></a>
+<FONT color="green">205</FONT>                ZipUtil.setNameAndCommentFromExtraFields(current, fileName, null);<a name="line.205"></a>
+<FONT color="green">206</FONT>            }<a name="line.206"></a>
+<FONT color="green">207</FONT>            return current;<a name="line.207"></a>
+<FONT color="green">208</FONT>        }<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>        /** {@inheritDoc} */<a name="line.210"></a>
+<FONT color="green">211</FONT>        public ArchiveEntry getNextEntry() throws IOException {<a name="line.211"></a>
+<FONT color="green">212</FONT>            return getNextZipEntry();<a name="line.212"></a>
+<FONT color="green">213</FONT>        }<a name="line.213"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>        /**<a name="line.215"></a>
+<FONT color="green">216</FONT>         * Whether this class is able to read the given entry.<a name="line.216"></a>
+<FONT color="green">217</FONT>         *<a name="line.217"></a>
+<FONT color="green">218</FONT>         * &lt;p&gt;May return false if it is set up to use encryption or a<a name="line.218"></a>
+<FONT color="green">219</FONT>         * compression method that hasn't been implemented yet.&lt;/p&gt;<a name="line.219"></a>
+<FONT color="green">220</FONT>         * @since Apache Commons Compress 1.1<a name="line.220"></a>
+<FONT color="green">221</FONT>         */<a name="line.221"></a>
+<FONT color="green">222</FONT>        public boolean canReadEntryData(ArchiveEntry ae) {<a name="line.222"></a>
+<FONT color="green">223</FONT>            if (ae instanceof ZipArchiveEntry) {<a name="line.223"></a>
+<FONT color="green">224</FONT>                ZipArchiveEntry ze = (ZipArchiveEntry) ae;<a name="line.224"></a>
+<FONT color="green">225</FONT>                return ZipUtil.canHandleEntryData(ze)<a name="line.225"></a>
+<FONT color="green">226</FONT>                    &amp;&amp; supportsDataDescriptorFor(ze);<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>            }<a name="line.228"></a>
+<FONT color="green">229</FONT>            return false;<a name="line.229"></a>
+<FONT color="green">230</FONT>        }<a name="line.230"></a>
+<FONT color="green">231</FONT>    <a name="line.231"></a>
+<FONT color="green">232</FONT>        public int read(byte[] buffer, int start, int length) throws IOException {<a name="line.232"></a>
+<FONT color="green">233</FONT>            if (closed) {<a name="line.233"></a>
+<FONT color="green">234</FONT>                throw new IOException("The stream is closed");<a name="line.234"></a>
+<FONT color="green">235</FONT>            }<a name="line.235"></a>
+<FONT color="green">236</FONT>            if (inf.finished() || current == null) {<a name="line.236"></a>
+<FONT color="green">237</FONT>                return -1;<a name="line.237"></a>
+<FONT color="green">238</FONT>            }<a name="line.238"></a>
+<FONT color="green">239</FONT>    <a name="line.239"></a>
+<FONT color="green">240</FONT>            // avoid int overflow, check null buffer<a name="line.240"></a>
+<FONT color="green">241</FONT>            if (start &lt;= buffer.length &amp;&amp; length &gt;= 0 &amp;&amp; start &gt;= 0<a name="line.241"></a>
+<FONT color="green">242</FONT>                &amp;&amp; buffer.length - start &gt;= length) {<a name="line.242"></a>
+<FONT color="green">243</FONT>                ZipUtil.checkRequestedFeatures(current);<a name="line.243"></a>
+<FONT color="green">244</FONT>                if (!supportsDataDescriptorFor(current)) {<a name="line.244"></a>
+<FONT color="green">245</FONT>                    throw new UnsupportedZipFeatureException(UnsupportedZipFeatureException<a name="line.245"></a>
+<FONT color="green">246</FONT>                                                             .Feature<a name="line.246"></a>
+<FONT color="green">247</FONT>                                                             .DATA_DESCRIPTOR,<a name="line.247"></a>
+<FONT color="green">248</FONT>                                                             current);<a name="line.248"></a>
+<FONT color="green">249</FONT>                }<a name="line.249"></a>
+<FONT color="green">250</FONT>    <a name="line.250"></a>
+<FONT color="green">251</FONT>                if (current.getMethod() == ZipArchiveOutputStream.STORED) {<a name="line.251"></a>
+<FONT color="green">252</FONT>                    if (hasDataDescriptor) {<a name="line.252"></a>
+<FONT color="green">253</FONT>                        if (lastStoredEntry == null) {<a name="line.253"></a>
+<FONT color="green">254</FONT>                            readStoredEntry();<a name="line.254"></a>
+<FONT color="green">255</FONT>                        }<a name="line.255"></a>
+<FONT color="green">256</FONT>                        return lastStoredEntry.read(buffer, start, length);<a name="line.256"></a>
+<FONT color="green">257</FONT>                    }<a name="line.257"></a>
+<FONT color="green">258</FONT>    <a name="line.258"></a>
+<FONT color="green">259</FONT>                    int csize = (int) current.getSize();<a name="line.259"></a>
+<FONT color="green">260</FONT>                    if (readBytesOfEntry &gt;= csize) {<a name="line.260"></a>
+<FONT color="green">261</FONT>                        return -1;<a name="line.261"></a>
+<FONT color="green">262</FONT>                    }<a name="line.262"></a>
+<FONT color="green">263</FONT>                    if (offsetInBuffer &gt;= lengthOfLastRead) {<a name="line.263"></a>
+<FONT color="green">264</FONT>                        offsetInBuffer = 0;<a name="line.264"></a>
+<FONT color="green">265</FONT>                        if ((lengthOfLastRead = in.read(buf)) == -1) {<a name="line.265"></a>
+<FONT color="green">266</FONT>                            return -1;<a name="line.266"></a>
+<FONT color="green">267</FONT>                        }<a name="line.267"></a>
+<FONT color="green">268</FONT>                        count(lengthOfLastRead);<a name="line.268"></a>
+<FONT color="green">269</FONT>                        bytesReadFromStream += lengthOfLastRead;<a name="line.269"></a>
+<FONT color="green">270</FONT>                    }<a name="line.270"></a>
+<FONT color="green">271</FONT>                    int toRead = length &gt; lengthOfLastRead<a name="line.271"></a>
+<FONT color="green">272</FONT>                        ? lengthOfLastRead - offsetInBuffer<a name="line.272"></a>
+<FONT color="green">273</FONT>                        : length;<a name="line.273"></a>
+<FONT color="green">274</FONT>                    if ((csize - readBytesOfEntry) &lt; toRead) {<a name="line.274"></a>
+<FONT color="green">275</FONT>                        toRead = csize - readBytesOfEntry;<a name="line.275"></a>
+<FONT color="green">276</FONT>                    }<a name="line.276"></a>
+<FONT color="green">277</FONT>                    System.arraycopy(buf, offsetInBuffer, buffer, start, toRead);<a name="line.277"></a>
+<FONT color="green">278</FONT>                    offsetInBuffer += toRead;<a name="line.278"></a>
+<FONT color="green">279</FONT>                    readBytesOfEntry += toRead;<a name="line.279"></a>
+<FONT color="green">280</FONT>                    crc.update(buffer, start, toRead);<a name="line.280"></a>
+<FONT color="green">281</FONT>                    return toRead;<a name="line.281"></a>
+<FONT color="green">282</FONT>                }<a name="line.282"></a>
+<FONT color="green">283</FONT>    <a name="line.283"></a>
+<FONT color="green">284</FONT>                if (inf.needsInput()) {<a name="line.284"></a>
+<FONT color="green">285</FONT>                    fill();<a name="line.285"></a>
+<FONT color="green">286</FONT>                    if (lengthOfLastRead &gt; 0) {<a name="line.286"></a>
+<FONT color="green">287</FONT>                        bytesReadFromStream += lengthOfLastRead;<a name="line.287"></a>
+<FONT color="green">288</FONT>                    }<a name="line.288"></a>
+<FONT color="green">289</FONT>                }<a name="line.289"></a>
+<FONT color="green">290</FONT>                int read = 0;<a name="line.290"></a>
+<FONT color="green">291</FONT>                try {<a name="line.291"></a>
+<FONT color="green">292</FONT>                    read = inf.inflate(buffer, start, length);<a name="line.292"></a>
+<FONT color="green">293</FONT>                } catch (DataFormatException e) {<a name="line.293"></a>
+<FONT color="green">294</FONT>                    throw new ZipException(e.getMessage());<a name="line.294"></a>
+<FONT color="green">295</FONT>                }<a name="line.295"></a>
+<FONT color="green">296</FONT>                if (read == 0) {<a name="line.296"></a>
+<FONT color="green">297</FONT>                    if (inf.finished()) {<a name="line.297"></a>
+<FONT color="green">298</FONT>                        return -1;<a name="line.298"></a>
+<FONT color="green">299</FONT>                    } else if (lengthOfLastRead == -1) {<a name="line.299"></a>
+<FONT color="green">300</FONT>                        throw new IOException("Truncated ZIP file");<a name="line.300"></a>
+<FONT color="green">301</FONT>                    }<a name="line.301"></a>
+<FONT color="green">302</FONT>                }<a name="line.302"></a>
+<FONT color="green">303</FONT>                crc.update(buffer, start, read);<a name="line.303"></a>
+<FONT color="green">304</FONT>                return read;<a name="line.304"></a>
+<FONT color="green">305</FONT>            }<a name="line.305"></a>
+<FONT color="green">306</FONT>            throw new ArrayIndexOutOfBoundsException();<a name="line.306"></a>
+<FONT color="green">307</FONT>        }<a name="line.307"></a>
+<FONT color="green">308</FONT>    <a name="line.308"></a>
+<FONT color="green">309</FONT>        public void close() throws IOException {<a name="line.309"></a>
+<FONT color="green">310</FONT>            if (!closed) {<a name="line.310"></a>
+<FONT color="green">311</FONT>                closed = true;<a name="line.311"></a>
+<FONT color="green">312</FONT>                in.close();<a name="line.312"></a>
+<FONT color="green">313</FONT>            }<a name="line.313"></a>
+<FONT color="green">314</FONT>        }<a name="line.314"></a>
+<FONT color="green">315</FONT>    <a name="line.315"></a>
+<FONT color="green">316</FONT>        public long skip(long value) throws IOException {<a name="line.316"></a>
+<FONT color="green">317</FONT>            if (value &gt;= 0) {<a name="line.317"></a>
+<FONT color="green">318</FONT>                long skipped = 0;<a name="line.318"></a>
+<FONT color="green">319</FONT>                byte[] b = new byte[1024];<a name="line.319"></a>
+<FONT color="green">320</FONT>                while (skipped != value) {<a name="line.320"></a>
+<FONT color="green">321</FONT>                    long rem = value - skipped;<a name="line.321"></a>
+<FONT color="green">322</FONT>                    int x = read(b, 0, (int) (b.length &gt; rem ? rem : b.length));<a name="line.322"></a>
+<FONT color="green">323</FONT>                    if (x == -1) {<a name="line.323"></a>
+<FONT color="green">324</FONT>                        return skipped;<a name="line.324"></a>
+<FONT color="green">325</FONT>                    }<a name="line.325"></a>
+<FONT color="green">326</FONT>                    skipped += x;<a name="line.326"></a>
+<FONT color="green">327</FONT>                }<a name="line.327"></a>
+<FONT color="green">328</FONT>                return skipped;<a name="line.328"></a>
+<FONT color="green">329</FONT>            }<a name="line.329"></a>
+<FONT color="green">330</FONT>            throw new IllegalArgumentException();<a name="line.330"></a>
+<FONT color="green">331</FONT>        }<a name="line.331"></a>
+<FONT color="green">332</FONT>    <a name="line.332"></a>
+<FONT color="green">333</FONT>        /**<a name="line.333"></a>
+<FONT color="green">334</FONT>         * Checks if the signature matches what is expected for a zip file.<a name="line.334"></a>
+<FONT color="green">335</FONT>         * Does not currently handle self-extracting zips which may have arbitrary<a name="line.335"></a>
+<FONT color="green">336</FONT>         * leading content.<a name="line.336"></a>
+<FONT color="green">337</FONT>         * <a name="line.337"></a>
+<FONT color="green">338</FONT>         * @param signature<a name="line.338"></a>
+<FONT color="green">339</FONT>         *            the bytes to check<a name="line.339"></a>
+<FONT color="green">340</FONT>         * @param length<a name="line.340"></a>
+<FONT color="green">341</FONT>         *            the number of bytes to check<a name="line.341"></a>
+<FONT color="green">342</FONT>         * @return true, if this stream is a zip archive stream, false otherwise<a name="line.342"></a>
+<FONT color="green">343</FONT>         */<a name="line.343"></a>
+<FONT color="green">344</FONT>        public static boolean matches(byte[] signature, int length) {<a name="line.344"></a>
+<FONT color="green">345</FONT>            if (length &lt; ZipArchiveOutputStream.LFH_SIG.length) {<a name="line.345"></a>
+<FONT color="green">346</FONT>                return false;<a name="line.346"></a>
+<FONT color="green">347</FONT>            }<a name="line.347"></a>
+<FONT color="green">348</FONT>    <a name="line.348"></a>
+<FONT color="green">349</FONT>            return checksig(signature, ZipArchiveOutputStream.LFH_SIG) // normal file<a name="line.349"></a>
+<FONT color="green">350</FONT>                || checksig(signature, ZipArchiveOutputStream.EOCD_SIG); // empty zip<a name="line.350"></a>
+<FONT color="green">351</FONT>        }<a name="line.351"></a>
+<FONT color="green">352</FONT>    <a name="line.352"></a>
+<FONT color="green">353</FONT>        private static boolean checksig(byte[] signature, byte[] expected){<a name="line.353"></a>
+<FONT color="green">354</FONT>            for (int i = 0; i &lt; expected.length; i++) {<a name="line.354"></a>
+<FONT color="green">355</FONT>                if (signature[i] != expected[i]) {<a name="line.355"></a>
+<FONT color="green">356</FONT>                    return false;<a name="line.356"></a>
+<FONT color="green">357</FONT>                }<a name="line.357"></a>
+<FONT color="green">358</FONT>            }<a name="line.358"></a>
+<FONT color="green">359</FONT>            return true;        <a name="line.359"></a>
+<FONT color="green">360</FONT>        }<a name="line.360"></a>
+<FONT color="green">361</FONT>    <a name="line.361"></a>
+<FONT color="green">362</FONT>        /**<a name="line.362"></a>
+<FONT color="green">363</FONT>         * Closes the current ZIP archive entry and positions the underlying<a name="line.363"></a>
+<FONT color="green">364</FONT>         * stream to the beginning of the next entry. All per-entry variables<a name="line.364"></a>
+<FONT color="green">365</FONT>         * and data structures are cleared.<a name="line.365"></a>
+<FONT color="green">366</FONT>         * &lt;p&gt;<a name="line.366"></a>
+<FONT color="green">367</FONT>         * If the compressed size of this entry is included in the entry header,<a name="line.367"></a>
+<FONT color="green">368</FONT>         * then any outstanding bytes are simply skipped from the underlying<a name="line.368"></a>
+<FONT color="green">369</FONT>         * stream without uncompressing them. This allows an entry to be safely<a name="line.369"></a>
+<FONT color="green">370</FONT>         * closed even if the compression method is unsupported.<a name="line.370"></a>
+<FONT color="green">371</FONT>         * &lt;p&gt;<a name="line.371"></a>
+<FONT color="green">372</FONT>         * In case we don't know the compressed size of this entry or have<a name="line.372"></a>
+<FONT color="green">373</FONT>         * already buffered too much data from the underlying stream to support<a name="line.373"></a>
+<FONT color="green">374</FONT>         * uncompression, then the uncompression process is completed and the<a name="line.374"></a>
+<FONT color="green">375</FONT>         * end position of the stream is adjusted based on the result of that<a name="line.375"></a>
+<FONT color="green">376</FONT>         * process.<a name="line.376"></a>
+<FONT color="green">377</FONT>         *<a name="line.377"></a>
+<FONT color="green">378</FONT>         * @throws IOException if an error occurs<a name="line.378"></a>
+<FONT color="green">379</FONT>         */<a name="line.379"></a>
+<FONT color="green">380</FONT>        private void closeEntry() throws IOException {<a name="line.380"></a>
+<FONT color="green">381</FONT>            if (closed) {<a name="line.381"></a>
+<FONT color="green">382</FONT>                throw new IOException("The stream is closed");<a name="line.382"></a>
+<FONT color="green">383</FONT>            }<a name="line.383"></a>
+<FONT color="green">384</FONT>            if (current == null) {<a name="line.384"></a>
+<FONT color="green">385</FONT>                return;<a name="line.385"></a>
+<FONT color="green">386</FONT>            }<a name="line.386"></a>
+<FONT color="green">387</FONT>    <a name="line.387"></a>
+<FONT color="green">388</FONT>            // Ensure all entry bytes are read<a name="line.388"></a>
+<FONT color="green">389</FONT>            if (bytesReadFromStream &lt;= current.getCompressedSize()<a name="line.389"></a>
+<FONT color="green">390</FONT>                    &amp;&amp; !hasDataDescriptor) {<a name="line.390"></a>
+<FONT color="green">391</FONT>                long remaining = current.getCompressedSize() - bytesReadFromStream;<a name="line.391"></a>
+<FONT color="green">392</FONT>                while (remaining &gt; 0) {<a name="line.392"></a>
+<FONT color="green">393</FONT>                    long n = in.read(buf, 0, (int) Math.min(buf.length, remaining));<a name="line.393"></a>
+<FONT color="green">394</FONT>                    if (n &lt; 0) {<a name="line.394"></a>
+<FONT color="green">395</FONT>                        throw new EOFException(<a name="line.395"></a>
+<FONT color="green">396</FONT>                                "Truncated ZIP entry: " + current.getName());<a name="line.396"></a>
+<FONT color="green">397</FONT>                    } else {<a name="line.397"></a>
+<FONT color="green">398</FONT>                        count(n);<a name="line.398"></a>
+<FONT color="green">399</FONT>                        remaining -= n;<a name="line.399"></a>
+<FONT color="green">400</FONT>                    }<a name="line.400"></a>
+<FONT color="green">401</FONT>                }<a name="line.401"></a>
+<FONT color="green">402</FONT>            } else {<a name="line.402"></a>
+<FONT color="green">403</FONT>                skip(Long.MAX_VALUE);<a name="line.403"></a>
+<FONT color="green">404</FONT>    <a name="line.404"></a>
+<FONT color="green">405</FONT>                int inB;<a name="line.405"></a>
+<FONT color="green">406</FONT>                if (current.getMethod() == ZipArchiveOutputStream.DEFLATED) {<a name="line.406"></a>
+<FONT color="green">407</FONT>                    inB = inf.getTotalIn();<a name="line.407"></a>
+<FONT color="green">408</FONT>                } else {<a name="line.408"></a>
+<FONT color="green">409</FONT>                    inB = readBytesOfEntry;<a name="line.409"></a>
+<FONT color="green">410</FONT>                }<a name="line.410"></a>
+<FONT color="green">411</FONT>                int diff = 0;<a name="line.411"></a>
+<FONT color="green">412</FONT>    <a name="line.412"></a>
+<FONT color="green">413</FONT>                // Pushback any required bytes<a name="line.413"></a>
+<FONT color="green">414</FONT>                if ((diff = bytesReadFromStream - inB) != 0) {<a name="line.414"></a>
+<FONT color="green">415</FONT>                    ((PushbackInputStream) in).unread(<a name="line.415"></a>
+<FONT color="green">416</FONT>                            buf,  lengthOfLastRead - diff, diff);<a name="line.416"></a>
+<FONT color="green">417</FONT>                    pushedBackBytes(diff);<a name="line.417"></a>
+<FONT color="green">418</FONT>                }<a name="line.418"></a>
+<FONT color="green">419</FONT>            }<a name="line.419"></a>
+<FONT color="green">420</FONT>    <a name="line.420"></a>
+<FONT color="green">421</FONT>            if (lastStoredEntry == null &amp;&amp; hasDataDescriptor) {<a name="line.421"></a>
+<FONT color="green">422</FONT>                readDataDescriptor();<a name="line.422"></a>
+<FONT color="green">423</FONT>            }<a name="line.423"></a>
+<FONT color="green">424</FONT>    <a name="line.424"></a>
+<FONT color="green">425</FONT>            inf.reset();<a name="line.425"></a>
+<FONT color="green">426</FONT>            readBytesOfEntry = offsetInBuffer = bytesReadFromStream =<a name="line.426"></a>
+<FONT color="green">427</FONT>                lengthOfLastRead = 0;<a name="line.427"></a>
+<FONT color="green">428</FONT>            crc.reset();<a name="line.428"></a>
+<FONT color="green">429</FONT>            current = null;<a name="line.429"></a>
+<FONT color="green">430</FONT>            lastStoredEntry = null;<a name="line.430"></a>
+<FONT color="green">431</FONT>        }<a name="line.431"></a>
+<FONT color="green">432</FONT>    <a name="line.432"></a>
+<FONT color="green">433</FONT>        private void fill() throws IOException {<a name="line.433"></a>
+<FONT color="green">434</FONT>            if (closed) {<a name="line.434"></a>
+<FONT color="green">435</FONT>                throw new IOException("The stream is closed");<a name="line.435"></a>
+<FONT color="green">436</FONT>            }<a name="line.436"></a>
+<FONT color="green">437</FONT>            if ((lengthOfLastRead = in.read(buf)) &gt; 0) {<a name="line.437"></a>
+<FONT color="green">438</FONT>                count(lengthOfLastRead);<a name="line.438"></a>
+<FONT color="green">439</FONT>                inf.setInput(buf, 0, lengthOfLastRead);<a name="line.439"></a>
+<FONT color="green">440</FONT>            }<a name="line.440"></a>
+<FONT color="green">441</FONT>        }<a name="line.441"></a>
+<FONT color="green">442</FONT>    <a name="line.442"></a>
+<FONT color="green">443</FONT>        private void readFully(byte[] b) throws IOException {<a name="line.443"></a>
+<FONT color="green">444</FONT>            int count = 0, x = 0;<a name="line.444"></a>
+<FONT color="green">445</FONT>            while (count != b.length) {<a name="line.445"></a>
+<FONT color="green">446</FONT>                count += x = in.read(b, count, b.length - count);<a name="line.446"></a>
+<FONT color="green">447</FONT>                if (x == -1) {<a name="line.447"></a>
+<FONT color="green">448</FONT>                    throw new EOFException();<a name="line.448"></a>
+<FONT color="green">449</FONT>                }<a name="line.449"></a>
+<FONT color="green">450</FONT>                count(x);<a name="line.450"></a>
+<FONT color="green">451</FONT>            }<a name="line.451"></a>
+<FONT color="green">452</FONT>        }<a name="line.452"></a>
+<FONT color="green">453</FONT>    <a name="line.453"></a>
+<FONT color="green">454</FONT>        private void readDataDescriptor() throws IOException {<a name="line.454"></a>
+<FONT color="green">455</FONT>            byte[] b = new byte[WORD];<a name="line.455"></a>
+<FONT color="green">456</FONT>            readFully(b);<a name="line.456"></a>
+<FONT color="green">457</FONT>            ZipLong val = new ZipLong(b);<a name="line.457"></a>
+<FONT color="green">458</FONT>            if (ZipLong.DD_SIG.equals(val)) {<a name="line.458"></a>
+<FONT color="green">459</FONT>                // data descriptor with signature, skip sig<a name="line.459"></a>
+<FONT color="green">460</FONT>                readFully(b);<a name="line.460"></a>
+<FONT color="green">461</FONT>                val = new ZipLong(b);<a name="line.461"></a>
+<FONT color="green">462</FONT>            }<a name="line.462"></a>
+<FONT color="green">463</FONT>            current.setCrc(val.getValue());<a name="line.463"></a>
+<FONT color="green">464</FONT>            readFully(b);<a name="line.464"></a>
+<FONT color="green">465</FONT>            current.setCompressedSize(new ZipLong(b).getValue());<a name="line.465"></a>
+<FONT color="green">466</FONT>            readFully(b);<a name="line.466"></a>
+<FONT color="green">467</FONT>            current.setSize(new ZipLong(b).getValue());<a name="line.467"></a>
+<FONT color="green">468</FONT>        }<a name="line.468"></a>
+<FONT color="green">469</FONT>    <a name="line.469"></a>
+<FONT color="green">470</FONT>        /**<a name="line.470"></a>
+<FONT color="green">471</FONT>         * Whether this entry requires a data descriptor this library can work with.<a name="line.471"></a>
+<FONT color="green">472</FONT>         *<a name="line.472"></a>
+<FONT color="green">473</FONT>         * @return true if allowStoredEntriesWithDataDescriptor is true,<a name="line.473"></a>
+<FONT color="green">474</FONT>         * the entry doesn't require any data descriptor or the method is<a name="line.474"></a>
+<FONT color="green">475</FONT>         * DEFLATED.<a name="line.475"></a>
+<FONT color="green">476</FONT>         */<a name="line.476"></a>
+<FONT color="green">477</FONT>        private boolean supportsDataDescriptorFor(ZipArchiveEntry entry) {<a name="line.477"></a>
+<FONT color="green">478</FONT>            return allowStoredEntriesWithDataDescriptor ||<a name="line.478"></a>
+<FONT color="green">479</FONT>                !entry.getGeneralPurposeBit().usesDataDescriptor()<a name="line.479"></a>
+<FONT color="green">480</FONT>                || entry.getMethod() == ZipArchiveEntry.DEFLATED;<a name="line.480"></a>
+<FONT color="green">481</FONT>        }<a name="line.481"></a>
+<FONT color="green">482</FONT>    <a name="line.482"></a>
+<FONT color="green">483</FONT>        /**<a name="line.483"></a>
+<FONT color="green">484</FONT>         * Caches a stored entry that uses the data descriptor.<a name="line.484"></a>
+<FONT color="green">485</FONT>         *<a name="line.485"></a>
+<FONT color="green">486</FONT>         * &lt;ul&gt;<a name="line.486"></a>
+<FONT color="green">487</FONT>         *   &lt;li&gt;Reads a stored entry until the signature of a local file<a name="line.487"></a>
+<FONT color="green">488</FONT>         *     header, central directory header or data descriptor has been<a name="line.488"></a>
+<FONT color="green">489</FONT>         *     found.&lt;/li&gt;<a name="line.489"></a>
+<FONT color="green">490</FONT>         *   &lt;li&gt;Stores all entry data in lastStoredEntry.&lt;/p&gt;<a name="line.490"></a>
+<FONT color="green">491</FONT>         *   &lt;li&gt;Rewinds the stream to position at the data<a name="line.491"></a>
+<FONT color="green">492</FONT>         *     descriptor.&lt;/li&gt;<a name="line.492"></a>
+<FONT color="green">493</FONT>         *   &lt;li&gt;reads the data descriptor&lt;/li&gt;<a name="line.493"></a>
+<FONT color="green">494</FONT>         * &lt;/ul&gt;<a name="line.494"></a>
+<FONT color="green">495</FONT>         *<a name="line.495"></a>
+<FONT color="green">496</FONT>         * &lt;p&gt;After calling this method the entry should know its size,<a name="line.496"></a>
+<FONT color="green">497</FONT>         * the entry's data is cached and the stream is positioned at the<a name="line.497"></a>
+<FONT color="green">498</FONT>         * next local file or central directory header.&lt;/p&gt;<a name="line.498"></a>
+<FONT color="green">499</FONT>         */<a name="line.499"></a>
+<FONT color="green">500</FONT>        private void readStoredEntry() throws IOException {<a name="line.500"></a>
+<FONT color="green">501</FONT>            ByteArrayOutputStream bos = new ByteArrayOutputStream();<a name="line.501"></a>
+<FONT color="green">502</FONT>            byte[] LFH = ZipLong.LFH_SIG.getBytes();<a name="line.502"></a>
+<FONT color="green">503</FONT>            byte[] CFH = ZipLong.CFH_SIG.getBytes();<a name="line.503"></a>
+<FONT color="green">504</FONT>            byte[] DD = ZipLong.DD_SIG.getBytes();<a name="line.504"></a>
+<FONT color="green">505</FONT>            int off = 0;<a name="line.505"></a>
+<FONT color="green">506</FONT>            boolean done = false;<a name="line.506"></a>
+<FONT color="green">507</FONT>    <a name="line.507"></a>
+<FONT color="green">508</FONT>            while (!done) {<a name="line.508"></a>
+<FONT color="green">509</FONT>                int r = in.read(buf, off, ZipArchiveOutputStream.BUFFER_SIZE - off);<a name="line.509"></a>
+<FONT color="green">510</FONT>                if (r &lt;= 0) {<a name="line.510"></a>
+<FONT color="green">511</FONT>                    // read the whole archive without ever finding a<a name="line.511"></a>
+<FONT color="green">512</FONT>                    // central directory<a name="line.512"></a>
+<FONT color="green">513</FONT>                    throw new IOException("Truncated ZIP file");<a name="line.513"></a>
+<FONT color="green">514</FONT>                }<a name="line.514"></a>
+<FONT color="green">515</FONT>                if (r + off &lt; 4) {<a name="line.515"></a>
+<FONT color="green">516</FONT>                    // buf is too small to check for a signature, loop<a name="line.516"></a>
+<FONT color="green">517</FONT>                    off += r;<a name="line.517"></a>
+<FONT color="green">518</FONT>                    continue;<a name="line.518"></a>
+<FONT color="green">519</FONT>                }<a name="line.519"></a>
+<FONT color="green">520</FONT>    <a name="line.520"></a>
+<FONT color="green">521</FONT>                int readTooMuch = 0;<a name="line.521"></a>
+<FONT color="green">522</FONT>                for (int i = 0; !done &amp;&amp; i &lt; r - 4; i++) {<a name="line.522"></a>
+<FONT color="green">523</FONT>                    if (buf[i] == LFH[0] &amp;&amp; buf[i + 1] == LFH[1]) {<a name="line.523"></a>
+<FONT color="green">524</FONT>                        if ((buf[i + 2] == LFH[2] &amp;&amp; buf[i + 3] == LFH[3])<a name="line.524"></a>
+<FONT color="green">525</FONT>                            || (buf[i] == CFH[2] &amp;&amp; buf[i + 3] == CFH[3])) {<a name="line.525"></a>
+<FONT color="green">526</FONT>                            // found a LFH or CFH:<a name="line.526"></a>
+<FONT color="green">527</FONT>                            readTooMuch = off + r - i - 12 /* dd without signature */;<a name="line.527"></a>
+<FONT color="green">528</FONT>                            done = true;<a name="line.528"></a>
+<FONT color="green">529</FONT>                        }<a name="line.529"></a>
+<FONT color="green">530</FONT>                        else if (buf[i + 2] == DD[2] &amp;&amp; buf[i + 3] == DD[3]) {<a name="line.530"></a>
+<FONT color="green">531</FONT>                            // found DD:<a name="line.531"></a>
+<FONT color="green">532</FONT>                            readTooMuch = off + r - i;<a name="line.532"></a>
+<FONT color="green">533</FONT>                            done = true;<a name="line.533"></a>
+<FONT color="green">534</FONT>                        }<a name="line.534"></a>
+<FONT color="green">535</FONT>                        if (done) {<a name="line.535"></a>
+<FONT color="green">536</FONT>                            // * push back bytes read in excess as well as the data<a name="line.536"></a>
+<FONT color="green">537</FONT>                            //   descriptor<a name="line.537"></a>
+<FONT color="green">538</FONT>                            // * copy the remaining bytes to cache<a name="line.538"></a>
+<FONT color="green">539</FONT>                            // * read data descriptor<a name="line.539"></a>
+<FONT color="green">540</FONT>                            ((PushbackInputStream) in).unread(buf, off + r - readTooMuch, readTooMuch);<a name="line.540"></a>
+<FONT color="green">541</FONT>                            bos.write(buf, 0, i);<a name="line.541"></a>
+<FONT color="green">542</FONT>                            readDataDescriptor();<a name="line.542"></a>
+<FONT color="green">543</FONT>                        }<a name="line.543"></a>
+<FONT color="green">544</FONT>                    }<a name="line.544"></a>
+<FONT color="green">545</FONT>                }<a name="line.545"></a>
+<FONT color="green">546</FONT>                if (!done) {<a name="line.546"></a>
+<FONT color="green">547</FONT>                    // worst case we've read a data descriptor without a<a name="line.547"></a>
+<FONT color="green">548</FONT>                    // signature (12 bytes) plus the first three bytes of<a name="line.548"></a>
+<FONT color="green">549</FONT>                    // a LFH or CFH signature<a name="line.549"></a>
+<FONT color="green">550</FONT>                    // save the last 15 bytes in the buffer, cache<a name="line.550"></a>
+<FONT color="green">551</FONT>                    // anything in front of that, read on<a name="line.551"></a>
+<FONT color="green">552</FONT>                    if (off + r &gt; 15) {<a name="line.552"></a>
+<FONT color="green">553</FONT>                        bos.write(buf, 0, off + r - 15);<a name="line.553"></a>
+<FONT color="green">554</FONT>                        System.arraycopy(buf, off + r - 15, buf, 0, 15);<a name="line.554"></a>
+<FONT color="green">555</FONT>                        off = 15;<a name="line.555"></a>
+<FONT color="green">556</FONT>                    } else {<a name="line.556"></a>
+<FONT color="green">557</FONT>                        off += r;<a name="line.557"></a>
+<FONT color="green">558</FONT>                    }<a name="line.558"></a>
+<FONT color="green">559</FONT>                }<a name="line.559"></a>
+<FONT color="green">560</FONT>            }<a name="line.560"></a>
+<FONT color="green">561</FONT>    <a name="line.561"></a>
+<FONT color="green">562</FONT>            byte[] b = bos.toByteArray();<a name="line.562"></a>
+<FONT color="green">563</FONT>            lastStoredEntry = new ByteArrayInputStream(b);<a name="line.563"></a>
+<FONT color="green">564</FONT>        }<a name="line.564"></a>
+<FONT color="green">565</FONT>    }<a name="line.565"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
