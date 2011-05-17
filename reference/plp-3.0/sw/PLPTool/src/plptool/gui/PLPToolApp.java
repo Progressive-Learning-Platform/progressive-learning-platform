@@ -195,14 +195,14 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("       Assemble <asm> and write plp output to <out>.");
             System.out.println();
             System.out.println("  -s   <plpfile>");
-            System.out.println("       Launches the command line simulator to simulate <plpfile>.");
+            System.out.println("       Launch the command line simulator to simulate <plpfile>.");
             System.out.println();
             System.out.println("  -plp <plpfile>");
-            System.out.println("       Prints out the list of source files contained in <plpfile>.");
-            System.out.println("       Creates <plpfile> if it does not exist with main.asm as source file.");
+            System.out.println("       Print out the list of source files contained in <plpfile>.");
+            System.out.println("       Create <plpfile> if it does not exist with main.asm as source file.");
             System.out.println();
             System.out.println("  -plp");
-            System.out.println("       Prints out command-line plp file manipulator commands.");
+            System.out.println("       Print out command-line plp file manipulator commands.");
             System.out.println();
         }
     }

@@ -18,6 +18,7 @@
 
 package plptool.gui;
 
+import java.awt.Color;
 import plptool.PLPSimCore;
 import plptool.Msg;
 import plptool.Config;
@@ -47,11 +48,12 @@ public class SimRunner extends Thread {
         startInstr = sim.getinstrcount();
         Msg.M("--- run");
         startTime = System.currentTimeMillis();
+        plp.g_simsh.setStatusString("Running", Color.green);
 
         while(stepCount > 0) {
             int steps = Integer.parseInt(plp.g_simsh.getTxtSteps().getText());
             if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
-                for(int i = 0; i < steps; i++)
+                for(int i = 0; i < steps && Msg.lastError == 0; i++)
                     plp.sim.step();
                 plp.g_sim.updateComponents();
             } else {
@@ -69,10 +71,15 @@ public class SimRunner extends Thread {
             } catch(Exception e) {}
         }
 
+        if(Msg.lastError != 0)
+            plp.g_simsh.setStatusString("ERROR", Color.red);
+        else
+            plp.g_simsh.setStatusString("Ready", Color.black);
+
         long time = System.currentTimeMillis() - startTime;
         Msg.m("--- SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
         Msg.M("in " + time + " milliseconds of real time.");
-
+        
         plp.g_simsh.unselectTglRun();
     }
 }

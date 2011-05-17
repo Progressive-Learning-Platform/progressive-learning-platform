@@ -45,11 +45,6 @@ public abstract class PLPSimCore {
     protected int instructionCount;
 
     /**
-     * Main memory.
-     */
-    public MemModule memory;
-
-    /**
      * CPU front-side bus.
      */
     public PLPSimBus bus;

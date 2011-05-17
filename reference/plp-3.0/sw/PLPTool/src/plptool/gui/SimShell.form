@@ -175,7 +175,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="simControls" alignment="0" max="32767" attributes="0"/>
-          <Component id="simDesktop" alignment="0" pref="862" max="32767" attributes="0"/>
+          <Component id="simDesktop" alignment="0" pref="864" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -208,7 +208,9 @@
                   <Component id="btnReset" min="-2" pref="75" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnOpts" min="-2" pref="75" max="-2" attributes="0"/>
-                  <EmptySpace pref="413" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="status" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="328" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -222,6 +224,7 @@
                       <Component id="tglRun" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnReset" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnOpts" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="status" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -271,6 +274,13 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOptsActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="status">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="status.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="status.text"/>
+            <Property name="name" type="java.lang.String" value="status" noResource="true"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

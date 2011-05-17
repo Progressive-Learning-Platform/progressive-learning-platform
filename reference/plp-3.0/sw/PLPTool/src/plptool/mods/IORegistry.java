@@ -413,7 +413,7 @@ public class IORegistry {
      */
     public Object getRegSize(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getModuleFrame: invalid index:" + index,
+            Msg.E("getRegSize: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return null;
         }
@@ -421,13 +421,24 @@ public class IORegistry {
         return regSize.get(index);
     }
 
+    public long getStartAddr(int index) {
+        if(index >= modules.size() || index < 0) {
+            Msg.E("getStartAddr: invalid index:" + index,
+                     Constants.PLP_GENERIC_ERROR, null);
+            return -1;
+        }
+
+        return modules.get(index).startAddr();
+    }
+
+
     /**
      * @param index Index of the module.
      * @return The type of the module
      */
     public long getType(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getModuleFrame: invalid index:" + index,
+            Msg.E("getType: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return -1;
         }

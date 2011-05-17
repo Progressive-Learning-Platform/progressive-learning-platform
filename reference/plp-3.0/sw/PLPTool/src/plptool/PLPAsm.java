@@ -32,7 +32,7 @@ public abstract class PLPAsm {
     /**
      * Assembly source files attached to this assembler
      */
-    protected ArrayList<PLPAsmSource>  SourceList;
+    protected ArrayList<PLPAsmSource>  sourceList;
 
     protected int         mapperIndex;
     protected int[]       lineNumMap;
@@ -40,13 +40,15 @@ public abstract class PLPAsm {
     protected int[]       objCodeFileMapper;
     protected int[]       objCodeLineNumMapper;
 
+    protected long          entryPoint;
+
     protected StringBuilder pass1Str;
     protected String        preprocessedAsm;
 
     public PLPAsm(String strAsm, String strFilePath) {
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
-        SourceList = new ArrayList<PLPAsmSource>();
-        SourceList.add(plpAsmObj);
+        sourceList = new ArrayList<PLPAsmSource>();
+        sourceList.add(plpAsmObj);
         preprocessedAsm = new String();
 
         asmIndex = 0;
@@ -55,7 +57,7 @@ public abstract class PLPAsm {
     }
 
     public PLPAsm(ArrayList<PLPAsmSource> asms) {
-        SourceList = asms;
+        sourceList = asms;
         preprocessedAsm = new String();
 
         asmIndex = 0;
@@ -259,12 +261,21 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Returns the SourceList attached to this assembly.
+     * Returns the sourceList attached to this assembly.
      *
-     * @return Returns SourceList as ArrayList
+     * @return Returns sourceList as ArrayList
      */
     public ArrayList<PLPAsmSource> getAsmList() {
-        return SourceList;
+        return sourceList;
+    }
+
+    /**
+     * Get entry point of the program (first .text <addr> directive)
+     *
+     * @return Entry point address
+     */
+    public long getEntryPoint() {
+        return entryPoint;
     }
 
     public void setAssembled(boolean b) {

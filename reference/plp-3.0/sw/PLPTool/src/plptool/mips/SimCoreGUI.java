@@ -798,8 +798,19 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     public final void fillProgramMemoryTable() {
         javax.swing.table.DefaultTableModel program = (javax.swing.table.DefaultTableModel) tblProgram.getModel();
+        int mainMemIndex = -1;
 
-        Object[][] objCode = sim.memory.getValueSet();
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            if(plp.ioreg.getType(i) == 0 && plp.ioreg.getStartAddr(i) != 0) {
+                mainMemIndex = i;
+            }
+        }
+
+        if(mainMemIndex < 0) {
+            return;
+        }
+
+        Object[][] objCode = ((plptool.mods.MemModule)plp.ioreg.getModule(mainMemIndex)).getValueSet();
         Object row[];
         for(int i = 0; i < objCode.length; i++) {
             if((Boolean) objCode[i][2]) {

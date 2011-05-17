@@ -67,7 +67,7 @@ public class SimShell extends javax.swing.JFrame {
         menuIOReg.setSelected(false);
     }
 
-    /** release build featuers disabler **/
+    /** release build features disabler **/
     public final void disableFeatures() {
         menuRemoveIO.setVisible(false);
         menuPresets.setVisible(false);
@@ -84,6 +84,7 @@ public class SimShell extends javax.swing.JFrame {
 
     public void unselectTglRun() {
         tglRun.setSelected(false);
+        cmenuRun.setSelected(false);
     }
 
     public void destroySimulation() {
@@ -145,6 +146,7 @@ public class SimShell extends javax.swing.JFrame {
         plp.sim.reset();
         plp.updateComponents();
         plp.g_err.clearError();
+        setStatusString("Ready", Color.black);
     }
 
     private void step() {
@@ -224,6 +226,11 @@ public class SimShell extends javax.swing.JFrame {
         }catch(Exception e) {}
     }
 
+    public void setStatusString(String inStat, Color fontColor) {
+        status.setText(inStat);
+        status.setForeground(fontColor);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -239,6 +246,7 @@ public class SimShell extends javax.swing.JFrame {
         btnReset = new javax.swing.JButton();
         tglRun = new javax.swing.JToggleButton();
         btnOpts = new javax.swing.JButton();
+        status = new javax.swing.JLabel();
         simDesktop = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuSim = new javax.swing.JMenu();
@@ -301,6 +309,10 @@ public class SimShell extends javax.swing.JFrame {
             }
         });
 
+        status.setFont(resourceMap.getFont("status.font")); // NOI18N
+        status.setText(resourceMap.getString("status.text")); // NOI18N
+        status.setName("status"); // NOI18N
+
         javax.swing.GroupLayout simControlsLayout = new javax.swing.GroupLayout(simControls);
         simControls.setLayout(simControlsLayout);
         simControlsLayout.setHorizontalGroup(
@@ -316,7 +328,9 @@ public class SimShell extends javax.swing.JFrame {
                 .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnOpts, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(411, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(status)
+                .addContainerGap(328, Short.MAX_VALUE))
         );
         simControlsLayout.setVerticalGroup(
             simControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -327,7 +341,8 @@ public class SimShell extends javax.swing.JFrame {
                     .addComponent(btnStep)
                     .addComponent(tglRun)
                     .addComponent(btnReset)
-                    .addComponent(btnOpts))
+                    .addComponent(btnOpts)
+                    .addComponent(status))
                 .addContainerGap())
         );
 
@@ -462,7 +477,7 @@ public class SimShell extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(simControls, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
+            .addComponent(simDesktop, javax.swing.GroupLayout.DEFAULT_SIZE, 864, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -641,6 +656,7 @@ public class SimShell extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuWindow;
     private javax.swing.JPanel simControls;
     private javax.swing.JDesktopPane simDesktop;
+    private javax.swing.JLabel status;
     private javax.swing.JToggleButton tglRun;
     private javax.swing.JTextField txtSteps;
     // End of variables declaration//GEN-END:variables

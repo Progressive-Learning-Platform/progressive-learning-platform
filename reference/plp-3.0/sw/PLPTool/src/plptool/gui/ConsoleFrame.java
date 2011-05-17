@@ -162,6 +162,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_dev.getEditor().print();
                 }
             }
+            else if(command.equals("ignoresavedmods")) {
+                plptool.Config.simIgnoreSavedSimState = true;
+            }
+            else if(command.equals("loadsavedmods")) {
+                plptool.Config.simIgnoreSavedSimState = false;
+            }
             else if(command.equals("asmexplorer")) {
                 plp.g_dev.setVisible(false);
                 plp.g_simsh.destroySimulation();
@@ -170,7 +176,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     asmexplorer = new ASMExplorer(plp);
                 }
 
-                plp.sim = new plptool.mips.SimCore((plptool.mips.Asm) plp.asm, plp.asm.getAddrTable()[0], -1L);
+                plp.sim = new plptool.mips.SimCore((plptool.mips.Asm) plp.asm, plp.asm.getAddrTable()[0]);
                 plp.sim.reset();
 
                 asmexplorer.setVisible(true);
