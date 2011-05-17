@@ -37,6 +37,9 @@ public class Config {
     public static boolean simBusReturnsZeroForUninitRegs   = true;
     public static boolean simAllowExecutionOfArbitraryMem  = true;
     public static boolean simDumpTraceOnFailedEvaluation   = false;
+    public static long    simDefaultRAMSize                = 0x1000000;
+    public static long    simRAMStartingAddress            = 0x10000000;
+    public static boolean simIgnoreSavedSimState           = false;
 
     public static double  relativeDefaultWindowWidth       = 0.8;
     public static double  relativeDefaultWindowHeight      = 0.8;
@@ -51,7 +54,7 @@ public class Config {
 
     public static int     maxUndoLength                    = 20;
 
-    public static long    cfgDefaultRAMSize                = 0x1000000;
+    
 
     public static String  devFont                          = "Monospaced";
     public static int     devFontSize                      = 12;

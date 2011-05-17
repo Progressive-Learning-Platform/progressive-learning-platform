@@ -119,9 +119,10 @@ public class Preset {
         {
             "PLP 2.2 I/O Configuration",
 
-            new Integer[]{0, 1, 2, 4, 7, 9, 8},
+            new Integer[]{0, 0, 1, 2, 4, 7, 9, 8},
 
             new Long[]{0x0L,
+                       0x10000000L,
                        0xf0200000L,
                        0xf0100000L,
                        0xf0500000L,
@@ -130,6 +131,7 @@ public class Preset {
                        0xf0000000L},
 
             new Long[]{0x10000000L,
+                       0x1000000L,
                        1L,
                        1L,
                        2L,

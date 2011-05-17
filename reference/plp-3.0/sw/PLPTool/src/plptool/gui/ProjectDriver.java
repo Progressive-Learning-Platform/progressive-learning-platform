@@ -18,6 +18,7 @@
 
 package plptool.gui;
 
+import java.awt.Color;
 import plptool.*;
 
 import org.jdesktop.application.SingleFrameApplication;
@@ -236,7 +237,7 @@ public class ProjectDriver {
         open_asm = 0;
         smods = null;
 
-        meta =  "PLP-2.2\n";
+        meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
 
@@ -270,7 +271,7 @@ public class ProjectDriver {
         open_asm = 0;
         smods = null;
 
-        meta =  "PLP-2.2\n";
+        meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
 
@@ -311,7 +312,7 @@ public class ProjectDriver {
 
         File outFile = plpfile;
 
-        meta = "PLP-2.2\n";
+        meta = "PLP-3.0\n";
 
         if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
@@ -326,6 +327,8 @@ public class ProjectDriver {
         else {
             meta += "DIRTY=1\n";
         }
+
+        meta += "ARCH=" + arch + "\n";
 
         meta += "\n";
 
@@ -505,6 +508,8 @@ public class ProjectDriver {
 
         Msg.I("Opening " + path, null);
 
+        arch = null;
+
         if(!plpFile.exists())
             return Msg.E("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
@@ -538,10 +543,10 @@ public class ProjectDriver {
                 Scanner metaScanner;
 
                 String lines[] = meta.split("\\r?\\n");
-                if(lines[0].equals("PLP-2.2"))  {
+                if(lines[0].equals("PLP-3.0"))  {
 
                 } else {
-                    Msg.W("This is not a PLP-2.2 project file. Opening anyways.", this);
+                    Msg.W("This is not a PLP-3.0 project file. Opening anyways.", this);
 
                 }
 
@@ -549,6 +554,8 @@ public class ProjectDriver {
                 metaScanner.findWithinHorizon("DIRTY=", 0);
                 if(metaScanner.nextInt() == 0)
                     dirty = false;
+                if(metaScanner.findWithinHorizon("ARCH=", 0) != null)
+                    arch = metaScanner.nextLine();
             }
 
             else if(entry.getName().equals("plp.image")) {
@@ -612,6 +619,12 @@ public class ProjectDriver {
             return Msg.E("open(" + path + "): Invalid PLP archive.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
+
+        if(arch == null) {
+            Msg.W("No ISA information specified in the archive, assuming plpmips", this);
+            arch = "plpmips";
+        }
+
 
         plpfile = new File(path);
         modified = false;
@@ -807,9 +820,10 @@ public class ProjectDriver {
 
         if(smods == null)
             ioreg.loadPredefinedPreset(0);
-        else if(smods != null)
+        else if(smods != null && !Config.simIgnoreSavedSimState)
             ioreg.loadPreset(smods);
-            
+
+        sim.setStartAddr(asm.getEntryPoint());
         sim.loadProgram(asm);
 
         sim.reset();
@@ -827,6 +841,7 @@ public class ProjectDriver {
                 g_err.setVisible(true);
             g_simsh.tileWindows();
             g_simsh.resetSettings();
+            g_simsh.setStatusString("Ready", Color.black);
 
             /** 2.2 Release- disable unimplemented features **/
             if(arch.equals("plpmips"))

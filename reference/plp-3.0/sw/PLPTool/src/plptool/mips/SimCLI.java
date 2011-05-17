@@ -102,14 +102,24 @@ public class SimCLI {
 
             Msg.M("\nMain memory listing");
             Msg.M("===================");
-            core.memory.printAll(core.pc.eval());
+            for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+                if(plp.ioreg.getType(i) == 0) {
+                    Msg.M("Attached memory in bus position " + plp.ioreg.getPositionInBus(i));
+                    ((plptool.mods.MemModule) plp.ioreg.getModule(i)).printAll(core.pc.eval());
+                }
+            }
         }
         else if(tokens[0].equals("pram")) {
             if(tokens.length != 2) {
                 Msg.M("Usage: pram <address>");
             }
             else {
-                core.memory.print(PLPToolbox.parseNum(tokens[1]));
+                for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+                    if(plp.ioreg.getType(i) == 0) {
+                        Msg.M("Memory attached in bus position " + plp.ioreg.getPositionInBus(i));
+                        ((plptool.mods.MemModule) plp.ioreg.getModule(i)).print(PLPToolbox.parseNum(tokens[1]));
+                    }
+                }
             }
         }
         else if(input.equals("preg")) {
@@ -140,7 +150,7 @@ public class SimCLI {
         else if(input.equals("pprg")) {
             Msg.M("\nProgram Listing");
             Msg.M("===============");
-            core.printProgram(core.pc.eval());
+            core.printProgram(1, core.pc.eval());
         }
         else if(input.equals("pasm")) {
             Formatter.prettyPrint(asm);
@@ -169,9 +179,8 @@ public class SimCLI {
                 Msg.M("Usage: w <address> <data>");
             }
             else {
-                if(core.memory.write(PLPToolbox.parseNum(tokens[1]),
-                                  PLPToolbox.parseNum(tokens[2]), false) == Constants.PLP_OK)
-                  core.memory.print(PLPToolbox.parseNum(tokens[1]));
+                core.bus.write(PLPToolbox.parseNum(tokens[1]),
+                                  PLPToolbox.parseNum(tokens[2]), false);
             }
         }
         else if(tokens[0].equals("wbus")) {
@@ -323,7 +332,7 @@ public class SimCLI {
                     Msg.M("==============");
                     for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
                         addr = PLPToolbox.parseNum(tokens[1]) + 4 * j;
-                        core.memory.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
+                        core.bus.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
                         Msg.M(String.format("%08x", addr) +
                                            "   " + PLPToolbox.asciiWord(inlineAsm.getObjectCode()[j]) +
                                            "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
@@ -433,13 +442,14 @@ public class SimCLI {
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
         plp.ioreg = new plptool.mods.IORegistry(plp);
-        plp.sim = new SimCore((plptool.mips.Asm) plp.asm, plp.asm.getAddrTable()[0], 0x1000000);
+        plp.sim = new SimCore((plptool.mips.Asm) plp.asm, plp.asm.getEntryPoint());
         plp.sim.setStartAddr(plp.asm.getAddrTable()[0]);
+        plp.ioreg.loadPredefinedPreset(0);
         plp.sim.reset();
         ((plptool.mips.SimCore)plp.sim).printfrontend();
         plp.sim.bus.enableAllModules();
-        Msg.M("Simulation core initialized with nigh-infinite RAM.");
-        Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
+        Msg.M("Simulation core initialized.");
+        Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
         Msg.m(String.format("\n%08x", plp.sim.getFlags()) +
                              " " + plp.sim.getinstrcount() +
                              " sim > ");

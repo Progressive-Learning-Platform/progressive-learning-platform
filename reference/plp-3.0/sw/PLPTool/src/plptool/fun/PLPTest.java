@@ -7,7 +7,7 @@ package plptool.fun;
 
 import plptool.mips.SimCore;
 import plptool.mips.Asm;
-import plptool.PLPSimMods;
+//import plptool.PLPSimMods;
 import plptool.Msg;
 
 /**
@@ -33,9 +33,9 @@ public class PLPTest {
             System.exit(-1);
 
         
-        SimCore sim = new SimCore(asm, 0, 8000);
-        PLPSimMods mods = new PLPSimMods(sim);
-        sim.bus.add(mods.io_leds);
+        SimCore sim = new SimCore(asm, 0);
+        //PLPSimMods mods = new PLPSimMods(sim);
+        //sim.bus.add(mods.io_leds);
         sim.bus.enableAllModules();
         //sim.bus.write((long) 0x8000400 << 4, 0xbeef, false);
         //System.out.println(String.format("%08x", sim.bus.read((long) 0x8000400 << 4)));

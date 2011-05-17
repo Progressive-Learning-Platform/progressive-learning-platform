@@ -109,15 +109,11 @@ public class SimCore extends PLPSimCore {
      * @param asm assembler object passed on to this simulator
      * @see plptool.PLPAsm
      */
-    public SimCore(Asm asm, long startAddr, long RAMsize) {
-        if(RAMsize <= 0)
-            RAMsize = (long) Math.pow(2, 31);
-
+    public SimCore(Asm asm, long startAddr) {
         this.startAddr = startAddr;
 
-        memory = new MemModule(startAddr, RAMsize, Constants.FLAGS_ALIGNED_MEMORY);
         regfile = new MemModule(0, 32, false);
-        pc = new PLPSimRegModule(0); // pc=0 on reset
+        pc = new PLPSimRegModule(0); // pc=startAddr on reset
 
         this.asm = asm;
         this.objCode = asm.getObjectCode();
@@ -127,7 +123,7 @@ public class SimCore extends PLPSimCore {
 
         // core mods
         forwarding = new mod_forwarding();
-        bus = new PLPSimBus(memory);
+        bus = new PLPSimBus();
 
         // Instantiate stages
         wb_stage = new wb(regfile);
@@ -135,7 +131,6 @@ public class SimCore extends PLPSimCore {
         ex_stage = new ex(mem_stage, new alu());
         id_stage = new id(ex_stage, regfile);
 
-        memory.enable();
         regfile.enable();
     }
 
@@ -149,9 +144,9 @@ public class SimCore extends PLPSimCore {
      */
     public int reset() {
         int i;
-        
-        // clear RAM
-        memory.clear();
+
+        for(i = 0; i < bus.getNumOfMods(); i++)
+            bus.clearModRegisters(i);
 
         // init regfile
         for(i = 0; i < 32; i++)
@@ -387,10 +382,10 @@ public class SimCore extends PLPSimCore {
      *
      * @param highlight Memory location to highlight, probably the PC value
      */
-    public void printProgram(long highlight) {
+    public void printProgram(int memoryPosition, long highlight) {
         Msg.M("pc\taddress\t\thex\t\tDisassembly");
         Msg.M("--\t-------\t\t---\t\t-----------");
-        Object[][] values = super.memory.getValueSet();
+        Object[][] values = ((MemModule) bus.getRefMod(memoryPosition)).getValueSet();
         for(int i = 0; i < values.length; i++) {
                 if((Long) values[i][0] == highlight)
                     Msg.m(">>>");
