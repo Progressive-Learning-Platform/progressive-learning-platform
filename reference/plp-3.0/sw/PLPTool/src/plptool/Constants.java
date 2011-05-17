@@ -65,6 +65,7 @@ public class Constants {
     public static final int PLP_ASM_INVALID_JUMP_TARGET          = 72;
     public static final int PLP_ASM_INVALID_POINTER              = 73;
     public static final int PLP_ASM_ASSEMBLE_FAILED              = 74;
+    public static final int PLP_ASM_MEM_REGION_START_NOT_INIT    = 75;
 
     // Formatter Errors
     public static final int PLP_OUT_UNHANDLED_ERROR              = 128;
