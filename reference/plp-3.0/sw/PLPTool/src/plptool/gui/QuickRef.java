@@ -61,19 +61,22 @@ public class QuickRef extends javax.swing.JFrame {
         str += "<a name=\"r\" /><h1>R-type Instructions</h1>";
         str += "<table border=1 width=\"100%\">";
 
-        String[][] data = new String[11][2];
+        String[][] data = new String[13][2];
 
-        data[0][0] = "<b>addu</b> $rd, $rs, $rt";      data[0][1] = "rd = rs + rt";
-        data[1][0] = "<b>subu</b> $rd, $rs, $rt";      data[1][1] = "rd = rs - rt";
-        data[2][0] = "<b>and</b>  $rd, $rs, $rt";      data[2][1] = "rd = rs & rt";
-        data[3][0] = "<b>or</b>   $rd, $rs, $rt";      data[3][1] = "rd = rs | rt";
-        data[4][0] = "<b>nor</b>  $rd, $rs, $rt";      data[4][1] = "rd = ~(rs | rt)";
-        data[5][0] = "<b>slt</b>  $rd, $rs, $rt";      data[5][1] = "rd = (rs &lt; rt) ? 1 : 0";
-        data[6][0] = "<b>sltu</b> $rd, $rs, $rt";      data[6][1] = "rd = (rs &lt; rt) ? 1 : 0";
-        data[7][0] = "<b>sll</b>  $rd, $rt, shamt";    data[7][1] = "rd = rt &lt;&lt; shamt";
-        data[8][0] = "<b>slr</b>  $rd, $rt, shamt";    data[8][1] = "rd = rt &gt;&gt; shamt";
-        data[9][0] = "<b>jr</b> $rs";                  data[9][1] = "PC = rs";
-        data[10][0] = "<b>jalr</b> $rd, $rs";          data[10][1] = "rd = PC + 4; PC = rs";
+        data[0][0] = "<font color=blue><b>addu</b></font> $rd, $rs, $rt";      data[0][1] = "rd = rs + rt";
+        data[1][0] = "<font color=blue><b>subu</b></font> $rd, $rs, $rt";      data[1][1] = "rd = rs - rt";
+
+        data[2][0] = "<font color=blue><b>and</b></font>  $rd, $rs, $rt";      data[2][1] = "rd = rs &amp; rt";
+        data[3][0] = "<font color=blue><b>or</b></font>   $rd, $rs, $rt";      data[3][1] = "rd = rs | rt";
+        data[4][0] = "<font color=blue><b>nor</b></font>  $rd, $rs, $rt";      data[4][1] = "rd = ~(rs | rt)";
+        data[5][0] = "<font color=blue><b>mullo</b></font> $rd, $rs, $rt";     data[5][1] = "rd = (rs * rt) &amp; 0xffffffff";
+        data[6][0] = "<font color=blue><b>mulhi</b></font> $rd, $rs, $rt";     data[6][1] = "rd = (rs * rt) &gt;&gt; 32";
+        data[7][0] = "<font color=blue><b>slt</b></font>  $rd, $rs, $rt";      data[7][1] = "rd = (rs &lt; rt) ? 1 : 0";
+        data[8][0] = "<font color=blue><b>sltu</b></font> $rd, $rs, $rt";      data[8][1] = "rd = (rs &lt; rt) ? 1 : 0";
+        data[9][0] = "<font color=blue><b>sll</b></font>  $rd, $rt, shamt";    data[9][1] = "rd = rt &lt;&lt; shamt";
+        data[10][0] = "<font color=blue><b>slr</b></font>  $rd, $rt, shamt";   data[10][1] = "rd = rt &gt;&gt; shamt";
+        data[11][0] = "<font color=blue><b>jr</b></font> $rs";                 data[11][1] = "PC = rs";
+        data[12][0] = "<font color=blue><b>jalr</b></font> $rd, $rs";          data[12][1] = "rd = PC + 4; PC = rs";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
@@ -88,16 +91,16 @@ public class QuickRef extends javax.swing.JFrame {
 
         data = new String[10][2];
 
-        data[0][0] = "<b>addiu</b> $rt, $rs, imm";     data[0][1] = "rt = rs + SignExtend(imm)";
-        data[1][0] = "<b>andi</b>  $rt, $rs, imm";     data[1][1] = "rt = rs & ZeroExtend(imm)";
-        data[2][0] = "<b>ori</b>   $rt, $rs, imm";     data[2][1] = "rt = rs | ZeroExtend(imm)";
-        data[3][0] = "<b>slit</b>  $rt, $rs, imm";     data[3][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
-        data[4][0] = "<b>sltiu</b> $rt, $rs, imm";     data[4][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
-        data[5][0] = "<b>lui</b>   $rt, imm";          data[5][1] = "rt = imm &lt;&lt; 16";
-        data[6][0] = "<b>lw</b>    $rt, imm($rs)";     data[6][1] = "rt = mem[SignExtend(imm) + rs]";
-        data[7][0] = "<b>sw</b>    $rt, imm($rs)";     data[7][1] = "mem[SignExtend(imm) + rs] = rt";
-        data[8][0] = "<b>beq</b>   $rt, $rs, label";   data[8][1] = "if (rt == rs) PC = PC + 4 + imm";
-        data[9][0] = "<b>bne</b>   $rt, $rs, label";   data[9][1] = "if (rt != rs) PC = PC + 4 + imm";
+        data[0][0] = "<font color=blue><b>addiu</b></font> $rt, $rs, imm";     data[0][1] = "rt = rs + SignExtend(imm)";
+        data[1][0] = "<font color=blue><b>andi</b></font>  $rt, $rs, imm";     data[1][1] = "rt = rs & ZeroExtend(imm)";
+        data[2][0] = "<font color=blue><b>ori</b></font>   $rt, $rs, imm";     data[2][1] = "rt = rs | ZeroExtend(imm)";
+        data[3][0] = "<font color=blue><b>slit</b></font>  $rt, $rs, imm";     data[3][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
+        data[4][0] = "<font color=blue><b>sltiu</b></font> $rt, $rs, imm";     data[4][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
+        data[5][0] = "<font color=blue><b>lui</b></font>   $rt, imm";          data[5][1] = "rt = imm &lt;&lt; 16";
+        data[6][0] = "<font color=blue><b>lw</b></font>    $rt, imm($rs)";     data[6][1] = "rt = mem[SignExtend(imm) + rs]";
+        data[7][0] = "<font color=blue><b>sw</b></font>    $rt, imm($rs)";     data[7][1] = "mem[SignExtend(imm) + rs] = rt";
+        data[8][0] = "<font color=blue><b>beq</b></font>   $rt, $rs, label";   data[8][1] = "if (rt == rs) PC = PC + 4 + imm";
+        data[9][0] = "<font color=blue><b>bne</b></font>   $rt, $rs, label";   data[9][1] = "if (rt != rs) PC = PC + 4 + imm";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
@@ -112,8 +115,8 @@ public class QuickRef extends javax.swing.JFrame {
 
         data = new String[2][2];
 
-        data[0][0] = "<b>j</b>     label";             data[0][1] = "PC = label";
-        data[1][0] = "<b>jal</b>   label";             data[1][1] = "ra = PC + 4; PC = label";
+        data[0][0] = "<font color=blue><b>j</b></font>     label";             data[0][1] = "PC = label";
+        data[1][0] = "<font color=blue><b>jal</b></font>   label";             data[1][1] = "ra = PC + 4; PC = label";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
@@ -128,16 +131,16 @@ public class QuickRef extends javax.swing.JFrame {
 
         data = new String[7][2];
 
-        data[0][0] = "<b>nop</b>";                     data[0][1] = "sll $0, $0, 0";
-        data[1][0] = "<b>b</b>     label";             data[1][1] = "beq $0, $0, label";
-        data[2][0] = "<b>move</b>  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
-        data[3][0] = "<b>li</b>    $rd, imm32";        data[3][1] = "lui $rd, imm32 &gt;&gt; 16<br />";
+        data[0][0] = "<font color=blue><b>nop</b></font>";                     data[0][1] = "sll $0, $0, 0";
+        data[1][0] = "<font color=blue><b>b</b></font>     label";             data[1][1] = "beq $0, $0, label";
+        data[2][0] = "<font color=blue><b>move</b></font>  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
+        data[3][0] = "<font color=blue><b>li</b></font>    $rd, imm32";        data[3][1] = "lui $rd, imm32 &gt;&gt; 16<br />";
                                                 data[3][1] += "ori $rd, $rd, imm32 & 0xffff";
-        data[4][0] = "<b>li</b>    $rd, label";        data[4][1] = "lui $rd, label[31:16]<br />";
+        data[4][0] = "<font color=blue><b>li</b></font>    $rd, label";        data[4][1] = "lui $rd, label[31:16]<br />";
                                                 data[4][1] += "ori $rd, $rd, label[15:0]";
-        data[5][0] = "<b>push</b>  $rt";               data[5][1] = "sw $rt, 0($sp)<br />";
+        data[5][0] = "<font color=blue><b>push</b></font>  $rt";               data[5][1] = "sw $rt, 0($sp)<br />";
                                                 data[5][1] += "addiu $sp, $sp, -4";
-        data[6][0] = "<b>pop</b>   $rt";               data[6][1] = "addiu $sp, $sp, 4<br />";
+        data[6][0] = "<font color=blue><b>pop</b></font>   $rt";               data[6][1] = "addiu $sp, $sp, 4<br />";
                                                 data[6][1] += "lw $rt, 0($sp)";
 
         for(int i = 0; i < data.length; i++) {

@@ -69,8 +69,8 @@ public class Asm extends plptool.PLPAsm {
         super(strAsm, strFilePath);
 
         curAddr = 0;
-        curTextAddr = 0;
-        curDataAddr = 0;
+        curTextAddr = -1;
+        curDataAddr = -1;
         entryPoint = -1;
         instrMap = new HashMap<String, Integer>();
         symTable = new HashMap<String, Long>();
@@ -90,8 +90,8 @@ public class Asm extends plptool.PLPAsm {
         super(asms);
 
         curAddr = 0;
-        curTextAddr = 0;
-        curDataAddr = 0;
+        curTextAddr = -1;
+        curDataAddr = -1;
         entryPoint = -1;
         instrMap = new HashMap<String, Integer>();
         symTable = new HashMap<String, Long>();
@@ -282,7 +282,8 @@ public class Asm extends plptool.PLPAsm {
         curActiveFile = topLevelAsm.getAsmFilePath();
         asmIndex = index;
 
-        curRegion = 0; // unmapped region / flat model
+        if(index == 0)
+            curRegion = 0;
 
         Msg.D("preprocess: splitting...", 2, this);
 
@@ -386,6 +387,8 @@ public class Asm extends plptool.PLPAsm {
                 
                 
                 } else if(curRegion != 1) {
+                    directiveOffset++;
+
                     if(curRegion == 2)
                         curDataAddr = curAddr;
 
@@ -396,8 +399,15 @@ public class Asm extends plptool.PLPAsm {
                         appendPreprocessedAsm("ASM__ORG__ " + asmTokens[1], i, true);
                         curAddr = sanitize32bits(asmTokens[1]);
                         entryPoint = curAddr;
+                        curTextAddr = entryPoint;
                     } else {
                         appendPreprocessedAsm("ASM__ORG__ " +  String.format("0x%08x", curTextAddr), i, true);
+                    }
+
+                    if(curAddr < 0) {
+                        error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Starting address for .text is not defined.",
+                                     Constants.PLP_ASM_MEM_REGION_START_NOT_INIT, this);
                     }
 
                     Msg.D("curAddr is now " + String.format("0x%08x", curAddr), 4, this);
@@ -412,6 +422,8 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
               
                 } else if(curRegion != 2) {
+                    directiveOffset++;
+
                     if(curRegion == 1)
                         curTextAddr = curAddr;
                     curRegion = 2;
@@ -421,8 +433,15 @@ public class Asm extends plptool.PLPAsm {
                     if (asmTokens.length == 2) {
                         appendPreprocessedAsm("ASM__ORG__ " + asmTokens[1], i, true);
                         curAddr = sanitize32bits(asmTokens[1]);
+                        curDataAddr = curAddr;
                     } else {
                         appendPreprocessedAsm("ASM__ORG__ " +  String.format("0x%08x", curDataAddr), i, true);
+                    }
+
+                    if(curAddr < 0) {
+                        error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Starting address for .data is not defined.",
+                                     Constants.PLP_ASM_MEM_REGION_START_NOT_INIT, this);
                     }
 
                     Msg.D("curAddr is now " + String.format("0x%08x", curAddr), 4, this);
