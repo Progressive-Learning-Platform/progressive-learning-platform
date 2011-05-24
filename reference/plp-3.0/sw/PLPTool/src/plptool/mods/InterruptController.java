@@ -33,8 +33,8 @@ public class InterruptController extends PLPSimBusModule {
 
     ProjectDriver plp;
 
-    public InterruptController(ProjectDriver plp) {
-        super(0xf0700000L, 0xf0700000L+32, true);
+    public InterruptController(long addr, ProjectDriver plp) {
+        super(addr, addr+32, true);
         this.plp = plp;
     }
 
@@ -43,18 +43,18 @@ public class InterruptController extends PLPSimBusModule {
         if(!plp.getArch().equals("plpmips"))
             return Constants.PLP_SIM_UNSUPPORTED_ARCHITECTURE;
 
-	long stat = (Long) super.readReg(0xf0700010L);
-	long mask = (Long) super.readReg(0xf0700014L);
+	long stat = (Long) super.readReg(super.startAddr + 0x10);
+	long mask = (Long) super.readReg(super.startAddr + 0x14);
 
 	// IRQ = (stat[30:0] & mask[30:0] != 0) & stat[31]<GIE> 
         if((((stat & 0xefffffffL) & (mask & 0xefffffffL)) != 0)
                 && (stat & 0x80000000L) == 0x80000000L) {
 	    // save current PC
-            super.writeReg(0xf070001cL, ((SimCore)plp.sim).pc.eval(), false);
+            super.writeReg(super.startAddr+0x1c, ((SimCore)plp.sim).pc.eval(), false);
 	    // raise IRQ
             plp.sim.setIRQ(1);
 	    // disable GIE
-            super.writeReg(0xf0700010L, stat & 0x7fffffffL, false);
+            super.writeReg(super.startAddr+0x10, stat & 0x7fffffffL, false);
         }
 
         return Constants.PLP_OK;

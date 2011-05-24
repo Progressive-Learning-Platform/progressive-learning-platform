@@ -337,7 +337,7 @@ public class IORegistry {
             /******************************************************************/
             // Interrupt Controller is summoned
             case 10:
-                module = new InterruptController(plp);
+                module = new InterruptController(addr, plp);
 
                 break;
                 
