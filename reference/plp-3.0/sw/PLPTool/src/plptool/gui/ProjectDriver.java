@@ -397,7 +397,7 @@ public class ProjectDriver {
             tOut.closeArchiveEntry();
 
 
-            // Write simulation configuraiton
+            // Write simulation configuration
             Msg.D("Writing out simulation configuration...", 2, this);
             entry = new TarArchiveEntry("plp.simconfig");
             String str = "";
@@ -816,10 +816,11 @@ public class ProjectDriver {
         sim = ArchRegistry.createSimCore(this);
         ioreg = new plptool.mods.IORegistry(this);
 
-        Msg.D("smods is " + (smods == null ? "null" : "not null"), 3, null);
+        Msg.D("smods is " + (smods == null ? "null" : "not null")
+	      + " and g is " + g, 3, null);
 
-        if(smods == null)
-            ioreg.loadPredefinedPreset(0);
+        if(smods == null || !g)
+            ioreg.loadPredefinedPreset(g ? 0 : 1);
         else if(smods != null && !Config.simIgnoreSavedSimState)
             ioreg.loadPreset(smods);
 

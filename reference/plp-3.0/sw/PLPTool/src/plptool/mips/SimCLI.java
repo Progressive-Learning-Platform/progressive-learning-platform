@@ -444,7 +444,7 @@ public class SimCLI {
         plp.ioreg = new plptool.mods.IORegistry(plp);
         plp.sim = new SimCore((plptool.mips.Asm) plp.asm, plp.asm.getEntryPoint());
         plp.sim.setStartAddr(plp.asm.getAddrTable()[0]);
-        plp.ioreg.loadPredefinedPreset(0);
+        plp.ioreg.loadPredefinedPreset(1);
         plp.sim.reset();
         ((plptool.mips.SimCore)plp.sim).printfrontend();
         plp.sim.bus.enableAllModules();
