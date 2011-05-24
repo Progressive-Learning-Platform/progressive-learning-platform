@@ -43,12 +43,18 @@ public class InterruptController extends PLPSimBusModule {
         if(!plp.getArch().equals("plpmips"))
             return Constants.PLP_SIM_UNSUPPORTED_ARCHITECTURE;
 
-        if((((Long) super.readReg(0xf0700010L) & 0xefffffffL)
-          & ((Long) super.readReg(0xf0700014L) & 0xefffffffL)) != 0
-                && ((Long) super.readReg(0xf0700010L) & 0x80000000L) == 0x80000000L) {
+	long stat = (Long) super.readReg(0xf0700010L);
+	long mask = (Long) super.readReg(0xf0700014L);
+
+	// IRQ = (stat[30:0] & mask[30:0] != 0) & stat[31]<GIE> 
+        if((((stat & 0xefffffffL) & (mask & 0xefffffffL)) != 0)
+                && (stat & 0x80000000L) == 0x80000000L) {
+	    // save current PC
             super.writeReg(0xf070001cL, ((SimCore)plp.sim).pc.eval(), false);
+	    // raise IRQ
             plp.sim.setIRQ(1);
-            super.writeReg(0xf0700010L, (Long) super.readReg(0xf0700010L) & 0xefffffffL, false);
+	    // disable GIE
+            super.writeReg(0xf0700010L, stat & 0x7fffffffL, false);
         }
 
         return Constants.PLP_OK;
@@ -65,14 +71,15 @@ public class InterruptController extends PLPSimBusModule {
 
     @Override
     public Object read(long addr) {
+	long ISR = (Long) super.readReg(super.startAddr+24);
         if(addr == super.startAddr) {
-            Asm asm = new Asm("li $k0," + super.readReg(super.startAddr+24), "inline");
+            Asm asm = new Asm("li $k0," + ISR, "inline");
             asm.preprocess(0);
             asm.assemble();
             return asm.getObjectCode()[0];
         }
         else if(addr == super.startAddr + 4) {
-            Asm asm = new Asm("li $k0," + super.readReg(super.startAddr+24), "inline");
+            Asm asm = new Asm("li $k0," + ISR, "inline");
             asm.preprocess(0);
             asm.assemble();
             return asm.getObjectCode()[1];
