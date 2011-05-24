@@ -88,10 +88,15 @@ public class SimCore extends PLPSimCore {
     long[] addrTable;
 
     /**
-     * Stallers
+     * IF stage Staller
      */
     boolean if_stall;
+
+    /**
+     * EX stage Staller
+     */
     boolean ex_stall;
+
     boolean ex_continue;
 
     /**
@@ -100,6 +105,11 @@ public class SimCore extends PLPSimCore {
      * @see plptool.PLPAsm
      */
     Asm asm;
+
+    /**
+     * External interrupt hardware vector
+     */
+    private final long ISR = 0xf0700000L;
 
     /**
      * Simulator plp constructor.
@@ -260,6 +270,11 @@ public class SimCore extends PLPSimCore {
             pc.write(ex_stage.ctl_branchtarget);
         else if(ex_stage.hot && ex_stage.ctl_jump == 1)
             pc.write(ex_stage.ctl_jumptarget);
+        else if(IRQ > 0) { // interrupt request
+            pc.write(ISR);
+            IRQ = 0; //hardware acknowledge;
+            sim_flags |= Constants.PLP_SIM_IRQ;
+        }
         else if(!if_stall)
             pc.write(pc.eval() + 4);
 

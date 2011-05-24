@@ -45,6 +45,11 @@ public abstract class PLPSimCore {
     protected int instructionCount;
 
     /**
+     * External interrupt
+     */
+    protected long IRQ;
+
+    /**
      * CPU front-side bus.
      */
     public PLPSimBus bus;
@@ -88,5 +93,12 @@ public abstract class PLPSimCore {
      */
     public void setStartAddr(long addr) {
         startAddr = addr;
+    }
+
+    /**
+     * Set interrupt flag
+     */
+    public void setIRQ(long IRQ) {
+        this.IRQ = IRQ;
     }
 }
