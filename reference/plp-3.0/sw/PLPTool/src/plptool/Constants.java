@@ -89,6 +89,7 @@ public class Constants {
     public static final int PLP_SIM_UNABLE_TO_LOAD_PROGRAM       = 269;
     public static final int PLP_SIM_NO_EXECUTE_VIOLATION         = 270;
     public static final int PLP_SIM_MODULE_NO_DATA_ON_READ       = 271;
+    public static final int PLP_SIM_UNSUPPORTED_ARCHITECTURE     = 272;
 
     // Programmer errors
     public static final int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
@@ -133,7 +134,8 @@ public class Constants {
     public static final long PLP_SIM_IF_STALL_SET                = 0x00000100;
     public static final long PLP_SIM_ID_STALL_SET                = 0x00000200;
     public static final long PLP_SIM_EX_STALL_SET                = 0x00000400;
-    public static final long PLP_SIM_MEM_STALL_SET                = 0x00000800;
+    public static final long PLP_SIM_MEM_STALL_SET               = 0x00000800;
+    public static final long PLP_SIM_IRQ                         = 0x40000000;
 
     // General
     public static final int PLP_NUMBER_ERROR                     = -1;

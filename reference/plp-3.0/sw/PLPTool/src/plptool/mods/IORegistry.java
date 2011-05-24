@@ -74,7 +74,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 10;
+    private final int NUMBER_OF_MODULES = 11;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -219,6 +219,16 @@ public class IORegistry {
         mods[9][4] = true;
         mods[9][5] = true;
 
+        /* ********************************************************************/
+        // PLP MIPS Interrupt Controller
+
+        mods[10][0] = "PLP MIPS Interrupt Controller";
+        mods[10][1] = false;
+        mods[10][2] = 7;
+        mods[10][3] = "This module implements the PLP MIPS interrupt controller.";
+        mods[10][4] = true;
+        mods[10][5] = false;
+
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -321,6 +331,13 @@ public class IORegistry {
             case 9:
                 module = new SevenSegments(addr);
                 moduleFrame = new SevenSegmentsFrame();
+
+                break;
+
+            /******************************************************************/
+            // Interrupt Controller is summoned
+            case 10:
+                module = new InterruptController(plp);
 
                 break;
                 
