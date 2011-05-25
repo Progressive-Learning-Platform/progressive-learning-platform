@@ -800,7 +800,7 @@ public class ProjectDriver {
     public int simulate() {
         Msg.I("Starting simulation...", null);
 
-        this.updateAsm(open_asm, g_dev.getEditor().getText());
+        if(g) this.updateAsm(open_asm, g_dev.getEditor().getText());
 
         if(asm == null || !asm.isAssembled())
             return Msg.E("simulate(): The project is not assembled.",
@@ -815,6 +815,7 @@ public class ProjectDriver {
 
         sim = ArchRegistry.createSimCore(this);
         ioreg = new plptool.mods.IORegistry(this);
+        ArchRegistry.simulatorInitialization(this);
 
         Msg.D("smods is " + (smods == null ? "null" : "not null")
 	      + " and g is " + g, 3, null);
@@ -835,9 +836,11 @@ public class ProjectDriver {
             g_simsh.getSimDesktop().add(g_ioreg);
             g_simsh.getSimDesktop().add(g_sim);
             g_ioreg.refreshModulesTable();
-            g_sim.updateComponents();
-            g_sim.updateBusTable();
-            g_sim.setVisible(true);
+            if(g_sim != null) {
+                g_sim.updateComponents();
+                g_sim.updateBusTable();
+                g_sim.setVisible(true);
+            }
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
             g_simsh.tileWindows();
@@ -851,7 +854,9 @@ public class ProjectDriver {
             /*************************************************/
 
             g_simsh.setVisible(true);
-        }
+        } else
+            ArchRegistry.launchCLISimulatorInterface(this);
+
 
         return Constants.PLP_OK;
     }

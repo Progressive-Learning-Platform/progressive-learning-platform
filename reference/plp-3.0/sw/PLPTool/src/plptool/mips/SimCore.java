@@ -398,6 +398,17 @@ public class SimCore extends PLPSimCore {
      * @param highlight Memory location to highlight, probably the PC value
      */
     public void printProgram(int memoryPosition, long highlight) {
+        if(memoryPosition < 0 || memoryPosition >= bus.getNumOfMods()) {
+            Msg.E("Invalid index", Constants.PLP_SIM_WRONG_MODULE_TYPE, this);
+            return;
+        }
+
+
+        if(!(bus.getRefMod(memoryPosition) instanceof MemModule)) {
+            Msg.E("The specified module is not a memory module.",
+                  Constants.PLP_SIM_WRONG_MODULE_TYPE, this);
+            return;
+        }
         Msg.M("pc\taddress\t\thex\t\tDisassembly");
         Msg.M("--\t-------\t\t---\t\t-----------");
         Object[][] values = ((MemModule) bus.getRefMod(memoryPosition)).getValueSet();

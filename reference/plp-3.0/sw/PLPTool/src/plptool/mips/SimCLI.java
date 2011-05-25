@@ -147,10 +147,15 @@ public class SimCLI {
             Msg.M("============================");
             core.printfrontend();
         }
-        else if(input.equals("pprg")) {
-            Msg.M("\nProgram Listing");
-            Msg.M("===============");
-            core.printProgram(1, core.pc.eval());
+        else if(tokens[0].equals("pprg")) {
+            if(tokens.length != 2) {
+                Msg.M("Usage: pprg <index of memory module on the BUS>");
+            }
+            else {
+                Msg.M("\nProgram Listing");
+                Msg.M("===============");
+                core.printProgram(PLPToolbox.parseNumInt(tokens[1]), core.pc.eval());
+            }
         }
         else if(input.equals("pasm")) {
             Formatter.prettyPrint(asm);
@@ -441,14 +446,7 @@ public class SimCLI {
         String input;
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-        plp.ioreg = new plptool.mods.IORegistry(plp);
-        plp.sim = new SimCore((plptool.mips.Asm) plp.asm, plp.asm.getEntryPoint());
-        plp.sim.setStartAddr(plp.asm.getAddrTable()[0]);
-        plp.ioreg.loadPredefinedPreset(1);
-        plp.sim.reset();
-        ((plptool.mips.SimCore)plp.sim).printfrontend();
-        plp.sim.bus.enableAllModules();
-        Msg.M("Simulation core initialized.");
+        Msg.M("Welcome to PLP MIPS Simulator Command Line Interface");
         Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
         Msg.m(String.format("\n%08x", plp.sim.getFlags()) +
                              " " + plp.sim.getinstrcount() +
@@ -495,7 +493,7 @@ public class SimCLI {
                 Msg.M("\n pnextvars\n\tPrint pipeline registers' input values.");
                 Msg.M("\n pram <address> ..or.. pram\n\tPrint value of RAM at <address>. Print all if no argument is given.");
                 Msg.M("\n preg <address> ..or.. preg\n\tPrint contents of a register or print contents of register file.");
-                Msg.M("\n pprg\n\tPrint disassembly of current program loaded in the CPU.");
+                Msg.M("\n pprg <index>\n\tPrint disassembly of the contents of memory module with bus location specified by <index>");
                 Msg.M("\n pasm\n\tPrint program object code.");
                 Msg.M("\n pfd\n\tPrint CPU frontend states / IF stage input side values.");
 

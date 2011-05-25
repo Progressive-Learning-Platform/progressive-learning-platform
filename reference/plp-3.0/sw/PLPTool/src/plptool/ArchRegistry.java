@@ -94,7 +94,7 @@ public class ArchRegistry {
     }
 
     /**
-     * This methods returns a new instance of the simulation core.
+     * This method returns a new instance of the simulation core.
      *
      * @param plp The current instance of the project driver
      * @return SimCore instance of the ISA
@@ -122,7 +122,55 @@ public class ArchRegistry {
     }
 
     /**
-     * This methods returns a new instance of the simulation core frame.
+     * Additional simulation initialization code. Called by the ProjectDriver
+     * AFTER the I/O registry has been initialized
+     *
+     * @param plp The current instance of the project driver
+     */
+    public static void simulatorInitialization(ProjectDriver plp) {
+        String arch = plp.getArch();
+
+        if(arch == null)
+            return;
+
+        /**********************************************************************
+         * plpmips SimCore initialization
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp));
+            plp.sim.bus.enableAllModules();
+        }
+
+        // ... add your simulation core initialization here ... //
+    }
+
+    /**
+     * Launch a CLI for the simulator
+     *
+     * @param plp The current instance of the project driver
+     */
+    public static void launchCLISimulatorInterface(ProjectDriver plp) {
+        String arch = plp.getArch();
+
+        if(arch == null)
+            return;
+
+        /**********************************************************************
+         * plpmips SimCore CLI interface
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            plptool.mips.SimCLI.simCL(plp);
+        }
+
+        else
+            Msg.E("The ISA " + arch + " does not have a registered" +
+                  " CLI for the simulator.", Constants.PLP_ISA_NO_SIM_CLI, null);
+
+        // ... add your simulation core instantiation here ... //
+    }
+
+    /**
+     * This method returns a new instance of the simulation core frame.
      *
      * @param plp The current instance of the project driver
      * @return SimCoreGUI instance of the ISA
@@ -146,6 +194,12 @@ public class ArchRegistry {
             return null;
     }
 
+    /**
+     * This method returns a new instance of the serial programmer
+     *
+     * @param plp The current instance of the project driver
+     * @return SerialProgrammer instance of the ISA
+     */
     public static PLPSerialProgrammer createProgrammer(ProjectDriver plp) {
         String arch = plp.getArch();
 
