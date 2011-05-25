@@ -651,4 +651,9 @@ public class IORegistry {
             }
         });
     }
+
+    @Override
+    public String toString() {
+        return "IORegistry";
+    }
 }
