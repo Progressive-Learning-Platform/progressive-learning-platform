@@ -49,8 +49,13 @@ public class InterruptController extends PLPSimBusModule {
 	// IRQ = (stat[30:0] & mask[30:0] != 0) & stat[31]<GIE> 
         if((((stat & 0xefffffffL) & (mask & 0xefffffffL)) != 0)
                 && (stat & 0x80000000L) == 0x80000000L) {
+
+            Msg.D("IRQ. retaddr: " +
+                  String.format("0x%08x", ((SimCore)plp.sim).ex_stage.instrAddr),
+                  3, this);
+
 	    // save current PC
-            super.writeReg(super.startAddr+0x1c, ((SimCore)plp.sim).pc.eval(), false);
+            super.writeReg(super.startAddr+0x1c, ((SimCore)plp.sim).ex_stage.instrAddr, false);
 	    // raise IRQ
             plp.sim.setIRQ(1);
 	    // disable GIE

@@ -96,7 +96,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Issues a read to the bus. This will return a value from specified address
+     * Issue a read to the bus. This will return a value from specified address
      * starting with the module with lowest index (main memory preferably).
      * If there's any address space overlap, the module with lower index will
      * be read, but all modules do get the read command.
@@ -129,7 +129,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Issues a write to the bus. The write will be issued to all modules
+     * Issue a write to the bus. The write will be issued to all modules
      * if there's an address overlap.
      *
      * @param addr Address to write to
@@ -213,7 +213,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Evaluates all modules attached to the bus.
+     * Evaluate all modules attached to the bus.
      *
      * @return PLP_OK, or error code
      */
@@ -227,7 +227,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Evaluates module that has the specified index
+     * Evaluate module that has the specified index
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -244,7 +244,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Executes a GUI evaluation on the module that has the specified index
+     * Execute a GUI evaluation on the module that has the specified index
      *
      * @param index Index of the module
      * @param x Object to draw to, left to the module to implement
@@ -268,7 +268,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Enables all I/O mods.
+     * Enable all I/O mods.
      *
      * @return Returns 0 on completion.
      */
@@ -282,7 +282,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Disables all I/O mods. Including the main memory if it is attached to
+     * Disable all I/O mods. Including the main memory if it is attached to
      * the bus. Be careful.
      *
      * @return Returns 0 on completion.
@@ -297,7 +297,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Returns whether the specified module is enabled or not.
+     * Return whether the specified module is enabled or not.
      *
      * @param index Index of the module
      * @return Boolean on whether the module is enabled
@@ -317,7 +317,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Enables specified module, allowing evaluations and writes
+     * Enable specified module, allowing evaluations and writes
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -336,7 +336,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Disables specified module, disallowing evaluations and writes
+     * Disable specified module, disallowing evaluations and writes
      *
      * @param index Index of the module
      * @return PLP_OK, or error code
@@ -355,7 +355,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Clears saved values of specified module. This renders all registers
+     * Clear saved values of specified module. This renders all registers
      * of the module to be marked uninitialized
      *
      * @param index Index of the module
@@ -375,7 +375,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Returns the information string for the specified module.
+     * Return the information string for the specified module.
      *
      * @param index Index of the module
      * @return String of introduction
@@ -395,7 +395,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Returns the starting address of the specified module.
+     * Return the starting address of the specified module.
      *
      * @param index Index of the module
      * @return Starting address in (long)
@@ -415,7 +415,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Returns the ending address of the specified module
+     * Return the ending address of the specified module
      *
      * @param index Index of the module
      * @return Ending address in (long)
@@ -435,7 +435,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Returns number of modules attached to this bus
+     * Return number of modules attached to this bus
      *
      * @return Number of modules in (int)
      */
@@ -446,7 +446,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Returns a reference to the requested module for direct access.
+     * Return a reference to the requested module for direct access.
      *
      * @param index Index of the module
      * @return PLPSimBusModule reference of the module
@@ -466,7 +466,7 @@ public class PLPSimBus {
     }
 
     /**
-     * Issues bus.write(0) on all registers of the specified module
+     * Issue bus.write(0) on all registers of the specified module
      *
      * @param index Index of the module
      */
