@@ -54,7 +54,7 @@ public class VGA extends PLPSimBusModule {
     }
     
     private int draw() {
-        if(!enabled)
+        if(!enabled || frame == null)
             return Constants.PLP_OK;
 
         if(!super.isInitialized(startAddr + 4))

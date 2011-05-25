@@ -41,18 +41,16 @@ public class UART extends PLPSimBusModule {
     UARTFrame frame;
     Queue<Long> rb = new LinkedList<Long>();
 
-    public UART(long addr) {
+    public UART(long addr, UARTFrame frame) {
         super(addr, addr+12, true);
+        this.frame = frame;
+        frame.setUART(this);
     }
 
     public void receivedData(char c) {
         rb.add(new Long(c));
     }
 
-    public void setFrame(Object x) {
-        frame = (UARTFrame)x;
-        frame.setUART(this);
-    }
     public int eval() {
         /* handle new data received from the host */
         if (!ready && rb.size() != 0) {
@@ -103,7 +101,7 @@ public class UART extends PLPSimBusModule {
 
         if (addr == startAddr) { /* command register */
             if (d == 1) { /* send */
-                frame.addText(sendB);
+                if(frame != null) frame.addText(sendB);
             } else if (d == 2) /* clear rdy */
                 ready = false;
             else

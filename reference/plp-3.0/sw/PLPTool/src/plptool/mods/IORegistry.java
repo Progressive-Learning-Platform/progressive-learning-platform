@@ -270,7 +270,7 @@ public class IORegistry {
             // LEDArray is summoned
             case 1:
                 module = new LEDArray(addr);
-                moduleFrame = new LEDArrayFrame();
+                if(plp.g()) moduleFrame = new LEDArrayFrame();
 
                 break;
 
@@ -278,7 +278,7 @@ public class IORegistry {
             // Switches is summoned
             case 2:
                 module = new Switches(addr);
-                moduleFrame = new SwitchesFrame((Switches) module);
+                if(plp.g()) moduleFrame = new SwitchesFrame((Switches) module);
 
                 break;
 
@@ -292,7 +292,7 @@ public class IORegistry {
             // PLPID is summoned
             case 4:
                 module = new PLPID(addr);
-                moduleFrame = new PLPIDFrame((PLPID) module);
+                if(plp.g()) moduleFrame = new PLPIDFrame((PLPID) module);
                 break;
 
             /******************************************************************/
@@ -304,7 +304,7 @@ public class IORegistry {
             /******************************************************************/
             // VGA is summoned
             case 6:
-                moduleFrame = new VGAFrame();
+                if(plp.g()) moduleFrame = new VGAFrame();
                 module = new VGA(addr, plp.sim.bus, (VGAFrame) moduleFrame);
                 module.threaded = plptool.Config.threadedModEnabled;
                 module.stop = false;
@@ -321,16 +321,15 @@ public class IORegistry {
             /******************************************************************/
             // UART is summoned
             case 8:
-                module = new UART(addr);
-                moduleFrame = new UARTFrame();
-                ((UART)module).setFrame(moduleFrame);
+                if(plp.g()) moduleFrame = new UARTFrame();
+                module = new UART(addr, (UARTFrame) moduleFrame);
                 break;
 
             /******************************************************************/
             // Seven Segments is summoned
             case 9:
                 module = new SevenSegments(addr);
-                moduleFrame = new SevenSegmentsFrame();
+                if(plp.g()) moduleFrame = new SevenSegmentsFrame();
 
                 break;
 
