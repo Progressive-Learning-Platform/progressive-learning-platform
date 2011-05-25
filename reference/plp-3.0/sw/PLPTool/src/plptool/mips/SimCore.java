@@ -251,12 +251,29 @@ public class SimCore extends PLPSimCore {
         ret += ex_stage.eval();
         ret += id_stage.eval();
         
-        // Evaluate modules attached to the bus
-        ret += bus.eval();
-
         // Engage forwarding unit
         if(Config.simForwardingUnit)
             forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
+
+        // pc update logic (input side IF)
+        if(ex_stage.hot && ex_stage.ctl_pcsrc == 1)
+            pc.write(ex_stage.ctl_branchtarget);
+        else if(ex_stage.hot && ex_stage.ctl_jump == 1)
+            pc.write(ex_stage.ctl_jumptarget);
+        else if(!if_stall)
+            pc.write(pc.eval() + 4);
+
+        // Evaluate modules attached to the bus
+        ret += bus.eval();
+
+        // Interrupt request
+        if(IRQ > 0) { 
+            pc.write(ISR);
+            IRQ = 0; //hardware acknowledge;
+            sim_flags |= Constants.PLP_SIM_IRQ;
+            if_stall = true;
+            sim_flags |= Constants.PLP_SIM_IF_STALL_SET;
+        }
 
         if(ret != 0) {
             Msg.E("Evaluation failed. This simulation is stale.",
@@ -264,19 +281,6 @@ public class SimCore extends PLPSimCore {
 
             if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
         }
-
-        // pc update logic (input side IF)
-        if(ex_stage.hot && ex_stage.ctl_pcsrc == 1)
-            pc.write(ex_stage.ctl_branchtarget);
-        else if(ex_stage.hot && ex_stage.ctl_jump == 1)
-            pc.write(ex_stage.ctl_jumptarget);
-        else if(IRQ > 0) { // interrupt request
-            pc.write(ISR);
-            IRQ = 0; //hardware acknowledge;
-            sim_flags |= Constants.PLP_SIM_IRQ;
-        }
-        else if(!if_stall)
-            pc.write(pc.eval() + 4);
 
         // We're stalled in this cycle, do not fetch new instruction
         if(if_stall && !ex_continue) {
