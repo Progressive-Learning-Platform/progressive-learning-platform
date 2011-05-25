@@ -50,7 +50,7 @@ public class InterruptController extends PLPSimBusModule {
         if((((stat & 0xefffffffL) & (mask & 0xefffffffL)) != 0)
                 && (stat & 0x80000000L) == 0x80000000L) {
 	    // save current PC
-            super.writeReg(super.startAddr+0x1c, ((SimCore)plp.sim).pc.eval(), false);
+            super.writeReg(super.startAddr+0x1c, ((SimCore)plp.sim).pc.eval()+4, false);
 	    // raise IRQ
             plp.sim.setIRQ(1);
 	    // disable GIE

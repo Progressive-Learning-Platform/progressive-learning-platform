@@ -90,6 +90,7 @@ public class Constants {
     public static final int PLP_SIM_NO_EXECUTE_VIOLATION         = 270;
     public static final int PLP_SIM_MODULE_NO_DATA_ON_READ       = 271;
     public static final int PLP_SIM_UNSUPPORTED_ARCHITECTURE     = 272;
+    public static final int PLP_SIM_WRONG_MODULE_TYPE            = 273;
 
     // Programmer errors
     public static final int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
@@ -116,6 +117,9 @@ public class Constants {
     public static final int PLP_BACKEND_EMPTY_PROGRAM            = 1033;
     public static final int PLP_BACKEND_THREAD_EXCEPTION         = 1034;
     public static final int PLP_BACKEND_NO_NATIVE_SERIAL_LIBS    = 1035;
+
+    // Framework errors
+    public static final int PLP_ISA_NO_SIM_CLI                   = 2048;
 
     // ProjectDriver modes
     public static final int PLP_DEFAULT                          = 0;
