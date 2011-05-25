@@ -44,7 +44,7 @@ public class UART extends PLPSimBusModule {
     public UART(long addr, UARTFrame frame) {
         super(addr, addr+12, true);
         this.frame = frame;
-        frame.setUART(this);
+        if(frame != null) frame.setUART(this);
     }
 
     public void receivedData(char c) {

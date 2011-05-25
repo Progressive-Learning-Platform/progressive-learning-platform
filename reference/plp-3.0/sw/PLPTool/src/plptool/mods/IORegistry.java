@@ -254,6 +254,8 @@ public class IORegistry {
         PLPSimBusModule module = null;
         Object moduleFrame = null;
 
+        Msg.D("Loading " + mods[index][0], 3, this);
+
         switch(index) {
 
             // This is where the modules are initialized when the simulator
