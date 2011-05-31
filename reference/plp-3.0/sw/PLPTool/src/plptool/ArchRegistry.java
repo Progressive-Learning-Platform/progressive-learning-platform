@@ -137,7 +137,7 @@ public class ArchRegistry {
          * plpmips SimCore initialization
          **********************************************************************/
         else if(arch.equals("plpmips")) {
-            plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp));
+            plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
             plp.sim.bus.enableAllModules();
         }
 
