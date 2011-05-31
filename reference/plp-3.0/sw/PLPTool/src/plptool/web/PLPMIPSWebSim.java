@@ -40,6 +40,8 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                 public void run() {
                     initComponents();
                     btnStep.setEnabled(false);
+                    btnExec.setEnabled(false);
+                    txtCLI.setEnabled(false);
                     lblStatus.setText("Assemble whenever you're ready!");
                     txtEditor.setText(".org 0x10000000");
                 }
@@ -63,6 +65,8 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JTextPane();
         lblStatus = new javax.swing.JLabel();
+        txtCLI = new javax.swing.JTextField();
+        btnExec = new javax.swing.JButton();
 
         setName("Form"); // NOI18N
 
@@ -91,6 +95,21 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         lblStatus.setText("jLabel1");
         lblStatus.setName("lblStatus"); // NOI18N
 
+        txtCLI.setName("txtCLI"); // NOI18N
+        txtCLI.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCLIKeyPressed(evt);
+            }
+        });
+
+        btnExec.setText("Execute");
+        btnExec.setName("btnExec"); // NOI18N
+        btnExec.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExecActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -98,25 +117,33 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAssemble)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(10, 10, 10)
                         .addComponent(lblStatus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 440, Short.MAX_VALUE)
-                        .addComponent(btnStep)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 410, Short.MAX_VALUE)
+                        .addComponent(btnStep))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(txtCLI, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addComponent(btnExec)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCLI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExec))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnStep)
-                    .addComponent(btnAssemble)
-                    .addComponent(lblStatus))
+                    .addComponent(lblStatus)
+                    .addComponent(btnAssemble))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -128,6 +155,8 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
             btnAssemble.setText("Assemble");
             btnStep.setEnabled(false);
             lblStatus.setText("Assemble whenever you're ready!");
+            txtCLI.setEnabled(false);
+            btnExec.setEnabled(false);
             return;
         }
 
@@ -140,7 +169,8 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         if(plp.assemble() == Constants.PLP_OK &&
            plp.simulate() == Constants.PLP_OK) {
             btnAssemble.setText("Back to Editor");
-            
+            txtCLI.setEnabled(true);
+            btnExec.setEnabled(true);
             txtEditor.setEditable(false);
             btnStep.setEnabled(true);
             lblStatus.setText("Hit step to advance the program");
@@ -153,14 +183,48 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
         txtEditor.setText("");
-        SimCLI.simCLCommand("s", plp);
+        plp.sim.step();
+        SimCore sc = (SimCore) plp.sim;
+        
+        Msg.M("Register File Contents");
+        Msg.M("======================");
+
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 4; j++)
+                Msg.m((i+8*j) + ((i+8*j < 10) ? "  " : " ") + String.format("%08x", sc.regfile.read(i+8*j)) + "  ");
+
+            Msg.M("");
+        }
+        
+        Msg.M("");
+        Msg.M("Instructions in-flight");
+        Msg.M("======================");
+
+        sc.wb_stage.printinstr();
+        sc.mem_stage.printinstr();
+        sc.ex_stage.printinstr();
+        sc.id_stage.printinstr();
+        sc.printfrontend();
     }//GEN-LAST:event_btnStepActionPerformed
+
+    private void btnExecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecActionPerformed
+        txtEditor.setText("");
+        SimCLI.simCLCommand(txtCLI.getText(), plp);
+        txtCLI.setText("");
+    }//GEN-LAST:event_btnExecActionPerformed
+
+    private void txtCLIKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCLIKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnExecActionPerformed(null);
+    }//GEN-LAST:event_txtCLIKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAssemble;
+    private javax.swing.JButton btnExec;
     private javax.swing.JButton btnStep;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblStatus;
+    private javax.swing.JTextField txtCLI;
     private javax.swing.JTextPane txtEditor;
     // End of variables declaration//GEN-END:variables
 
