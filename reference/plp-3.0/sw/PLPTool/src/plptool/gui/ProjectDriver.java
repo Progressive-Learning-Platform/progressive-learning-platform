@@ -116,6 +116,7 @@ public class ProjectDriver {
     public plptool.gui.QuickRef                g_qref;     // Quick Reference
     public plptool.gui.FindAndReplace          g_find;     // Find and Replace
     private boolean                            g;          // are we driving a GUI?
+    private boolean                            applet;     // are we driving an applet?
 
     // Desktop
     public javax.swing.JDesktopPane            g_desktop;  // Desktop pane
@@ -137,6 +138,7 @@ public class ProjectDriver {
      */
     public ProjectDriver(int modes, String arch) {
         this.g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
+        this.applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
         this.arch = arch;
 
         modified = false;
@@ -854,6 +856,9 @@ public class ProjectDriver {
             /*************************************************/
 
             g_simsh.setVisible(true);
+        }
+        else if (applet) {
+            // do nothing
         } else
             ArchRegistry.launchCLISimulatorInterface(this);
 

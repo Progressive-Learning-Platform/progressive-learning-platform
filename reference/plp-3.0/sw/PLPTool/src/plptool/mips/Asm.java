@@ -1016,7 +1016,6 @@ public class Asm extends plptool.PLPAsm {
         }
 
         Msg.D("assemble(): Assembly completed.", 1, this);
-        assembled = true;
         
         } catch(Exception e) {
             error++; Msg.E("assemble(" + sourceList.get(asmFileMap[i]).getAsmFilePath() + ":" +
@@ -1027,6 +1026,8 @@ public class Asm extends plptool.PLPAsm {
         if(error > 0)
             Msg.E("assemble: " +
                      error + " error(s).", Constants.PLP_ASM_ASSEMBLE_FAILED, this);
+        else
+            assembled = true;
 
         return (error == 0) ? Constants.PLP_OK : Constants.PLP_ASM_ASSEMBLE_FAILED;
     }
