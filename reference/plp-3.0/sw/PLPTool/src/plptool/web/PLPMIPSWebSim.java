@@ -21,6 +21,7 @@ package plptool.web;
 import plptool.*;
 import plptool.mips.*;
 import plptool.mods.*;
+import plptool.gui.ProjectDriver;
 
 /**
  * Java applet interface for the PLP MIPS simulation.
@@ -30,8 +31,7 @@ import plptool.mods.*;
 public class PLPMIPSWebSim extends javax.swing.JApplet {
 
     String oldStr;
-    Asm asm;
-    SimCore sim;
+    ProjectDriver plp;
 
     /** Initializes the applet PLPMIPSWebSim */
     public void init() {
@@ -134,19 +134,13 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         oldStr = txtEditor.getText();
         txtEditor.setText("");
         Msg.output = txtEditor;
-        asm = new Asm(oldStr, "WebApplet");
-        int ret = -1;
-        if(asm.preprocess(0) == Constants.PLP_OK)
-            ret = asm.assemble();
+        plp = new ProjectDriver(Constants.PLP_GUI_APPLET, "plpmips");
+        plp.asms.add(new PLPAsmSource(oldStr, "WebApplet", 0));
 
-        if(asm.isAssembled()) {
+        if(plp.assemble() == Constants.PLP_OK &&
+           plp.simulate() == Constants.PLP_OK) {
             btnAssemble.setText("Back to Editor");
-            sim = new SimCore(asm, asm.getEntryPoint());
-            sim.bus.add(new InterruptController(0xf0700000L, (PLPSimCore) sim));
-            sim.bus.add(new MemModule(0x10000000L, 0x1000000, true));
-            sim.bus.enableAllModules();
-            sim.loadProgram(asm);
-            sim.reset();
+            
             txtEditor.setEditable(false);
             btnStep.setEnabled(true);
             lblStatus.setText("Hit step to advance the program");
@@ -159,14 +153,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
         txtEditor.setText("");
-        sim.step();
-        Msg.M("");
-        sim.wb_stage.printinstr();
-        sim.mem_stage.printinstr();
-        sim.ex_stage.printinstr();
-        sim.id_stage.printinstr();
-        sim.printfrontend();
-        Msg.M("-------------------------------------");
+        SimCLI.simCLCommand("s", plp);
     }//GEN-LAST:event_btnStepActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -145,10 +145,12 @@ public class ProjectDriver {
         plpfile = null;
         halt = false;
 
+        if(applet) asms = new ArrayList<PLPAsmSource>();
+
         this.ioreg = new plptool.mods.IORegistry(this);
-        this.curdir = (new java.io.File(".")).getAbsolutePath();
+        if(!applet) this.curdir = (new java.io.File(".")).getAbsolutePath();
         
-        if(g) {
+        if(g && !applet) {
             this.g_err = new SimErrorFrame();
             this.g_dev = new Develop(this);
             this.g_simsh = new SimShell(this);
@@ -181,7 +183,7 @@ public class ProjectDriver {
         serial_support = true;
 
         try {
-            gnu.io.RXTXVersion.getVersion();
+            if(!applet) gnu.io.RXTXVersion.getVersion();
         } catch(UnsatisfiedLinkError e) {
             Msg.W("Failed to detect native RXTX library. " +
                   "Functionality requiring serial communication will fail.", null);
