@@ -33,12 +33,10 @@ public class PLPTest {
             System.exit(-1);
 
         
-        SimCore sim = new SimCore(asm, 0);
-        //PLPSimMods mods = new PLPSimMods(sim);
-        //sim.bus.add(mods.io_leds);
+        plptool.mips.SimCore sim = new plptool.mips.SimCore(asm, 0);
+        sim.bus.add(new plptool.mods.MemModule(0, 0x1000, true));
+        sim.bus.add(new plptool.mods.LEDArray(0x80004004L));
         sim.bus.enableAllModules();
-        //sim.bus.write((long) 0x8000400 << 4, 0xbeef, false);
-        //System.out.println(String.format("%08x", sim.bus.read((long) 0x8000400 << 4)));
         sim.bus.eval();
         sim.reset();
         sim.step();
@@ -58,5 +56,8 @@ public class PLPTest {
         sim.bus.eval();
         sim.regfile.print(3);
         sim.regfile.print(4);
+
+
+
     }
 }

@@ -34,7 +34,7 @@ public class SimCLI {
     static boolean silent = false;
 
     public static void simCLCommand(String input, plptool.gui.ProjectDriver plp) {
-        if(plp.g())
+        if(plp != null && plp.g())
             plp.g_err.clearError();
 
         SimCore core = (SimCore) plp.sim;

@@ -21,7 +21,6 @@ package plptool.mods;
 import plptool.Constants;
 import plptool.Msg;
 import plptool.PLPSimBusModule;
-import plptool.gui.ProjectDriver;
 import plptool.mips.*;
 
 /**
@@ -31,16 +30,16 @@ import plptool.mips.*;
  */
 public class InterruptController extends PLPSimBusModule {
 
-    ProjectDriver plp;
+    SimCore sim;
 
-    public InterruptController(long addr, ProjectDriver plp) {
+    public InterruptController(long addr, plptool.PLPSimCore sim) {
         super(addr, addr+32, true);
-        this.plp = plp;
+        this.sim = (SimCore) sim;
     }
 
     public int eval() {
 
-        if(!plp.getArch().equals("plpmips"))
+        if(!(sim instanceof SimCore))
             return Constants.PLP_SIM_UNSUPPORTED_ARCHITECTURE;
 
 	long stat = (Long) super.readReg(super.startAddr + 0x10);
@@ -51,13 +50,13 @@ public class InterruptController extends PLPSimBusModule {
                 && (stat & 0x80000000L) == 0x80000000L) {
 
             Msg.D("IRQ. retaddr: " +
-                  String.format("0x%08x", ((SimCore)plp.sim).ex_stage.instrAddr),
+                  String.format("0x%08x", sim.ex_stage.instrAddr),
                   3, this);
 
 	    // save current PC
-            super.writeReg(super.startAddr+0x1c, ((SimCore)plp.sim).ex_stage.instrAddr, false);
+            super.writeReg(super.startAddr+0x1c, sim.ex_stage.instrAddr, false);
 	    // raise IRQ
-            plp.sim.setIRQ(1);
+            sim.setIRQ(1);
 	    // disable GIE
             super.writeReg(super.startAddr+0x10, stat & 0x7fffffffL, false);
         }

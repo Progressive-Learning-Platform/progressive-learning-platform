@@ -125,6 +125,7 @@ public class Constants {
     public static final int PLP_DEFAULT                          = 0;
     public static final int PLP_GUI_START_IDE                    = 1;
     public static final int PLP_GUI_START_SIM                    = 2;
+    public static final int PLP_GUI_APPLET                       = 3;
 
     // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFF80;
