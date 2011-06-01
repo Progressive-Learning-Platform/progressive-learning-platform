@@ -16,10 +16,11 @@
 
  */
 
-package plptool.gui;
+package plptool.gui.frames;
 
 import javax.swing.text.Document;
 import plptool.Msg;
+import plptool.gui.ProjectDriver;
 
 /**
  *

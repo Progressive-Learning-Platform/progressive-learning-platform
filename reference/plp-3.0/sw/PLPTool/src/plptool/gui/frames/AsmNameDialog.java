@@ -16,7 +16,9 @@
 
  */
 
-package plptool.gui;
+package plptool.gui.frames;
+
+import plptool.gui.ProjectDriver;
 
 /**
  *

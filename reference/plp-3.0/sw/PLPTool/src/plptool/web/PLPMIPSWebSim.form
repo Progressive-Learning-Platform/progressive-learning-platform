@@ -27,11 +27,11 @@
                       <Component id="btnAssemble" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Component id="lblStatus" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="410" max="32767" attributes="0"/>
+                      <EmptySpace pref="422" max="32767" attributes="0"/>
                       <Component id="btnStep" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="txtCLI" pref="511" max="32767" attributes="0"/>
+                      <Component id="txtCLI" pref="522" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Component id="btnExec" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -92,7 +92,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="txtEditor">
           <Properties>
-            <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Monospaced" size="12" style="0"/>
             </Property>
             <Property name="name" type="java.lang.String" value="txtEditor" noResource="true"/>

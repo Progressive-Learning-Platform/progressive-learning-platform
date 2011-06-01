@@ -224,7 +224,7 @@ public class IORegistry {
 
         mods[10][0] = "PLP MIPS Interrupt Controller";
         mods[10][1] = false;
-        mods[10][2] = 7;
+        mods[10][2] = 2;
         mods[10][3] = "This module implements the PLP MIPS interrupt controller.";
         mods[10][4] = true;
         mods[10][5] = false;

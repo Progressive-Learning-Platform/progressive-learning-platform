@@ -16,10 +16,11 @@
 
  */
 
-package plptool.gui;
+package plptool.gui.frames;
 
 import plptool.Constants;
 import javax.swing.table.DefaultTableModel;
+import plptool.gui.ProjectDriver;
 
 /**
  *
