@@ -18,6 +18,8 @@
 
 package plptool.gui;
 
+import plptool.gui.frames.ConsoleFrame;
+import plptool.gui.frames.SimShell;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.Msg;

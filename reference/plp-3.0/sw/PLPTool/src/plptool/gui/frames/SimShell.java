@@ -16,7 +16,7 @@
 
  */
 
-package plptool.gui;
+package plptool.gui.frames;
 
 import plptool.*;
 import org.jdesktop.application.Action;
@@ -34,6 +34,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.awt.Color;
 import javax.swing.JTextField;
+import plptool.gui.ProjectDriver;
+import plptool.gui.SimRunner;
 
 /**
  *

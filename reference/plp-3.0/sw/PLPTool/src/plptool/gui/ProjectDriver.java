@@ -20,6 +20,9 @@ package plptool.gui;
 
 import java.awt.Color;
 import plptool.*;
+import plptool.gui.frames.*;
+import plptool.mods.Preset;
+import plptool.mods.IORegistry;
 
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -73,16 +76,16 @@ public class ProjectDriver {
     public byte[]                              binimage;   // binary image
     public String                              hexstring;  // hex string
     public String                              meta;       // Meta String
-    public plptool.mods.Preset                 smods;      // Saved mods information
+    public Preset                 smods;      // Saved mods information
 
     /*
      * References to PLP configuration and messaging classes
      */ // --
 
-    public plptool.Config                      cfg;        // Configuration
-    public plptool.Msg                         msg;        // Messaging class
+    public Config                      cfg;        // Configuration
+    public Msg                         msg;        // Messaging class
 
-    public ArrayList<plptool.PLPAsmSource>     asms;       // Assembly files
+    public ArrayList<PLPAsmSource>     asms;       // Assembly files
 
     private boolean                            halt;       // critical error
     
@@ -90,31 +93,31 @@ public class ProjectDriver {
      * References to the workflow framework objects
      */ // --
 
-    public plptool.PLPAsm                      asm;        // Assembler
-    public plptool.PLPAsm[]                    asm_array;  // Asm array
-    public plptool.PLPLinker                   lnkr;       // Linker
-    public plptool.PLPSerialProgrammer         prg;        // Programmer
+    public PLPAsm                      asm;        // Assembler
+    public PLPAsm[]                    asm_array;  // Asm array
+    public PLPLinker                   lnkr;       // Linker
+    public PLPSerialProgrammer         prg;        // Programmer
 
-    public plptool.PLPSimCore                  sim;        // Simulation core
-    public plptool.mods.IORegistry             ioreg;      // I/O registry
-    public plptool.PLPSimCoreGUI               g_sim;      // Sim Core GUI
+    public PLPSimCore                  sim;        // Simulation core
+    public IORegistry             ioreg;      // I/O registry
+    public PLPSimCoreGUI               g_sim;      // Sim Core GUI
 
     /*
      * PLP GUI Windows
      */ // --
-    public plptool.gui.SimShell                g_simsh;    // PLP Simulator Frontend
-    public plptool.gui.IORegistryFrame         g_ioreg;    // I/O registry GUI
-    public plptool.gui.Develop                 g_dev;      // IDE GUI
-    public plptool.gui.SimErrorFrame           g_err;      // Error frame
-    public plptool.gui.AboutBoxDialog          g_about;    // About frame
-    public plptool.gui.OptionsFrame            g_opts;     // Options frame
-    public plptool.gui.ProgrammerDialog        g_prg;      // Programming dialog
-    public plptool.gui.AsmNameDialog           g_fname;    // ASM Name dialog
-    public plptool.gui.SimRunner               g_simrun;   // SimRunner thread
-    public plptool.gui.Watcher                 g_watcher;  // Watcher window
-    public plptool.gui.ASMSimView              g_asmview;  // ASM Sim viewer
-    public plptool.gui.QuickRef                g_qref;     // Quick Reference
-    public plptool.gui.FindAndReplace          g_find;     // Find and Replace
+    public SimShell                g_simsh;    // PLP Simulator Frontend
+    public IORegistryFrame         g_ioreg;    // I/O registry GUI
+    public Develop                 g_dev;      // IDE GUI
+    public SimErrorFrame           g_err;      // Error frame
+    public AboutBoxDialog          g_about;    // About frame
+    public OptionsFrame            g_opts;     // Options frame
+    public ProgrammerDialog        g_prg;      // Programming dialog
+    public AsmNameDialog           g_fname;    // ASM Name dialog
+    public SimRunner               g_simrun;   // SimRunner thread
+    public Watcher                 g_watcher;  // Watcher window
+    public ASMSimView              g_asmview;  // ASM Sim viewer
+    public QuickRef                g_qref;     // Quick Reference
+    public FindAndReplace          g_find;     // Find and Replace
     private boolean                            g;          // are we driving a GUI?
     private boolean                            applet;     // are we driving an applet?
 
@@ -128,7 +131,7 @@ public class ProjectDriver {
     public TimeoutWatcher                      p_watchdog;
 
     // Others
-    public plptool.gui.SerialTerminal          term;        // Serial terminal
+    public SerialTerminal          term;        // Serial terminal
 
     /**
      * The constructor for the project driver.
@@ -147,7 +150,7 @@ public class ProjectDriver {
 
         if(applet) asms = new ArrayList<PLPAsmSource>();
 
-        this.ioreg = new plptool.mods.IORegistry(this);
+        this.ioreg = new IORegistry(this);
         if(!applet) this.curdir = (new java.io.File(".")).getAbsolutePath();
         
         if(g && !applet) {
@@ -236,8 +239,8 @@ public class ProjectDriver {
         modified = true;
         plpfile = new File("Unsaved Project");
 
-        asms = new ArrayList<plptool.PLPAsmSource>();
-        asms.add(new plptool.PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
+        asms = new ArrayList<PLPAsmSource>();
+        asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
         open_asm = 0;
         smods = null;
 
@@ -268,9 +271,9 @@ public class ProjectDriver {
         modified = true;
         plpfile = new File("Unsaved Project");
 
-        asms = new ArrayList<plptool.PLPAsmSource>();
+        asms = new ArrayList<PLPAsmSource>();
         if(importAsm(asmPath) != Constants.PLP_OK) {
-            asms.add(new plptool.PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
+            asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
         }
         open_asm = 0;
         smods = null;
@@ -318,7 +321,7 @@ public class ProjectDriver {
 
         meta = "PLP-3.0\n";
 
-        if(asm != null && asm.isAssembled()) {
+        if(asm != null && asm.isAssembled() && arch.equals("plpmips")) {
             objCode = asm.getObjectCode();
             Msg.D("Creating verilog hex code...", 2, this);
             verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
@@ -518,7 +521,7 @@ public class ProjectDriver {
             return Msg.E("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
-        asms = new ArrayList<plptool.PLPAsmSource>();
+        asms = new ArrayList<PLPAsmSource>();
         smods = null;
 
         try {
@@ -535,7 +538,7 @@ public class ProjectDriver {
             metaStr = new String(image);
 
             if(entry.getName().endsWith("asm")) {
-                asms.add(new plptool.PLPAsmSource(metaStr, entry.getName(), asmIndex));
+                asms.add(new PLPAsmSource(metaStr, entry.getName(), asmIndex));
                 Msg.I(asmIndex + ": "
                          + entry.getName()
                          + " (" + entry.getSize() + " bytes)", null);
@@ -586,7 +589,7 @@ public class ProjectDriver {
 
                     if(lines[i].equals("MODS")) {
                         i++;
-                        this.smods = new plptool.mods.Preset();
+                        this.smods = new Preset();
 
                         while(i < lines.length && !lines[i].equals("END")) {
                             tokens = lines[i].split("::");
@@ -818,7 +821,7 @@ public class ProjectDriver {
             g_simsh.destroySimulation();
 
         sim = ArchRegistry.createSimCore(this);
-        ioreg = new plptool.mods.IORegistry(this);
+        ioreg = new IORegistry(this);
         ArchRegistry.simulatorInitialization(this);
 
         Msg.D("smods is " + (smods == null ? "null" : "not null")

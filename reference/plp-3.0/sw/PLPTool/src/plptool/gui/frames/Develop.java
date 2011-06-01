@@ -16,7 +16,7 @@
 
  */
 
-package plptool.gui;
+package plptool.gui.frames;
 
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -39,6 +39,8 @@ import javax.swing.event.UndoableEditListener;
 import plptool.Msg;
 import plptool.Constants;
 import plptool.Config;
+import plptool.gui.ProjectDriver;
+import plptool.gui.SerialTerminal;
 
 /**
  *
@@ -735,10 +737,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {

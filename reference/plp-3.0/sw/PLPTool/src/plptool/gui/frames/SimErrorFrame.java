@@ -22,7 +22,7 @@
  * Created on Dec 6, 2010, 6:37:51 PM
  */
 
-package plptool.gui;
+package plptool.gui.frames;
 
 import java.awt.Color;
 

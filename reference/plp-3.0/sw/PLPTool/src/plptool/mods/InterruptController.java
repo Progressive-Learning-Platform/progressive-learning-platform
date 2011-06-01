@@ -33,7 +33,7 @@ public class InterruptController extends PLPSimBusModule {
     SimCore sim;
 
     public InterruptController(long addr, plptool.PLPSimCore sim) {
-        super(addr, addr+32, true);
+        super(addr, addr+4, true);
         this.sim = (SimCore) sim;
     }
 
@@ -42,23 +42,18 @@ public class InterruptController extends PLPSimBusModule {
         if(!(sim instanceof SimCore))
             return Constants.PLP_SIM_UNSUPPORTED_ARCHITECTURE;
 
-	long stat = (Long) super.readReg(super.startAddr + 0x10);
-	long mask = (Long) super.readReg(super.startAddr + 0x14);
+	long stat = (Long) super.readReg(super.startAddr);
+	long mask = (Long) super.readReg(super.startAddr + 0x4);
 
 	// IRQ = (stat[30:0] & mask[30:0] != 0) & stat[31]<GIE> 
         if((((stat & 0xefffffffL) & (mask & 0xefffffffL)) != 0)
                 && (stat & 0x80000000L) == 0x80000000L) {
 
-            Msg.D("IRQ. retaddr: " +
-                  String.format("0x%08x", sim.ex_stage.instrAddr),
-                  3, this);
+            // disable GIE
+            super.writeReg(super.startAddr, stat & 0x7fffffffL, false);
 
-	    // save current PC
-            super.writeReg(super.startAddr+0x1c, sim.ex_stage.instrAddr, false);
 	    // raise IRQ
-            sim.setIRQ(1);
-	    // disable GIE
-            super.writeReg(super.startAddr+0x10, stat & 0x7fffffffL, false);
+            sim.setIRQ(stat);
         }
 
         return Constants.PLP_OK;

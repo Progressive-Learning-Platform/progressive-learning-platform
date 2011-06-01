@@ -2,7 +2,7 @@
  * PLPToolAboutBox.java
  */
 
-package plptool.gui;
+package plptool.gui.frames;
 
 import org.jdesktop.application.Action;
 import java.net.URI;

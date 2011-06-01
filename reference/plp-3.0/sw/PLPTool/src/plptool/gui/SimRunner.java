@@ -44,26 +44,31 @@ public class SimRunner extends Thread {
     @Override
     public void run() {
         Msg.lastError = 0;
-        plp.g_err.clearError();
+        if(plp.g())
+            plp.g_err.clearError();
         startInstr = sim.getinstrcount();
         Msg.M("--- run");
         startTime = System.currentTimeMillis();
-        plp.g_simsh.setStatusString("Running", Color.green);
+        if(plp.g())
+            plp.g_simsh.setStatusString("Running", Color.green);
 
         while(stepCount > 0) {
             int steps = Integer.parseInt(plp.g_simsh.getTxtSteps().getText());
             if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps && Msg.lastError == 0; i++)
                     plp.sim.step();
-                plp.g_sim.updateComponents();
+                if(plp.g())
+                    plp.g_sim.updateComponents();
             } else {
-                plp.g_simsh.getTxtSteps().setText("1");
+                if(plp.g()) plp.g_simsh.getTxtSteps().setText("1");
                 steps = 1;
             }
             if(Config.simRefreshGUIDuringSimRun)
-                plp.updateComponents();
+                if(plp.g())
+                    plp.updateComponents();
             if(Msg.lastError != 0) {
-                plp.g_err.setError(Msg.lastError);
+                if(plp.g())
+                    plp.g_err.setError(Msg.lastError);
                 break;
             }
             try {
@@ -71,15 +76,19 @@ public class SimRunner extends Thread {
             } catch(Exception e) {}
         }
 
-        if(Msg.lastError != 0)
-            plp.g_simsh.setStatusString("ERROR", Color.red);
+        if(Msg.lastError != 0) {
+            if(plp.g())
+                plp.g_simsh.setStatusString("ERROR", Color.red);
+        }
         else
-            plp.g_simsh.setStatusString("Ready", Color.black);
+            if(plp.g())
+                plp.g_simsh.setStatusString("Ready", Color.black);
 
         long time = System.currentTimeMillis() - startTime;
         Msg.m("--- SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
         Msg.M("in " + time + " milliseconds of real time.");
         
-        plp.g_simsh.unselectTglRun();
+        if(plp.g())
+            plp.g_simsh.unselectTglRun();
     }
 }

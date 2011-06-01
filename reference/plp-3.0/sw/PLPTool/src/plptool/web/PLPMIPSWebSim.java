@@ -43,7 +43,12 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                     btnExec.setEnabled(false);
                     txtCLI.setEnabled(false);
                     lblStatus.setText("Assemble whenever you're ready!");
-                    txtEditor.setText(".org 0x10000000");
+                    txtEditor.setText(".org 0x10000000\n" +
+                                      "\n" +
+                                      "\tmove $t0, $0" +
+                                      "\nloop:" +
+                                      "\n\tj loop" +
+                                      "\n\taddiu $t0, $t0, 1\t\t# increment $t0 by one");
                 }
             });
         } catch (Exception ex) {
