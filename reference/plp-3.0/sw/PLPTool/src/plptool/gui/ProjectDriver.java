@@ -784,6 +784,7 @@ public class ProjectDriver {
         if(asm != null && asm.isAssembled() && ret == 0) {
             if(!wasAssembled)
                 modified = true;
+            Msg.I("Done.", null);
             if(g) g_dev.enableSimControls();
         }
         else
@@ -793,8 +794,6 @@ public class ProjectDriver {
             refreshProjectView(false);
             g_dev.getEditor().setCaretPosition(caretPos);
         }
-
-        Msg.I("Done.", null);
 
         return Constants.PLP_OK;
     }
