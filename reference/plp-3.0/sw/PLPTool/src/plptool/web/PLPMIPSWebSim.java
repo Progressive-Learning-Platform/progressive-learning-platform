@@ -168,6 +168,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         oldStr = txtEditor.getText();
         txtEditor.setText("");
         Msg.output = txtEditor;
+        Msg.M("PLPTool build: " + Version.stamp);
         plp = new ProjectDriver(Constants.PLP_GUI_APPLET, "plpmips");
         plp.asms.add(new PLPAsmSource(oldStr, "WebApplet", 0));
 
