@@ -168,16 +168,22 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         oldStr = txtEditor.getText();
         txtEditor.setText("");
         Msg.output = txtEditor;
-        Msg.M("PLPTool build: " + Version.stamp);
+        Msg.M("PLPTool build: " + Version.stamp + "\n");
         plp = new ProjectDriver(Constants.PLP_GUI_APPLET, "plpmips");
         plp.asms.add(new PLPAsmSource(oldStr, "WebApplet", 0));
+        plp.assemble();
 
-        if(plp.assemble() == Constants.PLP_OK &&
-           plp.simulate() == Constants.PLP_OK) {
+        if(plp.asm != null) {
             btnAssemble.setText("Back to Editor");
+            txtEditor.setEditable(false);
+            
+            if (plp.simulate() != Constants.PLP_OK) {
+                lblStatus.setText("Assemble failed, check your code!");
+                return;
+            }
+            
             txtCLI.setEnabled(true);
             btnExec.setEnabled(true);
-            txtEditor.setEditable(false);
             btnStep.setEnabled(true);
             lblStatus.setText("Hit step to advance the program");
         } else {
