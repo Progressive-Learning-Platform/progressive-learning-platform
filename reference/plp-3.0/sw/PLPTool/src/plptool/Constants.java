@@ -117,6 +117,7 @@ public class Constants {
     public static final int PLP_BACKEND_EMPTY_PROGRAM            = 1033;
     public static final int PLP_BACKEND_THREAD_EXCEPTION         = 1034;
     public static final int PLP_BACKEND_NO_NATIVE_SERIAL_LIBS    = 1035;
+    public static final int PLP_BACKEND_ASM_DOES_NOT_EXIST       = 1036;
 
     // Framework errors
     public static final int PLP_ISA_NO_SIM_CLI                   = 2048;
@@ -126,6 +127,7 @@ public class Constants {
     public static final int PLP_GUI_START_IDE                    = 1;
     public static final int PLP_GUI_START_SIM                    = 2;
     public static final int PLP_GUI_APPLET                       = 4;
+    public static final int PLP_NON_INTERACTIVE                  = 8;
 
     // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFF80;

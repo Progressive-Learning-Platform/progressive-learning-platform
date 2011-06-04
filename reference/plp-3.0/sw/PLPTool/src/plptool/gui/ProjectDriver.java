@@ -51,7 +51,7 @@ import javax.swing.tree.*;
  */
 public class ProjectDriver {
 
-    public SingleFrameApplication              app;        // App
+    public SingleFrameApplication  app;        // App
 
     /*
      * These variables hold some project file information for this driver.
@@ -62,45 +62,45 @@ public class ProjectDriver {
      * arch         - active ISA for this project
      */ // --
 
-    public File                                plpfile;
-    private boolean                            modified;
-    public int                                 open_asm;
-    public String                              curdir;
-    private String                             arch;    
+    public File                    plpfile;
+    private boolean                modified;
+    public int                     open_asm;
+    public String                  curdir;
+    private String                 arch;    
 
     /*
      * These variables hold data and information loaded from
      * the plp project file.
      */ // --
 
-    public byte[]                              binimage;   // binary image
-    public String                              hexstring;  // hex string
-    public String                              meta;       // Meta String
-    public Preset                 smods;      // Saved mods information
+    public byte[]                  binimage;   // binary image
+    public String                  hexstring;  // hex string
+    public String                  meta;       // Meta String
+    public Preset                  smods;      // Saved mods information
 
     /*
      * References to PLP configuration and messaging classes
      */ // --
 
-    public Config                      cfg;        // Configuration
-    public Msg                         msg;        // Messaging class
+    public Config                  cfg;        // Configuration
+    public Msg                     msg;        // Messaging class
 
-    public ArrayList<PLPAsmSource>     asms;       // Assembly files
+    public ArrayList<PLPAsmSource> asms;       // Assembly files
 
-    private boolean                            halt;       // critical error
+    private boolean                halt;       // critical error
     
     /*
      * References to the workflow framework objects
      */ // --
 
-    public PLPAsm                      asm;        // Assembler
-    public PLPAsm[]                    asm_array;  // Asm array
-    public PLPLinker                   lnkr;       // Linker
-    public PLPSerialProgrammer         prg;        // Programmer
+    public PLPAsm                  asm;        // Assembler
+    public PLPAsm[]                asm_array;  // Asm array
+    public PLPLinker               lnkr;       // Linker
+    public PLPSerialProgrammer     prg;        // Programmer
 
-    public PLPSimCore                  sim;        // Simulation core
-    public IORegistry             ioreg;      // I/O registry
-    public PLPSimCoreGUI               g_sim;      // Sim Core GUI
+    public PLPSimCore              sim;        // Simulation core
+    public IORegistry              ioreg;      // I/O registry
+    public PLPSimCoreGUI           g_sim;      // Sim Core GUI
 
     /*
      * PLP GUI Windows
@@ -118,17 +118,17 @@ public class ProjectDriver {
     public ASMSimView              g_asmview;  // ASM Sim viewer
     public QuickRef                g_qref;     // Quick Reference
     public FindAndReplace          g_find;     // Find and Replace
-    private boolean                            g;          // are we driving a GUI?
-    private boolean                            applet;     // are we driving an applet?
+    private boolean                g;          // are we driving a GUI?
+    private boolean                applet;     // are we driving an applet?
 
     // Desktop
     public javax.swing.JDesktopPane            g_desktop;  // Desktop pane
 
     // Programmer
-    private boolean                            serial_support;
-    public gnu.io.SerialPort                   p_port;
-    public int                                 p_progress;
-    public TimeoutWatcher                      p_watchdog;
+    private boolean                serial_support;
+    public gnu.io.SerialPort       p_port;
+    public int                     p_progress;
+    public TimeoutWatcher          p_watchdog;
 
     // Others
     public SerialTerminal          term;        // Serial terminal
@@ -940,6 +940,17 @@ public class ProjectDriver {
     }
 
     /**
+     *
+     * @return boolean whether the project is assembled
+     */
+    public boolean isAssembled() {
+        if(asm != null)
+            return asm.isAssembled();
+
+        return false;
+    }
+
+    /**
      * Getter function for the asm source file with the specified index
      *
      * @param index Index of source file to get
@@ -953,6 +964,21 @@ public class ProjectDriver {
         }
 
         return asms.get(index);
+    }
+
+    /**
+     * Getter function for the asm source file with the specified filename
+     *
+     * @param asmFileName identifier for the source asm
+     * @return PLPAsmSource object that corresponds to index
+     */
+    public PLPAsmSource getAsm(String asmFileName) {
+        for(int i = 0; i < asms.size(); i++) {
+            if(asms.get(i).getAsmFilePath().equals(asmFileName))
+                return asms.get(i);
+        }
+
+        return null;
     }
 
     /**
@@ -1098,6 +1124,22 @@ public class ProjectDriver {
         if(g) refreshProjectView(false);
 
         return Constants.PLP_OK;
+    }
+    /**
+     * Remove the source file with the specified name
+     *
+     * @param asmFileName Name of the source file to remove
+     * @return PLP_OK on successful operation, error code otherwise
+     */
+    public int removeAsm(String asmFileName) {
+        for(int i = 0; i < asms.size(); i++) {
+            if (asms.get(i).getAsmFilePath().equals(asmFileName))
+                return removeAsm(i);
+        }
+
+        return Msg.E("removeAsm: Can not find source file with the name \"" +
+                     asmFileName + "\" within the project.",
+                     Constants.PLP_BACKEND_ASM_DOES_NOT_EXIST, this);
     }
 
     /**
