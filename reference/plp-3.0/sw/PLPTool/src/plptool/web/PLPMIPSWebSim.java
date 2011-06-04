@@ -20,7 +20,6 @@ package plptool.web;
 
 import plptool.*;
 import plptool.mips.*;
-import plptool.mods.*;
 import plptool.gui.ProjectDriver;
 
 /**
@@ -49,11 +48,87 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                                       "\nloop:" +
                                       "\n\tj loop" +
                                       "\n\taddiu $t0, $t0, 1\t\t# increment $t0 by one");
+
+                    // Instantiate a new projectdriver and attach a source object
+                    plp = new ProjectDriver(Constants.PLP_GUI_APPLET, "plpmips");
+                    plp.newAsm("WebApplet");
                 }
             });
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void assemble() {
+        if(btnAssemble.getText().equals("Back to Editor")) {
+            txtEditor.setEditable(true);
+            txtEditor.setText(oldStr);
+            btnAssemble.setText("Assemble");
+            btnStep.setEnabled(false);
+            lblStatus.setText("Assemble whenever you're ready!");
+            txtCLI.setEnabled(false);
+            btnExec.setEnabled(false);
+            return;
+        }
+
+        oldStr = txtEditor.getText();
+        txtEditor.setText("");
+        Msg.output = txtEditor;
+        Msg.M("PLPTool build: " + Version.stamp + "\n");
+
+        plp.getAsm("WebApplet").setAsmString(oldStr);
+        plp.assemble();
+
+        if(plp.isAssembled()) {
+            btnAssemble.setText("Back to Editor");
+            txtEditor.setEditable(false);
+
+            if (plp.simulate() != Constants.PLP_OK) {
+                lblStatus.setText("Assembly failed, check your code!");
+                return;
+            }
+
+            txtCLI.setEnabled(true);
+            btnExec.setEnabled(true);
+            btnStep.setEnabled(true);
+            lblStatus.setText("Hit step to advance the program");
+        } else {
+            btnAssemble.setText("Back to Editor");
+            lblStatus.setText("Assembly failed, check your code!");
+            txtEditor.setEditable(false);
+        }
+    }
+
+    private void step() {
+        txtEditor.setText("");
+        plp.sim.step();
+        SimCore sc = (SimCore) plp.sim;
+
+        Msg.M("Register File Contents");
+        Msg.M("======================");
+
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 4; j++)
+                Msg.m((i+8*j) + ((i+8*j < 10) ? "  " : " ") + String.format("%08x", sc.regfile.read(i+8*j)) + "  ");
+
+            Msg.M("");
+        }
+
+        Msg.M("");
+        Msg.M("Instructions in-flight");
+        Msg.M("======================");
+
+        sc.wb_stage.printinstr();
+        sc.mem_stage.printinstr();
+        sc.ex_stage.printinstr();
+        sc.id_stage.printinstr();
+        sc.printfrontend();
+    }
+
+    private void execCLI() {
+        txtEditor.setText("");
+        SimCLI.simCLCommand(txtCLI.getText(), plp);
+        txtCLI.setText("");
     }
 
     /** This method is called from within the init() method to
@@ -154,80 +229,20 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
-        if(btnAssemble.getText().equals("Back to Editor")) {
-            txtEditor.setEditable(true);
-            txtEditor.setText(oldStr);
-            btnAssemble.setText("Assemble");
-            btnStep.setEnabled(false);
-            lblStatus.setText("Assemble whenever you're ready!");
-            txtCLI.setEnabled(false);
-            btnExec.setEnabled(false);
-            return;
-        }
-
-        oldStr = txtEditor.getText();
-        txtEditor.setText("");
-        Msg.output = txtEditor;
-        Msg.M("PLPTool build: " + Version.stamp + "\n");
-        plp = new ProjectDriver(Constants.PLP_GUI_APPLET, "plpmips");
-        plp.asms.add(new PLPAsmSource(oldStr, "WebApplet", 0));
-        plp.assemble();
-
-        if(plp.asm != null) {
-            btnAssemble.setText("Back to Editor");
-            txtEditor.setEditable(false);
-            
-            if (plp.simulate() != Constants.PLP_OK) {
-                lblStatus.setText("Assemble failed, check your code!");
-                return;
-            }
-            
-            txtCLI.setEnabled(true);
-            btnExec.setEnabled(true);
-            btnStep.setEnabled(true);
-            lblStatus.setText("Hit step to advance the program");
-        } else {
-            btnAssemble.setText("Back to Editor");
-            lblStatus.setText("Assemble failed, check your code!");
-            txtEditor.setEditable(false);
-        }
+        assemble();
     }//GEN-LAST:event_btnAssembleActionPerformed
 
     private void btnStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepActionPerformed
-        txtEditor.setText("");
-        plp.sim.step();
-        SimCore sc = (SimCore) plp.sim;
-        
-        Msg.M("Register File Contents");
-        Msg.M("======================");
-
-        for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 4; j++)
-                Msg.m((i+8*j) + ((i+8*j < 10) ? "  " : " ") + String.format("%08x", sc.regfile.read(i+8*j)) + "  ");
-
-            Msg.M("");
-        }
-        
-        Msg.M("");
-        Msg.M("Instructions in-flight");
-        Msg.M("======================");
-
-        sc.wb_stage.printinstr();
-        sc.mem_stage.printinstr();
-        sc.ex_stage.printinstr();
-        sc.id_stage.printinstr();
-        sc.printfrontend();
+        step();
     }//GEN-LAST:event_btnStepActionPerformed
 
     private void btnExecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecActionPerformed
-        txtEditor.setText("");
-        SimCLI.simCLCommand(txtCLI.getText(), plp);
-        txtCLI.setText("");
+        execCLI();
     }//GEN-LAST:event_btnExecActionPerformed
 
     private void txtCLIKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCLIKeyPressed
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
-            btnExecActionPerformed(null);
+            execCLI();
     }//GEN-LAST:event_txtCLIKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
