@@ -31,6 +31,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
 
     String oldStr;
     ProjectDriver plp;
+    Runner runner;
 
     /** Initializes the applet PLPMIPSWebSim */
     public void init() {
@@ -40,6 +41,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                     initComponents();
                     btnStep.setEnabled(false);
                     btnExec.setEnabled(false);
+                    tglRun.setEnabled(false);
                     txtCLI.setEnabled(false);
                     lblStatus.setText("Assemble whenever you're ready!");
                     txtEditor.setText(".org 0x10000000\n" +
@@ -48,6 +50,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                                       "\nloop:" +
                                       "\n\tj loop" +
                                       "\n\taddiu $t0, $t0, 1\t\t# increment $t0 by one");
+                    Config.simRunnerDelay = 100;
 
                     // Instantiate a new projectdriver and attach a source object
                     plp = new ProjectDriver(Constants.PLP_GUI_APPLET, "plpmips");
@@ -68,6 +71,9 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
             lblStatus.setText("Assemble whenever you're ready!");
             txtCLI.setEnabled(false);
             btnExec.setEnabled(false);
+            runner.stepCount = 0;
+            tglRun.setSelected(false);
+            tglRun.setEnabled(false);
             return;
         }
 
@@ -91,6 +97,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
             txtCLI.setEnabled(true);
             btnExec.setEnabled(true);
             btnStep.setEnabled(true);
+            tglRun.setEnabled(true);
             lblStatus.setText("Hit step to advance the program");
         } else {
             btnAssemble.setText("Back to Editor");
@@ -99,9 +106,10 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         }
     }
 
-    private void step() {
+    private int step() {
         txtEditor.setText("");
-        plp.sim.step();
+        int ret;
+        ret = plp.sim.step();
         SimCore sc = (SimCore) plp.sim;
 
         Msg.M("Register File Contents");
@@ -123,6 +131,25 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         sc.ex_stage.printinstr();
         sc.id_stage.printinstr();
         sc.printfrontend();
+
+        return ret;
+    }
+
+    private void toggleRun() {
+        if(!tglRun.isSelected()) {
+            lblStatus.setText("Stopped.");
+            if(runner != null)
+                runner.stepCount = 0;
+            tglRun.setSelected(false);
+            btnStep.setEnabled(true);
+        }
+        else {
+            lblStatus.setText("Running...");
+            runner = new Runner(plp, this);
+            runner.stepCount = 1;
+            btnStep.setEnabled(false);
+            runner.start();
+        }
     }
 
     private void execCLI() {
@@ -147,6 +174,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         lblStatus = new javax.swing.JLabel();
         txtCLI = new javax.swing.JTextField();
         btnExec = new javax.swing.JButton();
+        tglRun = new javax.swing.JToggleButton();
 
         setName("Form"); // NOI18N
 
@@ -168,7 +196,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        txtEditor.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        txtEditor.setFont(new java.awt.Font("Monospaced", 0, 12));
         txtEditor.setName("txtEditor"); // NOI18N
         jScrollPane1.setViewportView(txtEditor);
 
@@ -190,6 +218,14 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
             }
         });
 
+        tglRun.setText("Run");
+        tglRun.setName("tglRun"); // NOI18N
+        tglRun.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglRunActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -197,15 +233,17 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAssemble)
                         .addGap(10, 10, 10)
                         .addComponent(lblStatus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 410, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 365, Short.MAX_VALUE)
+                        .addComponent(tglRun)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnStep))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(txtCLI, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+                        .addComponent(txtCLI, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
                         .addGap(10, 10, 10)
                         .addComponent(btnExec)))
                 .addContainerGap())
@@ -223,7 +261,8 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnStep)
                     .addComponent(lblStatus)
-                    .addComponent(btnAssemble))
+                    .addComponent(btnAssemble)
+                    .addComponent(tglRun))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -245,14 +284,46 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
             execCLI();
     }//GEN-LAST:event_txtCLIKeyPressed
 
+    private void tglRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglRunActionPerformed
+        toggleRun();
+    }//GEN-LAST:event_tglRunActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAssemble;
     private javax.swing.JButton btnExec;
     private javax.swing.JButton btnStep;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblStatus;
+    private javax.swing.JToggleButton tglRun;
     private javax.swing.JTextField txtCLI;
     private javax.swing.JTextPane txtEditor;
     // End of variables declaration//GEN-END:variables
 
+    class Runner extends plptool.gui.SimRunner {
+        ProjectDriver plp;
+        PLPMIPSWebSim applet;
+
+        public Runner(ProjectDriver plp, PLPMIPSWebSim applet) {
+            super(plp);
+            this.plp = plp;
+            this.applet = applet;
+        }
+
+        @Override
+        public void run() {
+            int ret;
+
+            while(stepCount > 0) {
+                ret = applet.step();
+                try {
+                    this.sleep(Config.simRunnerDelay);
+                } catch(Exception e) {
+                    stepCount = 0;
+                }
+
+                if(ret != Constants.PLP_OK)
+                    applet.toggleRun();
+            }
+        }
+    }
 }
