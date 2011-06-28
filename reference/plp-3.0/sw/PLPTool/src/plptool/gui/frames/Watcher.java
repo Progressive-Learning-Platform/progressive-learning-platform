@@ -20,8 +20,13 @@ package plptool.gui.frames;
 
 import plptool.Constants;
 import plptool.PLPToolbox;
-import javax.swing.table.DefaultTableModel;
 import plptool.gui.ProjectDriver;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTextField;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 
 /**
  *
@@ -35,6 +40,10 @@ public class Watcher extends javax.swing.JInternalFrame {
     public Watcher(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
+
+        CustomCellTextField textField = new CustomCellTextField(plp, this);
+        CustomCellEditor ce = new CustomCellEditor(textField);
+        tblEntries.setDefaultEditor(String.class, ce);
 
         cmbType.addItem("Bus");
         cmbType.addItem("Register");
@@ -106,7 +115,7 @@ public class Watcher extends javax.swing.JInternalFrame {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false
+                true, false, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -147,7 +156,7 @@ public class Watcher extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -178,7 +187,7 @@ public class Watcher extends javax.swing.JInternalFrame {
                     .addComponent(txtAddr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAdd))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemoveSelected)
@@ -252,8 +261,12 @@ public class Watcher extends javax.swing.JInternalFrame {
         }
     }
 
-    private DefaultTableModel getTblValues() {
+    public DefaultTableModel getTblValues() {
         return (DefaultTableModel) tblEntries.getModel();
+    }
+
+    public javax.swing.JTable getTable() {
+        return tblEntries;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -268,4 +281,63 @@ public class Watcher extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtAddr;
     // End of variables declaration//GEN-END:variables
 
+    class CustomCellTextField extends JTextField {
+        private ProjectDriver plp;
+        private Watcher watcher;
+        
+        public CustomCellTextField(ProjectDriver plp, Watcher watcher) {
+            super();
+            this.plp = plp;
+            this.watcher = watcher;
+            
+            addFocusListener(
+                new CellFocusListener(plp)
+            );
+        }        
+    }
+    
+    class CustomCellEditor extends DefaultCellEditor {
+        CustomCellTextField textField;
+        
+        public CustomCellEditor(CustomCellTextField textField) {
+            super(textField);
+            this.textField = textField;
+        }
+    }
+    
+    class CellFocusListener implements FocusListener {
+        
+        private ProjectDriver plp;
+        private DefaultTableModel values;
+        private int row;
+        private int col;
+        
+        public CellFocusListener(ProjectDriver plp) {
+            this.plp = plp;
+        }
+        
+        public void focusGained(FocusEvent e) {
+            row = plp.g_watcher.getTable().getSelectedRow();
+            col = plp.g_watcher.getTable().getSelectedColumn();
+        }
+        
+        public void focusLost(FocusEvent e) {
+            // update simulator state
+            values = plp.g_watcher.getTblValues();
+
+            String type = (String) values.getValueAt(row, 0);
+            long newVal = PLPToolbox.parseNum((String) values.getValueAt(row, col));
+            long address = PLPToolbox.parseNum((String) values.getValueAt(row, 1));
+
+            if(type.equals("Bus")) {
+                plp.sim.bus.write(address, newVal, false);
+            } else if(type.equals("Register")) {
+                if(plp.getArch().equals("plpmips")) {
+                    ((plptool.mips.SimCore) (plp.sim)).regfile.write(address, newVal, false);
+                }
+            }
+
+            plp.updateComponents();
+        }
+    }
 }
