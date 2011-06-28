@@ -41,7 +41,7 @@ public class Watcher extends javax.swing.JInternalFrame {
         this.plp = plp;
         initComponents();
 
-        CustomCellTextField textField = new CustomCellTextField(plp, this);
+        CustomCellTextField textField = new CustomCellTextField(plp);
         CustomCellEditor ce = new CustomCellEditor(textField);
         tblEntries.setDefaultEditor(String.class, ce);
 
@@ -282,13 +282,9 @@ public class Watcher extends javax.swing.JInternalFrame {
     // End of variables declaration//GEN-END:variables
 
     class CustomCellTextField extends JTextField {
-        private ProjectDriver plp;
-        private Watcher watcher;
-        
-        public CustomCellTextField(ProjectDriver plp, Watcher watcher) {
+       
+        public CustomCellTextField(ProjectDriver plp) {
             super();
-            this.plp = plp;
-            this.watcher = watcher;
             
             addFocusListener(
                 new CellFocusListener(plp)
@@ -311,6 +307,7 @@ public class Watcher extends javax.swing.JInternalFrame {
         private DefaultTableModel values;
         private int row;
         private int col;
+        Object oldVal;
         
         public CellFocusListener(ProjectDriver plp) {
             this.plp = plp;
@@ -319,6 +316,7 @@ public class Watcher extends javax.swing.JInternalFrame {
         public void focusGained(FocusEvent e) {
             row = plp.g_watcher.getTable().getSelectedRow();
             col = plp.g_watcher.getTable().getSelectedColumn();
+            oldVal = plp.g_watcher.getTblValues().getValueAt(row, col);
         }
         
         public void focusLost(FocusEvent e) {
@@ -326,14 +324,22 @@ public class Watcher extends javax.swing.JInternalFrame {
             values = plp.g_watcher.getTblValues();
 
             String type = (String) values.getValueAt(row, 0);
+            
             long newVal = PLPToolbox.parseNum((String) values.getValueAt(row, col));
             long address = PLPToolbox.parseNum((String) values.getValueAt(row, 1));
 
-            if(type.equals("Bus")) {
-                plp.sim.bus.write(address, newVal, false);
-            } else if(type.equals("Register")) {
-                if(plp.getArch().equals("plpmips")) {
-                    ((plptool.mips.SimCore) (plp.sim)).regfile.write(address, newVal, false);
+            if(newVal == -1) {
+                values.setValueAt(oldVal, row, col);
+                plp.g_watcher.getTable().setModel(values);
+                return;
+
+            }  else {
+                if(type.equals("Bus")) {
+                    plp.sim.bus.write(address, newVal, false);
+                } else if(type.equals("Register")) {
+                    if(plp.getArch().equals("plpmips")) {
+                        ((plptool.mips.SimCore) (plp.sim)).regfile.write(address, newVal, false);
+                    }
                 }
             }
 

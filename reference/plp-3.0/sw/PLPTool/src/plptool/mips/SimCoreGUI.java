@@ -25,7 +25,15 @@
 package plptool.mips;
 
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTextField;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 import plptool.PLPToolbox;
+import plptool.gui.ProjectDriver;
 
 /**
  *
@@ -84,6 +92,10 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         tblRegFile.setValueAt("30: $fp", 30, 0);
         tblRegFile.setValueAt("31: $ra", 31, 0);
 
+        CustomCellTextField textField = new CustomCellTextField(this);
+        CustomCellEditor ce = new CustomCellEditor(textField);
+        tblRegFile.setDefaultEditor(String.class, ce);
+
         old_pc = -1;
 
         clearProgramMemoryTable();
@@ -112,7 +124,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         coreRegFilePane = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblRegFile = new javax.swing.JTable();
-        btnModifyRegisters = new javax.swing.JButton();
         coreProgramPane = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblProgram = new javax.swing.JTable();
@@ -173,14 +184,14 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             .addGroup(coreVisPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblVis)
-                .addContainerGap(438, Short.MAX_VALUE))
+                .addContainerGap(434, Short.MAX_VALUE))
         );
         coreVisPaneLayout.setVerticalGroup(
             coreVisPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(coreVisPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblVis)
-                .addContainerGap(416, Short.MAX_VALUE))
+                .addContainerGap(405, Short.MAX_VALUE))
         );
 
         coreMainPane.addTab(resourceMap.getString("coreVisPane.TabConstraints.tabTitle"), coreVisPane); // NOI18N
@@ -259,32 +270,20 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         tblRegFile.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblRegFile.columnModel.title1")); // NOI18N
         tblRegFile.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblRegFile.columnModel.title2")); // NOI18N
 
-        btnModifyRegisters.setText(resourceMap.getString("btnModifyRegisters.text")); // NOI18N
-        btnModifyRegisters.setName("btnModifyRegisters"); // NOI18N
-        btnModifyRegisters.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnModifyRegistersActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout coreRegFilePaneLayout = new javax.swing.GroupLayout(coreRegFilePane);
         coreRegFilePane.setLayout(coreRegFilePaneLayout);
         coreRegFilePaneLayout.setHorizontalGroup(
             coreRegFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, coreRegFilePaneLayout.createSequentialGroup()
+            .addGroup(coreRegFilePaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(coreRegFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
-                    .addComponent(btnModifyRegisters))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
                 .addContainerGap())
         );
         coreRegFilePaneLayout.setVerticalGroup(
             coreRegFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, coreRegFilePaneLayout.createSequentialGroup()
+            .addGroup(coreRegFilePaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnModifyRegisters)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -333,14 +332,14 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             coreProgramPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(coreProgramPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
                 .addContainerGap())
         );
         coreProgramPaneLayout.setVerticalGroup(
             coreProgramPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(coreProgramPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -397,14 +396,14 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             coreMemMapPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(coreMemMapPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
                 .addContainerGap())
         );
         coreMemMapPaneLayout.setVerticalGroup(
             coreMemMapPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(coreMemMapPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -498,7 +497,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                     .addComponent(rdioBrNever)
                     .addComponent(lblBranchPrdction)
                     .addComponent(rdioBrAlways))
-                .addContainerGap(324, Short.MAX_VALUE))
+                .addContainerGap(307, Short.MAX_VALUE))
         );
         coreSimOptsPaneLayout.setVerticalGroup(
             coreSimOptsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -525,7 +524,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                 .addComponent(rdioBrLast)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rdioBrRandom)
-                .addContainerGap(137, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
 
         coreMainPane.addTab(resourceMap.getString("coreSimOptsPane.TabConstraints.tabTitle"), coreSimOptsPane); // NOI18N
@@ -572,9 +571,9 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             .addGroup(coreConsolePaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(coreConsolePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, coreConsolePaneLayout.createSequentialGroup()
-                        .addComponent(simCLConsole, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+                        .addComponent(simCLConsole, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(simCLExec)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -588,7 +587,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(coreConsolePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(simCLClear)
@@ -614,7 +613,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(nextInstr, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))
-                    .addComponent(coreMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE))
+                    .addComponent(coreMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -627,7 +626,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                     .addComponent(nextInstr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(coreMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                .addComponent(coreMainPane, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
                 .addGap(12, 12, 12))
         );
 
@@ -672,10 +671,6 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
     private void tblRegFileKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblRegFileKeyPressed
 
     }//GEN-LAST:event_tblRegFileKeyPressed
-
-    private void btnModifyRegistersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModifyRegistersActionPerformed
-        updateRegisters();
-    }//GEN-LAST:event_btnModifyRegistersActionPerformed
 
     private void tblMemMapMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMemMapMousePressed
 
@@ -859,11 +854,18 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         }
     }
 
+    public JTable getRegFileTable()  {
+        return tblRegFile;
+    }
+
+    public DefaultTableModel getRegFileValues() {
+        return (DefaultTableModel) tblRegFile.getModel();
+    }
+
     private javax.swing.table.DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField PC;
-    private javax.swing.JButton btnModifyRegisters;
     private javax.swing.JCheckBox chkEXEXFwdI;
     private javax.swing.JCheckBox chkEXEXFwdR;
     private javax.swing.JCheckBox chkMEMEXFwdI;
@@ -900,4 +902,58 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
     private javax.swing.JTable tblRegFile;
     // End of variables declaration//GEN-END:variables
 
+    class CustomCellTextField extends JTextField {
+
+        public CustomCellTextField(SimCoreGUI g_sim) {
+            super();
+
+            addFocusListener(
+                new CellFocusListener(g_sim)
+            );
+        }
+    }
+
+    class CustomCellEditor extends DefaultCellEditor {
+        CustomCellTextField textField;
+
+        public CustomCellEditor(CustomCellTextField textField) {
+            super(textField);
+            this.textField = textField;
+        }
+    }
+
+    class CellFocusListener implements FocusListener {
+
+        private SimCoreGUI g_sim;
+        private DefaultTableModel values;
+        private int row;
+        private int col;
+        Object oldVal;
+
+        public CellFocusListener(SimCoreGUI g_sim) {
+            this.g_sim = g_sim;
+        }
+
+        public void focusGained(FocusEvent e) {
+            row = g_sim.getRegFileTable().getSelectedRow();
+            col = g_sim.getRegFileTable().getSelectedColumn();
+            oldVal = g_sim.getRegFileValues().getValueAt(row, col);
+        }
+
+        public void focusLost(FocusEvent e) {
+            // update simulator state
+            values = g_sim.getRegFileValues();
+
+            long newVal = PLPToolbox.parseNum((String) values.getValueAt(row, col));
+            if(newVal == -1) {
+                values.setValueAt(oldVal, row, col);
+                g_sim.getRegFileTable().setModel(values);
+                return;
+
+            }  else
+                ((plptool.mips.SimCore) (plp.sim)).regfile.write(row, newVal, false);
+
+            plp.updateComponents();
+        }
+    }
 }
