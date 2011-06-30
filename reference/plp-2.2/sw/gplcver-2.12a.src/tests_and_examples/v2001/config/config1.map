@@ -1,7 +1,0 @@
-library top test.v;
-library foo foo/foo.v;
-
-config cfg;
- design top.test;
- default liblist foo;
-endconfig
