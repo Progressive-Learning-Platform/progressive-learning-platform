@@ -17,7 +17,7 @@ cp -R /backup/fritz/buildbot /backup/fritz/buildbot_tmp
 cd /backup/fritz/buildbot_tmp
 
 #we're in our temporary repo, let's build some things
-cd reference/plp-$VERSION/hw
+cd reference/hw
 source /opt/Xilinx/12.4/ISE_DS/settings64.sh
 cd bootrom
 sh build.sh > bootrom_log
@@ -35,7 +35,7 @@ ant package-for-store > build_plptool_log
 ant javadoc > build_javadoc_log
 
 #run the autotext
-cd /backup/fritz/buildbot_tmp/reference/plp-$VERSION/sw
+cd /backup/fritz/buildbot_tmp/reference/sw
 yes | /usr/local/bin/djtgcfg prog -d Nexys2 -i 0 -f ../hw/build/build_500k_volatile/top.bit >> auto_test_log
 sleep 10
 java -jar PLPTool/store/PLPToolStatic.jar -p examples/auto_test.plp /dev/ttyUSB0 >> auto_test_log
@@ -44,16 +44,16 @@ python /backup/fritz/scripts/auto_test.py /dev/ttyUSB0 >> auto_test_log
 #everything should be built (or have failed), so get things ready to push to the website
 cd /backup/fritz/buildbot_tmp
 mkdir to_push
-cp reference/plp-$VERSION/sw/auto_test_log to_push
-cp reference/plp-$VERSION/hw/*_log to_push
-cp reference/plp-$VERSION/hw/bootrom/*_log to_push
-cp reference/plp-$VERSION/hw/build/build_500k_volatile/top.bit to_push/nexys2_500k.bit
-cp reference/plp-$VERSION/hw/build/build_500k_volatile/top.mcs to_push/nexys2_500k.mcs
-cp reference/plp-$VERSION/hw/build/build_1200k_volatile/top.bit to_push/nexys2_1200k.bit
-cp reference/plp-$VERSION/hw/build/build_1200k_volatile/top.mcs to_push/nexys2_1200k.mcs
-cp reference/plp-$VERSION/sw/PLPTool/*_log to_push
-cp reference/plp-$VERSION/sw/PLPTool/store/* to_push
-cp -R reference/plp-$VERSION/sw/PLPTool/dist/javadoc to_push
+cp reference/sw/auto_test_log to_push
+cp reference/hw/*_log to_push
+cp reference/hw/bootrom/*_log to_push
+cp reference/hw/build/build_500k_volatile/top.bit to_push/nexys2_500k.bit
+cp reference/hw/build/build_500k_volatile/top.mcs to_push/nexys2_500k.mcs
+cp reference/hw/build/build_1200k_volatile/top.bit to_push/nexys2_1200k.bit
+cp reference/hw/build/build_1200k_volatile/top.mcs to_push/nexys2_1200k.mcs
+cp reference/sw/PLPTool/*_log to_push
+cp reference/sw/PLPTool/store/* to_push
+cp -R reference/sw/PLPTool/dist/javadoc to_push
 
 #our data is ready to send off to the webserver
 ssh fritz@rome.ceat.okstate.edu "rm -rf plp/nightly/*"
