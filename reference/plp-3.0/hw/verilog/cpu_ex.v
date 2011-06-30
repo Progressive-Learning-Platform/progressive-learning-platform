@@ -31,7 +31,7 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 		id_pc, id_jaddr, id_c_rfbse, id_rs, id_rt,
 		wb_wdata, wb_rfw, wb_waddr, p_c_rfw, p_c_wbsource,
 		p_c_drw, p_alu_r, p_rfb, p_rf_waddr, p_jalra,
-		p_rt, baddr, jaddr, c_b, c_j);
+		p_rt, baddr, jaddr, c_b, c_j, int_flush, int_pc);
 	input 		rst, clk, cpu_stall;
 	input		id_c_rfw;
 	input [1:0]	id_c_wbsource;
@@ -54,6 +54,7 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	input [31:0]	wb_wdata;
 	input 		wb_rfw;
 	input [4:0]	wb_waddr;
+	input 		int_flush;
 	output reg	p_c_rfw;
 	output reg [1:0] p_c_wbsource;
 	output reg [1:0] p_c_drw;
@@ -66,6 +67,7 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	output [31:0]	jaddr;
 	output c_b;
 	output c_j;
+	output [31:0]	int_pc;
 
 	/* forward logic */
 	wire [1:0] forwardX = (p_c_rfw & (p_rf_waddr == id_rs) & (p_rf_waddr != 0)) ? 2'b01 :
@@ -129,9 +131,11 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	assign jaddr = id_c_jjr ? x : jjal_jaddr;
 	assign baddr = {{14{id_se[15]}},id_se,2'b0} + pc_4;
 
+	assign int_pc = id_pc;
+
 	always @(posedge clk) begin
 		if (!cpu_stall) begin
-		if (rst) begin
+		if (rst || int_flush) begin
 			p_c_rfw <= 0;
 			p_c_wbsource <= 0;
 			p_c_drw <= 0;

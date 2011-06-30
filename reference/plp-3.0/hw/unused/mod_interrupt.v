@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
 /* 
 David Fritz
 
-timer module
+interrupt controller module
 
-a simple 32-bit timer. Timer increments on every edge. 
-
+27.6.2011
 */
-module mod_timer(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int);
+
+module mod_interrupt(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, leds);
         input rst;
         input clk;
         input ie,de;
@@ -33,24 +33,23 @@ module mod_timer(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int);
         input [1:0] drw;
         input [31:0] din;
         output [31:0] iout, dout;
-	output int;
+	output reg [7:0] leds;
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
         assign iout = idata;
         assign dout = ddata;
 
-	reg [31:0] timer;
-	
-	assign int = timer == 32'hffffffff;
-
-	assign ddata = timer;
+	assign idata = 32'h00000000;
+	assign ddata = {24'h000000,leds};
 
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
-		timer = timer + 1;
-
-		if (drw[0] && de && !rst) timer = din;
-		else if (rst) timer = 0;
+		if (drw[0] && de && !rst) begin
+			leds = din[7:0];
+			$display("MOD_LEDS: %x", din[7:0]);
+		end else if (rst) begin
+			leds = 8'hff;
+		end
 	end
 endmodule

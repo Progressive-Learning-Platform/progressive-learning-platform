@@ -29,13 +29,14 @@ module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
 		wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_se, 
 		p_shamt, p_func, p_rf_waddr, p_c_rfw, p_c_wbsource,
 		p_c_drw, p_c_alucontrol, p_c_j, p_c_b, p_c_jjr,
-		p_jaddr, p_pc, p_c_rfbse, p_rs, p_rt, c_stall);
+		p_jaddr, p_pc, p_c_rfbse, p_rs, p_rt, c_stall, int_flush);
 	input 		rst, clk, cpu_stall;
 	input	[31:0]	if_pc;
 	input	[31:0]	if_inst;
 	input 		wb_rfw;
 	input   [4:0]	wb_rf_waddr;
 	input   [31:0]  wb_rf_wdata;
+	input		int_flush;
 	output reg [31:0] p_rfa;
 	output reg [31:0] p_rfb;
 	output reg [31:0] p_se;
@@ -115,7 +116,7 @@ module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
 
 	always @(posedge clk) begin
 		if (!cpu_stall) begin
-		if (rst) begin		
+		if (rst || int_flush) begin		
 			p_rfa <= 0;
 			p_rfb <= 0;
 			p_shamt <= 0;

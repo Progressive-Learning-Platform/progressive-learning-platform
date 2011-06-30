@@ -26,7 +26,7 @@ instruction fetch phase
 */
 
 module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
-		pc_b, b_addr, j_addr, iin, p_inst, stall, int);
+		pc_b, b_addr, j_addr, iin, p_inst, stall, int, int_ack, int_flush, int_pc);
 	input 		rst, clk, cpu_stall, int;
 	input 		pc_j;
 	input 		pc_b;
@@ -37,6 +37,8 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 	output 	[31:0] 	imem_addr;
 	input	[31:0]	iin;
 	output reg [31:0] p_inst;
+	output int_ack, int_flush;
+	input [31:0] int_pc;
 
 	reg [31:0] pc;
 	wire [31:0] next_pc;
@@ -51,27 +53,20 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 	 *
 	 * state machine:
 	 * 00 - idle, waiting for interrupt
-	 * 01 - stalling for previous branch
 	 * 10 - injecting interrupt
 	 * 11 - injecting nop (branch delay slot)
 	 */
 	reg  [1:0] int_state = 2'b00;
-	wire prev_branch = iin[31:26] == 6'h04 || /* beq */
-			   iin[31:26] == 6'h05 || /* bne */
-			   iin[31:26] == 6'h02 || /* j */
-			   iin[31:26] == 6'h03 || /* jal */
-			   ((iin[31:26] == 6'h00) && (iin[5:0] == 6'h08)) || /* jr */ 
-			   ((iin[31:26] == 6'h00) && (iin[5:0] == 6'h09)); /* jalr */
 	wire [1:0] next_int_state = 
-		int_state == 2'b00 && int && (prev_branch || flush || stall) ?		2'b01 : /* stall for one cycle */
-		int_state == 2'b00 && int && !(prev_branch || flush || stall) ? 	2'b10 : /* go for it! */
-		int_state == 2'b01 ? 							2'b10 :
-		int_state == 2'b10 ?							2'b11 :
-		int_state == 2'b11 ? 							2'b00 : 2'b00; /* default case is invalid */
+		int_state == 2'b00 && int ?	2'b10 : /* go! */
+		int_state == 2'b10 ?		2'b11 :
+		int_state == 2'b11 ? 		2'b00 : 2'b00; /* default case is invalid */
 	wire [31:0] next_inst = 
 		int_state == 2'b10 ? 32'h0340d809 : /* jalr $i1, $i0 - 0000_0011_0100_0000_1101_1000_0000_1001 */
 		int_state == 2'b11 ? 32'h00000000 : /* nop */
 				     iin;
+	assign int_ack = int_state == 2'b10;
+	assign int_flush = next_int_state == 2'b10;
 
 	always @(posedge clk) begin
 		if (!cpu_stall) begin
@@ -84,12 +79,12 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 			p_pc <= p_pc;
 			pc <= pc;
 			p_inst <= p_inst;
-			int_state <= int_state;
+			int_state <= next_int_state;
 		end else if (flush && !rst && !stall) begin
 			p_pc <= 0;
 			p_inst <= 0;
 			pc <= next_pc;
-			int_state <= int_state;
+			int_state <= next_int_state;
 		end else begin
 			p_pc <= pc;
 			pc   <= next_pc;
@@ -102,9 +97,10 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 		end
 	end		
 
-	assign next_pc = 
-		(pc_b) ? b_addr :
-		(pc_j & !pc_b) ? j_addr :
+	assign next_pc =
+		(next_int_state == 2'b10) ? int_pc - 8: 
+		(pc_b & next_int_state != 2'b10) ? b_addr :
+		(pc_j & !pc_b & next_int_state != 2'b10) ? j_addr :
 		pc + 4;
 
 	assign imem_addr = pc;
