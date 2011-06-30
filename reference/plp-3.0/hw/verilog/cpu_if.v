@@ -60,16 +60,15 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 			   ((iin[31:26] == 6'h00) && (iin[5:0] == 6'h08)) || /* jr */ 
 			   ((iin[31:26] == 6'h00) && (iin[5:0] == 6'h09)); /* jalr */
 	wire [1:0] next_int_state = 
-		int_state == 2'b00 && int && prev_branch ? 				2'b01 : /* stall for one cycle */
-		int_state == 2'b00 && int && (flush || stall) ?				2'b01 : /* stall for flush or stalls, interrupt will happen later */
-		int_state == 2'b00 && int && !prev_branch && !stall && !flush ? 	2'b10 : /* go for it! */
+		int_state == 2'b00 && int && (prev_branch || flush || stall) ?		2'b01 : /* stall for one cycle */
+		int_state == 2'b00 && int && !(prev_branch || flush || stall) ? 	2'b10 : /* go for it! */
 		int_state == 2'b01 ? 							2'b10 :
 		int_state == 2'b10 ?							2'b11 :
 		int_state == 2'b11 ? 							2'b00 : 2'b00; /* default case is invalid */
 	wire [31:0] next_inst = 
-		int_state == 2'b00 ? iin : /* no interrupt */
-		int_state == 2'b01 ? iin : /* stalling, allow iin to drive still */
-		int_state == 2'b10 ? 32'h0340d809 : 32'h0; /*jalr $k1, $k0 - 0000_0011_0100_0000_1101_1000_0000_1001*/
+		int_state == 2'b10 ? 32'h0340d809 : /* jalr $i1, $i0 - 0000_0011_0100_0000_1101_1000_0000_1001 */
+		int_state == 2'b11 ? 32'h00000000 : /* nop */
+				     iin;
 
 	/* flush logic (for branches and jumps) */
 	wire flush = pc_b | pc_j;
