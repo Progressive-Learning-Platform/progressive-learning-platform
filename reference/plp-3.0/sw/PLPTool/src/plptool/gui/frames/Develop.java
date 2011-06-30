@@ -65,6 +65,8 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu popupProject;
     private int oldPosition;
 
+    private TextLineNumber tln;
+
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
 
@@ -81,12 +83,15 @@ public class Develop extends javax.swing.JFrame {
         
         splitterH.setDividerLocation(0.25);
 
+        tln = new TextLineNumber(txtEditor);
+        scroller.setRowHeaderView(tln);
+
         catchyPLP();
 
         oldPosition = 0;
 
         Msg.output = txtOutput;
-        jScrollPane3.setEnabled(false);
+        scroller.setEnabled(false);
         txtOutput.setEditable(false);
         rootmenuProject.setEnabled(false);
         menuPrint.setEnabled(false);
@@ -562,17 +567,14 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void catchyPLP() {
-        txtEditor.setContentType("text/html");
-        
         String catchyStr;
 
-        catchyStr = "<center><h1>Progressive Learning Platform</h1></center>";
+        catchyStr =  "Progressive Learning Platform\n\n";
+        catchyStr += "You can start by creating a new project or opening an existing one.\n\n";
 
-        if(Constants.debugLevel >= 1 || plptool.Version.stamp.contains("daily"))  {
-            catchyStr += "<center><h3>Build: " + plptool.Version.stamp + "</h3></center>";
-            catchyStr += "<center><h3>OS/arch: " + System.getProperty("os.name")
-                    + "/" + System.getProperty("os.arch") + "</h3></center>";
-        }
+        catchyStr += "Build: " + plptool.Version.stamp + "\n";
+        catchyStr += "OS/arch: " + System.getProperty("os.name")
+                      + "/" + System.getProperty("os.arch") + "\n";
 
         boolean savedConfig = Config.devSyntaxHighlighting;
         Config.devSyntaxHighlighting = false;
@@ -615,7 +617,7 @@ public class Develop extends javax.swing.JFrame {
         treeProject = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
         txtCurFile = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        scroller = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JTextPane();
         lblPosition = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -720,7 +722,7 @@ public class Develop extends javax.swing.JFrame {
         txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
         txtCurFile.setName("txtCurFile"); // NOI18N
 
-        jScrollPane3.setName("jScrollPane3"); // NOI18N
+        scroller.setName("scroller"); // NOI18N
 
         txtEditor.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
@@ -737,10 +739,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -748,7 +750,7 @@ public class Develop extends javax.swing.JFrame {
                 txtEditorKeyTyped(evt);
             }
         });
-        jScrollPane3.setViewportView(txtEditor);
+        scroller.setViewportView(txtEditor);
 
         lblPosition.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
@@ -758,7 +760,7 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
@@ -773,7 +775,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1637,7 +1639,6 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
@@ -1684,6 +1685,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuHelp;
     private javax.swing.JMenu rootmenuProject;
     private javax.swing.JMenu rootmenuTools;
+    private javax.swing.JScrollPane scroller;
     private javax.swing.JSplitPane splitterH;
     private javax.swing.JSplitPane splitterV;
     private javax.swing.JToolBar toolbar;

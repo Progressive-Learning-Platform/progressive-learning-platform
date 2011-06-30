@@ -554,7 +554,7 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" alignment="0" pref="664" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="664" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
@@ -572,7 +572,7 @@
                                   <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane3" pref="427" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="427" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -585,9 +585,9 @@
                         <Property name="name" type="java.lang.String" value="txtCurFile" noResource="true"/>
                       </Properties>
                     </Component>
-                    <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+                    <Container class="javax.swing.JScrollPane" name="scroller">
                       <Properties>
-                        <Property name="name" type="java.lang.String" value="jScrollPane3" noResource="true"/>
+                        <Property name="name" type="java.lang.String" value="scroller" noResource="true"/>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
