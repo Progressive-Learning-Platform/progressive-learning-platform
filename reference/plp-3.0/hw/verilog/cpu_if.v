@@ -41,6 +41,9 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 	reg [31:0] pc;
 	wire [31:0] next_pc;
 
+	/* flush logic (for branches and jumps) */
+	wire flush = pc_b | pc_j;
+
 	/* interrupt logic */
 	/* we're guaranteed not to get an interrupt when 
 	 * handling one already, as interrupts disable
@@ -69,9 +72,6 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 		int_state == 2'b10 ? 32'h0340d809 : /* jalr $i1, $i0 - 0000_0011_0100_0000_1101_1000_0000_1001 */
 		int_state == 2'b11 ? 32'h00000000 : /* nop */
 				     iin;
-
-	/* flush logic (for branches and jumps) */
-	wire flush = pc_b | pc_j;
 
 	always @(posedge clk) begin
 		if (!cpu_stall) begin
