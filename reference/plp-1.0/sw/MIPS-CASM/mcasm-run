@@ -1,9 +1,0 @@
-perl -s mcasm.pl  \
-  -parse_directives              \
-  -generate_coe                  \
-  -generate_irom                 \
-  -reserve_beginning_for_entry   \
-  -disallow_multiple_orgs        \
-  -suppress_directive_warnings   \
-  -verbose                       \
-  $1 $1.bit
