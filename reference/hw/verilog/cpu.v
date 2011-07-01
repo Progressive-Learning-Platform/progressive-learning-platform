@@ -26,7 +26,7 @@ pipelined mips machine
 
 */
 
-module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin, int);
+module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin, int, int_ack);
 	input clk, rst, cpu_stall;
 	output [31:0] daddr;
 	output [31:0] dout;
@@ -35,6 +35,7 @@ module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin, int);
 	output [31:0] iaddr;
 	input [31:0] iin;
 	input int;
+	output int_ack;
 
 	wire 	[31:0] 	ifid_pc;
 	wire	[31:0]	ifid_inst;
@@ -87,7 +88,7 @@ module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin, int);
 	wire		int_flush;
 
 	cpu_if  stage_if (rst, clk, cpu_stall, iaddr, ifid_pc, exif_j,
-			exif_b, exif_baddr, exif_jaddr, iin, ifid_inst, idif_stall, int, , int_flush, int_pc);
+			exif_b, exif_baddr, exif_jaddr, iin, ifid_inst, idif_stall, int, int_ack, int_flush, int_pc);
 	cpu_id  stage_id (rst, clk, cpu_stall, ifid_pc, ifid_inst, wbid_rfw,
 			wbid_waddr, wbid_wdata, idex_rfa, idex_rfb, idex_se,
 			idex_shamt, idex_func, idex_rf_waddr, idex_c_rfw, idex_c_wbsource,
