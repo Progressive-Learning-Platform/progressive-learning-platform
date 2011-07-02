@@ -39,23 +39,23 @@ module mod_interrupt(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int, 
 
 	input i_timer;
 
-        assign iout = 32'b0; /* never allow executing from this module */
-        assign dout = daddr == 32'h00000000 ? mask : status;
-
 	reg [31:1] status; /* zeroth bit is defined as 1 */
 	reg [31:0] mask;
 	reg	   state; /* 0 idle - 1 interrupting and waiting for ack */
 
-	wire [31:0] external_interrupts =
-		{30'b0, i_timer, 1'b1};
+        assign iout = 32'b0; /* never allow executing from this module */
+        assign dout = daddr == 32'h00000000 ? mask : {status,1'b1};
+
+	wire [31:1] external_interrupts =
+		{30'b0, i_timer};
 
 	assign int = state;
-	wire next_state = !state && ((mask & {status,1'b1}) != 0) && mask[0] ? 1 : 
+	wire next_state = !state && ((mask[31:1] & status) != 0) && mask[0] ? 1 : 
 			  state && int_ack ? 0 : state;
 	wire [31:0] mask_v = drw[0] && de && daddr == 32'h00000000 ? din : mask;
 	wire [31:0] next_mask = state ? mask & {mask_v[31:1],1'b0} : mask_v; /* clear the gie on interrupts */
-	wire [31:0] status_v = drw[0] && de && daddr == 32'h00000004 ? din : status;
-	wire [31:0] next_status = external_interrupts | status_v;
+	wire [31:1] status_v = drw[0] && de && daddr == 32'h00000004 ? din[31:1] : status;
+	wire [31:1] next_status = external_interrupts | status_v;
 
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
