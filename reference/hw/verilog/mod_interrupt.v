@@ -50,8 +50,7 @@ module mod_interrupt(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int, 
 		{30'b0, i_timer};
 
 	assign int = state;
-	wire next_state = !state && ((mask[31:1] & status) != 0) && mask[0] ? 1 : 
-			  state && int_ack ? 0 : state;
+	wire next_state = !state && ((mask[31:1] & status) != 0) && mask[0] ? 1 : 0;
 	wire [31:0] mask_v = drw[0] && de && daddr == 32'h00000000 ? din : mask;
 	wire [31:0] next_mask = state ? {mask_v[31:1],1'b0} : mask_v; /* clear the gie on interrupts */
 	wire [31:1] status_v = drw[0] && de && daddr == 32'h00000004 ? din[31:1] : status;
