@@ -25,7 +25,7 @@ interrupt controller module
 27.6.2011
 */
 
-module mod_interrupt(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int, int_ack, i_timer);
+module mod_interrupt(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int, int_ack, i_timer, i_uart);
         input rst;
         input clk;
         input ie,de;
@@ -38,6 +38,7 @@ module mod_interrupt(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int, 
 	input int_ack;
 
 	input i_timer;
+	input i_uart;
 
 	reg [31:1] status; /* zeroth bit is defined as 1 */
 	reg [31:0] mask;
@@ -47,7 +48,7 @@ module mod_interrupt(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, int, 
         assign dout = daddr == 32'h00000000 ? mask : {status,1'b1};
 
 	wire [31:1] external_interrupts =
-		{30'b0, i_timer};
+		{29'b0, i_uart, i_timer};
 
 	assign int = state;
 	wire next_state = !state && ((mask[31:1] & status) != 0) && mask[0] ? 1 : 0;

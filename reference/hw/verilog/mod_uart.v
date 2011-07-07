@@ -52,7 +52,7 @@ SEND BUFFER:
 	Lower byte contains data to be sent
 
 */
-module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
+module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd, i_uart);
         input rst;
         input clk;
         input ie,de;
@@ -62,6 +62,7 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
         output [31:0] iout, dout;
 	output txd;
 	input rxd;
+	output i_uart;
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
@@ -84,7 +85,8 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd);
 			  (daddr == 32'h4) ? {30'h0,data_rdy,cts} : /* status */
 			  (daddr == 32'h8) ? {24'h0,in_buffer} : /* receive */
 			  (daddr == 32'hc) ? {24'h0,out_buffer} : 0; /* transmit */
-	
+	assign i_uart = data_rdy;	
+
 	/* all data bus activity is negative edge triggered */
 	always @(negedge clk) begin
 		if (de && drw[0] && daddr == 32'hc) /* write a new byte to the output buffer */
