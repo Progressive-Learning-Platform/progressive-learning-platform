@@ -668,6 +668,29 @@ public class Develop extends javax.swing.JFrame {
         menuOptions = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuSerialTerminal = new javax.swing.JMenuItem();
+        rootmenuSim = new javax.swing.JMenu();
+        menuSimStep = new javax.swing.JMenuItem();
+        menuSimReset = new javax.swing.JMenuItem();
+        menuSimRun = new javax.swing.JCheckBoxMenuItem();
+        menuStepSize = new javax.swing.JMenu();
+        menuStep1 = new javax.swing.JRadioButtonMenuItem();
+        menuStep2 = new javax.swing.JRadioButtonMenuItem();
+        menuStep3 = new javax.swing.JRadioButtonMenuItem();
+        menuStep4 = new javax.swing.JRadioButtonMenuItem();
+        menuStep5 = new javax.swing.JRadioButtonMenuItem();
+        jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        menuSimTools = new javax.swing.JMenu();
+        menuSimView = new javax.swing.JCheckBoxMenuItem();
+        menuSimWatcher = new javax.swing.JCheckBoxMenuItem();
+        menuSimMemory = new javax.swing.JCheckBoxMenuItem();
+        menuSimIO = new javax.swing.JCheckBoxMenuItem();
+        menuIOReg = new javax.swing.JMenu();
+        menuLEDs = new javax.swing.JCheckBoxMenuItem();
+        menuSwitches = new javax.swing.JCheckBoxMenuItem();
+        menuSevenSegments = new javax.swing.JCheckBoxMenuItem();
+        menuUART = new javax.swing.JCheckBoxMenuItem();
+        menuVGA = new javax.swing.JCheckBoxMenuItem();
+        menuPLPID = new javax.swing.JCheckBoxMenuItem();
         rootmenuHelp = new javax.swing.JMenu();
         menuQuickRef = new javax.swing.JMenuItem();
         menuManual = new javax.swing.JMenuItem();
@@ -1198,6 +1221,116 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuTools);
 
+        rootmenuSim.setText(resourceMap.getString("rootmenuSim.text")); // NOI18N
+        rootmenuSim.setName("rootmenuSim"); // NOI18N
+
+        menuSimStep.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK));
+        menuSimStep.setText(resourceMap.getString("menuSimStep.text")); // NOI18N
+        menuSimStep.setName("menuSimStep"); // NOI18N
+        rootmenuSim.add(menuSimStep);
+
+        menuSimReset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimReset.setText(resourceMap.getString("menuSimReset.text")); // NOI18N
+        menuSimReset.setName("menuSimReset"); // NOI18N
+        rootmenuSim.add(menuSimReset);
+
+        menuSimRun.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        menuSimRun.setText(resourceMap.getString("menuSimRun.text")); // NOI18N
+        menuSimRun.setName("menuSimRun"); // NOI18N
+        rootmenuSim.add(menuSimRun);
+
+        menuStepSize.setText(resourceMap.getString("menuStepSize.text")); // NOI18N
+        menuStepSize.setName("menuStepSize"); // NOI18N
+
+        menuStep1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.ALT_MASK));
+        menuStep1.setSelected(true);
+        menuStep1.setText(resourceMap.getString("menuStep1.text")); // NOI18N
+        menuStep1.setName("menuStep1"); // NOI18N
+        menuStepSize.add(menuStep1);
+
+        menuStep2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.ALT_MASK));
+        menuStep2.setText(resourceMap.getString("menuStep2.text")); // NOI18N
+        menuStep2.setName("menuStep2"); // NOI18N
+        menuStepSize.add(menuStep2);
+
+        menuStep3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.ALT_MASK));
+        menuStep3.setText(resourceMap.getString("menuStep3.text")); // NOI18N
+        menuStep3.setName("menuStep3"); // NOI18N
+        menuStepSize.add(menuStep3);
+
+        menuStep4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.ALT_MASK));
+        menuStep4.setText(resourceMap.getString("menuStep4.text")); // NOI18N
+        menuStep4.setName("menuStep4"); // NOI18N
+        menuStepSize.add(menuStep4);
+
+        menuStep5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.ALT_MASK));
+        menuStep5.setText(resourceMap.getString("menuStep5.text")); // NOI18N
+        menuStep5.setName("menuStep5"); // NOI18N
+        menuStepSize.add(menuStep5);
+
+        rootmenuSim.add(menuStepSize);
+
+        jSeparator9.setName("jSeparator9"); // NOI18N
+        rootmenuSim.add(jSeparator9);
+
+        menuSimTools.setText(resourceMap.getString("menuSimTools.text")); // NOI18N
+        menuSimTools.setName("menuSimTools"); // NOI18N
+
+        menuSimView.setText(resourceMap.getString("menuSimView.text")); // NOI18N
+        menuSimView.setName("menuSimView"); // NOI18N
+        menuSimTools.add(menuSimView);
+
+        menuSimWatcher.setText(resourceMap.getString("menuSimWatcher.text")); // NOI18N
+        menuSimWatcher.setName("menuSimWatcher"); // NOI18N
+        menuSimTools.add(menuSimWatcher);
+
+        menuSimMemory.setText(resourceMap.getString("menuSimMemory.text")); // NOI18N
+        menuSimMemory.setName("menuSimMemory"); // NOI18N
+        menuSimTools.add(menuSimMemory);
+
+        menuSimIO.setText(resourceMap.getString("menuSimIO.text")); // NOI18N
+        menuSimIO.setName("menuSimIO"); // NOI18N
+        menuSimTools.add(menuSimIO);
+
+        rootmenuSim.add(menuSimTools);
+
+        menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
+        menuIOReg.setName("menuIOReg"); // NOI18N
+
+        menuLEDs.setSelected(true);
+        menuLEDs.setText(resourceMap.getString("menuLEDs.text")); // NOI18N
+        menuLEDs.setName("menuLEDs"); // NOI18N
+        menuIOReg.add(menuLEDs);
+
+        menuSwitches.setSelected(true);
+        menuSwitches.setText(resourceMap.getString("menuSwitches.text")); // NOI18N
+        menuSwitches.setName("menuSwitches"); // NOI18N
+        menuIOReg.add(menuSwitches);
+
+        menuSevenSegments.setSelected(true);
+        menuSevenSegments.setText(resourceMap.getString("menuSevenSegments.text")); // NOI18N
+        menuSevenSegments.setName("menuSevenSegments"); // NOI18N
+        menuIOReg.add(menuSevenSegments);
+
+        menuUART.setSelected(true);
+        menuUART.setText(resourceMap.getString("menuUART.text")); // NOI18N
+        menuUART.setName("menuUART"); // NOI18N
+        menuIOReg.add(menuUART);
+
+        menuVGA.setSelected(true);
+        menuVGA.setText(resourceMap.getString("menuVGA.text")); // NOI18N
+        menuVGA.setName("menuVGA"); // NOI18N
+        menuIOReg.add(menuVGA);
+
+        menuPLPID.setSelected(true);
+        menuPLPID.setText(resourceMap.getString("menuPLPID.text")); // NOI18N
+        menuPLPID.setName("menuPLPID"); // NOI18N
+        menuIOReg.add(menuPLPID);
+
+        rootmenuSim.add(menuIOReg);
+
+        jMenuBar1.add(rootmenuSim);
+
         rootmenuHelp.setText(resourceMap.getString("rootmenuHelp.text")); // NOI18N
         rootmenuHelp.setName("rootmenuHelp"); // NOI18N
         rootmenuHelp.addActionListener(new java.awt.event.ActionListener() {
@@ -1647,6 +1780,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
+    private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
@@ -1656,14 +1790,17 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuExportASM;
     private javax.swing.JMenuItem menuFindAndReplace;
+    private javax.swing.JMenu menuIOReg;
     private javax.swing.JMenuItem menuImportASM;
     private javax.swing.JMenuItem menuIssues;
     private javax.swing.JMenuItem menuIssuesPage;
+    private javax.swing.JCheckBoxMenuItem menuLEDs;
     private javax.swing.JMenuItem menuManual;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuNewASM;
     private javax.swing.JMenuItem menuOpen;
     private javax.swing.JMenuItem menuOptions;
+    private javax.swing.JCheckBoxMenuItem menuPLPID;
     private javax.swing.JMenuItem menuPaste;
     private javax.swing.JMenuItem menuPrint;
     private javax.swing.JMenuItem menuProgram;
@@ -1678,12 +1815,31 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator5;
     private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
+    private javax.swing.JCheckBoxMenuItem menuSevenSegments;
+    private javax.swing.JCheckBoxMenuItem menuSimIO;
+    private javax.swing.JCheckBoxMenuItem menuSimMemory;
+    private javax.swing.JMenuItem menuSimReset;
+    private javax.swing.JCheckBoxMenuItem menuSimRun;
+    private javax.swing.JMenuItem menuSimStep;
+    private javax.swing.JMenu menuSimTools;
+    private javax.swing.JCheckBoxMenuItem menuSimView;
+    private javax.swing.JCheckBoxMenuItem menuSimWatcher;
     private javax.swing.JMenuItem menuSimulate;
+    private javax.swing.JRadioButtonMenuItem menuStep1;
+    private javax.swing.JRadioButtonMenuItem menuStep2;
+    private javax.swing.JRadioButtonMenuItem menuStep3;
+    private javax.swing.JRadioButtonMenuItem menuStep4;
+    private javax.swing.JRadioButtonMenuItem menuStep5;
+    private javax.swing.JMenu menuStepSize;
+    private javax.swing.JCheckBoxMenuItem menuSwitches;
+    private javax.swing.JCheckBoxMenuItem menuUART;
     private javax.swing.JMenuItem menuUndo;
+    private javax.swing.JCheckBoxMenuItem menuVGA;
     private javax.swing.JMenu rootmenuEdit;
     private javax.swing.JMenu rootmenuFile;
     private javax.swing.JMenu rootmenuHelp;
     private javax.swing.JMenu rootmenuProject;
+    private javax.swing.JMenu rootmenuSim;
     private javax.swing.JMenu rootmenuTools;
     private javax.swing.JScrollPane scroller;
     private javax.swing.JSplitPane splitterH;

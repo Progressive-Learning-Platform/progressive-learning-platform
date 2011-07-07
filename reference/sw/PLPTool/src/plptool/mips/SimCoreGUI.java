@@ -150,7 +150,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         jScrollPane4 = new javax.swing.JScrollPane();
         simCLOutput = new javax.swing.JTextPane();
 
-        setMaximizable(true);
+        
         setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SimCoreGUI.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
