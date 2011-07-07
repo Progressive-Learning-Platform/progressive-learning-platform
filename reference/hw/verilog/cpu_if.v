@@ -53,19 +53,23 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 	 *
 	 * state machine:
 	 * 00 - idle, waiting for interrupt
+	 * 01 - wait 1 cycle for branch delay slot
 	 * 10 - injecting interrupt
 	 * 11 - injecting nop (branch delay slot)
 	 */
 	reg  [1:0] int_state = 2'b00;
+	wire cycle_wait = pc - int_pc != 8;
 	wire [1:0] next_int_state = 
-		int_state == 2'b00 && int ?	2'b10 : /* go! */
-		int_state == 2'b10 ?		2'b11 :
-		int_state == 2'b11 ? 		2'b00 : 2'b00; /* default case is invalid */
+		int_state == 2'b00 && int &&  cycle_wait ? 2'b01 : /* wait 1 cycle */
+		int_state == 2'b00 && int && !cycle_wait ? 2'b10 : /* go! */
+		int_state == 2'b01 && !cycle_wait	 ? 2'b10 : /* ...go */
+		int_state == 2'b10 			 ? 2'b11 :
+		int_state == 2'b11 			 ? 2'b00 : int_state; /* default case is invalid */
 	wire [31:0] next_inst = 
 		int_state == 2'b10 ? 32'h0340d809 : /* jalr $i1, $i0 - 0000_0011_0100_0000_1101_1000_0000_1001 */
 		int_state == 2'b11 ? 32'h00000000 : /* nop */
 				     iin;
-	assign int_ack = int_state == 2'b10;
+	assign int_ack = int_state != 2'b00;
 	assign int_flush = next_int_state == 2'b10;
 
 	always @(posedge clk) begin
