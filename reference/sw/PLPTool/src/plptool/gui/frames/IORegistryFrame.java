@@ -354,7 +354,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
 
         if(addr != plptool.Constants.PLP_NUMBER_ERROR && size > 0) {
             if(!(Boolean) modInfo[modIndex][4] || (addr % 4 == 0)) {
-                plp.ioreg.attachModuleToBus(modIndex, addr, size, plp.g_simsh.getSimDesktop());
+                plp.ioreg.attachModuleToBus(modIndex, addr, size);
                 refreshModulesTable();
             }
         } else {
@@ -396,7 +396,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
             Long[] startAddresses = (Long[]) Preset.presets[index][2];
             Long[] sizes = (Long[]) Preset.presets[index][3];
             for(int i = 0; i < modsType.length; i++)
-                plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.g_simsh.getSimDesktop());
+                plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i]);
             plp.setModified();
             plp.updateComponents();
             plp.g_sim.updateBusTable();

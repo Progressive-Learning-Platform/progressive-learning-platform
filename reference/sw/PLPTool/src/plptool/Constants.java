@@ -171,6 +171,8 @@ public class Constants {
     public static final int PLP_TOOLFRAME_IOREGISTRY             = 1;
     public static final int PLP_TOOLFRAME_ASMVIEW                = 2;
     public static final int PLP_TOOLFRAME_WATCHER                = 3;
+    public static final int PLP_TOOLFRAME_SIMRUN                 = 4;
+    public static final int PLP_TOOLFRAME_SIMCPU                 = 5;
 
     // ASMView Columns identifiers
     public static final int ASMVIEW_ADDR                         = 0;
