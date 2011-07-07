@@ -840,7 +840,7 @@ public class ProjectDriver {
             g_ioreg = new IORegistryFrame(this);
             g_sim = ArchRegistry.createSimCoreGUI(this);
             //g_simsh.getSimDesktop().add(g_ioreg);
-            g_simsh.getSimDesktop().add(g_sim);
+            //g_simsh.getSimDesktop().add(g_sim);
             g_ioreg.refreshModulesTable();
             if(g_sim != null) {
                 g_sim.updateComponents();

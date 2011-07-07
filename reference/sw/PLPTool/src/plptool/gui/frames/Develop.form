@@ -353,6 +353,182 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="rootmenuSim">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="rootmenuSim.text"/>
+            <Property name="name" type="java.lang.String" value="rootmenuSim" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuSimStep">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+S"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="menuSimStep.text"/>
+                <Property name="name" type="java.lang.String" value="menuSimStep" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuSimReset">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+R"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="menuSimReset.text"/>
+                <Property name="name" type="java.lang.String" value="menuSimReset" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimRun">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="F4"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="menuSimRun.text"/>
+                <Property name="name" type="java.lang.String" value="menuSimRun" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <Menu class="javax.swing.JMenu" name="menuStepSize">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuStepSize.text"/>
+                <Property name="name" type="java.lang.String" value="menuStepSize" noResource="true"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuStep1">
+                  <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Alt+1"/>
+                    </Property>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuStep1.text"/>
+                    <Property name="name" type="java.lang.String" value="menuStep1" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuStep2">
+                  <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Alt+2"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="menuStep2.text"/>
+                    <Property name="name" type="java.lang.String" value="menuStep2" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuStep3">
+                  <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Alt+3"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="menuStep3.text"/>
+                    <Property name="name" type="java.lang.String" value="menuStep3" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuStep4">
+                  <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Alt+4"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="menuStep4.text"/>
+                    <Property name="name" type="java.lang.String" value="menuStep4" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuStep5">
+                  <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Alt+5"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="menuStep5.text"/>
+                    <Property name="name" type="java.lang.String" value="menuStep5" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator9">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="jSeparator9" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <Menu class="javax.swing.JMenu" name="menuSimTools">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuSimTools.text"/>
+                <Property name="name" type="java.lang.String" value="menuSimTools" noResource="true"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimView">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimView.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimView" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimWatcher">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimWatcher.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimWatcher" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimMemory">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimMemory.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimMemory" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimIO">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimIO.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimIO" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="menuIOReg">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuIOReg.text"/>
+                <Property name="name" type="java.lang.String" value="menuIOReg" noResource="true"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuLEDs">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuLEDs.text"/>
+                    <Property name="name" type="java.lang.String" value="menuLEDs" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSwitches">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSwitches.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSwitches" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSevenSegments">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSevenSegments.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSevenSegments" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuUART">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuUART.text"/>
+                    <Property name="name" type="java.lang.String" value="menuUART" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuVGA">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuVGA.text"/>
+                    <Property name="name" type="java.lang.String" value="menuVGA" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuPLPID">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuPLPID.text"/>
+                    <Property name="name" type="java.lang.String" value="menuPLPID" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuHelp">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuHelp.text"/>
