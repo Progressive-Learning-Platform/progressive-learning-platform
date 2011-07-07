@@ -18,6 +18,7 @@
 
 package plptool.gui.frames;
 
+import java.awt.Color;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.awt.Desktop;
@@ -69,6 +70,7 @@ public class Develop extends javax.swing.JFrame {
     private int oldPosition;
 
     private TextLineNumber tln;
+    private TextLineHighlighter tlh;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -87,6 +89,7 @@ public class Develop extends javax.swing.JFrame {
         splitterH.setDividerLocation(0.25);
 
         tln = new TextLineNumber(txtEditor);
+        tlh = new TextLineHighlighter(txtEditor);
         scroller.setRowHeaderView(tln);
 
         catchyPLP();
@@ -164,6 +167,8 @@ public class Develop extends javax.swing.JFrame {
                 scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
 
             tln.setHighlight(lineNum - 1);
+            tlh.setY(yPos);
+            tlh.repaint();
 
             if(plp.open_asm != fileNum) {
                 plp.open_asm = fileNum;
