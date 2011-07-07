@@ -15,7 +15,7 @@ package plptool.mods;
  *
  * @author fritz
  */
-public class UARTFrame extends javax.swing.JInternalFrame {
+public class UARTFrame extends javax.swing.JFrame {
     UART u;
     
     /** Creates new form UARTFrame */
@@ -48,7 +48,7 @@ public class UARTFrame extends javax.swing.JInternalFrame {
         txtRawByte = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(UARTFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N

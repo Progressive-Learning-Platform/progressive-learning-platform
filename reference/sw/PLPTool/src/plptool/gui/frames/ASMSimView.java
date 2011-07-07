@@ -26,7 +26,7 @@ import plptool.gui.ProjectDriver;
  *
  * @author wira
  */
-public class ASMSimView extends javax.swing.JInternalFrame {
+public class ASMSimView extends javax.swing.JFrame {
 
     private ProjectDriver plp;
 
@@ -35,7 +35,7 @@ public class ASMSimView extends javax.swing.JInternalFrame {
         initComponents();
 
         this.plp = plp;
-        plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_ASMVIEW);
+        //plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_ASMVIEW);
         updateTable();
     }
 
@@ -94,9 +94,9 @@ public class ASMSimView extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblASM = new javax.swing.JTable();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setMaximizable(true);
+        ;
         setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ASMSimView.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N

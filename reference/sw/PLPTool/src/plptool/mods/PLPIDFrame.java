@@ -15,7 +15,7 @@ package plptool.mods;
  *
  * @author fritz
  */
-public class PLPIDFrame extends javax.swing.JInternalFrame {
+public class PLPIDFrame extends javax.swing.JFrame {
 
     PLPID module;
 
@@ -41,7 +41,7 @@ public class PLPIDFrame extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
         txtFrequency = new javax.swing.JTextField();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(PLPIDFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N

@@ -31,7 +31,7 @@ import javax.swing.JPanel;
  *
  * @author wira
  */
-public class VGAFrame extends javax.swing.JInternalFrame {
+public class VGAFrame extends javax.swing.JFrame {
 
     private BufferedImage I = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
     //private JPanel container;
@@ -76,7 +76,7 @@ public class VGAFrame extends javax.swing.JInternalFrame {
 
         container = new javax.swing.JPanel();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(VGAFrame.class);

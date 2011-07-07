@@ -30,7 +30,7 @@ import plptool.gui.ProjectDriver;
  * @see IORegistry
  * @author wira
  */
-public class IORegistryFrame extends javax.swing.JInternalFrame {
+public class IORegistryFrame extends javax.swing.JFrame {
 
     Object[][] modInfo;
     ProjectDriver plp;
@@ -51,7 +51,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         for(int i = 0; i < Preset.presets.length; i++)
             cmbPresets.addItem(Preset.presets[i][0]);
 
-        plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_IOREGISTRY);
+        //plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_IOREGISTRY);
     }
 
     /** This method is called from within the constructor to
@@ -84,9 +84,9 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         cmbPresets = new javax.swing.JComboBox();
         btnLoadPreset = new javax.swing.JButton();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setIconifiable(true);
+        ;
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(IORegistryFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
@@ -411,14 +411,14 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
         for(int row = 0; row < tblMods.getRowCount(); row++) {
             Object x = plp.ioreg.getModuleFrame(row);
             if((Boolean) tblMods.getModel().getValueAt(row, 5)) {
-                if(x != null && x instanceof javax.swing.JInternalFrame && !((javax.swing.JInternalFrame)x).isVisible()) {
-                    ((javax.swing.JInternalFrame) x).setVisible(true);
+                if(x != null && x instanceof javax.swing.JFrame && !((javax.swing.JFrame)x).isVisible()) {
+                    ((javax.swing.JFrame) x).setVisible(true);
                     changed = true;
                 }
             }
             else {
-                if(x != null && x instanceof javax.swing.JInternalFrame && ((javax.swing.JInternalFrame)x).isVisible()) {
-                    ((javax.swing.JInternalFrame) x).setVisible(false);
+                if(x != null && x instanceof javax.swing.JFrame && ((javax.swing.JFrame)x).isVisible()) {
+                    ((javax.swing.JFrame) x).setVisible(false);
                     changed = true;
                 }
             }
@@ -443,7 +443,7 @@ public class IORegistryFrame extends javax.swing.JInternalFrame {
             mods.removeRow(0);
 
         for(int i = 0; i < modules.length; i++) {
-            javax.swing.JInternalFrame frame = (javax.swing.JInternalFrame) plp.ioreg.getModuleFrame(i);
+            javax.swing.JFrame frame = (javax.swing.JFrame) plp.ioreg.getModuleFrame(i);
             Object row[] = new Object[]
             { modules[i].toString(),
               i,

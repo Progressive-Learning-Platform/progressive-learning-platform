@@ -79,7 +79,7 @@ public class SimShell extends javax.swing.JFrame {
         Msg.output = null;
     }
 
-    public void summonFrame(javax.swing.JInternalFrame frame) {
+    public void summonFrame(javax.swing.JFrame frame) {
         simDesktop.add(frame);
         frame.setVisible(true);
     }
@@ -563,7 +563,7 @@ public class SimShell extends javax.swing.JFrame {
         if(menuWatcher.isSelected()) {
             if(plp.g_watcher == null) {
                 plp.g_watcher = new Watcher(plp);
-                plp.g_simsh.getSimDesktop().add(plp.g_watcher);
+                //plp.g_simsh.getSimDesktop().add(plp.g_watcher);
             }
 
             plp.g_watcher.setVisible(true);
@@ -577,7 +577,7 @@ public class SimShell extends javax.swing.JFrame {
         if(menuASMView.isSelected()) {
             if(plp.g_asmview == null) {
                 plp.g_asmview = new ASMSimView(plp);
-                plp.g_simsh.getSimDesktop().add(plp.g_asmview);
+                //plp.g_simsh.getSimDesktop().add(plp.g_asmview);
             }
 
             plp.g_asmview.setVisible(true);
@@ -591,7 +591,7 @@ public class SimShell extends javax.swing.JFrame {
         if(menuIOReg.isSelected()) {
             if(plp.g_ioreg == null) {
                 plp.g_ioreg = new IORegistryFrame(plp);
-                plp.g_simsh.getSimDesktop().add(plp.g_ioreg);
+                //plp.g_simsh.getSimDesktop().add(plp.g_ioreg);
             }
 
             plp.g_ioreg.setVisible(true);
@@ -625,15 +625,15 @@ public class SimShell extends javax.swing.JFrame {
         }
     }
     
-    public void attachOptionSynchronizer(final javax.swing.JInternalFrame frame, final int toolframe_index) {
-        frame.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
-            @Override
-            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
-                frame.setVisible(false);
-                getToolCheckboxMenu(toolframe_index).setSelected(false);
-            }
-        });
-    }
+    //public void attachOptionSynchronizer(final javax.swing.JFrame frame, final int toolframe_index) {
+    //    frame.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+    //        @Override
+    //        public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+    //            frame.setVisible(false);
+    //            getToolCheckboxMenu(toolframe_index).setSelected(false);
+    //        }
+    //    });
+    //}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOpts;
