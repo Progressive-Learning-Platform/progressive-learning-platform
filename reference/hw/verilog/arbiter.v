@@ -48,7 +48,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	wire mod_vga_sram_rdy;
 
 	/* interrupt interconnect */
-	wire i_timer;
+	wire i_timer, i_uart;
 
 	/* effective address calculation for the modules */
 	wire [7:0] imod, dmod;
@@ -123,7 +123,7 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	/* module instantiations */
 	/* 0 */ mod_rom		rom_t		(rst, clk, mod0_ie, mod0_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod0_inst, mod0_data);
 	/* 1 */ mod_memory_hierarchy	ram_t		(rst, clk, mod1_ie, mod1_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod1_inst, mod1_data, cpu_stall, mod_sram_clk, mod_sram_adv, mod_sram_cre, mod_sram_ce, mod_sram_oe, mod_sram_we, mod_sram_lb, mod_sram_ub, mod_sram_data, mod_sram_addr, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy);
-	/* 2 */ mod_uart	uart_t		(rst, clk, mod2_ie, mod2_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod2_inst, mod2_data, mod_uart_txd, mod_uart_rxd);
+	/* 2 */ mod_uart	uart_t		(rst, clk, mod2_ie, mod2_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod2_inst, mod2_data, mod_uart_txd, mod_uart_rxd, i_uart);
 	/* 3 */ mod_switches 	switches_t 	(rst, clk, mod3_ie, mod3_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod3_inst, mod3_data, mod_switches_switches);
 	/* 4 */ mod_leds	leds_t    	(rst, clk, mod4_ie, mod4_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod4_inst, mod4_data, mod_leds_leds);
 	/* 5 */ mod_gpio	gpio_t		(rst, clk, mod5_ie, mod5_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod5_inst, mod5_data, mod_gpio_gpio);
@@ -131,5 +131,5 @@ module arbiter(rst, clk, cpu_daddr, cpu_bus_data, bus_cpu_data, cpu_drw, cpu_iad
 	/* 7 */ mod_plpid	plpid_t   	(rst, clk, mod7_ie, mod7_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod7_inst, mod7_data);
 	/* 8 */ mod_timer	timer_t	  	(rst, clk, mod8_ie, mod8_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod8_inst, mod8_data, i_timer);
 	/* 9 */ mod_sseg	sseg_t		(rst, clk, mod9_ie, mod9_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, mod9_inst, mod9_data, mod_sseg_an, mod_sseg_display);
-	/* 10 */mod_interrupt	interrupt_t	(rst, clk, modA_ie, modA_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, modA_inst, modA_data, int, int_ack, i_timer);
+	/* 10 */mod_interrupt	interrupt_t	(rst, clk, modA_ie, modA_de, ieff_addr, deff_addr, cpu_drw, cpu_bus_data, modA_inst, modA_data, int, int_ack, i_timer, i_uart);
 endmodule
