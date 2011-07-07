@@ -15,7 +15,7 @@ package plptool.mods;
  *
  * @author wira
  */
-public class SwitchesFrame extends javax.swing.JInternalFrame {
+public class SwitchesFrame extends javax.swing.JFrame {
 
     Switches module;
 
@@ -72,7 +72,7 @@ public class SwitchesFrame extends javax.swing.JInternalFrame {
         bit1 = new javax.swing.JToggleButton();
         bit0 = new javax.swing.JToggleButton();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SwitchesFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N

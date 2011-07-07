@@ -32,7 +32,7 @@ import java.awt.event.FocusEvent;
  *
  * @author wira
  */
-public class Watcher extends javax.swing.JInternalFrame {
+public class Watcher extends javax.swing.JFrame {
 
     ProjectDriver plp;
 
@@ -48,7 +48,7 @@ public class Watcher extends javax.swing.JInternalFrame {
         cmbType.addItem("Bus");
         cmbType.addItem("Register");
 
-        plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_WATCHER);
+        //plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_WATCHER);
     }
 
     public DefaultTableModel getEntries() {
@@ -74,9 +74,9 @@ public class Watcher extends javax.swing.JInternalFrame {
         btnRemoveSelected = new javax.swing.JButton();
         btnRemoveAll = new javax.swing.JButton();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setMaximizable(true);
+        ;
         setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Watcher.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N

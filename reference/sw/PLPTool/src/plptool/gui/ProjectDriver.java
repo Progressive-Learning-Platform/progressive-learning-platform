@@ -158,7 +158,7 @@ public class ProjectDriver {
             this.g_dev = new Develop(this);
             this.g_simsh = new SimShell(this);
             this.g_ioreg = new IORegistryFrame(this);
-            this.g_simsh.getSimDesktop().add(this.g_ioreg);
+            //this.g_simsh.getSimDesktop().add(this.g_ioreg);
             this.g_desktop = this.g_simsh.getSimDesktop();
             this.g_about = new AboutBoxDialog(this.g_dev);
             this.g_opts = new OptionsFrame(this);
@@ -839,7 +839,7 @@ public class ProjectDriver {
         if(g) {
             g_ioreg = new IORegistryFrame(this);
             g_sim = ArchRegistry.createSimCoreGUI(this);
-            g_simsh.getSimDesktop().add(g_ioreg);
+            //g_simsh.getSimDesktop().add(g_ioreg);
             g_simsh.getSimDesktop().add(g_sim);
             g_ioreg.refreshModulesTable();
             if(g_sim != null) {

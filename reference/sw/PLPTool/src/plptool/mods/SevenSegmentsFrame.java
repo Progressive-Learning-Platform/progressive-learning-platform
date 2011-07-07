@@ -28,7 +28,7 @@ package plptool.mods;
  *
  * @author wira
  */
-public class SevenSegmentsFrame extends javax.swing.JInternalFrame {
+public class SevenSegmentsFrame extends javax.swing.JFrame {
 
     /** Creates new form SevenSegmentsFrame */
     public SevenSegmentsFrame() {
@@ -146,7 +146,7 @@ public class SevenSegmentsFrame extends javax.swing.JInternalFrame {
         h0b7 = new javax.swing.JLabel();
         h1b7 = new javax.swing.JLabel();
 
-        setClosable(true);
+        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SevenSegmentsFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N

@@ -25,7 +25,7 @@ import plptool.gui.ProjectDriver;
 import plptool.Msg;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import javax.swing.JInternalFrame;
+import javax.swing.JFrame;
 
 /**
  * This class associates a module to its display frame, and allows users to
@@ -360,10 +360,10 @@ public class IORegistry {
         module.enable();
         positionInBus.add(plp.sim.bus.add(module));
 
-        if(moduleFrame != null && simDesktop != null && moduleFrame instanceof JInternalFrame) {
-            attachModuleFrameListeners((JInternalFrame) moduleFrame, plp);
-            simDesktop.add((JInternalFrame) moduleFrame);
-            ((JInternalFrame) moduleFrame).setVisible(true);
+        if(moduleFrame != null && simDesktop != null && moduleFrame instanceof JFrame) {
+            attachModuleFrameListeners((JFrame) moduleFrame, plp);
+            //simDesktop.add((JFrame) moduleFrame);
+            ((JFrame) moduleFrame).setVisible(true);
         }
 
         return Constants.PLP_OK;
@@ -473,8 +473,8 @@ public class IORegistry {
      */
     public void removeAllModules() {
         while(!modules.isEmpty()) {
-            if(moduleFrames.get(0) != null && moduleFrames.get(0) instanceof JInternalFrame)
-                ((JInternalFrame) moduleFrames.get(0)).dispose();
+            if(moduleFrames.get(0) != null && moduleFrames.get(0) instanceof JFrame)
+                ((JFrame) moduleFrames.get(0)).dispose();
             moduleFrames.remove(0);
             
             if(modules.get(0).threaded && modules.get(0).isAlive()) {
@@ -511,8 +511,8 @@ public class IORegistry {
         regSize.remove(index);
         type.remove(index);
 
-        if(moduleFrames.get(index) != null && moduleFrames.get(index) instanceof JInternalFrame)
-            ((JInternalFrame) moduleFrames.get(index)).dispose();
+        if(moduleFrames.get(index) != null && moduleFrames.get(index) instanceof JFrame)
+            ((JFrame) moduleFrames.get(index)).dispose();
 
         moduleFrames.remove(index);
 
@@ -610,7 +610,7 @@ public class IORegistry {
             if(plp.g()) {
                 this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i), plp.g_simsh.getSimDesktop());
                 if(preset.getHasFrame(i))
-                    ((JInternalFrame)moduleFrames.get(i)).setVisible(preset.getVisible(i));
+                    ((JFrame)moduleFrames.get(i)).setVisible(preset.getVisible(i));
             }
             else
                 this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i), null);
@@ -629,8 +629,8 @@ public class IORegistry {
 
         for(int i = 0; i < modules.size(); i++) {
             preset.addModuleDefinition(type.get(i), modules.get(i).startAddr(), regSize.get(i), 
-                    (moduleFrames.get(i) != null && (moduleFrames.get(i) instanceof JInternalFrame)),
-                    (moduleFrames.get(i) instanceof JInternalFrame) ? ((JInternalFrame)moduleFrames.get(i)).isVisible() : false);
+                    (moduleFrames.get(i) != null && (moduleFrames.get(i) instanceof JFrame)),
+                    (moduleFrames.get(i) instanceof JFrame) ? ((JFrame)moduleFrames.get(i)).isVisible() : false);
         }
 
         return preset;
@@ -642,13 +642,20 @@ public class IORegistry {
      * @param x Module frame to attach the listener to
      * @param plp Current project driver instance
      */
-    public static void attachModuleFrameListeners(final JInternalFrame x, final plptool.gui.ProjectDriver plp) {
-        x.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+    public static void attachModuleFrameListeners(final JFrame x, final plptool.gui.ProjectDriver plp) {
+        x.addWindowListener(new java.awt.event.WindowListener() {
             @Override
-            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
                 x.setVisible(false);
                 plp.g_ioreg.refreshModulesTable();
             }
+
+            @Override public void windowOpened(java.awt.event.WindowEvent evt) { }
+            @Override public void windowDeactivated(java.awt.event.WindowEvent evt) { }
+            @Override public void windowActivated(java.awt.event.WindowEvent evt) { }
+            @Override public void windowDeiconified(java.awt.event.WindowEvent evt) { }
+            @Override public void windowIconified(java.awt.event.WindowEvent evt) { }
+            @Override public void windowClosed(java.awt.event.WindowEvent evt) { }
         });
     }
 
