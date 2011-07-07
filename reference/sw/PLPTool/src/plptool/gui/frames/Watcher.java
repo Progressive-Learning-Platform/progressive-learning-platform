@@ -343,7 +343,7 @@ public class Watcher extends javax.swing.JFrame {
                 }
             }
 
-            plp.updateComponents();
+            plp.updateComponents(true);
         }
     }
 }

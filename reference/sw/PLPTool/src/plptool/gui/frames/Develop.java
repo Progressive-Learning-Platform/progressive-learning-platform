@@ -21,20 +21,23 @@ package plptool.gui.frames;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.awt.Desktop;
-import javax.swing.tree.*;
-import javax.swing.SwingUtilities;
+import java.awt.Point;
+import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.event.*;
 import javax.swing.undo.UndoManager;
+import javax.swing.table.*;
+import javax.swing.tree.*;
 import java.net.URI;
+
+
 
 import java.io.File;
 import java.awt.datatransfer.DataFlavor;
 
 //For Syntax Highlighting
-import javax.swing.text.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 
 import plptool.Msg;
 import plptool.Constants;
@@ -143,7 +146,37 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void updateComponents() {
+        if(plp.isSimulating()) {
+            plptool.mips.SimCore sim = (plptool.mips.SimCore) plp.sim;
+            int pc_index = plp.asm.lookupAddrIndex(sim.id_stage.i_instrAddr);
+            if(pc_index == -1 || sim.isStalled()) {
+                tln.setHighlight(-1);
+                return;
+            }
 
+            int lineNum = plp.asm.getLineNumMapper()[pc_index];
+            int fileNum = plp.asm.getFileMapper()[pc_index];
+
+            int yPos = (lineNum - 1) * txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
+            int viewPortY = scroller.getViewport().getViewPosition().y;
+
+            if(yPos > (viewPortY + scroller.getHeight()) || yPos < viewPortY)
+                scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
+
+            tln.setHighlight(lineNum - 1);
+
+            if(plp.open_asm != fileNum) {
+                plp.open_asm = fileNum;
+                plp.refreshProjectView(false);
+            } else
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        tln.repaint();
+                    }
+                });
+
+        }
     }
 
     public void changeFormatting() {
@@ -222,7 +255,7 @@ public class Develop extends javax.swing.JFrame {
         plp.plpfile = null;
         plp.setUnModified();
         txtCurFile.setText("No file open");
-        plp.g_simsh.destroySimulation();
+        endSim();
         plp.refreshProjectView(false);
     }
 
@@ -617,6 +650,11 @@ public class Develop extends javax.swing.JFrame {
         menuSimIO.setSelected(false);
         plp.desimulate();
         rootmenuSim.setEnabled(false);
+        tln.setHighlight(-1);
+    }
+
+    public void stopRunState() {
+        menuSimRun.setSelected(false);
     }
 
     public javax.swing.JCheckBoxMenuItem getToolCheckboxMenu(int index) {
@@ -639,10 +677,11 @@ public class Develop extends javax.swing.JFrame {
     }
 
     /**
-     * Attach listeners to the specified module frame x
+     * Attach listeners to the specified module frame x so it deselects the
+     * corresponding control menu when closing
      *
      * @param x Module frame to attach the listener to
-     * @param plp Current project driver instance
+     * @param int Menu type requested
      */
     public void attachModuleFrameListeners(final javax.swing.JFrame x, final int menu) {
         x.addWindowListener(new java.awt.event.WindowListener() {
@@ -1646,7 +1685,12 @@ public class Develop extends javax.swing.JFrame {
                     plp.open_asm = Integer.parseInt(tokens[0]);
                     plp.refreshProjectView(false);
                     if (Config.devSyntaxHighlighting) {
-                        syntaxHighlight();
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                syntaxHighlight();
+                            }
+                        });
                     }
                 }
             }
@@ -1658,8 +1702,10 @@ public class Develop extends javax.swing.JFrame {
     private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
         if(plp.asms != null && plp.asms.size() > 0) {
             int caretPos = txtEditor.getCaretPosition();
-            int line;
-            line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
+            Element root = txtEditor.getDocument().getDefaultRootElement();
+
+            int line = root.getElementIndex(caretPos)+1;
+            //line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
             String fName = plp.asms.get(plp.open_asm).getAsmFilePath();
             txtCurFile.setText(fName + ":" + line + (plp.open_asm == 0 ? " <main program>" : ""));
         }
@@ -1690,35 +1736,51 @@ public class Develop extends javax.swing.JFrame {
         menuSaveActionPerformed(evt);
     }//GEN-LAST:event_btnSaveActionPerformed
 
+    private boolean deleteOccured;
+
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
         
-        boolean deleteOccured = false;
+        deleteOccured = false;
+        boolean modified = false;
 
         if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
-            plp.setModified();
+            modified = true;
         } else if ((int)evt.getKeyChar() == 127) {
             deleteOccured = true;
-            plp.setModified();
+            modified = true;
         } else if ((int)evt.getKeyChar() == 8) {
             deleteOccured = true;
-            plp.setModified();
+            modified = true;
         } else if ((int)evt.getKeyChar() == 24) {
             deleteOccured = true;
-            plp.setModified();
+            modified = true;
         } else if ((int)evt.getKeyChar() == 22) {
             deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             Config.devSyntaxHighlightOnAssemble = true;
+            modified = true;
+        }
+
+        if(modified) {
             plp.setModified();
+
+            if(txtEditor.isEditable()) {
+                disableSimControls();
+            }
         }
-       
-        if(Config.devSyntaxHighlighting && !deleteOccured && !evt.isControlDown()) {
-            Config.nothighlighting = false;
-            int caretPos = txtEditor.getCaretPosition();
-            syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
-            txtEditor.setCaretPosition(caretPos);
-            Config.nothighlighting = true;
-        }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if(Config.devSyntaxHighlighting && !deleteOccured) {
+                    Config.nothighlighting = false;
+                    int caretPos = txtEditor.getCaretPosition();
+                    syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
+                    txtEditor.setCaretPosition(caretPos);
+                    Config.nothighlighting = true;
+                }
+            }
+        });
     }//GEN-LAST:event_txtEditorKeyTyped
 
     private void menuQuickProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuickProgramActionPerformed
@@ -1795,13 +1857,8 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimStepActionPerformed
         plp.sim.step();
-        plp.updateComponents();
+        plp.updateComponents(true);
     }//GEN-LAST:event_menuSimStepActionPerformed
-
-    private void menuSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimResetActionPerformed
-        plp.sim.reset();
-        plp.updateComponents();
-    }//GEN-LAST:event_menuSimResetActionPerformed
 
     private void menuExitSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitSimActionPerformed
         endSim();
@@ -1857,6 +1914,11 @@ public class Develop extends javax.swing.JFrame {
             plp.g_sim.setVisible(false);
         }
     }//GEN-LAST:event_menuSimViewActionPerformed
+
+    private void menuSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimResetActionPerformed
+        plp.sim.reset();
+        plp.updateComponents(true);
+    }//GEN-LAST:event_menuSimResetActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();

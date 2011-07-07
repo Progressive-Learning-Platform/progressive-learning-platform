@@ -109,13 +109,13 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plptool.mips.SimCLI.simCLCommand(command, plp);
                     if(asmexplorer != null) asmexplorer.updateTable();
                     if(plp.g_sim != null) plp.g_sim.updateComponents();
-                    if(plp.g_simsh != null) plp.updateComponents();
+                    if(plp.sim != null) plp.updateComponents(true);
                 }
             }
 
             else if(command.equals("reset")) {
                 plp.g_dev.dispose();
-                plp.g_simsh.dispose();
+                plp.desimulate();
                 plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, "plpmips");
                 plp.g_dev.setVisible(true);
             }
@@ -146,7 +146,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             }
             else if(command.equals("updategui")) {
                 if(plp.g_sim != null) {
-                    plp.updateComponents();
+                    plp.updateComponents(true);
                     plp.g_ioreg.refreshModulesTable();
                 }
             }
@@ -171,7 +171,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             }
             else if(command.equals("asmexplorer")) {
                 plp.g_dev.setVisible(false);
-                plp.g_simsh.destroySimulation();
+                plp.desimulate();
 
                 if(asmexplorer == null) {
                     asmexplorer = new ASMExplorer(plp);

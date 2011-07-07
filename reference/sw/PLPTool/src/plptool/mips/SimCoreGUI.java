@@ -953,7 +953,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             }  else
                 ((plptool.mips.SimCore) (plp.sim)).regfile.write(row, newVal, false);
 
-            plp.updateComponents();
+            plp.updateComponents(true);
         }
     }
 }

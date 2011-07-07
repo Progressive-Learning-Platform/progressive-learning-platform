@@ -263,6 +263,10 @@ public class Asm extends plptool.PLPAsm {
         regs.put("$sp"   , new Byte((byte) 29));
         regs.put("$fp"   , new Byte((byte) 30));
         regs.put("$ra"   , new Byte((byte) 31));
+
+        // Interrupt registers
+        regs.put("$i0"   , new Byte((byte) 26));
+        regs.put("$i1"   , new Byte((byte) 27));
     }
 
     /**
@@ -335,8 +339,9 @@ public class Asm extends plptool.PLPAsm {
                 recursionRetVal = 0;
                 for(int k = 0; k < sourceList.size(); k++) {
                     if(asmTokens[1].equals(sourceList.get(k).getAsmFilePath())) {
-                        asmIndex = k;
-                        found = true;
+                        error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                asmTokens[1] + " is already in the project sources list.",
+                                Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                     }
                 }
                 if(!found) {
@@ -660,6 +665,11 @@ public class Asm extends plptool.PLPAsm {
 
             Msg.D("pr:\n" + preprocessedAsm + ">>>", 30, this);
 
+        }
+
+        // Now append the rest of the files in sourceFiles
+        for(int k = 1; index == 0 && k < sourceList.size(); k++) {
+            this.preprocess(k);
         }
 
         } catch(Exception e) {

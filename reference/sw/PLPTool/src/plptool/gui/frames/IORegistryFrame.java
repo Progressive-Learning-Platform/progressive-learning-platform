@@ -362,7 +362,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
         }
 
         plp.setModified();
-        plp.updateComponents();
+        plp.updateComponents(false);
         plp.g_sim.updateBusTable();
         refreshModulesTable();
     }//GEN-LAST:event_btnAddActionPerformed
@@ -375,7 +375,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
             plp.ioreg.removeModule(index);
             refreshModulesTable();
             plp.setModified();
-            plp.updateComponents();
+            plp.updateComponents(false);
             plp.g_sim.updateBusTable();
         }
     }//GEN-LAST:event_btnRemoveActionPerformed
@@ -384,7 +384,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
         plp.ioreg.removeAllModules();
         plp.setModified();
         refreshModulesTable();
-        plp.updateComponents();
+        plp.updateComponents(false);
         plp.g_sim.updateBusTable();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -398,7 +398,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
             for(int i = 0; i < modsType.length; i++)
                 plp.ioreg.attachModuleToBus(modsType[i], startAddresses[i], sizes[i]);
             plp.setModified();
-            plp.updateComponents();
+            plp.updateComponents(false);
             plp.g_sim.updateBusTable();
             refreshModulesTable();
         }

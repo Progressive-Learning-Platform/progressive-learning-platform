@@ -45,6 +45,8 @@ public class TextLineNumber extends JPanel
 	private float digitAlignment;
 	private int minimumDisplayDigits;
 
+        private int highlightLine;
+
 	//  Keep history information to reduce the number of times the component
 	//  needs to be repainted
 
@@ -86,6 +88,8 @@ public class TextLineNumber extends JPanel
 		component.getDocument().addDocumentListener(this);
 		component.addCaretListener( this );
 		component.addPropertyChangeListener("font", this);
+
+                highlightLine = -1;
 	}
 
 	/**
@@ -257,6 +261,7 @@ public class TextLineNumber extends JPanel
             {
     			if (isCurrentLine(rowStartOffset))
     				g.setColor( getCurrentLineForeground() );
+                        
     			else
     				g.setColor( getForeground() );
 
@@ -264,10 +269,22 @@ public class TextLineNumber extends JPanel
     			//  "X" and "Y" offsets for drawing the string.
 
     			String lineNumber = getTextLineNumber(rowStartOffset);
-    			int stringWidth = fontMetrics.stringWidth( lineNumber );
-    			int x = getOffsetX(availableWidth, stringWidth) + insets.left;
-				int y = getOffsetY(rowStartOffset, fontMetrics);
-    			g.drawString(lineNumber, x, y);
+    			int stringWidth;
+
+
+    			int x;
+                        int y = getOffsetY(rowStartOffset, fontMetrics);
+    			if(isHighlightLine(rowStartOffset)) {
+                                g.setColor( getCurrentLineForeground() );
+                                stringWidth = fontMetrics.stringWidth( ">>>" );
+                                x = getOffsetX(availableWidth, stringWidth) + insets.left;
+                                g.drawString(">>>", x, y);
+
+                        }  else {
+                                stringWidth = fontMetrics.stringWidth( lineNumber );
+                                x = getOffsetX(availableWidth, stringWidth) + insets.left;
+                                g.drawString(lineNumber, x, y);
+                        }
 
     			//  Move to the next row
 
@@ -287,6 +304,20 @@ public class TextLineNumber extends JPanel
 		Element root = component.getDocument().getDefaultRootElement();
 
 		if (root.getElementIndex( rowStartOffset ) == root.getElementIndex(caretPosition))
+			return true;
+		else
+			return false;
+	}
+
+        /*
+	 *  We need to know if the caret is currently positioned on the line we
+	 *  are about to paint so the line number can be highlighted.
+	 */
+	private boolean isHighlightLine(int rowStartOffset)
+	{
+		Element root = component.getDocument().getDefaultRootElement();
+
+		if (highlightLine != -1 && root.getElementIndex( rowStartOffset ) == highlightLine)
 			return true;
 		else
 			return false;
@@ -368,6 +399,10 @@ public class TextLineNumber extends JPanel
 
 		return y - descent;
 	}
+
+        public void setHighlight(int lineNum) {
+            highlightLine = lineNum;
+        }
 
 //
 //  Implement CaretListener interface

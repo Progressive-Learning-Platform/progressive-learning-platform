@@ -49,23 +49,23 @@ public class SimRunner extends Thread {
         startInstr = sim.getinstrcount();
         Msg.M("--- run");
         startTime = System.currentTimeMillis();
-        if(plp.g())
-            plp.g_simsh.setStatusString("Running", Color.green);
+        //if(plp.g())
+        //    plp.g_simsh.setStatusString("Running", Color.green);
 
         while(stepCount > 0) {
-            int steps = Integer.parseInt(plp.g_simsh.getTxtSteps().getText());
+            int steps = 1; //Integer.parseInt(plp.g_simsh.getTxtSteps().getText());
             if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps && Msg.lastError == 0; i++)
                     plp.sim.step();
                 if(plp.g())
                     plp.g_sim.updateComponents();
             } else {
-                if(plp.g()) plp.g_simsh.getTxtSteps().setText("1");
+                //if(plp.g()) plp.g_simsh.getTxtSteps().setText("1");
                 steps = 1;
             }
             if(Config.simRefreshGUIDuringSimRun)
                 if(plp.g())
-                    plp.updateComponents();
+                    plp.updateComponents(false);
             if(Msg.lastError != 0) {
                 if(plp.g())
                     plp.g_err.setError(Msg.lastError);
@@ -77,18 +77,20 @@ public class SimRunner extends Thread {
         }
 
         if(Msg.lastError != 0) {
-            if(plp.g())
-                plp.g_simsh.setStatusString("ERROR", Color.red);
+            //if(plp.g())
+            //    plp.g_simsh.setStatusString("ERROR", Color.red);
         }
-        else
-            if(plp.g())
-                plp.g_simsh.setStatusString("Ready", Color.black);
+        //else
+            //if(plp.g())
+            //    plp.g_simsh.setStatusString("Ready", Color.black);
 
         long time = System.currentTimeMillis() - startTime;
         Msg.m("--- SimRunner: " + (sim.getinstrcount() - startInstr) + " instructions issued ");
         Msg.M("in " + time + " milliseconds of real time.");
         
-        if(plp.g())
-            plp.g_simsh.unselectTglRun();
+        if(plp.g()) {
+            plp.updateComponents(true);
+            plp.g_dev.stopRunState();
+        }
     }
 }

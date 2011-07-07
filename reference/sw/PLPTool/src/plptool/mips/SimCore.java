@@ -393,6 +393,15 @@ public class SimCore extends PLPSimCore {
     }
 
     /**
+     * Return whether the CPU is stalled
+     *
+     * @return boolean that indicates whether the CPU is stalled
+     */
+    public boolean isStalled() {
+        return if_stall;
+    }
+
+    /**
      * Print front end states.
      */
     public void printfrontend() {

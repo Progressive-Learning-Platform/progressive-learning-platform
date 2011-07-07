@@ -146,7 +146,7 @@ public class SimShell extends javax.swing.JFrame {
         if(plp.g_simrun != null)
             plp.g_simrun.stepCount = 0;
         plp.sim.reset();
-        plp.updateComponents();
+        plp.updateComponents(false);
         plp.g_err.clearError();
         setStatusString("Ready", Color.black);
     }
@@ -161,7 +161,7 @@ public class SimShell extends javax.swing.JFrame {
             if(steps <= MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps; i++)
                     plp.sim.step();
-                plp.updateComponents();
+                plp.updateComponents(false);
             } else {
                 txtSteps.setText("1");
             }

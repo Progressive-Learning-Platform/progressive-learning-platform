@@ -20,6 +20,7 @@ package plptool.mips;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
 import gnu.io.SerialPort;
 
 import java.io.InputStream;
@@ -51,6 +52,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                             Constants.PLP_GENERIC_ERROR, this);
         } catch(UnsatisfiedLinkError e) {
             return Msg.E("Failed to link with native RXTX library.",
+                            Constants.PLP_GENERIC_ERROR, this);
+        } catch(gnu.io.NoSuchPortException e) {
+            return Msg.E(portName + " is not found.",
                             Constants.PLP_GENERIC_ERROR, this);
         }
 

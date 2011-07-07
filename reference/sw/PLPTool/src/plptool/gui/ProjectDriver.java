@@ -66,7 +66,8 @@ public class ProjectDriver {
     private boolean                modified;
     public int                     open_asm;
     public String                  curdir;
-    private String                 arch;    
+    private String                 arch;
+    private boolean                sim_mode;
 
     /*
      * These variables hold data and information loaded from
@@ -105,7 +106,6 @@ public class ProjectDriver {
     /*
      * PLP GUI Windows
      */ // --
-    public SimShell                g_simsh;    // PLP Simulator Frontend
     public IORegistryFrame         g_ioreg;    // I/O registry GUI
     public Develop                 g_dev;      // IDE GUI
     public SimErrorFrame           g_err;      // Error frame
@@ -120,9 +120,6 @@ public class ProjectDriver {
     public FindAndReplace          g_find;     // Find and Replace
     private boolean                g;          // are we driving a GUI?
     private boolean                applet;     // are we driving an applet?
-
-    // Desktop
-    public javax.swing.JDesktopPane            g_desktop;  // Desktop pane
 
     // Programmer
     private boolean                serial_support;
@@ -147,6 +144,7 @@ public class ProjectDriver {
         modified = false;
         plpfile = null;
         halt = false;
+        sim_mode = false;
 
         if(applet) asms = new ArrayList<PLPAsmSource>();
 
@@ -156,10 +154,8 @@ public class ProjectDriver {
         if(g && !applet) {
             this.g_err = new SimErrorFrame();
             this.g_dev = new Develop(this);
-            this.g_simsh = new SimShell(this);
             this.g_ioreg = new IORegistryFrame(this);
             //this.g_simsh.getSimDesktop().add(this.g_ioreg);
-            this.g_desktop = this.g_simsh.getSimDesktop();
             this.g_about = new AboutBoxDialog(this.g_dev);
             this.g_opts = new OptionsFrame(this);
             this.g_qref = new QuickRef();
@@ -171,9 +167,6 @@ public class ProjectDriver {
             this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
                               (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
             this.g_dev.setLocationRelativeTo(null);
-            this.g_simsh.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
-                              (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-            this.g_simsh.setLocationRelativeTo(null);
 
             this.g_qref.setLocationRelativeTo(null);
             this.g_find.setLocationRelativeTo(null);
@@ -252,8 +245,7 @@ public class ProjectDriver {
 
         if(g) {
             refreshProjectView(false);
-            g_simsh.destroySimulation();
-            g_simsh.setVisible(false);
+            desimulate();
             g_dev.disableSimControls();
         }
 
@@ -286,8 +278,7 @@ public class ProjectDriver {
 
         if(g) {
             refreshProjectView(false);
-            g_simsh.destroySimulation();
-            g_simsh.setVisible(false);
+            desimulate();
             g_dev.disableSimControls();
         }
 
@@ -642,8 +633,7 @@ public class ProjectDriver {
 
         if(g) {
             g_opts.restoreSavedOpts();
-            g_simsh.destroySimulation();
-            g_simsh.setVisible(false);
+            desimulate();
 
             if(asm != null && asm.isAssembled())
                 g_dev.enableSimControls();
@@ -667,6 +657,7 @@ public class ProjectDriver {
             return Constants.PLP_GENERIC_ERROR;
 
         String windowTitle = plpfile.getName() + ((modified) ? "*" : "") +
+                             (sim_mode ? " - Simulation Mode " : "") +
                              " - PLP Software Tool " + Constants.versionString;
         g_dev.setTitle(windowTitle);
 
@@ -816,8 +807,8 @@ public class ProjectDriver {
             return Msg.E("simulate(): Empty program.",
                             Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
 
-        if(g && g_simsh != null)
-            g_simsh.destroySimulation();
+        if(g && sim_mode)
+            desimulate();
 
         sim = ArchRegistry.createSimCore(this);
         ioreg = new IORegistry(this);
@@ -835,33 +826,27 @@ public class ProjectDriver {
         sim.loadProgram(asm);
 
         sim.reset();
+        sim_mode = true;
 
         if(g) {
             g_ioreg = new IORegistryFrame(this);
             g_sim = ArchRegistry.createSimCoreGUI(this);
-            //g_simsh.getSimDesktop().add(g_ioreg);
-            //g_simsh.getSimDesktop().add(g_sim);
             g_ioreg.refreshModulesTable();
             g_dev.attachModuleFrameListeners(g_ioreg, Constants.PLP_TOOLFRAME_IOREGISTRY);
             if(g_sim != null) {
                 g_sim.updateComponents();
                 g_sim.updateBusTable();
                 g_dev.attachModuleFrameListeners(g_sim, Constants.PLP_TOOLFRAME_SIMCPU);
-                //g_sim.setVisible(true);
             }
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
-            //g_simsh.tileWindows();
-            //g_simsh.resetSettings();
-            //g_simsh.setStatusString("Ready", Color.black);
 
             /** 2.2 Release- disable unimplemented features **/
             if(arch.equals("plpmips"))
                 ((plptool.mips.SimCoreGUI)g_sim).disableFeatures();
-            //g_simsh.disableFeatures();
             /*************************************************/
 
-            //g_simsh.setVisible(true);
+            updateWindowTitle();
         }
         else if (applet) {
             // do nothing
@@ -907,7 +892,19 @@ public class ProjectDriver {
         g_watcher = null;
         g_asmview = null;
 
+        sim_mode = false;
+        updateWindowTitle();
+
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Return whether the project is being simulated
+     *
+     * @return boolean
+     */
+    public boolean isSimulating() {
+        return sim_mode;
     }
 
     /**
@@ -1215,9 +1212,11 @@ public class ProjectDriver {
     /**
      * Update GUI components
      */
-    public void updateComponents() {
+    public void updateComponents(boolean updateDevelop) {
         g_sim.updateComponents();
-        g_dev.updateComponents();
+        
+        if(updateDevelop)
+            g_dev.updateComponents();
 
         if(ioreg != null)
             ioreg.gui_eval();
