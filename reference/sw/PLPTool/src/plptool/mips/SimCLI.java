@@ -298,8 +298,7 @@ public class SimCLI {
             else {
                 ioReg.attachModuleToBus((int) PLPToolbox.parseNum(tokens[1]),
                                         PLPToolbox.parseNum(tokens[2]),
-                                        PLPToolbox.parseNum(tokens[3]),
-                                        null);
+                                        PLPToolbox.parseNum(tokens[3]));
             }
         }
         else if(tokens[0].equals("rmmod")) {

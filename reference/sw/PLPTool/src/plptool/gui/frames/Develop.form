@@ -208,7 +208,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuAssemble">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F5"/>
+                  <KeyStroke key="F2"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuAssemble.icon"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuAssemble.text"/>
@@ -221,7 +221,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuSimulate">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F9"/>
+                  <KeyStroke key="F3"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimulate.icon"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimulate.text"/>
@@ -234,7 +234,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuProgram">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F7"/>
+                  <KeyStroke key="F4"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuProgram.icon"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuProgram.text"/>
@@ -247,7 +247,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuQuickProgram">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F3"/>
+                  <KeyStroke key="Shift+F4"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuQuickProgram.text"/>
                 <Property name="name" type="java.lang.String" value="menuQuickProgram" noResource="true"/>
@@ -307,9 +307,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSetMainProgram">
               <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F2"/>
-                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuSetMainProgram.text"/>
                 <Property name="name" type="java.lang.String" value="menuSetMainProgram" noResource="true"/>
               </Properties>
@@ -362,29 +359,38 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuSimStep">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Shift+S"/>
+                  <KeyStroke key="F5"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimStep.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimStep" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimStepActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSimReset">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+R"/>
+                  <KeyStroke key="F6"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimReset.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimReset" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimResetActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimRun">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F4"/>
+                  <KeyStroke key="F7"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimRun.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimRun" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimRunActionPerformed"/>
+              </Events>
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="menuStepSize">
               <Properties>
@@ -453,27 +459,48 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimView">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Shift+Ctrl+C"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimView.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimView" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimViewActionPerformed"/>
+                  </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimWatcher">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Shift+Ctrl+W"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimWatcher.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimWatcher" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimWatcherActionPerformed"/>
+                  </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimMemory">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Shift+Ctrl+D"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimMemory.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimMemory" noResource="true"/>
                   </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimIO">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Shift+Ctrl+R"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimIO.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimIO" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimIOActionPerformed"/>
+                  </Events>
                 </MenuItem>
               </SubComponents>
             </Menu>
@@ -485,48 +512,59 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuLEDs">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuLEDs.text"/>
                     <Property name="name" type="java.lang.String" value="menuLEDs" noResource="true"/>
                   </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSwitches">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSwitches.text"/>
                     <Property name="name" type="java.lang.String" value="menuSwitches" noResource="true"/>
                   </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSevenSegments">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSevenSegments.text"/>
                     <Property name="name" type="java.lang.String" value="menuSevenSegments" noResource="true"/>
                   </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuUART">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuUART.text"/>
                     <Property name="name" type="java.lang.String" value="menuUART" noResource="true"/>
                   </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuVGA">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuVGA.text"/>
                     <Property name="name" type="java.lang.String" value="menuVGA" noResource="true"/>
                   </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuPLPID">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuPLPID.text"/>
                     <Property name="name" type="java.lang.String" value="menuPLPID" noResource="true"/>
                   </Properties>
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator10">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="jSeparator10" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuExitSim">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="F8"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="menuExitSim.text"/>
+                <Property name="name" type="java.lang.String" value="menuExitSim" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuExitSimActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuHelp">
@@ -655,7 +693,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="485" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="482" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -730,11 +768,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="664" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="663" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="459" max="32767" attributes="0"/>
+                              <EmptySpace pref="445" max="32767" attributes="0"/>
                               <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>

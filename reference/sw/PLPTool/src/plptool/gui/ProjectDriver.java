@@ -842,30 +842,70 @@ public class ProjectDriver {
             //g_simsh.getSimDesktop().add(g_ioreg);
             //g_simsh.getSimDesktop().add(g_sim);
             g_ioreg.refreshModulesTable();
+            g_dev.attachModuleFrameListeners(g_ioreg, Constants.PLP_TOOLFRAME_IOREGISTRY);
             if(g_sim != null) {
                 g_sim.updateComponents();
                 g_sim.updateBusTable();
-                g_sim.setVisible(true);
+                g_dev.attachModuleFrameListeners(g_sim, Constants.PLP_TOOLFRAME_SIMCPU);
+                //g_sim.setVisible(true);
             }
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
-            g_simsh.tileWindows();
-            g_simsh.resetSettings();
-            g_simsh.setStatusString("Ready", Color.black);
+            //g_simsh.tileWindows();
+            //g_simsh.resetSettings();
+            //g_simsh.setStatusString("Ready", Color.black);
 
             /** 2.2 Release- disable unimplemented features **/
             if(arch.equals("plpmips"))
                 ((plptool.mips.SimCoreGUI)g_sim).disableFeatures();
-            g_simsh.disableFeatures();
+            //g_simsh.disableFeatures();
             /*************************************************/
 
-            g_simsh.setVisible(true);
+            //g_simsh.setVisible(true);
         }
         else if (applet) {
             // do nothing
         } else
             ArchRegistry.launchCLISimulatorInterface(this);
 
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Destroy current simulation.
+     *
+     * @return PLP_OK on successful operation, error code otherwise
+     */
+    public int desimulate() {
+        if(ioreg != null && ioreg.getNumOfModsAttached() > 0) {
+            smods = ioreg.createPreset();
+            ioreg.removeAllModules();
+            ioreg = null;
+        }
+
+        if(sim != null) {
+            if(g_sim != null)
+                g_sim.dispose();
+            g_err.dispose();
+        }
+
+        if(g_simrun != null) {
+            g_simrun.stepCount = 0;
+        }
+
+        if(g_ioreg != null)
+            g_ioreg.dispose();
+
+        if(g_watcher != null)
+            g_watcher.dispose();
+
+        if(g_asmview != null)
+            g_asmview.dispose();
+
+        g_ioreg = null;
+        g_watcher = null;
+        g_asmview = null;
 
         return Constants.PLP_OK;
     }

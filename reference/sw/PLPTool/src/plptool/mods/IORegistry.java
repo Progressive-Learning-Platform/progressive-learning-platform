@@ -243,13 +243,10 @@ public class IORegistry {
      * @param addr The starting address of the module's address space.
      * @param size The size of the module's address space.
      * @param sim Simulation core associated with the main application.
-     * @param simDesktop Simulator desktop the module frames will be added to
-     * (if applicable).
      * @return PLP_OK on completion, or PLP_SIM_INVALID_MODULE if invalid index
      * is specified.
      */
-    public int attachModuleToBus(int index, long addr, long size,
-                                 javax.swing.JDesktopPane simDesktop) {
+    public int attachModuleToBus(int index, long addr, long size) {
 
         PLPSimBusModule module = null;
         Object moduleFrame = null;
@@ -360,10 +357,10 @@ public class IORegistry {
         module.enable();
         positionInBus.add(plp.sim.bus.add(module));
 
-        if(moduleFrame != null && simDesktop != null && moduleFrame instanceof JFrame) {
+        if(moduleFrame != null && moduleFrame instanceof JFrame) {
             attachModuleFrameListeners((JFrame) moduleFrame, plp);
             //simDesktop.add((JFrame) moduleFrame);
-            ((JFrame) moduleFrame).setVisible(true);
+            //((JFrame) moduleFrame).setVisible(true);
         }
 
         return Constants.PLP_OK;
@@ -590,9 +587,9 @@ public class IORegistry {
         Long[] sizes = (Long[]) Preset.presets[index][3];
         for(int i = 0; i < modsType.length; i++) {
             if(plp.g())
-                this.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], plp.g_simsh.getSimDesktop());
+                this.attachModuleToBus(modsType[i], startAddresses[i], sizes[i]);
             else
-                this.attachModuleToBus(modsType[i], startAddresses[i], sizes[i], null);
+                this.attachModuleToBus(modsType[i], startAddresses[i], sizes[i]);
         }
 
         return Constants.PLP_OK;
@@ -608,12 +605,12 @@ public class IORegistry {
 
         for(int i = 0; i < preset.size(); i++) {
             if(plp.g()) {
-                this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i), plp.g_simsh.getSimDesktop());
+                this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i));
                 if(preset.getHasFrame(i))
                     ((JFrame)moduleFrames.get(i)).setVisible(preset.getVisible(i));
             }
             else
-                this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i), null);
+                this.attachModuleToBus(preset.getType(i), preset.getAddress(i), preset.getSize(i));
         }
 
         return Constants.PLP_OK;
