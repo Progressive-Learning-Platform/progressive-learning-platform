@@ -33,7 +33,7 @@ this is as basic as it gets:
 	unified, single level
 */
 
-module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy);
+module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, cpu_stall, sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub, sram_data, sram_addr, mod_vga_sram_data, mod_vga_sram_addr, mod_vga_sram_read, mod_vga_sram_rdy, pmc_cache_miss_I, pmc_cache_miss_D, pmc_cache_access_I, pmc_cache_access_D);
 	input rst;
 	input clk;
 	input ie, de;
@@ -51,6 +51,8 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	output 	      sram_clk, sram_adv, sram_cre, sram_ce, sram_oe, sram_we, sram_lb, sram_ub;
 	output [23:1] sram_addr;
 	inout  [15:0] sram_data;
+
+	output pmc_cache_miss_I, pmc_cache_miss_D, pmc_cache_access_I, pmc_cache_access_D;
 
 	wire          cache_iwrite, cache_dwrite;
 	wire   [10:0] cache_iaddr, cache_daddr;
@@ -78,6 +80,12 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	reg 	[3:0]  state = 4'b0000;
 	wire 	[3:0]  next_state;
 	wire	       ihit, dhit;
+
+	/* performance counter logic */
+	assign pmc_cache_miss_I    = state[3] & state[1];
+	assign pmc_cache_miss_D    = state[3] & state[0];
+	assign pmc_cache_access_I = ie & (state[3] || ihit);
+	assign pmc_cache_access_D = de & drw != 0 & (state[3] || dhit);
 
 	assign cpu_stall    = next_state != 4'b0000;
 	assign cache_iwrite = state[1];
