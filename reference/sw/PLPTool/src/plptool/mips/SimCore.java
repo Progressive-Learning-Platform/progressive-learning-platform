@@ -626,21 +626,18 @@ public class SimCore extends PLPSimCore {
             if(opcode != 0) {
                 switch(Asm.lookupInstrType(Asm.lookupInstrOpcode(opcode))) {
                     case 3: // beq and bne
-                        Msg.M("I-3");
                         ex_reg.i_ctl_branch = 1;
 
                         break;
 
                     case 4: // i-types
                     case 5: // lui
-                        Msg.M("I-4/5");
                         ex_reg.i_fwd_ctl_regwrite = 1;
                         ex_reg.i_ctl_aluSrc = 1;
 
                         break;
 
                     case 6: // lw and sw
-                        Msg.M("I-6");
                         if(opcode == 0x23) {
                             ex_reg.i_fwd_ctl_memtoreg = 1;
                             ex_reg.i_fwd_ctl_regwrite = 1;
@@ -654,7 +651,6 @@ public class SimCore extends PLPSimCore {
                         break;
                     
                     case 7: // j and jal
-                        Msg.M("I-7");
                         ex_reg.i_ctl_jump = 1;
                         if(Asm.lookupInstrOpcode(opcode).equals("jal")) {
                             ex_reg.i_fwd_ctl_regwrite = 1;
@@ -675,18 +671,15 @@ public class SimCore extends PLPSimCore {
                     case 0: // r-types
                     case 1: // shifts
                     case 8: // multiply
-                        Msg.M("WHAT THE HELL");
                         ex_reg.i_fwd_ctl_regwrite = 1;
                         ex_reg.i_ctl_regDst = 1;
                         break;
 
                     case 2: // jr
-                        Msg.M("R-2");
                         ex_reg.i_ctl_jump = 1;
                         break;
                         
                     case 9: // jalr
-                        Msg.M("R-9");
                         ex_reg.i_ctl_jump = 1;
                         ex_reg.i_fwd_ctl_regwrite = 1;
                         ex_reg.i_ctl_regDst = 1;
