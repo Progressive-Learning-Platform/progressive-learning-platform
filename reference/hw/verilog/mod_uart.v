@@ -52,7 +52,7 @@ SEND BUFFER:
 	Lower byte contains data to be sent
 
 */
-module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd, i_uart);
+module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd, i_uart, pmc_uart_recv, pmc_uart_send);
         input rst;
         input clk;
         input ie,de;
@@ -63,6 +63,9 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd, 
 	output txd;
 	input rxd;
 	output i_uart;
+
+	/* pmc */
+	output pmc_uart_recv, pmc_uart_send;
 
         /* by spec, the iout and dout signals must go hiZ when we're not using them */
         wire [31:0] idata, ddata;
@@ -80,6 +83,9 @@ module mod_uart(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, txd, rxd, 
 	
 	assign send = (de && drw[0] && daddr == 32'h0) ? din[0] : 0;
 	assign clear = (de && drw[0] && daddr == 32'h0) ? din[1] : 0;
+
+	assign pmc_uart_recv = clear;
+	assign pmc_uart_send = send;
 
 	assign ddata = (daddr == 32'h0) ? 0 : /* command reg */
 			  (daddr == 32'h4) ? {30'h0,data_rdy,cts} : /* status */
