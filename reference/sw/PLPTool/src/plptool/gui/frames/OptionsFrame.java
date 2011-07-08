@@ -76,6 +76,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         simNoExecute = new javax.swing.JCheckBox();
         simBusReadDefaultZero = new javax.swing.JCheckBox();
         simDumpTraceOnFailedEval = new javax.swing.JCheckBox();
+        simRefreshDev = new javax.swing.JCheckBox();
         btnClose = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(OptionsFrame.class);
@@ -123,7 +124,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addGroup(paneEditorLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbFontSize, 0, 352, Short.MAX_VALUE)))
+                        .addComponent(cmbFontSize, 0, 380, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         paneEditorLayout.setVerticalGroup(
@@ -135,7 +136,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(318, Short.MAX_VALUE))
+                .addContainerGap(340, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
@@ -184,6 +185,14 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
+        simRefreshDev.setText(resourceMap.getString("simRefreshDev.text")); // NOI18N
+        simRefreshDev.setName("simRefreshDev"); // NOI18N
+        simRefreshDev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simRefreshDevActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout paneSimLayout = new javax.swing.GroupLayout(paneSim);
         paneSim.setLayout(paneSimLayout);
         paneSimLayout.setHorizontalGroup(
@@ -193,9 +202,10 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneSimLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
                     .addComponent(jLabel1)
-                    .addComponent(simBusReadDefaultZero))
+                    .addComponent(simBusReadDefaultZero)
+                    .addComponent(simRefreshDev))
                 .addContainerGap())
         );
         paneSimLayout.setVerticalGroup(
@@ -211,7 +221,9 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simBusReadDefaultZero)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simDumpTraceOnFailedEval)
-                .addContainerGap(183, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(simRefreshDev)
+                .addContainerGap(203, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
@@ -285,6 +297,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_cmbFontSizeActionPerformed
 
+    private void simRefreshDevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simRefreshDevActionPerformed
+        Config.simRefreshDevDuringSimRun = simRefreshDev.isSelected();
+    }//GEN-LAST:event_simRefreshDevActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JComboBox cmbFontSize;
@@ -297,6 +313,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox simBusReadDefaultZero;
     private javax.swing.JCheckBox simDumpTraceOnFailedEval;
     private javax.swing.JCheckBox simNoExecute;
+    private javax.swing.JCheckBox simRefreshDev;
     private javax.swing.JTabbedPane tabsOptions;
     // End of variables declaration//GEN-END:variables
 

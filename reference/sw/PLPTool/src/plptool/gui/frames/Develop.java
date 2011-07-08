@@ -149,6 +149,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void updateComponents() {
+        try {
         if(plp.isSimulating()) {
             plptool.mips.SimCore sim = (plptool.mips.SimCore) plp.sim;
             int pc_index = plp.asm.lookupAddrIndex(sim.id_stage.i_instrAddr);
@@ -181,6 +182,16 @@ public class Develop extends javax.swing.JFrame {
                     }
                 });
 
+        }
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(this, "Looks like the GUI is being refreshed too fast!\n" +
+                                          "Slow down simulation speed or turn off IDE refresh in simulation options to prevent this error.", "PLPTool Error", JOptionPane.ERROR_MESSAGE);
+
+            if(Constants.debugLevel >= 5)
+                e.printStackTrace();
+
+            if(plp.g_simrun != null)
+                plp.g_simrun.stepCount = -1;
         }
     }
 
@@ -676,6 +687,24 @@ public class Develop extends javax.swing.JFrame {
             case Constants.PLP_TOOLFRAME_SIMRUN:
                 return menuSimRun;
 
+            case Constants.PLP_TOOLFRAME_SIMLEDS:
+                return menuLEDs;
+
+            case Constants.PLP_TOOLFRAME_SIMSWITCHES:
+                return menuSwitches;
+
+            case Constants.PLP_TOOLFRAME_SIMUART:
+                return menuUART;
+
+            case Constants.PLP_TOOLFRAME_SIMVGA:
+                return menuVGA;
+
+            case Constants.PLP_TOOLFRAME_SIMPLPID:
+                return menuPLPID;
+
+            case Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS:
+                return menuSevenSegments;
+
             default:
                 return null;
         }
@@ -705,6 +734,77 @@ public class Develop extends javax.swing.JFrame {
         });
     }
 
+    private void setLEDsFrame(boolean v) {
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.LEDArray) {
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
+                menuLEDs.setSelected(v);
+                plp.updateComponents(false);
+            }
+        }
+    }
+
+    private void setSwitchesFrame(boolean v) {
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.Switches) {
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
+                menuSwitches.setSelected(v);
+                plp.updateComponents(false);
+            }
+        }
+    }
+
+    private void setSevenSegmentsFrame(boolean v) {
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.SevenSegments) {
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
+                menuSevenSegments.setSelected(v);
+                plp.updateComponents(false);
+            }
+        }
+    }
+
+    private void setUARTFrame(boolean v) {
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.UART) {
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
+                menuUART.setSelected(v);
+                plp.updateComponents(false);
+            }
+        }
+    }
+
+    private void setVGAFrame(boolean v) {
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.VGA) {
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
+                menuVGA.setSelected(v);
+                plp.updateComponents(false);
+            }
+        }
+    }
+
+    private void setPLPIDFrame(boolean v) {
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.PLPID) {
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
+                menuPLPID.setSelected(v);
+                plp.updateComponents(false);
+            }
+        }
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -835,11 +935,11 @@ public class Develop extends javax.swing.JFrame {
 
         treeProject.setName("treeProject"); // NOI18N
         treeProject.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                treeProjectMouseClicked(evt);
-            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 treeProjectMousePressed(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                treeProjectMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(treeProject);
@@ -869,10 +969,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -890,11 +990,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 459, Short.MAX_VALUE)
                 .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -928,7 +1028,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1340,7 +1440,7 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuSim.add(menuSimStep);
 
-        menuSimReset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F6, 0));
+        menuSimReset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, 0));
         menuSimReset.setText(resourceMap.getString("menuSimReset.text")); // NOI18N
         menuSimReset.setName("menuSimReset"); // NOI18N
         menuSimReset.addActionListener(new java.awt.event.ActionListener() {
@@ -1437,28 +1537,64 @@ public class Develop extends javax.swing.JFrame {
         menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
         menuIOReg.setName("menuIOReg"); // NOI18N
 
+        menuLEDs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
         menuLEDs.setText(resourceMap.getString("menuLEDs.text")); // NOI18N
         menuLEDs.setName("menuLEDs"); // NOI18N
+        menuLEDs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLEDsActionPerformed(evt);
+            }
+        });
         menuIOReg.add(menuLEDs);
 
+        menuSwitches.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
         menuSwitches.setText(resourceMap.getString("menuSwitches.text")); // NOI18N
         menuSwitches.setName("menuSwitches"); // NOI18N
+        menuSwitches.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSwitchesActionPerformed(evt);
+            }
+        });
         menuIOReg.add(menuSwitches);
 
+        menuSevenSegments.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
         menuSevenSegments.setText(resourceMap.getString("menuSevenSegments.text")); // NOI18N
         menuSevenSegments.setName("menuSevenSegments"); // NOI18N
+        menuSevenSegments.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSevenSegmentsActionPerformed(evt);
+            }
+        });
         menuIOReg.add(menuSevenSegments);
 
+        menuUART.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
         menuUART.setText(resourceMap.getString("menuUART.text")); // NOI18N
         menuUART.setName("menuUART"); // NOI18N
+        menuUART.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuUARTActionPerformed(evt);
+            }
+        });
         menuIOReg.add(menuUART);
 
+        menuVGA.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
         menuVGA.setText(resourceMap.getString("menuVGA.text")); // NOI18N
         menuVGA.setName("menuVGA"); // NOI18N
+        menuVGA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuVGAActionPerformed(evt);
+            }
+        });
         menuIOReg.add(menuVGA);
 
+        menuPLPID.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.CTRL_MASK));
         menuPLPID.setText(resourceMap.getString("menuPLPID.text")); // NOI18N
         menuPLPID.setName("menuPLPID"); // NOI18N
+        menuPLPID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPLPIDActionPerformed(evt);
+            }
+        });
         menuIOReg.add(menuPLPID);
 
         rootmenuSim.add(menuIOReg);
@@ -1466,7 +1602,7 @@ public class Develop extends javax.swing.JFrame {
         jSeparator10.setName("jSeparator10"); // NOI18N
         rootmenuSim.add(jSeparator10);
 
-        menuExitSim.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F8, 0));
+        menuExitSim.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
         menuExitSim.setText(resourceMap.getString("menuExitSim.text")); // NOI18N
         menuExitSim.setName("menuExitSim"); // NOI18N
         menuExitSim.addActionListener(new java.awt.event.ActionListener() {
@@ -1921,9 +2057,44 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSimViewActionPerformed
 
     private void menuSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimResetActionPerformed
+        if(plp.g_simrun != null)
+            plp.g_simrun.stepCount = -1;
         plp.sim.reset();
+        
         plp.updateComponents(true);
     }//GEN-LAST:event_menuSimResetActionPerformed
+
+    private void menuLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLEDsActionPerformed
+        setLEDsFrame(menuLEDs.isSelected());
+    }//GEN-LAST:event_menuLEDsActionPerformed
+
+    private void menuSwitchesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSwitchesActionPerformed
+        setSwitchesFrame(menuSwitches.isSelected());
+
+    }//GEN-LAST:event_menuSwitchesActionPerformed
+
+    private void menuSevenSegmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSevenSegmentsActionPerformed
+        setSevenSegmentsFrame(menuSevenSegments.isSelected());
+    }//GEN-LAST:event_menuSevenSegmentsActionPerformed
+
+    private void menuUARTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUARTActionPerformed
+        setUARTFrame(menuUART.isSelected());
+    }//GEN-LAST:event_menuUARTActionPerformed
+
+    private void menuVGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuVGAActionPerformed
+        setVGAFrame(menuVGA.isSelected());
+    }//GEN-LAST:event_menuVGAActionPerformed
+
+    private void menuPLPIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPLPIDActionPerformed
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.PLPID) {
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(menuPLPID.isSelected());
+                plp.updateComponents(false);
+            }
+        }
+    }//GEN-LAST:event_menuPLPIDActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();

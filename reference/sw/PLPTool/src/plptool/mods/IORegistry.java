@@ -269,7 +269,10 @@ public class IORegistry {
             // LEDArray is summoned
             case 1:
                 module = new LEDArray(addr);
-                if(plp.g()) moduleFrame = new LEDArrayFrame();
+                if(plp.g()) {
+                    moduleFrame = new LEDArrayFrame();
+                    attachModuleFrameListeners((JFrame) moduleFrame, plp, Constants.PLP_TOOLFRAME_SIMLEDS);
+                }
 
                 break;
 
@@ -277,7 +280,10 @@ public class IORegistry {
             // Switches is summoned
             case 2:
                 module = new Switches(addr);
-                if(plp.g()) moduleFrame = new SwitchesFrame((Switches) module);
+                if(plp.g()) {
+                    moduleFrame = new SwitchesFrame((Switches) module);
+                    attachModuleFrameListeners((JFrame) moduleFrame, plp, Constants.PLP_TOOLFRAME_SIMSWITCHES);
+                }
 
                 break;
 
@@ -291,7 +297,10 @@ public class IORegistry {
             // PLPID is summoned
             case 4:
                 module = new PLPID(addr);
-                if(plp.g()) moduleFrame = new PLPIDFrame((PLPID) module);
+                if(plp.g()) {
+                    moduleFrame = new PLPIDFrame((PLPID) module);
+                    attachModuleFrameListeners((JFrame) moduleFrame, plp, Constants.PLP_TOOLFRAME_SIMPLPID);
+                }
                 break;
 
             /******************************************************************/
@@ -303,7 +312,10 @@ public class IORegistry {
             /******************************************************************/
             // VGA is summoned
             case 6:
-                if(plp.g()) moduleFrame = new VGAFrame();
+                if(plp.g()) {
+                    moduleFrame = new VGAFrame();
+                    attachModuleFrameListeners((JFrame) moduleFrame, plp, Constants.PLP_TOOLFRAME_SIMVGA);
+                }
                 module = new VGA(addr, plp.sim.bus, (VGAFrame) moduleFrame);
                 module.threaded = plptool.Config.threadedModEnabled;
                 module.stop = false;
@@ -320,7 +332,10 @@ public class IORegistry {
             /******************************************************************/
             // UART is summoned
             case 8:
-                if(plp.g()) moduleFrame = new UARTFrame();
+                if(plp.g()) {
+                    moduleFrame = new UARTFrame();
+                    attachModuleFrameListeners((JFrame) moduleFrame, plp, Constants.PLP_TOOLFRAME_SIMUART);
+                }
                 module = new UART(addr, (UARTFrame) moduleFrame);
                 break;
 
@@ -328,7 +343,10 @@ public class IORegistry {
             // Seven Segments is summoned
             case 9:
                 module = new SevenSegments(addr);
-                if(plp.g()) moduleFrame = new SevenSegmentsFrame();
+                if(plp.g()) {
+                    moduleFrame = new SevenSegmentsFrame();
+                    attachModuleFrameListeners((JFrame) moduleFrame, plp,  Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS);
+                }
 
                 break;
 
@@ -357,11 +375,11 @@ public class IORegistry {
         module.enable();
         positionInBus.add(plp.sim.bus.add(module));
 
-        if(moduleFrame != null && moduleFrame instanceof JFrame) {
-            attachModuleFrameListeners((JFrame) moduleFrame, plp);
+        //if(moduleFrame != null && moduleFrame instanceof JFrame) {
+        //    attachModuleFrameListeners((JFrame) moduleFrame, plp);
             //simDesktop.add((JFrame) moduleFrame);
             //((JFrame) moduleFrame).setVisible(true);
-        }
+        //}
 
         return Constants.PLP_OK;
     }
@@ -639,12 +657,13 @@ public class IORegistry {
      * @param x Module frame to attach the listener to
      * @param plp Current project driver instance
      */
-    public static void attachModuleFrameListeners(final JFrame x, final plptool.gui.ProjectDriver plp) {
+    public static void attachModuleFrameListeners(final JFrame x, final plptool.gui.ProjectDriver plp, final int menuDesignation) {
         x.addWindowListener(new java.awt.event.WindowListener() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 x.setVisible(false);
                 plp.g_ioreg.refreshModulesTable();
+                plp.g_dev.getToolCheckboxMenu(menuDesignation).setSelected(false);
             }
 
             @Override public void windowOpened(java.awt.event.WindowEvent evt) { }

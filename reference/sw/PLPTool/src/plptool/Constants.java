@@ -174,6 +174,13 @@ public class Constants {
     public static final int PLP_TOOLFRAME_SIMRUN                 = 4;
     public static final int PLP_TOOLFRAME_SIMCPU                 = 5;
 
+    public static final int PLP_TOOLFRAME_SIMLEDS                = 6;
+    public static final int PLP_TOOLFRAME_SIMSWITCHES            = 7;
+    public static final int PLP_TOOLFRAME_SIMUART                = 8;
+    public static final int PLP_TOOLFRAME_SIMPLPID               = 9;
+    public static final int PLP_TOOLFRAME_SIMSEVENSEGMENTS       = 10;
+    public static final int PLP_TOOLFRAME_SIMVGA                 = 11;
+
     // ASMView Columns identifiers
     public static final int ASMVIEW_ADDR                         = 0;
     public static final int ASMVIEW_LABEL                        = 1;
