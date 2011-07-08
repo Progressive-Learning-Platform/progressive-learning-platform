@@ -106,10 +106,8 @@ public class SimCore extends PLPSimCore {
      */
     Asm asm;
 
-    /**
-     * External interrupt hardware vector
-     */
-    private final long ISR = 0xf0700000L;
+    int int_inject;
+
 
     /**
      * Simulator plp constructor.
@@ -164,12 +162,14 @@ public class SimCore extends PLPSimCore {
 
         loadProgram(asm);
 
+        IRQ = 0;
         pc.reset(startAddr);
         instructionCount = 0;
         sim_flags = (long) 0;
         ex_continue = false;
         ex_stall = false;
         if_stall = false;
+        int_inject = 0;
         flushpipeline();
 
         Msg.M("core: reset");
@@ -266,23 +266,6 @@ public class SimCore extends PLPSimCore {
         // Evaluate modules attached to the bus
         ret += bus.eval();
 
-        // Interrupt request
-        if(IRQ > 0) { 
-            pc.write(ISR);
-            if_stall = true;
-            IRQ = 0; //hardware acknowledge;
-            sim_flags |= Constants.PLP_SIM_IRQ;
-            sim_flags |= Constants.PLP_SIM_IF_STALL_SET;
-
-            // flush if/id/ex
-            mem_stage.i_instrAddr = -1;
-            mem_stage.i_instruction = 0;
-            ex_stage.i_instrAddr = -1;
-            ex_stage.i_instruction = 0;
-            id_stage.i_instrAddr = -1;
-            id_stage.i_instruction = 0;
-        }
-
         if(ret != 0) {
             Msg.E("Evaluation failed. This simulation is stale.",
                   Constants.PLP_SIM_EVALUATION_FAILED, this);
@@ -298,8 +281,8 @@ public class SimCore extends PLPSimCore {
             id_stage.hot = true;
 
             return Constants.PLP_OK;
-        }
-        else if(ex_stall) { // ex_stall, clear id/ex register
+
+        } else if(ex_stall) { // ex_stall, clear id/ex register
             ex_stall = false;
             ex_continue = true;
             ex_stage.i_instruction = 0;
@@ -314,16 +297,52 @@ public class SimCore extends PLPSimCore {
             pc.write(old_pc + 4);
 
             return ret;
-        }
-        else if(ex_continue) { // resume from ex_stall, turn on id/ex register
+
+        } else if(ex_continue) { // resume from ex_stall, turn on id/ex register
             ex_stage.hot = true;
             ex_continue = false;
 
             return fetch();
-        }
-        else {
+
+        } else if (int_inject == 2) {
+            Msg.M("IRQ serviced, int_inject 2->1");
+            Asm x = new Asm("jalr $i1, $i0", "inline");
+            x.preprocess(0);
+            x.assemble();
+            id_stage.i_instruction = x.getObjectCode()[0];
+            id_stage.i_instrAddr = ex_stage.instrAddr - 8;
+            id_stage.hot = true;
+
+            int_inject--;
+            return Constants.PLP_OK;
+
+        } else if (int_inject == 1) {
+            Msg.M("IRQ serviced, int_inject 1->0");
+            id_stage.i_instruction = 0;
+            id_stage.hot = true;
+
+            int_inject--;
+            return Constants.PLP_OK;
+
+        // Interrupt request
+        } else if(IRQ > 0) {
+            Msg.M("IRQ Triggered.");
+            Msg.M("instrAddr diff: " + (pc.eval() - ex_stage.instrAddr));
+            if(pc.eval() - ex_stage.instrAddr == 8) {
+                regfile.write(27, pc.input(), false);
+                Msg.M("IRQ serviced, int_inject = 2");
+                int_inject = 2;
+                IRQ = 0;
+
+                id_stage.i_instruction = 0;
+                ex_stage.i_instruction = 0;
+                mem_stage.i_instruction = 0;
+            }
+
+            return Constants.PLP_OK;
+
+        } else
             return fetch();
-        }
     }
 
     /**
@@ -607,18 +626,21 @@ public class SimCore extends PLPSimCore {
             if(opcode != 0) {
                 switch(Asm.lookupInstrType(Asm.lookupInstrOpcode(opcode))) {
                     case 3: // beq and bne
+                        Msg.M("I-3");
                         ex_reg.i_ctl_branch = 1;
 
                         break;
 
                     case 4: // i-types
                     case 5: // lui
+                        Msg.M("I-4/5");
                         ex_reg.i_fwd_ctl_regwrite = 1;
                         ex_reg.i_ctl_aluSrc = 1;
 
                         break;
 
                     case 6: // lw and sw
+                        Msg.M("I-6");
                         if(opcode == 0x23) {
                             ex_reg.i_fwd_ctl_memtoreg = 1;
                             ex_reg.i_fwd_ctl_regwrite = 1;
@@ -632,6 +654,7 @@ public class SimCore extends PLPSimCore {
                         break;
                     
                     case 7: // j and jal
+                        Msg.M("I-7");
                         ex_reg.i_ctl_jump = 1;
                         if(Asm.lookupInstrOpcode(opcode).equals("jal")) {
                             ex_reg.i_fwd_ctl_regwrite = 1;
@@ -639,15 +662,9 @@ public class SimCore extends PLPSimCore {
                             ex_reg.i_ctl_rd_addr = 31;
                             ex_reg.i_fwd_ctl_jal = 1;
                         }
-
+                        
                         break;
-                    case 9: // jalr
-                        ex_reg.i_ctl_jump = 1;
-                        ex_reg.i_fwd_ctl_regwrite = 1;
-                        ex_reg.i_ctl_regDst = 1;
-                        ex_reg.i_fwd_ctl_jal = 1;
 
-                        break;
                     default:
                         return Msg.E("Unhandled instruction type.",
                                         Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
@@ -658,12 +675,23 @@ public class SimCore extends PLPSimCore {
                     case 0: // r-types
                     case 1: // shifts
                     case 8: // multiply
+                        Msg.M("WHAT THE HELL");
                         ex_reg.i_fwd_ctl_regwrite = 1;
                         ex_reg.i_ctl_regDst = 1;
                         break;
 
                     case 2: // jr
+                        Msg.M("R-2");
                         ex_reg.i_ctl_jump = 1;
+                        break;
+                        
+                    case 9: // jalr
+                        Msg.M("R-9");
+                        ex_reg.i_ctl_jump = 1;
+                        ex_reg.i_fwd_ctl_regwrite = 1;
+                        ex_reg.i_ctl_regDst = 1;
+                        ex_reg.i_fwd_ctl_jal = 1;
+
                         break;
 
                     default:
