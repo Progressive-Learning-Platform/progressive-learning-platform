@@ -42,18 +42,18 @@ public class InterruptController extends PLPSimBusModule {
         if(!(sim instanceof SimCore))
             return Constants.PLP_SIM_UNSUPPORTED_ARCHITECTURE;
 
-	long stat = (Long) super.readReg(super.startAddr);
-	long mask = (Long) super.readReg(super.startAddr + 0x4);
+	long stat = (Long) super.readReg(super.startAddr) & 0xfffffffe;
+	long mask = (Long) super.readReg(super.startAddr + 0x4) & 0xfffffffe;
 
-	// IRQ = (stat[30:0] & mask[30:0] != 0) & stat[31]<GIE> 
-        if((((stat & 0xefffffffL) & (mask & 0xefffffffL)) != 0)
-                && (stat & 0x80000000L) == 0x80000000L) {
+        boolean gie = ((Long) super.readReg(super.startAddr + 0x4) & 1) == 1;
 
-            // disable GIE
-            super.writeReg(super.startAddr, stat & 0x7fffffffL, false);
+	// IRQ = (stat[31:0] & mask[31:0] != 0)
+        if(gie && ((stat & mask) != 0)) {
 
 	    // raise IRQ
             sim.setIRQ(stat);
+
+            super.writeReg(super.startAddr, new Long(0x1L),false);
         }
 
         return Constants.PLP_OK;
@@ -70,27 +70,8 @@ public class InterruptController extends PLPSimBusModule {
 
     @Override
     public Object read(long addr) {
-	long ISR = (Long) super.readReg(super.startAddr+24);
         if(addr == super.startAddr) {
-            Asm asm = new Asm("li $k0," + ISR, "inline");
-            asm.preprocess(0);
-            asm.assemble();
-            return asm.getObjectCode()[0];
-        }
-        else if(addr == super.startAddr + 4) {
-            Asm asm = new Asm("li $k0," + ISR, "inline");
-            asm.preprocess(0);
-            asm.assemble();
-            return asm.getObjectCode()[1];
-        }
-        else if(addr == super.startAddr + 8) {
-            Asm asm = new Asm("jr $k0", "inline");
-            asm.preprocess(0);
-            asm.assemble();
-            return asm.getObjectCode()[0];
-        }
-        else if(addr == super.startAddr + 12) {
-            return 0L;
+            return (Long) super.readReg(addr) | 0x1L;
         }
         else
             return super.readReg(addr);
