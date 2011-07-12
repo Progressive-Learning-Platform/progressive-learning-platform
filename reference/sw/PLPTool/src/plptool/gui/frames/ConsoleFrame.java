@@ -138,6 +138,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("simcore")) {
                 out.setText(plp.sim.toString());
             }
+            else if(command.equals("hidetoolbar")) {
+                plp.g_dev.setToolbarVisible(false);
+            }
+            else if(command.equals("showtoolbar")) {
+                plp.g_dev.setToolbarVisible(true);
+            }
             else if(command.equals("assemble")) {
                     plp.assemble();
                 }
