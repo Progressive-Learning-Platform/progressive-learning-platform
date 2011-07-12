@@ -108,7 +108,6 @@
         <Menu class="javax.swing.JMenu" name="rootmenuEdit">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuEdit.text"/>
-            <Property name="name" type="java.lang.String" value="rootmenuEdit" noResource="true"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuCopy">
@@ -729,7 +728,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="485" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="471" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -822,7 +821,7 @@
                                   <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="427" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="351" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -926,9 +925,19 @@
           <Properties>
             <Property name="icon" type="javax.swing.Icon" resourceKey="btnNew.icon"/>
             <Property name="text" type="java.lang.String" resourceKey="btnNew.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnNew.toolTipText"/>
             <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="horizontalTextPosition" type="int" value="2"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[30, 30]"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="btnNew" noResource="true"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[30, 30]"/>
+            </Property>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
@@ -939,8 +948,12 @@
           <Properties>
             <Property name="icon" type="javax.swing.Icon" resourceKey="btnOpen.icon"/>
             <Property name="text" type="java.lang.String" resourceKey="btnOpen.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnOpen.toolTipText"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="btnOpen" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
@@ -952,8 +965,12 @@
           <Properties>
             <Property name="icon" type="javax.swing.Icon" resourceKey="btnSave.icon"/>
             <Property name="text" type="java.lang.String" resourceKey="btnSave.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSave.toolTipText"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="btnSave" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
@@ -973,6 +990,9 @@
             <Property name="toolTipText" type="java.lang.String" resourceKey="btnAssemble.toolTipText"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="btnAssemble" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
@@ -980,13 +1000,16 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAssembleActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btnSimulate">
+        <Component class="javax.swing.JToggleButton" name="btnSimulate">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimulate.icon"/>
             <Property name="text" type="java.lang.String" resourceKey="btnSimulate.text"/>
             <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimulate.toolTipText"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="btnSimulate" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
@@ -1001,6 +1024,9 @@
             <Property name="toolTipText" type="java.lang.String" resourceKey="btnProgram.toolTipText"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="btnProgram" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
@@ -1008,22 +1034,60 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnProgramActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator3">
+        <Component class="javax.swing.JToolBar$Separator" name="separatorSim">
           <Properties>
-            <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="separatorSim" noResource="true"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnAbout">
+        <Component class="javax.swing.JButton" name="btnSimStep">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" resourceKey="btnAbout.icon"/>
-            <Property name="text" type="java.lang.String" resourceKey="btnAbout.text"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimStep.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimStep.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimStep.toolTipText"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="btnAbout" noResource="true"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimStep" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAboutActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimStepActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimRun">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimRun.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimRun.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimRun.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimRun" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimRunActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnSimReset">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimReset.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimReset.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimReset.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimReset" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimResetActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

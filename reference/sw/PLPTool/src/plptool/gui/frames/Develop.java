@@ -252,6 +252,10 @@ public class Develop extends javax.swing.JFrame {
         return treeProject;
     }
 
+    public void setToolbarVisible(boolean b) {
+        toolbar.setVisible(b);
+    }
+
     public final void enableBuildControls() {
         rootmenuProject.setEnabled(true);
         menuImportASM.setEnabled(true);
@@ -654,7 +658,13 @@ public class Develop extends javax.swing.JFrame {
         if(plp.simulate() == Constants.PLP_OK) {
             txtEditor.setEditable(false);
             rootmenuSim.setEnabled(true);
-        }
+            btnSimulate.setSelected(true);
+            btnSimRun.setVisible(true);
+            separatorSim.setVisible(true);
+            btnSimReset.setVisible(true);
+            btnSimStep.setVisible(true);
+        } else
+            endSim();
     }
 
     public void endSim() {
@@ -666,11 +676,18 @@ public class Develop extends javax.swing.JFrame {
         menuSimIO.setSelected(false);
         plp.desimulate();
         rootmenuSim.setEnabled(false);
+        btnSimulate.setSelected(false);
         tln.setHighlight(-1);
+        btnSimRun.setSelected(false);
+        btnSimStep.setVisible(false);
+        btnSimReset.setVisible(false);
+        btnSimRun.setVisible(false);
+        separatorSim.setVisible(false);
     }
 
     public void stopRunState() {
         menuSimRun.setSelected(false);
+        btnSimRun.setSelected(false);
     }
 
     public javax.swing.JCheckBoxMenuItem getToolCheckboxMenu(int index) {
@@ -833,10 +850,12 @@ public class Develop extends javax.swing.JFrame {
         btnSave = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JToolBar.Separator();
         btnAssemble = new javax.swing.JButton();
-        btnSimulate = new javax.swing.JButton();
+        btnSimulate = new javax.swing.JToggleButton();
         btnProgram = new javax.swing.JButton();
-        jSeparator3 = new javax.swing.JToolBar.Separator();
-        btnAbout = new javax.swing.JButton();
+        separatorSim = new javax.swing.JToolBar.Separator();
+        btnSimStep = new javax.swing.JButton();
+        btnSimRun = new javax.swing.JToggleButton();
+        btnSimReset = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -1005,7 +1024,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1028,7 +1047,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1040,9 +1059,13 @@ public class Develop extends javax.swing.JFrame {
 
         btnNew.setIcon(resourceMap.getIcon("btnNew.icon")); // NOI18N
         btnNew.setText(resourceMap.getString("btnNew.text")); // NOI18N
+        btnNew.setToolTipText(resourceMap.getString("btnNew.toolTipText")); // NOI18N
         btnNew.setFocusable(false);
-        btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        btnNew.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnNew.setMinimumSize(new java.awt.Dimension(30, 30));
         btnNew.setName("btnNew"); // NOI18N
+        btnNew.setPreferredSize(new java.awt.Dimension(30, 30));
         btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1053,8 +1076,10 @@ public class Develop extends javax.swing.JFrame {
 
         btnOpen.setIcon(resourceMap.getIcon("btnOpen.icon")); // NOI18N
         btnOpen.setText(resourceMap.getString("btnOpen.text")); // NOI18N
+        btnOpen.setToolTipText(resourceMap.getString("btnOpen.toolTipText")); // NOI18N
         btnOpen.setFocusable(false);
         btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnOpen.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnOpen.setName("btnOpen"); // NOI18N
         btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -1066,8 +1091,10 @@ public class Develop extends javax.swing.JFrame {
 
         btnSave.setIcon(resourceMap.getIcon("btnSave.icon")); // NOI18N
         btnSave.setText(resourceMap.getString("btnSave.text")); // NOI18N
+        btnSave.setToolTipText(resourceMap.getString("btnSave.toolTipText")); // NOI18N
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSave.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSave.setName("btnSave"); // NOI18N
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnSave.addActionListener(new java.awt.event.ActionListener() {
@@ -1085,6 +1112,7 @@ public class Develop extends javax.swing.JFrame {
         btnAssemble.setToolTipText(resourceMap.getString("btnAssemble.toolTipText")); // NOI18N
         btnAssemble.setFocusable(false);
         btnAssemble.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAssemble.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnAssemble.setName("btnAssemble"); // NOI18N
         btnAssemble.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnAssemble.addActionListener(new java.awt.event.ActionListener() {
@@ -1099,6 +1127,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimulate.setToolTipText(resourceMap.getString("btnSimulate.toolTipText")); // NOI18N
         btnSimulate.setFocusable(false);
         btnSimulate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimulate.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimulate.setName("btnSimulate"); // NOI18N
         btnSimulate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnSimulate.addActionListener(new java.awt.event.ActionListener() {
@@ -1113,6 +1142,7 @@ public class Develop extends javax.swing.JFrame {
         btnProgram.setToolTipText(resourceMap.getString("btnProgram.toolTipText")); // NOI18N
         btnProgram.setFocusable(false);
         btnProgram.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnProgram.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnProgram.setName("btnProgram"); // NOI18N
         btnProgram.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnProgram.addActionListener(new java.awt.event.ActionListener() {
@@ -1122,21 +1152,53 @@ public class Develop extends javax.swing.JFrame {
         });
         toolbar.add(btnProgram);
 
-        jSeparator3.setName("jSeparator3"); // NOI18N
-        toolbar.add(jSeparator3);
+        separatorSim.setName("separatorSim"); // NOI18N
+        toolbar.add(separatorSim);
 
-        btnAbout.setIcon(resourceMap.getIcon("btnAbout.icon")); // NOI18N
-        btnAbout.setText(resourceMap.getString("btnAbout.text")); // NOI18N
-        btnAbout.setFocusable(false);
-        btnAbout.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnAbout.setName("btnAbout"); // NOI18N
-        btnAbout.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnAbout.addActionListener(new java.awt.event.ActionListener() {
+        btnSimStep.setIcon(resourceMap.getIcon("btnSimStep.icon")); // NOI18N
+        btnSimStep.setText(resourceMap.getString("btnSimStep.text")); // NOI18N
+        btnSimStep.setToolTipText(resourceMap.getString("btnSimStep.toolTipText")); // NOI18N
+        btnSimStep.setFocusable(false);
+        btnSimStep.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimStep.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimStep.setName("btnSimStep"); // NOI18N
+        btnSimStep.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimStep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAboutActionPerformed(evt);
+                btnSimStepActionPerformed(evt);
             }
         });
-        toolbar.add(btnAbout);
+        toolbar.add(btnSimStep);
+
+        btnSimRun.setIcon(resourceMap.getIcon("btnSimRun.icon")); // NOI18N
+        btnSimRun.setText(resourceMap.getString("btnSimRun.text")); // NOI18N
+        btnSimRun.setToolTipText(resourceMap.getString("btnSimRun.toolTipText")); // NOI18N
+        btnSimRun.setFocusable(false);
+        btnSimRun.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimRun.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimRun.setName("btnSimRun"); // NOI18N
+        btnSimRun.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimRun.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimRunActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnSimRun);
+
+        btnSimReset.setIcon(resourceMap.getIcon("btnSimReset.icon")); // NOI18N
+        btnSimReset.setText(resourceMap.getString("btnSimReset.text")); // NOI18N
+        btnSimReset.setToolTipText(resourceMap.getString("btnSimReset.toolTipText")); // NOI18N
+        btnSimReset.setFocusable(false);
+        btnSimReset.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimReset.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimReset.setName("btnSimReset"); // NOI18N
+        btnSimReset.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimResetActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnSimReset);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -1220,7 +1282,6 @@ public class Develop extends javax.swing.JFrame {
         jMenuBar1.add(rootmenuFile);
 
         rootmenuEdit.setText(resourceMap.getString("rootmenuEdit.text")); // NOI18N
-        rootmenuEdit.setName("rootmenuEdit"); // NOI18N
 
         menuCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         menuCopy.setText(resourceMap.getString("menuCopy.text")); // NOI18N
@@ -1754,15 +1815,6 @@ public class Develop extends javax.swing.JFrame {
         assemble();
     }//GEN-LAST:event_btnAssembleActionPerformed
 
-    private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
-        if(plp.asm.isAssembled())
-            beginSim();
-    }//GEN-LAST:event_btnSimulateActionPerformed
-
-    private void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
-        about();
-    }//GEN-LAST:event_btnAboutActionPerformed
-
     private void menuExportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExportASMActionPerformed
         exportASM();
     }//GEN-LAST:event_menuExportASMActionPerformed
@@ -2010,6 +2062,7 @@ public class Develop extends javax.swing.JFrame {
             plp.g_simrun = new plptool.gui.SimRunner(plp);
             plp.g_simrun.start();
             menuSimRun.setSelected(true);
+            btnSimRun.setSelected(true);
         } else {
             if(plp.g_simrun != null) {
                 try {
@@ -2017,6 +2070,7 @@ public class Develop extends javax.swing.JFrame {
                 } catch(Exception e) {}
             }
             menuSimRun.setSelected(false);
+            btnSimRun.setSelected(false);
         }
     }//GEN-LAST:event_menuSimRunActionPerformed
 
@@ -2096,6 +2150,44 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuPLPIDActionPerformed
 
+    private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
+        if(btnSimulate.isSelected()) {
+            if(plp.isAssembled())
+                beginSim();
+        } else
+            endSim();
+    }//GEN-LAST:event_btnSimulateActionPerformed
+
+    private void btnSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimRunActionPerformed
+        if(btnSimRun.isSelected()) {
+            plp.g_simrun = new plptool.gui.SimRunner(plp);
+            plp.g_simrun.start();
+            menuSimRun.setSelected(true);
+            btnSimRun.setSelected(true);
+        } else {
+            if(plp.g_simrun != null) {
+                try {
+                    plp.g_simrun.stepCount = 0;
+                } catch(Exception e) {}
+            }
+            menuSimRun.setSelected(false);
+            btnSimRun.setSelected(false);
+        }
+    }//GEN-LAST:event_btnSimRunActionPerformed
+
+    private void btnSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimStepActionPerformed
+        plp.sim.step();
+        plp.updateComponents(true);
+    }//GEN-LAST:event_btnSimStepActionPerformed
+
+    private void btnSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimResetActionPerformed
+        if(plp.g_simrun != null)
+            plp.g_simrun.stepCount = -1;
+        plp.sim.reset();
+
+        plp.updateComponents(true);
+    }//GEN-LAST:event_btnSimResetActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -2167,13 +2259,15 @@ public class Develop extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnAssemble;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnProgram;
     private javax.swing.JButton btnSave;
-    private javax.swing.JButton btnSimulate;
+    private javax.swing.JButton btnSimReset;
+    private javax.swing.JToggleButton btnSimRun;
+    private javax.swing.JButton btnSimStep;
+    private javax.swing.JToggleButton btnSimulate;
     private javax.swing.JPanel devMainPane;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
@@ -2182,7 +2276,6 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
@@ -2251,6 +2344,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuSim;
     private javax.swing.JMenu rootmenuTools;
     private javax.swing.JScrollPane scroller;
+    private javax.swing.JToolBar.Separator separatorSim;
     private javax.swing.JSplitPane splitterH;
     private javax.swing.JSplitPane splitterV;
     private javax.swing.JToolBar toolbar;
