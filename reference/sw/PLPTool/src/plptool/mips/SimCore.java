@@ -311,6 +311,7 @@ public class SimCore extends PLPSimCore {
             x.assemble();
             id_stage.i_instruction = x.getObjectCode()[0];
             id_stage.i_instrAddr = ex_stage.instrAddr - 8;
+            id_stage.i_ctl_pcplus4 = ex_stage.instrAddr - 8;
             id_stage.hot = true;
 
             int_inject--;
@@ -329,7 +330,7 @@ public class SimCore extends PLPSimCore {
             Msg.M("IRQ Triggered.");
             Msg.M("instrAddr diff: " + (pc.eval() - ex_stage.instrAddr));
             if(pc.eval() - ex_stage.instrAddr == 8) {
-                regfile.write(27, pc.input(), false);
+                //regfile.write(27, pc.input(), false);
                 Msg.M("IRQ serviced, int_inject = 2");
                 int_inject = 2;
                 IRQ = 0;
@@ -337,9 +338,12 @@ public class SimCore extends PLPSimCore {
                 id_stage.i_instruction = 0;
                 ex_stage.i_instruction = 0;
                 mem_stage.i_instruction = 0;
-            }
+                id_stage.hot = true;
 
-            return Constants.PLP_OK;
+                return Constants.PLP_OK;
+
+            } else
+                return fetch();
 
         } else
             return fetch();
