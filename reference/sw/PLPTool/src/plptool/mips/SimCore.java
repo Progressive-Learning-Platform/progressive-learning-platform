@@ -329,15 +329,21 @@ public class SimCore extends PLPSimCore {
         } else if(IRQ > 0) {
             Msg.M("IRQ Triggered.");
             Msg.M("instrAddr diff: " + (pc.eval() - ex_stage.instrAddr));
-            if(pc.eval() - ex_stage.instrAddr == 8) {
+            //if(pc.eval() - ex_stage.instrAddr == 8) {
+            if(pc.input() - ex_stage.i_instrAddr == 8) {
                 //regfile.write(27, pc.input(), false);
                 Msg.M("IRQ serviced, int_inject = 2");
                 int_inject = 2;
                 IRQ = 0;
 
                 id_stage.i_instruction = 0;
+                ex_stage.i_fwd_ctl_regwrite = 0;
+                ex_stage.i_fwd_ctl_memwrite = 0;
                 ex_stage.i_instruction = 0;
+                mem_stage.i_fwd_ctl_regwrite = 0;
+                mem_stage.i_ctl_memwrite = 0;
                 mem_stage.i_instruction = 0;
+
                 id_stage.hot = true;
 
                 return Constants.PLP_OK;

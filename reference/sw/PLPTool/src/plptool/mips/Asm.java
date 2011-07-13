@@ -333,36 +333,39 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
 
-                appendPreprocessedAsm("ASM__SKIP__", i, true);
-                boolean found = false;
-                prevAsmIndex = asmIndex;
-                recursionRetVal = 0;
-                for(int k = 0; k < sourceList.size(); k++) {
-                    if(asmTokens[1].equals(sourceList.get(k).getAsmFilePath())) {
-                        error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
-                                asmTokens[1] + " is already in the project sources list.",
-                                Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                    appendPreprocessedAsm("ASM__SKIP__", i, true);
+                    boolean found = false;
+                    boolean conflict = false;
+                    prevAsmIndex = asmIndex;
+                    recursionRetVal = 0;
+                    for(int k = 0; k < sourceList.size(); k++) {
+                        if(asmTokens[1].equals(sourceList.get(k).getAsmFilePath())) {
+                            Msg.W("preprocess(" + curActiveFile + ":" + i + "): " +
+                                    asmTokens[1] + " is already in the project sources list. Ignoring.",
+                                    this);
+                            found = true;
+                            conflict = true;
+                        }
                     }
-                }
-                if(!found) {
-                    asmIndex = sourceList.size();
-                    PLPAsmSource childAsm = new PLPAsmSource
-                                                (null, asmTokens[1], asmIndex);
-                    if(childAsm.getAsmString() != null) {
-                        sourceList.add(childAsm);
-                        found = true;
+                    if(!found) {
+                        asmIndex = sourceList.size();
+                        PLPAsmSource childAsm = new PLPAsmSource
+                                                    (null, asmTokens[1], asmIndex);
+                        if(childAsm.getAsmString() != null) {
+                            sourceList.add(childAsm);
+                            found = true;
+                        }
                     }
-                }
-                savedActiveFile = curActiveFile;
-                if(found) { recursionRetVal = this.preprocess(asmIndex); }
-                curActiveFile = savedActiveFile;
-                asmIndex = prevAsmIndex;
-                directiveOffset++;
+                    savedActiveFile = curActiveFile;
+                    if(found && !conflict) { recursionRetVal = this.preprocess(asmIndex); }
+                    curActiveFile = savedActiveFile;
+                    asmIndex = prevAsmIndex;
+                    directiveOffset++;
 
-                if(recursionRetVal != 0) {
-                    Msg.errorCounter++;
-                    return recursionRetVal;
-                }
+                    if(recursionRetVal != 0) {
+                        Msg.errorCounter++;
+                        return recursionRetVal;
+                    }
                 }
             }
 
@@ -667,9 +670,12 @@ public class Asm extends plptool.PLPAsm {
 
         }
 
+        int ret;
         // Now append the rest of the files in sourceFiles
         for(int k = 1; index == 0 && k < sourceList.size(); k++) {
-            this.preprocess(k);
+            ret = this.preprocess(k);
+            if(ret != Constants.PLP_OK)
+                return ret;
         }
 
         } catch(Exception e) {
