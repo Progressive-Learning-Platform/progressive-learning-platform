@@ -206,7 +206,7 @@ public class Develop extends javax.swing.JFrame {
     public void notifyplpModified() {
         if(trackChanges) {
             if(Config.nothighlighting) {
-                plp.setModified();
+                //plp.setModified();
             }
         }
     }
@@ -1955,6 +1955,7 @@ public class Develop extends javax.swing.JFrame {
         }
 
         if(modified) {
+            Msg.D("Text has been modified.", 5, this);
             plp.setModified();
 
             if(txtEditor.isEditable()) {

@@ -640,7 +640,7 @@ public class ProjectDriver {
             else
                 g_dev.disableSimControls();
             
-            modified = false;
+            this.setUnModified();
             updateWindowTitle();
         }
 
@@ -955,11 +955,13 @@ public class ProjectDriver {
      * may need saving.
      */
     public void setModified() {
+        Msg.D("Project has been modified.", 3, this);
         modified = true;
         this.updateWindowTitle();
     }
 
     public void setUnModified() {
+        Msg.D("Project has been unmodified.", 3, this);
         modified = false;
         this.updateWindowTitle();
     }
