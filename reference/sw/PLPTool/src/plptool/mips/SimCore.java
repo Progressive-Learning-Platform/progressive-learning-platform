@@ -106,7 +106,15 @@ public class SimCore extends PLPSimCore {
      */
     Asm asm;
 
-    int int_inject;
+    /**
+     * Interrupt request state machine variable
+     */
+    private int int_inject;
+
+    /**
+     * Interrupt return address
+     */
+    private long irq_ret;
 
 
     /**
@@ -277,7 +285,7 @@ public class SimCore extends PLPSimCore {
         if(if_stall && !ex_continue) {
             if_stall = false;
             id_stage.i_instruction = 0;
-            id_stage.i_instrAddr = -1;
+            id_stage.i_instrAddr = pc.input();
             id_stage.hot = true;
 
             return Constants.PLP_OK;
@@ -305,21 +313,22 @@ public class SimCore extends PLPSimCore {
             return fetch();
 
         } else if (int_inject == 2) {
-            Msg.M("IRQ serviced, int_inject 2->1");
+            Msg.M("IRQ service, int_inject 2->1");
             Asm x = new Asm("jalr $i1, $i0", "inline");
             x.preprocess(0);
             x.assemble();
             id_stage.i_instruction = x.getObjectCode()[0];
-            id_stage.i_instrAddr = ex_stage.instrAddr - 8;
-            id_stage.i_ctl_pcplus4 = ex_stage.instrAddr - 8;
+            id_stage.i_instrAddr = 0;
+            id_stage.i_ctl_pcplus4 = irq_ret - 4;
             id_stage.hot = true;
 
             int_inject--;
             return Constants.PLP_OK;
 
         } else if (int_inject == 1) {
-            Msg.M("IRQ serviced, int_inject 1->0");
+            Msg.M("IRQ service, int_inject 1->0");
             id_stage.i_instruction = 0;
+            id_stage.i_instrAddr = -1;
             id_stage.hot = true;
 
             int_inject--;
@@ -332,19 +341,22 @@ public class SimCore extends PLPSimCore {
             //if(pc.eval() - ex_stage.instrAddr == 8) {
             if(pc.input() - ex_stage.i_instrAddr == 8) {
                 //regfile.write(27, pc.input(), false);
-                Msg.M("IRQ serviced, int_inject = 2");
+                irq_ret = mem_stage.i_instrAddr;
                 int_inject = 2;
                 IRQ = 0;
-
+                Msg.M("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret));
+                
                 id_stage.i_instruction = 0;
-                ex_stage.i_fwd_ctl_regwrite = 0;
-                ex_stage.i_fwd_ctl_memwrite = 0;
                 ex_stage.i_instruction = 0;
-                mem_stage.i_fwd_ctl_regwrite = 0;
-                mem_stage.i_ctl_memwrite = 0;
                 mem_stage.i_instruction = 0;
+                id_stage.i_instrAddr = -1;
+                ex_stage.i_instrAddr = -1;
+                mem_stage.i_instrAddr = -1;
+                
 
                 id_stage.hot = true;
+                ex_stage.hot = true;
+                mem_stage.hot = true;
 
                 return Constants.PLP_OK;
 
