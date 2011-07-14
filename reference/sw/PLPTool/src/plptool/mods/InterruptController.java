@@ -42,18 +42,24 @@ public class InterruptController extends PLPSimBusModule {
         if(!(sim instanceof SimCore))
             return Constants.PLP_SIM_UNSUPPORTED_ARCHITECTURE;
 
-	long stat = (Long) super.readReg(super.startAddr) & 0xfffffffe;
-	long mask = (Long) super.readReg(super.startAddr + 0x4) & 0xfffffffe;
+	long mask = (Long) super.readReg(super.startAddr) & 0xfffffffe;
+	long stat = ((Long) super.readReg(super.startAddr+4) & 0xfffffffe) |
+                    sim.getIRQ();
+        super.writeReg(super.startAddr+4, new Long(stat), false);
 
-        boolean gie = ((Long) super.readReg(super.startAddr + 0x4) & 1) == 1;
+        boolean gie = ((Long) super.readReg(super.startAddr) & 1) == 1;
 
-	// IRQ = (stat[31:0] & mask[31:0] != 0)
-        if(gie && ((stat & mask) != 0)) {
+        if(gie && ((stat & mask) != 0) && ((SimCore)sim).IRQAck == 0) {
+
+            Msg.D("IRQ: " + String.format("%02x", sim.getIRQ()) +
+                  " stat: " + String.format("%02x", stat) +
+                  " mask: " + String.format("%02x", mask), 3, this);
 
 	    // raise IRQ
-            sim.setIRQ(stat);
-
-            super.writeReg(super.startAddr, new Long(0x1L),false);
+            ((SimCore)sim).int_state = 3;
+            
+            // clear mask / disable interrupts
+            super.writeReg(super.startAddr, new Long(0L), false);
         }
 
         return Constants.PLP_OK;
@@ -70,10 +76,9 @@ public class InterruptController extends PLPSimBusModule {
 
     @Override
     public Object read(long addr) {
-        if(addr == super.startAddr) {
+        if(addr == super.startAddr+4) {
             return (Long) super.readReg(addr) | 0x1L;
-        }
-        else
+        } else
             return super.readReg(addr);
     }
 

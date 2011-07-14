@@ -96,9 +96,23 @@ public abstract class PLPSimCore {
     }
 
     /**
-     * Set interrupt flag
+     * Set interrupt bit (mask)
      */
     public void setIRQ(long IRQ) {
-        this.IRQ = IRQ;
+        this.IRQ |= IRQ;
+    }
+
+    /**
+     * Mask interrupt bit
+     */
+    public void maskIRQ(long IRQ) {
+        this.IRQ &= IRQ;
+    }
+
+    /**
+     * Get interrupt bits that are currently set
+     */
+    public long getIRQ() {
+        return IRQ;
     }
 }

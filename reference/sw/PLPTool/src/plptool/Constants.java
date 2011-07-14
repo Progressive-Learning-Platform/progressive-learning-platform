@@ -142,7 +142,8 @@ public class Constants {
     public static final long PLP_SIM_ID_STALL_SET                = 0x00000200;
     public static final long PLP_SIM_EX_STALL_SET                = 0x00000400;
     public static final long PLP_SIM_MEM_STALL_SET               = 0x00000800;
-    public static final long PLP_SIM_IRQ                         = 0x40000000;
+    public static final long PLP_SIM_IRQ                         = 0x10000000;
+    public static final long PLP_SIM_IRQ_SERVICED                = 0x20000000;
 
     // General
     public static final int PLP_NUMBER_ERROR                     = -1;

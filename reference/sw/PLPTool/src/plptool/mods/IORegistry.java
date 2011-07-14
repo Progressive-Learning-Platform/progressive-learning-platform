@@ -326,7 +326,7 @@ public class IORegistry {
             /******************************************************************/
             // Timer is summoned
             case 7:
-                module = new Timer(addr);
+                module = new Timer(addr, plp.sim);
                 break;
 
             /******************************************************************/
@@ -336,7 +336,7 @@ public class IORegistry {
                     moduleFrame = new UARTFrame();
                     attachModuleFrameListeners((JFrame) moduleFrame, plp, Constants.PLP_TOOLFRAME_SIMUART);
                 }
-                module = new UART(addr, (UARTFrame) moduleFrame);
+                module = new UART(addr, (UARTFrame) moduleFrame, plp.sim);
                 break;
 
             /******************************************************************/
