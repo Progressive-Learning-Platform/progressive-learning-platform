@@ -109,12 +109,17 @@ public class SimCore extends PLPSimCore {
     /**
      * Interrupt request state machine variable
      */
-    private int int_inject;
+    public int int_state;
 
     /**
      * Interrupt return address
      */
     private long irq_ret;
+
+    /**
+     * Interrupt acknowledge
+     */
+     public long IRQAck;
 
 
     /**
@@ -171,13 +176,14 @@ public class SimCore extends PLPSimCore {
         loadProgram(asm);
 
         IRQ = 0;
+        IRQAck = 0;
         pc.reset(startAddr);
         instructionCount = 0;
         sim_flags = (long) 0;
         ex_continue = false;
         ex_stall = false;
         if_stall = false;
-        int_inject = 0;
+        int_state = 0;
         flushpipeline();
 
         Msg.M("core: reset");
@@ -243,6 +249,9 @@ public class SimCore extends PLPSimCore {
         int ret = 0;
         long old_pc = pc.eval();
 
+
+        /******************** RISING EDGE OF THE CLOCK ************************/
+
         // Propagate values
         if(wb_stage.hot)  wb_stage.clock();
         if(mem_stage.hot) mem_stage.clock();
@@ -252,6 +261,8 @@ public class SimCore extends PLPSimCore {
         // clock pc for next instruction
         if(!if_stall)
             pc.clock();
+
+        /******************** FALLING EDGE OF THE CLOCK ***********************/
 
         // Evaluate stages
         ret += wb_stage.eval();
@@ -273,6 +284,9 @@ public class SimCore extends PLPSimCore {
 
         // Evaluate modules attached to the bus
         ret += bus.eval();
+        // Evalulate interrupt controller again to see if anything raised an IRQ
+        // (PLPSimBus evaluates modules from index 0 upwards)
+        ret += bus.eval(0);
 
         if(ret != 0) {
             Msg.E("Evaluation failed. This simulation is stale.",
@@ -312,8 +326,8 @@ public class SimCore extends PLPSimCore {
 
             return fetch();
 
-        } else if (int_inject == 2) {
-            Msg.M("IRQ service, int_inject 2->1");
+        } else if (int_state == 2) {
+            Msg.D("IRQ service, int_inject 2->1", 3, this);
             Asm x = new Asm("jalr $i1, $i0", "inline");
             x.preprocess(0);
             x.assemble();
@@ -322,44 +336,47 @@ public class SimCore extends PLPSimCore {
             id_stage.i_ctl_pcplus4 = irq_ret - 4;
             id_stage.hot = true;
 
-            int_inject--;
+            int_state--;
             return Constants.PLP_OK;
 
-        } else if (int_inject == 1) {
-            Msg.M("IRQ service, int_inject 1->0");
+        } else if (int_state == 1) {
+            Msg.D("IRQ service, int_inject 1->0", 3, this);
             id_stage.i_instruction = 0;
             id_stage.i_instrAddr = -1;
             id_stage.hot = true;
 
-            int_inject--;
+            int_state--;
+            IRQAck = 0;
             return Constants.PLP_OK;
 
         // Interrupt request
-        } else if(IRQ > 0) {
-            Msg.M("IRQ Triggered.");
-            Msg.M("instrAddr diff: " + (pc.eval() - ex_stage.instrAddr));
-            //if(pc.eval() - ex_stage.instrAddr == 8) {
-            if(pc.input() - ex_stage.i_instrAddr == 8) {
-                //regfile.write(27, pc.input(), false);
-                irq_ret = mem_stage.i_instrAddr;
-                int_inject = 2;
-                IRQ = 0;
-                Msg.M("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret));
-                
+        } else if(int_state == 3) {
+            Msg.D("IRQ Triggered.", 3, this);
+            long diff = pc.input() - ex_stage.i_instrAddr;
+            Msg.D("instrAddr diff: " + diff, 3, this);
+            sim_flags |= Constants.PLP_SIM_IRQ;
+           
+            if(diff == 8) {
+                sim_flags |= Constants.PLP_SIM_IRQ_SERVICED;
+                irq_ret = mem_stage.i_instrAddr; // address to return to
+                int_state--;
+                IRQAck = 1;
+                Msg.D("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret), 3, this);
+
+                // flush 3 stages
                 id_stage.i_instruction = 0;
                 ex_stage.i_instruction = 0;
                 mem_stage.i_instruction = 0;
                 id_stage.i_instrAddr = -1;
                 ex_stage.i_instrAddr = -1;
-                mem_stage.i_instrAddr = -1;
-                
-
+                mem_stage.i_instrAddr = -1;              
                 id_stage.hot = true;
                 ex_stage.hot = true;
                 mem_stage.hot = true;
 
                 return Constants.PLP_OK;
 
+            // can't service yet due to jump/branch
             } else
                 return fetch();
 

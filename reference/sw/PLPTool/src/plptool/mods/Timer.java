@@ -16,14 +16,22 @@ import plptool.Constants;
  */
 public class Timer extends PLPSimBusModule {
 
-    public Timer(long addr) {
+    private plptool.PLPSimCore sim;
+
+    public Timer(long addr, plptool.PLPSimCore sim) {
         super(addr, addr, true);
+        this.sim = sim;
     }
 
     public int eval() {
         if (super.isInitialized(super.startAddr)) {
-            long timer = (Long)super.read(super.startAddr);
+            long timer = (Long)super.read(super.startAddr) & 0xffffffffL;
             timer++;
+            if(timer == 0xffffffffL)
+                sim.setIRQ(2);
+            else
+                sim.maskIRQ(0xfffffffdL);
+
             super.write(super.startAddr, timer, false);
         } else {
             super.write(super.startAddr,(long) 0,false);

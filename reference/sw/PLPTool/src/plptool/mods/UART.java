@@ -39,11 +39,13 @@ public class UART extends PLPSimBusModule {
     long receiveB, sendB;
     boolean ready = false;
     UARTFrame frame;
+    plptool.PLPSimCore sim;
     Queue<Long> rb = new LinkedList<Long>();
 
-    public UART(long addr, UARTFrame frame) {
+    public UART(long addr, UARTFrame frame, plptool.PLPSimCore sim) {
         super(addr, addr+12, true);
         this.frame = frame;
+        this.sim = sim;
         if(frame != null) frame.setUART(this);
     }
 
@@ -57,6 +59,11 @@ public class UART extends PLPSimBusModule {
             ready = true;
             receiveB = (Long)rb.remove();
         }
+
+        if(ready)
+            sim.setIRQ(0x4L);
+        else
+            sim.maskIRQ(0xfffffffbL);
 
         return Constants.PLP_OK;
     }
