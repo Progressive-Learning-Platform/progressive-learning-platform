@@ -346,7 +346,7 @@ public class Develop extends javax.swing.JFrame {
 
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
                     plp.curdir = fc.getSelectedFile().getParent();
-                    plp.open(fc.getSelectedFile().getAbsolutePath());
+                    plp.open(fc.getSelectedFile().getAbsolutePath(), true);
                 }
 
                 //undoManager = new DoManager(txtEditor.getText());
@@ -369,7 +369,7 @@ public class Develop extends javax.swing.JFrame {
             if(!plp.plpfile.getName().endsWith(".plp"))
                 plp.plpfile = new File(plp.plpfile.getAbsolutePath() + ".plp");
             plp.save();
-            plp.open(plp.plpfile.getAbsolutePath());
+            plp.open(plp.plpfile.getAbsolutePath(), true);
         }
 
         return retVal;

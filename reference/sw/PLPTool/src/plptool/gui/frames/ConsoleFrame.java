@@ -218,7 +218,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     out.setText("cfgSyntaxHighlighting " + plptool.Config.devSyntaxHighlighting);
                 }
                 if(tokens[0].equals("open")) {
-                    plp.open(tokens[1]);
+                    plp.open(tokens[1], true);
                 }
                 if(tokens[0].equals("program")) {
                     plp.program(tokens[1]);
