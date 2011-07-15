@@ -58,8 +58,8 @@ public class InterruptController extends PLPSimBusModule {
 	    // raise IRQ
             ((SimCore)sim).int_state = 3;
             
-            // clear mask / disable interrupts
-            super.writeReg(super.startAddr, new Long(0L), false);
+            // clear GIE
+            super.writeReg(super.startAddr, new Long(mask), false);
         }
 
         return Constants.PLP_OK;
