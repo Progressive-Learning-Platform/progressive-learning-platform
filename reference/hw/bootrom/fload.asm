@@ -18,13 +18,6 @@ memory_test:
 memory_done:
 	.asciiz "done."
 
-.include ../../sw/libplp/libplp_timer.asm
-.include ../../sw/libplp/libplp_leds.asm
-.include ../../sw/libplp/libplp_plpid.asm
-.include ../../sw/libplp/libplp_uart.asm
-.include ../../sw/libplp/libplp_switches.asm
-.include ../../sw/libplp/libplp_sseg.asm
-
 #
 #startup 
 #
