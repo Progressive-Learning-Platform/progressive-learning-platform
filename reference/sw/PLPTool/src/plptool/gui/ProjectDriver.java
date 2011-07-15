@@ -64,6 +64,7 @@ public class ProjectDriver {
 
     public File                    plpfile;
     private boolean                modified;
+    private boolean                dirty;
     public int                     open_asm;
     public String                  curdir;
     private String                 arch;
@@ -240,6 +241,7 @@ public class ProjectDriver {
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
+        dirty = true;
 
         Msg.I("New project initialized.", null);
 
@@ -273,6 +275,7 @@ public class ProjectDriver {
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
+        dirty = true;
 
         Msg.I("New project initialized.", null);
 
@@ -321,9 +324,11 @@ public class ProjectDriver {
             else
                 meta += "START=0\n";
             meta += "DIRTY=0\n";
+            dirty = false;
         }
         else {
             meta += "DIRTY=1\n";
+            dirty = true;
         }
 
         meta += "ARCH=" + arch + "\n";
@@ -502,7 +507,7 @@ public class ProjectDriver {
      */
     public int open(String path, boolean assemble) {
         File plpFile = new File(path);
-        boolean dirty = true;
+        dirty = true;
 
         Msg.I("Opening " + path, null);
 
@@ -1206,9 +1211,13 @@ public class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    public int command(String command) {
-
-        return Constants.PLP_OK;
+    /**
+     * Is the binary files up to date.
+     *
+     * @return boolean that denotes whether the binary files are up to date
+     */
+    public boolean isDirty() {
+        return dirty;
     }
 
     /**

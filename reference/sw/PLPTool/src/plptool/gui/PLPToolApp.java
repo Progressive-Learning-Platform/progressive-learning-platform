@@ -127,30 +127,7 @@ public class PLPToolApp extends SingleFrameApplication {
         if(args.length == 1 && args[0].equals("--serialterminal")) {
             serialTerminal = true;
             launch(PLPToolApp.class, args);
-        }
-        else if(args.length > 0 && args[0].equals("-a")) {
-            if(args.length != 3) {
-                System.out.println("Usage: PLPTool -a <asm> <out>");
-                System.exit(-1);
-            } else {
-                ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
-                if(!(plp.create(args[1]) == Constants.PLP_OK)) return;
-                plp.plpfile = new java.io.File(args[2]);
-                String timestamp = (new java.util.Date()).toString();
-                plp.save();
-                if(plp.asm.isAssembled()) {
-                    plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
-                    Msg.M("");
-                    plptool.mips.Formatter.prettyPrint(plp.asm);
-                    Msg.M("");
-                    Msg.M("Build timestamp: " + timestamp);
-                    Msg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
-                    Msg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
-                } else
-                    Msg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
-            }
-        }
-        else if(args.length > 0 && args[0].equals("-s")) {
+        } else if(args.length > 0 && args[0].equals("-s")) {
             if(args.length != 2) {
                 System.out.println("Usage: PLPTool -s <plpfile>");
             } else {
@@ -159,30 +136,15 @@ public class PLPToolApp extends SingleFrameApplication {
                 if(plp.asm.isAssembled())
                     plp.simulate();
             }
-        }
-        else if(args.length > 0 && args[0].equals("-p")) {
-            if(args.length != 3) {
-                System.out.println("Usage: PLPTool -p <plpfile> <port>");
-            } else {
-                try {
-                    ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
-                    if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
-                    plp.program(args[2]);
-                } catch(Exception e) { }
-            }
-        }
-        else  if(args.length > 0 && args[0].equals("-plp")) {
+        } else  if(args.length > 0 && args[0].equals("-plp")) {
             ProjectFileManipulator.CLI(args);
-        }
-        else if(args.length == 1 && fileToOpen != null && fileToOpen.exists()) {
+        } else if(args.length == 1 && fileToOpen != null && fileToOpen.exists()) {
             open = true;
             plpFilePath = args[0];
             launch(PLPToolApp.class, args);
-        }
-        else if(args.length == 0) {
+        } else if(args.length == 0) {
             launch(PLPToolApp.class, args);
-        }
-        else {
+        } else {
             Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
             System.out.println();
             System.out.println("Usage:\n");
@@ -193,9 +155,6 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("       Launch PLP Tool GUI and open <plpfile>");
             System.out.println();
             System.out.println("Non-GUI options:\n");
-            System.out.println("  -a   <asm> <out>");
-            System.out.println("       Assemble <asm> and write plp output to <out>.");
-            System.out.println();
             System.out.println("  -s   <plpfile>");
             System.out.println("       Launch the command line simulator to simulate <plpfile>.");
             System.out.println();
