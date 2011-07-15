@@ -56,7 +56,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             Msg.output = plp.g_dev.getOutput();
             if(plpFilePath != null)
-                plp.open(plpFilePath);
+                plp.open(plpFilePath, true);
         }
 
         // show(mainWindow);
@@ -155,7 +155,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("Usage: PLPTool -s <plpfile>");
             } else {
                 ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
-                if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
+                if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
                 if(plp.asm.isAssembled())
                     plp.simulate();
             }
@@ -166,7 +166,7 @@ public class PLPToolApp extends SingleFrameApplication {
             } else {
                 try {
                     ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
-                    if(!(plp.open(args[1]) == Constants.PLP_OK)) return;
+                    if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
                     plp.program(args[2]);
                 } catch(Exception e) { }
             }

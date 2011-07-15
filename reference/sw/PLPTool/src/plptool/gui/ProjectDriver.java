@@ -294,7 +294,7 @@ public class ProjectDriver {
 
         // commit changes of currently open source file
         if(g) updateAsm(open_asm, g_dev.getEditorText());
-        assemble();
+        //assemble();
 
         if(plpfile == null || plpfile.getName().equals("Unsaved Project"))
             return Msg.E("No PLP project file is open. Use Save As.",
@@ -500,7 +500,7 @@ public class ProjectDriver {
      * @param path Path to project file to load.
      * @return PLP_OK on successful operation, error code otherwise
      */
-    public int open(String path) {
+    public int open(String path, boolean assemble) {
         File plpFile = new File(path);
         boolean dirty = true;
 
@@ -629,7 +629,7 @@ public class ProjectDriver {
         open_asm = 0;
 
         if(g) refreshProjectView(false);
-        if(!dirty) assemble();
+        if(!dirty && assemble) assemble();
 
         if(g) {
             g_opts.restoreSavedOpts();
