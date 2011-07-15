@@ -208,8 +208,11 @@ public class ProjectFileManipulator {
                 return;
             }
 
-            if(plp.asm != null && plp.asm.isAssembled())
+            if(!plp.isDirty()) {
+                plp.assemble();
                 plp.program(args[3]);
+            } else
+                Msg.E("Binary files are not up to date!", Constants.PLP_GENERIC_ERROR, plp);
 
         } else {
             Msg.I("Invalid option: " + args[2], null);
