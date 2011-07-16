@@ -50,6 +50,9 @@ public class TextLineHighlighter implements Highlighter.HighlightPainter {
 
             g.setColor(new Color(225,225,255));
             g.fillRect(0, yPos, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
+        } else if(yPos == -1 && old_yPos > -1) {
+            g.setColor(Color.WHITE);
+            g.fillRect(0, old_yPos, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
         }
     }
 }
