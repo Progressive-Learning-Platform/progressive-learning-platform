@@ -1,7 +1,7 @@
 /* Overloads to all.css */
-#container { width: 860px }
-.left-column { width: 58%; }
-.right-column { width: 38%; }
+#container { width: 980px }
+.left-column { width: 50%; }
+.right-column { width: 50%; }
 
 #htmltag_body {
   background-color: #eee;
@@ -46,8 +46,13 @@ span.keyword {
 }
 #resources {
   position: relative;
-  margin-top: 1em;
+  margin-top: 0em;
+  margin-left: 2em;
 }
+#banner {
+  float: right;
+}
+
 #resources h3 {
   margin-top: 0; 
   margin-bottom: -.5em;
@@ -59,7 +64,7 @@ span.keyword {
   margin-top: 4em;
 }
 #resources-contributors {
-  float: right;
+  float: left;
 }
 #resources ul {
   padding-left: 2em;
