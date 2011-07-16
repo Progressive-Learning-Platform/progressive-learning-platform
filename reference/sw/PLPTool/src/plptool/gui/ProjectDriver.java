@@ -299,6 +299,10 @@ public class ProjectDriver {
      */
     public int save() {
 
+        if(sim_mode) {
+            
+        }
+
         // commit changes of currently open source file
         if(g) updateAsm(open_asm, g_dev.getEditorText());
         //assemble();

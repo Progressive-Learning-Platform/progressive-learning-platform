@@ -669,15 +669,19 @@ public class Develop extends javax.swing.JFrame {
 
     public void endSim() {
         txtEditor.setEditable(true);
+        txtEditor.getCaret().setVisible(true);
         menuSimRun.setSelected(false);
         menuSimView.setSelected(false);
         menuSimWatcher.setSelected(false);
         menuSimMemory.setSelected(false);
         menuSimIO.setSelected(false);
+        tln.setHighlight(-1);
+        tlh.setY(-1);
+        tln.repaint();
+        tlh.repaint();
         plp.desimulate();
         rootmenuSim.setEnabled(false);
         btnSimulate.setSelected(false);
-        tln.setHighlight(-1);
         btnSimRun.setSelected(false);
         btnSimStep.setVisible(false);
         btnSimReset.setVisible(false);
@@ -1024,7 +1028,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1063,9 +1067,7 @@ public class Develop extends javax.swing.JFrame {
         btnNew.setFocusable(false);
         btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         btnNew.setMargin(new java.awt.Insets(2, 0, 2, 0));
-        btnNew.setMinimumSize(new java.awt.Dimension(42, 46));
         btnNew.setName("btnNew"); // NOI18N
-        btnNew.setPreferredSize(new java.awt.Dimension(42, 46));
         btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1204,11 +1206,13 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
+        rootmenuFile.setMnemonic('F');
         rootmenuFile.setText(resourceMap.getString("rootmenuFile.text")); // NOI18N
         rootmenuFile.setName("rootmenuFile"); // NOI18N
 
         menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuNew.setIcon(resourceMap.getIcon("menuNew.icon")); // NOI18N
+        menuNew.setMnemonic('N');
         menuNew.setText(resourceMap.getString("menuNew.text")); // NOI18N
         menuNew.setName("menuNew"); // NOI18N
         menuNew.addActionListener(new java.awt.event.ActionListener() {
@@ -1223,6 +1227,7 @@ public class Develop extends javax.swing.JFrame {
 
         menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         menuOpen.setIcon(resourceMap.getIcon("menuOpen.icon")); // NOI18N
+        menuOpen.setMnemonic('O');
         menuOpen.setText(resourceMap.getString("menuOpen.text")); // NOI18N
         menuOpen.setName("menuOpen"); // NOI18N
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -1234,6 +1239,7 @@ public class Develop extends javax.swing.JFrame {
 
         menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuSave.setIcon(resourceMap.getIcon("menuSave.icon")); // NOI18N
+        menuSave.setMnemonic('S');
         menuSave.setText(resourceMap.getString("menuSave.text")); // NOI18N
         menuSave.setName("menuSave"); // NOI18N
         menuSave.addActionListener(new java.awt.event.ActionListener() {
@@ -1244,6 +1250,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuFile.add(menuSave);
 
         menuSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuSaveAs.setMnemonic('A');
         menuSaveAs.setText(resourceMap.getString("menuSaveAs.text")); // NOI18N
         menuSaveAs.setName("menuSaveAs"); // NOI18N
         menuSaveAs.addActionListener(new java.awt.event.ActionListener() {
@@ -1257,6 +1264,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuFile.add(jSeparator8);
 
         menuPrint.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        menuPrint.setMnemonic('P');
         menuPrint.setText(resourceMap.getString("menuPrint.text")); // NOI18N
         menuPrint.setName("menuPrint"); // NOI18N
         menuPrint.addActionListener(new java.awt.event.ActionListener() {
@@ -1270,6 +1278,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuFile.add(menuSeparator3);
 
         menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        menuExit.setMnemonic('X');
         menuExit.setText(resourceMap.getString("menuExit.text")); // NOI18N
         menuExit.setName("menuExit"); // NOI18N
         menuExit.addActionListener(new java.awt.event.ActionListener() {
@@ -1281,9 +1290,11 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuFile);
 
+        rootmenuEdit.setMnemonic('E');
         rootmenuEdit.setText(resourceMap.getString("rootmenuEdit.text")); // NOI18N
 
         menuCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        menuCopy.setMnemonic('C');
         menuCopy.setText(resourceMap.getString("menuCopy.text")); // NOI18N
         menuCopy.setName("menuCopy"); // NOI18N
         menuCopy.addActionListener(new java.awt.event.ActionListener() {
@@ -1294,6 +1305,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuEdit.add(menuCopy);
 
         menuCut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+        menuCut.setMnemonic('t');
         menuCut.setText(resourceMap.getString("menuCut.text")); // NOI18N
         menuCut.setName("menuCut"); // NOI18N
         menuCut.addActionListener(new java.awt.event.ActionListener() {
@@ -1304,6 +1316,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuEdit.add(menuCut);
 
         menuPaste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        menuPaste.setMnemonic('P');
         menuPaste.setText(resourceMap.getString("menuPaste.text")); // NOI18N
         menuPaste.setName("menuPaste"); // NOI18N
         menuPaste.addActionListener(new java.awt.event.ActionListener() {
@@ -1317,6 +1330,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuEdit.add(menuSeparator4);
 
         menuFindAndReplace.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        menuFindAndReplace.setMnemonic('F');
         menuFindAndReplace.setText(resourceMap.getString("menuFindAndReplace.text")); // NOI18N
         menuFindAndReplace.setName("menuFindAndReplace"); // NOI18N
         menuFindAndReplace.addActionListener(new java.awt.event.ActionListener() {
@@ -1330,6 +1344,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuEdit.add(menuSeparator5);
 
         menuUndo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+        menuUndo.setMnemonic('U');
         menuUndo.setText(resourceMap.getString("menuUndo.text")); // NOI18N
         menuUndo.setName("menuUndo"); // NOI18N
         menuUndo.addActionListener(new java.awt.event.ActionListener() {
@@ -1340,6 +1355,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuEdit.add(menuUndo);
 
         menuRedo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
+        menuRedo.setMnemonic('R');
         menuRedo.setText(resourceMap.getString("menuRedo.text")); // NOI18N
         menuRedo.setName("menuRedo"); // NOI18N
         menuRedo.addActionListener(new java.awt.event.ActionListener() {
@@ -1351,6 +1367,7 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuEdit);
 
+        rootmenuProject.setMnemonic('R');
         rootmenuProject.setText(resourceMap.getString("rootmenuProject.text")); // NOI18N
         rootmenuProject.setName("rootmenuProject"); // NOI18N
         rootmenuProject.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1366,6 +1383,7 @@ public class Develop extends javax.swing.JFrame {
 
         menuAssemble.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
         menuAssemble.setIcon(resourceMap.getIcon("menuAssemble.icon")); // NOI18N
+        menuAssemble.setMnemonic('A');
         menuAssemble.setText(resourceMap.getString("menuAssemble.text")); // NOI18N
         menuAssemble.setName("menuAssemble"); // NOI18N
         menuAssemble.addActionListener(new java.awt.event.ActionListener() {
@@ -1377,6 +1395,7 @@ public class Develop extends javax.swing.JFrame {
 
         menuSimulate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
         menuSimulate.setIcon(resourceMap.getIcon("menuSimulate.icon")); // NOI18N
+        menuSimulate.setMnemonic('S');
         menuSimulate.setText(resourceMap.getString("menuSimulate.text")); // NOI18N
         menuSimulate.setName("menuSimulate"); // NOI18N
         menuSimulate.addActionListener(new java.awt.event.ActionListener() {
@@ -1386,8 +1405,9 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuProject.add(menuSimulate);
 
-        menuProgram.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        menuProgram.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.SHIFT_MASK));
         menuProgram.setIcon(resourceMap.getIcon("menuProgram.icon")); // NOI18N
+        menuProgram.setMnemonic('P');
         menuProgram.setText(resourceMap.getString("menuProgram.text")); // NOI18N
         menuProgram.setName("menuProgram"); // NOI18N
         menuProgram.addActionListener(new java.awt.event.ActionListener() {
@@ -1397,7 +1417,8 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuProject.add(menuProgram);
 
-        menuQuickProgram.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.SHIFT_MASK));
+        menuQuickProgram.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        menuQuickProgram.setMnemonic('Q');
         menuQuickProgram.setText(resourceMap.getString("menuQuickProgram.text")); // NOI18N
         menuQuickProgram.setName("menuQuickProgram"); // NOI18N
         menuQuickProgram.addActionListener(new java.awt.event.ActionListener() {
@@ -1410,6 +1431,7 @@ public class Develop extends javax.swing.JFrame {
         jSeparator1.setName("jSeparator1"); // NOI18N
         rootmenuProject.add(jSeparator1);
 
+        menuNewASM.setMnemonic('N');
         menuNewASM.setText(resourceMap.getString("menuNewASM.text")); // NOI18N
         menuNewASM.setName("menuNewASM"); // NOI18N
         menuNewASM.addActionListener(new java.awt.event.ActionListener() {
@@ -1419,6 +1441,7 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuProject.add(menuNewASM);
 
+        menuImportASM.setMnemonic('I');
         menuImportASM.setText(resourceMap.getString("menuImportASM.text")); // NOI18N
         menuImportASM.setName("menuImportASM"); // NOI18N
         menuImportASM.addActionListener(new java.awt.event.ActionListener() {
@@ -1428,6 +1451,7 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuProject.add(menuImportASM);
 
+        menuExportASM.setMnemonic('X');
         menuExportASM.setText(resourceMap.getString("menuExportASM.text")); // NOI18N
         menuExportASM.setName("menuExportASM"); // NOI18N
         menuExportASM.addActionListener(new java.awt.event.ActionListener() {
@@ -1438,6 +1462,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuProject.add(menuExportASM);
 
         menuDeleteASM.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        menuDeleteASM.setMnemonic('R');
         menuDeleteASM.setText(resourceMap.getString("menuDeleteASM.text")); // NOI18N
         menuDeleteASM.setName("menuDeleteASM"); // NOI18N
         menuDeleteASM.addActionListener(new java.awt.event.ActionListener() {
@@ -1450,6 +1475,7 @@ public class Develop extends javax.swing.JFrame {
         jSeparator2.setName("jSeparator2"); // NOI18N
         rootmenuProject.add(jSeparator2);
 
+        menuSetMainProgram.setMnemonic('C');
         menuSetMainProgram.setText(resourceMap.getString("menuSetMainProgram.text")); // NOI18N
         menuSetMainProgram.setName("menuSetMainProgram"); // NOI18N
         menuSetMainProgram.addActionListener(new java.awt.event.ActionListener() {
@@ -1461,9 +1487,11 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuProject);
 
+        rootmenuTools.setMnemonic('T');
         rootmenuTools.setText(resourceMap.getString("rootmenuTools.text")); // NOI18N
         rootmenuTools.setName("rootmenuTools"); // NOI18N
 
+        menuOptions.setMnemonic('O');
         menuOptions.setText(resourceMap.getString("menuOptions.text")); // NOI18N
         menuOptions.setName("menuOptions"); // NOI18N
         menuOptions.addActionListener(new java.awt.event.ActionListener() {
@@ -1477,6 +1505,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuTools.add(jSeparator7);
 
         menuSerialTerminal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        menuSerialTerminal.setMnemonic('S');
         menuSerialTerminal.setText(resourceMap.getString("menuSerialTerminal.text")); // NOI18N
         menuSerialTerminal.setName("menuSerialTerminal"); // NOI18N
         menuSerialTerminal.addActionListener(new java.awt.event.ActionListener() {
@@ -1488,10 +1517,12 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuTools);
 
+        rootmenuSim.setMnemonic('S');
         rootmenuSim.setText(resourceMap.getString("rootmenuSim.text")); // NOI18N
         rootmenuSim.setName("rootmenuSim"); // NOI18N
 
         menuSimStep.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        menuSimStep.setMnemonic('S');
         menuSimStep.setText(resourceMap.getString("menuSimStep.text")); // NOI18N
         menuSimStep.setName("menuSimStep"); // NOI18N
         menuSimStep.addActionListener(new java.awt.event.ActionListener() {
@@ -1502,6 +1533,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuSim.add(menuSimStep);
 
         menuSimReset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, 0));
+        menuSimReset.setMnemonic('E');
         menuSimReset.setText(resourceMap.getString("menuSimReset.text")); // NOI18N
         menuSimReset.setName("menuSimReset"); // NOI18N
         menuSimReset.addActionListener(new java.awt.event.ActionListener() {
@@ -1512,6 +1544,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuSim.add(menuSimReset);
 
         menuSimRun.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F7, 0));
+        menuSimRun.setMnemonic('R');
         menuSimRun.setText(resourceMap.getString("menuSimRun.text")); // NOI18N
         menuSimRun.setName("menuSimRun"); // NOI18N
         menuSimRun.addActionListener(new java.awt.event.ActionListener() {
@@ -1521,31 +1554,36 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuSim.add(menuSimRun);
 
+        menuStepSize.setMnemonic('C');
         menuStepSize.setText(resourceMap.getString("menuStepSize.text")); // NOI18N
-        menuStepSize.setName("menuStepSize"); // NOI18N
 
         menuStep1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.ALT_MASK));
+        menuStep1.setMnemonic('1');
         menuStep1.setSelected(true);
         menuStep1.setText(resourceMap.getString("menuStep1.text")); // NOI18N
         menuStep1.setName("menuStep1"); // NOI18N
         menuStepSize.add(menuStep1);
 
         menuStep2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.ALT_MASK));
+        menuStep2.setMnemonic('5');
         menuStep2.setText(resourceMap.getString("menuStep2.text")); // NOI18N
         menuStep2.setName("menuStep2"); // NOI18N
         menuStepSize.add(menuStep2);
 
         menuStep3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.ALT_MASK));
+        menuStep3.setMnemonic('2');
         menuStep3.setText(resourceMap.getString("menuStep3.text")); // NOI18N
         menuStep3.setName("menuStep3"); // NOI18N
         menuStepSize.add(menuStep3);
 
         menuStep4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.ALT_MASK));
+        menuStep4.setMnemonic('0');
         menuStep4.setText(resourceMap.getString("menuStep4.text")); // NOI18N
         menuStep4.setName("menuStep4"); // NOI18N
         menuStepSize.add(menuStep4);
 
         menuStep5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.ALT_MASK));
+        menuStep5.setMnemonic('5');
         menuStep5.setText(resourceMap.getString("menuStep5.text")); // NOI18N
         menuStep5.setName("menuStep5"); // NOI18N
         menuStepSize.add(menuStep5);
@@ -1555,10 +1593,12 @@ public class Develop extends javax.swing.JFrame {
         jSeparator9.setName("jSeparator9"); // NOI18N
         rootmenuSim.add(jSeparator9);
 
+        menuSimTools.setMnemonic('T');
         menuSimTools.setText(resourceMap.getString("menuSimTools.text")); // NOI18N
         menuSimTools.setName("menuSimTools"); // NOI18N
 
         menuSimView.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuSimView.setMnemonic('C');
         menuSimView.setText(resourceMap.getString("menuSimView.text")); // NOI18N
         menuSimView.setName("menuSimView"); // NOI18N
         menuSimView.addActionListener(new java.awt.event.ActionListener() {
@@ -1569,6 +1609,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimTools.add(menuSimView);
 
         menuSimWatcher.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuSimWatcher.setMnemonic('W');
         menuSimWatcher.setText(resourceMap.getString("menuSimWatcher.text")); // NOI18N
         menuSimWatcher.setName("menuSimWatcher"); // NOI18N
         menuSimWatcher.addActionListener(new java.awt.event.ActionListener() {
@@ -1579,11 +1620,13 @@ public class Develop extends javax.swing.JFrame {
         menuSimTools.add(menuSimWatcher);
 
         menuSimMemory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuSimMemory.setMnemonic('D');
         menuSimMemory.setText(resourceMap.getString("menuSimMemory.text")); // NOI18N
         menuSimMemory.setName("menuSimMemory"); // NOI18N
         menuSimTools.add(menuSimMemory);
 
         menuSimIO.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuSimIO.setMnemonic('R');
         menuSimIO.setText(resourceMap.getString("menuSimIO.text")); // NOI18N
         menuSimIO.setName("menuSimIO"); // NOI18N
         menuSimIO.addActionListener(new java.awt.event.ActionListener() {
@@ -1595,10 +1638,12 @@ public class Develop extends javax.swing.JFrame {
 
         rootmenuSim.add(menuSimTools);
 
+        menuIOReg.setMnemonic('D');
         menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
         menuIOReg.setName("menuIOReg"); // NOI18N
 
         menuLEDs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
+        menuLEDs.setMnemonic('1');
         menuLEDs.setText(resourceMap.getString("menuLEDs.text")); // NOI18N
         menuLEDs.setName("menuLEDs"); // NOI18N
         menuLEDs.addActionListener(new java.awt.event.ActionListener() {
@@ -1609,6 +1654,7 @@ public class Develop extends javax.swing.JFrame {
         menuIOReg.add(menuLEDs);
 
         menuSwitches.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
+        menuSwitches.setMnemonic('2');
         menuSwitches.setText(resourceMap.getString("menuSwitches.text")); // NOI18N
         menuSwitches.setName("menuSwitches"); // NOI18N
         menuSwitches.addActionListener(new java.awt.event.ActionListener() {
@@ -1619,6 +1665,7 @@ public class Develop extends javax.swing.JFrame {
         menuIOReg.add(menuSwitches);
 
         menuSevenSegments.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
+        menuSevenSegments.setMnemonic('3');
         menuSevenSegments.setText(resourceMap.getString("menuSevenSegments.text")); // NOI18N
         menuSevenSegments.setName("menuSevenSegments"); // NOI18N
         menuSevenSegments.addActionListener(new java.awt.event.ActionListener() {
@@ -1629,6 +1676,7 @@ public class Develop extends javax.swing.JFrame {
         menuIOReg.add(menuSevenSegments);
 
         menuUART.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
+        menuUART.setMnemonic('4');
         menuUART.setText(resourceMap.getString("menuUART.text")); // NOI18N
         menuUART.setName("menuUART"); // NOI18N
         menuUART.addActionListener(new java.awt.event.ActionListener() {
@@ -1639,6 +1687,7 @@ public class Develop extends javax.swing.JFrame {
         menuIOReg.add(menuUART);
 
         menuVGA.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
+        menuVGA.setMnemonic('5');
         menuVGA.setText(resourceMap.getString("menuVGA.text")); // NOI18N
         menuVGA.setName("menuVGA"); // NOI18N
         menuVGA.addActionListener(new java.awt.event.ActionListener() {
@@ -1649,6 +1698,7 @@ public class Develop extends javax.swing.JFrame {
         menuIOReg.add(menuVGA);
 
         menuPLPID.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.CTRL_MASK));
+        menuPLPID.setMnemonic('6');
         menuPLPID.setText(resourceMap.getString("menuPLPID.text")); // NOI18N
         menuPLPID.setName("menuPLPID"); // NOI18N
         menuPLPID.addActionListener(new java.awt.event.ActionListener() {
@@ -1664,6 +1714,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuSim.add(jSeparator10);
 
         menuExitSim.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
+        menuExitSim.setMnemonic('X');
         menuExitSim.setText(resourceMap.getString("menuExitSim.text")); // NOI18N
         menuExitSim.setName("menuExitSim"); // NOI18N
         menuExitSim.addActionListener(new java.awt.event.ActionListener() {
@@ -1675,6 +1726,7 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuSim);
 
+        rootmenuHelp.setMnemonic('H');
         rootmenuHelp.setText(resourceMap.getString("rootmenuHelp.text")); // NOI18N
         rootmenuHelp.setName("rootmenuHelp"); // NOI18N
         rootmenuHelp.addActionListener(new java.awt.event.ActionListener() {
@@ -1684,6 +1736,7 @@ public class Develop extends javax.swing.JFrame {
         });
 
         menuQuickRef.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        menuQuickRef.setMnemonic('Q');
         menuQuickRef.setText(resourceMap.getString("menuQuickRef.text")); // NOI18N
         menuQuickRef.setName("menuQuickRef"); // NOI18N
         menuQuickRef.addActionListener(new java.awt.event.ActionListener() {
@@ -1693,6 +1746,7 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuHelp.add(menuQuickRef);
 
+        menuManual.setMnemonic('M');
         menuManual.setText(resourceMap.getString("menuManual.text")); // NOI18N
         menuManual.setName("menuManual"); // NOI18N
         menuManual.addActionListener(new java.awt.event.ActionListener() {
@@ -1705,6 +1759,7 @@ public class Develop extends javax.swing.JFrame {
         jSeparator5.setName("jSeparator5"); // NOI18N
         rootmenuHelp.add(jSeparator5);
 
+        menuIssues.setMnemonic('R');
         menuIssues.setText(resourceMap.getString("menuIssues.text")); // NOI18N
         menuIssues.setName("menuIssues"); // NOI18N
         menuIssues.addActionListener(new java.awt.event.ActionListener() {
@@ -1714,6 +1769,7 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuHelp.add(menuIssues);
 
+        menuIssuesPage.setMnemonic('I');
         menuIssuesPage.setText(resourceMap.getString("menuIssuesPage.text")); // NOI18N
         menuIssuesPage.setName("menuIssuesPage"); // NOI18N
         menuIssuesPage.addActionListener(new java.awt.event.ActionListener() {
@@ -1727,6 +1783,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuHelp.add(jSeparator6);
 
         menuAbout.setIcon(resourceMap.getIcon("menuAbout.icon")); // NOI18N
+        menuAbout.setMnemonic('A');
         menuAbout.setText(resourceMap.getString("menuAbout.text")); // NOI18N
         menuAbout.setName("menuAbout"); // NOI18N
         menuAbout.addActionListener(new java.awt.event.ActionListener() {
@@ -1936,6 +1993,9 @@ public class Develop extends javax.swing.JFrame {
         deleteOccured = false;
         boolean modified = false;
 
+        if(evt.isAltDown())
+            return;
+
         if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             modified = true;
@@ -2056,6 +2116,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuExitSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitSimActionPerformed
         endSim();
+        plp.refreshProjectView(false);
     }//GEN-LAST:event_menuExitSimActionPerformed
 
     private void menuSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimRunActionPerformed
@@ -2156,8 +2217,10 @@ public class Develop extends javax.swing.JFrame {
         if(btnSimulate.isSelected()) {
             if(plp.isAssembled())
                 beginSim();
-        } else
+        } else {
             endSim();
+            plp.refreshProjectView(false);
+        }
     }//GEN-LAST:event_btnSimulateActionPerformed
 
     private void btnSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimRunActionPerformed
