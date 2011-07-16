@@ -106,3 +106,6 @@ NET "mod_gpio_gpio<12>" LOC = "p17";
 NET "mod_gpio_gpio<13>" LOC = "r16";
 NET "mod_gpio_gpio<14>" LOC = "t18";
 NET "mod_gpio_gpio<15>" LOC = "u18";
+
+NET "i_button" LOC = "H13";
+
