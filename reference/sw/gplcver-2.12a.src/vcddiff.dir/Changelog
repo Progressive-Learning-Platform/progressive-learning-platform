@@ -1,0 +1,23 @@
+vcddiff.04a
+===========
+
+   *** SEE THE VCDDIFF README FOR MORE INFORMATION OF NEW BEVAHIOR ***
+
+   - All values that didn't have a previous value are initialized, and 
+     seen in edges as '?'.
+
+   - Added '-wrap' option.  This option when used with edge printing, wraps
+     the line after every 11 edges.  Therefore 11 edges are printed per line
+     followed by a '\', to indicate a new line.  An empty line indicates
+     the start of the second signal value on the next line.  Default
+     no longer wraps
+
+   - Added the ranges '[a:b]' to the signal name
+
+   - If one value is narrower than the other they are right aligned at low 
+     bit side.
+  
+ Bugs
+  -  add_signal(), filled one too many bits in intialization
+  -  add_edges(), last bit print was wrong 
+  -  get_time_diffs, need to rewind() prior to seeking
