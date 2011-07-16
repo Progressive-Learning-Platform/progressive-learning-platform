@@ -55,6 +55,40 @@ public class Watcher extends javax.swing.JFrame {
         return (DefaultTableModel) tblEntries.getModel();
     }
 
+    public void setEntries(DefaultTableModel tblModel) {
+        tblEntries.setModel(tblModel);
+    }
+
+    public static DefaultTableModel getTableInitialModel() {
+        DefaultTableModel ret;
+        ret = new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Type", "Address", "Hex Value", "Dec Value"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        };
+
+        return ret;
+    }
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

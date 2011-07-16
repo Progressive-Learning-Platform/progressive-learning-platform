@@ -39,6 +39,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 import javax.swing.tree.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * This is the PLPTool application project backend. This class handles
@@ -79,6 +80,7 @@ public class ProjectDriver {
     public String                  hexstring;  // hex string
     public String                  meta;       // Meta String
     public Preset                  smods;      // Saved mods information
+    public DefaultTableModel       watcher;    // Watcher entries
 
     /*
      * References to PLP configuration and messaging classes
@@ -237,6 +239,7 @@ public class ProjectDriver {
         asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
         open_asm = 0;
         smods = null;
+        watcher = null;
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -271,6 +274,7 @@ public class ProjectDriver {
         }
         open_asm = 0;
         smods = null;
+        watcher = null;
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -411,14 +415,12 @@ public class ProjectDriver {
             str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
 
 
-            if(g_watcher != null) {
+            if(watcher != null) {
                 str += "WATCHER\n";
 
-                javax.swing.table.DefaultTableModel watcherTbl = g_watcher.getEntries();
-
-                for(i = 0; i < watcherTbl.getRowCount(); i++) {
-                    str += watcherTbl.getValueAt(i, 0) + "::";
-                    str += watcherTbl.getValueAt(i, 1) + "\n";
+                for(i = 0; i < watcher.getRowCount(); i++) {
+                    str += watcher.getValueAt(i, 0) + "::";
+                    str += watcher.getValueAt(i, 1) + "\n";
                 }
 
                 str += "END\n";
@@ -519,6 +521,7 @@ public class ProjectDriver {
 
         asms = new ArrayList<PLPAsmSource>();
         smods = null;
+        watcher = null;
 
         try {
 
@@ -599,6 +602,18 @@ public class ProjectDriver {
                                         Long.parseLong(tokens[3]), true,
                                         Boolean.parseBoolean(tokens[5]));
 
+                            i++;
+                        }
+                    }
+
+                    if(lines[i].equals("WATCHER")) {
+                        i++;
+                        this.watcher = Watcher.getTableInitialModel();
+
+                        while(i < lines.length && !lines[i].equals("END")) {
+                            tokens = lines[i].split("::");
+                            Object row[] = {tokens[0], tokens[1], null, null};
+                            watcher.addRow(row);
                             i++;
                         }
                     }
@@ -843,6 +858,13 @@ public class ProjectDriver {
                 g_sim.updateBusTable();
                 g_dev.attachModuleFrameListeners(g_sim, Constants.PLP_TOOLFRAME_SIMCPU);
             }
+            g_watcher = new Watcher(this);
+            g_watcher.setVisible(false);
+            g_dev.attachModuleFrameListeners(g_watcher, Constants.PLP_TOOLFRAME_WATCHER);
+            if(watcher != null) {
+                g_watcher.setEntries(watcher);
+                g_watcher.updateWatcher();
+            }
             if(Constants.debugLevel >= 1)
                 g_err.setVisible(true);
 
@@ -887,8 +909,10 @@ public class ProjectDriver {
         if(g_ioreg != null)
             g_ioreg.dispose();
 
-        if(g_watcher != null)
+        if(g_watcher != null) {
+            watcher = g_watcher.getEntries();
             g_watcher.dispose();
+        }
 
         if(g_asmview != null)
             g_asmview.dispose();
@@ -1207,6 +1231,34 @@ public class ProjectDriver {
             open_asm = 0;
 
         if(g) refreshProjectView(true);
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Set the position of the specified source file to a new one.
+     *
+     * @param index Index of the source file to be modified
+     * @param newIndex The new position of the source file
+     * @return PLP_OK on successful operation, error code otherwise
+     */
+    public int setAsmPosition(int index, int newIndex) {
+        if(asms == null || index < 0 || index >= asms.size())
+            return Msg.E("setAsmPosition: Invalid index: " + index,
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+
+        if(asms == null || newIndex < 0 || newIndex >= asms.size())
+            return Msg.E("setAsmPosition: Invalid new index: " + newIndex,
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+
+        if(newIndex <= index) {
+            asms.add(newIndex, asms.get(index));
+            asms.remove(index + 1);
+
+        } else {
+            asms.add(newIndex+1, asms.get(index));
+            asms.remove(index);
+        }
 
         return Constants.PLP_OK;
     }
