@@ -38,7 +38,7 @@ ant javadoc > build_javadoc_log
 cd /backup/fritz/buildbot_tmp/reference/sw
 yes | /usr/local/bin/djtgcfg prog -d Nexys2 -i 0 -f ../hw/build/build_500k_volatile/top.bit >> auto_test_log
 sleep 10
-java -jar PLPTool/store/PLPToolStatic.jar -p examples/auto_test.plp /dev/ttyUSB0 >> auto_test_log
+java -jar PLPTool/store/PLPToolStatic.jar -plp examples/auto_test.plp -p /dev/ttyUSB0 >> auto_test_log
 python /backup/fritz/scripts/auto_test.py /dev/ttyUSB0 >> auto_test_log
 
 #everything should be built (or have failed), so get things ready to push to the website
