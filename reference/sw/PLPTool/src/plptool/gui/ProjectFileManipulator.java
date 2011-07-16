@@ -140,7 +140,7 @@ public class ProjectFileManipulator {
                 Msg.M(lineNum + "\t: " + splitStr[lineNum - 1]);
             }
 
-        } else if(args[2].equals("-m")) {
+        } else if(args[2].equals("-meta")) {
             Msg.I("Metafile contents:", null);
             Msg.M(plp.meta);
 
@@ -162,6 +162,17 @@ public class ProjectFileManipulator {
 
             int index = Integer.parseInt(args[3]);
             plp.exportAsm(index, args[4]);
+
+        } else if((args[2].equals("-m"))) {
+            if(!(args.length == 5)) {
+                Msg.E("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
+                return;
+            }
+
+            int index = Integer.parseInt(args[3]);
+            int newIndex = Integer.parseInt(args[4]);
+            plp.setAsmPosition(index, newIndex);
+            plp.save();
 
         } else if((args[2].equals("-edit"))) {
             if(!(args.length == 4)) {
@@ -221,7 +232,7 @@ public class ProjectFileManipulator {
     }
 
     public static void helpMessage() {
-        System.out.println("  PLP project file manipulator commands, to be run with -plp <plpfile> [options]");
+        System.out.println("PLP project file manipulator commands, to be run with -plp <plpfile> [options]");
         System.out.println();
         System.out.println("  -c <asm 1> <asm 2> ...");
         System.out.println("       Create a new PLP project <plpfile> and import <asm-x> into the project.");
@@ -246,6 +257,9 @@ public class ProjectFileManipulator {
         System.out.println();
         System.out.println("  -s <index>");
         System.out.println("       Set source file with <index> as the main program.");
+        System.out.println();
+        System.out.println("  -m <index> <new index>");
+        System.out.println("       Move the source file with <index> to a new position <new index> in the project.");
         System.out.println();
     }
 }
