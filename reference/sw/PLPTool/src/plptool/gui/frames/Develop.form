@@ -9,6 +9,7 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="rootmenuFile">
           <Properties>
+            <Property name="mnemonic" type="int" value="70"/>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuFile.text"/>
             <Property name="name" type="java.lang.String" value="rootmenuFile" noResource="true"/>
           </Properties>
@@ -19,6 +20,7 @@
                   <KeyStroke key="Ctrl+N"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuNew.icon"/>
+                <Property name="mnemonic" type="int" value="78"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuNew.text"/>
                 <Property name="name" type="java.lang.String" value="menuNew" noResource="true"/>
               </Properties>
@@ -37,6 +39,7 @@
                   <KeyStroke key="Ctrl+O"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuOpen.icon"/>
+                <Property name="mnemonic" type="int" value="79"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuOpen.text"/>
                 <Property name="name" type="java.lang.String" value="menuOpen" noResource="true"/>
               </Properties>
@@ -50,6 +53,7 @@
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuSave.icon"/>
+                <Property name="mnemonic" type="int" value="83"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSave.text"/>
                 <Property name="name" type="java.lang.String" value="menuSave" noResource="true"/>
               </Properties>
@@ -62,6 +66,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Shift+Ctrl+A"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSaveAs.text"/>
                 <Property name="name" type="java.lang.String" value="menuSaveAs" noResource="true"/>
               </Properties>
@@ -79,6 +84,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+P"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="80"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuPrint.text"/>
                 <Property name="name" type="java.lang.String" value="menuPrint" noResource="true"/>
               </Properties>
@@ -96,6 +102,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+Q"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="88"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuExit.text"/>
                 <Property name="name" type="java.lang.String" value="menuExit" noResource="true"/>
               </Properties>
@@ -107,6 +114,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuEdit">
           <Properties>
+            <Property name="mnemonic" type="int" value="69"/>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuEdit.text"/>
           </Properties>
           <SubComponents>
@@ -115,6 +123,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+C"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="67"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuCopy.text"/>
                 <Property name="name" type="java.lang.String" value="menuCopy" noResource="true"/>
               </Properties>
@@ -127,6 +136,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+X"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="116"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuCut.text"/>
                 <Property name="name" type="java.lang.String" value="menuCut" noResource="true"/>
               </Properties>
@@ -139,6 +149,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+V"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="80"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuPaste.text"/>
                 <Property name="name" type="java.lang.String" value="menuPaste" noResource="true"/>
               </Properties>
@@ -156,6 +167,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+F"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="70"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuFindAndReplace.text"/>
                 <Property name="name" type="java.lang.String" value="menuFindAndReplace" noResource="true"/>
               </Properties>
@@ -173,6 +185,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+Z"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="85"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuUndo.text"/>
                 <Property name="name" type="java.lang.String" value="menuUndo" noResource="true"/>
               </Properties>
@@ -185,6 +198,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+Y"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuRedo.text"/>
                 <Property name="name" type="java.lang.String" value="menuRedo" noResource="true"/>
               </Properties>
@@ -196,6 +210,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuProject">
           <Properties>
+            <Property name="mnemonic" type="int" value="82"/>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuProject.text"/>
             <Property name="name" type="java.lang.String" value="rootmenuProject" noResource="true"/>
           </Properties>
@@ -210,6 +225,7 @@
                   <KeyStroke key="F2"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuAssemble.icon"/>
+                <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuAssemble.text"/>
                 <Property name="name" type="java.lang.String" value="menuAssemble" noResource="true"/>
               </Properties>
@@ -223,6 +239,7 @@
                   <KeyStroke key="F3"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimulate.icon"/>
+                <Property name="mnemonic" type="int" value="83"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimulate.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimulate" noResource="true"/>
               </Properties>
@@ -233,9 +250,10 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuProgram">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F4"/>
+                  <KeyStroke key="Shift+F4"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuProgram.icon"/>
+                <Property name="mnemonic" type="int" value="80"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuProgram.text"/>
                 <Property name="name" type="java.lang.String" value="menuProgram" noResource="true"/>
               </Properties>
@@ -246,8 +264,9 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuQuickProgram">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Shift+F4"/>
+                  <KeyStroke key="F4"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="81"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuQuickProgram.text"/>
                 <Property name="name" type="java.lang.String" value="menuQuickProgram" noResource="true"/>
               </Properties>
@@ -262,6 +281,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuNewASM">
               <Properties>
+                <Property name="mnemonic" type="int" value="78"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuNewASM.text"/>
                 <Property name="name" type="java.lang.String" value="menuNewASM" noResource="true"/>
               </Properties>
@@ -271,6 +291,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuImportASM">
               <Properties>
+                <Property name="mnemonic" type="int" value="73"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuImportASM.text"/>
                 <Property name="name" type="java.lang.String" value="menuImportASM" noResource="true"/>
               </Properties>
@@ -280,6 +301,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuExportASM">
               <Properties>
+                <Property name="mnemonic" type="int" value="88"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuExportASM.text"/>
                 <Property name="name" type="java.lang.String" value="menuExportASM" noResource="true"/>
               </Properties>
@@ -292,6 +314,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+E"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuDeleteASM.text"/>
                 <Property name="name" type="java.lang.String" value="menuDeleteASM" noResource="true"/>
               </Properties>
@@ -306,6 +329,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSetMainProgram">
               <Properties>
+                <Property name="mnemonic" type="int" value="67"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSetMainProgram.text"/>
                 <Property name="name" type="java.lang.String" value="menuSetMainProgram" noResource="true"/>
               </Properties>
@@ -317,12 +341,14 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuTools">
           <Properties>
+            <Property name="mnemonic" type="int" value="84"/>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuTools.text"/>
             <Property name="name" type="java.lang.String" value="rootmenuTools" noResource="true"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuOptions">
               <Properties>
+                <Property name="mnemonic" type="int" value="79"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuOptions.text"/>
                 <Property name="name" type="java.lang.String" value="menuOptions" noResource="true"/>
               </Properties>
@@ -340,6 +366,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+T"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="83"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSerialTerminal.text"/>
                 <Property name="name" type="java.lang.String" value="menuSerialTerminal" noResource="true"/>
               </Properties>
@@ -351,6 +378,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuSim">
           <Properties>
+            <Property name="mnemonic" type="int" value="83"/>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuSim.text"/>
             <Property name="name" type="java.lang.String" value="rootmenuSim" noResource="true"/>
           </Properties>
@@ -360,6 +388,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F5"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="83"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimStep.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimStep" noResource="true"/>
               </Properties>
@@ -372,6 +401,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F9"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="69"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimReset.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimReset" noResource="true"/>
               </Properties>
@@ -384,6 +414,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F7"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimRun.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimRun" noResource="true"/>
               </Properties>
@@ -393,8 +424,8 @@
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="menuStepSize">
               <Properties>
+                <Property name="mnemonic" type="int" value="67"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuStepSize.text"/>
-                <Property name="name" type="java.lang.String" value="menuStepSize" noResource="true"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuStep1">
@@ -402,6 +433,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Alt+1"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="49"/>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuStep1.text"/>
                     <Property name="name" type="java.lang.String" value="menuStep1" noResource="true"/>
@@ -412,6 +444,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Alt+2"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="53"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuStep2.text"/>
                     <Property name="name" type="java.lang.String" value="menuStep2" noResource="true"/>
                   </Properties>
@@ -421,6 +454,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Alt+3"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="50"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuStep3.text"/>
                     <Property name="name" type="java.lang.String" value="menuStep3" noResource="true"/>
                   </Properties>
@@ -430,6 +464,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Alt+4"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="48"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuStep4.text"/>
                     <Property name="name" type="java.lang.String" value="menuStep4" noResource="true"/>
                   </Properties>
@@ -439,6 +474,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Alt+5"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="53"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuStep5.text"/>
                     <Property name="name" type="java.lang.String" value="menuStep5" noResource="true"/>
                   </Properties>
@@ -452,6 +488,7 @@
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="menuSimTools">
               <Properties>
+                <Property name="mnemonic" type="int" value="84"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimTools.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimTools" noResource="true"/>
               </Properties>
@@ -461,6 +498,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Shift+Ctrl+C"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="67"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimView.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimView" noResource="true"/>
                   </Properties>
@@ -473,6 +511,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Shift+Ctrl+W"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="87"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimWatcher.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimWatcher" noResource="true"/>
                   </Properties>
@@ -485,6 +524,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Shift+Ctrl+D"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="68"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimMemory.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimMemory" noResource="true"/>
                   </Properties>
@@ -494,6 +534,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Shift+Ctrl+R"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="82"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimIO.text"/>
                     <Property name="name" type="java.lang.String" value="menuSimIO" noResource="true"/>
                   </Properties>
@@ -505,6 +546,7 @@
             </Menu>
             <Menu class="javax.swing.JMenu" name="menuIOReg">
               <Properties>
+                <Property name="mnemonic" type="int" value="68"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuIOReg.text"/>
                 <Property name="name" type="java.lang.String" value="menuIOReg" noResource="true"/>
               </Properties>
@@ -514,6 +556,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+1"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="49"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuLEDs.text"/>
                     <Property name="name" type="java.lang.String" value="menuLEDs" noResource="true"/>
                   </Properties>
@@ -526,6 +569,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+2"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="50"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSwitches.text"/>
                     <Property name="name" type="java.lang.String" value="menuSwitches" noResource="true"/>
                   </Properties>
@@ -538,6 +582,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+3"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="51"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSevenSegments.text"/>
                     <Property name="name" type="java.lang.String" value="menuSevenSegments" noResource="true"/>
                   </Properties>
@@ -550,6 +595,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+4"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="52"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuUART.text"/>
                     <Property name="name" type="java.lang.String" value="menuUART" noResource="true"/>
                   </Properties>
@@ -562,6 +608,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+5"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="53"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuVGA.text"/>
                     <Property name="name" type="java.lang.String" value="menuVGA" noResource="true"/>
                   </Properties>
@@ -574,6 +621,7 @@
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+6"/>
                     </Property>
+                    <Property name="mnemonic" type="int" value="54"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuPLPID.text"/>
                     <Property name="name" type="java.lang.String" value="menuPLPID" noResource="true"/>
                   </Properties>
@@ -593,6 +641,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F11"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="88"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuExitSim.text"/>
                 <Property name="name" type="java.lang.String" value="menuExitSim" noResource="true"/>
               </Properties>
@@ -604,6 +653,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuHelp">
           <Properties>
+            <Property name="mnemonic" type="int" value="72"/>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuHelp.text"/>
             <Property name="name" type="java.lang.String" value="rootmenuHelp" noResource="true"/>
           </Properties>
@@ -616,6 +666,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F1"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="81"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuQuickRef.text"/>
                 <Property name="name" type="java.lang.String" value="menuQuickRef" noResource="true"/>
               </Properties>
@@ -625,6 +676,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuManual">
               <Properties>
+                <Property name="mnemonic" type="int" value="77"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuManual.text"/>
                 <Property name="name" type="java.lang.String" value="menuManual" noResource="true"/>
               </Properties>
@@ -639,6 +691,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuIssues">
               <Properties>
+                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuIssues.text"/>
                 <Property name="name" type="java.lang.String" value="menuIssues" noResource="true"/>
               </Properties>
@@ -648,6 +701,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuIssuesPage">
               <Properties>
+                <Property name="mnemonic" type="int" value="73"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuIssuesPage.text"/>
                 <Property name="name" type="java.lang.String" value="menuIssuesPage" noResource="true"/>
               </Properties>
@@ -663,6 +717,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuAbout">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="menuAbout.icon"/>
+                <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuAbout.text"/>
                 <Property name="name" type="java.lang.String" value="menuAbout" noResource="true"/>
               </Properties>
@@ -728,7 +783,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="466" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="464" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -803,11 +858,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="664" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="663" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="459" max="32767" attributes="0"/>
+                              <EmptySpace pref="445" max="32767" attributes="0"/>
                               <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -821,7 +876,7 @@
                                   <Component id="lblPosition" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="407" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="409" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -931,13 +986,7 @@
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[2, 0, 2, 0]"/>
             </Property>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[42, 46]"/>
-            </Property>
             <Property name="name" type="java.lang.String" value="btnNew" noResource="true"/>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[42, 46]"/>
-            </Property>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>

@@ -92,6 +92,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnGo">
       <Properties>
+        <Property name="mnemonic" type="int" value="78"/>
         <Property name="text" type="java.lang.String" resourceKey="btnGo.text"/>
         <Property name="name" type="java.lang.String" value="btnGo" noResource="true"/>
       </Properties>
@@ -107,12 +108,14 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="chkReplace">
       <Properties>
+        <Property name="mnemonic" type="int" value="82"/>
         <Property name="text" type="java.lang.String" resourceKey="chkReplace.text"/>
         <Property name="name" type="java.lang.String" value="chkReplace" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnClose">
       <Properties>
+        <Property name="mnemonic" type="int" value="67"/>
         <Property name="text" type="java.lang.String" resourceKey="btnClose.text"/>
         <Property name="name" type="java.lang.String" value="btnClose" noResource="true"/>
       </Properties>
@@ -122,6 +125,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnReplaceAll">
       <Properties>
+        <Property name="mnemonic" type="int" value="65"/>
         <Property name="text" type="java.lang.String" resourceKey="btnReplaceAll.text"/>
         <Property name="name" type="java.lang.String" value="btnReplaceAll" noResource="true"/>
       </Properties>

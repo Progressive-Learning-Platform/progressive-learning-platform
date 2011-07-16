@@ -80,6 +80,7 @@ public class FindAndReplace extends javax.swing.JFrame {
         txtReplace.setText(resourceMap.getString("txtReplace.text")); // NOI18N
         txtReplace.setName("txtReplace"); // NOI18N
 
+        btnGo.setMnemonic('N');
         btnGo.setText(resourceMap.getString("btnGo.text")); // NOI18N
         btnGo.setName("btnGo"); // NOI18N
         btnGo.addActionListener(new java.awt.event.ActionListener() {
@@ -91,9 +92,11 @@ public class FindAndReplace extends javax.swing.JFrame {
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
+        chkReplace.setMnemonic('R');
         chkReplace.setText(resourceMap.getString("chkReplace.text")); // NOI18N
         chkReplace.setName("chkReplace"); // NOI18N
 
+        btnClose.setMnemonic('C');
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
         btnClose.addActionListener(new java.awt.event.ActionListener() {
@@ -102,6 +105,7 @@ public class FindAndReplace extends javax.swing.JFrame {
             }
         });
 
+        btnReplaceAll.setMnemonic('A');
         btnReplaceAll.setText(resourceMap.getString("btnReplaceAll.text")); // NOI18N
         btnReplaceAll.setName("btnReplaceAll"); // NOI18N
         btnReplaceAll.addActionListener(new java.awt.event.ActionListener() {
