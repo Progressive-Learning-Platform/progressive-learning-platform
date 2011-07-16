@@ -41,6 +41,7 @@ public class Config {
     public static long    simDefaultRAMSize                = 0x1000000;
     public static long    simRAMStartingAddress            = 0x10000000;
     public static boolean simIgnoreSavedSimState           = false;
+    public static int     simCyclesPerStep                 = 1;
 
     public static double  relativeDefaultWindowWidth       = 0.8;
     public static double  relativeDefaultWindowHeight      = 0.8;

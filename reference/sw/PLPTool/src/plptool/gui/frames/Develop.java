@@ -144,6 +144,7 @@ public class Develop extends javax.swing.JFrame {
 
         
         this.setLocationRelativeTo(null);
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/plp.png")));
 
         Msg.M(Constants.copyrightString);
     }
@@ -663,6 +664,7 @@ public class Develop extends javax.swing.JFrame {
             separatorSim.setVisible(true);
             btnSimReset.setVisible(true);
             btnSimStep.setVisible(true);
+            btnWatcher.setVisible(true);
         } else
             endSim();
     }
@@ -686,6 +688,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimStep.setVisible(false);
         btnSimReset.setVisible(false);
         btnSimRun.setVisible(false);
+        btnWatcher.setVisible(false);
         separatorSim.setVisible(false);
     }
 
@@ -826,6 +829,12 @@ public class Develop extends javax.swing.JFrame {
             }
         }
     }
+    
+    private void stepSim() {
+        for(int i = 0; i < Config.simCyclesPerStep; i++)
+            plp.sim.step();
+        plp.updateComponents(true);
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -836,6 +845,7 @@ public class Develop extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        grpSteps = new javax.swing.ButtonGroup();
         devMainPane = new javax.swing.JPanel();
         splitterV = new javax.swing.JSplitPane();
         splitterH = new javax.swing.JSplitPane();
@@ -860,6 +870,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimStep = new javax.swing.JButton();
         btnSimRun = new javax.swing.JToggleButton();
         btnSimReset = new javax.swing.JButton();
+        btnWatcher = new javax.swing.JToggleButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -933,7 +944,7 @@ public class Develop extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Develop.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
-        setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage("resources/plp.png"));
+        setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage("gui/frames/resources/plp.png"));
         setName("Form"); // NOI18N
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
             public void windowGainedFocus(java.awt.event.WindowEvent evt) {
@@ -1201,6 +1212,15 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         toolbar.add(btnSimReset);
+
+        btnWatcher.setIcon(resourceMap.getIcon("btnWatcher.icon")); // NOI18N
+        btnWatcher.setText(resourceMap.getString("btnWatcher.text")); // NOI18N
+        btnWatcher.setToolTipText(resourceMap.getString("btnWatcher.toolTipText")); // NOI18N
+        btnWatcher.setFocusable(false);
+        btnWatcher.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnWatcher.setName("btnWatcher"); // NOI18N
+        btnWatcher.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnWatcher);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -1558,34 +1578,64 @@ public class Develop extends javax.swing.JFrame {
         menuStepSize.setText(resourceMap.getString("menuStepSize.text")); // NOI18N
 
         menuStep1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.ALT_MASK));
+        grpSteps.add(menuStep1);
         menuStep1.setMnemonic('1');
         menuStep1.setSelected(true);
         menuStep1.setText(resourceMap.getString("menuStep1.text")); // NOI18N
         menuStep1.setName("menuStep1"); // NOI18N
+        menuStep1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStep1ActionPerformed(evt);
+            }
+        });
         menuStepSize.add(menuStep1);
 
         menuStep2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.ALT_MASK));
+        grpSteps.add(menuStep2);
         menuStep2.setMnemonic('5');
         menuStep2.setText(resourceMap.getString("menuStep2.text")); // NOI18N
         menuStep2.setName("menuStep2"); // NOI18N
+        menuStep2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStep2ActionPerformed(evt);
+            }
+        });
         menuStepSize.add(menuStep2);
 
         menuStep3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.ALT_MASK));
+        grpSteps.add(menuStep3);
         menuStep3.setMnemonic('2');
         menuStep3.setText(resourceMap.getString("menuStep3.text")); // NOI18N
         menuStep3.setName("menuStep3"); // NOI18N
+        menuStep3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStep3ActionPerformed(evt);
+            }
+        });
         menuStepSize.add(menuStep3);
 
         menuStep4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.ALT_MASK));
+        grpSteps.add(menuStep4);
         menuStep4.setMnemonic('0');
         menuStep4.setText(resourceMap.getString("menuStep4.text")); // NOI18N
         menuStep4.setName("menuStep4"); // NOI18N
+        menuStep4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStep4ActionPerformed(evt);
+            }
+        });
         menuStepSize.add(menuStep4);
 
         menuStep5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.ALT_MASK));
+        grpSteps.add(menuStep5);
         menuStep5.setMnemonic('5');
         menuStep5.setText(resourceMap.getString("menuStep5.text")); // NOI18N
         menuStep5.setName("menuStep5"); // NOI18N
+        menuStep5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStep5ActionPerformed(evt);
+            }
+        });
         menuStepSize.add(menuStep5);
 
         rootmenuSim.add(menuStepSize);
@@ -2110,8 +2160,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuPrintActionPerformed
 
     private void menuSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimStepActionPerformed
-        plp.sim.step();
-        plp.updateComponents(true);
+        stepSim();
     }//GEN-LAST:event_menuSimStepActionPerformed
 
     private void menuExitSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitSimActionPerformed
@@ -2241,8 +2290,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimRunActionPerformed
 
     private void btnSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimStepActionPerformed
-        plp.sim.step();
-        plp.updateComponents(true);
+        stepSim();
     }//GEN-LAST:event_btnSimStepActionPerformed
 
     private void btnSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimResetActionPerformed
@@ -2253,6 +2301,32 @@ public class Develop extends javax.swing.JFrame {
         plp.updateComponents(true);
         plp.refreshProjectView(false);
     }//GEN-LAST:event_btnSimResetActionPerformed
+
+    private void menuStep1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep1ActionPerformed
+        if(menuStep1.isSelected())
+            Config.simCyclesPerStep = 1;
+    }//GEN-LAST:event_menuStep1ActionPerformed
+
+    private void menuStep2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep2ActionPerformed
+        if(menuStep2.isSelected())
+            Config.simCyclesPerStep = 5;
+    }//GEN-LAST:event_menuStep2ActionPerformed
+
+    private void menuStep3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep3ActionPerformed
+        if(menuStep3.isSelected())
+            Config.simCyclesPerStep = 20;
+    }//GEN-LAST:event_menuStep3ActionPerformed
+
+    private void menuStep4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep4ActionPerformed
+        if(menuStep4.isSelected())
+            Config.simCyclesPerStep = 100;
+
+    }//GEN-LAST:event_menuStep4ActionPerformed
+
+    private void menuStep5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep5ActionPerformed
+        if(menuStep5.isSelected())
+            Config.simCyclesPerStep = 5000;
+    }//GEN-LAST:event_menuStep5ActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
@@ -2334,7 +2408,9 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JToggleButton btnSimRun;
     private javax.swing.JButton btnSimStep;
     private javax.swing.JToggleButton btnSimulate;
+    private javax.swing.JToggleButton btnWatcher;
     private javax.swing.JPanel devMainPane;
+    private javax.swing.ButtonGroup grpSteps;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

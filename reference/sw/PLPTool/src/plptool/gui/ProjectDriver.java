@@ -300,7 +300,8 @@ public class ProjectDriver {
     public int save() {
 
         if(sim_mode) {
-            
+            smods = ioreg.createPreset();
+            watcher = g_watcher.getEntries();
         }
 
         // commit changes of currently open source file

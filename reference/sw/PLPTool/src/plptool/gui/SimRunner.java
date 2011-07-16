@@ -53,7 +53,7 @@ public class SimRunner extends Thread {
         //    plp.g_simsh.setStatusString("Running", Color.green);
 
         while(stepCount > 0) {
-            int steps = 1; //Integer.parseInt(plp.g_simsh.getTxtSteps().getText());
+            int steps = Config.simCyclesPerStep;
             if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps && Msg.lastError == 0; i++)
                     plp.sim.step();

@@ -232,7 +232,7 @@ public class ProjectFileManipulator {
     }
 
     public static void helpMessage() {
-        System.out.println("PLP project file manipulator commands, to be run with -plp <plpfile> [options]");
+        System.out.println("PLP project file manipulator commands, to be run with -plp <plpfile> [command]");
         System.out.println();
         System.out.println("  -c <asm 1> <asm 2> ...");
         System.out.println("       Create a new PLP project <plpfile> and import <asm-x> into the project.");

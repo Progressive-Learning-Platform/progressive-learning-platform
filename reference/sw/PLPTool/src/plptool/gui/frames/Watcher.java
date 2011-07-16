@@ -48,6 +48,7 @@ public class Watcher extends javax.swing.JFrame {
         cmbType.addItem("Bus");
         cmbType.addItem("Register");
 
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_watcher.png")));
         //plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_WATCHER);
     }
 
@@ -123,6 +124,11 @@ public class Watcher extends javax.swing.JFrame {
 
         txtAddr.setText(resourceMap.getString("txtAddr.text")); // NOI18N
         txtAddr.setName("txtAddr"); // NOI18N
+        txtAddr.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAddrKeyPressed(evt);
+            }
+        });
 
         btnAdd.setText(resourceMap.getString("btnAdd.text")); // NOI18N
         btnAdd.setName("btnAdd"); // NOI18N
@@ -187,7 +193,7 @@ public class Watcher extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -242,6 +248,7 @@ public class Watcher extends javax.swing.JFrame {
                                     (data != null) ? String.format("%d", data) : "Uninitialized"};
                     entries.addRow(row);
                     tblEntries.setModel(entries);
+                    plp.setModified();
                 }
 
                 break;
@@ -255,6 +262,7 @@ public class Watcher extends javax.swing.JFrame {
                                         (data != null) ? String.format("%d", data) : "Uninitialized"};
                         entries.addRow(row);
                         tblEntries.setModel(entries);
+                        plp.setModified();
                     }
                 }
 
@@ -265,14 +273,24 @@ public class Watcher extends javax.swing.JFrame {
     private void btnRemoveSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveSelectedActionPerformed
         DefaultTableModel entries = getTblValues();
         int rowToDelete = tblEntries.getSelectedRow();
-        entries.removeRow(rowToDelete);
+        if(rowToDelete > -1) {
+            entries.removeRow(rowToDelete);
+            plp.setModified();
+        }
     }//GEN-LAST:event_btnRemoveSelectedActionPerformed
 
     private void btnRemoveAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveAllActionPerformed
         DefaultTableModel entries = getTblValues();
         while(tblEntries.getRowCount() > 0)
             entries.removeRow(0);
+
+        plp.setModified();
     }//GEN-LAST:event_btnRemoveAllActionPerformed
+
+    private void txtAddrKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAddrKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnAddActionPerformed(null);
+    }//GEN-LAST:event_txtAddrKeyPressed
 
     public void updateWatcher() {
         DefaultTableModel entries = getTblValues();
