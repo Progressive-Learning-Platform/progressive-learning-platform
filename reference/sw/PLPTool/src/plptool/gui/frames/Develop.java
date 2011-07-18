@@ -144,7 +144,7 @@ public class Develop extends javax.swing.JFrame {
 
         
         this.setLocationRelativeTo(null);
-        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/plp.png")));
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
 
         Msg.M(Constants.copyrightString);
     }
@@ -1003,10 +1003,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1024,11 +1024,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 459, Short.MAX_VALUE)
                 .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1039,7 +1039,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(txtCurFile)
                     .addComponent(lblPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1062,7 +1062,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1218,6 +1218,7 @@ public class Develop extends javax.swing.JFrame {
         btnWatcher.setToolTipText(resourceMap.getString("btnWatcher.toolTipText")); // NOI18N
         btnWatcher.setFocusable(false);
         btnWatcher.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnWatcher.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnWatcher.setName("btnWatcher"); // NOI18N
         btnWatcher.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolbar.add(btnWatcher);

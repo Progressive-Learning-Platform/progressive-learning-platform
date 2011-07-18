@@ -19,6 +19,7 @@
 package plptool;
 
 import plptool.mods.MemModule;
+import java.util.ArrayList;
 
 /**
  * This abstract class defines the simulated CPU interface.
@@ -53,6 +54,11 @@ public abstract class PLPSimCore {
      * CPU front-side bus.
      */
     public PLPSimBus bus;
+
+    /**
+     * Breakpoints
+     */
+    public mod_breakpoint breakpoints;
 
     /**
      * Reset handler, to be implemented by the actual simulation core
@@ -114,5 +120,53 @@ public abstract class PLPSimCore {
      */
     public long getIRQ() {
         return IRQ;
+    }
+
+    /**
+     * The simulation runner will check on this address to evaluate breakpoints
+     */
+    public long visibleAddr;
+
+    /**
+     * Breakpoint module for the simulation
+     */
+    public class mod_breakpoint {
+        private ArrayList<Long> addresses;
+
+        public mod_breakpoint() {
+            addresses = new ArrayList<Long>();
+        }
+
+        public void add(long addr) {
+            addresses.add(addr);
+        }
+
+        public boolean remove(long addr) {
+            boolean ret = false;
+
+            for(int i = 0; i < addresses.size(); i++) {
+                if((long) addresses.get(i) == addr) {
+                    addresses.remove(i);
+                    ret = true;
+                }
+            }
+
+            return ret;
+        }
+
+        public boolean has_breakpoint() {
+            return addresses.size() > 0 ? true : false;
+        }
+
+        public boolean is_breakpoint(long addr) {
+            for(int i = 0; i < addresses.size(); i++) {
+                if((long) addresses.get(i) == addr) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
     }
 }
