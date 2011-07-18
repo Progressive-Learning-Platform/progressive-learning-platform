@@ -71,6 +71,12 @@ public class SimRunner extends Thread {
                     plp.g_err.setError(Msg.lastError);
                 break;
             }
+
+            if(plp.sim.breakpoints.has_breakpoint()) {
+                if(plp.sim.breakpoints.is_breakpoint(plp.sim.visibleAddr))
+                    stepCount = 0;
+            }
+            
             try {
                 this.sleep(Config.simRunnerDelay);
             } catch(Exception e) {}

@@ -26,6 +26,8 @@ import plptool.PLPSimBus;
 import plptool.PLPSimCore;
 import plptool.PLPSimRegModule;
 
+import java.util.ArrayList;
+
 /**
  * mips.SimCore is the PLP MIPS Architecture Simulator. This class
  * contains core functionality of the simulator: the CPU itself, memory
@@ -144,6 +146,7 @@ public class SimCore extends PLPSimCore {
 
         // core mods
         forwarding = new mod_forwarding();
+        breakpoints = new mod_breakpoint();
         bus = new PLPSimBus();
 
         // Instantiate stages
@@ -423,6 +426,7 @@ public class SimCore extends PLPSimCore {
         id_stage.i_ctl_pcplus4 = addr + 4;
 
         id_stage.hot = true;
+        visibleAddr = addr;
 
         return Constants.PLP_OK;
     }
@@ -1318,18 +1322,6 @@ public class SimCore extends PLPSimCore {
             }
 
             return 0;
-        }
-    }
-
-    public class mod_breakpoint {
-        public mod_breakpoint() {
-
-        }
-    }
-
-    public class mod_monitor {
-        public mod_monitor() {
-            
         }
     }
 

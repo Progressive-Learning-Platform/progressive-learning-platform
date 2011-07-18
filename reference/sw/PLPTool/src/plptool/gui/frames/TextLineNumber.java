@@ -23,7 +23,7 @@ import javax.swing.text.*;
  *  of a JScrollPane.
  */
 public class TextLineNumber extends JPanel
-	implements CaretListener, DocumentListener, PropertyChangeListener
+	implements CaretListener, DocumentListener, PropertyChangeListener, MouseListener
 {
 	public final static float LEFT = 0.0f;
 	public final static float CENTER = 0.5f;
@@ -88,6 +88,7 @@ public class TextLineNumber extends JPanel
 		component.getDocument().addDocumentListener(this);
 		component.addCaretListener( this );
 		component.addPropertyChangeListener("font", this);
+                this.addMouseListener(this);
 
                 highlightLine = -1;
 	}
@@ -224,7 +225,7 @@ public class TextLineNumber extends JPanel
 		{
 			lastDigits = digits;
 			FontMetrics fontMetrics = getFontMetrics( getFont() );
-			int width = fontMetrics.charWidth( '0' ) * digits;
+			int width = fontMetrics.charWidth( '0' ) * digits + 20;
 			Insets insets = getInsets();
 			int preferredWidth = insets.left + insets.right + width;
 
@@ -247,7 +248,7 @@ public class TextLineNumber extends JPanel
 
 		FontMetrics fontMetrics = component.getFontMetrics( component.getFont() );
 		Insets insets = getInsets();
-		int availableWidth = getSize().width - insets.left - insets.right;
+		int availableWidth = getSize().width - insets.left - insets.right - 20;
 
 		//  Determine the rows to draw within the clipped bounds.
 
@@ -495,4 +496,21 @@ public class TextLineNumber extends JPanel
 			}
 		}
 	}
+
+//
+// Implement MouseListener interface
+//
+    public void mousePressed(MouseEvent e) { }
+
+    public void mouseReleased(MouseEvent e) { }
+
+    public void mouseEntered(MouseEvent e) { }
+
+    public void mouseExited(MouseEvent e) { }
+
+    public void mouseClicked(MouseEvent e) {
+       if(e.getClickCount() == 2) {
+           // apply breakpoint
+       }
+    }
 }
