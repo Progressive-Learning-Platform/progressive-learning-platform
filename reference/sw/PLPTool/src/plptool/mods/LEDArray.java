@@ -67,6 +67,10 @@ public class LEDArray extends PLPSimBusModule {
         return Constants.PLP_OK;
     }
 
+    @Override public void reset() {
+        super.writeReg(super.startAddr, new Long(0L), false);
+    }
+
     public String introduce() {
         return "LED array";
     }

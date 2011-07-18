@@ -45,6 +45,10 @@ public class DummyMemory extends PLPSimBusModule {
         return new Long(0);
     }
 
+    @Override public void reset() {
+        super.clear();
+    }
+
     @Override public String toString() {
         return "MemModule";
     }

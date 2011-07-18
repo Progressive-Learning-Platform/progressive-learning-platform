@@ -90,7 +90,7 @@ public abstract class PLPSimCore {
      *
      * @return Returns instruction count in int.
      */
-    public int getinstrcount() {
+    public int getInstrCount() {
         return instructionCount;
     }
 
@@ -131,22 +131,22 @@ public abstract class PLPSimCore {
      * Breakpoint module for the simulation
      */
     public class mod_breakpoint {
-        private ArrayList<Long> addresses;
+        private ArrayList<breakpoint> breakpoints;
 
         public mod_breakpoint() {
-            addresses = new ArrayList<Long>();
+            breakpoints = new ArrayList<breakpoint>();
         }
 
-        public void add(long addr) {
-            addresses.add(addr);
+        public void add(long addr, int fileMap, int lineNumMap) {
+            breakpoints.add(new breakpoint(addr, fileMap, lineNumMap));
         }
 
         public boolean remove(long addr) {
             boolean ret = false;
 
-            for(int i = 0; i < addresses.size(); i++) {
-                if((long) addresses.get(i) == addr) {
-                    addresses.remove(i);
+            for(int i = 0; i < breakpoints.size(); i++) {
+                if((long) breakpoints.get(i).getAddr() == addr) {
+                    breakpoints.remove(i);
                     ret = true;
                 }
             }
@@ -154,13 +154,17 @@ public abstract class PLPSimCore {
             return ret;
         }
 
-        public boolean has_breakpoint() {
-            return addresses.size() > 0 ? true : false;
+        public void clear() {
+            breakpoints = new ArrayList<breakpoint>();
         }
 
-        public boolean is_breakpoint(long addr) {
-            for(int i = 0; i < addresses.size(); i++) {
-                if((long) addresses.get(i) == addr) {
+        public boolean hasBreakpoint() {
+            return breakpoints.size() > 0 ? true : false;
+        }
+
+        public boolean isBreakpoint(long addr) {
+            for(int i = 0; i < breakpoints.size(); i++) {
+                if((long) breakpoints.get(i).getAddr() == addr) {
                     return true;
                 }
             }
@@ -168,5 +172,39 @@ public abstract class PLPSimCore {
             return false;
         }
 
+        public boolean isBreakpoint(int fIndex, int lineNum) {
+            for(int i = 0; i < breakpoints.size(); i++) {
+                if((breakpoints.get(i).getFileMap() == fIndex) &&
+                   (breakpoints.get(i).getLineNumMap() == lineNum)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    class breakpoint {
+        private long addr;
+        private int fileMap;
+        private int lineNumMap;
+
+        public breakpoint(long addr, int fileMap, int lineNumMap) {
+            this.addr = addr;
+            this.fileMap = fileMap;
+            this.lineNumMap = lineNumMap;
+        }
+
+        public long getAddr() {
+            return addr;
+        }
+
+        public int getFileMap() {
+            return fileMap;
+        }
+
+        public int getLineNumMap() {
+            return lineNumMap;
+        }
     }
 }

@@ -70,6 +70,11 @@ public class InterruptController extends PLPSimBusModule {
 	return Constants.PLP_OK;
     }
 
+    @Override public void reset() {
+        super.writeReg(super.startAddr, new Long(0L), false);
+        super.writeReg(super.startAddr+4, new Long(0L), false);
+    }
+
     public String introduce() {
         return "PLP Interrupt Controller";
     }

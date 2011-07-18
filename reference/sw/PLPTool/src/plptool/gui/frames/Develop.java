@@ -72,6 +72,10 @@ public class Develop extends javax.swing.JFrame {
     private TextLineNumber tln;
     private TextLineHighlighter tlh;
 
+    // caret position
+    private int oldLine;
+    private int line;
+
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
 
@@ -81,6 +85,8 @@ public class Develop extends javax.swing.JFrame {
     public Develop(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
+        line = 0;
+        oldLine = 0;
 
         DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("No PLP Project Open");
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
@@ -88,7 +94,7 @@ public class Develop extends javax.swing.JFrame {
         
         splitterH.setDividerLocation(0.25);
 
-        tln = new TextLineNumber(txtEditor);
+        tln = new TextLineNumber(txtEditor, plp);
         tlh = new TextLineHighlighter(txtEditor);
         scroller.setRowHeaderView(tln);
 
@@ -836,6 +842,11 @@ public class Develop extends javax.swing.JFrame {
         plp.updateComponents(true);
     }
 
+    private void clearBreakpoints() {
+        plp.sim.breakpoints.clear();
+        tln.repaint();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -870,7 +881,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimStep = new javax.swing.JButton();
         btnSimRun = new javax.swing.JToggleButton();
         btnSimReset = new javax.swing.JButton();
-        btnWatcher = new javax.swing.JToggleButton();
+        btnWatcher = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -911,6 +922,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimStep = new javax.swing.JMenuItem();
         menuSimReset = new javax.swing.JMenuItem();
         menuSimRun = new javax.swing.JCheckBoxMenuItem();
+        menuClearBreakpoints = new javax.swing.JMenuItem();
         menuStepSize = new javax.swing.JMenu();
         menuStep1 = new javax.swing.JRadioButtonMenuItem();
         menuStep2 = new javax.swing.JRadioButtonMenuItem();
@@ -1221,6 +1233,11 @@ public class Develop extends javax.swing.JFrame {
         btnWatcher.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnWatcher.setName("btnWatcher"); // NOI18N
         btnWatcher.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnWatcher.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWatcherActionPerformed(evt);
+            }
+        });
         toolbar.add(btnWatcher);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
@@ -1229,7 +1246,6 @@ public class Develop extends javax.swing.JFrame {
 
         rootmenuFile.setMnemonic('F');
         rootmenuFile.setText(resourceMap.getString("rootmenuFile.text")); // NOI18N
-        rootmenuFile.setName("rootmenuFile"); // NOI18N
 
         menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuNew.setIcon(resourceMap.getIcon("menuNew.icon")); // NOI18N
@@ -1575,6 +1591,17 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuSim.add(menuSimRun);
 
+        menuClearBreakpoints.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.CTRL_MASK));
+        menuClearBreakpoints.setMnemonic('B');
+        menuClearBreakpoints.setText(resourceMap.getString("menuClearBreakpoints.text")); // NOI18N
+        menuClearBreakpoints.setName("menuClearBreakpoints"); // NOI18N
+        menuClearBreakpoints.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuClearBreakpointsActionPerformed(evt);
+            }
+        });
+        rootmenuSim.add(menuClearBreakpoints);
+
         menuStepSize.setMnemonic('C');
         menuStepSize.setText(resourceMap.getString("menuStepSize.text")); // NOI18N
 
@@ -1765,9 +1792,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuSim.add(jSeparator10);
 
         menuExitSim.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
-        menuExitSim.setMnemonic('X');
         menuExitSim.setText(resourceMap.getString("menuExitSim.text")); // NOI18N
-        menuExitSim.setName("menuExitSim"); // NOI18N
         menuExitSim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuExitSimActionPerformed(evt);
@@ -2004,11 +2029,17 @@ public class Develop extends javax.swing.JFrame {
         if(plp.asms != null && plp.asms.size() > 0) {
             int caretPos = txtEditor.getCaretPosition();
             Element root = txtEditor.getDocument().getDefaultRootElement();
+            line = root.getElementIndex(caretPos)+1;
 
-            int line = root.getElementIndex(caretPos)+1;
             //line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
             String fName = plp.asms.get(plp.open_asm).getAsmFilePath();
             txtCurFile.setText(fName + ":" + line + (plp.open_asm == 0 ? " <main program>" : ""));
+
+            //if(!plp.isSimulating() && (line != oldLine)) {
+            //    tlh.setLine(line - 1);
+            //    tlh.repaint();
+            //}
+            oldLine = line;
         }
     }//GEN-LAST:event_txtEditorCaretUpdate
 
@@ -2329,6 +2360,14 @@ public class Develop extends javax.swing.JFrame {
             Config.simCyclesPerStep = 5000;
     }//GEN-LAST:event_menuStep5ActionPerformed
 
+    private void btnWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWatcherActionPerformed
+        plp.g_watcher.setVisible(true);
+    }//GEN-LAST:event_btnWatcherActionPerformed
+
+    private void menuClearBreakpointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClearBreakpointsActionPerformed
+        clearBreakpoints();
+    }//GEN-LAST:event_menuClearBreakpointsActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -2409,7 +2448,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JToggleButton btnSimRun;
     private javax.swing.JButton btnSimStep;
     private javax.swing.JToggleButton btnSimulate;
-    private javax.swing.JToggleButton btnWatcher;
+    private javax.swing.JButton btnWatcher;
     private javax.swing.JPanel devMainPane;
     private javax.swing.ButtonGroup grpSteps;
     private javax.swing.JMenuBar jMenuBar1;
@@ -2428,6 +2467,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JLabel lblPosition;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
+    private javax.swing.JMenuItem menuClearBreakpoints;
     private javax.swing.JMenuItem menuCopy;
     private javax.swing.JMenuItem menuCut;
     private javax.swing.JMenuItem menuDeleteASM;

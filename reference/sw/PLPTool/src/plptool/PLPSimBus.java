@@ -478,6 +478,15 @@ public class PLPSimBus {
         }
     }
 
+    /**
+     * Call reset on all modules attached to this bus.
+     */
+    public void reset() {
+        for(int i = 0; i < bus_modules.size(); i++) {
+            bus_modules.get(i).reset();
+        }
+    }
+
     @Override public String toString() {
         return "PLPSimBus";
     }

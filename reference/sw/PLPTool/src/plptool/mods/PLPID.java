@@ -58,6 +58,10 @@ public class PLPID extends PLPSimBusModule {
         return null;
     }
 
+    @Override public void reset() {
+        super.clear();
+    }
+
     public String introduce() {
         return "PLPID";
     }

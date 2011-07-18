@@ -39,6 +39,10 @@ public class Switches extends PLPSimBusModule {
                         Constants.PLP_SIM_WRITE_TO_READONLY_MODULE, this);
     }
 
+    @Override public void reset() {
+        // nothing, read only module
+    }
+
     @Override
     public String toString() {
         return "Switches";

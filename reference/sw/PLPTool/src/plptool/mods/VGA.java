@@ -128,6 +128,11 @@ public class VGA extends PLPSimBusModule {
         } catch (Exception e) { }
     }
 
+    @Override public void reset() {
+        super.writeReg(startAddr, new Long(0L), false);
+        super.writeReg(startAddr+4, new Long(0L), false);
+    }
+
     public String introduce() {
         return "640x480 VGA Module";
     }

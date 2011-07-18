@@ -65,6 +65,10 @@ public class SevenSegments extends PLPSimBusModule {
         return Constants.PLP_OK;
     }
 
+    @Override public void reset() {
+        super.writeReg(startAddr, new Long(0xffffffffL), false);
+    }
+
     public String introduce() {
         return "Seven Segments Display";
     }

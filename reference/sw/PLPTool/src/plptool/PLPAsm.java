@@ -163,12 +163,83 @@ public abstract class PLPAsm {
         return symTable;
     }
 
+    /**
+     * Get the file mapper array. The index of the array is where the object
+     * code is stored in the object code array. The value is the source file
+     * ID when assembly was done.
+     *
+     * @return An array mapping the object code index to the source file ID
+     */
     public int[] getFileMapper() {
         return objCodeFileMapper;
     }
 
+    /**
+     * Get the line number array. The index of the array is where the object
+     * code is stored in the object code array. The value is the line number
+     * where this instruction came from.
+     *
+     * @return An array mapping the object code index to the source file
+     * line number
+     */
     public int[] getLineNumMapper() {
         return objCodeLineNumMapper;
+    }
+
+    /**
+     * Get the index of the source file where the instruction specified
+     * by the address came from.
+     *
+     * @param addr Address of the instruction
+     * @return The index of the source file where the instruction came from
+     */
+    public int getFileIndex(long addr) {
+        for(int i = 0; i < addrTable.length; i++) {
+            if(addrTable[i] == addr)
+                return objCodeFileMapper[i];
+        }
+
+        return -1;
+
+    }
+
+    /**
+     * Get the line number of the code where the instruction specified
+     * by the address came from
+     *
+     * @param addr Address of the instruction
+     * @return The index of the source file where the instruction came from
+     */
+    public int getLineNum(long addr) {
+        for(int i = 0; i < addrTable.length; i++) {
+            if(addrTable[i] == addr)
+                return objCodeLineNumMapper[i];
+        }
+
+        return -1;
+    }
+
+    /**
+     * Return the address of a given line of code in a source file
+     *
+     * @param fileIndex The index of the source file
+     * @param lineNum The line number of the code
+     * @return The address of the resulting instruction, or -1 if the search
+     * fails
+     */
+    public long getAddrFromFileMetadata(int fileIndex, int lineNum) {
+        if(!isAssembled())
+            return -1;
+
+        boolean found = false;
+        int i = 0;
+        while(i < objCodeFileMapper.length) {
+            if(objCodeFileMapper[i] == fileIndex && objCodeLineNumMapper[i] == lineNum)
+                return addrTable[i];
+            i++;
+        }
+
+        return -1;
     }
 
     /**
@@ -278,6 +349,11 @@ public abstract class PLPAsm {
         return entryPoint;
     }
 
+    /**
+     * Force this assembler object to be marked assembled or not
+     *
+     * @param b
+     */
     public void setAssembled(boolean b) {
         assembled = b;
     }
