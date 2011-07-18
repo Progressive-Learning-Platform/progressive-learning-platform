@@ -55,8 +55,15 @@ public class SimRunner extends Thread {
         while(stepCount > 0) {
             int steps = Config.simCyclesPerStep;
             if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
-                for(int i = 0; i < steps && Msg.lastError == 0; i++)
+                for(int i = 0; i < steps && Msg.lastError == 0 && stepCount > 0; i++) {
                     plp.sim.step();
+                    if(plp.sim.breakpoints.hasBreakpoint()) {
+                        if(plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
+                            stepCount = 0;
+                            Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
+                        }
+                    }
+                }
                 if(plp.g())
                     plp.g_sim.updateComponents();
             } else {
@@ -76,12 +83,7 @@ public class SimRunner extends Thread {
                 this.sleep(Config.simRunnerDelay);
             } catch(Exception e) {}
 
-            if(plp.sim.breakpoints.hasBreakpoint()) {
-                if(plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
-                    stepCount = 0;
-                    Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
-                }
-            }
+            
         }
 
         if(Msg.lastError != 0) {
