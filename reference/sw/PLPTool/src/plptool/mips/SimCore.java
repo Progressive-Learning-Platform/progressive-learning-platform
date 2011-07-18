@@ -169,8 +169,8 @@ public class SimCore extends PLPSimCore {
     public int reset() {
         int i;
 
-        for(i = 0; i < bus.getNumOfMods(); i++)
-            bus.clearModRegisters(i);
+        // issue a reset to all modules
+        bus.reset();
 
         // init regfile
         for(i = 0; i < 32; i++)
@@ -249,6 +249,7 @@ public class SimCore extends PLPSimCore {
         sim_flags = (long) 0;
         instructionCount++;
         wb_stage.instr_retired = false;
+        visibleAddr = -1;
         int ret = 0;
         long old_pc = pc.eval();
 

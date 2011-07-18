@@ -333,6 +333,12 @@ public abstract class PLPSimBusModule extends Thread {
     abstract public int gui_eval(Object x);
 
     /**
+     * This method is called by PLPSimBus.reset(). It is up to the module
+     * on how this should be implemented.
+     */
+    abstract public void reset();
+
+    /**
      * Introduction string when the module is loaded.
      */
     abstract public String introduce();

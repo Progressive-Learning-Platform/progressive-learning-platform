@@ -435,7 +435,7 @@ public class SimCLI {
             plp.g_err.setError(Msg.lastError);
 
         Msg.m(String.format("%08x", core.getFlags()) +
-                             " " + core.getinstrcount() +
+                             " " + core.getInstrCount() +
                              " sim > ");
     }
 
@@ -448,7 +448,7 @@ public class SimCLI {
         Msg.M("Welcome to PLP MIPS Simulator Command Line Interface");
         Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
         Msg.m(String.format("\n%08x", plp.sim.getFlags()) +
-                             " " + plp.sim.getinstrcount() +
+                             " " + plp.sim.getInstrCount() +
                              " sim > ");
 
         while(!(input = stdIn.readLine().trim()).equals("q"))

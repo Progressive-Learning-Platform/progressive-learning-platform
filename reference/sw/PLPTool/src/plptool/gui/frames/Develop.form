@@ -13,7 +13,6 @@
           <Properties>
             <Property name="mnemonic" type="int" value="70"/>
             <Property name="text" type="java.lang.String" resourceKey="rootmenuFile.text"/>
-            <Property name="name" type="java.lang.String" value="rootmenuFile" noResource="true"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuNew">
@@ -424,6 +423,19 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimRunActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuClearBreakpoints">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+B"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="66"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuClearBreakpoints.text"/>
+                <Property name="name" type="java.lang.String" value="menuClearBreakpoints" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuClearBreakpointsActionPerformed"/>
+              </Events>
+            </MenuItem>
             <Menu class="javax.swing.JMenu" name="menuStepSize">
               <Properties>
                 <Property name="mnemonic" type="int" value="67"/>
@@ -673,9 +685,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F11"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="88"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuExitSim.text"/>
-                <Property name="name" type="java.lang.String" value="menuExitSim" noResource="true"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuExitSimActionPerformed"/>
@@ -1171,7 +1181,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimResetActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JToggleButton" name="btnWatcher">
+        <Component class="javax.swing.JButton" name="btnWatcher">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" resourceKey="btnWatcher.icon"/>
             <Property name="text" type="java.lang.String" resourceKey="btnWatcher.text"/>
@@ -1184,6 +1194,9 @@
             <Property name="name" type="java.lang.String" value="btnWatcher" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnWatcherActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

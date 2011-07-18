@@ -105,6 +105,10 @@ public class MemModule extends PLPSimBusModule {
         return (Long) readReg(addr);
     }
 
+    @Override public void reset() {
+        super.clear();
+    }
+
     @Override public String toString() {
         return "MemModule";
     }

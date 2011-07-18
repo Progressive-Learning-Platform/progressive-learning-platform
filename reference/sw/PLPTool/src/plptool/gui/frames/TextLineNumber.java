@@ -13,6 +13,8 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
+import plptool.gui.ProjectDriver;
+
 /**
  *  This class will display line numbers for a related text component. The text
  *  component must use the same line height for each line. TextLineNumber
@@ -32,6 +34,9 @@ public class TextLineNumber extends JPanel
 	private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
 	private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
+
+        // Access to the project
+        private ProjectDriver plp;
 
 	//  Text component this TextTextLineNumber component is in sync with
 
@@ -62,9 +67,10 @@ public class TextLineNumber extends JPanel
 	 *
 	 *  @param component  the related text component
 	 */
-	public TextLineNumber(JTextComponent component)
+	public TextLineNumber(JTextComponent component, ProjectDriver plp)
 	{
 		this(component, 3);
+                this.plp = plp;
 	}
 
 	/**
@@ -287,6 +293,12 @@ public class TextLineNumber extends JPanel
                                 g.drawString(lineNumber, x, y);
                         }
 
+                        if(plp.isSimulating() && plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.open_asm, getLineNumber(rowStartOffset))) {
+                            stringWidth = fontMetrics.stringWidth( "B>" );
+                            x = getOffsetX(availableWidth + 20, stringWidth) + insets.left;
+                            g.drawString("B>", x, y);
+                        }
+
     			//  Move to the next row
 
     			rowStartOffset = Utilities.getRowEnd(component, rowStartOffset) + 1;
@@ -339,6 +351,17 @@ public class TextLineNumber extends JPanel
 		else
 			return "";
 	}
+
+        protected int getLineNumber(int rowStartOffset) {
+            Element root = component.getDocument().getDefaultRootElement();
+            int index = root.getElementIndex( rowStartOffset );
+            Element line = root.getElement( index );
+
+            if (line.getStartOffset() == rowStartOffset)
+                    return index + 1;
+            else
+                    return -1;
+        }
 
 	/*
 	 *  Determine the X offset to properly align the line number when drawn
@@ -509,8 +532,26 @@ public class TextLineNumber extends JPanel
     public void mouseExited(MouseEvent e) { }
 
     public void mouseClicked(MouseEvent e) {
-       if(e.getClickCount() == 2) {
+        if(e.getClickCount() == 2) {
+            if(!plp.isSimulating())
+                return;
            // apply breakpoint
-       }
+            int height = component.getFontMetrics(component.getFont()).getHeight();
+            int line = e.getY() / height + 1;
+            long addr = plp.asm.getAddrFromFileMetadata(plp.open_asm, line);
+            
+            if(addr != -1) {
+                if(!plp.sim.breakpoints.isBreakpoint(addr)) {
+                    plptool.Msg.M("Breakpoint at: " + plp.asms.get(plp.open_asm).getAsmFilePath() + "(" + line + "): " +
+                             String.format("0x%02x", addr));
+                    plp.sim.breakpoints.add(addr, plp.open_asm, line);
+
+                } else {
+                    plptool.Msg.M("Removing breakpoint.");
+                    plp.sim.breakpoints.remove(addr);
+                }
+                this.repaint();
+            }
+        }
     }
 }

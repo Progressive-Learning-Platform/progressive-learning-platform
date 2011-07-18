@@ -125,4 +125,11 @@ public class UART extends PLPSimBusModule {
 
         return Constants.PLP_OK;
     }
+
+    @Override public void reset() {
+        ready = false;
+        rb = new LinkedList<Long>();
+        super.writeReg(startAddr+4, new Long(0L), false);
+        super.writeReg(startAddr+12, new Long(0L), false);
+    }
 }

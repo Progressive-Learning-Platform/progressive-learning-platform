@@ -44,6 +44,10 @@ public class Timer extends PLPSimBusModule {
 	return Constants.PLP_OK;
     }
 
+    @Override public void reset() {
+        super.writeReg(startAddr, new Long(0L), false);
+    }
+
     public String introduce() {
         return "Timer";
     }

@@ -70,6 +70,11 @@ public class FTracer extends PLPSimBusModule {
     }
 
     @Override
+    public void reset() {
+
+    }
+
+    @Override
     public String toString() {
         return "Tracer";
     }

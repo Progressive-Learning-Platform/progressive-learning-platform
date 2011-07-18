@@ -33,6 +33,11 @@ public class TextLineHighlighter implements Highlighter.HighlightPainter {
         yPos = y;
     }
 
+    public void setLine(int line) {
+        old_yPos = yPos;
+        yPos = txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() * line;
+    }
+
     public void repaint() {
         txtEditor.repaint(0, yPos, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
 
