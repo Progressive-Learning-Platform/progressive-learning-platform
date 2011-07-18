@@ -77,8 +77,10 @@ public class SimRunner extends Thread {
             } catch(Exception e) {}
 
             if(plp.sim.breakpoints.hasBreakpoint()) {
-                if(plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr))
+                if(plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                     stepCount = 0;
+                    Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
+                }
             }
         }
 
@@ -91,7 +93,7 @@ public class SimRunner extends Thread {
             //    plp.g_simsh.setStatusString("Ready", Color.black);
 
         long time = System.currentTimeMillis() - startTime;
-        Msg.m("--- SimRunner: " + (sim.getInstrCount() - startInstr) + " instructions issued ");
+        Msg.m("--- stop: " + (sim.getInstrCount() - startInstr) + " instructions issued ");
         Msg.M("in " + time + " milliseconds of real time.");
         
         if(plp.g()) {

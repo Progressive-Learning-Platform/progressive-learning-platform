@@ -542,7 +542,7 @@ public class TextLineNumber extends JPanel
             
             if(addr != -1) {
                 if(!plp.sim.breakpoints.isBreakpoint(addr)) {
-                    plptool.Msg.M("Breakpoint at: " + plp.asms.get(plp.open_asm).getAsmFilePath() + "(" + line + "): " +
+                    plptool.Msg.M("New breakpoint set at: " + plp.asms.get(plp.open_asm).getAsmFilePath() + "(" + line + "): " +
                              String.format("0x%02x", addr));
                     plp.sim.breakpoints.add(addr, plp.open_asm, line);
 

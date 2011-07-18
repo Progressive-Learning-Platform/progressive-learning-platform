@@ -147,7 +147,6 @@ public class Develop extends javax.swing.JFrame {
         undoManager.setLimit(Config.devMaxUndoEntries);
         
         initPopupMenus();
-
         
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
@@ -2031,14 +2030,15 @@ public class Develop extends javax.swing.JFrame {
             Element root = txtEditor.getDocument().getDefaultRootElement();
             line = root.getElementIndex(caretPos)+1;
 
-            //line = txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length;
             String fName = plp.asms.get(plp.open_asm).getAsmFilePath();
             txtCurFile.setText(fName + ":" + line + (plp.open_asm == 0 ? " <main program>" : ""));
 
-            //if(!plp.isSimulating() && (line != oldLine)) {
-            //    tlh.setLine(line - 1);
-            //    tlh.repaint();
-            //}
+            if(plp.isSimulating()) {
+                long addr = plp.asm.getAddrFromFileMetadata(plp.open_asm, line);
+                if(addr != -1)
+                    txtCurFile.setText(txtCurFile.getText() + " " + String.format("0x%02x", addr));
+            }
+
             oldLine = line;
         }
     }//GEN-LAST:event_txtEditorCaretUpdate
