@@ -37,6 +37,14 @@ import plptool.mips.*;
  */
 public class ArchRegistry {
 
+    private static String[] archs = {
+                                        "plpmips",
+
+                                          // ... add your ISA name here ...
+
+                                        "test-isa"
+                                    };
+
     /**
      * This method returns a new instance of the ISA assembler when given an
      * ArrayList of source files.
@@ -217,5 +225,20 @@ public class ArchRegistry {
 
         else
             return null;
+    }
+
+    /**
+     * Determine whether the specified ISA is registered
+     *
+     * @param arch The ISA to test
+     * @return True if it is defined, false otherwise
+     */
+    public static boolean validateArch(String arch) {
+        for(int i = 0; i < archs.length; i++) {
+            if(archs[i].equals(arch))
+                return true;
+        }
+
+        return false;
     }
 }

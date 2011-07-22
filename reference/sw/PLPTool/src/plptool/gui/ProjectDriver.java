@@ -240,6 +240,7 @@ public class ProjectDriver {
         open_asm = 0;
         smods = null;
         watcher = null;
+        arch = "plpmips";
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -275,6 +276,7 @@ public class ProjectDriver {
         open_asm = 0;
         smods = null;
         watcher = null;
+        arch = "plpmips";
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -645,6 +647,10 @@ public class ProjectDriver {
 
         if(arch == null) {
             Msg.W("No ISA information specified in the archive, assuming plpmips", this);
+            arch = "plpmips";
+        } else if(arch != null && !ArchRegistry.validateArch(arch)) {
+            Msg.W("Invalid ISA is specified in the project file: '" + arch +
+                  "'. Assuming plpmips", this);
             arch = "plpmips";
         }
 
