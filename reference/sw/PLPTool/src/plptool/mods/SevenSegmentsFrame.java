@@ -32,6 +32,7 @@ public class SevenSegmentsFrame extends javax.swing.JFrame {
 
     /** Creates new form SevenSegmentsFrame */
     public SevenSegmentsFrame() {
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_sim_7segments.png")));
         initComponents();
     }
 

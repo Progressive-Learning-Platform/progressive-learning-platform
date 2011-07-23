@@ -22,6 +22,7 @@ public class SwitchesFrame extends javax.swing.JFrame {
     /** Creates new form SwitchesFrame */
     public SwitchesFrame(Switches module) {
         this.module = module;
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_sim_switches.png")));
         initComponents();
         txtAddress.setText(String.format("0x%08x", module.startAddr()));
     }

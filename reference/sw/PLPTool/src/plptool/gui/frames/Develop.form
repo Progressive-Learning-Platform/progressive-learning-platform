@@ -357,6 +357,19 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuOptionsActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuToolbar">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Alt+T"/>
+                </Property>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuToolbar.text"/>
+                <Property name="name" type="java.lang.String" value="menuToolbar" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuToolbarActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
               <Properties>
                 <Property name="name" type="java.lang.String" value="jSeparator7" noResource="true"/>
@@ -779,7 +792,6 @@
       <Connection code="java.awt.Toolkit.getDefaultToolkit().getImage(&quot;gui/frames/resources/plp.png&quot;)" type="code"/>
     </Property>
     <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
-    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
@@ -798,7 +810,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,29,0,0,2,-67"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,29,0,0,3,64"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -821,7 +833,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="697" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="828" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -901,11 +913,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="664" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="795" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="468" max="32767" attributes="0"/>
+                              <EmptySpace pref="599" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -923,7 +935,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="382" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="379" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1230,6 +1242,90 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnWatcherActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimLEDs">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimLEDs.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimLEDs.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimLEDs.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimLEDs" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimSwitches">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimSwitches.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimSwitches.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimSwitches.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimSwitches" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimSevenSegments">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimSevenSegments.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimSevenSegments.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimSevenSegments.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimSevenSegments" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimUART">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimUART.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimUART.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimUART.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimUART" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimVGA">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimVGA.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimVGA.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimVGA.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimVGA" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimPLPID">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimPLPID.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimPLPID.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimPLPID.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimPLPID" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
