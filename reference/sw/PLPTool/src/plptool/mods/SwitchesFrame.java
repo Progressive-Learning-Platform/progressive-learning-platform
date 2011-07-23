@@ -72,11 +72,11 @@ public class SwitchesFrame extends javax.swing.JFrame {
         bit1 = new javax.swing.JToggleButton();
         bit0 = new javax.swing.JToggleButton();
 
-        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SwitchesFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+        setResizable(false);
 
         lblAddress.setText(resourceMap.getString("lblAddress.text")); // NOI18N
         lblAddress.setName("lblAddress"); // NOI18N

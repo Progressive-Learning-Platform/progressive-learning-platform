@@ -146,11 +146,11 @@ public class SevenSegmentsFrame extends javax.swing.JFrame {
         h0b7 = new javax.swing.JLabel();
         h1b7 = new javax.swing.JLabel();
 
-        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SevenSegmentsFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+        setResizable(false);
 
         lblAddress.setText(resourceMap.getString("lblAddress.text")); // NOI18N
         lblAddress.setName("lblAddress"); // NOI18N
@@ -340,7 +340,7 @@ public class SevenSegmentsFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblAddress)
                         .addGap(16, 16, 16)
-                        .addComponent(txtAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+                        .addComponent(txtAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
                         .addGap(10, 10, 10)
                         .addComponent(lblValue)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
