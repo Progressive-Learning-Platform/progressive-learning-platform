@@ -90,11 +90,11 @@ public class LEDArrayFrame extends javax.swing.JFrame {
         lblValue = new javax.swing.JLabel();
         txtValue = new javax.swing.JTextField();
 
-        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(LEDArrayFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+        setResizable(false);
 
         lblAddress.setText(resourceMap.getString("lblAddress.text")); // NOI18N
         lblAddress.setName("lblAddress"); // NOI18N

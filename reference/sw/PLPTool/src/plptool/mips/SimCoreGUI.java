@@ -96,6 +96,8 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         CustomCellEditor ce = new CustomCellEditor(textField);
         tblRegFile.setDefaultEditor(String.class, ce);
 
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_cpu.png")));
+
         old_pc = -1;
 
         clearProgramMemoryTable();

@@ -48,11 +48,11 @@ public class UARTFrame extends javax.swing.JFrame {
         txtRawByte = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
 
-        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(UARTFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+        setResizable(false);
 
         jScrollPane1.setBackground(resourceMap.getColor("jScrollPane1.background")); // NOI18N
         jScrollPane1.setForeground(resourceMap.getColor("jScrollPane1.foreground")); // NOI18N
@@ -108,7 +108,7 @@ public class UARTFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblRawByte)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
