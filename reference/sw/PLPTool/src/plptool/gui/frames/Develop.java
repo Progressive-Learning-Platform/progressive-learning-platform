@@ -681,6 +681,12 @@ public class Develop extends javax.swing.JFrame {
             btnSimStep.setVisible(true);
             btnWatcher.setVisible(true);
             btnCPU.setVisible(true);
+            btnSimLEDs.setVisible(true);
+            btnSimSwitches.setVisible(true);
+            btnSimSevenSegments.setVisible(true);
+            btnSimUART.setVisible(true);
+            btnSimVGA.setVisible(true);
+            btnSimPLPID.setVisible(true);
             separatorSimControl.setVisible(true);
             lblSimStat.setText("Simulation Mode");
         } else
@@ -709,6 +715,12 @@ public class Develop extends javax.swing.JFrame {
         btnWatcher.setVisible(false);
         separatorSim.setVisible(false);
         btnCPU.setVisible(false);
+        btnSimLEDs.setVisible(false);
+        btnSimSwitches.setVisible(false);
+        btnSimSevenSegments.setVisible(false);
+        btnSimUART.setVisible(false);
+        btnSimVGA.setVisible(false);
+        btnSimPLPID.setVisible(false);
         separatorSimControl.setVisible(false);
         lblSimStat.setText("Editor Mode");
     }
@@ -906,6 +918,12 @@ public class Develop extends javax.swing.JFrame {
         separatorSimControl = new javax.swing.JToolBar.Separator();
         btnCPU = new javax.swing.JButton();
         btnWatcher = new javax.swing.JButton();
+        btnSimLEDs = new javax.swing.JToggleButton();
+        btnSimSwitches = new javax.swing.JToggleButton();
+        btnSimSevenSegments = new javax.swing.JToggleButton();
+        btnSimUART = new javax.swing.JToggleButton();
+        btnSimVGA = new javax.swing.JToggleButton();
+        btnSimPLPID = new javax.swing.JToggleButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -940,6 +958,7 @@ public class Develop extends javax.swing.JFrame {
         menuSetMainProgram = new javax.swing.JMenuItem();
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
+        menuToolbar = new javax.swing.JCheckBoxMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuSerialTerminal = new javax.swing.JMenuItem();
         rootmenuSim = new javax.swing.JMenu();
@@ -982,7 +1001,6 @@ public class Develop extends javax.swing.JFrame {
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage("gui/frames/resources/plp.png"));
         setName("Form"); // NOI18N
-        setResizable(false);
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
             public void windowGainedFocus(java.awt.event.WindowEvent evt) {
                 formWindowGainedFocus(evt);
@@ -1064,11 +1082,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 468, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 599, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1082,7 +1100,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1101,7 +1119,7 @@ public class Develop extends javax.swing.JFrame {
         devMainPane.setLayout(devMainPaneLayout);
         devMainPaneLayout.setHorizontalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE)
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1288,6 +1306,66 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         toolbar.add(btnWatcher);
+
+        btnSimLEDs.setIcon(resourceMap.getIcon("btnSimLEDs.icon")); // NOI18N
+        btnSimLEDs.setText(resourceMap.getString("btnSimLEDs.text")); // NOI18N
+        btnSimLEDs.setToolTipText(resourceMap.getString("btnSimLEDs.toolTipText")); // NOI18N
+        btnSimLEDs.setFocusable(false);
+        btnSimLEDs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimLEDs.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimLEDs.setName("btnSimLEDs"); // NOI18N
+        btnSimLEDs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnSimLEDs);
+
+        btnSimSwitches.setIcon(resourceMap.getIcon("btnSimSwitches.icon")); // NOI18N
+        btnSimSwitches.setText(resourceMap.getString("btnSimSwitches.text")); // NOI18N
+        btnSimSwitches.setToolTipText(resourceMap.getString("btnSimSwitches.toolTipText")); // NOI18N
+        btnSimSwitches.setFocusable(false);
+        btnSimSwitches.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimSwitches.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimSwitches.setName("btnSimSwitches"); // NOI18N
+        btnSimSwitches.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnSimSwitches);
+
+        btnSimSevenSegments.setIcon(resourceMap.getIcon("btnSimSevenSegments.icon")); // NOI18N
+        btnSimSevenSegments.setText(resourceMap.getString("btnSimSevenSegments.text")); // NOI18N
+        btnSimSevenSegments.setToolTipText(resourceMap.getString("btnSimSevenSegments.toolTipText")); // NOI18N
+        btnSimSevenSegments.setFocusable(false);
+        btnSimSevenSegments.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimSevenSegments.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimSevenSegments.setName("btnSimSevenSegments"); // NOI18N
+        btnSimSevenSegments.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnSimSevenSegments);
+
+        btnSimUART.setIcon(resourceMap.getIcon("btnSimUART.icon")); // NOI18N
+        btnSimUART.setText(resourceMap.getString("btnSimUART.text")); // NOI18N
+        btnSimUART.setToolTipText(resourceMap.getString("btnSimUART.toolTipText")); // NOI18N
+        btnSimUART.setFocusable(false);
+        btnSimUART.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimUART.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimUART.setName("btnSimUART"); // NOI18N
+        btnSimUART.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnSimUART);
+
+        btnSimVGA.setIcon(resourceMap.getIcon("btnSimVGA.icon")); // NOI18N
+        btnSimVGA.setText(resourceMap.getString("btnSimVGA.text")); // NOI18N
+        btnSimVGA.setToolTipText(resourceMap.getString("btnSimVGA.toolTipText")); // NOI18N
+        btnSimVGA.setFocusable(false);
+        btnSimVGA.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimVGA.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimVGA.setName("btnSimVGA"); // NOI18N
+        btnSimVGA.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnSimVGA);
+
+        btnSimPLPID.setIcon(resourceMap.getIcon("btnSimPLPID.icon")); // NOI18N
+        btnSimPLPID.setText(resourceMap.getString("btnSimPLPID.text")); // NOI18N
+        btnSimPLPID.setToolTipText(resourceMap.getString("btnSimPLPID.toolTipText")); // NOI18N
+        btnSimPLPID.setFocusable(false);
+        btnSimPLPID.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimPLPID.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimPLPID.setName("btnSimPLPID"); // NOI18N
+        btnSimPLPID.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar.add(btnSimPLPID);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -1586,6 +1664,17 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuTools.add(menuOptions);
+
+        menuToolbar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuToolbar.setSelected(true);
+        menuToolbar.setText(resourceMap.getString("menuToolbar.text")); // NOI18N
+        menuToolbar.setName("menuToolbar"); // NOI18N
+        menuToolbar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuToolbarActionPerformed(evt);
+            }
+        });
+        rootmenuTools.add(menuToolbar);
 
         jSeparator7.setName("jSeparator7"); // NOI18N
         rootmenuTools.add(jSeparator7);
@@ -2439,6 +2528,10 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnCPUActionPerformed
 
+    private void menuToolbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuToolbarActionPerformed
+        toolbar.setVisible(menuToolbar.isSelected());
+    }//GEN-LAST:event_menuToolbarActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -2516,9 +2609,15 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnProgram;
     private javax.swing.JButton btnSave;
+    private javax.swing.JToggleButton btnSimLEDs;
+    private javax.swing.JToggleButton btnSimPLPID;
     private javax.swing.JButton btnSimReset;
     private javax.swing.JToggleButton btnSimRun;
+    private javax.swing.JToggleButton btnSimSevenSegments;
     private javax.swing.JButton btnSimStep;
+    private javax.swing.JToggleButton btnSimSwitches;
+    private javax.swing.JToggleButton btnSimUART;
+    private javax.swing.JToggleButton btnSimVGA;
     private javax.swing.JToggleButton btnSimulate;
     private javax.swing.JButton btnWatcher;
     private javax.swing.JPanel devMainPane;
@@ -2590,6 +2689,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem menuStep5;
     private javax.swing.JMenu menuStepSize;
     private javax.swing.JCheckBoxMenuItem menuSwitches;
+    private javax.swing.JCheckBoxMenuItem menuToolbar;
     private javax.swing.JCheckBoxMenuItem menuUART;
     private javax.swing.JMenuItem menuUndo;
     private javax.swing.JCheckBoxMenuItem menuVGA;

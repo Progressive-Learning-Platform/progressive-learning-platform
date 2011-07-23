@@ -32,6 +32,7 @@ public class LEDArrayFrame extends javax.swing.JFrame {
 
     /** Creates new form LEDArrayFrame */
     public LEDArrayFrame() {
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_sim_leds.png")));
         initComponents();
     }
 
