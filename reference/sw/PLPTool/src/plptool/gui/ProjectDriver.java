@@ -1287,10 +1287,17 @@ public class ProjectDriver {
      * Update GUI components
      */
     public void updateComponents(boolean updateDevelop) {
+        try {
         g_sim.updateComponents();
         
         if(updateDevelop)
             g_dev.updateComponents();
+
+        g_dev.setLblSimStatText(
+                "Simulation Mode - " +
+                "Cycles / step: " + Config.simCyclesPerStep + " - " +
+                "Cycle: " + sim.getInstrCount()
+            );
 
         if(ioreg != null)
             ioreg.gui_eval();
@@ -1300,6 +1307,14 @@ public class ProjectDriver {
 
         if(g_asmview != null)
             g_asmview.updatePC();
+
+        } catch(Exception e) {
+            // GUI update error has occured
+            System.out.println("GUI error has occured. Switch to debug level 2 or above to print stack trace.");
+            if(Constants.debugLevel >= 2) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
