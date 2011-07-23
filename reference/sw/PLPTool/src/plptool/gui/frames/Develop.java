@@ -154,6 +154,10 @@ public class Develop extends javax.swing.JFrame {
         Msg.M(Constants.copyrightString);
     }
 
+    public void setLblSimStatText(String txt) {
+        lblSimStat.setText(txt);
+    }
+
     public void updateComponents() {
         try {
         if(plp.isSimulating()) {
@@ -163,6 +167,12 @@ public class Develop extends javax.swing.JFrame {
                 tln.setHighlight(-1);
                 return;
             }
+
+            lblSimStat.setText(
+                "Simulation Mode - " +
+                "Cycles / step: " + Config.simCyclesPerStep + " - " +
+                "Cycle: " + plp.sim.getInstrCount()
+            );
 
             int lineNum = plp.asm.getLineNumMapper()[pc_index];
             int fileNum = plp.asm.getFileMapper()[pc_index];
@@ -670,6 +680,7 @@ public class Develop extends javax.swing.JFrame {
             btnSimReset.setVisible(true);
             btnSimStep.setVisible(true);
             btnWatcher.setVisible(true);
+            lblSimStat.setText("Simulation Mode");
         } else
             endSim();
     }
@@ -695,6 +706,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimRun.setVisible(false);
         btnWatcher.setVisible(false);
         separatorSim.setVisible(false);
+        lblSimStat.setText("Editor Mode");
     }
 
     public void stopRunState() {
@@ -836,8 +848,14 @@ public class Develop extends javax.swing.JFrame {
     }
     
     private void stepSim() {
-        for(int i = 0; i < Config.simCyclesPerStep; i++)
+        boolean breakpoint = false;
+        for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
             plp.sim.step();
+            if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
+                Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
+                breakpoint = true;
+            }
+        }
         plp.updateComponents(true);
     }
 
@@ -866,6 +884,7 @@ public class Develop extends javax.swing.JFrame {
         scroller = new javax.swing.JScrollPane();
         txtEditor = new javax.swing.JTextPane();
         lblPosition = new javax.swing.JLabel();
+        lblSimStat = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtOutput = new javax.swing.JTextPane();
         toolbar = new javax.swing.JToolBar();
@@ -1014,10 +1033,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1031,16 +1050,21 @@ public class Develop extends javax.swing.JFrame {
         lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
         lblPosition.setName("lblPosition"); // NOI18N
 
+        lblSimStat.setText(resourceMap.getString("lblSimStat.text")); // NOI18N
+        lblSimStat.setName("lblSimStat"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 459, Short.MAX_VALUE)
-                .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSimStat))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1048,9 +1072,10 @@ public class Develop extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCurFile)
-                    .addComponent(lblPosition))
+                    .addComponent(lblPosition)
+                    .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1073,7 +1098,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -2335,29 +2360,39 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimResetActionPerformed
 
     private void menuStep1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep1ActionPerformed
-        if(menuStep1.isSelected())
+        if(menuStep1.isSelected()) {
             Config.simCyclesPerStep = 1;
+            updateComponents();
+        }
     }//GEN-LAST:event_menuStep1ActionPerformed
 
     private void menuStep2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep2ActionPerformed
-        if(menuStep2.isSelected())
+        if(menuStep2.isSelected()) {
             Config.simCyclesPerStep = 5;
+            updateComponents();
+        }
     }//GEN-LAST:event_menuStep2ActionPerformed
 
     private void menuStep3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep3ActionPerformed
-        if(menuStep3.isSelected())
+        if(menuStep3.isSelected()) {
             Config.simCyclesPerStep = 20;
+            updateComponents();
+        }
     }//GEN-LAST:event_menuStep3ActionPerformed
 
     private void menuStep4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep4ActionPerformed
-        if(menuStep4.isSelected())
+        if(menuStep4.isSelected()) {
             Config.simCyclesPerStep = 100;
+            updateComponents();
+        }
 
     }//GEN-LAST:event_menuStep4ActionPerformed
 
     private void menuStep5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep5ActionPerformed
-        if(menuStep5.isSelected())
+        if(menuStep5.isSelected()) {
             Config.simCyclesPerStep = 5000;
+            updateComponents();
+        }
     }//GEN-LAST:event_menuStep5ActionPerformed
 
     private void btnWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWatcherActionPerformed
@@ -2465,6 +2500,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JLabel lblPosition;
+    private javax.swing.JLabel lblSimStat;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
     private javax.swing.JMenuItem menuClearBreakpoints;
