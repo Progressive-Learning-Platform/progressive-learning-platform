@@ -863,7 +863,6 @@ public class Develop extends javax.swing.JFrame {
                 JToggleButton btn = getToolToggleButton(menu);
                 if(btn != null)
                     btn.setSelected(false);
-                System.out.println("I/O Windows closing, index: " + menu);
             }
 
             @Override public void windowOpened(java.awt.event.WindowEvent evt) { }
