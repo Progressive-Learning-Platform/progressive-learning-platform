@@ -608,82 +608,82 @@
                 <Property name="name" type="java.lang.String" value="menuIOReg" noResource="true"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuLEDs">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimLEDs">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+1"/>
                     </Property>
                     <Property name="mnemonic" type="int" value="49"/>
-                    <Property name="text" type="java.lang.String" resourceKey="menuLEDs.text"/>
-                    <Property name="name" type="java.lang.String" value="menuLEDs" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimLEDs.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimLEDs" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuLEDsActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimLEDsActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSwitches">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimSwitches">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+2"/>
                     </Property>
                     <Property name="mnemonic" type="int" value="50"/>
-                    <Property name="text" type="java.lang.String" resourceKey="menuSwitches.text"/>
-                    <Property name="name" type="java.lang.String" value="menuSwitches" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimSwitches.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimSwitches" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSwitchesActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimSwitchesActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSevenSegments">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimSevenSegments">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+3"/>
                     </Property>
                     <Property name="mnemonic" type="int" value="51"/>
-                    <Property name="text" type="java.lang.String" resourceKey="menuSevenSegments.text"/>
-                    <Property name="name" type="java.lang.String" value="menuSevenSegments" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimSevenSegments.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimSevenSegments" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSevenSegmentsActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimSevenSegmentsActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuUART">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimUART">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+4"/>
                     </Property>
                     <Property name="mnemonic" type="int" value="52"/>
-                    <Property name="text" type="java.lang.String" resourceKey="menuUART.text"/>
-                    <Property name="name" type="java.lang.String" value="menuUART" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimUART.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimUART" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuUARTActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimUARTActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuVGA">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimVGA">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+5"/>
                     </Property>
                     <Property name="mnemonic" type="int" value="53"/>
-                    <Property name="text" type="java.lang.String" resourceKey="menuVGA.text"/>
-                    <Property name="name" type="java.lang.String" value="menuVGA" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimVGA.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimVGA" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuVGAActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimVGAActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuPLPID">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimPLPID">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+6"/>
                     </Property>
                     <Property name="mnemonic" type="int" value="54"/>
-                    <Property name="text" type="java.lang.String" resourceKey="menuPLPID.text"/>
-                    <Property name="name" type="java.lang.String" value="menuPLPID" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuSimPLPID.text"/>
+                    <Property name="name" type="java.lang.String" value="menuSimPLPID" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuPLPIDActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimPLPIDActionPerformed"/>
                   </Events>
                 </MenuItem>
               </SubComponents>
@@ -838,7 +838,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="473" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="464" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -913,11 +913,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="795" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="794" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="599" max="32767" attributes="0"/>
+                              <EmptySpace pref="583" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -935,7 +935,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="379" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="400" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1256,6 +1256,9 @@
             <Property name="name" type="java.lang.String" value="btnSimLEDs" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimLEDsActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnSimSwitches">
           <Properties>
@@ -1270,6 +1273,9 @@
             <Property name="name" type="java.lang.String" value="btnSimSwitches" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimSwitchesActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnSimSevenSegments">
           <Properties>
@@ -1284,6 +1290,9 @@
             <Property name="name" type="java.lang.String" value="btnSimSevenSegments" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimSevenSegmentsActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnSimUART">
           <Properties>
@@ -1298,6 +1307,9 @@
             <Property name="name" type="java.lang.String" value="btnSimUART" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimUARTActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnSimVGA">
           <Properties>
@@ -1312,6 +1324,9 @@
             <Property name="name" type="java.lang.String" value="btnSimVGA" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimVGAActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnSimPLPID">
           <Properties>
@@ -1326,6 +1341,9 @@
             <Property name="name" type="java.lang.String" value="btnSimPLPID" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimPLPIDActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
