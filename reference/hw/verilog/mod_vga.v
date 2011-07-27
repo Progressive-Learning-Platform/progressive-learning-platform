@@ -115,7 +115,7 @@ module vga_controller (clk, rst, hs, vs, blank, hcount, vcount);
     vcount = ((vcounter >= V_PULSEWIDTH + V_BACKPORCH) &&
               (vcounter <  V_PERIOD - V_FRONTPORCH))
               ? (vcounter - V_PULSEWIDTH) - V_BACKPORCH : 0;
-    
+   
   end
 endmodule
 
@@ -132,19 +132,17 @@ module vga_sram_bypass (clk, enable, fb_addr, hcount, vcount, rgb, sram_data, sr
 	/* we use four smaller brams instead of one large one to prevent
 	 * routing issues with xilinx that appear when brams are in the same clb as
 	 * a multiplier, which we also have here */
-	reg [7:0] buffer_0 [159:0]; /* our buffer */
-	reg [7:0] buffer_1 [159:0];
-	reg [7:0] buffer_2 [159:0];
-	reg [7:0] buffer_3 [159:0];
+	reg [31:0] buffer [159:0]; /* our buffer */
 
-	reg [10:0] vcount_current = 0;
+	reg [31:0] vcount_current = 0;
 	reg [9:0] pos = 640;
 
 	/* we use hcount to index into the buffer */
-	assign rgb = (hcount[1:0] == 2'b00) ? buffer_0[hcount>>2] :
-		     (hcount[1:0] == 2'b01) ? buffer_1[hcount>>2] :
-		     (hcount[1:0] == 2'b10) ? buffer_2[hcount>>2] :
-		     buffer_3[hcount>>2];
+	assign rgb = 
+		hcount[1:0] == 2'b00 ? buffer[(hcount-1)>>2][7:0] :
+		hcount[1:0] == 2'b01 ? buffer[hcount>>2][31:24] :
+		hcount[1:0] == 2'b10 ? buffer[hcount>>2][23:16]  :
+		hcount[1:0] == 2'b11 ? buffer[hcount>>2][15:8] : 0;
 
 	assign sram_addr = fb_addr + (vcount_current * 640) + pos;
 	assign sram_read = (pos != 640 && enable);
@@ -156,10 +154,7 @@ module vga_sram_bypass (clk, enable, fb_addr, hcount, vcount, rgb, sram_data, sr
 		end
 		if (pos != 640 && sram_rdy) begin
 			pos <= pos + 4;
-			buffer_0[pos>>2] <= sram_data[31:24];
-			buffer_1[pos>>2] <= sram_data[23:16];
-			buffer_2[pos>>2] <= sram_data[15:8];
-			buffer_3[pos>>2] <= sram_data[7:0];
+			buffer[pos>>2] <= sram_data;
 		end
 	end
 endmodule
