@@ -20,6 +20,7 @@ public class UARTFrame extends javax.swing.JFrame {
     
     /** Creates new form UARTFrame */
     public UARTFrame() {
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_sim_uart.png")));
         initComponents();
 
         
