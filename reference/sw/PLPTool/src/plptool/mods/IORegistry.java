@@ -663,7 +663,14 @@ public class IORegistry {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 x.setVisible(false);
                 plp.g_ioreg.refreshModulesTable();
+                try {
                 plp.g_dev.getToolCheckboxMenu(menuDesignation).setSelected(false);
+                plp.g_dev.getToolToggleButton(menuDesignation).setSelected(false);
+                } catch(NullPointerException ne) {
+                    Msg.D("IORegistry.attachModuleFrameListeners: menu designation " + menuDesignation + " - no frame.", 3, this);
+                    if(Constants.debugLevel >= 4)
+                        ne.printStackTrace();
+                }
             }
 
             @Override public void windowOpened(java.awt.event.WindowEvent evt) { }

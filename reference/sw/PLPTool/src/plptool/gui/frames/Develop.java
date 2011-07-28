@@ -43,6 +43,8 @@ import java.util.regex.Matcher;
 import plptool.Msg;
 import plptool.Constants;
 import plptool.Config;
+import plptool.PLPSimBusModule;
+import plptool.mods.*;
 import plptool.gui.ProjectDriver;
 import plptool.gui.SerialTerminal;
 
@@ -156,6 +158,45 @@ public class Develop extends javax.swing.JFrame {
 
     public void setLblSimStatText(String txt) {
         lblSimStat.setText(txt);
+    }
+
+    public void updateIOFramesVisibility() {
+        if(!plp.isSimulating())
+            return;
+
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            PLPSimBusModule mod = plp.ioreg.getModule(i);
+            JFrame frame;
+            if(plp.ioreg.getModuleFrame(i) instanceof JFrame) {
+                frame = (JFrame) plp.ioreg.getModuleFrame(i);
+                boolean frameVisible = frame.isVisible();
+
+                if(mod instanceof LEDArray) {
+                    btnSimLEDs.setSelected(frameVisible);
+                    menuSimLEDs.setSelected(frameVisible);
+
+                } else if(mod instanceof Switches) {
+                    btnSimSwitches.setSelected(frameVisible);
+                    menuSimSwitches.setSelected(frameVisible);
+
+                } else if(mod instanceof SevenSegments) {
+                    btnSimSevenSegments.setSelected(frameVisible);
+                    menuSimSevenSegments.setSelected(frameVisible);
+
+                } else if(mod instanceof UART) {
+                    btnSimUART.setSelected(frameVisible);
+                    menuSimUART.setSelected(frameVisible);
+
+                } else if(mod instanceof VGA) {
+                    btnSimVGA.setSelected(frameVisible);
+                    menuSimVGA.setSelected(frameVisible);
+
+                } else if(mod instanceof PLPID) {
+                    btnSimPLPID.setSelected(frameVisible);
+                    menuSimPLPID.setSelected(frameVisible);
+                }
+            }
+        }
     }
 
     public void updateComponents() {
@@ -689,6 +730,7 @@ public class Develop extends javax.swing.JFrame {
             btnSimPLPID.setVisible(true);
             separatorSimControl.setVisible(true);
             lblSimStat.setText("Simulation Mode");
+            updateIOFramesVisibility();
         } else
             endSim();
     }
@@ -745,22 +787,59 @@ public class Develop extends javax.swing.JFrame {
                 return menuSimRun;
 
             case Constants.PLP_TOOLFRAME_SIMLEDS:
-                return menuLEDs;
+                return menuSimLEDs;
 
             case Constants.PLP_TOOLFRAME_SIMSWITCHES:
-                return menuSwitches;
+                return menuSimSwitches;
 
             case Constants.PLP_TOOLFRAME_SIMUART:
-                return menuUART;
+                return menuSimUART;
 
             case Constants.PLP_TOOLFRAME_SIMVGA:
-                return menuVGA;
+                return menuSimVGA;
 
             case Constants.PLP_TOOLFRAME_SIMPLPID:
-                return menuPLPID;
+                return menuSimPLPID;
 
             case Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS:
-                return menuSevenSegments;
+                return menuSimSevenSegments;
+
+            default:
+                return null;
+        }
+    }
+
+    public javax.swing.JToggleButton getToolToggleButton(int index) {
+        switch(index) {
+            case Constants.PLP_TOOLFRAME_IOREGISTRY:
+                return null;
+
+            case Constants.PLP_TOOLFRAME_SIMCPU:
+                return null;
+
+            case Constants.PLP_TOOLFRAME_WATCHER:
+                return null;
+
+            case Constants.PLP_TOOLFRAME_SIMRUN:
+                return btnSimRun;
+
+            case Constants.PLP_TOOLFRAME_SIMLEDS:
+                return btnSimLEDs;
+
+            case Constants.PLP_TOOLFRAME_SIMSWITCHES:
+                return btnSimSwitches;
+
+            case Constants.PLP_TOOLFRAME_SIMUART:
+                return btnSimUART;
+
+            case Constants.PLP_TOOLFRAME_SIMVGA:
+                return btnSimVGA;
+
+            case Constants.PLP_TOOLFRAME_SIMPLPID:
+                return btnSimPLPID;
+
+            case Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS:
+                return btnSimSevenSegments;
 
             default:
                 return null;
@@ -769,7 +848,7 @@ public class Develop extends javax.swing.JFrame {
 
     /**
      * Attach listeners to the specified module frame x so it deselects the
-     * corresponding control menu when closing
+     * corresponding control menu and toggle button when closing
      *
      * @param x Module frame to attach the listener to
      * @param int Menu type requested
@@ -780,6 +859,10 @@ public class Develop extends javax.swing.JFrame {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 x.setVisible(false);
                 getToolCheckboxMenu(menu).setSelected(false);
+
+                JToggleButton btn = getToolToggleButton(menu);
+                if(btn != null)
+                    btn.setSelected(false);
             }
 
             @Override public void windowOpened(java.awt.event.WindowEvent evt) { }
@@ -797,7 +880,8 @@ public class Develop extends javax.swing.JFrame {
 
             if(module instanceof plptool.mods.LEDArray) {
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
-                menuLEDs.setSelected(v);
+                menuSimLEDs.setSelected(v);
+                btnSimLEDs.setSelected(v);
                 plp.updateComponents(false);
             }
         }
@@ -809,7 +893,8 @@ public class Develop extends javax.swing.JFrame {
 
             if(module instanceof plptool.mods.Switches) {
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
-                menuSwitches.setSelected(v);
+                menuSimSwitches.setSelected(v);
+                btnSimSwitches.setSelected(v);
                 plp.updateComponents(false);
             }
         }
@@ -821,7 +906,8 @@ public class Develop extends javax.swing.JFrame {
 
             if(module instanceof plptool.mods.SevenSegments) {
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
-                menuSevenSegments.setSelected(v);
+                menuSimSevenSegments.setSelected(v);
+                btnSimSevenSegments.setSelected(v);
                 plp.updateComponents(false);
             }
         }
@@ -833,7 +919,8 @@ public class Develop extends javax.swing.JFrame {
 
             if(module instanceof plptool.mods.UART) {
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
-                menuUART.setSelected(v);
+                menuSimUART.setSelected(v);
+                btnSimUART.setSelected(v);
                 plp.updateComponents(false);
             }
         }
@@ -845,7 +932,8 @@ public class Develop extends javax.swing.JFrame {
 
             if(module instanceof plptool.mods.VGA) {
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
-                menuVGA.setSelected(v);
+                menuSimVGA.setSelected(v);
+                btnSimVGA.setSelected(v);
                 plp.updateComponents(false);
             }
         }
@@ -857,7 +945,8 @@ public class Develop extends javax.swing.JFrame {
 
             if(module instanceof plptool.mods.PLPID) {
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
-                menuPLPID.setSelected(v);
+                menuSimPLPID.setSelected(v);
+                btnSimPLPID.setSelected(v);
                 plp.updateComponents(false);
             }
         }
@@ -979,12 +1068,12 @@ public class Develop extends javax.swing.JFrame {
         menuSimMemory = new javax.swing.JCheckBoxMenuItem();
         menuSimIO = new javax.swing.JCheckBoxMenuItem();
         menuIOReg = new javax.swing.JMenu();
-        menuLEDs = new javax.swing.JCheckBoxMenuItem();
-        menuSwitches = new javax.swing.JCheckBoxMenuItem();
-        menuSevenSegments = new javax.swing.JCheckBoxMenuItem();
-        menuUART = new javax.swing.JCheckBoxMenuItem();
-        menuVGA = new javax.swing.JCheckBoxMenuItem();
-        menuPLPID = new javax.swing.JCheckBoxMenuItem();
+        menuSimLEDs = new javax.swing.JCheckBoxMenuItem();
+        menuSimSwitches = new javax.swing.JCheckBoxMenuItem();
+        menuSimSevenSegments = new javax.swing.JCheckBoxMenuItem();
+        menuSimUART = new javax.swing.JCheckBoxMenuItem();
+        menuSimVGA = new javax.swing.JCheckBoxMenuItem();
+        menuSimPLPID = new javax.swing.JCheckBoxMenuItem();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         menuExitSim = new javax.swing.JMenuItem();
         rootmenuHelp = new javax.swing.JMenu();
@@ -1082,11 +1171,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 796, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 599, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 600, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1100,7 +1189,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1315,6 +1404,11 @@ public class Develop extends javax.swing.JFrame {
         btnSimLEDs.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimLEDs.setName("btnSimLEDs"); // NOI18N
         btnSimLEDs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimLEDs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimLEDsActionPerformed(evt);
+            }
+        });
         toolbar.add(btnSimLEDs);
 
         btnSimSwitches.setIcon(resourceMap.getIcon("btnSimSwitches.icon")); // NOI18N
@@ -1325,6 +1419,11 @@ public class Develop extends javax.swing.JFrame {
         btnSimSwitches.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimSwitches.setName("btnSimSwitches"); // NOI18N
         btnSimSwitches.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimSwitches.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimSwitchesActionPerformed(evt);
+            }
+        });
         toolbar.add(btnSimSwitches);
 
         btnSimSevenSegments.setIcon(resourceMap.getIcon("btnSimSevenSegments.icon")); // NOI18N
@@ -1335,6 +1434,11 @@ public class Develop extends javax.swing.JFrame {
         btnSimSevenSegments.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimSevenSegments.setName("btnSimSevenSegments"); // NOI18N
         btnSimSevenSegments.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimSevenSegments.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimSevenSegmentsActionPerformed(evt);
+            }
+        });
         toolbar.add(btnSimSevenSegments);
 
         btnSimUART.setIcon(resourceMap.getIcon("btnSimUART.icon")); // NOI18N
@@ -1345,6 +1449,11 @@ public class Develop extends javax.swing.JFrame {
         btnSimUART.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimUART.setName("btnSimUART"); // NOI18N
         btnSimUART.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimUART.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimUARTActionPerformed(evt);
+            }
+        });
         toolbar.add(btnSimUART);
 
         btnSimVGA.setIcon(resourceMap.getIcon("btnSimVGA.icon")); // NOI18N
@@ -1355,6 +1464,11 @@ public class Develop extends javax.swing.JFrame {
         btnSimVGA.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimVGA.setName("btnSimVGA"); // NOI18N
         btnSimVGA.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimVGA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimVGAActionPerformed(evt);
+            }
+        });
         toolbar.add(btnSimVGA);
 
         btnSimPLPID.setIcon(resourceMap.getIcon("btnSimPLPID.icon")); // NOI18N
@@ -1365,6 +1479,11 @@ public class Develop extends javax.swing.JFrame {
         btnSimPLPID.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimPLPID.setName("btnSimPLPID"); // NOI18N
         btnSimPLPID.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimPLPID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimPLPIDActionPerformed(evt);
+            }
+        });
         toolbar.add(btnSimPLPID);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
@@ -1858,71 +1977,71 @@ public class Develop extends javax.swing.JFrame {
         menuIOReg.setText(resourceMap.getString("menuIOReg.text")); // NOI18N
         menuIOReg.setName("menuIOReg"); // NOI18N
 
-        menuLEDs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
-        menuLEDs.setMnemonic('1');
-        menuLEDs.setText(resourceMap.getString("menuLEDs.text")); // NOI18N
-        menuLEDs.setName("menuLEDs"); // NOI18N
-        menuLEDs.addActionListener(new java.awt.event.ActionListener() {
+        menuSimLEDs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimLEDs.setMnemonic('1');
+        menuSimLEDs.setText(resourceMap.getString("menuSimLEDs.text")); // NOI18N
+        menuSimLEDs.setName("menuSimLEDs"); // NOI18N
+        menuSimLEDs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuLEDsActionPerformed(evt);
+                menuSimLEDsActionPerformed(evt);
             }
         });
-        menuIOReg.add(menuLEDs);
+        menuIOReg.add(menuSimLEDs);
 
-        menuSwitches.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
-        menuSwitches.setMnemonic('2');
-        menuSwitches.setText(resourceMap.getString("menuSwitches.text")); // NOI18N
-        menuSwitches.setName("menuSwitches"); // NOI18N
-        menuSwitches.addActionListener(new java.awt.event.ActionListener() {
+        menuSimSwitches.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimSwitches.setMnemonic('2');
+        menuSimSwitches.setText(resourceMap.getString("menuSimSwitches.text")); // NOI18N
+        menuSimSwitches.setName("menuSimSwitches"); // NOI18N
+        menuSimSwitches.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuSwitchesActionPerformed(evt);
+                menuSimSwitchesActionPerformed(evt);
             }
         });
-        menuIOReg.add(menuSwitches);
+        menuIOReg.add(menuSimSwitches);
 
-        menuSevenSegments.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
-        menuSevenSegments.setMnemonic('3');
-        menuSevenSegments.setText(resourceMap.getString("menuSevenSegments.text")); // NOI18N
-        menuSevenSegments.setName("menuSevenSegments"); // NOI18N
-        menuSevenSegments.addActionListener(new java.awt.event.ActionListener() {
+        menuSimSevenSegments.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimSevenSegments.setMnemonic('3');
+        menuSimSevenSegments.setText(resourceMap.getString("menuSimSevenSegments.text")); // NOI18N
+        menuSimSevenSegments.setName("menuSimSevenSegments"); // NOI18N
+        menuSimSevenSegments.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuSevenSegmentsActionPerformed(evt);
+                menuSimSevenSegmentsActionPerformed(evt);
             }
         });
-        menuIOReg.add(menuSevenSegments);
+        menuIOReg.add(menuSimSevenSegments);
 
-        menuUART.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
-        menuUART.setMnemonic('4');
-        menuUART.setText(resourceMap.getString("menuUART.text")); // NOI18N
-        menuUART.setName("menuUART"); // NOI18N
-        menuUART.addActionListener(new java.awt.event.ActionListener() {
+        menuSimUART.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimUART.setMnemonic('4');
+        menuSimUART.setText(resourceMap.getString("menuSimUART.text")); // NOI18N
+        menuSimUART.setName("menuSimUART"); // NOI18N
+        menuSimUART.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuUARTActionPerformed(evt);
+                menuSimUARTActionPerformed(evt);
             }
         });
-        menuIOReg.add(menuUART);
+        menuIOReg.add(menuSimUART);
 
-        menuVGA.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
-        menuVGA.setMnemonic('5');
-        menuVGA.setText(resourceMap.getString("menuVGA.text")); // NOI18N
-        menuVGA.setName("menuVGA"); // NOI18N
-        menuVGA.addActionListener(new java.awt.event.ActionListener() {
+        menuSimVGA.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimVGA.setMnemonic('5');
+        menuSimVGA.setText(resourceMap.getString("menuSimVGA.text")); // NOI18N
+        menuSimVGA.setName("menuSimVGA"); // NOI18N
+        menuSimVGA.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuVGAActionPerformed(evt);
+                menuSimVGAActionPerformed(evt);
             }
         });
-        menuIOReg.add(menuVGA);
+        menuIOReg.add(menuSimVGA);
 
-        menuPLPID.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.CTRL_MASK));
-        menuPLPID.setMnemonic('6');
-        menuPLPID.setText(resourceMap.getString("menuPLPID.text")); // NOI18N
-        menuPLPID.setName("menuPLPID"); // NOI18N
-        menuPLPID.addActionListener(new java.awt.event.ActionListener() {
+        menuSimPLPID.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimPLPID.setMnemonic('6');
+        menuSimPLPID.setText(resourceMap.getString("menuSimPLPID.text")); // NOI18N
+        menuSimPLPID.setName("menuSimPLPID"); // NOI18N
+        menuSimPLPID.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuPLPIDActionPerformed(evt);
+                menuSimPLPIDActionPerformed(evt);
             }
         });
-        menuIOReg.add(menuPLPID);
+        menuIOReg.add(menuSimPLPID);
 
         rootmenuSim.add(menuIOReg);
 
@@ -2404,37 +2523,29 @@ public class Develop extends javax.swing.JFrame {
         plp.refreshProjectView(false);
     }//GEN-LAST:event_menuSimResetActionPerformed
 
-    private void menuLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLEDsActionPerformed
-        setLEDsFrame(menuLEDs.isSelected());
-    }//GEN-LAST:event_menuLEDsActionPerformed
+    private void menuSimLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimLEDsActionPerformed
+        setLEDsFrame(menuSimLEDs.isSelected());
+    }//GEN-LAST:event_menuSimLEDsActionPerformed
 
-    private void menuSwitchesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSwitchesActionPerformed
-        setSwitchesFrame(menuSwitches.isSelected());
+    private void menuSimSwitchesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimSwitchesActionPerformed
+        setSwitchesFrame(menuSimSwitches.isSelected());
+    }//GEN-LAST:event_menuSimSwitchesActionPerformed
 
-    }//GEN-LAST:event_menuSwitchesActionPerformed
+    private void menuSimSevenSegmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimSevenSegmentsActionPerformed
+        setSevenSegmentsFrame(menuSimSevenSegments.isSelected());
+    }//GEN-LAST:event_menuSimSevenSegmentsActionPerformed
 
-    private void menuSevenSegmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSevenSegmentsActionPerformed
-        setSevenSegmentsFrame(menuSevenSegments.isSelected());
-    }//GEN-LAST:event_menuSevenSegmentsActionPerformed
+    private void menuSimUARTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimUARTActionPerformed
+        setUARTFrame(menuSimUART.isSelected());
+    }//GEN-LAST:event_menuSimUARTActionPerformed
 
-    private void menuUARTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUARTActionPerformed
-        setUARTFrame(menuUART.isSelected());
-    }//GEN-LAST:event_menuUARTActionPerformed
+    private void menuSimVGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimVGAActionPerformed
+        setVGAFrame(menuSimVGA.isSelected());
+    }//GEN-LAST:event_menuSimVGAActionPerformed
 
-    private void menuVGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuVGAActionPerformed
-        setVGAFrame(menuVGA.isSelected());
-    }//GEN-LAST:event_menuVGAActionPerformed
-
-    private void menuPLPIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPLPIDActionPerformed
-        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
-            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
-
-            if(module instanceof plptool.mods.PLPID) {
-                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(menuPLPID.isSelected());
-                plp.updateComponents(false);
-            }
-        }
-    }//GEN-LAST:event_menuPLPIDActionPerformed
+    private void menuSimPLPIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimPLPIDActionPerformed
+        setPLPIDFrame(menuSimPLPID.isSelected());
+    }//GEN-LAST:event_menuSimPLPIDActionPerformed
 
     private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
         if(btnSimulate.isSelected()) {
@@ -2531,6 +2642,30 @@ public class Develop extends javax.swing.JFrame {
     private void menuToolbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuToolbarActionPerformed
         toolbar.setVisible(menuToolbar.isSelected());
     }//GEN-LAST:event_menuToolbarActionPerformed
+
+    private void btnSimLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimLEDsActionPerformed
+        setLEDsFrame(btnSimLEDs.isSelected());
+    }//GEN-LAST:event_btnSimLEDsActionPerformed
+
+    private void btnSimSwitchesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimSwitchesActionPerformed
+        setSwitchesFrame(btnSimSwitches.isSelected());
+    }//GEN-LAST:event_btnSimSwitchesActionPerformed
+
+    private void btnSimSevenSegmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimSevenSegmentsActionPerformed
+        setSevenSegmentsFrame(btnSimSevenSegments.isSelected());
+    }//GEN-LAST:event_btnSimSevenSegmentsActionPerformed
+
+    private void btnSimUARTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimUARTActionPerformed
+        setUARTFrame(btnSimUART.isSelected());
+    }//GEN-LAST:event_btnSimUARTActionPerformed
+
+    private void btnSimVGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimVGAActionPerformed
+        setVGAFrame(btnSimVGA.isSelected());
+    }//GEN-LAST:event_btnSimVGAActionPerformed
+
+    private void btnSimPLPIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimPLPIDActionPerformed
+        setPLPIDFrame(btnSimPLPID.isSelected());
+    }//GEN-LAST:event_btnSimPLPIDActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
@@ -2651,13 +2786,11 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuImportASM;
     private javax.swing.JMenuItem menuIssues;
     private javax.swing.JMenuItem menuIssuesPage;
-    private javax.swing.JCheckBoxMenuItem menuLEDs;
     private javax.swing.JMenuItem menuManual;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuNewASM;
     private javax.swing.JMenuItem menuOpen;
     private javax.swing.JMenuItem menuOptions;
-    private javax.swing.JCheckBoxMenuItem menuPLPID;
     private javax.swing.JMenuItem menuPaste;
     private javax.swing.JMenuItem menuPrint;
     private javax.swing.JMenuItem menuProgram;
@@ -2672,13 +2805,18 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator5;
     private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
-    private javax.swing.JCheckBoxMenuItem menuSevenSegments;
     private javax.swing.JCheckBoxMenuItem menuSimIO;
+    private javax.swing.JCheckBoxMenuItem menuSimLEDs;
     private javax.swing.JCheckBoxMenuItem menuSimMemory;
+    private javax.swing.JCheckBoxMenuItem menuSimPLPID;
     private javax.swing.JMenuItem menuSimReset;
     private javax.swing.JCheckBoxMenuItem menuSimRun;
+    private javax.swing.JCheckBoxMenuItem menuSimSevenSegments;
     private javax.swing.JMenuItem menuSimStep;
+    private javax.swing.JCheckBoxMenuItem menuSimSwitches;
     private javax.swing.JMenu menuSimTools;
+    private javax.swing.JCheckBoxMenuItem menuSimUART;
+    private javax.swing.JCheckBoxMenuItem menuSimVGA;
     private javax.swing.JCheckBoxMenuItem menuSimView;
     private javax.swing.JCheckBoxMenuItem menuSimWatcher;
     private javax.swing.JMenuItem menuSimulate;
@@ -2688,11 +2826,8 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem menuStep4;
     private javax.swing.JRadioButtonMenuItem menuStep5;
     private javax.swing.JMenu menuStepSize;
-    private javax.swing.JCheckBoxMenuItem menuSwitches;
     private javax.swing.JCheckBoxMenuItem menuToolbar;
-    private javax.swing.JCheckBoxMenuItem menuUART;
     private javax.swing.JMenuItem menuUndo;
-    private javax.swing.JCheckBoxMenuItem menuVGA;
     private javax.swing.JMenu rootmenuEdit;
     private javax.swing.JMenu rootmenuFile;
     private javax.swing.JMenu rootmenuHelp;
