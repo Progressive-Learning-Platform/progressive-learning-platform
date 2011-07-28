@@ -22,6 +22,7 @@ public class PLPIDFrame extends javax.swing.JFrame {
     /** Creates new form PLPIDFrame */
     public PLPIDFrame(PLPID module) {
         this.module = module;
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_sim_plpid.png")));
         initComponents();
     }
 
