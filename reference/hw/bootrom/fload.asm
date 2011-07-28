@@ -94,6 +94,7 @@ switches:
 boot_uart:
 	ori $s0, $zero, 0x0061 #a
 	ori $s1, $zero, 0x0064 #d
+	ori $at, $zero, 0x0063 #c
 	ori $s2, $zero, 0x006a #j
 	ori $s3, $zero, 0x0076 #v
 	ori $s4, $zero, 0x0066 #f, for fritz!
@@ -106,9 +107,14 @@ boot_uart_run:
 	jal libplp_leds_write
 	nop
 	beq $v0, $s0, boot_uart_address
+	nop
 	beq $v0, $s1, boot_uart_data
+	nop
 	beq $v0, $s2, boot_uart_jump
+	nop
 	beq $v0, $s3, boot_uart_version
+	nop
+	beq $v0, $at, boot_uart_chunk
 	nop
 	j boot_uart_run
 	nop
@@ -161,6 +167,24 @@ boot_uart_version:
 	li $a0, version_string
 	jal libplp_uart_write_string
 	nop
+	j boot_uart_run
+	nop
+
+boot_uart_chunk:
+	jal boot_uart_get_4_bytes
+	nop
+	move $t4, $v0 #data size
+	move $t5, $zero #count
+	boot_uart_chunk_loop:
+		jal boot_uart_get_4_bytes
+		nop
+		sw $v0, 0($s5)
+		addiu $s5, $s5, 4
+		addiu $t5, $t5, 1
+		bne $t5, $t4, boot_uart_chunk_loop
+		nop
+	jal libplp_uart_write
+	move $a0, $s4
 	j boot_uart_run
 	nop
 
