@@ -1,0 +1,30 @@
+
+                   DOUMENTATION DIRECTORY CONTENTS
+
+See either the IEEE P1364 Verilog standard LRM that can be purchased from
+IEEE or a book on Verilog to learn Verilog syntax and usage.
+
+The documentation directory contains the following files.
+
+cver.faq -            File containing answers to frequently asked question.    
+
+cver.hlp -            File containing help screen that is printed by cver 
+                      when "cver -h" is typed.  This is main source of
+                      instructions for using new +loadpli1= and +loadvpi=
+                      features but also see examples in the PLI
+                      tests_and_examples directories that contain running
+                      PLI models with make files and c compiler and linker
+                      options.
+
+dbg.hlp               All the gdb style debugger help screens combined into
+                      one file. see the helpgen.inp and README file in
+                      ver_srcs directory for debugger -i script that will
+                      generate the dbg.hlp file.
+
+cver-extensions.txt   Document describes new Verilog 2001 features and other
+                      enhancements in Cver.
+
+systasks.1            Man page giving all system task and functions
+
+systasks.ps           implemented by Cver in both man troff format and
+                      postscript.

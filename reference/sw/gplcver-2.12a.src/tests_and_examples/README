@@ -1,0 +1,39 @@
+
+
+                               RUNNING TESTS
+
+This directory contains a number of test directories.  Each directory
+contains a README file with specific instructions for running the
+tests (usually how to run the test shell script).  Directories are: 
+
+install.tst:
+
+ Installation test.  This test runs cver on various Verilog files to insure
+ correct build.  It should always be run.  
+
+examples.tf:
+
+  Examples of PLI 1.0 tf_ interface routines.  The test script uses
++loadpli1= option to make dynamic libraries (.so files) and then runs
+the test.
+
+examples.acc:
+
+  Examples of PLI 1.0 acc_ interface routines.  The test script uses
++loadpli1= option to make dynamic libraries (.so files) and then runs
+the test.
+
+examples.vpi:
+
+  Examples of PLI 1.0 acc_ interface routines.  The test script uses
++loadvpi= option to make dynamic libraries (.so files) and then runs
+the test.
+
+capacity.tst
+  This option test runs a 3.2 million gate circuit to show advantages of
+non flattened algorithm.  It requires about 150MB of free memory.  Running
+it is optional.
+
+v2001
+  This directory contains some tests for new verilog 2001 features supported
+by GPL Cver 2.xx.
