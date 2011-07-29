@@ -190,7 +190,9 @@ public class Constants {
     public static final int ASMVIEW_LINENUM                      = 4;
     public static final int ASMVIEW_SOURCEFILE                   = 5;
 
-    
+    // Programmer constants
+    public static final int PLP_PRG_CHUNK_BUFFER_SIZE            = 1048576; // 1MB
+
     // Flags
     public static final boolean FLAGS_ALIGNED_MEMORY             = true;
 }
