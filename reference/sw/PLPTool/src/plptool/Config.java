@@ -29,6 +29,7 @@ public class Config {
     public static boolean cfgInstrPretty                   = true;
 
     public static String  cfgArch                          = "plpmips";
+
     public static boolean simForwardingUnit                = true;
     public static boolean simDynamicMemoryAllocation       = false;
     public static boolean simRefreshGUIDuringSimRun        = true;
@@ -48,6 +49,8 @@ public class Config {
 
     public static int     threadedModRefreshRate           = 100;
     public static boolean threadedModEnabled               = true;
+
+    public static boolean prgProgramInChunks               = true;
 
     public static boolean devSyntaxHighlighting            = true;
     public static boolean devSyntaxHighlightOnAssemble     = false;

@@ -21,11 +21,7 @@ package plptool.mods;
 import plptool.Msg;
 
 import java.awt.Dimension;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
 
 /**
  *
@@ -120,23 +116,5 @@ public class VGAFrame extends javax.swing.JFrame {
     private javax.swing.JPanel container;
     // End of variables declaration//GEN-END:variables
 
-}
-
-class VGACanvas extends Canvas {
-
-    private BufferedImage I;
-
-    public VGACanvas(BufferedImage I) {
-        this.I = I;
-    }
-
-    public void setImage(BufferedImage I) {
-        this.I = I;
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        g.drawImage(I, 0, 0, Color.BLACK, null);
-    }
 }
 
