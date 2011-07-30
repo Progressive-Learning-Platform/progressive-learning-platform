@@ -65,6 +65,14 @@ public class ProgrammerDialog extends javax.swing.JDialog {
         plp.program((String) cmbPort.getSelectedItem());
     }
 
+    public void disableControls() {
+        btnDownloadProgram.setEnabled(false);
+    }
+
+    public void enableControls() {
+        btnDownloadProgram.setEnabled(true);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -162,6 +170,10 @@ public class ProgrammerDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnDownloadProgramActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        if(plp.prg != null) {
+            plp.prg.busy = false;
+            plp.prg.close();
+        }
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
 

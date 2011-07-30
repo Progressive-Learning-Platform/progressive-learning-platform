@@ -27,8 +27,12 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="tabsOptions" pref="459" max="32767" attributes="0"/>
-                  <Component id="btnClose" alignment="1" min="-2" pref="93" max="-2" attributes="0"/>
+                  <Component id="tabsOptions" pref="473" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="btnApply" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnClose" min="-2" pref="93" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -40,7 +44,10 @@
               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               <Component id="tabsOptions" min="-2" pref="424" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="btnClose" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnClose" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnApply" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -76,7 +83,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cmbFontSize" pref="380" max="32767" attributes="0"/>
+                              <Component id="cmbFontSize" pref="361" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -93,7 +100,7 @@
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cmbFontSize" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="340" max="32767" attributes="0"/>
+                      <EmptySpace pref="310" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -149,7 +156,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="simDumpTraceOnFailedEval" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simNoExecute" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="sSimSpeed" alignment="0" pref="434" max="32767" attributes="0"/>
+                          <Component id="sSimSpeed" alignment="0" pref="445" max="32767" attributes="0"/>
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simBusReadDefaultZero" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simRefreshDev" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -173,7 +180,7 @@
                       <Component id="simDumpTraceOnFailedEval" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="simRefreshDev" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="203" max="32767" attributes="0"/>
+                      <EmptySpace pref="120" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -239,6 +246,97 @@
             </Component>
           </SubComponents>
         </Container>
+        <Container class="javax.swing.JPanel" name="paneProgrammer">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="paneProgrammer" noResource="true"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Programmer">
+                <Property name="tabTitle" type="java.lang.String" resourceKey="paneProgrammer.TabConstraints.tabTitle"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="prgProgramInChunks" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="lblMaxChunkSize" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                              <Component id="prgMaxChunkSize" pref="277" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="lblReadTimeout" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="prgReadTimeout" pref="275" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="prgProgramInChunks" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lblMaxChunkSize" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="prgMaxChunkSize" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lblReadTimeout" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="prgReadTimeout" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="270" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JCheckBox" name="prgProgramInChunks">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="prgProgramInChunks.text"/>
+                <Property name="name" type="java.lang.String" value="prgProgramInChunks" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prgProgramInChunksActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblMaxChunkSize">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="lblMaxChunkSize.text"/>
+                <Property name="name" type="java.lang.String" value="lblMaxChunkSize" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="prgMaxChunkSize">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="prgMaxChunkSize.text"/>
+                <Property name="name" type="java.lang.String" value="prgMaxChunkSize" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblReadTimeout">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="lblReadTimeout.text"/>
+                <Property name="name" type="java.lang.String" value="lblReadTimeout" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="prgReadTimeout">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="prgReadTimeout.text"/>
+                <Property name="name" type="java.lang.String" value="prgReadTimeout" noResource="true"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
     <Component class="javax.swing.JButton" name="btnClose">
@@ -248,6 +346,15 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCloseActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnApply">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="btnApply.text"/>
+        <Property name="name" type="java.lang.String" value="btnApply" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnApplyActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
