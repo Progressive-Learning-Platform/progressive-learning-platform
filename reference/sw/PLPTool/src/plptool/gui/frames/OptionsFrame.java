@@ -109,6 +109,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgMaxChunkSize = new javax.swing.JTextField();
         lblReadTimeout = new javax.swing.JLabel();
         prgReadTimeout = new javax.swing.JTextField();
+        lblPrgWarning = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
         btnApply = new javax.swing.JButton();
 
@@ -284,6 +285,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgReadTimeout.setText(resourceMap.getString("prgReadTimeout.text")); // NOI18N
         prgReadTimeout.setName("prgReadTimeout"); // NOI18N
 
+        lblPrgWarning.setText(resourceMap.getString("lblPrgWarning.text")); // NOI18N
+        lblPrgWarning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblPrgWarning.setName("lblPrgWarning"); // NOI18N
+
         javax.swing.GroupLayout paneProgrammerLayout = new javax.swing.GroupLayout(paneProgrammer);
         paneProgrammer.setLayout(paneProgrammerLayout);
         paneProgrammerLayout.setHorizontalGroup(
@@ -291,6 +296,7 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(paneProgrammerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblPrgWarning)
                     .addComponent(prgProgramInChunks)
                     .addGroup(paneProgrammerLayout.createSequentialGroup()
                         .addComponent(lblMaxChunkSize)
@@ -315,7 +321,9 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblReadTimeout)
                     .addComponent(prgReadTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(270, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(lblPrgWarning)
+                .addContainerGap(234, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
@@ -423,6 +431,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lblMaxChunkSize;
+    private javax.swing.JLabel lblPrgWarning;
     private javax.swing.JLabel lblReadTimeout;
     private javax.swing.JPanel paneEditor;
     private javax.swing.JPanel paneProgrammer;
