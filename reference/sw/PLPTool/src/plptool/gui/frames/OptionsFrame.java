@@ -46,6 +46,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         cmbFontSize.addItem(48);
         cmbFontSize.addItem(72);
         cmbFontSize.setSelectedIndex(3);
+
+        prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
+        prgProgramInChunks.setSelected(Config.prgProgramInChunks);
+        prgReadTimeout.setText("" + Config.prgReadTimeout);
     }
 
     public javax.swing.JTabbedPane getTabs() {
@@ -54,6 +58,28 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     public void restoreSavedOpts() {
         sSimSpeed.setValue(Config.simRunnerDelay);
+    }
+
+    private void apply() {
+        try {
+            int chunkSize = Integer.parseInt(prgMaxChunkSize.getText());
+            if(chunkSize % 4 != 0) {
+                prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
+                return;
+            }
+
+            Config.prgMaxChunkSize = chunkSize;
+        } catch(Exception e) {
+            prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
+        }
+
+        try {
+            int readTimeout = Integer.parseInt(prgReadTimeout.getText());
+
+            Config.prgReadTimeout = readTimeout;
+        } catch(Exception e) {
+            prgReadTimeout.setText("" + Config.prgReadTimeout);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -77,7 +103,14 @@ public class OptionsFrame extends javax.swing.JFrame {
         simBusReadDefaultZero = new javax.swing.JCheckBox();
         simDumpTraceOnFailedEval = new javax.swing.JCheckBox();
         simRefreshDev = new javax.swing.JCheckBox();
+        paneProgrammer = new javax.swing.JPanel();
+        prgProgramInChunks = new javax.swing.JCheckBox();
+        lblMaxChunkSize = new javax.swing.JLabel();
+        prgMaxChunkSize = new javax.swing.JTextField();
+        lblReadTimeout = new javax.swing.JLabel();
+        prgReadTimeout = new javax.swing.JTextField();
         btnClose = new javax.swing.JButton();
+        btnApply = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(OptionsFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -124,7 +157,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addGroup(paneEditorLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbFontSize, 0, 380, Short.MAX_VALUE)))
+                        .addComponent(cmbFontSize, 0, 361, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         paneEditorLayout.setVerticalGroup(
@@ -136,7 +169,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(340, Short.MAX_VALUE))
+                .addContainerGap(310, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
@@ -202,7 +235,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneSimLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(simBusReadDefaultZero)
                     .addComponent(simRefreshDev))
@@ -223,16 +256,83 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simDumpTraceOnFailedEval)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simRefreshDev)
-                .addContainerGap(203, Short.MAX_VALUE))
+                .addContainerGap(120, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
+
+        paneProgrammer.setName("paneProgrammer"); // NOI18N
+
+        prgProgramInChunks.setSelected(true);
+        prgProgramInChunks.setText(resourceMap.getString("prgProgramInChunks.text")); // NOI18N
+        prgProgramInChunks.setName("prgProgramInChunks"); // NOI18N
+        prgProgramInChunks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prgProgramInChunksActionPerformed(evt);
+            }
+        });
+
+        lblMaxChunkSize.setText(resourceMap.getString("lblMaxChunkSize.text")); // NOI18N
+        lblMaxChunkSize.setName("lblMaxChunkSize"); // NOI18N
+
+        prgMaxChunkSize.setText(resourceMap.getString("prgMaxChunkSize.text")); // NOI18N
+        prgMaxChunkSize.setName("prgMaxChunkSize"); // NOI18N
+
+        lblReadTimeout.setText(resourceMap.getString("lblReadTimeout.text")); // NOI18N
+        lblReadTimeout.setName("lblReadTimeout"); // NOI18N
+
+        prgReadTimeout.setText(resourceMap.getString("prgReadTimeout.text")); // NOI18N
+        prgReadTimeout.setName("prgReadTimeout"); // NOI18N
+
+        javax.swing.GroupLayout paneProgrammerLayout = new javax.swing.GroupLayout(paneProgrammer);
+        paneProgrammer.setLayout(paneProgrammerLayout);
+        paneProgrammerLayout.setHorizontalGroup(
+            paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneProgrammerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(prgProgramInChunks)
+                    .addGroup(paneProgrammerLayout.createSequentialGroup()
+                        .addComponent(lblMaxChunkSize)
+                        .addGap(18, 18, 18)
+                        .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
+                    .addGroup(paneProgrammerLayout.createSequentialGroup()
+                        .addComponent(lblReadTimeout)
+                        .addGap(18, 18, 18)
+                        .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        paneProgrammerLayout.setVerticalGroup(
+            paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneProgrammerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(prgProgramInChunks)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblMaxChunkSize)
+                    .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblReadTimeout)
+                    .addComponent(prgReadTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(270, Short.MAX_VALUE))
+        );
+
+        tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
 
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCloseActionPerformed(evt);
+            }
+        });
+
+        btnApply.setText(resourceMap.getString("btnApply.text")); // NOI18N
+        btnApply.setName("btnApply"); // NOI18N
+        btnApply.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnApplyActionPerformed(evt);
             }
         });
 
@@ -243,8 +343,11 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tabsOptions, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
-                    .addComponent(btnClose, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tabsOptions, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnApply)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -253,7 +356,9 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(tabsOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnClose)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClose)
+                    .addComponent(btnApply))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
@@ -301,14 +406,30 @@ public class OptionsFrame extends javax.swing.JFrame {
         Config.simRefreshDevDuringSimRun = simRefreshDev.isSelected();
     }//GEN-LAST:event_simRefreshDevActionPerformed
 
+    private void prgProgramInChunksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prgProgramInChunksActionPerformed
+        Config.prgProgramInChunks = prgProgramInChunks.isSelected();
+    }//GEN-LAST:event_prgProgramInChunksActionPerformed
+
+    private void btnApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApplyActionPerformed
+        apply();
+
+    }//GEN-LAST:event_btnApplyActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnApply;
     private javax.swing.JButton btnClose;
     private javax.swing.JComboBox cmbFontSize;
     private javax.swing.JCheckBox editorSyntaxHighlighting;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel lblMaxChunkSize;
+    private javax.swing.JLabel lblReadTimeout;
     private javax.swing.JPanel paneEditor;
+    private javax.swing.JPanel paneProgrammer;
     private javax.swing.JPanel paneSim;
+    private javax.swing.JTextField prgMaxChunkSize;
+    private javax.swing.JCheckBox prgProgramInChunks;
+    private javax.swing.JTextField prgReadTimeout;
     private javax.swing.JSlider sSimSpeed;
     private javax.swing.JCheckBox simBusReadDefaultZero;
     private javax.swing.JCheckBox simDumpTraceOnFailedEval;

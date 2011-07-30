@@ -967,16 +967,15 @@ public class ProjectDriver {
             prg = ArchRegistry.createProgrammer(this);
             prg.connect(port, Constants.PLP_BAUDRATE);
             p_progress = 0;
-            p_watchdog = new TimeoutWatcher(this);
-
+            
             if(g) {
+                g_prg.disableControls();
                 g_prg.getProgressBar().setMinimum(0);
                 g_prg.getProgressBar().setMaximum(asm.getObjectCode().length - 1);
             }
 
             Msg.D("Starting worker threads", 2, this);
             prg.start();
-            p_watchdog.start();
             return Constants.PLP_OK;
 
         } else
@@ -995,13 +994,13 @@ public class ProjectDriver {
      * may need saving.
      */
     public void setModified() {
-        Msg.D("Project has been modified.", 3, this);
+        Msg.D("Project has been modified.", 5, this);
         modified = true;
         this.updateWindowTitle();
     }
 
     public void setUnModified() {
-        Msg.D("Project has been unmodified.", 3, this);
+        Msg.D("Project has been unmodified.", 5, this);
         modified = false;
         this.updateWindowTitle();
     }

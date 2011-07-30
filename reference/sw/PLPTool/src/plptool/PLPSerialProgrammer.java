@@ -35,12 +35,17 @@ public abstract class PLPSerialProgrammer extends Thread {
 
     @Override
     public void run() {
+        int ret;
         try {
 
         busy = true;
-        if(plp.p_port != null)
-            programWithAsm();
-        close();
+        if(plp.p_port != null) {
+            ret = programWithAsm();
+            close();
+            plp.g_prg.enableControls();
+            if(ret != Constants.PLP_OK)
+                plp.g_prg.getStatusField().setText("Failed!");
+        }
         
         } catch(Exception e) {
             e.printStackTrace();

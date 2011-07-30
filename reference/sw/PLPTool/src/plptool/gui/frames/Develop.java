@@ -969,6 +969,14 @@ public class Develop extends javax.swing.JFrame {
         tln.repaint();
     }
 
+    private void program() {
+        if(plp.prg != null) {
+            plp.prg.busy = false;
+        }
+        plp.g_prg.setVisible(true);
+        plp.g_prg.enableControls();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
