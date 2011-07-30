@@ -261,9 +261,10 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lblPrgWarning" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="prgProgramInChunks" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lblMaxChunkSize" min="-2" max="-2" attributes="0"/>
@@ -295,7 +296,9 @@
                           <Component id="lblReadTimeout" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="prgReadTimeout" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="270" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="lblPrgWarning" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="234" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -333,6 +336,13 @@
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="prgReadTimeout.text"/>
                 <Property name="name" type="java.lang.String" value="prgReadTimeout" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblPrgWarning">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="lblPrgWarning.text"/>
+                <Property name="verticalAlignment" type="int" value="1"/>
+                <Property name="name" type="java.lang.String" value="lblPrgWarning" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>

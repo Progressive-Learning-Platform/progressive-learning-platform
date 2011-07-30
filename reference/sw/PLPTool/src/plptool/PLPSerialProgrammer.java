@@ -42,9 +42,13 @@ public abstract class PLPSerialProgrammer extends Thread {
         if(plp.p_port != null) {
             ret = programWithAsm();
             close();
-            plp.g_prg.enableControls();
-            if(ret != Constants.PLP_OK)
-                plp.g_prg.getStatusField().setText("Failed!");
+            if(plp.g()) plp.g_prg.enableControls();
+            if(ret != Constants.PLP_OK) {
+                if(plp.g())
+                    plp.g_prg.getStatusField().setText("Failed!");
+                else
+                    Msg.I("Failed!", this);
+            }
         }
         
         } catch(Exception e) {
