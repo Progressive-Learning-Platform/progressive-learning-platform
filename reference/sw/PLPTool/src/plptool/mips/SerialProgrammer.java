@@ -46,6 +46,12 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private InputStream in;
     private OutputStream out;
 
+    private long objCode[];
+    private long addrTable[];
+
+    private int chunkIndex = 0;
+    private long chunkStartAddr;
+
     public int connect(String portName, int baudRate) throws Exception {
         try {
             portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
@@ -103,13 +109,13 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     public int programWithAsm() throws Exception {
         if(plp.asm.isAssembled() && out != null) {
             int ret;
-            long objCode[] = plp.asm.getObjectCode();
-            long addrTable[] = plp.asm.getAddrTable();
+            objCode = plp.asm.getObjectCode();
+            addrTable = plp.asm.getAddrTable();
             byte inData = '\0';
             byte buff[] = new byte[5];
             byte[] chunk = new byte[Constants.PLP_PRG_CHUNK_BUFFER_SIZE];
-            int chunkIndex = 0;
-            long chunkStartAddr;
+            boolean done = false;
+            
             String status;
             plp.p_port.enableReceiveTimeout(Config.prgReadTimeout);
 
@@ -183,12 +189,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
                         // address jump, send chunk now
                         if(Config.prgProgramInChunks) {
-                            if(plp.g())
-                                plp.g_prg.getStatusField().setText("Transmitting " +
-                                        String.format("0x%08x", chunkStartAddr) + " to " +
-                                        String.format("0x%08x", addrTable[i]) +
-                                        " (" + chunkIndex +" bytes)");
-                            ret = sendChunk(chunk, chunkIndex);
+                            ret = sendChunk(chunk, chunkIndex, i);
                             chunk = new byte[Constants.PLP_PRG_CHUNK_BUFFER_SIZE];
                             chunkIndex = 0;
                             chunkStartAddr = addrTable[i + 1];
@@ -211,12 +212,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     
                 // if we buffered up to maximum chunk size, send data
                 } else if(Config.prgProgramInChunks && chunkIndex == Config.prgMaxChunkSize) {
-                    if(plp.g())
-                        plp.g_prg.getStatusField().setText("Transmitting " +
-                                String.format("0x%08x", chunkStartAddr) + " to " +
-                                String.format("0x%08x", addrTable[i]) +
-                                " (" + chunkIndex +" bytes)");
-                    ret = sendChunk(chunk, chunkIndex);
+                    ret = sendChunk(chunk, chunkIndex, i);
                     chunk = new byte[Constants.PLP_PRG_CHUNK_BUFFER_SIZE];
                     chunkIndex = 0;
 
@@ -228,42 +224,67 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
                 // we're done, send final chunk
                 } else if(i == objCode.length - 1 && Config.prgProgramInChunks) {
-                    ret = sendChunk(chunk, chunkIndex);
+                    ret = sendChunk(chunk, chunkIndex, i);
 
                     if(ret != Constants.PLP_OK)
                         return ret;
+
+                    done = true;
                 }
             }
 
-            // jump to entrypoint
-            long entry = plp.asm.getEntryPoint();
-            Msg.D("Jumping to " + String.format("%08x", entry), 3, this);
-            buff[0] = (byte) 'a';
-            buff[1] = (byte) (entry >> 24);
-            buff[2] = (byte) (entry >> 16);
-            buff[3] = (byte) (entry >> 8);
-            buff[4] = (byte) (entry);
-            out.write(buff, 0, 5);
-            if(busy) inData = (byte) in.read();
-            if(inData != 'f')
-                return Msg.E("Programming failed, no acknowledgement received.",
-                                Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+            if(done) {
+                // jump to entrypoint
+                long entry = plp.asm.getEntryPoint();
+                Msg.D("Jumping to " + String.format("%08x", entry), 3, this);
+                buff[0] = (byte) 'a';
+                buff[1] = (byte) (entry >> 24);
+                buff[2] = (byte) (entry >> 16);
+                buff[3] = (byte) (entry >> 8);
+                buff[4] = (byte) (entry);
+                out.write(buff, 0, 5);
+                if(busy) inData = (byte) in.read();
+                if(inData != 'f')
+                    return Msg.E("Programming failed, no acknowledgement received.",
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
-            out.write('j');
-            if(busy) inData = (byte) in.read();
-            if(inData != 'f')
-                return Msg.E("Programming failed, no acknowledgement received.",
-                                Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                out.write('j');
+                if(busy) inData = (byte) in.read();
+                if(inData != 'f')
+                    return Msg.E("Programming failed, no acknowledgement received.",
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
-            double timeSecs = (System.currentTimeMillis()- startTime) / 1000.0;
-            if(plp.g()) {
-                plp.g_prg.enableControls();
-                plp.g_prg.getStatusField().setText("Done. " + objCode.length +
-                        " words in " + timeSecs + " seconds.");
+                double timeSecs = (System.currentTimeMillis()- startTime) / 1000.0;
+                if(plp.g()) {
+                    plp.g_prg.enableControls();
+                    plp.g_prg.getStatusField().setText("Done. " + objCode.length +
+                            " words in " + timeSecs + " seconds.");
+                }
+                Msg.I("done. " + objCode.length +
+                            " words in " + timeSecs + " seconds.", this);
+
+            // we were interrupted, try to reset board
+            } else {
+                Msg.I("interrupted.", this);
+
+                Msg.D("Jumping to " + String.format("%08x", 0), 3, this);
+                buff[0] = (byte) 'a';
+                buff[1] = 0;
+                buff[2] = 0;
+                buff[3] = 0;
+                buff[4] = 0;
+                out.write(buff, 0, 5);
+                if(busy) inData = (byte) in.read();
+                if(inData != 'f')
+                    return Msg.E("Programming failed, no acknowledgement received.",
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+
+                out.write('j');
+                if(busy) inData = (byte) in.read();
+                if(inData != 'f')
+                    return Msg.E("Programming failed, no acknowledgement received.",
+                                    Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
             }
-            Msg.I("done. " + objCode.length +
-                        " words in " + timeSecs + " seconds.", this);
-            
         } else {
             return Msg.E("Source is not assembled.",
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
@@ -272,10 +293,16 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         return Constants.PLP_OK;
     }
 
-    private int sendChunk(byte[] chunk, int size) throws IOException {
+    private int sendChunk(byte[] chunk, int size, int i) throws IOException {
         int len = size / 4;
         
         Msg.D("Sending chunk of size " + size + " bytes.", 3, this);
+
+        if(plp.g())
+            plp.g_prg.getStatusField().setText("Transmitting " +
+                    String.format("0x%08x", chunkStartAddr) + " to " +
+                    String.format("0x%08x", addrTable[i]) +
+                    " (" + chunkIndex +" bytes)");
 
         byte buff[] = new byte[5];
         buff[0] = 'c';
