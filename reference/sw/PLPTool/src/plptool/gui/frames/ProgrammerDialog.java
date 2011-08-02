@@ -49,6 +49,17 @@ public class ProgrammerDialog extends javax.swing.JDialog {
         }
         else
             cmbPort.addItem("Specify your serial port here.");
+
+        javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
+        javax.swing.Action escapeAction = new javax.swing.AbstractAction() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+               setVisible(false);
+               close();
+            }
+        };
+
+        getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
+        getRootPane().getActionMap().put("ESCAPE", escapeAction);
         
         this.setLocationRelativeTo(null);
     }
@@ -67,10 +78,23 @@ public class ProgrammerDialog extends javax.swing.JDialog {
 
     public void disableControls() {
         btnDownloadProgram.setEnabled(false);
+        btnClose.setText("Cancel");
     }
 
     public void enableControls() {
         btnDownloadProgram.setEnabled(true);
+        btnClose.setText("Close");
+    }
+
+    private void close() {
+         if(plp.prg != null) {
+            plp.prg.busy = false;
+            plp.prg.close();
+        }
+        progressBar.setValue(0);
+        txtStatus.setText("");
+
+        this.setVisible(false);
     }
 
     /** This method is called from within the constructor to
@@ -170,11 +194,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnDownloadProgramActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        if(plp.prg != null) {
-            plp.prg.busy = false;
-            plp.prg.close();
-        }
-        this.setVisible(false);
+        close();
     }//GEN-LAST:event_btnCloseActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
