@@ -212,6 +212,10 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     
                 // if we buffered up to maximum chunk size, send data
                 } else if(Config.prgProgramInChunks && chunkIndex == Config.prgMaxChunkSize) {
+                    if(!plp.g())
+                        Msg.I("Buffered " +
+                               progress + " of " + objCode.length + " words", this);
+                    
                     ret = sendChunk(chunk, chunkIndex, i);
                     chunk = new byte[Constants.PLP_PRG_CHUNK_BUFFER_SIZE];
                     chunkIndex = 0;
@@ -303,6 +307,11 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     String.format("0x%08x", chunkStartAddr) + " to " +
                     String.format("0x%08x", addrTable[i]) +
                     " (" + chunkIndex +" bytes)");
+        else
+            Msg.I("Transmitting " +
+                    String.format("0x%08x", chunkStartAddr) + " to " +
+                    String.format("0x%08x", addrTable[i]) +
+                    " (" + chunkIndex +" bytes)", this);
 
         byte buff[] = new byte[5];
         buff[0] = 'c';

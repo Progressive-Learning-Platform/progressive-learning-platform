@@ -236,11 +236,12 @@ public class Watcher extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        long addr = PLPToolbox.parseNum(txtAddr.getText());
+        long addr;
         DefaultTableModel entries = getTblValues();
                 
         switch(cmbType.getSelectedIndex()) {
             case 0:
+                addr = PLPToolbox.parseNum(txtAddr.getText());
                 if(plp.sim.bus.isMapped(addr)) {
                     Long data = (Long) plp.sim.bus.read(addr);
                     Object[] row = {"Bus", String.format("0x%08x", addr),
@@ -255,9 +256,16 @@ public class Watcher extends javax.swing.JFrame {
             case 1:
                 if(plp.getArch().equals("plpmips")) {
                     plptool.mips.SimCore mipsSim = (plptool.mips.SimCore) plp.sim;
+
+                    Byte reg = ((plptool.mips.Asm) plp.asm).getRegisterNumberFromName(txtAddr.getText());
+                    if(reg != null)
+                        addr = reg;
+                    else
+                        addr = PLPToolbox.parseNum(txtAddr.getText());
+
                     if(addr >= 0 && addr <= mipsSim.regfile.endAddr()) {
                         Long data = (Long) mipsSim.regfile.read(addr);
-                        Object[] row = {"Register", String.format("0x%08x", addr),
+                        Object[] row = {"Register", (reg != null ? txtAddr.getText() : String.format("0x%08x", addr)),
                                         (data != null) ? String.format("0x%08x", data) : "Uninitialized",
                                         (data != null) ? String.format("%d", data) : "Uninitialized"};
                         entries.addRow(row);
@@ -303,7 +311,17 @@ public class Watcher extends javax.swing.JFrame {
             }
             else if(entries.getValueAt(i, 0).equals("Register") && plp.getArch().equals("plpmips")) {
                 plptool.mips.SimCore mipsSim = (plptool.mips.SimCore) plp.sim;
-                Long data = (Long) mipsSim.regfile.read(PLPToolbox.parseNum((String) entries.getValueAt(i, 1)));
+
+                long addr;
+
+                String entry = (String)entries.getValueAt(i, 1);
+
+                if(entry.startsWith("$")) {
+                    addr = ((plptool.mips.Asm) plp.asm).getRegisterNumberFromName(entry);
+                } else
+                    addr = PLPToolbox.parseNum((String) entries.getValueAt(i, 1));
+
+                Long data = (Long) mipsSim.regfile.read(addr);
                 entries.setValueAt((data != null) ? String.format("0x%08x", data) : "Uninitialized", i, 2);
                 entries.setValueAt((data != null) ? String.format("%d", data) : "Uninitialized", i, 3);
             }
