@@ -215,7 +215,7 @@ public class Develop extends javax.swing.JFrame {
                 "Cycle: " + plp.sim.getInstrCount()
             );
 
-            int lineNum = plp.asm.getLineNumMapper()[pc_index];
+            final int lineNum = plp.asm.getLineNumMapper()[pc_index];
             int fileNum = plp.asm.getFileMapper()[pc_index];
             
             int yPos = (lineNum - 1) * txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
@@ -224,13 +224,6 @@ public class Develop extends javax.swing.JFrame {
             if(yPos > (viewPortY + scroller.getHeight()) || yPos < viewPortY)
                 scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
 
-            tln.setHighlight(lineNum - 1);
-            /*
-            tlh.setY(yPos);
-            tlh.repaint();
-             *
-             */
-
             if(plp.open_asm != fileNum) {
                 plp.open_asm = fileNum;
                 plp.refreshProjectView(false);
@@ -238,6 +231,8 @@ public class Develop extends javax.swing.JFrame {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        tln.setHighlight(lineNum - 1);
+                        tlh.repaint();
                         tln.repaint();
                     }
                 });
@@ -978,6 +973,12 @@ public class Develop extends javax.swing.JFrame {
         }
         plp.g_prg.setVisible(true);
         plp.g_prg.enableControls();
+    }
+
+    public void clearLineHighlights() {
+        tlh.setY(-1);
+        tlh.repaint();
+        tln.repaint();
     }
 
     /** This method is called from within the constructor to

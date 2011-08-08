@@ -59,15 +59,15 @@ public class TextLineHighlighter implements Highlighter.HighlightPainter {
 
         if(yPos > -1) {
             if(old_yPos > -1) {
-                y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
+                y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
                 g.setColor(Color.WHITE);
                 g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
             }
-            y = yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
+            y = yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
             g.setColor(color);
             g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
         } else if(yPos == -1 && old_yPos > -1) {
-            y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
+            y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
             g.setColor(Color.WHITE);
             g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
         }

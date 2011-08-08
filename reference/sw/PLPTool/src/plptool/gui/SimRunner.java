@@ -49,8 +49,8 @@ public class SimRunner extends Thread {
         startInstr = sim.getInstrCount();
         Msg.M("--- run");
         startTime = System.currentTimeMillis();
-        //if(plp.g())
-        //    plp.g_simsh.setStatusString("Running", Color.green);
+        if(plp.g())
+            plp.g_dev.clearLineHighlights();
 
         while(stepCount > 0) {
             int steps = Config.simCyclesPerStep;
