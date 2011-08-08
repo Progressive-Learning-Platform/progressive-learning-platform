@@ -272,13 +272,8 @@ public class TextLineNumber extends JPanel
                         int x;
                         int y = getOffsetY(rowStartOffset, fontMetrics);
 
-    			if (isCurrentLine(rowStartOffset)) {
+    			if (isCurrentLine(rowStartOffset))
     				g.setColor( getCurrentLineForeground() );
-                                tlh.setColor(new Color(235, 235, 255));
-                                tlh.setY(y);
-                                tlh.repaint();
-                        }
-                        
     			else
     				g.setColor( getForeground() );
 
@@ -308,7 +303,9 @@ public class TextLineNumber extends JPanel
                         if(plp.isSimulating() && plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.open_asm, getLineNumber(rowStartOffset))) {
                             stringWidth = fontMetrics.stringWidth( "B>" );
                             x = getOffsetX(availableWidth + 20, stringWidth) + insets.left;
-                            g.drawString("B>", x, y);
+                            //g.drawString("B>", x, y);
+                            g.setColor(Color.RED);
+                            g.fillRect(x + 2, y - (fontMetrics.getHeight() / 2), 16, 4);
                         }
 
     			//  Move to the next row
