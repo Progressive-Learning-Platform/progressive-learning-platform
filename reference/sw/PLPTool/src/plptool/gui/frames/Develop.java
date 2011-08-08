@@ -96,8 +96,8 @@ public class Develop extends javax.swing.JFrame {
         
         splitterH.setDividerLocation(0.25);
 
-        tln = new TextLineNumber(txtEditor, plp);
         tlh = new TextLineHighlighter(txtEditor);
+        tln = new TextLineNumber(txtEditor, tlh, plp);
         scroller.setRowHeaderView(tln);
 
         catchyPLP();
@@ -217,7 +217,7 @@ public class Develop extends javax.swing.JFrame {
 
             int lineNum = plp.asm.getLineNumMapper()[pc_index];
             int fileNum = plp.asm.getFileMapper()[pc_index];
-
+            
             int yPos = (lineNum - 1) * txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
             int viewPortY = scroller.getViewport().getViewPosition().y;
 
@@ -225,8 +225,11 @@ public class Develop extends javax.swing.JFrame {
                 scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
 
             tln.setHighlight(lineNum - 1);
+            /*
             tlh.setY(yPos);
             tlh.repaint();
+             *
+             */
 
             if(plp.open_asm != fileNum) {
                 plp.open_asm = fileNum;
