@@ -75,9 +75,9 @@ public class PLPToolbox {
             tVal = word >> (8 * j);
             tVal &= 0xFF;
             if(tVal >= 0x21 && tVal <= 0x7E)
-                tStr += (char) tVal + " ";
+                tStr += (char) tVal + (j == 0 ? "" : " ");
             else
-                tStr += ". ";
+                tStr += "." + (j == 0 ? "" : " ");
         }
 
         return tStr;

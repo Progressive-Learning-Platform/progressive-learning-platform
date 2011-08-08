@@ -59,6 +59,8 @@ public class TextLineNumber extends JPanel
     private int lastHeight;
     private int lastLine;
 
+        private TextLineHighlighter tlh;
+
 	private HashMap<String, FontMetrics> fonts;
 
 	/**
@@ -67,10 +69,11 @@ public class TextLineNumber extends JPanel
 	 *
 	 *  @param component  the related text component
 	 */
-	public TextLineNumber(JTextComponent component, ProjectDriver plp)
+	public TextLineNumber(JTextComponent component, TextLineHighlighter tlh, ProjectDriver plp)
 	{
 		this(component, 3);
                 this.plp = plp;
+                this.tlh = tlh;
 	}
 
 	/**
@@ -266,8 +269,15 @@ public class TextLineNumber extends JPanel
 		{
 			try
             {
-    			if (isCurrentLine(rowStartOffset))
+                        int x;
+                        int y = getOffsetY(rowStartOffset, fontMetrics);
+
+    			if (isCurrentLine(rowStartOffset)) {
     				g.setColor( getCurrentLineForeground() );
+                                tlh.setColor(new Color(235, 235, 255));
+                                tlh.setY(y);
+                                tlh.repaint();
+                        }
                         
     			else
     				g.setColor( getForeground() );
@@ -279,13 +289,15 @@ public class TextLineNumber extends JPanel
     			int stringWidth;
 
 
-    			int x;
-                        int y = getOffsetY(rowStartOffset, fontMetrics);
+    			
     			if(isHighlightLine(rowStartOffset)) {
                                 g.setColor( getCurrentLineForeground() );
                                 stringWidth = fontMetrics.stringWidth( ">>>" );
                                 x = getOffsetX(availableWidth, stringWidth) + insets.left;
                                 g.drawString(">>>", x, y);
+                                tlh.setColor(new Color(255, 235, 235));
+                                tlh.setY(y);
+                                tlh.repaint();
 
                         }  else {
                                 stringWidth = fontMetrics.stringWidth( lineNumber );
@@ -536,6 +548,7 @@ public class TextLineNumber extends JPanel
             if(!plp.isSimulating())
                 return;
            // apply breakpoint
+
             int height = component.getFontMetrics(component.getFont()).getHeight();
             int line = e.getY() / height + 1;
             long addr = plp.asm.getAddrFromFileMetadata(plp.open_asm, line);
