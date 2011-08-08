@@ -1171,6 +1171,13 @@ public class Asm extends plptool.PLPAsm {
             return Long.parseLong(number) & 0xFFFFFFFF;
     }
 
+    public Byte getRegisterNumberFromName(String name) {
+        if(regs.containsKey(name))
+            return regs.get(name);
+
+        return null;
+    }
+
     /**
      * Utility function to check for number of operands agreement.
      *
