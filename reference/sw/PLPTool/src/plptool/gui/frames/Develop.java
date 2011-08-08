@@ -226,17 +226,12 @@ public class Develop extends javax.swing.JFrame {
 
             if(plp.open_asm != fileNum) {
                 plp.open_asm = fileNum;
-                plp.refreshProjectView(false);
-            } else
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        tln.setHighlight(lineNum - 1);
-                        tlh.repaint();
-                        tln.repaint();
-                    }
-                });
-
+                //plp.refreshProjectView(false);
+                safeRefresh(false);
+            } else {
+                tln.setHighlight(lineNum - 1);
+                repaintLater();
+            }
         }
         } catch(Exception e) {
             JOptionPane.showMessageDialog(this, "Looks like the GUI is being refreshed too fast!\n" +
@@ -248,6 +243,25 @@ public class Develop extends javax.swing.JFrame {
             if(plp.g_simrun != null)
                 plp.g_simrun.stepCount = -1;
         }
+    }
+
+    private void repaintLater() {
+        SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        tlh.repaint();
+                        tln.repaint();
+                    }
+                });
+    }
+
+    private void safeRefresh(final boolean commit) {
+        SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        plp.refreshProjectView(commit);
+                    }
+                });
     }
 
     public void changeFormatting() {
@@ -331,7 +345,8 @@ public class Develop extends javax.swing.JFrame {
         plp.setUnModified();
         txtCurFile.setText("No file open");
         endSim();
-        plp.refreshProjectView(false);
+        //plp.refreshProjectView(false);
+        safeRefresh(false);
     }
 
     public final void disableBuildControls() {
@@ -485,7 +500,8 @@ public class Develop extends javax.swing.JFrame {
                 int remove_asm = Integer.parseInt(tokens[0]);
                 if(remove_asm == plp.open_asm) {
                     plp.open_asm = 0;
-                    plp.refreshProjectView(false);
+                    //plp.refreshProjectView(false);
+                    safeRefresh(false);
                 }
 
                 plp.removeAsm(remove_asm);
@@ -743,8 +759,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimIO.setSelected(false);
         tln.setHighlight(-1);
         tlh.setY(-1);
-        tln.repaint();
-        tlh.repaint();
+        repaintLater();
         plp.desimulate();
         rootmenuSim.setEnabled(false);
         btnSimulate.setSelected(false);
@@ -964,7 +979,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void clearBreakpoints() {
         plp.sim.breakpoints.clear();
-        tln.repaint();
+        repaintLater();
     }
 
     private void program() {
@@ -977,8 +992,7 @@ public class Develop extends javax.swing.JFrame {
 
     public void clearLineHighlights() {
         tlh.setY(-1);
-        tlh.repaint();
-        tln.repaint();
+        repaintLater();
     }
 
     /** This method is called from within the constructor to
@@ -2278,7 +2292,8 @@ public class Develop extends javax.swing.JFrame {
 
                     plp.updateAsm(plp.open_asm, txtEditor.getText());
                     plp.open_asm = Integer.parseInt(tokens[0]);
-                    plp.refreshProjectView(false);
+                    //plp.refreshProjectView(false);
+                    safeRefresh(false);
                     if (Config.devSyntaxHighlighting) {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
@@ -2470,7 +2485,8 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuExitSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitSimActionPerformed
         endSim();
-        plp.refreshProjectView(false);
+        //plp.refreshProjectView(false);
+        safeRefresh(false);
     }//GEN-LAST:event_menuExitSimActionPerformed
 
     private void menuSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimRunActionPerformed
@@ -2532,7 +2548,8 @@ public class Develop extends javax.swing.JFrame {
         plp.sim.reset();
         
         plp.updateComponents(true);
-        plp.refreshProjectView(false);
+        //plp.refreshProjectView(false);
+        safeRefresh(false);
     }//GEN-LAST:event_menuSimResetActionPerformed
 
     private void menuSimLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimLEDsActionPerformed
@@ -2565,7 +2582,8 @@ public class Develop extends javax.swing.JFrame {
                 beginSim();
         } else {
             endSim();
-            plp.refreshProjectView(false);
+            //plp.refreshProjectView(false);
+            safeRefresh(false);
         }
     }//GEN-LAST:event_btnSimulateActionPerformed
 
@@ -2596,7 +2614,8 @@ public class Develop extends javax.swing.JFrame {
         plp.sim.reset();
 
         plp.updateComponents(true);
-        plp.refreshProjectView(false);
+        //plp.refreshProjectView(false);
+        safeRefresh(false);
     }//GEN-LAST:event_btnSimResetActionPerformed
 
     private void menuStep1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep1ActionPerformed
