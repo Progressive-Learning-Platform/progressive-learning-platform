@@ -83,7 +83,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cmbFontSize" pref="361" max="32767" attributes="0"/>
+                              <Component id="cmbFontSize" pref="394" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -100,7 +100,7 @@
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cmbFontSize" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="310" max="32767" attributes="0"/>
+                      <EmptySpace pref="340" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -156,7 +156,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="simDumpTraceOnFailedEval" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simNoExecute" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="sSimSpeed" alignment="0" pref="445" max="32767" attributes="0"/>
+                          <Component id="sSimSpeed" alignment="0" pref="448" max="32767" attributes="0"/>
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simBusReadDefaultZero" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simRefreshDev" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -180,7 +180,7 @@
                       <Component id="simDumpTraceOnFailedEval" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="simRefreshDev" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="120" max="32767" attributes="0"/>
+                      <EmptySpace pref="203" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -269,12 +269,12 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lblMaxChunkSize" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                              <Component id="prgMaxChunkSize" pref="277" max="32767" attributes="0"/>
+                              <Component id="prgMaxChunkSize" pref="330" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lblReadTimeout" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="prgReadTimeout" pref="275" max="32767" attributes="0"/>
+                              <Component id="prgReadTimeout" pref="325" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -298,7 +298,7 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="lblPrgWarning" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="234" max="32767" attributes="0"/>
+                      <EmptySpace pref="279" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

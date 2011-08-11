@@ -487,6 +487,27 @@ public class PLPSimBus {
         }
     }
 
+    /**
+     * Like read(), but ignores errors
+     *
+     * @param addr Address to read from
+     * @return Data with successful read, -1 otherwise
+     */
+    public Object uncheckedRead(long addr) {
+        Object[] modules = bus_modules.toArray();
+        Object value = null;
+        for(int i = modules.length - 1; i >= 0; i--) {
+            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
+               addr <= ((PLPSimBusModule)modules[i]).endAddr())
+                value = ((PLPSimBusModule)modules[i]).read(addr);
+        }
+
+        if(value != null)
+            return value;
+
+        return null;
+    }
+
     @Override public String toString() {
         return "PLPSimBus";
     }

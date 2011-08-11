@@ -18,10 +18,13 @@
 
 package plptool.mods;
 
+import java.awt.Color;
 import plptool.Msg;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.awt.Toolkit;
+
 
 /**
  *
@@ -39,11 +42,10 @@ public class VGAFrame extends javax.swing.JFrame {
         initComponents();
         canvas = new VGACanvas(I);
         canvas.setSize(new Dimension(640, 480));
-        container.setSize(new Dimension(640, 480));
-        this.add(container);
+        //container.setSize(new Dimension(640, 480));
+        //container.setOpaque(true);
+        //this.add(container);
         container.add("Canvas", canvas);
-        this.setSize(new Dimension(660, 500));
-        this.pack();
     }
 
     public void draw(int[][] image) {
@@ -58,8 +60,20 @@ public class VGAFrame extends javax.swing.JFrame {
             for(int y = 0; y < 480; y++)
                 I.setRGB(x, y, image[x][y]);
 
+
         canvas.setImage(I);
         canvas.paint(canvas.getGraphics());
+    }
+
+    public void setLabelEnabled(boolean b) {
+        if(b)
+            lblVgaEnabled.setText("VGA is enabled");
+        else
+            lblVgaEnabled.setText("VGA is disabled");
+    }
+
+    public void setFramePointer(long addr) {
+        txtFramePointer.setText(String.format("0x%08x", addr));
     }
 
     /** This method is called from within the constructor to
@@ -72,13 +86,20 @@ public class VGAFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         container = new javax.swing.JPanel();
+        btnSaveToFile = new javax.swing.JButton();
+        lblVgaEnabled = new javax.swing.JLabel();
+        lblFramePointer = new javax.swing.JLabel();
+        txtFramePointer = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(VGAFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setMinimumSize(new java.awt.Dimension(640, 480));
         setName("Form"); // NOI18N
+        setResizable(false);
 
+        container.setMaximumSize(new java.awt.Dimension(640, 480));
+        container.setMinimumSize(new java.awt.Dimension(640, 480));
         container.setName("container"); // NOI18N
         container.setPreferredSize(new java.awt.Dimension(640, 480));
 
@@ -86,26 +107,72 @@ public class VGAFrame extends javax.swing.JFrame {
         container.setLayout(containerLayout);
         containerLayout.setHorizontalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 632, Short.MAX_VALUE)
+            .addGap(0, 640, Short.MAX_VALUE)
         );
         containerLayout.setVerticalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 454, Short.MAX_VALUE)
+            .addGap(0, 480, Short.MAX_VALUE)
         );
+
+        btnSaveToFile.setText(resourceMap.getString("btnSaveToFile.text")); // NOI18N
+        btnSaveToFile.setName("btnSaveToFile"); // NOI18N
+        btnSaveToFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveToFileActionPerformed(evt);
+            }
+        });
+
+        lblVgaEnabled.setText(resourceMap.getString("lblVgaEnabled.text")); // NOI18N
+        lblVgaEnabled.setName("lblVgaEnabled"); // NOI18N
+
+        lblFramePointer.setText(resourceMap.getString("lblFramePointer.text")); // NOI18N
+        lblFramePointer.setName("lblFramePointer"); // NOI18N
+
+        txtFramePointer.setEditable(false);
+        txtFramePointer.setText(resourceMap.getString("txtFramePointer.text")); // NOI18N
+        txtFramePointer.setName("txtFramePointer"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+            .addComponent(container, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblFramePointer)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtFramePointer, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblVgaEnabled)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+                .addComponent(btnSaveToFile)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(container, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSaveToFile)
+                    .addComponent(lblFramePointer)
+                    .addComponent(txtFramePointer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblVgaEnabled))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveToFileActionPerformed
+        Msg.M("Writing to " + System.getProperty("user.dir") + "/vgacapture.png ...");
+
+        try {
+            javax.imageio.ImageIO.write(I, "png", new java.io.File("./vgacapture.png"));
+        } catch(Exception e) {
+            Msg.E("Failed to write vgacapture.png", plptool.Constants.PLP_FILE_SAVE_ERROR, null);
+        }
+    }//GEN-LAST:event_btnSaveToFileActionPerformed
 
     @Override
     public String toString() {
@@ -113,7 +180,11 @@ public class VGAFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSaveToFile;
     private javax.swing.JPanel container;
+    private javax.swing.JLabel lblFramePointer;
+    private javax.swing.JLabel lblVgaEnabled;
+    private javax.swing.JTextField txtFramePointer;
     // End of variables declaration//GEN-END:variables
 
 }

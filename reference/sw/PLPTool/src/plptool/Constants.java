@@ -174,13 +174,14 @@ public class Constants {
     public static final int PLP_TOOLFRAME_WATCHER                = 3;
     public static final int PLP_TOOLFRAME_SIMRUN                 = 4;
     public static final int PLP_TOOLFRAME_SIMCPU                 = 5;
+    public static final int PLP_TOOLFRAME_SIMCTRL                = 6;
 
-    public static final int PLP_TOOLFRAME_SIMLEDS                = 6;
-    public static final int PLP_TOOLFRAME_SIMSWITCHES            = 7;
-    public static final int PLP_TOOLFRAME_SIMUART                = 8;
-    public static final int PLP_TOOLFRAME_SIMPLPID               = 9;
-    public static final int PLP_TOOLFRAME_SIMSEVENSEGMENTS       = 10;
-    public static final int PLP_TOOLFRAME_SIMVGA                 = 11;
+    public static final int PLP_TOOLFRAME_SIMLEDS                = 7;
+    public static final int PLP_TOOLFRAME_SIMSWITCHES            = 8;
+    public static final int PLP_TOOLFRAME_SIMUART                = 9;
+    public static final int PLP_TOOLFRAME_SIMPLPID               = 10;
+    public static final int PLP_TOOLFRAME_SIMSEVENSEGMENTS       = 11;
+    public static final int PLP_TOOLFRAME_SIMVGA                 = 12;
 
     // ASMView Columns identifiers
     public static final int ASMVIEW_ADDR                         = 0;

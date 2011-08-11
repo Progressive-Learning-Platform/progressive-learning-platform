@@ -255,7 +255,7 @@ public class Develop extends javax.swing.JFrame {
                 });
     }
 
-    private void safeRefresh(final boolean commit) {
+    public void safeRefresh(final boolean commit) {
         SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -764,6 +764,8 @@ public class Develop extends javax.swing.JFrame {
         rootmenuSim.setEnabled(false);
         btnSimulate.setSelected(false);
         btnSimRun.setSelected(false);
+        btnCPU.setSelected(false);
+        btnWatcher.setSelected(false);
         btnSimStep.setVisible(false);
         btnSimReset.setVisible(false);
         btnSimRun.setVisible(false);
@@ -799,6 +801,9 @@ public class Develop extends javax.swing.JFrame {
             case Constants.PLP_TOOLFRAME_SIMRUN:
                 return menuSimRun;
 
+            case Constants.PLP_TOOLFRAME_SIMCTRL:
+                return menuSimControl;
+
             case Constants.PLP_TOOLFRAME_SIMLEDS:
                 return menuSimLEDs;
 
@@ -828,10 +833,10 @@ public class Develop extends javax.swing.JFrame {
                 return null;
 
             case Constants.PLP_TOOLFRAME_SIMCPU:
-                return null;
+                return btnCPU;
 
             case Constants.PLP_TOOLFRAME_WATCHER:
-                return null;
+                return btnWatcher;
 
             case Constants.PLP_TOOLFRAME_SIMRUN:
                 return btnSimRun;
@@ -995,6 +1000,22 @@ public class Develop extends javax.swing.JFrame {
         repaintLater();
     }
 
+    public void runSimState() {
+        tlh.setY(-1);
+        repaintLater();
+        menuSimRun.setSelected(true);
+        btnSimRun.setSelected(true);
+        menuSimStep.setEnabled(false);
+        btnSimStep.setEnabled(false);
+    }
+
+    public void stopSimState() {
+        menuSimRun.setSelected(false);
+        btnSimRun.setSelected(false);
+        menuSimStep.setEnabled(true);
+        btnSimStep.setEnabled(true);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -1031,8 +1052,8 @@ public class Develop extends javax.swing.JFrame {
         btnSimRun = new javax.swing.JToggleButton();
         btnSimReset = new javax.swing.JButton();
         separatorSimControl = new javax.swing.JToolBar.Separator();
-        btnCPU = new javax.swing.JButton();
-        btnWatcher = new javax.swing.JButton();
+        btnCPU = new javax.swing.JToggleButton();
+        btnWatcher = new javax.swing.JToggleButton();
         btnSimLEDs = new javax.swing.JToggleButton();
         btnSimSwitches = new javax.swing.JToggleButton();
         btnSimSevenSegments = new javax.swing.JToggleButton();
@@ -1091,6 +1112,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimTools = new javax.swing.JMenu();
         menuSimView = new javax.swing.JCheckBoxMenuItem();
         menuSimWatcher = new javax.swing.JCheckBoxMenuItem();
+        menuSimControl = new javax.swing.JCheckBoxMenuItem();
         menuSimMemory = new javax.swing.JCheckBoxMenuItem();
         menuSimIO = new javax.swing.JCheckBoxMenuItem();
         menuIOReg = new javax.swing.JMenu();
@@ -1197,11 +1219,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 796, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 600, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 599, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1215,7 +1237,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1980,6 +2002,16 @@ public class Develop extends javax.swing.JFrame {
         });
         menuSimTools.add(menuSimWatcher);
 
+        menuSimControl.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimControl.setText(resourceMap.getString("menuSimControl.text")); // NOI18N
+        menuSimControl.setName("menuSimControl"); // NOI18N
+        menuSimControl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSimControlActionPerformed(evt);
+            }
+        });
+        menuSimTools.add(menuSimControl);
+
         menuSimMemory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuSimMemory.setMnemonic('D');
         menuSimMemory.setText(resourceMap.getString("menuSimMemory.text")); // NOI18N
@@ -2491,18 +2523,9 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimRunActionPerformed
         if(menuSimRun.isSelected()) {
-            plp.g_simrun = new plptool.gui.SimRunner(plp);
-            plp.g_simrun.start();
-            menuSimRun.setSelected(true);
-            btnSimRun.setSelected(true);
+            plp.runSimulation();
         } else {
-            if(plp.g_simrun != null) {
-                try {
-                    plp.g_simrun.stepCount = 0;
-                } catch(Exception e) {}
-            }
-            menuSimRun.setSelected(false);
-            btnSimRun.setSelected(false);
+            plp.stopSimulation();
         }
     }//GEN-LAST:event_menuSimRunActionPerformed
 
@@ -2521,6 +2544,8 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSimIOActionPerformed
 
     private void menuSimWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimWatcherActionPerformed
+        btnWatcher.setSelected(menuSimWatcher.isSelected());
+
         if(menuSimWatcher.isSelected()) {
             if(plp.g_watcher == null) {
                 plp.g_watcher = new Watcher(plp);
@@ -2528,6 +2553,7 @@ public class Develop extends javax.swing.JFrame {
             }
 
             plp.g_watcher.setVisible(true);
+
         } else {
             if(plp.g_watcher != null)
                 plp.g_watcher.setVisible(false);
@@ -2535,6 +2561,8 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSimWatcherActionPerformed
 
     private void menuSimViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimViewActionPerformed
+        btnCPU.setSelected(menuSimView.isSelected());
+
         if(menuSimView.isSelected()) {
             plp.g_sim.setVisible(true);
         } else {
@@ -2544,7 +2572,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimResetActionPerformed
         if(plp.g_simrun != null)
-            plp.g_simrun.stepCount = -1;
+            plp.stopSimulation();
         plp.sim.reset();
         
         plp.updateComponents(true);
@@ -2589,18 +2617,9 @@ public class Develop extends javax.swing.JFrame {
 
     private void btnSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimRunActionPerformed
         if(btnSimRun.isSelected()) {
-            plp.g_simrun = new plptool.gui.SimRunner(plp);
-            plp.g_simrun.start();
-            menuSimRun.setSelected(true);
-            btnSimRun.setSelected(true);
+            plp.runSimulation();
         } else {
-            if(plp.g_simrun != null) {
-                try {
-                    plp.g_simrun.stepCount = 0;
-                } catch(Exception e) {}
-            }
-            menuSimRun.setSelected(false);
-            btnSimRun.setSelected(false);
+            plp.stopSimulation();
         }
     }//GEN-LAST:event_btnSimRunActionPerformed
 
@@ -2610,7 +2629,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void btnSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimResetActionPerformed
         if(plp.g_simrun != null)
-            plp.g_simrun.stepCount = -1;
+            plp.stopSimulation();
         plp.sim.reset();
 
         plp.updateComponents(true);
@@ -2654,21 +2673,9 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuStep5ActionPerformed
 
-    private void btnWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWatcherActionPerformed
-        plp.g_watcher.setVisible(true);
-        menuSimWatcher.setSelected(true);
-    }//GEN-LAST:event_btnWatcherActionPerformed
-
     private void menuClearBreakpointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClearBreakpointsActionPerformed
         clearBreakpoints();
     }//GEN-LAST:event_menuClearBreakpointsActionPerformed
-
-    private void btnCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCPUActionPerformed
-        if(plp.g_sim != null) {
-            plp.g_sim.setVisible(true);
-            menuSimView.setSelected(true);
-        }
-    }//GEN-LAST:event_btnCPUActionPerformed
 
     private void menuToolbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuToolbarActionPerformed
         toolbar.setVisible(menuToolbar.isSelected());
@@ -2697,6 +2704,37 @@ public class Develop extends javax.swing.JFrame {
     private void btnSimPLPIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimPLPIDActionPerformed
         setPLPIDFrame(btnSimPLPID.isSelected());
     }//GEN-LAST:event_btnSimPLPIDActionPerformed
+
+    private void menuSimControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimControlActionPerformed
+        plp.g_simctrl.setVisible(menuSimControl.isSelected());
+    }//GEN-LAST:event_menuSimControlActionPerformed
+
+    private void btnWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWatcherActionPerformed
+        menuSimWatcher.setSelected(btnWatcher.isSelected());
+
+        if(btnWatcher.isSelected()) {
+            if(plp.g_watcher == null) {
+                plp.g_watcher = new Watcher(plp);
+                attachModuleFrameListeners(plp.g_watcher, Constants.PLP_TOOLFRAME_WATCHER);
+            }
+
+            plp.g_watcher.setVisible(true);
+
+        } else {
+            if(plp.g_watcher != null)
+                plp.g_watcher.setVisible(false);
+        }
+    }//GEN-LAST:event_btnWatcherActionPerformed
+
+    private void btnCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCPUActionPerformed
+        menuSimView.setSelected(btnCPU.isSelected());
+
+        if(btnCPU.isSelected()) {
+            plp.g_sim.setVisible(true);
+        } else {
+            plp.g_sim.setVisible(false);
+        }
+    }//GEN-LAST:event_btnCPUActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
@@ -2770,7 +2808,7 @@ public class Develop extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAssemble;
-    private javax.swing.JButton btnCPU;
+    private javax.swing.JToggleButton btnCPU;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnProgram;
@@ -2785,7 +2823,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JToggleButton btnSimUART;
     private javax.swing.JToggleButton btnSimVGA;
     private javax.swing.JToggleButton btnSimulate;
-    private javax.swing.JButton btnWatcher;
+    private javax.swing.JToggleButton btnWatcher;
     private javax.swing.JPanel devMainPane;
     private javax.swing.ButtonGroup grpSteps;
     private javax.swing.JMenuBar jMenuBar1;
@@ -2836,6 +2874,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator5;
     private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
+    private javax.swing.JCheckBoxMenuItem menuSimControl;
     private javax.swing.JCheckBoxMenuItem menuSimIO;
     private javax.swing.JCheckBoxMenuItem menuSimLEDs;
     private javax.swing.JCheckBoxMenuItem menuSimMemory;

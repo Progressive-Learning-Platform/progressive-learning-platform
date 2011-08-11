@@ -375,6 +375,9 @@ public class OptionsFrame extends javax.swing.JFrame {
 
     private void sSimSpeedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sSimSpeedStateChanged
         Config.simRunnerDelay = sSimSpeed.getValue();
+
+        if(plp.g_simctrl != null)
+            plp.g_simctrl.updateSlider();
     }//GEN-LAST:event_sSimSpeedStateChanged
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
