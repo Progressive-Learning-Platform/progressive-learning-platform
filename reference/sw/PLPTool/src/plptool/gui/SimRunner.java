@@ -74,8 +74,10 @@ public class SimRunner extends Thread {
                 if(plp.g())
                     plp.updateComponents(Config.simRefreshDevDuringSimRun);
             if(Msg.lastError != 0) {
-                if(plp.g())
+                if(plp.g()) {
                     plp.g_err.setError(Msg.lastError);
+                    plp.stopSimulation();
+                }
                 break;
             }
             

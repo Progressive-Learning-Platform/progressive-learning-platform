@@ -118,6 +118,7 @@ public class ProjectDriver {
     public AsmNameDialog           g_fname;    // ASM Name dialog
     public SimRunner               g_simrun;   // SimRunner thread
     public Watcher                 g_watcher;  // Watcher window
+    public SimControl              g_simctrl;  // Simulation Control Frame
     public ASMSimView              g_asmview;  // ASM Sim viewer
     public QuickRef                g_qref;     // Quick Reference
     public FindAndReplace          g_find;     // Find and Replace
@@ -872,6 +873,9 @@ public class ProjectDriver {
             g_watcher = new Watcher(this);
             g_watcher.setVisible(false);
             g_dev.attachModuleFrameListeners(g_watcher, Constants.PLP_TOOLFRAME_WATCHER);
+            g_simctrl = new SimControl(this);
+            g_simctrl.setVisible(false);
+            g_dev.attachModuleFrameListeners(g_simctrl, Constants.PLP_TOOLFRAME_SIMCTRL);
             if(watcher != null) {
                 g_watcher.setEntries(watcher);
                 g_watcher.updateWatcher();
@@ -928,9 +932,13 @@ public class ProjectDriver {
         if(g_asmview != null)
             g_asmview.dispose();
 
+        if(g_simctrl != null)
+            g_simctrl.dispose();
+
         g_ioreg = null;
         g_watcher = null;
         g_asmview = null;
+        g_simctrl = null;
 
         sim_mode = false;
         updateWindowTitle();
@@ -939,7 +947,44 @@ public class ProjectDriver {
     }
 
     /**
-     * Return whether the project is being simulated
+     * Run the simulation driver (SimRunner) thread
+     *
+     * @return PLP_OK on successful operation, error code otherwise
+     */
+    public int runSimulation() {
+        g_simrun = new plptool.gui.SimRunner(this);
+        g_simrun.start();
+
+        if(g) {
+            g_dev.runSimState();
+            g_simctrl.runSimState();
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Stop the simulation driver (SimRunner) thread
+     *
+     * @return PLP_OK on successful operation, error code otherwise
+     */
+    public int stopSimulation() {
+        if(g_simrun != null) {
+            try {
+                g_simrun.stepCount = 0;
+            } catch(Exception e) {}
+        }
+
+        if(g) {
+            g_dev.stopSimState();
+            g_simctrl.stopSimState();
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Return whether the project is in simulation mode
      *
      * @return boolean
      */

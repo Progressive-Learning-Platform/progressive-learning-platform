@@ -42,7 +42,7 @@ public class VGA extends PLPSimBusModule {
     }
 
     public int eval() {
-        // No need to eval every cycle
+
         return Constants.PLP_OK;
     }
 
@@ -67,6 +67,9 @@ public class VGA extends PLPSimBusModule {
         long framePointer = (Long) super.read(startAddr + 4);
         Msg.D("Framepointer is at " + String.format("0x%08x", framePointer), 4, this);
 
+        frame.setLabelEnabled(((Long) super.read(startAddr) & 0x1) == 1);
+        frame.setFramePointer(framePointer);
+
         // the image is a 640x480 int array (each color is 8-bit, most significant
         // 8-bit is ignored (we're using INT_RGB_TYPE for BufferedImage).
         int[][] image = new int[640][480];
@@ -79,7 +82,16 @@ public class VGA extends PLPSimBusModule {
                 // default data to 0
                 long data = 0;
                 if(bus.isInitialized(addr)) {
-                    data = (Long) bus.read(addr);
+                    /* -------------------- HACK ALERT ------------------------
+                     * This is a hack to prevent racing condition, may cause
+                     * some artifact in VGA output. Unchecked read on the bus
+                     * will return 'null' if the mapped module failed to
+                     * return a value and will not generate a simulation-stopping
+                     * error. This could happen when the module is being written
+                     * to while we issue a read to the bus.
+                     */
+                    Object dataObj = bus.uncheckedRead(addr);
+                    data = dataObj != null ? (Long) dataObj : 0;
                     Msg.D("Initialized pixel at " + String.format("0x%08x", addr), 4, this);
                 }
 
