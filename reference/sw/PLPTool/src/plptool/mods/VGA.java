@@ -83,7 +83,7 @@ public class VGA extends PLPSimBusModule {
                 long data = 0;
                 if(bus.isInitialized(addr)) {
                     /* -------------------- HACK ALERT ------------------------
-                     * This is a hack to prevent racing condition, may cause
+                     * This is a hack to prevent race condition, and may cause
                      * some artifact in VGA output. Unchecked read on the bus
                      * will return 'null' if the mapped module failed to
                      * return a value and will not generate a simulation-stopping

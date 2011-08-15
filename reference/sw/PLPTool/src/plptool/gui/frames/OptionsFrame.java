@@ -158,7 +158,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addGroup(paneEditorLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbFontSize, 0, 361, Short.MAX_VALUE)))
+                        .addComponent(cmbFontSize, 0, 394, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         paneEditorLayout.setVerticalGroup(
@@ -170,7 +170,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(310, Short.MAX_VALUE))
+                .addContainerGap(347, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
@@ -236,7 +236,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneSimLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(simBusReadDefaultZero)
                     .addComponent(simRefreshDev))
@@ -257,7 +257,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simDumpTraceOnFailedEval)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simRefreshDev)
-                .addContainerGap(120, Short.MAX_VALUE))
+                .addContainerGap(210, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
@@ -299,13 +299,13 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(lblPrgWarning)
                     .addComponent(prgProgramInChunks)
                     .addGroup(paneProgrammerLayout.createSequentialGroup()
-                        .addComponent(lblMaxChunkSize)
+                        .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblReadTimeout)
+                            .addComponent(lblMaxChunkSize))
                         .addGap(18, 18, 18)
-                        .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
-                    .addGroup(paneProgrammerLayout.createSequentialGroup()
-                        .addComponent(lblReadTimeout)
-                        .addGap(18, 18, 18)
-                        .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)))
+                        .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                            .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneProgrammerLayout.setVerticalGroup(
@@ -323,7 +323,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(prgReadTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lblPrgWarning)
-                .addContainerGap(234, Short.MAX_VALUE))
+                .addContainerGap(286, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
@@ -348,12 +348,12 @@ public class OptionsFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tabsOptions, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnApply)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tabsOptions, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnApply, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -361,8 +361,8 @@ public class OptionsFrame extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(tabsOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(tabsOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 431, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClose)
