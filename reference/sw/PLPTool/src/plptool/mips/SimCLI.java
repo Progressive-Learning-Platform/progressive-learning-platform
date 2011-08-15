@@ -67,6 +67,7 @@ public class SimCLI {
                 Msg.M("Usage: s <number of instructions>");
             }
             else {
+                Msg.lastError = 0;
                 int steps = PLPToolbox.parseNumInt(tokens[1]);
                 long time = 0;
                 if(steps > Constants.PLP_LONG_SIM) {
@@ -76,7 +77,7 @@ public class SimCLI {
                     }
                     time = System.currentTimeMillis();
                 }
-                for(int i = 0; i < steps; i++) {
+                for(int i = 0; i < steps && Msg.lastError == 0; i++) {
                     if(core.step() != Constants.PLP_OK)
                     Msg.E("Simulation is stale. Please reset.",
                              Constants.PLP_SIM_STALE, null);
