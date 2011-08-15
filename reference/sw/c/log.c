@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "log.h"
 
-static int LOG_LEVEL = 0;
+int LOG_LEVEL = 0;
 
 void _log(int l, FILE *f, char *s) {
 	if (LOG_LEVEL >= l)
