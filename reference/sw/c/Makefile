@@ -17,7 +17,7 @@ build.files: $(addsuffix .build, $(FILES))
 
 build.flex:
 	+@echo build lexer
-	+@flex -s lexer.flex >flex.build.out 2>&1 || (echo BUILD FAIL lexer; cat flex.build.out; exit 1)
+	+@flex -s lexer.lex >flex.build.out 2>&1 || (echo BUILD FAIL lexer; cat flex.build.out; exit 1)
 	+@rm -f flex.build.out
 
 clean.flex:
