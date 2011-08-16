@@ -8,9 +8,12 @@ IS			(u|U|l|L)*
 %{
 #include <stdio.h>
 #include "parser.tab.h"
+#include "log.h"
 
 void count();
 %}
+
+%option yylineno
 
 %%
 "/*"			{ comment(); }
@@ -109,7 +112,7 @@ L?\"(\\.|[^\\"])*\"	{ count(); return(STRING_LITERAL); }
 "?"			{ count(); return('?'); }
 
 [ \t\v\n\f]		{ count(); }
-.			{ /* ignore bad characters */ }
+.			{ printf("[e] %d: bad input '%s'\n", yylineno, yytext); }
 
 %%
 
@@ -151,6 +154,11 @@ void count()
 			column += 8 - (column % 8);
 		else
 			column++;
+
+	/* log all tokens */
+	vlog("[lexer] : ");
+	vlog(yytext);
+	vlog("\n");
 
 	ECHO;
 }

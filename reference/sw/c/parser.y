@@ -416,6 +416,7 @@ function_definition
 
 %%
 #include <stdio.h>
+#include "log.h"
 
 extern char yytext[];
 extern int column;
