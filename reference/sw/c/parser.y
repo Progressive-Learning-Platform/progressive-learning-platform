@@ -15,13 +15,13 @@
 
 primary_expression
 	: IDENTIFIER
-	| CONSTANT
+	| CONSTANT { printf("constant: %s", $1); }
 	| STRING_LITERAL
 	| '(' expression ')'
 	;
 
 postfix_expression
-	: primary_expression
+	: primary_expression { printf("primary\n"); }
 	| postfix_expression '[' expression ']'
 	| postfix_expression '(' ')'
 	| postfix_expression '(' argument_expression_list ')'
@@ -37,7 +37,7 @@ argument_expression_list
 	;
 
 unary_expression
-	: postfix_expression
+	: postfix_expression { printf("postfix\n"); }
 	| INC_OP unary_expression
 	| DEC_OP unary_expression
 	| unary_operator cast_expression
@@ -55,12 +55,12 @@ unary_operator
 	;
 
 cast_expression
-	: unary_expression
+	: unary_expression { printf("unary\n"); }
 	| '(' type_name ')' cast_expression
 	;
 
 multiplicative_expression
-	: cast_expression
+	: cast_expression { printf("cast\n"); }
 	| multiplicative_expression '*' cast_expression
 	| multiplicative_expression '/' cast_expression
 	| multiplicative_expression '%' cast_expression
@@ -68,7 +68,7 @@ multiplicative_expression
 
 additive_expression
 	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
+	| additive_expression '+' multiplicative_expression { printf("add : %s - %s\n", $1, $3); }
 	| additive_expression '-' multiplicative_expression
 	;
 
