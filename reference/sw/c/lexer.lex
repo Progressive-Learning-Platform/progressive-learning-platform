@@ -51,18 +51,18 @@ void count();
 "volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
 
-{L}({L}|{D})*		{ count(); return(check_type()); }
+{L}({L}|{D})*		{ yylval=strdup(yytext); count(); return(check_type()); }
 
-0[xX]{H}+{IS}?		{ count(); return(CONSTANT); }
-0{D}+{IS}?		{ count(); return(CONSTANT); }
-{D}+{IS}?		{ count(); return(CONSTANT); }
-L?'(\\.|[^\\'])+'	{ count(); return(CONSTANT); }
+0[xX]{H}+{IS}?		{ yylval=strdup(yytext); count(); return(CONSTANT); }
+0{D}+{IS}?		{ yylval=strdup(yytext); count(); return(CONSTANT); }
+{D}+{IS}?		{ yylval=strdup(yytext); count(); return(CONSTANT); }
+L?'(\\.|[^\\'])+'	{ yylval=strdup(yytext); count(); return(CONSTANT); }
 
-{D}+{E}{FS}?		{ count(); return(CONSTANT); }
-{D}*"."{D}+({E})?{FS}?	{ count(); return(CONSTANT); }
-{D}+"."{D}*({E})?{FS}?	{ count(); return(CONSTANT); }
+{D}+{E}{FS}?		{ yylval=strdup(yytext); count(); return(CONSTANT); }
+{D}*"."{D}+({E})?{FS}?	{ yylval=strdup(yytext); count(); return(CONSTANT); }
+{D}+"."{D}*({E})?{FS}?	{ yylval=strdup(yytext); count(); return(CONSTANT); }
 
-L?\"(\\.|[^\\"])*\"	{ count(); return(STRING_LITERAL); }
+L?\"(\\.|[^\\"])*\"	{ yylval=strdup(yytext); count(); return(STRING_LITERAL); }
 
 "..."			{ count(); return(ELLIPSIS); }
 ">>="			{ count(); return(RIGHT_ASSIGN); }
