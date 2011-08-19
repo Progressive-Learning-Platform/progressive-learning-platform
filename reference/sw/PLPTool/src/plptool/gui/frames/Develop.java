@@ -755,7 +755,6 @@ public class Develop extends javax.swing.JFrame {
         menuSimRun.setSelected(false);
         menuSimView.setSelected(false);
         menuSimWatcher.setSelected(false);
-        menuSimMemory.setSelected(false);
         menuSimIO.setSelected(false);
         tln.setHighlight(-1);
         tlh.setY(-1);
@@ -1113,8 +1112,8 @@ public class Develop extends javax.swing.JFrame {
         menuSimView = new javax.swing.JCheckBoxMenuItem();
         menuSimWatcher = new javax.swing.JCheckBoxMenuItem();
         menuSimControl = new javax.swing.JCheckBoxMenuItem();
-        menuSimMemory = new javax.swing.JCheckBoxMenuItem();
         menuSimIO = new javax.swing.JCheckBoxMenuItem();
+        menuSimAsmView = new javax.swing.JMenuItem();
         menuIOReg = new javax.swing.JMenu();
         menuSimLEDs = new javax.swing.JCheckBoxMenuItem();
         menuSimSwitches = new javax.swing.JCheckBoxMenuItem();
@@ -1237,7 +1236,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -2012,12 +2011,6 @@ public class Develop extends javax.swing.JFrame {
         });
         menuSimTools.add(menuSimControl);
 
-        menuSimMemory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        menuSimMemory.setMnemonic('D');
-        menuSimMemory.setText(resourceMap.getString("menuSimMemory.text")); // NOI18N
-        menuSimMemory.setName("menuSimMemory"); // NOI18N
-        menuSimTools.add(menuSimMemory);
-
         menuSimIO.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuSimIO.setMnemonic('R');
         menuSimIO.setText(resourceMap.getString("menuSimIO.text")); // NOI18N
@@ -2028,6 +2021,15 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         menuSimTools.add(menuSimIO);
+
+        menuSimAsmView.setText(resourceMap.getString("menuSimAsmView.text")); // NOI18N
+        menuSimAsmView.setName("menuSimAsmView"); // NOI18N
+        menuSimAsmView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSimAsmViewActionPerformed(evt);
+            }
+        });
+        menuSimTools.add(menuSimAsmView);
 
         rootmenuSim.add(menuSimTools);
 
@@ -2736,6 +2738,13 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnCPUActionPerformed
 
+    private void menuSimAsmViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimAsmViewActionPerformed
+        if(plp.g_asmview == null)
+            plp.g_asmview = new ASMSimView(plp);
+
+        plp.g_asmview.setVisible(true);
+    }//GEN-LAST:event_menuSimAsmViewActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -2874,10 +2883,10 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator5;
     private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
+    private javax.swing.JMenuItem menuSimAsmView;
     private javax.swing.JCheckBoxMenuItem menuSimControl;
     private javax.swing.JCheckBoxMenuItem menuSimIO;
     private javax.swing.JCheckBoxMenuItem menuSimLEDs;
-    private javax.swing.JCheckBoxMenuItem menuSimMemory;
     private javax.swing.JCheckBoxMenuItem menuSimPLPID;
     private javax.swing.JMenuItem menuSimReset;
     private javax.swing.JCheckBoxMenuItem menuSimRun;

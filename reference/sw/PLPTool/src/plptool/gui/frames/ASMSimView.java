@@ -73,8 +73,10 @@ public class ASMSimView extends javax.swing.JFrame {
 
         for(int i = 0; i < objCode.length; i++) {
             if(((plptool.mips.SimCore) plp.sim).pc.eval() == plp.asm.getAddrTable()[i]) {
-                if((Boolean) model.getValueAt(i, Constants.ASMVIEW_BREAKPOINT))
+                if((Boolean) model.getValueAt(i, Constants.ASMVIEW_BREAKPOINT)) {
                     plp.g_simrun.stepCount = -1;
+                    plp.stopSimulation();
+                }
                 model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]) + " [PC]", i, Constants.ASMVIEW_ADDR);
             } else {
                 model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]), i, Constants.ASMVIEW_ADDR);
@@ -94,10 +96,6 @@ public class ASMSimView extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblASM = new javax.swing.JTable();
 
-        ;
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        ;
-        setResizable(true);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ASMSimView.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
