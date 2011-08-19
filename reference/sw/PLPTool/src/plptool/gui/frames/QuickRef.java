@@ -94,7 +94,7 @@ public class QuickRef extends javax.swing.JFrame {
         data[0][0] = "<font color=blue><b>addiu</b></font> $rt, $rs, imm";     data[0][1] = "rt = rs + SignExtend(imm)";
         data[1][0] = "<font color=blue><b>andi</b></font>  $rt, $rs, imm";     data[1][1] = "rt = rs & ZeroExtend(imm)";
         data[2][0] = "<font color=blue><b>ori</b></font>   $rt, $rs, imm";     data[2][1] = "rt = rs | ZeroExtend(imm)";
-        data[3][0] = "<font color=blue><b>slit</b></font>  $rt, $rs, imm";     data[3][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
+        data[3][0] = "<font color=blue><b>slti</b></font>  $rt, $rs, imm";     data[3][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
         data[4][0] = "<font color=blue><b>sltiu</b></font> $rt, $rs, imm";     data[4][1] = "rt = (rs &lt; SignExtend(imm)) ? 1 : 0";
         data[5][0] = "<font color=blue><b>lui</b></font>   $rt, imm";          data[5][1] = "rt = imm &lt;&lt; 16";
         data[6][0] = "<font color=blue><b>lw</b></font>    $rt, imm($rs)";     data[6][1] = "rt = mem[SignExtend(imm) + rs]";
