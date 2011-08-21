@@ -7,6 +7,8 @@
 #include <ctype.h>
 #include <unistd.h>
 
+int LOG_LEVEL = 0;
+
 static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
 static FILE *FILE_INPUT = NULL;

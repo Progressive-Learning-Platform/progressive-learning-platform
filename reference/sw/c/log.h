@@ -3,12 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-extern LOG_LEVEL;
+extern int LOG_LEVEL;
 
-#define log(x) _log(1,stdout,x)
-#define err(x) _log(0,stderr,x)
-#define vlog(x) _log(2,stdout,x)
-
-void _log(int l, FILE *f, char* s);
+#define log(...) if(LOG_LEVEL>=1){printf(__VA_ARGS__);}
+#define err(...) fprintf(stderr,__VA_ARGS__)
+#define vlog(...) if(LOG_LEVEL>=2){printf(__VA_ARGS__);}
 
 #endif 
