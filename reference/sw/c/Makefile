@@ -6,7 +6,6 @@ LDFLAGS =
 
 FILES=\
 	main\
-	log\
 	lex.yy\
 	parser.tab\
 	

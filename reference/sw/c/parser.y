@@ -1,3 +1,20 @@
+%{
+
+#include <stdio.h>
+#include "log.h"
+
+extern char yytext[];
+extern int column;
+
+yyerror(s)
+char *s;
+{
+	fflush(stdout);
+	printf("\n%*s\n%*s\n", column, "^", column, s);
+}
+
+%}
+
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -15,7 +32,7 @@
 
 primary_expression
 	: IDENTIFIER
-	| CONSTANT { printf("constant: %s", $1); }
+	| CONSTANT { vlog("constant: "); }
 	| STRING_LITERAL
 	| '(' expression ')'
 	;
@@ -415,15 +432,4 @@ function_definition
 	;
 
 %%
-#include <stdio.h>
-#include "log.h"
 
-extern char yytext[];
-extern int column;
-
-yyerror(s)
-char *s;
-{
-	fflush(stdout);
-	printf("\n%*s\n%*s\n", column, "^", column, s);
-}
