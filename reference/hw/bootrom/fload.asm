@@ -10,9 +10,9 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "there once was a man who said though\nit seems that i know that i know,\nwhat i would like to see\nis the i that knows me\nwhen i know that i know that i know"
+	.asciiz "Worf: Rest assured, commander, we will be victorious, at whatever the cost.\nRiker: Worf, it's just a game, a friendly little competition. You work up a sweat, you have a few laughs and you make new friends.\nWorf: If winning is not important, then commander, why keep score?"
 version_string:
-	.asciiz "plp-3.0"
+	.asciiz "plp-3.1"
 memory_test:
 	.asciiz "starting memory test..."
 memory_done:
@@ -69,7 +69,7 @@ flash_leds_loop2:
 
 #more seven segment
 sseg_version:
-	li $a0, 0x30c0ffff
+	li $a0, 0x30f9ffff
 	jal libplp_sseg_write_raw
 	nop
 	j flash_leds_loop2
