@@ -160,7 +160,7 @@ void count()
 	vlog(yytext);
 	vlog("\n");
 
-	ECHO;
+//	ECHO;
 }
 
 
