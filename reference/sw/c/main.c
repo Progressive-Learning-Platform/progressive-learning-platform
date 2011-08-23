@@ -50,26 +50,26 @@ void handle_opts(int argc, char *argv[]) {
 
 	if (dvalue != NULL) {
 		LOG_LEVEL = atoi(dvalue);
-		vlog("setting log level\n");
+		vlog("[plpc] setting log level\n");
 	}
 
 	if (ivalue != NULL) {
 		S_FILE_INPUT = ivalue;
-		log("input file: ");
+		log("[plpc] input file: ");
 		log(S_FILE_INPUT);
 		log("\n");
 	} else {
-		err("no input file specified, use -i <input file>\n");
+		err("[plpc] no input file specified, use -i <input file>\n");
 		exit(1);
 	}
 
 	if (ovalue != NULL) {
 		S_FILE_OUTPUT = ovalue;
-		log("output file: ");
+		log("[plpc] output file: ");
 		log(S_FILE_OUTPUT);
 		log("\n");
 	} else {
-		err("no output file specified, use -o <output file>\n");
+		err("[plpc] no output file specified, use -o <output file>\n");
 		exit(1);
 	}
 }
@@ -80,26 +80,26 @@ int main(int argc, char *argv[]) {
 	handle_opts(argc, argv);	
 
 	/* open files */
-	vlog("opening files\n");
+	vlog("[plpc] opening files\n");
 	FILE_INPUT = fopen(S_FILE_INPUT,"r");
 	if (FILE_INPUT == NULL) {
-		err("cannot open input file!\n");
+		err("[plpc] cannot open input file!\n");
 		exit(1);
 	}
 	FILE_OUTPUT = fopen(S_FILE_OUTPUT,"w");
 	if (FILE_OUTPUT == NULL) {
-		err("cannot open output file!\n");
+		err("[plpc] cannot open output file!\n");
 		exit(1);
 	}
 	yyset_in(FILE_INPUT);
 
-	log("starting parser\n");
+	log("[plpc] starting parser\n");
 	yyparse();
 
-	vlog("closing files\n");
+	vlog("[plpc] closing files\n");
 	fclose(FILE_INPUT);
 	fclose(FILE_OUTPUT);
 
-	log("done\n");
+	log("[plpc] done\n");
 	return 0;
 }
