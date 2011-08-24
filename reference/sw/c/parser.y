@@ -264,7 +264,7 @@ enumerator_list
 	;
 
 enumerator
-	: IDENTIFIER { vlog("[parser] IDENTIFIER\n"); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
 	| IDENTIFIER '=' constant_expression { vlog("[parser] IDENTIFIER_=_CONSTANT\n"); }
 	;
 
@@ -279,7 +279,7 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER { vlog("[parser] IDENTIFIER\n"); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
 	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); }
 	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); }
 	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); }
@@ -318,7 +318,7 @@ parameter_declaration
 	;
 
 identifier_list
-	: IDENTIFIER { vlog("[parser] IDENTIFIER\n"); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
 	| identifier_list ',' IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_,_IDENTIFIER\n"); }
 	;
 
