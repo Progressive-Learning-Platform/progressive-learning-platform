@@ -1,5 +1,11 @@
+int f(int a) {
+	return a+45;
+}
+
 int main(void) {
 	int a = 5;
+	int b;
 	a = a+2;
+	b = f(a);
 	return 0;
 }
