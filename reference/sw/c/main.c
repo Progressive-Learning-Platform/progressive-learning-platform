@@ -69,8 +69,11 @@ void handle_opts(int argc, char *argv[]) {
 		log(S_FILE_OUTPUT);
 		log("\n");
 	} else {
-		err("[plpc] no output file specified, use -o <output file>\n");
-		exit(1);
+		S_FILE_OUTPUT = malloc(9);
+		sprintf(S_FILE_OUTPUT,"plpc.out");
+		log("[plpc] output file: ");
+		log(S_FILE_OUTPUT);
+		log("\n");
 	}
 }
 
