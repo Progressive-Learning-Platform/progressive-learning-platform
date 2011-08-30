@@ -175,7 +175,7 @@ public class QuickRef extends javax.swing.JFrame {
         str += "<a name=\"regs\" /><h1>Registers Usage Guide</h1>";
         str += "<table border=1 width=\"100%\"";
 
-        data = new String[11][2];
+        data = new String[12][2];
 
         data[0][0] = "$0, $zero";               data[0][1] = "The zero register";
         data[1][0] = "$1, $at";                 data[1][1] = "Assembler temporary";
@@ -183,11 +183,12 @@ public class QuickRef extends javax.swing.JFrame {
         data[3][0] = "$4-$7, $a0-$a3";          data[3][1] = "Function arguments";
         data[4][0] = "$8-$17, $t0-$t9";         data[4][1] = "Temporaries";
         data[5][0] = "$18-$25, $s0-$s7";        data[5][1] = "Saved temporaries";
-        data[6][0] = "$26-$27, $k0-$k1";        data[6][1] = "Kernel";
-        data[7][0] = "$28, $gp";                data[7][1] = "Global pointer";
-        data[8][0] = "$29, $sp";                data[8][1] = "Stack pointer";
-        data[9][0] = "$30, $fp";                data[9][1] = "Frame pointer";
-        data[10][0] = "$31, $ra";               data[10][1] = "Return address";
+        data[6][0] = "$26, $i0";                data[6][1] = "Interrupt vector";
+        data[7][0] = "$27, $i1";                data[7][1] = "Interrupt return address";
+        data[8][0] = "$28, $gp";                data[8][1] = "Global pointer";
+        data[9][0] = "$29, $sp";                data[9][1] = "Stack pointer";
+        data[10][0] = "$30, $fp";               data[10][1] = "Frame pointer";
+        data[11][0] = "$31, $ra";               data[11][1] = "Return address";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";

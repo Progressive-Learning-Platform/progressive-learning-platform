@@ -1010,7 +1010,9 @@ public class ProjectDriver {
 
         if(asm != null && asm.isAssembled()) {
             prg = ArchRegistry.createProgrammer(this);
-            prg.connect(port, Constants.PLP_BAUDRATE);
+            int ret = prg.connect(port, Constants.PLP_BAUDRATE);
+            if(ret != Constants.PLP_OK)
+                return ret;
             p_progress = 0;
             
             if(g) {
