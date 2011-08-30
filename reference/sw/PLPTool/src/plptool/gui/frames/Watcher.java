@@ -391,9 +391,11 @@ public class Watcher extends javax.swing.JFrame {
             values = plp.g_watcher.getTblValues();
 
             String type = (String) values.getValueAt(row, 0);
+            String addr = (String) values.getValueAt(row, 1);
+            String val  = (String) values.getValueAt(row, col);
             
-            long newVal = PLPToolbox.parseNum((String) values.getValueAt(row, col));
-            long address = PLPToolbox.parseNum((String) values.getValueAt(row, 1));
+            long newVal = PLPToolbox.parseNum(val);
+            long address;
 
             if(newVal == -1) {
                 values.setValueAt(oldVal, row, col);
@@ -402,10 +404,22 @@ public class Watcher extends javax.swing.JFrame {
 
             }  else {
                 if(type.equals("Bus")) {
+                    address = PLPToolbox.parseNum(addr);
                     plp.sim.bus.write(address, newVal, false);
                 } else if(type.equals("Register")) {
                     if(plp.getArch().equals("plpmips")) {
-                        ((plptool.mips.SimCore) (plp.sim)).regfile.write(address, newVal, false);
+                        if(addr.startsWith("$")) {
+                            Byte regNum = ((plptool.mips.Asm) plp.asm).getRegisterNumberFromName(addr);
+                            if(regNum != null)
+                                address = regNum;
+                            else
+                                address = -1;
+
+                        }  else
+                            address = PLPToolbox.parseNum(addr);
+
+                        if(address != -1)
+                            ((plptool.mips.SimCore) (plp.sim)).regfile.write(address, newVal, false);
                     }
                 }
             }
