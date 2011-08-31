@@ -26,10 +26,10 @@ echo "Create programming file"
 echo "==========================================="
 xst      -intstyle xflow -ifn top.xst -ofn top.syr
 ngdbuild -intstyle xflow -dd _ngo -nt timestamp -uc top.ucf -p xc6slx16-csg324-3 "top.ngc" top.ngd
-map      -intstyle xflow -p xc6slx16-csg324-3 -cm area -ir off -pr off -c 100 -o top_map.ncd top.ngd top.pcf
-par      -intstyle xflow -w -ol high -t 1 top_map.ncd top.ncd top.pcf
-trce     -intstyle xflow -v 3 -s 4 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf
+map      -intstyle xflow -p xc6slx16-csg324-3 -ir off -pr off -o top_map.ncd top.ngd top.pcf
+par      -intstyle xflow -w -ol high top_map.ncd top.ncd top.pcf
+trce     -intstyle xflow -v 3 -s 3 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf
 bitgen   -intstyle xflow -f top.ut top.ncd
-promgen -w -c FF -x xcf04s -p mcs -o top -u 0 top.bit 
+#promgen -w -c FF -x xcf04s -p mcs -o top -u 0 top.bit 
 
 
