@@ -16,6 +16,10 @@ echo "==========================================="
 
 rm top.prj
 
+#the nexys3 has a special clock module, copy it over first
+cp ../../verilog/clock.v ../../verilog/clock.nexys2
+cp ../../verilog/clock.nexys3 ../../verilog/clock.v
+
 for i in `ls ../../verilog/*.v`
 do
 	echo "verilog work ${i}" >> top.prj
@@ -32,4 +36,5 @@ trce     -intstyle xflow -v 3 -s 3 -n 3 -fastpaths -xml top.twx top.ncd -o top.t
 bitgen   -intstyle xflow -f top.ut top.ncd
 #promgen -w -c FF -x xcf04s -p mcs -o top -u 0 top.bit 
 
-
+#restore the verilog structure
+mv ../../verilog/clock.nexys2 ../../verilog/clock.v
