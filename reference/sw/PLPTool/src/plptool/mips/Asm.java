@@ -377,12 +377,12 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
 
-                appendPreprocessedAsm("ASM__ORG__ " + asmTokens[1], i, true);
-                directiveOffset++;
-                curAddr = sanitize32bits(asmTokens[1]);
-                if(entryPoint < 0)
-                    entryPoint = curAddr;
-                Msg.D("curAddr is now " + String.format("0x%08x", curAddr), 4, this);
+                    appendPreprocessedAsm("ASM__ORG__ " + asmTokens[1], i, true);
+                    directiveOffset++;
+                    curAddr = sanitize32bits(asmTokens[1]);
+                    if(entryPoint < 0)
+                        entryPoint = curAddr;
+                    Msg.D("curAddr is now " + String.format("0x%08x", curAddr), 4, this);
                 }
             }
 
@@ -464,9 +464,9 @@ public class Asm extends plptool.PLPAsm {
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
-                appendPreprocessedAsm("ASM__WORD__ " + asmTokens[1], i, true);
-                regionMap.add(curRegion);
-                curAddr += 4;
+                    appendPreprocessedAsm("ASM__WORD__ " + asmTokens[1], i, true);
+                    regionMap.add(curRegion);
+                    curAddr += 4;
                 }
             }
 
@@ -480,11 +480,12 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
                 
-                for(j = 0; j < Integer.parseInt(asmTokens[1]); j++) {
-                    appendPreprocessedAsm("ASM__WORD__ 0", i, true);
+                    long size = Integer.parseInt(asmTokens[1]);
+
+                    curAddr += 4 * size;
+                    appendPreprocessedAsm("ASM__ORG__ " + curAddr, i, true);
+                    directiveOffset++;
                     regionMap.add(curRegion);
-                    curAddr += 4;
-                }
                 }
             }
 
@@ -504,9 +505,9 @@ public class Asm extends plptool.PLPAsm {
                                       "label \"" + tempLabel + "\" already defined.",
                                       Constants.PLP_ASM_DUPLICATE_LABEL, this);
                 } else {
-                symTable.put(tempLabel, new Long((int) curAddr));
-                appendPreprocessedAsm("ASM__SKIP__", i, true);
-                directiveOffset++;
+                    symTable.put(tempLabel, new Long((int) curAddr));
+                    appendPreprocessedAsm("ASM__SKIP__", i, true);
+                    directiveOffset++;
                 }
             }
 
@@ -798,10 +799,10 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
 
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[3])) << 16;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[3])) << 16;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
+                        objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     }
 
@@ -820,10 +821,10 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
 
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 16;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i - s] |= ((byte) (sanitize16bits(asmTokens[3]) & 0x1F)) << 6;
-                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 16;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
+                        objectCode[i - s] |= ((byte) (sanitize16bits(asmTokens[3]) & 0x1F)) << 6;
+                        objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     }
 
@@ -841,8 +842,8 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
 
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
-                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
+                        objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     }
 
@@ -865,12 +866,12 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_BRANCH_TARGET, this);
                     } else {
 
-                    branchTarget = symTable.get(asmTokens[3]) - (asmPC + 4);
-                    branchTarget /= 4;
-                    objectCode[i - s] |= branchTarget & 0xFFFF;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 16;
-                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
+                        branchTarget = symTable.get(asmTokens[3]) - (asmPC + 4);
+                        branchTarget /= 4;
+                        objectCode[i - s] |= branchTarget & 0xFFFF;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 21;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 16;
+                        objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     }
 
@@ -889,10 +890,10 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
 
-                    objectCode[i - s] |= sanitize16bits(asmTokens[3]);
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
+                        objectCode[i - s] |= sanitize16bits(asmTokens[3]);
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
+                        objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     }
 
@@ -910,9 +911,9 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
 
-                    objectCode[i - s] |= sanitize16bits(asmTokens[2]);
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
+                        objectCode[i - s] |= sanitize16bits(asmTokens[2]);
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
+                        objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     }
 
@@ -931,10 +932,10 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
 
-                    objectCode[i - s] |= sanitize16bits(asmTokens[2]);
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[3])) << 21;
-                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
+                        objectCode[i - s] |= sanitize16bits(asmTokens[2]);
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 16;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[3])) << 21;
+                        objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     }
 
@@ -952,8 +953,8 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_BRANCH_TARGET, this);
                     } else {
 
-                    objectCode[i - s] |= (long) (symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
-                    objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
+                        objectCode[i - s] |= (long) (symTable.get(asmTokens[1]) >> 2) & 0x3FFFFFF;
+                        objectCode[i - s] |= (long) opcode.get(asmTokens[0]) << 26;
 
                     }
 
@@ -972,9 +973,9 @@ public class Asm extends plptool.PLPAsm {
                                           Constants.PLP_ASM_INVALID_REGISTER, this);
                     } else {
 
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
-                    objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
-                    objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[2])) << 21;
+                        objectCode[i - s] |= ((Byte) regs.get(asmTokens[1])) << 11;
+                        objectCode[i - s] |= (Byte) funct.get(asmTokens[0]);
 
                     }
 
