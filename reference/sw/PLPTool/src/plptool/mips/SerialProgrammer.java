@@ -211,7 +211,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                                             Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                     
                 // if we buffered up to maximum chunk size, send data
-                } else if(Config.prgProgramInChunks && chunkIndex == Config.prgMaxChunkSize) {
+                } else if(Config.prgProgramInChunks &&
+                          chunkIndex == Config.prgMaxChunkSize &&
+                          (i < objCode.length - 1)) {
                     if(!plp.g())
                         Msg.I("Buffered " +
                                progress + " of " + objCode.length + " words", this);
@@ -225,10 +227,12 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
                     if(ret != Constants.PLP_OK)
                         return ret;
+                }
 
-                // we're done, send final chunk
-                } else if(i == objCode.length - 1) {
-                    
+                // we're done
+                if(i == objCode.length - 1) {
+
+                    // send final chunk
                     if(Config.prgProgramInChunks) {
                         ret = sendChunk(chunk, chunkIndex, i);
 
