@@ -498,12 +498,6 @@ public class Develop extends javax.swing.JFrame {
                 String[] tokens = nodeStr.split(": ");
 
                 int remove_asm = Integer.parseInt(tokens[0]);
-                if(remove_asm == plp.open_asm) {
-                    plp.open_asm = 0;
-                    //plp.refreshProjectView(false);
-                    safeRefresh(false);
-                }
-
                 plp.removeAsm(remove_asm);
             }
         }

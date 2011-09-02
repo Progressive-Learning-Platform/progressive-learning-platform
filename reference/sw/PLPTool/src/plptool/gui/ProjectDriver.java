@@ -1236,13 +1236,16 @@ public class ProjectDriver {
         modified = true;
 
         if(index < open_asm) {
+            Msg.D("removeAsm: index < open_asm: " + index + "<" + open_asm, 4, this);
             if(g) updateAsm(open_asm, g_dev.getEditorText());
             open_asm--;
+        } else if(index == open_asm && open_asm != 0) {
+            Msg.D("removeAsm: index == open_asm: " + index + "==" + open_asm, 4, this);
+            open_asm--;
+        } else {
+            Msg.D("removeAsm: index > open_asm: " + index + ">" + open_asm, 4, this);
+            if(g) updateAsm(open_asm, g_dev.getEditorText());
         }
-        else if(index == open_asm && open_asm != 0)
-            open_asm--;
-        else
-            if(g) updateAsm(open_asm, g_dev.getEditorText());
             
         Msg.I("Removing " + asms.get(index).getAsmFilePath(), null);
         asms.remove(index);

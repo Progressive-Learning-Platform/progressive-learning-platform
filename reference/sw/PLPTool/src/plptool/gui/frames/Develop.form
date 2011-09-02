@@ -946,7 +946,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="415" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="416" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
