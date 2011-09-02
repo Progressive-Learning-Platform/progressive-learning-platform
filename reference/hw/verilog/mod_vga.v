@@ -115,7 +115,7 @@ module vga_controller (clk, rst, hs, vs, blank, hcount, vcount);
     vcount = ((vcounter >= V_PULSEWIDTH + V_BACKPORCH) &&
               (vcounter <  V_PERIOD - V_FRONTPORCH))
               ? (vcounter - V_PULSEWIDTH) - V_BACKPORCH : 0;
-   
+
   end
 endmodule
 
