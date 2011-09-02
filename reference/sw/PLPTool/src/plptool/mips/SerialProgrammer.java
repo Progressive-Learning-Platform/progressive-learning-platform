@@ -184,9 +184,6 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 }
 
                 if((i < objCode.length - 1) && (addrTable[i + 1] != addrTable[i] + 4)) {
-                        Msg.D(String.format("Address jump: %08x to %08x",
-                                   addrTable[i], addrTable[i + 1]), 3, this);
-
                         // address jump, send chunk now
                         if(Config.prgProgramInChunks) {
                             ret = sendChunk(chunk, chunkIndex, i);
@@ -197,6 +194,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                             if(ret != Constants.PLP_OK)
                                 return ret;
                         }
+
+                        Msg.D(String.format("Address jump: %08x to %08x",
+                                   addrTable[i], addrTable[i + 1]), 3, this);
 
                         // and send new address
                         buff[0] = (byte) 'a';
