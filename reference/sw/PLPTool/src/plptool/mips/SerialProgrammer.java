@@ -227,11 +227,14 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                         return ret;
 
                 // we're done, send final chunk
-                } else if(i == objCode.length - 1 && Config.prgProgramInChunks) {
-                    ret = sendChunk(chunk, chunkIndex, i);
+                } else if(i == objCode.length - 1) {
+                    
+                    if(Config.prgProgramInChunks) {
+                        ret = sendChunk(chunk, chunkIndex, i);
 
-                    if(ret != Constants.PLP_OK)
-                        return ret;
+                        if(ret != Constants.PLP_OK)
+                            return ret;
+                    }
 
                     done = true;
                 }
