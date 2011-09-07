@@ -50,6 +50,8 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
+
+        update();
     }
 
     public javax.swing.JTabbedPane getTabs() {
@@ -61,6 +63,26 @@ public class OptionsFrame extends javax.swing.JFrame {
     }
 
     private void apply() {
+        update();
+        Config.simAllowExecutionOfArbitraryMem = simNoExecute.isSelected();
+        Config.simBusReturnsZeroForUninitRegs = simBusReadDefaultZero.isSelected();
+        Config.simDumpTraceOnFailedEvaluation = simDumpTraceOnFailedEval.isSelected();
+        if(Config.devSyntaxHighlighting = editorSyntaxHighlighting.isSelected())
+            plp.g_dev.changeFormatting();
+
+        Config.simRunnerDelay = sSimSpeed.getValue();
+        Config.simRefreshDevDuringSimRun = simRefreshDev.isSelected();
+        Config.prgProgramInChunks = prgProgramInChunks.isSelected();
+
+        if(cmbFontSize.getItemCount() > 0) {
+            Config.devFontSize = (Integer) cmbFontSize.getItemAt(cmbFontSize.getSelectedIndex());
+            plp.g_dev.changeFormatting();
+            plp.refreshProjectView(false);
+        }
+
+        if(plp.g_simctrl != null)
+            plp.g_simctrl.updateSlider();
+
         try {
             int chunkSize = Integer.parseInt(prgMaxChunkSize.getText());
             if(chunkSize % 4 != 0) {
@@ -80,6 +102,27 @@ public class OptionsFrame extends javax.swing.JFrame {
         } catch(Exception e) {
             prgReadTimeout.setText("" + Config.prgReadTimeout);
         }
+    }
+
+    private void triggerChange() {
+        btnApply.setEnabled(true);
+    }
+
+    private void update() {
+        btnApply.setEnabled(false);
+    }
+
+    public void reloadConfig() {
+        simNoExecute.setSelected(Config.simAllowExecutionOfArbitraryMem);
+        simBusReadDefaultZero.setSelected(Config.simBusReturnsZeroForUninitRegs);
+        simDumpTraceOnFailedEval.setSelected(Config.simDumpTraceOnFailedEvaluation);
+        editorSyntaxHighlighting.setSelected(Config.devSyntaxHighlighting);
+        sSimSpeed.setValue(Config.simRunnerDelay);
+        simRefreshDev.setSelected(Config.simRefreshDevDuringSimRun);
+        prgProgramInChunks.setSelected(Config.prgProgramInChunks);
+        prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
+        prgReadTimeout.setText("" + Config.prgReadTimeout);
+        update();
     }
 
     /** This method is called from within the constructor to
@@ -278,12 +321,22 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         prgMaxChunkSize.setText(resourceMap.getString("prgMaxChunkSize.text")); // NOI18N
         prgMaxChunkSize.setName("prgMaxChunkSize"); // NOI18N
+        prgMaxChunkSize.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                prgMaxChunkSizeKeyPressed(evt);
+            }
+        });
 
         lblReadTimeout.setText(resourceMap.getString("lblReadTimeout.text")); // NOI18N
         lblReadTimeout.setName("lblReadTimeout"); // NOI18N
 
         prgReadTimeout.setText(resourceMap.getString("prgReadTimeout.text")); // NOI18N
         prgReadTimeout.setName("prgReadTimeout"); // NOI18N
+        prgReadTimeout.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                prgReadTimeoutKeyPressed(evt);
+            }
+        });
 
         lblPrgWarning.setText(resourceMap.getString("lblPrgWarning.text")); // NOI18N
         lblPrgWarning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
@@ -374,10 +427,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sSimSpeedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sSimSpeedStateChanged
-        Config.simRunnerDelay = sSimSpeed.getValue();
-
-        if(plp.g_simctrl != null)
-            plp.g_simctrl.updateSlider();
+        triggerChange();
     }//GEN-LAST:event_sSimSpeedStateChanged
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
@@ -385,20 +435,20 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void simNoExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simNoExecuteActionPerformed
-        Config.simAllowExecutionOfArbitraryMem = simNoExecute.isSelected();
+        triggerChange();
     }//GEN-LAST:event_simNoExecuteActionPerformed
 
     private void simBusReadDefaultZeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simBusReadDefaultZeroActionPerformed
-        Config.simBusReturnsZeroForUninitRegs = simBusReadDefaultZero.isSelected();
+        triggerChange();
     }//GEN-LAST:event_simBusReadDefaultZeroActionPerformed
 
     private void simDumpTraceOnFailedEvalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simDumpTraceOnFailedEvalActionPerformed
-        Config.simDumpTraceOnFailedEvaluation = simDumpTraceOnFailedEval.isSelected();
+        triggerChange();
     }//GEN-LAST:event_simDumpTraceOnFailedEvalActionPerformed
 
     private void editorSyntaxHighlightingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editorSyntaxHighlightingActionPerformed
-        Config.devSyntaxHighlighting = editorSyntaxHighlighting.isSelected();
-        plp.g_dev.changeFormatting();
+        triggerChange();
+
     }//GEN-LAST:event_editorSyntaxHighlightingActionPerformed
 
     private void cmbFontSizePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cmbFontSizePropertyChange
@@ -406,25 +456,28 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbFontSizePropertyChange
 
     private void cmbFontSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFontSizeActionPerformed
-        if(cmbFontSize.getItemCount() > 0) {
-            Config.devFontSize = (Integer) cmbFontSize.getItemAt(cmbFontSize.getSelectedIndex());
-            plp.g_dev.changeFormatting();
-            plp.refreshProjectView(false);
-        }
+        triggerChange();
     }//GEN-LAST:event_cmbFontSizeActionPerformed
 
     private void simRefreshDevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simRefreshDevActionPerformed
-        Config.simRefreshDevDuringSimRun = simRefreshDev.isSelected();
+        triggerChange();
     }//GEN-LAST:event_simRefreshDevActionPerformed
 
     private void prgProgramInChunksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prgProgramInChunksActionPerformed
-        Config.prgProgramInChunks = prgProgramInChunks.isSelected();
+        triggerChange();
     }//GEN-LAST:event_prgProgramInChunksActionPerformed
 
     private void btnApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApplyActionPerformed
         apply();
-
     }//GEN-LAST:event_btnApplyActionPerformed
+
+    private void prgMaxChunkSizeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_prgMaxChunkSizeKeyPressed
+        triggerChange();
+    }//GEN-LAST:event_prgMaxChunkSizeKeyPressed
+
+    private void prgReadTimeoutKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_prgReadTimeoutKeyPressed
+        triggerChange();
+    }//GEN-LAST:event_prgReadTimeoutKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApply;
