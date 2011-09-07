@@ -15,6 +15,14 @@ import plptool.Constants;
 
 import java.awt.Color;
 import plptool.gui.ProjectDriver;
+import gnu.io.CommPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import plptool.Msg;
 
 /**
  *
@@ -150,6 +158,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("showoutput")) {
 
             }
+
             else if(command.equals("open_asm")) {
                 plptool.Msg.I("open_asm:" + plp.open_asm, null);
             }
@@ -232,6 +241,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 if(tokens[0].equals("program")) {
                     plp.program(tokens[1]);
                 }
+                if(tokens[0].equals("opencloseport")) {
+                   opencloseport(tokens[1]);
+                }
 
                 if(tokens[0].equals("simcl") && asmexplorer != null) {
                     String xcmd = "";
@@ -255,11 +267,64 @@ public class ConsoleFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_cmdKeyPressed
 
+   private CommPort commPort;
+   private CommPortIdentifier portIdentifier;
+   protected InputStream sIn;
+   private OutputStream sOut;
+   private SerialPort port;
+
+   private void opencloseport(String portName) {
+       System.out.println("Resetting " + portName);
+
+       try {
+            int baudRate = 57600;
+            portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+
+            if (portIdentifier.isCurrentlyOwned()) {
+                Msg.D("Serial port " + portName + " is in use.", 2, this);
+            } else {
+                commPort = portIdentifier.open(this.getClass().getName(), 2000);
+
+                if (commPort instanceof SerialPort) {
+                    port = (SerialPort) commPort;
+                    port.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
+                            SerialPort.STOPBITS_1,
+                            SerialPort.PARITY_NONE);
+
+                    port.enableReceiveTimeout(1000);
+                    sIn = port.getInputStream();
+                    sOut = port.getOutputStream();
+
+                } else {
+                    Msg.D(portName + " is not a serial port.", 2, this);
+                }
+            }
+        } catch (Exception e) {
+            Msg.D("Error opening port.", 2, this);
+            System.err.println(e);
+        }
+
+        try {
+            sIn.close();
+            sOut.close();
+            port.close();
+            commPort.close();
+
+            Msg.I("Port closed.", this);
+
+        } catch(Exception e) {
+            Msg.D("Error closing port.", 2, this);
+        }
+
+       System.out.println("Done");
+   }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cmd;
     private javax.swing.JScrollPane jscroll;
     private javax.swing.JTextPane out;
     // End of variables declaration//GEN-END:variables
+
 
 }
 
