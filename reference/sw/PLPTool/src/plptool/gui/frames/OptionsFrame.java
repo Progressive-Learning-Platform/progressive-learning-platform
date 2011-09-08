@@ -51,7 +51,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
 
-        update();
+        reloadConfig();
     }
 
     public javax.swing.JTabbedPane getTabs() {
