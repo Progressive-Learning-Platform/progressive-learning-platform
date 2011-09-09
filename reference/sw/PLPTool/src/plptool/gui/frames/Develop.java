@@ -78,6 +78,9 @@ public class Develop extends javax.swing.JFrame {
     private int oldLine;
     private int line;
 
+    private double hPaneSavedProportion = -1;
+    private double vPaneSavedProportion = -1;
+
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
 
@@ -1073,6 +1076,10 @@ public class Develop extends javax.swing.JFrame {
         menuSeparator5 = new javax.swing.JPopupMenu.Separator();
         menuUndo = new javax.swing.JMenuItem();
         menuRedo = new javax.swing.JMenuItem();
+        rootmenuView = new javax.swing.JMenu();
+        menuToolbar = new javax.swing.JCheckBoxMenuItem();
+        menuProjectPane = new javax.swing.JCheckBoxMenuItem();
+        menuOutputPane = new javax.swing.JCheckBoxMenuItem();
         rootmenuProject = new javax.swing.JMenu();
         menuAssemble = new javax.swing.JMenuItem();
         menuSimulate = new javax.swing.JMenuItem();
@@ -1087,7 +1094,6 @@ public class Develop extends javax.swing.JFrame {
         menuSetMainProgram = new javax.swing.JMenuItem();
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
-        menuToolbar = new javax.swing.JCheckBoxMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuSerialTerminal = new javax.swing.JMenuItem();
         rootmenuSim = new javax.swing.JMenu();
@@ -1105,6 +1111,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimTools = new javax.swing.JMenu();
         menuSimView = new javax.swing.JCheckBoxMenuItem();
         menuSimWatcher = new javax.swing.JCheckBoxMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuSimControl = new javax.swing.JCheckBoxMenuItem();
         menuSimIO = new javax.swing.JCheckBoxMenuItem();
         menuSimAsmView = new javax.swing.JMenuItem();
@@ -1188,10 +1195,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1212,11 +1219,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 599, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 576, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1230,7 +1237,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1253,7 +1260,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1691,6 +1698,46 @@ public class Develop extends javax.swing.JFrame {
 
         jMenuBar1.add(rootmenuEdit);
 
+        rootmenuView.setMnemonic('V');
+        rootmenuView.setText(resourceMap.getString("rootmenuView.text")); // NOI18N
+        rootmenuView.setName("rootmenuView"); // NOI18N
+
+        menuToolbar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuToolbar.setMnemonic('T');
+        menuToolbar.setSelected(true);
+        menuToolbar.setText(resourceMap.getString("menuToolbar.text")); // NOI18N
+        menuToolbar.setName("menuToolbar"); // NOI18N
+        menuToolbar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuToolbarActionPerformed(evt);
+            }
+        });
+        rootmenuView.add(menuToolbar);
+
+        menuProjectPane.setMnemonic('R');
+        menuProjectPane.setSelected(true);
+        menuProjectPane.setText(resourceMap.getString("menuProjectPane.text")); // NOI18N
+        menuProjectPane.setName("menuProjectPane"); // NOI18N
+        menuProjectPane.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuProjectPaneActionPerformed(evt);
+            }
+        });
+        rootmenuView.add(menuProjectPane);
+
+        menuOutputPane.setMnemonic('O');
+        menuOutputPane.setSelected(true);
+        menuOutputPane.setText(resourceMap.getString("menuOutputPane.text")); // NOI18N
+        menuOutputPane.setName("menuOutputPane"); // NOI18N
+        menuOutputPane.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuOutputPaneActionPerformed(evt);
+            }
+        });
+        rootmenuView.add(menuOutputPane);
+
+        jMenuBar1.add(rootmenuView);
+
         rootmenuProject.setMnemonic('R');
         rootmenuProject.setText(resourceMap.getString("rootmenuProject.text")); // NOI18N
         rootmenuProject.setName("rootmenuProject"); // NOI18N
@@ -1825,17 +1872,6 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuTools.add(menuOptions);
 
-        menuToolbar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        menuToolbar.setSelected(true);
-        menuToolbar.setText(resourceMap.getString("menuToolbar.text")); // NOI18N
-        menuToolbar.setName("menuToolbar"); // NOI18N
-        menuToolbar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuToolbarActionPerformed(evt);
-            }
-        });
-        rootmenuTools.add(menuToolbar);
-
         jSeparator7.setName("jSeparator7"); // NOI18N
         rootmenuTools.add(jSeparator7);
 
@@ -1857,6 +1893,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuSim.setName("rootmenuSim"); // NOI18N
 
         menuSimStep.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        menuSimStep.setIcon(resourceMap.getIcon("menuSimStep.icon")); // NOI18N
         menuSimStep.setMnemonic('S');
         menuSimStep.setText(resourceMap.getString("menuSimStep.text")); // NOI18N
         menuSimStep.setName("menuSimStep"); // NOI18N
@@ -1868,6 +1905,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuSim.add(menuSimStep);
 
         menuSimReset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, 0));
+        menuSimReset.setIcon(resourceMap.getIcon("menuSimReset.icon")); // NOI18N
         menuSimReset.setMnemonic('E');
         menuSimReset.setText(resourceMap.getString("menuSimReset.text")); // NOI18N
         menuSimReset.setName("menuSimReset"); // NOI18N
@@ -1976,6 +2014,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimView.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuSimView.setMnemonic('C');
         menuSimView.setText(resourceMap.getString("menuSimView.text")); // NOI18N
+        menuSimView.setIcon(resourceMap.getIcon("menuSimView.icon")); // NOI18N
         menuSimView.setName("menuSimView"); // NOI18N
         menuSimView.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1987,6 +2026,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimWatcher.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuSimWatcher.setMnemonic('W');
         menuSimWatcher.setText(resourceMap.getString("menuSimWatcher.text")); // NOI18N
+        menuSimWatcher.setIcon(resourceMap.getIcon("menuSimWatcher.icon")); // NOI18N
         menuSimWatcher.setName("menuSimWatcher"); // NOI18N
         menuSimWatcher.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1994,6 +2034,9 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         menuSimTools.add(menuSimWatcher);
+
+        jSeparator3.setName("jSeparator3"); // NOI18N
+        menuSimTools.add(jSeparator3);
 
         menuSimControl.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         menuSimControl.setText(resourceMap.getString("menuSimControl.text")); // NOI18N
@@ -2034,6 +2077,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimLEDs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
         menuSimLEDs.setMnemonic('1');
         menuSimLEDs.setText(resourceMap.getString("menuSimLEDs.text")); // NOI18N
+        menuSimLEDs.setIcon(resourceMap.getIcon("menuSimLEDs.icon")); // NOI18N
         menuSimLEDs.setName("menuSimLEDs"); // NOI18N
         menuSimLEDs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2045,6 +2089,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimSwitches.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
         menuSimSwitches.setMnemonic('2');
         menuSimSwitches.setText(resourceMap.getString("menuSimSwitches.text")); // NOI18N
+        menuSimSwitches.setIcon(resourceMap.getIcon("menuSimSwitches.icon")); // NOI18N
         menuSimSwitches.setName("menuSimSwitches"); // NOI18N
         menuSimSwitches.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2056,6 +2101,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimSevenSegments.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
         menuSimSevenSegments.setMnemonic('3');
         menuSimSevenSegments.setText(resourceMap.getString("menuSimSevenSegments.text")); // NOI18N
+        menuSimSevenSegments.setIcon(resourceMap.getIcon("menuSimSevenSegments.icon")); // NOI18N
         menuSimSevenSegments.setName("menuSimSevenSegments"); // NOI18N
         menuSimSevenSegments.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2067,6 +2113,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimUART.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
         menuSimUART.setMnemonic('4');
         menuSimUART.setText(resourceMap.getString("menuSimUART.text")); // NOI18N
+        menuSimUART.setIcon(resourceMap.getIcon("menuSimUART.icon")); // NOI18N
         menuSimUART.setName("menuSimUART"); // NOI18N
         menuSimUART.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2078,6 +2125,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimVGA.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
         menuSimVGA.setMnemonic('5');
         menuSimVGA.setText(resourceMap.getString("menuSimVGA.text")); // NOI18N
+        menuSimVGA.setIcon(resourceMap.getIcon("menuSimVGA.icon")); // NOI18N
         menuSimVGA.setName("menuSimVGA"); // NOI18N
         menuSimVGA.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2089,6 +2137,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimPLPID.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.CTRL_MASK));
         menuSimPLPID.setMnemonic('6');
         menuSimPLPID.setText(resourceMap.getString("menuSimPLPID.text")); // NOI18N
+        menuSimPLPID.setIcon(resourceMap.getIcon("menuSimPLPID.icon")); // NOI18N
         menuSimPLPID.setName("menuSimPLPID"); // NOI18N
         menuSimPLPID.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2739,6 +2788,34 @@ public class Develop extends javax.swing.JFrame {
         plp.g_asmview.setVisible(true);
     }//GEN-LAST:event_menuSimAsmViewActionPerformed
 
+    private void menuProjectPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProjectPaneActionPerformed
+        boolean v;
+        
+        if(v = menuProjectPane.isSelected()) {
+            if(hPaneSavedProportion > -1)
+                splitterH.setDividerLocation(hPaneSavedProportion);
+        } else {
+            hPaneSavedProportion = splitterH.getDividerLocation() / (double) splitterH.getWidth();
+            splitterH.setDividerLocation(0.0);
+        }
+
+        splitterH.setEnabled(v);
+    }//GEN-LAST:event_menuProjectPaneActionPerformed
+
+    private void menuOutputPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOutputPaneActionPerformed
+        boolean v;
+
+        if(v = menuOutputPane.isSelected()) {
+            if(vPaneSavedProportion > -1)
+                splitterV.setDividerLocation(vPaneSavedProportion);
+        } else {
+            vPaneSavedProportion = splitterV.getDividerLocation() / (double) splitterV.getHeight();
+            splitterV.setDividerLocation(1.0);
+        }
+
+        splitterV.setEnabled(v);
+    }//GEN-LAST:event_menuOutputPaneActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -2836,6 +2913,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
@@ -2863,9 +2941,11 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuNewASM;
     private javax.swing.JMenuItem menuOpen;
     private javax.swing.JMenuItem menuOptions;
+    private javax.swing.JCheckBoxMenuItem menuOutputPane;
     private javax.swing.JMenuItem menuPaste;
     private javax.swing.JMenuItem menuPrint;
     private javax.swing.JMenuItem menuProgram;
+    private javax.swing.JCheckBoxMenuItem menuProjectPane;
     private javax.swing.JMenuItem menuQuickProgram;
     private javax.swing.JMenuItem menuQuickRef;
     private javax.swing.JMenuItem menuRedo;
@@ -2907,6 +2987,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuProject;
     private javax.swing.JMenu rootmenuSim;
     private javax.swing.JMenu rootmenuTools;
+    private javax.swing.JMenu rootmenuView;
     private javax.swing.JScrollPane scroller;
     private javax.swing.JToolBar.Separator separatorSim;
     private javax.swing.JToolBar.Separator separatorSimControl;
