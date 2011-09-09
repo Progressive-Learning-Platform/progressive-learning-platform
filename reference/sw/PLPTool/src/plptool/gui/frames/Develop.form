@@ -209,6 +209,51 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="rootmenuView">
+          <Properties>
+            <Property name="mnemonic" type="int" value="86"/>
+            <Property name="text" type="java.lang.String" resourceKey="rootmenuView.text"/>
+            <Property name="name" type="java.lang.String" value="rootmenuView" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuToolbar">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Alt+T"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="84"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuToolbar.text"/>
+                <Property name="name" type="java.lang.String" value="menuToolbar" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuToolbarActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuProjectPane">
+              <Properties>
+                <Property name="mnemonic" type="int" value="82"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuProjectPane.text"/>
+                <Property name="name" type="java.lang.String" value="menuProjectPane" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuProjectPaneActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuOutputPane">
+              <Properties>
+                <Property name="mnemonic" type="int" value="79"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuOutputPane.text"/>
+                <Property name="name" type="java.lang.String" value="menuOutputPane" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuOutputPaneActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="rootmenuProject">
           <Properties>
             <Property name="mnemonic" type="int" value="82"/>
@@ -357,19 +402,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuOptionsActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuToolbar">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+Alt+T"/>
-                </Property>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" resourceKey="menuToolbar.text"/>
-                <Property name="name" type="java.lang.String" value="menuToolbar" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuToolbarActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
               <Properties>
                 <Property name="name" type="java.lang.String" value="jSeparator7" noResource="true"/>
@@ -402,6 +434,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F5"/>
                 </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimStep.icon"/>
                 <Property name="mnemonic" type="int" value="83"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimStep.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimStep" noResource="true"/>
@@ -415,6 +448,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F9"/>
                 </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimReset.icon"/>
                 <Property name="mnemonic" type="int" value="69"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimReset.text"/>
                 <Property name="name" type="java.lang.String" value="menuSimReset" noResource="true"/>
@@ -557,6 +591,7 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="67"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimView.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimView.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimView" noResource="true"/>
                   </Properties>
                   <Events>
@@ -570,11 +605,17 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="87"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimWatcher.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimWatcher.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimWatcher" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimWatcherActionPerformed"/>
                   </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
+                  </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimControl">
                   <Properties>
@@ -626,6 +667,7 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="49"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimLEDs.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimLEDs.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimLEDs" noResource="true"/>
                   </Properties>
                   <Events>
@@ -639,6 +681,7 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="50"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimSwitches.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimSwitches.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimSwitches" noResource="true"/>
                   </Properties>
                   <Events>
@@ -652,6 +695,7 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="51"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimSevenSegments.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimSevenSegments.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimSevenSegments" noResource="true"/>
                   </Properties>
                   <Events>
@@ -665,6 +709,7 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="52"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimUART.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimUART.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimUART" noResource="true"/>
                   </Properties>
                   <Events>
@@ -678,6 +723,7 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="53"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimVGA.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimVGA.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimVGA" noResource="true"/>
                   </Properties>
                   <Events>
@@ -691,6 +737,7 @@
                     </Property>
                     <Property name="mnemonic" type="int" value="54"/>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimPLPID.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimPLPID.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimPLPID" noResource="true"/>
                   </Properties>
                   <Events>
@@ -849,7 +896,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="473" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="464" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -924,11 +971,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="795" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="794" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="599" max="32767" attributes="0"/>
+                              <EmptySpace pref="576" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -946,7 +993,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="416" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="407" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
