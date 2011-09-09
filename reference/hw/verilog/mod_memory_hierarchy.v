@@ -42,7 +42,7 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	input [31:0] din;
 	output [31:0] iout, dout;
 	output cpu_stall;
-
+ 
 	/* sram signals */
 	output [31:0] mod_vga_sram_data;
 	input  [31:0] mod_vga_sram_addr;
@@ -80,6 +80,7 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	reg 	[3:0]  state = 4'b0000;
 	wire 	[3:0]  next_state;
 	wire	       ihit, dhit;
+	wire	       conflict;
 
 	/* performance counter logic */
 	assign pmc_cache_miss_I    = state[3] & state[1];
@@ -88,24 +89,25 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	assign pmc_cache_access_D = de & drw != 0 & (state[3] || dhit);
 
 	assign cpu_stall    = next_state != 4'b0000;
-	assign cache_iwrite = state[1];
-	assign cache_dwrite = state[0] && (!ie || cache_iaddr != cache_daddr);
+	assign cache_iwrite = state[1] && !conflict;
+	assign cache_dwrite = state[0];
 	assign cache_iaddr  = iaddr[12:2];
 	assign cache_daddr  = daddr[12:2];
 	assign cache_iin    = sram_iout;
 	assign cache_din    = state[2] ? din : sram_dout;
 	assign tag_iin 	    = {13'b0000000000001, iaddr[31:13]};
 	assign tag_din	    = {13'b0000000000001, daddr[31:13]};
-	assign iout	    = state[3] && state[1] ? sram_iout : cache_iout;
-	assign dout	    = state[3] && state[0] ? sram_dout : cache_dout;
+	assign iout	    = state[1] ? sram_iout : cache_iout;
+	assign dout	    = state[0] ? sram_dout : cache_dout;
 	assign sram_ie	    = state[1] && !state[3];
 	assign sram_de	    = state[0] && !state[3];
 	assign sram_drw	    = drw;
 	assign sram_iaddr   = iaddr;
 	assign sram_daddr   = daddr;
 	assign sram_din	    = din;
-	assign ihit	    = tag_iout == {13'b0000000000001,iaddr[31:13]};
-	assign dhit	    = tag_dout == {13'b0000000000001,daddr[31:13]};
+	assign ihit	    = tag_iout == tag_iin && !conflict;
+	assign dhit	    = tag_dout == tag_iin;
+	assign conflict	    = (cache_iaddr == cache_daddr) && ie && de && drw != 2'b00;
 	assign next_state   =
 		state == 4'b0000 && ((ihit && ie) || !ie) && !dhit && drw == 2'b10 && de ? 4'b0001 : /* data miss */
 		state == 4'b0000 && ((dhit && de && drw == 2'b10) || drw == 2'b00 || !de) && !ihit && ie ? 4'b0010 : /* instruction miss */

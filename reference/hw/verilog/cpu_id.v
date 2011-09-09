@@ -162,14 +162,14 @@ module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
 	end
 
 	always @(negedge clk) begin
-		if (!cpu_stall) begin
+		//if (!cpu_stall) begin
 		/* regfile */
 		if (wb_rfw && wb_rf_waddr != 5'd0) begin
 			rf[wb_rf_waddr] <= wb_rf_wdata;
 		end
 		//if(wb_rfw)
 		//	$display("ID: DATA %x written to REG %x", wb_rf_wdata, wb_rf_waddr);
-		end
+		//end
 	end
 	
 endmodule
