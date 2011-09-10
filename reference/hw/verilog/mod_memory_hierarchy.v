@@ -83,10 +83,10 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	wire	       conflict;
 
 	/* performance counter logic */
-	assign pmc_cache_miss_I    = state[3] & state[1];
-	assign pmc_cache_miss_D    = state[3] & state[0];
-	assign pmc_cache_access_I = ie & (state[3] || ihit);
-	assign pmc_cache_access_D = de & drw != 0 & (state[3] || dhit);
+	assign pmc_cache_miss_I   = state[3] & state[1];
+	assign pmc_cache_miss_D   = state[3] & state[0];
+	assign pmc_cache_access_I = ie && next_state == 4'b0000;
+	assign pmc_cache_access_D = de && drw != 2'b00 && next_state == 4'b0000;
 
 	assign cpu_stall    = next_state != 4'b0000;
 	assign cache_iwrite = state[1] && !conflict;
