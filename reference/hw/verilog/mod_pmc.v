@@ -25,7 +25,7 @@ performance counter hardware
 7.7.2011
 */
 
-module mod_pmc(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, pmc_int, pmc_cache_miss_D, pmc_cache_miss_I, pmc_cache_access_I, pmc_cache_access_D, pmc_uart_recv, pmc_uart_send);
+module mod_pmc(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout, pmc_int, pmc_cache_miss_I, pmc_cache_miss_D, pmc_cache_access_I, pmc_cache_access_D, pmc_uart_recv, pmc_uart_send);
         input rst;
         input clk;
         input ie,de;
