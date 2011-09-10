@@ -480,7 +480,7 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
                 
-                    long size = Integer.parseInt(asmTokens[1]);
+                    long size = Asm.sanitize32bits(asmTokens[1]);
 
                     curAddr += 4 * size;
                     appendPreprocessedAsm("ASM__ORG__ " + curAddr, i, true);
