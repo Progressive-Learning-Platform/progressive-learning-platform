@@ -18,12 +18,13 @@ cd /backup/fritz/buildbot_tmp
 
 #we're in our temporary repo, let's build some things
 cd reference/hw
-source /opt/Xilinx/12.4/ISE_DS/settings64.sh
+source /opt/Xilinx/13.1/ISE_DS/settings64.sh
 cd bootrom
 sh build.sh > bootrom_log
 cd ..
 sh scripts/build_500k_linux.sh > build_nexys2_500k_log
 sh scripts/build_1200k_linux.sh > build_nexys2_1200k_log
+sh scripts/build_nexys3_linux.sh > build_nexys3_log
 
 #update the PLPTool nightly version
 cd ../sw/PLPTool/src/plptool
@@ -51,6 +52,7 @@ cp reference/hw/build/build_500k_volatile/top.bit to_push/nexys2_500k.bit
 cp reference/hw/build/build_500k_volatile/top.mcs to_push/nexys2_500k.mcs
 cp reference/hw/build/build_1200k_volatile/top.bit to_push/nexys2_1200k.bit
 cp reference/hw/build/build_1200k_volatile/top.mcs to_push/nexys2_1200k.mcs
+cp reference/hw/build/build_nexys3_volatile/top.bit to_push/nexys3.bit
 cp reference/sw/PLPTool/*_log to_push
 cp reference/sw/PLPTool/store/* to_push
 cp -R reference/sw/PLPTool/dist/javadoc to_push

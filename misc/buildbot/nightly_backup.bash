@@ -15,6 +15,9 @@ mkdir website
 scp -r fritz@rome.ceat.okstate.edu:~/plp ./website/plp
 scp -r fritz@rome.ceat.okstate.edu:~/public_html ./website/public_html
 
+#get rid of the video data on the website, we have it backed up elsewhere
+rm -rf ./website/plp/ecen4243/videos
+
 #google docs
 #doesn't quite work yet... I'll have to do this one manually
 
