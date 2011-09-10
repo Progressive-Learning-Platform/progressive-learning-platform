@@ -106,7 +106,7 @@ module mod_memory_hierarchy(rst, clk, ie, de, iaddr, daddr, drw, din, iout, dout
 	assign sram_daddr   = daddr;
 	assign sram_din	    = din;
 	assign ihit	    = tag_iout == tag_iin && !conflict;
-	assign dhit	    = tag_dout == tag_iin;
+	assign dhit	    = tag_dout == tag_din;
 	assign conflict	    = (cache_iaddr == cache_daddr) && ie && de && drw != 2'b00;
 	assign next_state   =
 		state == 4'b0000 && ((ihit && ie) || !ie) && !dhit && drw == 2'b10 && de ? 4'b0001 : /* data miss */
