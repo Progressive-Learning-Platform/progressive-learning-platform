@@ -26,8 +26,9 @@ package plptool;
 public abstract class PLPSerialProgrammer extends Thread {
     protected plptool.gui.ProjectDriver plp;
 
-    public boolean busy = false;
-    public int     progress = 0;
+    public boolean      busy = false;
+    public int          progress = 0;
+    protected String    portName;
 
     public PLPSerialProgrammer(plptool.gui.ProjectDriver plp) {
         this.plp = plp;
@@ -49,6 +50,13 @@ public abstract class PLPSerialProgrammer extends Thread {
                 else
                     Msg.I("Failed!", this);
             }
+
+            /*** RXTX Linux hack for the Nexys3 board ***/
+            if(Config.prgNexys3ProgramWorkaround && PLPToolbox.isHostLinux()) {
+                connect(portName, Constants.PLP_BAUDRATE);
+                close();
+            }
+
         }
         
         } catch(Exception e) {

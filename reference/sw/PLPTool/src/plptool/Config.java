@@ -30,6 +30,8 @@ public class Config {
 
     public static String  cfgArch                          = "plpmips";
 
+    public static boolean hostIsLinux                      = false;
+
     public static boolean simForwardingUnit                = true;
     public static boolean simDynamicMemoryAllocation       = false;
     public static boolean simRefreshGUIDuringSimRun        = true;
@@ -53,6 +55,7 @@ public class Config {
     public static boolean prgProgramInChunks               = true;
     public static int     prgMaxChunkSize                  = 2048; //16384;
     public static int     prgReadTimeout                   = 500;
+    public static boolean prgNexys3ProgramWorkaround       = true;
 
     public static boolean devSyntaxHighlighting            = true;
     public static boolean devSyntaxHighlightOnAssemble     = false;
