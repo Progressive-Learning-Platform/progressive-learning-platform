@@ -50,13 +50,6 @@ public abstract class PLPSerialProgrammer extends Thread {
                 else
                     Msg.I("Failed!", this);
             }
-
-            /*** RXTX Linux hack for the Nexys3 board ***/
-            if(Config.prgNexys3ProgramWorkaround && PLPToolbox.isHostLinux()) {
-                connect(portName, Constants.PLP_BAUDRATE);
-                close();
-            }
-
         }
         
         } catch(Exception e) {
