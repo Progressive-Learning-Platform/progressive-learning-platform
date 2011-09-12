@@ -40,7 +40,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     public SerialProgrammer(plptool.gui.ProjectDriver plp) {
         super(plp);
     }
-    
+
     private CommPort commPort;
     private CommPortIdentifier portIdentifier;
     private InputStream in;
@@ -53,6 +53,8 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private long chunkStartAddr;
 
     public int connect(String portName, int baudRate) throws Exception {
+        Msg.D("Connecting to " + portName, 2, this);
+        
         try {
             portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         } catch(NoClassDefFoundError e) {
@@ -82,6 +84,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
                 in = plp.p_port.getInputStream();
                 out = plp.p_port.getOutputStream();
+                this.portName = portName;
+
+                Msg.D("Port name: " + plp.p_port.getName(), 4, this);
             }
             else {
                 return Msg.E(portName + " is not a serial port.",
@@ -93,6 +98,8 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     public int close() {
+        Msg.D("Closing " + portName, 2, this);
+
         try {
             in.close();
             out.close();

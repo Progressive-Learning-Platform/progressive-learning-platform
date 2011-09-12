@@ -105,6 +105,11 @@ public class PLPToolbox {
         return Constants.PLP_OS_UNKNOWN;
     }
 
+    public static boolean isHostLinux() {
+        return (getOS(false) == Constants.PLP_OS_LINUX_32 ||
+                getOS(false) == Constants.PLP_OS_LINUX_64);
+    }
+
     public static void attachHideOnEscapeListener(final javax.swing.JFrame frame) {
         javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
         javax.swing.Action escapeAction = new javax.swing.AbstractAction() {
