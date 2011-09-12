@@ -1002,8 +1002,12 @@ public class ProjectDriver {
      */
     public int program(String port) {
         if(!serial_support)
-            Msg.E("No native serial libraries available.",
-                    Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, this);
+            return Msg.E("No native serial libraries available.",
+                         Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, this);
+
+        if(asm.getObjectCode().length < 1)
+            return Msg.E("Empty program.",
+                         Constants.PLP_PRG_EMPTY_PROGRAM, this);
 
         Msg.I("Programming to " + port, this);
 
@@ -1015,6 +1019,14 @@ public class ProjectDriver {
             if(ret != Constants.PLP_OK)
                 return ret;
             p_progress = 0;
+
+            /*** RXTX Linux hack for the Nexys3 board ***/
+            if(Config.prgNexys3ProgramWorkaround && PLPToolbox.isHostLinux()) {
+                Msg.D("program: Nexys 3 Linux RXTX workaround engaging...", 2, this);
+                prg.close();
+                prg = ArchRegistry.createProgrammer(this);
+                prg.connect(port, Constants.PLP_BAUDRATE);
+            }
             
             if(g) {
                 g_prg.disableControls();
