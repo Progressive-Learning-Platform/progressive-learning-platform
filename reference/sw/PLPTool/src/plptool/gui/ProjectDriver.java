@@ -1050,33 +1050,6 @@ public class ProjectDriver {
     }
 
     /**
-     * Open and immediately close a serial port. Used for RXTX workaround
-     * for the Nexys 3 board in Linux
-     *
-     * @param port Serial port to reset
-     * @return PLP_OK on successful operation, error code otherwise
-     */
-    public int resetSerialPort(String port) {
-        try {
-
-        PLPSerialProgrammer tempPrg = ArchRegistry.createProgrammer(this);
-        int ret = tempPrg.connect(port, Constants.PLP_BAUDRATE);
-
-        if(ret != Constants.PLP_OK)
-            return ret;
-
-        tempPrg.close();
-
-        } catch(Exception e) {
-            e.printStackTrace();
-            return Msg.E("Port reset failed.\n" + e,
-                            Constants.PLP_GENERIC_ERROR, this);
-        }
-
-        return Constants.PLP_OK;
-    }
-
-    /**
      * Alert the project driver that the project state has been changed and
      * may need saving.
      */
