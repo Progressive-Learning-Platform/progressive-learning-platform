@@ -1004,16 +1004,17 @@ public class ProjectDriver {
         if(!serial_support)
             return Msg.E("No native serial libraries available.",
                          Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, this);
-
-        if(asm.getObjectCode().length < 1)
-            return Msg.E("Empty program.",
-                         Constants.PLP_PRG_EMPTY_PROGRAM, this);
-
+     
         Msg.I("Programming to " + port, this);
 
         try {
 
         if(asm != null && asm.isAssembled()) {
+
+            if(asm.getObjectCode().length < 1)
+                return Msg.E("Empty program.",
+                             Constants.PLP_PRG_EMPTY_PROGRAM, this);
+
             prg = ArchRegistry.createProgrammer(this);
             int ret = prg.connect(port, Constants.PLP_BAUDRATE);
             if(ret != Constants.PLP_OK)
