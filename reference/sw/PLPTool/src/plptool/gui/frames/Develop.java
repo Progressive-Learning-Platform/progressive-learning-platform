@@ -576,6 +576,8 @@ public class Develop extends javax.swing.JFrame {
     }
 
     private void redo() {
+        Msg.D("redo()", 10, this);
+
         if(undoManager.canRedo()) {
             undoManager.safeRedo();
         }
@@ -2440,7 +2442,9 @@ public class Develop extends javax.swing.JFrame {
         if(evt.isAltDown())
             return;
 
-        if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
+        if(evt.isControlDown() && evt.getKeyChar() == 'y' ) {
+            Msg.D("redo.", 10, this);
+        } else if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             modified = true;
         } else if ((int)evt.getKeyChar() == 127) {
@@ -2465,20 +2469,19 @@ public class Develop extends javax.swing.JFrame {
             if(txtEditor.isEditable()) {
                 disableSimControls();
             }
-        }
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if(Config.devSyntaxHighlighting && !deleteOccured) {
-                    Config.nothighlighting = false;
-                    int caretPos = txtEditor.getCaretPosition();
-                    syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
-                    txtEditor.setCaretPosition(caretPos);
-                    Config.nothighlighting = true;
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if(Config.devSyntaxHighlighting && !deleteOccured) {
+                        Config.nothighlighting = false;
+                        int caretPos = txtEditor.getCaretPosition();
+                        syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
+                        txtEditor.setCaretPosition(caretPos);
+                        Config.nothighlighting = true;
+                    }
                 }
-            }
-        });
+            });
+        }
     }//GEN-LAST:event_txtEditorKeyTyped
 
     private void menuQuickProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuickProgramActionPerformed
@@ -3011,6 +3014,13 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem popupmenuPaste;
 
     private javax.swing.JPopupMenu popupEdit;
+
+    @Override
+    public String toString() {
+        return plp.plpfile != null ?
+            "Develop(" + plp.plpfile.getName() +")" :
+            "Develop";
+    }
 
 }
 
