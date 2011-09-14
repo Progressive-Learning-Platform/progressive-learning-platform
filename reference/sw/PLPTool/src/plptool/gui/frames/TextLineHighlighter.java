@@ -8,6 +8,8 @@ package plptool.gui.frames;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
+import plptool.Msg;
+import plptool.Config;
 
 /**
  *
@@ -59,14 +61,21 @@ public class TextLineHighlighter implements Highlighter.HighlightPainter {
 
         if(yPos > -1) {
             if(old_yPos > -1) {
+                Msg.D("tlh clearing old_yPos: " + old_yPos, 4, null);
                 y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
                 g.setColor(Color.WHITE);
                 g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
             }
+
+            if(!Config.simHighlightLine)
+                return;
+
+            Msg.D("tlh drawing yPos: " + yPos, 4, null);
             y = yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
             g.setColor(color);
             g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
         } else if(yPos == -1 && old_yPos > -1) {
+            Msg.D("tlh (yPos == -1) clearing old_yPos: " + old_yPos, 4, null);
             y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
             g.setColor(Color.WHITE);
             g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());

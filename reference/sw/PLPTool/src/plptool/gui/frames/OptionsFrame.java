@@ -73,6 +73,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         Config.simRunnerDelay = sSimSpeed.getValue();
         Config.simRefreshDevDuringSimRun = simRefreshDev.isSelected();
         Config.prgProgramInChunks = prgProgramInChunks.isSelected();
+        Config.simHighlightLine = simHighlightLine.isSelected();
 
         if(cmbFontSize.getItemCount() > 0) {
             Config.devFontSize = (Integer) cmbFontSize.getItemAt(cmbFontSize.getSelectedIndex());
@@ -119,6 +120,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         editorSyntaxHighlighting.setSelected(Config.devSyntaxHighlighting);
         sSimSpeed.setValue(Config.simRunnerDelay);
         simRefreshDev.setSelected(Config.simRefreshDevDuringSimRun);
+        simHighlightLine.setSelected(Config.simHighlightLine);
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
         prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
@@ -146,6 +148,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         simBusReadDefaultZero = new javax.swing.JCheckBox();
         simDumpTraceOnFailedEval = new javax.swing.JCheckBox();
         simRefreshDev = new javax.swing.JCheckBox();
+        simHighlightLine = new javax.swing.JCheckBox();
         paneProgrammer = new javax.swing.JPanel();
         prgProgramInChunks = new javax.swing.JCheckBox();
         lblMaxChunkSize = new javax.swing.JLabel();
@@ -270,6 +273,15 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
+        simHighlightLine.setSelected(true);
+        simHighlightLine.setText(resourceMap.getString("simHighlightLine.text")); // NOI18N
+        simHighlightLine.setName("simHighlightLine"); // NOI18N
+        simHighlightLine.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simHighlightLineActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout paneSimLayout = new javax.swing.GroupLayout(paneSim);
         paneSim.setLayout(paneSimLayout);
         paneSimLayout.setHorizontalGroup(
@@ -277,6 +289,7 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(paneSimLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneSimLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(simHighlightLine)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
                     .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
@@ -300,7 +313,9 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simDumpTraceOnFailedEval)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simRefreshDev)
-                .addContainerGap(210, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(simHighlightLine)
+                .addContainerGap(184, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
@@ -479,6 +494,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         triggerChange();
     }//GEN-LAST:event_prgReadTimeoutKeyPressed
 
+    private void simHighlightLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simHighlightLineActionPerformed
+        triggerChange();
+    }//GEN-LAST:event_simHighlightLineActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApply;
     private javax.swing.JButton btnClose;
@@ -498,6 +517,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JSlider sSimSpeed;
     private javax.swing.JCheckBox simBusReadDefaultZero;
     private javax.swing.JCheckBox simDumpTraceOnFailedEval;
+    private javax.swing.JCheckBox simHighlightLine;
     private javax.swing.JCheckBox simNoExecute;
     private javax.swing.JCheckBox simRefreshDev;
     private javax.swing.JTabbedPane tabsOptions;

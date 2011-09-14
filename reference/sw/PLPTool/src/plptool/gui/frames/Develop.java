@@ -258,6 +258,11 @@ public class Develop extends javax.swing.JFrame {
                 });
     }
 
+    private void repaintNow() {
+        tlh.repaint();
+        tln.repaint();
+    }
+
     public void safeRefresh(final boolean commit) {
         SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -985,14 +990,6 @@ public class Develop extends javax.swing.JFrame {
         repaintLater();
     }
 
-    private void program() {
-        if(plp.prg != null) {
-            plp.prg.busy = false;
-        }
-        plp.g_prg.setVisible(true);
-        plp.g_prg.enableControls();
-    }
-
     public void clearLineHighlights() {
         tlh.setY(-1);
         repaintLater();
@@ -1012,6 +1009,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimRun.setSelected(false);
         menuSimStep.setEnabled(true);
         btnSimStep.setEnabled(true);
+        repaintLater();
     }
 
     /** This method is called from within the constructor to
@@ -2373,6 +2371,7 @@ public class Develop extends javax.swing.JFrame {
                     plp.open_asm = Integer.parseInt(tokens[0]);
                     //plp.refreshProjectView(false);
                     safeRefresh(false);
+                    repaintNow();
                     if (Config.devSyntaxHighlighting) {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
