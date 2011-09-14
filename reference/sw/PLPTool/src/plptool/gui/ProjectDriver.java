@@ -133,6 +133,7 @@ public class ProjectDriver {
 
     // Others
     public SerialTerminal          term;        // Serial terminal
+    public NumberConverter         nconv;       // Number converter
 
     /**
      * The constructor for the project driver.

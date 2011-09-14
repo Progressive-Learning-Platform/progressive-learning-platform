@@ -61,7 +61,7 @@ public class TextLineHighlighter implements Highlighter.HighlightPainter {
 
         if(yPos > -1) {
             if(old_yPos > -1) {
-                Msg.D("tlh clearing old_yPos: " + old_yPos, 4, null);
+                Msg.D("tlh clearing old_yPos: " + old_yPos, 10, null);
                 y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
                 g.setColor(Color.WHITE);
                 g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
@@ -70,12 +70,12 @@ public class TextLineHighlighter implements Highlighter.HighlightPainter {
             if(!Config.simHighlightLine)
                 return;
 
-            Msg.D("tlh drawing yPos: " + yPos, 4, null);
+            Msg.D("tlh drawing yPos: " + yPos, 10, null);
             y = yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
             g.setColor(color);
             g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
         } else if(yPos == -1 && old_yPos > -1) {
-            Msg.D("tlh (yPos == -1) clearing old_yPos: " + old_yPos, 4, null);
+            Msg.D("tlh (yPos == -1) clearing old_yPos: " + old_yPos, 10, null);
             y = old_yPos - txtEditor.getFontMetrics(txtEditor.getFont()).getHeight() + txtEditor.getFontMetrics(txtEditor.getFont()).getDescent();
             g.setColor(Color.WHITE);
             g.fillRect(0, y, txtEditor.getWidth(), txtEditor.getFontMetrics(txtEditor.getFont()).getHeight());
