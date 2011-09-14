@@ -47,6 +47,7 @@ import plptool.PLPSimBusModule;
 import plptool.mods.*;
 import plptool.gui.ProjectDriver;
 import plptool.gui.SerialTerminal;
+import plptool.gui.NumberConverter;
 
 /**
  *
@@ -1096,6 +1097,7 @@ public class Develop extends javax.swing.JFrame {
         menuOptions = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuSerialTerminal = new javax.swing.JMenuItem();
+        menuNumberConverter = new javax.swing.JMenuItem();
         rootmenuSim = new javax.swing.JMenu();
         menuSimStep = new javax.swing.JMenuItem();
         menuSimReset = new javax.swing.JMenuItem();
@@ -1237,7 +1239,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1885,6 +1887,17 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuTools.add(menuSerialTerminal);
+
+        menuNumberConverter.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F12, 0));
+        menuNumberConverter.setMnemonic('C');
+        menuNumberConverter.setText(resourceMap.getString("menuNumberConverter.text")); // NOI18N
+        menuNumberConverter.setName("menuNumberConverter"); // NOI18N
+        menuNumberConverter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuNumberConverterActionPerformed(evt);
+            }
+        });
+        rootmenuTools.add(menuNumberConverter);
 
         jMenuBar1.add(rootmenuTools);
 
@@ -2818,6 +2831,14 @@ public class Develop extends javax.swing.JFrame {
         splitterV.setEnabled(v);
     }//GEN-LAST:event_menuOutputPaneActionPerformed
 
+    private void menuNumberConverterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNumberConverterActionPerformed
+        if(plp.nconv == null)
+                plp.nconv = new NumberConverter(false);
+
+        plp.nconv.setVisible(false);
+        plp.nconv.setVisible(true);
+    }//GEN-LAST:event_menuNumberConverterActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -2941,6 +2962,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuManual;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuNewASM;
+    private javax.swing.JMenuItem menuNumberConverter;
     private javax.swing.JMenuItem menuOpen;
     private javax.swing.JMenuItem menuOptions;
     private javax.swing.JCheckBoxMenuItem menuOutputPane;
