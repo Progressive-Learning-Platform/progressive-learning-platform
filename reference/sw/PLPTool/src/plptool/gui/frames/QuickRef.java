@@ -74,7 +74,7 @@ public class QuickRef extends javax.swing.JFrame {
         data[7][0] = "<font color=blue><b>slt</b></font>  $rd, $rs, $rt";      data[7][1] = "rd = (rs &lt; rt) ? 1 : 0";
         data[8][0] = "<font color=blue><b>sltu</b></font> $rd, $rs, $rt";      data[8][1] = "rd = (rs &lt; rt) ? 1 : 0";
         data[9][0] = "<font color=blue><b>sll</b></font>  $rd, $rt, shamt";    data[9][1] = "rd = rt &lt;&lt; shamt";
-        data[10][0] = "<font color=blue><b>slr</b></font>  $rd, $rt, shamt";   data[10][1] = "rd = rt &gt;&gt; shamt";
+        data[10][0] = "<font color=blue><b>srl</b></font>  $rd, $rt, shamt";   data[10][1] = "rd = rt &gt;&gt; shamt";
         data[11][0] = "<font color=blue><b>jr</b></font> $rs";                 data[11][1] = "PC = rs";
         data[12][0] = "<font color=blue><b>jalr</b></font> $rd, $rs";          data[12][1] = "rd = PC + 4; PC = rs";
 
@@ -201,7 +201,7 @@ public class QuickRef extends javax.swing.JFrame {
         str += "<a name=\"mmap\" /><h1>I/O Memory Map</h1>";
         str += "<table border=1 width=\"100%\"";
 
-        data = new String[10][2];
+        data = new String[11][2];
 
         data[0][0] = "0x00000000";              data[0][1] = "Boot ROM";
         data[1][0] = "0x10000000";              data[1][1] = "RAM";
@@ -213,6 +213,7 @@ public class QuickRef extends javax.swing.JFrame {
         data[7][0] = "0xf0500000";              data[7][1] = "PLPID";
         data[8][0] = "0xf0600000";              data[8][1] = "Timer";
         data[9][0] = "0xf0a00000";              data[9][1] = "Seven Segments";
+        data[10][0] = "0xf0700000";             data[10][1] = "Interrupt Controller";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";

@@ -101,8 +101,8 @@ public class SimRunner extends Thread {
         Msg.M("in " + time + " milliseconds of real time.");
         
         if(plp.g()) {
+            plp.stopSimulation();
             plp.updateComponents(true);
-            plp.g_dev.stopRunState();
         }
     }
 }
