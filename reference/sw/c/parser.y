@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include "log.h"
+#include "handlers.h"
 
 extern char yytext[];
 extern int column;
@@ -31,7 +32,7 @@ char *s;
 %%
 
 primary_expression
-	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); handle_identifier($1); }
 	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1); }
 	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1); }
 	| '(' expression ')' { vlog("[parser] EXPRESSION: %s\n", $1); }
@@ -175,7 +176,7 @@ declaration
 declaration_specifiers
 	: storage_class_specifier { vlog("[parser] STORAGE_CLASS_SPECIFIER\n"); }
 	| storage_class_specifier declaration_specifiers { vlog("[parser] STORAGE_CLASS_SPECIFIER_DECLARATION_SPECIFIERS\n"); }
-	| type_specifier { vlog("[parser] TYPE_SPECIFIER\n"); }
+	| type_specifier { vlog("[parser] DECLARATION_SPECIFIER_TYPE_SPECIFIER\n"); }
 	| type_specifier declaration_specifiers { vlog("[parser] TYPE_SPECIFIER_DECLARATION_SPECIFIERS\n"); }
 	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); }
 	| type_qualifier declaration_specifiers { vlog("[parser] TYPE_QUALIFIER_DECLARATION_SPECIFIERS\n"); }
@@ -236,7 +237,7 @@ struct_declaration
 
 specifier_qualifier_list
 	: type_specifier specifier_qualifier_list { vlog("[parser] TYPE_SPECIFIER_SPEC_QUALIFIER_LIST\n"); }
-	| type_specifier { vlog("[parser] TYPE_SPECIFIER\n"); }
+	| type_specifier { vlog("[parser] SPECIFIER_QUALIFIER_LIST_TYPE_SPECIFIER\n"); }
 	| type_qualifier specifier_qualifier_list { vlog("[parser] TYPE_QUALIFIER_SPEC_QUALIFIER_LIST\n"); }
 	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); }
 	;
@@ -264,8 +265,8 @@ enumerator_list
 	;
 
 enumerator
-	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
-	| IDENTIFIER '=' constant_expression { vlog("[parser] IDENTIFIER_=_CONSTANT\n"); }
+	: IDENTIFIER { vlog("[parser] ENUMERATOR_IDENTIFIER: %s\n", $1); }
+	| IDENTIFIER '=' constant_expression { vlog("[parser] ENUMERATOR_IDENTIFIER_=_CONSTANT\n"); }
 	;
 
 type_qualifier
@@ -279,7 +280,7 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1); handle_identifier($1); }
 	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); }
 	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); }
 	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); }
@@ -318,7 +319,7 @@ parameter_declaration
 	;
 
 identifier_list
-	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_IDENTIFIER: %s\n", $1); }
 	| identifier_list ',' IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_,_IDENTIFIER\n"); }
 	;
 
