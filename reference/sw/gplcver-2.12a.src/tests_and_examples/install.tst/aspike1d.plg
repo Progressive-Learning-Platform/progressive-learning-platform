@@ -1,0 +1,107 @@
+-- adding initial procedural start at statement **aspike1.v(11)
+-- assign buf test.__gate$$1(x, x) event output gate, x to w1
+-- assign not test.__gate$$2(x, x) event output gate, x to w2
+-- assign bufif1 test.__gate$$3(StX, x, x) event output gate, StX to out
+
+>>>> wire initialization complete <<<<<
+-- resuming at statement **aspike1.v(11)
+-- scheduling delay resume at **aspike1.v(12) for time 0
+-- resuming at statement **aspike1.v(12)
+-- scheduling delay resume at **aspike1.v(13) for time 100
+-- evaluating loads of reg/wire test.in
+-- bufif1 gate test.__gate$$3 input 2 changed to 0:
+ DEL, SCHD AT 5 <OV=StX, NSV=HiZ>
+-- buf gate test.__gate$$1 input 1 changed to 0:
+ DEL, SCHD AT 2 <OV=x, NSV=0>
+         0 out=x,in=0,w1=x,w2=x
+
+<<< event tracing at time 2
+-- buf gate test.__gate$$1 processing store event to output, the fi=1 driver: 0
+-- assign buf test.__gate$$1(0, 0) event output gate, 0 to w1
+-- evaluating loads of reg/wire test.w1
+-- not gate test.__gate$$2 input 1 changed to 0:
+ DEL, SCHD AT 5 <OV=x, NSV=1>
+         2 out=x,in=0,w1=0,w2=x
+
+<<< event tracing at time 5
+-- bufif1 gate test.__gate$$3 processing store event to output, the fi=1 driver: HiZ
+-- assign bufif1 test.__gate$$3(HiZ, x, 0) event output gate, HiZ to out
+-- not gate test.__gate$$2 processing store event to output, the fi=1 driver: 1
+-- assign not test.__gate$$2(1, 0) event output gate, 1 to w2
+-- evaluating loads of reg/wire test.w2
+-- bufif1 gate test.__gate$$3 input 1 changed to 1:
+ DEL, NOCHG <OV=HiZ>
+         5 out=z,in=0,w1=0,w2=1
+
+<<< event tracing at time 100
+-- resuming at statement **aspike1.v(13)
+-- scheduling delay resume at **aspike1.v(14) for time 200
+-- evaluating loads of reg/wire test.in
+-- bufif1 gate test.__gate$$3 input 2 changed to 1:
+ DEL, SCHD AT 105 <OV=HiZ, NSV=St1>
+-- buf gate test.__gate$$1 input 1 changed to 1:
+ DEL, SCHD AT 101 <OV=0, NSV=1>
+       100 out=z,in=1,w1=0,w2=1
+
+<<< event tracing at time 101
+-- buf gate test.__gate$$1 processing store event to output, the fi=1 driver: 1
+-- assign buf test.__gate$$1(1, 1) event output gate, 1 to w1
+-- evaluating loads of reg/wire test.w1
+-- not gate test.__gate$$2 input 1 changed to 1:
+ DEL, SCHD AT 105 <OV=1, NSV=0>
+       101 out=z,in=1,w1=1,w2=1
+
+<<< event tracing at time 105
+-- bufif1 gate test.__gate$$3 processing store event to output, the fi=1 driver: St1
+-- assign bufif1 test.__gate$$3(St1, 1, 1) event output gate, St1 to out
+-- not gate test.__gate$$2 processing store event to output, the fi=1 driver: 0
+-- assign not test.__gate$$2(0, 1) event output gate, 0 to w2
+-- evaluating loads of reg/wire test.w2
+-- bufif1 gate test.__gate$$3 input 1 changed to 0:
+ DEL, SCHD AT 111 <OV=St1, NSV=St0>
+       105 out=1,in=1,w1=1,w2=0
+
+<<< event tracing at time 111
+-- bufif1 gate test.__gate$$3 processing store event to output, the fi=1 driver: St0
+-- assign bufif1 test.__gate$$3(St0, 0, 1) event output gate, St0 to out
+       111 out=0,in=1,w1=1,w2=0
+
+<<< event tracing at time 200
+-- resuming at statement **aspike1.v(14)
+-- scheduling delay resume at **aspike1.v(15) for time 300
+-- evaluating loads of reg/wire test.in
+-- bufif1 gate test.__gate$$3 input 2 changed to x:
+ DEL, SCHD AT 205 <OV=St0, NSV=StL>
+-- buf gate test.__gate$$1 input 1 changed to x:
+ DEL, SCHD AT 201 <OV=1, NSV=x>
+       200 out=0,in=x,w1=1,w2=0
+
+<<< event tracing at time 201
+-- buf gate test.__gate$$1 processing store event to output, the fi=1 driver: x
+-- assign buf test.__gate$$1(x, x) event output gate, x to w1
+-- evaluating loads of reg/wire test.w1
+-- not gate test.__gate$$2 input 1 changed to x:
+ DEL, SCHD AT 204 <OV=0, NSV=x>
+       201 out=0,in=x,w1=x,w2=0
+
+<<< event tracing at time 204
+-- not gate test.__gate$$2 processing store event to output, the fi=1 driver: x
+-- assign not test.__gate$$2(x, x) event output gate, x to w2
+-- evaluating loads of reg/wire test.w2
+-- bufif1 gate test.__gate$$3 input 1 changed to x:
+ DEL, PEND, UNSTABLE RESCHD <OV=St0, OSV=StL AT 205, NSV=StX AT 209>
+       204 out=0,in=x,w1=x,w2=x
+
+<<< event tracing at time 209
+-- bufif1 gate test.__gate$$3 processing store event to output, the fi=1 driver: StX
+-- assign bufif1 test.__gate$$3(StX, x, x) event output gate, StX to out
+       209 out=x,in=x,w1=x,w2=x
+
+<<< event tracing at time 300
+-- resuming at statement **aspike1.v(15)
+-- evaluating loads of reg/wire test.in
+-- bufif1 gate test.__gate$$3 input 2 changed to z:
+ DEL, NOCHG <OV=StX>
+-- buf gate test.__gate$$1 input 1 changed to z:
+ DEL, NOCHG <OV=x>
+       300 out=x,in=z,w1=x,w2=x

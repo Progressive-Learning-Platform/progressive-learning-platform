@@ -1,0 +1,86 @@
+
+          DISCUSSION OF CVER EXTENSIONS AND IMPLEMENTION 
+
+
+1. Cver PLI include files and vpi_ interface follows Verilog IEEE P1364 2001
+   LRM not 1995 LRM.
+
+2. Cver has preliminary support for Verilog 2000 attributes.
+
+   Verilog 2000 (* .. *) attributes are now partially supported.  They
+   can be added to variables, ports and instances/modules.  They can
+   not yet be attached to any other HDL object including statements and
+   expressions.  If you try to attach an attribute to an object that is not
+   supported, a syntax error will be emitted.  vpi_ access to attributes is
+   supported following Verilog 2000 LRM.  Attribute values can be previously
+   defined parameters.
+
+3. Cver uses fast relaxation algorithm for switch channel simulation.
+
+   Loading and initialization (full relaxation so incremental algorithm
+   can be used during simulation) for large tran and inout switch
+   channels is now much faster.  New +switchverbose option can be turned to
+   identify large switch channels and monitor switch channel elaboration.
+
+4. Cver supports Verilog 2001 macros 
+
+   `undef and `ifndef pare supported.  Also, macros with parameters
+   are supported.  Following other simulators, argument macros require no
+   white space between macro name and argument list so non argument macro
+   values can be surrounded by parentheses.  `define constants __cver__,
+   __CVER__, __P1364__, and __p1364__ are automatically defined.
+
+5. Cver supports explicitly named pound parameters.
+
+   New Verilog 2000 named pound parameters are supported so that not
+   all parameters in pound parameter list need be given.  Example of new
+   syntax is:
+
+     level1 #(.p2(501)) x1(i);
+     
+6. Cver implements a number of new system tasks and functions.  See
+   the systasks.1 man page for definitions of all system task and functions
+   supported by Cver.
+
+7. Cver implements a number of vpi_ PLI 2.0 enhancements
+
+   a) Added ability for PLI to dynamically add and remove additional
+      drivers to nets and after adding a driver, vpi_put_value can be
+      used to drive values (including hiz for tri-stating) onto nets.  
+      This provides a better way for PLI to drive wires compared to
+      soft force that disappears on next net change as defined in P1364 LRM.
+      This addition allows vpi_ to contribute drivers to nets where actual
+      net value is determined using normal strength competition rules.
+      It is not in Verilog 2000 because proposal was voted down by committee.
+
+      See async.c, vsetval1.c and vsetval2.c tests in examples.vpi directory
+      for examples of how new capability is used.  Driving a new using
+      PLI involves two steps.  First use vpi_put_value with delay mode
+      vpiNetDriver (for entire net) or vpiNetBitDriver for one bit of vector.
+      The object returned by the call is then used as handle passed to
+      vpi_put_value to add a driver.  Removing driver is accomplished by
+      putting hiz value to net driver object.  File cv_vpi_user.h must be
+      included to use this enhancement.
+
+   b) Added vpiOneOfEachMod iterator.  Iterator returned contains one
+      instance of each module in design.  It also was not accepted as part
+      of Verilog 2000 PLI standard.  It is used for source processing
+      where only one instance of each module need be processed.  It is
+      much faster than traversing entire instance tree to find module types
+      uses in design for large designs.
+
+   c) Added vpiPoundParam 1 to 1 access method.  Given a handle to a pound
+      parameter, the expression object passed to the instance is returned.
+      The expression can be evaluated to get pound parameter value.  The
+      value may differ from the final value of the parameter if he value
+      is over-ridden by a defparam. 
+
+7. Cver also supports pulse checking for Gates
+
+   P1364 pulse checking options (such as +show_cancele) work in Cver
+   for both path delays and gates.  This allows using SDF (DEVICE
+   delays to implement distributed delay macro cell modules.
+   Cver does not support pathpulse precentages because it is not  
+   pessimistic enough.  Default is normal inertial delay rescheduling.
+   Use +show_cancele to cause insertion of x for any width glitch.
+
