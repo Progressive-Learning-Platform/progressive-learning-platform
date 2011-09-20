@@ -204,7 +204,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addGroup(paneEditorLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbFontSize, 0, 394, Short.MAX_VALUE)))
+                        .addComponent(cmbFontSize, 0, 366, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         paneEditorLayout.setVerticalGroup(
@@ -216,7 +216,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(347, Short.MAX_VALUE))
+                .addContainerGap(325, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
@@ -292,7 +292,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(simHighlightLine)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(simBusReadDefaultZero)
                     .addComponent(simRefreshDev))
@@ -315,7 +315,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simRefreshDev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simHighlightLine)
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addContainerGap(122, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
@@ -372,8 +372,8 @@ public class OptionsFrame extends javax.swing.JFrame {
                             .addComponent(lblMaxChunkSize))
                         .addGap(18, 18, 18)
                         .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                            .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE))))
+                            .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                            .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneProgrammerLayout.setVerticalGroup(
@@ -391,7 +391,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(prgReadTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lblPrgWarning)
-                .addContainerGap(286, Short.MAX_VALUE))
+                .addContainerGap(255, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
@@ -405,6 +405,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         });
 
         btnApply.setText(resourceMap.getString("btnApply.text")); // NOI18N
+        btnApply.setEnabled(false);
         btnApply.setName("btnApply"); // NOI18N
         btnApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

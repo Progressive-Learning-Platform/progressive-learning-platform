@@ -18,6 +18,9 @@
 
 package plptool.gui;
 
+import plptool.Msg;
+import plptool.Constants;
+
 /**
  *
  * @author wira
@@ -61,11 +64,62 @@ public class NumberConverter extends javax.swing.JFrame {
         setLocationRelativeTo(null);
 
         cmbBase.removeAllItems();
-        cmbBase.addItem("ASCII");
+        cmbBase.addItem("ASCII (Unicode)");
         cmbBase.addItem("Decimal");
         cmbBase.addItem("Binary");
         cmbBase.addItem("Octal");
         cmbBase.addItem("Hexadecimal");
+    }
+
+    private void convert() {
+        boolean valid = false;
+        long number = -1;
+
+        try {
+
+
+        switch(cmbBase.getSelectedIndex()) {
+            case 0:
+                if(txtInput.getText().length() == 1) {
+                    number = txtInput.getText().charAt(0);
+                    valid = true;
+                }
+
+                break;
+
+            case 1:
+                number = Long.parseLong(txtInput.getText());
+                valid = true;
+                break;
+            case 2:
+                number = Long.parseLong(txtInput.getText(), 2);
+                valid = true;
+                break;
+
+            case 3:
+                number = Long.parseLong(txtInput.getText(), 8);
+                valid = true;
+                break;
+
+            case 4:
+                number = Long.parseLong(txtInput.getText(), 16);
+                valid = true;
+                break;
+
+         }
+
+        if(valid) {
+            txtASCII.setText("" + ((char) number));
+            txtBinary.setText(Long.toBinaryString(number));
+            txtDecimal.setText("" + number);
+            txtOctal.setText(String.format("%o", number));
+            txtHex.setText(String.format("%h", number));
+        } else
+            Msg.E("Can not convert the number '" + txtInput.getText() + "'", Constants.PLP_GENERIC_ERROR, null);
+
+        } catch(Exception e) {
+            Msg.E("Can not convert the number '" + txtInput.getText() + "'", Constants.PLP_GENERIC_ERROR, null);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -96,6 +150,7 @@ public class NumberConverter extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         txtASCII = new javax.swing.JTextField();
         btnClose = new javax.swing.JButton();
+        btnConvert = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(NumberConverter.class);
         jTextField2.setText(resourceMap.getString("jTextField2.text")); // NOI18N
@@ -137,6 +192,7 @@ public class NumberConverter extends javax.swing.JFrame {
         jLabel5.setName("jLabel5"); // NOI18N
 
         txtBinary.setEditable(false);
+        txtBinary.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtBinary.setText(resourceMap.getString("txtBinary.text")); // NOI18N
         txtBinary.setName("txtBinary"); // NOI18N
 
@@ -144,6 +200,7 @@ public class NumberConverter extends javax.swing.JFrame {
         jLabel6.setName("jLabel6"); // NOI18N
 
         txtOctal.setEditable(false);
+        txtOctal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtOctal.setText(resourceMap.getString("txtOctal.text")); // NOI18N
         txtOctal.setName("txtOctal"); // NOI18N
 
@@ -151,6 +208,7 @@ public class NumberConverter extends javax.swing.JFrame {
         jLabel7.setName("jLabel7"); // NOI18N
 
         txtHex.setEditable(false);
+        txtHex.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtHex.setText(resourceMap.getString("txtHex.text")); // NOI18N
         txtHex.setName("txtHex"); // NOI18N
 
@@ -158,6 +216,7 @@ public class NumberConverter extends javax.swing.JFrame {
         jLabel8.setName("jLabel8"); // NOI18N
 
         txtDecimal.setEditable(false);
+        txtDecimal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtDecimal.setText(resourceMap.getString("txtDecimal.text")); // NOI18N
         txtDecimal.setName("txtDecimal"); // NOI18N
 
@@ -165,6 +224,7 @@ public class NumberConverter extends javax.swing.JFrame {
         jLabel9.setName("jLabel9"); // NOI18N
 
         txtASCII.setEditable(false);
+        txtASCII.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtASCII.setText(resourceMap.getString("txtASCII.text")); // NOI18N
         txtASCII.setName("txtASCII"); // NOI18N
 
@@ -173,6 +233,15 @@ public class NumberConverter extends javax.swing.JFrame {
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCloseActionPerformed(evt);
+            }
+        });
+
+        btnConvert.setText(resourceMap.getString("btnConvert.text")); // NOI18N
+        btnConvert.setName("btnConvert"); // NOI18N
+        btnConvert.setPreferredSize(new java.awt.Dimension(46, 27));
+        btnConvert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConvertActionPerformed(evt);
             }
         });
 
@@ -186,18 +255,18 @@ public class NumberConverter extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(txtInput)
-                            .addComponent(cmbBase, 0, 203, Short.MAX_VALUE))))
+                            .addComponent(cmbBase, 0, 495, Short.MAX_VALUE))))
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
-                .addContainerGap(261, Short.MAX_VALUE))
+                .addContainerGap(546, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,17 +275,19 @@ public class NumberConverter extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtASCII)
                     .addComponent(txtDecimal)
                     .addComponent(txtHex)
                     .addComponent(txtOctal)
-                    .addComponent(txtBinary, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
+                    .addComponent(txtBinary, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(71, Short.MAX_VALUE)
-                .addComponent(btnClose)
+                .addContainerGap(360, Short.MAX_VALUE)
+                .addComponent(btnConvert, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -257,7 +328,9 @@ public class NumberConverter extends javax.swing.JFrame {
                     .addComponent(jLabel9)
                     .addComponent(txtASCII, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(btnClose)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClose)
+                    .addComponent(btnConvert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -272,54 +345,14 @@ public class NumberConverter extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void txtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInputKeyPressed
-        boolean valid = false;
-        long number = -1;
-
-        try {
-
         if(evt.isActionKey() || evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            switch(cmbBase.getSelectedIndex()) {
-                case 0:
-                    if(txtInput.getText().length() == 1) {
-                        number = txtInput.getText().charAt(0);
-                        valid = true;
-                    }
-
-                    break;
-
-                case 1:
-                    number = Integer.parseInt(txtInput.getText());
-                    valid = true;
-                    break;
-                case 2:
-                    number = Integer.parseInt(txtInput.getText(), 2);
-                    valid = true;
-                    break;
-
-                case 3:
-                    number = Integer.parseInt(txtInput.getText(), 8);
-                    valid = true;
-                    break;
-
-                case 4:
-                    number = Integer.parseInt(txtInput.getText(), 16);
-                    valid = true;
-                    break;
-            }
-        }
-
-        if(valid) {
-            txtASCII.setText("" + ((char) number));
-            txtBinary.setText(Long.toBinaryString(number));
-            txtDecimal.setText("" + number);
-            txtOctal.setText(String.format("%o", number));
-            txtHex.setText(String.format("%h", number));
-        }
-
-        } catch(Exception e) {
-
+            convert();
         }
     }//GEN-LAST:event_txtInputKeyPressed
+
+    private void btnConvertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertActionPerformed
+            convert();
+    }//GEN-LAST:event_btnConvertActionPerformed
 
     /**
     * @param args the command line arguments
@@ -334,6 +367,7 @@ public class NumberConverter extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnConvert;
     private javax.swing.JComboBox cmbBase;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
