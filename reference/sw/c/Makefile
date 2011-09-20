@@ -43,10 +43,10 @@ clean.bison:
 
 build.link:
 	+@echo link
-	+@$(CC) $(LDFLAGS) -o plpc $(OBJECTS)
+	+@$(CC) $(LDFLAGS) -o pcc $(OBJECTS)
 
 clean: clean.flex clean.bison clean.files
-	+@rm -f plpc
+	+@rm -f pcc
 
 build: build.flex build.bison build.files build.link
 
