@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "parser.tab.h"
 #include "log.h"
+#include "stack.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -13,6 +14,8 @@ static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
 static FILE *FILE_INPUT = NULL;
 static FILE *FILE_OUTPUT = NULL;
+
+stack* parse_stack = NULL;
 
 void handle_opts(int argc, char *argv[]) {
 	char *dvalue = NULL;
