@@ -46,6 +46,7 @@ public class Config {
     public static boolean simIgnoreSavedSimState           = false;
     public static int     simCyclesPerStep                 = 1;
     public static boolean simHighlightLine                 = false;
+    public static boolean simCycleAccurate                 = false;
 
     public static double  relativeDefaultWindowWidth       = 0.8;
     public static double  relativeDefaultWindowHeight      = 0.8;

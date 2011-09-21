@@ -151,7 +151,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="simHighlightLine" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -161,6 +161,7 @@
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simBusReadDefaultZero" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simRefreshDev" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="simCycleAccurate" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -183,7 +184,9 @@
                       <Component id="simRefreshDev" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="simHighlightLine" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="122" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="simCycleAccurate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="88" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -255,6 +258,15 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="simHighlightLineActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="simCycleAccurate">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="simCycleAccurate.text"/>
+                <Property name="name" type="java.lang.String" value="simCycleAccurate" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="simCycleAccurateActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
