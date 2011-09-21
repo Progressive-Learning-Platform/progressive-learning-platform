@@ -143,10 +143,14 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* create an empty symbol table */
-//	sym = new_symbol_table(NULL);
+	sym = new_symbol_table(NULL);
 
 	log("[pcc] starting frontend\n");
 	yyparse();
+
+	/* print the parse stack */
+	if (PARSE_OUTPUT != NULL)
+		print_stack(PARSE_OUTPUT);
 
 	vlog("[pcc] closing files\n");
 	fclose(FILE_INPUT);

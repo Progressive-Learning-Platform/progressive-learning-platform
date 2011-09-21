@@ -9,7 +9,8 @@ void handle_identifier(char *s) {
 	push(s);
 }
 
-void handle_function_declarator(char *s) {
+void handle_declarator(char *s) {
 	/* create a symbol table entry */
-	new_symbol(sym, TYPE_FUNCTION, s);
+	new_symbol(sym, s);
+	push(s);
 };

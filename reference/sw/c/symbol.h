@@ -1,12 +1,9 @@
 #ifndef SYMBOL
 #define SYMBOL
 
-#define TYPE_FUNCTION 0
-
 typedef struct symbol_list_t {
 	struct symbol_list_t *next;
-	int type;
-	void *value;
+	char *value;
 } symbol_list;
 
 typedef struct symbol_table_t {
@@ -15,7 +12,7 @@ typedef struct symbol_table_t {
 	symbol_list *s;
 } symbol_table;
 
-void new_symbol(symbol_table*,int,void*);
+void new_symbol(symbol_table*, char*);
 symbol_table* new_symbol_table(symbol_table*);
 
 #endif 

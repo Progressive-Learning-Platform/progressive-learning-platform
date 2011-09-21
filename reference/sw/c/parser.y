@@ -32,14 +32,14 @@ char *s;
 %%
 
 primary_expression
-	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); handle_identifier($1); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
 	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1); }
 	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1); }
 	| '(' expression ')' { vlog("[parser] EXPRESSION: %s\n", $1); }
 	;
 
 postfix_expression
-	: primary_expression { vlog("[parser] PRIMARY_EXPRESSION\n"); }
+	: primary_expression /*  { vlog("[parser] PRIMARY_EXPRESSION\n"); } */
 	| postfix_expression '[' expression ']' { vlog("[parser] POSTFIX_BRACKET_EXPRESSION\n"); }
 	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); }
 	| postfix_expression '(' argument_expression_list ')' { vlog("[parser] POSTFIX_ARG_EXPRESSION_LIST\n"); }
@@ -50,12 +50,12 @@ postfix_expression
 	;
 
 argument_expression_list
-	: assignment_expression { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); }
+	: assignment_expression /* { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); } */
 	| argument_expression_list ',' assignment_expression { vlog("[parser] ARG_EXPRESSION_LIST_,_ASSIGNMENT_EXPRESSION\n"); }
 	;
 
 unary_expression
-	: postfix_expression { vlog("[parser] POSTFIX_EXPRESSION\n"); }
+	: postfix_expression /* { vlog("[parser] POSTFIX_EXPRESSION\n"); } */
 	| INC_OP unary_expression { vlog("[parser] INC_OP_UNARY_EXPRESSION\n"); }
 	| DEC_OP unary_expression { vlog("[parser] DEC_OP_UNARY_EXPRESSION\n"); }
 	| unary_operator cast_expression { vlog("[parser] UNARY_OP_CAST_EXPRESSION\n"); }
@@ -73,31 +73,31 @@ unary_operator
 	;
 
 cast_expression
-	: unary_expression { vlog("[parser] UNARY_EXPRESSION\n"); }
+	: unary_expression /* { vlog("[parser] UNARY_EXPRESSION\n"); } */
 	| '(' type_name ')' cast_expression { vlog("[parser] TYPE_NAME_CAST_EXPRESSION\n"); }
 	;
 
 multiplicative_expression
-	: cast_expression { vlog("[parser] CAST_EXPRESSION\n"); }
+	: cast_expression /* { vlog("[parser] CAST_EXPRESSION\n"); } */
 	| multiplicative_expression '*' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_*_CAST_EXPRESSION\n"); }
 	| multiplicative_expression '/' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_/_CAST_EXPRESSION\n"); }
 	| multiplicative_expression '%' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_%_CAST_EXPRESSION\n"); }
 	;
 
 additive_expression
-	: multiplicative_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION\n"); }
+	: multiplicative_expression /* { vlog("[parser] MULTIPLICATIVE_EXPRESSION\n"); } */
 	| additive_expression '+' multiplicative_expression { vlog("[parser] ADDITIVE_EXPRESSION_+_MULTIPLICATIVE_EXPRESSION\n"); }
 	| additive_expression '-' multiplicative_expression { vlog("[parser] ADDITIVE_EXPRESSION_-_MULTIPLICATIVE_EXPRESSION\n"); }
 	;
 
 shift_expression
-	: additive_expression { vlog("[parser] ADDITIVE_EXPRESSION\n"); }
+	: additive_expression /*  { vlog("[parser] ADDITIVE_EXPRESSION\n"); } */
 	| shift_expression LEFT_OP additive_expression { vlog("[parser] SHIFT_LEFT_ADDITIVE\n"); }
 	| shift_expression RIGHT_OP additive_expression { vlog("[parser] SHIFT_RIGHT_ADDITIVE\n"); }
 	;
 
 relational_expression
-	: shift_expression { vlog("[parser] SHIFT_EXPRESSION\n"); }
+	: shift_expression /* { vlog("[parser] SHIFT_EXPRESSION\n"); } */
 	| relational_expression '<' shift_expression { vlog("[parser] RELATIONAL_<_SHIFT\n"); }
 	| relational_expression '>' shift_expression { vlog("[parser] RELATIONAL_>_SIHFT\n"); }
 	| relational_expression LE_OP shift_expression { vlog("[parser] RELATIONAL_LE_SHIFT\n"); }
@@ -105,43 +105,43 @@ relational_expression
 	;
 
 equality_expression
-	: relational_expression { vlog("[parser] RELATIONAL_EXPRESSION\n"); }
+	: relational_expression /* { vlog("[parser] RELATIONAL_EXPRESSION\n"); } */
 	| equality_expression EQ_OP relational_expression { vlog("[parser] EQUALITY_EQ_RELATIONAL\n"); }
 	| equality_expression NE_OP relational_expression { vlog("[parser] EQUALITY_NE_RELATIONAL\n"); }
 	;
 
 and_expression
-	: equality_expression { vlog("[parser] EQUALITY_EXPRESSION\n"); }
+	: equality_expression /* { vlog("[parser] EQUALITY_EXPRESSION\n"); } */
 	| and_expression '&' equality_expression { vlog("[parser] AND_EXPRESSION_&_EQUALITY\n"); }
 	;
 
 exclusive_or_expression
-	: and_expression { vlog("[parser] AND_EXPRESSION\n"); }
+	: and_expression /* { vlog("[parser] AND_EXPRESSION\n"); } */
 	| exclusive_or_expression '^' and_expression { vlog("[parser] XOR_^_AND_EXPRESSION\n"); }
 	;
 
 inclusive_or_expression
-	: exclusive_or_expression { vlog("[parser] XOR_EXPRESSION\n"); }
+	: exclusive_or_expression /* { vlog("[parser] XOR_EXPRESSION\n"); } */
 	| inclusive_or_expression '|' exclusive_or_expression { vlog("[parser] OR_|_XOR\n"); }
 	;
 
 logical_and_expression
-	: inclusive_or_expression { vlog("[parser] OR_EXPRESSION\n"); }
+	: inclusive_or_expression /* { vlog("[parser] OR_EXPRESSION\n"); } */
 	| logical_and_expression AND_OP inclusive_or_expression { vlog("[parser] LOGICAL_AND_&&_OR\n"); }
 	;
 
 logical_or_expression
-	: logical_and_expression { vlog("[parser] LOGICAL_AND\n"); }
+	: logical_and_expression /* { vlog("[parser] LOGICAL_AND\n"); } */
 	| logical_or_expression OR_OP logical_and_expression { vlog("[parser] LOGICAL_OR_||_LOGICAL_AND\n"); }
 	;
 
 conditional_expression
-	: logical_or_expression { vlog("[parser] LOGICAL_OR\n"); }
+	: logical_or_expression /* { vlog("[parser] LOGICAL_OR\n"); } */
 	| logical_or_expression '?' expression ':' conditional_expression { vlog("[parser] LOGICAL_OR_?\n"); }
 	;
 
 assignment_expression
-	: conditional_expression { vlog("[parser] CONDITIONAL_EXPRESSION\n"); }
+	: conditional_expression /* { vlog("[parser] CONDITIONAL_EXPRESSION\n"); } */
 	| unary_expression assignment_operator assignment_expression { vlog("[parser] UNARY_ASSIGNMENT\n"); }
 	;
 
@@ -160,12 +160,12 @@ assignment_operator
 	;
 
 expression
-	: assignment_expression { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); }
+	: assignment_expression /* { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); } */
 	| expression ',' assignment_expression { vlog("[parser] EXPRESSION_,_ASSIGNMENT_EXPRESSION\n"); }
 	;
 
 constant_expression
-	: conditional_expression { vlog("[parser] CONDITIONAL_EXPRESSION\n"); }
+	: conditional_expression /* { vlog("[parser] CONDITIONAL_EXPRESSION\n"); } */
 	;
 
 declaration
@@ -174,21 +174,21 @@ declaration
 	;
 
 declaration_specifiers
-	: storage_class_specifier { vlog("[parser] STORAGE_CLASS_SPECIFIER\n"); }
-	| storage_class_specifier declaration_specifiers { vlog("[parser] STORAGE_CLASS_SPECIFIER_DECLARATION_SPECIFIERS\n"); }
-	| type_specifier { vlog("[parser] DECLARATION_SPECIFIER_TYPE_SPECIFIER\n"); }
-	| type_specifier declaration_specifiers { vlog("[parser] TYPE_SPECIFIER_DECLARATION_SPECIFIERS\n"); }
-	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); }
-	| type_qualifier declaration_specifiers { vlog("[parser] TYPE_QUALIFIER_DECLARATION_SPECIFIERS\n"); }
+	: storage_class_specifier { vlog("[parser] STORAGE_CLASS_SPECIFIER\n"); } 
+	| storage_class_specifier declaration_specifiers { vlog("[parser] STORAGE_CLASS_SPECIFIER_DECLARATION_SPECIFIERS\n"); } 
+	| type_specifier { vlog("[parser] DECLARATION_SPECIFIER_TYPE_SPECIFIER\n"); } 
+	| type_specifier declaration_specifiers { vlog("[parser] TYPE_SPECIFIER_DECLARATION_SPECIFIERS\n"); } 
+	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); } 
+	| type_qualifier declaration_specifiers { vlog("[parser] TYPE_QUALIFIER_DECLARATION_SPECIFIERS\n"); } 
 	;
 
 init_declarator_list
-	: init_declarator { vlog("[parser] INIT_DECLARATOR\n"); }
-	| init_declarator_list ',' init_declarator { vlog("[parser] INIT_DECLARATOR_LIST_,_INIT_DECLARATOR\n"); }
+	: init_declarator { vlog("[parser] INIT_DECLARATOR\n"); } 
+	| init_declarator_list ',' init_declarator { vlog("[parser] INIT_DECLARATOR_LIST_,_INIT_DECLARATOR\n"); } 
 	;
 
 init_declarator
-	: declarator { vlog("[parser] DECLARATOR\n"); }
+	: declarator { vlog("[parser] DECLARATOR\n"); } 
 	| declarator '=' initializer { vlog("[parser] DECLARATOR_=_INITIALIZER\n"); }
 	;
 
@@ -227,12 +227,12 @@ struct_or_union
 	;
 
 struct_declaration_list
-	: struct_declaration { vlog("[parser] STRUCT_DECLARATION\n"); }
-	| struct_declaration_list struct_declaration { vlog("[parser] STRUCT_DECLARATION_LIST\n"); }
+	: struct_declaration { vlog("[parser] STRUCT_DECLARATION\n"); } 
+	| struct_declaration_list struct_declaration  { vlog("[parser] STRUCT_DECLARATION_LIST\n"); } 
 	;
 
 struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';' { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); }
+	: specifier_qualifier_list struct_declarator_list ';'  { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); } 
 	;
 
 specifier_qualifier_list
@@ -280,7 +280,7 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1); handle_identifier($1); }
+	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1); }
 	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); }
 	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); }
 	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); }
@@ -427,7 +427,7 @@ external_declaration
 
 function_definition
 	: declaration_specifiers declarator declaration_list compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); }
-	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); }
+	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); vlog("DDDD1: %s\n", $3);}
 	| declarator declaration_list compound_statement { vlog("[parser] DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); }
 	| declarator compound_statement { vlog("[parser] DECLARATOR_COMPOUND_STATEMENT\n"); }
 	;

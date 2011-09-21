@@ -1,6 +1,7 @@
 #include "stack.h"
 #include "log.h"
 #include "stdlib.h"
+#include "string.h"
 
 extern stack *parse_stack;
 
@@ -23,5 +24,28 @@ char* pop(void) {
 	} else {
 		err("attempt to pop on empty stack");
 		return NULL;
+	}
+}
+
+/* i'm not winning any awards for this function... */
+void print_stack(FILE *f) {
+	/* create a reverse stack for printing */
+	stack *v = NULL;
+	stack *curr = parse_stack;
+
+	while (curr != NULL) {
+		stack *t = malloc(sizeof(stack));
+		t->n = v;
+		t->val = curr->val;
+		v = t;
+		curr = curr->n;
+	}
+
+	/* now just traverse and print, and simultaneously clean up our reverse stack */
+	while (v != NULL) {
+		stack *d = v;
+		fprintf(f, "%s\n", v->val);
+		v = v->n;
+		free(d);
 	}
 }
