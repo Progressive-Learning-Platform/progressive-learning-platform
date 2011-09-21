@@ -10,7 +10,7 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "
+	.asciiz "Meine Ruh' ist hin,\nMein Herz ist schwer;\nIch finde sie nimmer\nund nimmermehr."
 version_string:
 	.asciiz "plp-3.2"
 memory_test:
