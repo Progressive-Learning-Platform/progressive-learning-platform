@@ -1,11 +1,33 @@
 #include "symbol.h"
 #include <stdlib.h>
 
-void new_symbol(symbol_table *t, int type, void *v) {
+extern symbol_table *sym;
+
+void insert(char *s) {
+	int found = lookup(s);
+	if (!found) {
+		new_symbol(sym, s);
+	} else {
+		err("[parser] token %s already defined in this scope\n", s);
+	}
+}
+
+/* lookup a symbol in the current scope */
+int lookup(char *s) {
+	symbol_list *curr = sym->s;
+	while (curr != NULL) {
+		if (curr->value == s)
+			return 1;
+		curr = curr->next;
+	}
+	return 0;	
+}
+	
+
+void new_symbol(symbol_table *t, char *v) {
 	/* insert our new symbol to the top of the list */
 	symbol_list *symbol = malloc(sizeof(symbol_list));
 	symbol->next = t->s;
-	symbol->type = type;
 	symbol->value = v;
 	t->s = symbol;
 }
@@ -15,7 +37,8 @@ symbol_table* new_symbol_table(symbol_table *t) {
 	table->child = NULL;
 	table->parent = t;
 	table->s = NULL;
-	t->child = table;
+	if (t != NULL)
+		t->child = table;
 	return table;
 }
 
