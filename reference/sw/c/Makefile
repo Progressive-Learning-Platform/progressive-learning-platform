@@ -8,6 +8,7 @@ FILES=\
 	main\
 	handlers\
 	stack\
+	symbol\
 	lex.yy\
 	parser.tab\
 	
