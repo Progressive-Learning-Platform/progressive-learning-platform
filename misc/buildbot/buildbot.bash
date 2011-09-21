@@ -32,6 +32,7 @@ sed -i "s/public final.*/public final static String stamp =\"${VERSION}-nightly-
 
 #build PLPTool
 cd ../..
+ant clean
 ant package-for-store > build_plptool_log
 ant javadoc > build_javadoc_log
 
