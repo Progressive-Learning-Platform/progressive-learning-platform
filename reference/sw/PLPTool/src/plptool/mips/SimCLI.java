@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import plptool.Msg;
 import plptool.PLPToolbox;
 import plptool.Constants;
+import plptool.Config;
 
 /**
  * PLPTool command line simulator interface for the MIPS simulation core
@@ -371,6 +372,15 @@ public class SimCLI {
                 Msg.M("Silent mode on.");
             }
         }
+        else if(input.equals("cycleaccurate")) {
+            if(Config.simCycleAccurate) {
+                Config.simCycleAccurate = false;
+                Msg.M("Cycle-accurate mode off.");
+            } else {
+                Config.simCycleAccurate = true;
+                Msg.M("Cycle-accurate mode on.");
+            }
+        }
         else if(input.equals("mod_forwarding")) {
             Msg.M("EX->EX R-type: " + core.forwarding.ex_ex_rtype);
             Msg.M("EX->EX I-type: " + core.forwarding.ex_ex_itype);
@@ -445,7 +455,7 @@ public class SimCLI {
 
         String input;
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-
+        Config.simCycleAccurate = true;
         Msg.M("Welcome to PLP MIPS Simulator Command Line Interface");
         Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
         Msg.m(String.format("\n%08x", plp.sim.getFlags()) +
@@ -523,6 +533,7 @@ public class SimCLI {
                 Msg.M("\nMiscellaneous.");
                 Msg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
                 Msg.M("\n silent\n\tToggle silent mode (default off).");
+                Msg.M("\n cycleaccurate\n\tToggle cycle-accurate mode (default on).");
 
                 break;
         }

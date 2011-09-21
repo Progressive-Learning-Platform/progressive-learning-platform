@@ -2471,6 +2471,14 @@ public class Develop extends javax.swing.JFrame {
         } else if ((int)evt.getKeyChar() == 22) {
             deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             Config.devSyntaxHighlightOnAssemble = true;
+            
+            /*** highlight now ***/
+            Config.nothighlighting = false;
+            syntaxHighlight();
+            Config.nothighlighting = true;
+            Config.devSyntaxHighlightOnAssemble = false;
+            /*********************/
+            
             modified = true;
         }
 
