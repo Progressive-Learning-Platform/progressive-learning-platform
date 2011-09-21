@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "parser.tab.h"
 #include "log.h"
+#include "stack.h"
+#include "symbol.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -13,6 +15,9 @@ static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
 static FILE *FILE_INPUT = NULL;
 static FILE *FILE_OUTPUT = NULL;
+
+stack *parse_stack = NULL;
+symbol_table *sym = NULL;
 
 void handle_opts(int argc, char *argv[]) {
 	char *dvalue = NULL;
@@ -50,28 +55,28 @@ void handle_opts(int argc, char *argv[]) {
 
 	if (dvalue != NULL) {
 		LOG_LEVEL = atoi(dvalue);
-		vlog("[plpc] setting log level\n");
+		vlog("[pcc] setting log level\n");
 	}
 
 	if (ivalue != NULL) {
 		S_FILE_INPUT = ivalue;
-		log("[plpc] input file: ");
+		log("[pcc] input file: ");
 		log(S_FILE_INPUT);
 		log("\n");
 	} else {
-		err("[plpc] no input file specified, use -i <input file>\n");
+		err("[pcc] no input file specified, use -i <input file>\n");
 		exit(1);
 	}
 
 	if (ovalue != NULL) {
 		S_FILE_OUTPUT = ovalue;
-		log("[plpc] output file: ");
+		log("[pcc] output file: ");
 		log(S_FILE_OUTPUT);
 		log("\n");
 	} else {
 		S_FILE_OUTPUT = malloc(9);
-		sprintf(S_FILE_OUTPUT,"plpc.out");
-		log("[plpc] output file: ");
+		sprintf(S_FILE_OUTPUT,"pcc.out");
+		log("[pcc] output file: ");
 		log(S_FILE_OUTPUT);
 		log("\n");
 	}
@@ -83,26 +88,29 @@ int main(int argc, char *argv[]) {
 	handle_opts(argc, argv);	
 
 	/* open files */
-	vlog("[plpc] opening files\n");
+	vlog("[pcc] opening files\n");
 	FILE_INPUT = fopen(S_FILE_INPUT,"r");
 	if (FILE_INPUT == NULL) {
-		err("[plpc] cannot open input file!\n");
+		err("[pcc] cannot open input file!\n");
 		exit(1);
 	}
 	FILE_OUTPUT = fopen(S_FILE_OUTPUT,"w");
 	if (FILE_OUTPUT == NULL) {
-		err("[plpc] cannot open output file!\n");
+		err("[pcc] cannot open output file!\n");
 		exit(1);
 	}
 	yyset_in(FILE_INPUT);
 
-	log("[plpc] starting parser\n");
+	/* create an empty symbol table */
+	sym = new_symbol_table(NULL);
+
+	log("[pcc] starting frontend\n");
 	yyparse();
 
-	vlog("[plpc] closing files\n");
+	vlog("[pcc] closing files\n");
 	fclose(FILE_INPUT);
 	fclose(FILE_OUTPUT);
 
-	log("[plpc] done\n");
+	log("[pcc] done\n");
 	return 0;
 }

@@ -5,6 +5,7 @@ int f(int a) {
 int main(void) {
 	int a = 5;
 	int b;
+	b[3] = 2;
 	a = a+2+5+10;
 	b = f(a);
 	return 0;
