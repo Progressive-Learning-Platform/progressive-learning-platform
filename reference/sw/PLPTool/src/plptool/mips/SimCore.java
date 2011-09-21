@@ -254,29 +254,35 @@ public class SimCore extends PLPSimCore {
         long old_pc = pc.eval();
 
 
-        /******************** RISING EDGE OF THE CLOCK ************************/
+        if(!Config.simCycleAccurate)
+            ret += stepFunctional();
 
-        // Propagate values
-        if(wb_stage.hot)  wb_stage.clock();
-        if(mem_stage.hot) mem_stage.clock();
-        if(ex_stage.hot)  ex_stage.clock();
-        if(id_stage.hot)  id_stage.clock();
+        else {
 
-        // clock pc for next instruction
-        if(!if_stall)
-            pc.clock();
+            /****************** RISING EDGE OF THE CLOCK **********************/
 
-        /******************** FALLING EDGE OF THE CLOCK ***********************/
+            // Propagate values
+            if(wb_stage.hot)  wb_stage.clock();
+            if(mem_stage.hot) mem_stage.clock();
+            if(ex_stage.hot)  ex_stage.clock();
+            if(id_stage.hot)  id_stage.clock();
 
-        // Evaluate stages
-        ret += wb_stage.eval();
-        ret += mem_stage.eval();
-        ret += ex_stage.eval();
-        ret += id_stage.eval();
-        
-        // Engage forwarding unit
-        if(Config.simForwardingUnit)
-            forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
+            // clock pc for next instruction
+            if(!if_stall)
+                pc.clock();
+
+            /****************** FALLING EDGE OF THE CLOCK *********************/
+
+            // Evaluate stages
+            ret += wb_stage.eval();
+            ret += mem_stage.eval();
+            ret += ex_stage.eval();
+            ret += id_stage.eval();
+
+            // Engage forwarding unit
+            if(Config.simForwardingUnit)
+                forwarding.eval(id_stage, ex_stage, mem_stage, wb_stage);
+        }
 
         // pc update logic (input side IF)
         if(ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_pcsrc == 1)
@@ -430,6 +436,31 @@ public class SimCore extends PLPSimCore {
         visibleAddr = addr;
 
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Non-cycle accurate stepping. Lets the instruction through the pipeline
+     * before fetching the next one (functional mode)
+     *
+     * @return Returns 0 on successful completion. Error code otherwise.
+     */
+    public int stepFunctional() {
+        int ret = 0;
+
+        pc.clock();
+        id_stage.clock();
+        ret += id_stage.eval();
+        ex_stage.clock();
+        ret += ex_stage.eval();
+        mem_stage.clock();
+        ret += mem_stage.eval();
+        wb_stage.clock();
+        ret += wb_stage.eval();
+        ex_stage.hot = true;
+        if_stall = false;
+        ex_stall = false;
+
+        return ret;
     }
 
     /**

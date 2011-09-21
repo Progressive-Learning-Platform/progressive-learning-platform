@@ -20,6 +20,7 @@ package plptool.gui.frames;
 
 import plptool.Config;
 import plptool.gui.ProjectDriver;
+import plptool.Msg;
 
 /**
  *
@@ -74,6 +75,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         Config.simRefreshDevDuringSimRun = simRefreshDev.isSelected();
         Config.prgProgramInChunks = prgProgramInChunks.isSelected();
         Config.simHighlightLine = simHighlightLine.isSelected();
+        Config.simCycleAccurate = simCycleAccurate.isSelected();
 
         if(cmbFontSize.getItemCount() > 0) {
             Config.devFontSize = (Integer) cmbFontSize.getItemAt(cmbFontSize.getSelectedIndex());
@@ -124,6 +126,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
         prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
+        simCycleAccurate.setSelected(Config.simCycleAccurate);
         update();
     }
 
@@ -149,6 +152,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         simDumpTraceOnFailedEval = new javax.swing.JCheckBox();
         simRefreshDev = new javax.swing.JCheckBox();
         simHighlightLine = new javax.swing.JCheckBox();
+        simCycleAccurate = new javax.swing.JCheckBox();
         paneProgrammer = new javax.swing.JPanel();
         prgProgramInChunks = new javax.swing.JCheckBox();
         lblMaxChunkSize = new javax.swing.JLabel();
@@ -204,7 +208,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addGroup(paneEditorLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbFontSize, 0, 394, Short.MAX_VALUE)))
+                        .addComponent(cmbFontSize, 0, 366, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         paneEditorLayout.setVerticalGroup(
@@ -216,7 +220,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(347, Short.MAX_VALUE))
+                .addContainerGap(325, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
@@ -282,6 +286,14 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
+        simCycleAccurate.setText(resourceMap.getString("simCycleAccurate.text")); // NOI18N
+        simCycleAccurate.setName("simCycleAccurate"); // NOI18N
+        simCycleAccurate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simCycleAccurateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout paneSimLayout = new javax.swing.GroupLayout(paneSim);
         paneSim.setLayout(paneSimLayout);
         paneSimLayout.setHorizontalGroup(
@@ -292,10 +304,11 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(simHighlightLine)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(simBusReadDefaultZero)
-                    .addComponent(simRefreshDev))
+                    .addComponent(simRefreshDev)
+                    .addComponent(simCycleAccurate))
                 .addContainerGap())
         );
         paneSimLayout.setVerticalGroup(
@@ -315,7 +328,9 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simRefreshDev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simHighlightLine)
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(simCycleAccurate)
+                .addContainerGap(88, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
@@ -372,8 +387,8 @@ public class OptionsFrame extends javax.swing.JFrame {
                             .addComponent(lblMaxChunkSize))
                         .addGap(18, 18, 18)
                         .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                            .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE))))
+                            .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                            .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneProgrammerLayout.setVerticalGroup(
@@ -391,7 +406,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(prgReadTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lblPrgWarning)
-                .addContainerGap(286, Short.MAX_VALUE))
+                .addContainerGap(255, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
@@ -405,6 +420,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         });
 
         btnApply.setText(resourceMap.getString("btnApply.text")); // NOI18N
+        btnApply.setEnabled(false);
         btnApply.setName("btnApply"); // NOI18N
         btnApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -498,6 +514,12 @@ public class OptionsFrame extends javax.swing.JFrame {
         triggerChange();
     }//GEN-LAST:event_simHighlightLineActionPerformed
 
+    private void simCycleAccurateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simCycleAccurateActionPerformed
+        triggerChange();
+        if(plp.isSimulating())
+            Msg.W("The simulation may need to be restarted.", null);
+    }//GEN-LAST:event_simCycleAccurateActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApply;
     private javax.swing.JButton btnClose;
@@ -516,6 +538,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JTextField prgReadTimeout;
     private javax.swing.JSlider sSimSpeed;
     private javax.swing.JCheckBox simBusReadDefaultZero;
+    private javax.swing.JCheckBox simCycleAccurate;
     private javax.swing.JCheckBox simDumpTraceOnFailedEval;
     private javax.swing.JCheckBox simHighlightLine;
     private javax.swing.JCheckBox simNoExecute;

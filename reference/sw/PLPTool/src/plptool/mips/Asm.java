@@ -132,7 +132,6 @@ public class Asm extends plptool.PLPAsm {
         instrMap.put("bne",  new Integer(3));
 
         // I-type Arithmetic and Logical instructions
-        instrMap.put("addi",  new Integer(4));
         instrMap.put("addiu", new Integer(4));
         instrMap.put("andi",  new Integer(4));
         instrMap.put("ori",   new Integer(4));
@@ -182,7 +181,6 @@ public class Asm extends plptool.PLPAsm {
 	funct.put("mulhi" , new Byte((byte) 0x11));
 
         opcode.put("_RTYPE", new Byte((byte) 0x00));
-        opcode.put("addi"  , new Byte((byte) 0x08));
         opcode.put("addiu" , new Byte((byte) 0x09));
         opcode.put("andi"  , new Byte((byte) 0x0C));
         opcode.put("beq"   , new Byte((byte) 0x04));
