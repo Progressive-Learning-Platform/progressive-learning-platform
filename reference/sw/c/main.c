@@ -3,6 +3,7 @@
 #include "parser.tab.h"
 #include "log.h"
 #include "stack.h"
+#include "symbol.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -15,7 +16,8 @@ static char *S_FILE_OUTPUT = NULL;
 static FILE *FILE_INPUT = NULL;
 static FILE *FILE_OUTPUT = NULL;
 
-stack* parse_stack = NULL;
+stack *parse_stack = NULL;
+symbol_table *sym = NULL;
 
 void handle_opts(int argc, char *argv[]) {
 	char *dvalue = NULL;
@@ -99,7 +101,10 @@ int main(int argc, char *argv[]) {
 	}
 	yyset_in(FILE_INPUT);
 
-	log("[pcc] starting parser\n");
+	/* create an empty symbol table */
+	sym = new_symbol_table(NULL);
+
+	log("[pcc] starting frontend\n");
 	yyparse();
 
 	vlog("[pcc] closing files\n");
