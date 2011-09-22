@@ -36,7 +36,7 @@ public class Config {
     public static boolean simDynamicMemoryAllocation       = false;
     public static boolean simRefreshGUIDuringSimRun        = true;
     public static boolean simRefreshDevDuringSimRun        = false;
-    public static int     simRunnerDelay                   = 100;
+    public static int     simRunnerDelay                   = 1;
     public static boolean cfgVerbose                       = true;
     public static boolean simBusReturnsZeroForUninitRegs   = true;
     public static boolean simAllowExecutionOfArbitraryMem  = true;
