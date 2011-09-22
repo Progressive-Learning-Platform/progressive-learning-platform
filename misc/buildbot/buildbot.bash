@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=3.0
+VERSION=3.2
 DATE=`date +%y%m%d`
 
 # we assume that /backup/fritz/buildbot has a valid hg repo in it
