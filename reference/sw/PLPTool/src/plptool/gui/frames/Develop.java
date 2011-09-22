@@ -318,6 +318,10 @@ public class Develop extends javax.swing.JFrame {
         });
     }
 
+    public void setFocusToEditor() {
+        txtEditor.requestFocusInWindow();
+    }
+
     public String getEditorText() {
         return txtEditor.getText();
     }

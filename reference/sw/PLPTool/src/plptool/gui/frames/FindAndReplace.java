@@ -174,6 +174,7 @@ public class FindAndReplace extends javax.swing.JFrame {
     }
 
     private void btnGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoActionPerformed
+        plp.g_dev.setFocusToEditor();
         curIndex = plp.g_dev.getEditor().getCaretPosition();
 
         int caret = plp.g_dev.getEditor().getText().indexOf(txtFind.getText(), curIndex);
@@ -181,8 +182,7 @@ public class FindAndReplace extends javax.swing.JFrame {
         if(caret > -1) {
             haveTriedFromTop = false;
             findAndReplaceString(caret);
-        }
-        else if(!haveTriedFromTop) {
+        } else if(!haveTriedFromTop) {
             haveTriedFromTop = true;
 
             caret = plp.g_dev.getEditor().getText().indexOf(txtFind.getText(), 0);
