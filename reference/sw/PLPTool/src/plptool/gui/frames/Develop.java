@@ -443,7 +443,18 @@ public class Develop extends javax.swing.JFrame {
         int retVal = fc.showSaveDialog(null);
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            plp.plpfile = new File(fc.getSelectedFile().getAbsolutePath());
+            File fOut = new File(fc.getSelectedFile().getAbsolutePath());
+
+            if(fOut.exists()) {
+                int ret = JOptionPane.showConfirmDialog(this, fOut.getName() +
+                        " already exists. Overwrite?", "File exists",
+                        JOptionPane.YES_NO_OPTION);
+            
+                if(ret == JOptionPane.NO_OPTION)
+                    return -1;
+            }
+
+            plp.plpfile = fOut;
             plp.curdir = fc.getSelectedFile().getParent();
             if(!plp.plpfile.getName().endsWith(".plp"))
                 plp.plpfile = new File(plp.plpfile.getAbsolutePath() + ".plp");
@@ -476,6 +487,10 @@ public class Develop extends javax.swing.JFrame {
                     ret = this.savePLPFileAs();
                 else
                     plp.save();
+
+            // check if user hit the close window button (X button on the corner)
+            else if(n == javax.swing.JOptionPane.CLOSED_OPTION)
+                return 2;
 
             if(ret == javax.swing.JFileChooser.APPROVE_OPTION)
                 return n;
@@ -678,7 +693,12 @@ public class Develop extends javax.swing.JFrame {
         Matcher matcher0 = pattern0.matcher(num);
         Pattern pattern1 = Pattern.compile("0x[0-9a-fA-F]*");
         Matcher matcher1 = pattern1.matcher(num);
-        return (matcher0.matches() || matcher1.matches());
+        Pattern pattern2 = Pattern.compile("0b[0-1]*");
+        Matcher matcher2 = pattern2.matcher(num);
+        Pattern pattern3 = Pattern.compile("'\\S'");
+        Matcher matcher3 = pattern3.matcher(num);
+        return (matcher0.matches() || matcher1.matches() ||
+                matcher2.matches() || matcher3.matches());
     }
 
     //Called whenever syntax styles change

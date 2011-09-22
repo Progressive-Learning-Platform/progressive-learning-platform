@@ -236,12 +236,16 @@ public class Watcher extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        long addr;
+        long addr, tempAddr;
         DefaultTableModel entries = getTblValues();
                 
         switch(cmbType.getSelectedIndex()) {
             case 0:
-                addr = PLPToolbox.parseNum(txtAddr.getText());
+                if(plp.isAssembled() && (tempAddr = plp.asm.resolveAddress(txtAddr.getText())) != -1)
+                    addr = tempAddr;
+                else
+                    addr = PLPToolbox.parseNum(txtAddr.getText());
+
                 if(plp.sim.bus.isMapped(addr)) {
                     Long data = (Long) plp.sim.bus.read(addr);
                     Object[] row = {"Bus", String.format("0x%08x", addr),
