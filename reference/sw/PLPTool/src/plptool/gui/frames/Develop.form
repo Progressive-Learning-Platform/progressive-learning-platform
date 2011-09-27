@@ -279,14 +279,13 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuAssembleActionPerformed1"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuSimulate">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimulate">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F3"/>
                 </Property>
-                <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimulate.icon"/>
-                <Property name="mnemonic" type="int" value="83"/>
                 <Property name="text" type="java.lang.String" resourceKey="menuSimulate.text"/>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimulate.icon"/>
                 <Property name="name" type="java.lang.String" value="menuSimulate" noResource="true"/>
               </Properties>
               <Events>
@@ -1006,7 +1005,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="401" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="407" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

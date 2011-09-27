@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Joshua Holland, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,23 +18,17 @@
 
 package plptool.gui.frames;
 
-import java.awt.Color;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.awt.Desktop;
 import java.awt.Point;
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
-import javax.swing.undo.UndoManager;
-import javax.swing.table.*;
 import javax.swing.tree.*;
 import java.net.URI;
 
 
 
 import java.io.File;
-import java.awt.datatransfer.DataFlavor;
 
 //For Syntax Highlighting
 import java.util.regex.Pattern;
@@ -70,13 +64,11 @@ public class Develop extends javax.swing.JFrame {
     private ProjectDriver plp;
     private DevUndoManager undoManager;
     private javax.swing.JPopupMenu popupProject;
-    private int oldPosition;
 
     private TextLineNumber tln;
     private TextLineHighlighter tlh;
 
     // caret position
-    private int oldLine;
     private int line;
 
     private double hPaneSavedProportion = -1;
@@ -92,7 +84,6 @@ public class Develop extends javax.swing.JFrame {
         this.plp = plp;
         initComponents();
         line = 0;
-        oldLine = 0;
 
         DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("No PLP Project Open");
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
@@ -105,8 +96,6 @@ public class Develop extends javax.swing.JFrame {
         scroller.setRowHeaderView(tln);
 
         catchyPLP();
-
-        oldPosition = 0;
 
         Msg.output = txtOutput;
         scroller.setEnabled(false);
@@ -756,6 +745,7 @@ public class Develop extends javax.swing.JFrame {
 
     public void beginSim() {
         if(plp.simulate() == Constants.PLP_OK) {
+            menuSimulate.setSelected(true);
             txtEditor.setEditable(false);
             rootmenuSim.setEnabled(true);
             btnSimulate.setSelected(true);
@@ -781,6 +771,7 @@ public class Develop extends javax.swing.JFrame {
     public void endSim() {
         txtEditor.setEditable(true);
         txtEditor.getCaret().setVisible(true);
+        menuSimulate.setSelected(false);
         menuSimRun.setSelected(false);
         menuSimView.setSelected(false);
         menuSimWatcher.setSelected(false);
@@ -1107,7 +1098,7 @@ public class Develop extends javax.swing.JFrame {
         menuOutputPane = new javax.swing.JCheckBoxMenuItem();
         rootmenuProject = new javax.swing.JMenu();
         menuAssemble = new javax.swing.JMenuItem();
-        menuSimulate = new javax.swing.JMenuItem();
+        menuSimulate = new javax.swing.JCheckBoxMenuItem();
         menuProgram = new javax.swing.JMenuItem();
         menuQuickProgram = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -1263,7 +1254,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1791,9 +1782,8 @@ public class Develop extends javax.swing.JFrame {
         rootmenuProject.add(menuAssemble);
 
         menuSimulate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
-        menuSimulate.setIcon(resourceMap.getIcon("menuSimulate.icon")); // NOI18N
-        menuSimulate.setMnemonic('S');
         menuSimulate.setText(resourceMap.getString("menuSimulate.text")); // NOI18N
+        menuSimulate.setIcon(resourceMap.getIcon("menuSimulate.icon")); // NOI18N
         menuSimulate.setName("menuSimulate"); // NOI18N
         menuSimulate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2285,12 +2275,6 @@ public class Develop extends javax.swing.JFrame {
         openPLPFile();
     }//GEN-LAST:event_menuOpenActionPerformed
 
-    private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
-        if(plp.asm.isAssembled()) {
-            beginSim();
-        }
-    }//GEN-LAST:event_menuSimulateActionPerformed
-
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
         newPLPFile();
         if(Config.devSyntaxHighlighting)
@@ -2438,8 +2422,6 @@ public class Develop extends javax.swing.JFrame {
                 if(addr != -1)
                     txtCurFile.setText(txtCurFile.getText() + " " + String.format("0x%02x", addr));
             }
-
-            oldLine = line;
         }
     }//GEN-LAST:event_txtEditorCaretUpdate
 
@@ -2871,6 +2853,17 @@ public class Develop extends javax.swing.JFrame {
         plp.nconv.setVisible(true);
     }//GEN-LAST:event_menuNumberConverterActionPerformed
 
+    private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
+        if(menuSimulate.isSelected()) {
+            if(plp.isAssembled())
+                beginSim();
+        } else {
+            endSim();
+            //plp.refreshProjectView(false);
+            safeRefresh(false);
+        }
+    }//GEN-LAST:event_menuSimulateActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3028,7 +3021,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem menuSimVGA;
     private javax.swing.JCheckBoxMenuItem menuSimView;
     private javax.swing.JCheckBoxMenuItem menuSimWatcher;
-    private javax.swing.JMenuItem menuSimulate;
+    private javax.swing.JCheckBoxMenuItem menuSimulate;
     private javax.swing.JRadioButtonMenuItem menuStep1;
     private javax.swing.JRadioButtonMenuItem menuStep2;
     private javax.swing.JRadioButtonMenuItem menuStep3;
