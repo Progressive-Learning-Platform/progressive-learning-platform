@@ -138,6 +138,7 @@ public class PLPSimBus {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int write(long addr, Object data, boolean isInstr) {
+        Msg.D("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
         boolean noMapping = true;
         int ret = Constants.PLP_OK;
         Object[] modules = bus_modules.toArray();

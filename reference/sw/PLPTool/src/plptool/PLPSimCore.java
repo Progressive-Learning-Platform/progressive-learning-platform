@@ -106,6 +106,7 @@ public abstract class PLPSimCore {
      */
     public void setIRQ(long IRQ) {
         this.IRQ |= IRQ;
+        Msg.D("setIRQ: New IRQ is " + String.format("0x%08x", IRQ), 5, this);
     }
 
     /**
@@ -113,12 +114,14 @@ public abstract class PLPSimCore {
      */
     public void maskIRQ(long IRQ) {
         this.IRQ &= IRQ;
+        Msg.D("maskIRQ: New IRQ is " + String.format("0x%08x", IRQ), 5, this);
     }
 
     /**
      * Get interrupt bits that are currently set
      */
     public long getIRQ() {
+        Msg.D("getIRQ: " + String.format("0x%08x", IRQ), 5, this);
         return IRQ;
     }
 

@@ -80,6 +80,15 @@ public class InterruptController extends PLPSimBusModule {
     }
 
     @Override
+    public int write(long addr, Object data, boolean isInstr) {
+        Msg.D("Writing " + ((Long) data) + " to " + String.format("0x%08x", addr), 1, this);
+        super.writeReg(addr, data, isInstr);
+        
+        return Constants.PLP_OK;
+    }
+
+
+    @Override
     public Object read(long addr) {
         if(addr == super.startAddr+4) {
             return (Long) super.readReg(addr) | 0x1L;
