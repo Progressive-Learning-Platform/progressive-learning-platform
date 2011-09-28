@@ -254,7 +254,7 @@ public class SimCore extends PLPSimCore {
         long old_pc = pc.eval();
 
 
-        if(!Config.simCycleAccurate)
+        if(Config.simFunctional)
             ret += stepFunctional();
 
         else {

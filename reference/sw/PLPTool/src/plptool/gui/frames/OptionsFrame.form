@@ -161,7 +161,7 @@
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simBusReadDefaultZero" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simRefreshDev" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="simCycleAccurate" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="simFunctional" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -185,7 +185,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="simHighlightLine" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="simCycleAccurate" min="-2" max="-2" attributes="0"/>
+                      <Component id="simFunctional" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="88" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -260,13 +260,13 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="simHighlightLineActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="simCycleAccurate">
+            <Component class="javax.swing.JCheckBox" name="simFunctional">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="simCycleAccurate.text"/>
-                <Property name="name" type="java.lang.String" value="simCycleAccurate" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="simFunctional.text"/>
+                <Property name="name" type="java.lang.String" value="simFunctional" noResource="true"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="simCycleAccurateActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="simFunctionalActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

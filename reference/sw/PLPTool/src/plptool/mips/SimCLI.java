@@ -373,12 +373,12 @@ public class SimCLI {
             }
         }
         else if(input.equals("cycleaccurate")) {
-            if(Config.simCycleAccurate) {
-                Config.simCycleAccurate = false;
-                Msg.M("Cycle-accurate mode off.");
+            if(Config.simFunctional) {
+                Config.simFunctional = false;
+                Msg.M("Functional simulation mode off.");
             } else {
-                Config.simCycleAccurate = true;
-                Msg.M("Cycle-accurate mode on.");
+                Config.simFunctional = true;
+                Msg.M("Functional simulation mode on.");
             }
         }
         else if(input.equals("mod_forwarding")) {
@@ -455,7 +455,6 @@ public class SimCLI {
 
         String input;
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-        Config.simCycleAccurate = true;
         Msg.M("Welcome to PLP MIPS Simulator Command Line Interface");
         Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
         Msg.m(String.format("\n%08x", plp.sim.getFlags()) +
@@ -533,7 +532,7 @@ public class SimCLI {
                 Msg.M("\nMiscellaneous.");
                 Msg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
                 Msg.M("\n silent\n\tToggle silent mode (default off).");
-                Msg.M("\n cycleaccurate\n\tToggle cycle-accurate mode (default on).");
+                Msg.M("\n functionalsim\n\tToggle functional simulation mode (default off).");
 
                 break;
         }
