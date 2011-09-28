@@ -75,7 +75,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         Config.simRefreshDevDuringSimRun = simRefreshDev.isSelected();
         Config.prgProgramInChunks = prgProgramInChunks.isSelected();
         Config.simHighlightLine = simHighlightLine.isSelected();
-        Config.simCycleAccurate = simCycleAccurate.isSelected();
+        Config.simFunctional = simFunctional.isSelected();
 
         if(cmbFontSize.getItemCount() > 0) {
             Config.devFontSize = (Integer) cmbFontSize.getItemAt(cmbFontSize.getSelectedIndex());
@@ -126,7 +126,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
         prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
-        simCycleAccurate.setSelected(Config.simCycleAccurate);
+        simFunctional.setSelected(Config.simFunctional);
         update();
     }
 
@@ -152,7 +152,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         simDumpTraceOnFailedEval = new javax.swing.JCheckBox();
         simRefreshDev = new javax.swing.JCheckBox();
         simHighlightLine = new javax.swing.JCheckBox();
-        simCycleAccurate = new javax.swing.JCheckBox();
+        simFunctional = new javax.swing.JCheckBox();
         paneProgrammer = new javax.swing.JPanel();
         prgProgramInChunks = new javax.swing.JCheckBox();
         lblMaxChunkSize = new javax.swing.JLabel();
@@ -286,11 +286,11 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
-        simCycleAccurate.setText(resourceMap.getString("simCycleAccurate.text")); // NOI18N
-        simCycleAccurate.setName("simCycleAccurate"); // NOI18N
-        simCycleAccurate.addActionListener(new java.awt.event.ActionListener() {
+        simFunctional.setText(resourceMap.getString("simFunctional.text")); // NOI18N
+        simFunctional.setName("simFunctional"); // NOI18N
+        simFunctional.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                simCycleAccurateActionPerformed(evt);
+                simFunctionalActionPerformed(evt);
             }
         });
 
@@ -308,7 +308,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(simBusReadDefaultZero)
                     .addComponent(simRefreshDev)
-                    .addComponent(simCycleAccurate))
+                    .addComponent(simFunctional))
                 .addContainerGap())
         );
         paneSimLayout.setVerticalGroup(
@@ -329,7 +329,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simHighlightLine)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(simCycleAccurate)
+                .addComponent(simFunctional)
                 .addContainerGap(88, Short.MAX_VALUE))
         );
 
@@ -514,11 +514,11 @@ public class OptionsFrame extends javax.swing.JFrame {
         triggerChange();
     }//GEN-LAST:event_simHighlightLineActionPerformed
 
-    private void simCycleAccurateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simCycleAccurateActionPerformed
+    private void simFunctionalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simFunctionalActionPerformed
         triggerChange();
         if(plp.isSimulating())
             Msg.W("The simulation may need to be restarted.", null);
-    }//GEN-LAST:event_simCycleAccurateActionPerformed
+    }//GEN-LAST:event_simFunctionalActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApply;
@@ -538,8 +538,8 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JTextField prgReadTimeout;
     private javax.swing.JSlider sSimSpeed;
     private javax.swing.JCheckBox simBusReadDefaultZero;
-    private javax.swing.JCheckBox simCycleAccurate;
     private javax.swing.JCheckBox simDumpTraceOnFailedEval;
+    private javax.swing.JCheckBox simFunctional;
     private javax.swing.JCheckBox simHighlightLine;
     private javax.swing.JCheckBox simNoExecute;
     private javax.swing.JCheckBox simRefreshDev;
