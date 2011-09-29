@@ -7,6 +7,9 @@
 extern char yytext[];
 extern int column;
 
+/* redefine YYSTYPE to a string */
+#define YYSTYPE char *
+
 yyerror(s)
 char *s;
 {

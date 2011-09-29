@@ -10,6 +10,10 @@
 #include <ctype.h>
 #include <unistd.h>
 
+/* lexer/parser externs */
+extern void yyset_in  (FILE * in_str  );
+extern int yyparse(void);
+
 int LOG_LEVEL = 0;
 
 static char *S_FILE_INPUT = NULL;

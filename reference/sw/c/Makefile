@@ -1,4 +1,4 @@
-all: build nolog
+all: clean build nolog
 
 CC = gcc
 CFLAGS = -O2 -Wall
@@ -20,7 +20,7 @@ build.files: $(addsuffix .build, $(FILES))
 nolog:
 	+@rm -f flex.build.out bison.build.out build.out link.build.out
 
-log: build.flex	log.flex build.bison log.bison build.files log.files build.link log.link
+log: clean build.flex log.flex build.bison log.bison build.files log.files build.link log.link
 
 log.flex:
 	+@sed  's/^/     /'  flex.build.out
