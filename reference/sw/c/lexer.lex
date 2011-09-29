@@ -11,6 +11,9 @@ IS			(u|U|l|L)*
 #include "log.h"
 
 void count();
+void comment();
+int check_type();
+
 %}
 
 %option yylineno
@@ -51,7 +54,7 @@ void count();
 "volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
 
-{L}({L}|{D})*		{ yylval=strdup(yytext); count(); return(check_type()); }
+{L}({L}|{D})*		{ yylval=strdup((char*)yytext); count(); return(check_type()); }
 
 0[xX]{H}+{IS}?		{ yylval=strdup(yytext); count(); return(CONSTANT); }
 0{D}+{IS}?		{ yylval=strdup(yytext); count(); return(CONSTANT); }
@@ -116,13 +119,13 @@ L?\"(\\.|[^\\"])*\"	{ yylval=strdup(yytext); count(); return(STRING_LITERAL); }
 
 %%
 
-yywrap()
+int yywrap()
 {
 	return(1);
 }
 
 
-comment()
+void comment()
 {
 	char c, c1;
 
@@ -159,8 +162,6 @@ void count()
 	vlog("[lexer] : ");
 	vlog(yytext);
 	vlog("\n");
-
-//	ECHO;
 }
 
 
