@@ -28,6 +28,9 @@ char *s;
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
+%nonassoc IFX
+%nonassoc ELSE
+
 %start translation_unit
 %%
 
@@ -395,7 +398,7 @@ expression_statement
 	;
 
 selection_statement
-	: IF '(' expression ')' statement { vlog("[parser] IF_(_EXPRESSION_)_STATEMENT\n"); }
+	: IF '(' expression ')' statement %prec IFX { vlog("[parser] IF_(_EXPRESSION_)_STATEMENT\n"); }
 	| IF '(' expression ')' statement ELSE statement { vlog("[parser] IF_(_EXPRESSION_)_STATEMENT_ELSE_STATEMENT\n"); }
 	| SWITCH '(' expression ')' statement { vlog("[parser] SWITCH_(_EXPRESSION_)_STATEMENT\n"); }
 	;
