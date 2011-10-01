@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "parser.tab.h"
 #include "log.h"
-#include "stack.h"
 #include "symbol.h"
 
 /* for getopts */
@@ -25,7 +24,6 @@ static FILE *FILE_OUTPUT = NULL;
 static FILE *PARSE_OUTPUT = NULL;
 static FILE *SYMBOL_OUTPUT = NULL;
 
-stack *parse_stack = NULL;
 symbol_table *sym = NULL;
 
 void print_usage(void) {
@@ -35,7 +33,7 @@ void print_usage(void) {
 	printf("-o <filename>	output filename\n");
 	printf("-d [0,1,2]	debug level (0=off (default), 1=on, 2=verbose)\n");
 	printf("-s		print symbol table to <output name>.symbol\n");
-	printf("-p		print parse stack to <output name>.parse\n");
+	printf("-p		print parse tree to <output name>.parse\n");
 }
 
 void handle_opts(int argc, char *argv[]) {
@@ -107,7 +105,7 @@ void handle_opts(int argc, char *argv[]) {
 	if (pparse) {
 		S_PARSE_OUTPUT = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) + 7));
 		sprintf(S_PARSE_OUTPUT, "%s.parse", S_FILE_OUTPUT);
-		log("[pcc] parse table output: %s\n", S_PARSE_OUTPUT);
+		log("[pcc] parse tree output: %s\n", S_PARSE_OUTPUT);
 	}
 	
 }
@@ -142,7 +140,7 @@ int main(int argc, char *argv[]) {
 	if (S_PARSE_OUTPUT != NULL) {
 		PARSE_OUTPUT = fopen(S_PARSE_OUTPUT, "w");
 		if (PARSE_OUTPUT == NULL) {
-			err("[pcc] cannot open parse table output file: %s\n", S_PARSE_OUTPUT);
+			err("[pcc] cannot open parse tree output file: %s\n", S_PARSE_OUTPUT);
 			exit(1);
 		}
 	}
@@ -154,9 +152,9 @@ int main(int argc, char *argv[]) {
 	yyparse();
 
 	/* print the parse stack */
-	if (PARSE_OUTPUT != NULL)
+/*	if (PARSE_OUTPUT != NULL)
 		print_stack(PARSE_OUTPUT);
-
+*/
 	vlog("[pcc] closing files\n");
 	fclose(FILE_INPUT);
 	fclose(FILE_OUTPUT);

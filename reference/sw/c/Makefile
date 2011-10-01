@@ -6,9 +6,8 @@ LDFLAGS =
 
 FILES=\
 	main\
-	handlers\
-	stack\
 	symbol\
+	parse_tree\
 	lex.yy\
 	parser.tab\
 	

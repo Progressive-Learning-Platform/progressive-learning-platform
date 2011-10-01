@@ -2,13 +2,12 @@
 
 #include <stdio.h>
 #include "log.h"
-#include "handlers.h"
+#include "parse_tree.h"
+#include "symbol.h"
 
 extern char yytext[];
 extern int column;
-
-/* redefine YYSTYPE to a string */
-#define YYSTYPE char *
+extern symbol_table *sym;
 
 yyerror(s)
 char *s;
@@ -19,7 +18,13 @@ char *s;
 
 %}
 
-%token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
+%union {
+	char *val;
+	struct node *n;
+};
+
+%token <val> IDENTIFIER CONSTANT STRING_LITERAL 
+%token SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
@@ -34,14 +39,16 @@ char *s;
 %nonassoc IFX
 %nonassoc ELSE
 
+%type <n> primary_expression
+
 %start translation_unit
 %%
 
 primary_expression
-	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); new_symbol(sym, $1); $$ = id($1); }
 	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1); }
 	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1); }
-	| '(' expression ')' { vlog("[parser] EXPRESSION: %s\n", $1); }
+	| '(' expression ')' { vlog("[parser] EXPRESSION"); }
 	;
 
 postfix_expression
@@ -433,7 +440,7 @@ external_declaration
 
 function_definition
 	: declaration_specifiers declarator declaration_list compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); }
-	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); vlog("DDDD1: %s\n", $3);}
+	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); }
 	| declarator declaration_list compound_statement { vlog("[parser] DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); }
 	| declarator compound_statement { vlog("[parser] DECLARATOR_COMPOUND_STATEMENT\n"); }
 	;
