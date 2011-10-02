@@ -8,6 +8,7 @@ IS			(u|U|l|L)*
 %{
 #include <stdio.h>
 #include "parser.tab.h"
+#include "parse_tree.h"
 #include "log.h"
 
 void count();
@@ -54,18 +55,18 @@ int check_type();
 "volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
 
-{L}({L}|{D})*		{ yylval.val = strdup((char*)yytext); count(); return(check_type()); }
+{L}({L}|{D})*		{ yylval = con((char*)yytext); count(); return(check_type()); }
 
-0[xX]{H}+{IS}?		{ yylval.val = strdup(yytext); count(); return(CONSTANT); }
-0{D}+{IS}?		{ yylval.val = strdup(yytext); count(); return(CONSTANT); }
-{D}+{IS}?		{ yylval.val = strdup(yytext); count(); return(CONSTANT); }
-L?'(\\.|[^\\'])+'	{ yylval.val = strdup(yytext); count(); return(CONSTANT); }
+0[xX]{H}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
+0{D}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
+{D}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
+L?'(\\.|[^\\'])+'	{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 
-{D}+{E}{FS}?		{ yylval.val = strdup(yytext); count(); return(CONSTANT); }
-{D}*"."{D}+({E})?{FS}?	{ yylval.val = strdup(yytext); count(); return(CONSTANT); }
-{D}+"."{D}*({E})?{FS}?	{ yylval.val = strdup(yytext); count(); return(CONSTANT); }
+{D}+{E}{FS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
+{D}*"."{D}+({E})?{FS}?	{ yylval = con((char*)yytext); count(); return(CONSTANT); }
+{D}+"."{D}*({E})?{FS}?	{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 
-L?\"(\\.|[^\\"])*\"	{ yylval.val = strdup(yytext); count(); return(STRING_LITERAL); }
+L?\"(\\.|[^\\"])*\"	{ yylval = con((char*)yytext); count(); return(STRING_LITERAL); }
 
 "..."			{ count(); return(ELLIPSIS); }
 ">>="			{ count(); return(RIGHT_ASSIGN); }
