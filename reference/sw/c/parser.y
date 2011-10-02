@@ -5,11 +5,15 @@
 #include "parse_tree.h"
 #include "symbol.h"
 
+#define YYSTYPE node *
+
 extern char yytext[];
 extern int column;
 extern symbol_table *sym;
 
-yyerror(s)
+extern int yylex (void);
+
+void yyerror(s)
 char *s;
 {
 	fflush(stdout);
@@ -18,12 +22,14 @@ char *s;
 
 %}
 
+/*
 %union {
 	char *val;
 	struct node *n;
 };
+*/
 
-%token <val> IDENTIFIER CONSTANT STRING_LITERAL 
+%token IDENTIFIER CONSTANT STRING_LITERAL 
 %token SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -39,15 +45,15 @@ char *s;
 %nonassoc IFX
 %nonassoc ELSE
 
-%type <n> primary_expression
+/*%type <n> translation_unit external_declaration*/
 
 %start translation_unit
 %%
 
 primary_expression
-	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1); new_symbol(sym, $1); $$ = id($1); }
-	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1); }
-	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1->id); }
+	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1->id); } 
+	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1->id); }
 	| '(' expression ')' { vlog("[parser] EXPRESSION"); }
 	;
 
@@ -94,7 +100,7 @@ multiplicative_expression
 	: cast_expression /* { vlog("[parser] CAST_EXPRESSION\n"); } */
 	| multiplicative_expression '*' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_*_CAST_EXPRESSION\n"); }
 	| multiplicative_expression '/' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_/_CAST_EXPRESSION\n"); }
-	| multiplicative_expression '%' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_%_CAST_EXPRESSION\n"); }
+	| multiplicative_expression '%' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_MOD_CAST_EXPRESSION\n"); }
 	;
 
 additive_expression
@@ -162,7 +168,7 @@ assignment_operator
 	: '=' { vlog("[parser] =\n"); }
 	| MUL_ASSIGN { vlog("[parser] *=\n"); }
 	| DIV_ASSIGN { vlog("[parser] /=\n"); }
-	| MOD_ASSIGN { vlog("[parser] %=\n"); }
+	| MOD_ASSIGN { vlog("[parser] MOD=\n"); }
 	| ADD_ASSIGN { vlog("[parser] +=\n"); }
 	| SUB_ASSIGN { vlog("[parser] -=\n"); }
 	| LEFT_ASSIGN { vlog("[parser] <<=\n"); }
@@ -278,7 +284,7 @@ enumerator_list
 	;
 
 enumerator
-	: IDENTIFIER { vlog("[parser] ENUMERATOR_IDENTIFIER: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] ENUMERATOR_IDENTIFIER: %s\n", $1->id); }
 	| IDENTIFIER '=' constant_expression { vlog("[parser] ENUMERATOR_IDENTIFIER_=_CONSTANT\n"); }
 	;
 
@@ -293,7 +299,7 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1->id); }
 	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); }
 	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); }
 	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); }
@@ -332,7 +338,7 @@ parameter_declaration
 	;
 
 identifier_list
-	: IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_IDENTIFIER: %s\n", $1); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_IDENTIFIER: %s\n", $1->id); }
 	| identifier_list ',' IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_,_IDENTIFIER\n"); }
 	;
 
@@ -429,8 +435,8 @@ jump_statement
 	;
 
 translation_unit
-	: external_declaration { vlog("[parser] EXTERNAL_DECLARATION\n"); }
-	| translation_unit external_declaration { vlog("[parser] TRANSLATION_UNIT_EXTERNAL_DECLARATION\n"); }
+	: external_declaration { vlog("[parser] EXTERNAL_DECLARATION\n"); $$ = $1; }
+	| translation_unit external_declaration { vlog("[parser] TRANSLATION_UNIT_EXTERNAL_DECLARATION\n"); $$ = (node*)op("translation_unit", 1, $2); }
 	;
 
 external_declaration
