@@ -4,6 +4,7 @@
 #include "parser.tab.h"
 #include "log.h"
 #include "symbol.h"
+#include "parse_tree.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -25,6 +26,7 @@ static FILE *PARSE_OUTPUT = NULL;
 static FILE *SYMBOL_OUTPUT = NULL;
 
 symbol_table *sym = NULL;
+node *parse_tree_head = NULL;
 
 void print_usage(void) {
 	printf("pcc - plp c compiler\n\n");
@@ -151,10 +153,12 @@ int main(int argc, char *argv[]) {
 	log("[pcc] starting frontend\n");
 	yyparse();
 
-	/* print the parse stack */
-/*	if (PARSE_OUTPUT != NULL)
-		print_stack(PARSE_OUTPUT);
-*/
+	/* print the parse tree */
+	if (PARSE_OUTPUT != NULL) {
+		vlog("[pcc] printing parse tree\n");
+		print_tree(parse_tree_head, PARSE_OUTPUT, 0);
+	}
+
 	vlog("[pcc] closing files\n");
 	fclose(FILE_INPUT);
 	fclose(FILE_OUTPUT);
