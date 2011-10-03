@@ -7,7 +7,8 @@ typedef enum {
 	type_con,
 	type_id,
 	type_op,
-	type_type
+	type_type,
+	type_string
 } node_type;
 
 typedef struct node_t {
@@ -19,6 +20,7 @@ typedef struct node_t {
 
 node *con(char *);
 node *id(char *);
+node *str(char *);
 node *type(char *);
 node *op(char *t, int num_ops, ...);
 node *add_child(node *, node *); /* add a child node to this node */

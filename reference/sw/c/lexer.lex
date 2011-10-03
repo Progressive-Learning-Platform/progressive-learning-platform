@@ -11,7 +11,9 @@ IS			(u|U|l|L)*
 #include "parse_tree.h"
 #include "log.h"
 
+
 void count();
+void count_no_log();
 void comment();
 int check_type();
 
@@ -55,7 +57,7 @@ int check_type();
 "volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
 
-{L}({L}|{D})*		{ yylval = con((char*)yytext); count(); return(check_type()); }
+{L}({L}|{D})*		{ yylval = id((char*)yytext); count(); return(check_type()); }
 
 0[xX]{H}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 0{D}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
@@ -66,7 +68,7 @@ L?'(\\.|[^\\'])+'	{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 {D}*"."{D}+({E})?{FS}?	{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 {D}+"."{D}*({E})?{FS}?	{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 
-L?\"(\\.|[^\\"])*\"	{ yylval = con((char*)yytext); count(); return(STRING_LITERAL); }
+L?\"(\\.|[^\\"])*\"	{ yylval = str((char*)yytext); count(); return(STRING_LITERAL); }
 
 "..."			{ count(); return(ELLIPSIS); }
 ">>="			{ count(); return(RIGHT_ASSIGN); }
@@ -115,7 +117,7 @@ L?\"(\\.|[^\\"])*\"	{ yylval = con((char*)yytext); count(); return(STRING_LITERA
 "|"			{ count(); return('|'); }
 "?"			{ count(); return('?'); }
 
-[ \t\v\n\f]		{ count(); }
+[ \t\v\n\f]		{ count_no_log(); }
 .			{ printf("[e] %d: bad input '%s'\n", yylineno, yytext); }
 
 %%
@@ -146,6 +148,19 @@ loop:
 
 
 int column = 0;
+
+void count_no_log()
+{
+	int i;
+
+	for (i = 0; yytext[i] != '\0'; i++)
+		if (yytext[i] == '\n')
+			column = 0;
+		else if (yytext[i] == '\t')
+			column += 8 - (column % 8);
+		else
+			column++;
+}
 
 void count()
 {
