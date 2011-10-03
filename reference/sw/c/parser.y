@@ -10,6 +10,7 @@
 extern char yytext[];
 extern int column;
 extern symbol_table *sym;
+extern node *parse_tree_head;
 
 extern int yylex (void);
 
@@ -189,7 +190,7 @@ constant_expression
 
 declaration
 	: declaration_specifiers ';' { vlog("[parser] DECLARATION_SPECIFIERS_;\n"); }
-	| declaration_specifiers init_declarator_list ';' { vlog("[parser] DECLARATION_SPECIFIERS_INIT_DECLARATOR_LIST_;\n"); }
+	| declaration_specifiers init_declarator_list ';' { vlog("[parser] DECLARATION_SPECIFIERS_INIT_DECLARATOR_LIST_;\n"); $$ = op("declarator", 2, $1, $2); }
 	;
 
 declaration_specifiers
@@ -220,15 +221,15 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { vlog("[parser] VOID\n"); }
-	| CHAR { vlog("[parser] CHAR\n"); }
-	| SHORT { vlog("[parser] SHORT\n"); }
-	| INT { vlog("[parser] INT\n"); }
-	| LONG { vlog("[parser] LONG\n"); }
-	| FLOAT { vlog("[parser] FLOAT\n"); }
-	| DOUBLE { vlog("[parser] DOUBLE\n"); }
-	| SIGNED { vlog("[parser] SIGNED\n"); }
-	| UNSIGNED { vlog("[parser] UNSIGNED\n"); }
+	: VOID { vlog("[parser] VOID\n"); $$ = type("void"); }
+	| CHAR { vlog("[parser] CHAR\n"); $$ = type("char"); }
+	| SHORT { vlog("[parser] SHORT\n"); $$ = type("short"); }
+	| INT { vlog("[parser] INT\n"); $$ = type("int"); }
+	| LONG { vlog("[parser] LONG\n"); $$ = type("long"); }
+	| FLOAT { vlog("[parser] FLOAT\n"); $$ = type("float"); }
+	| DOUBLE { vlog("[parser] DOUBLE\n"); $$ = type("double"); }
+	| SIGNED { vlog("[parser] SIGNED\n"); $$ = type("signed"); }
+	| UNSIGNED { vlog("[parser] UNSIGNED\n"); $$ = type("unsigned"); }
 	| struct_or_union_specifier { vlog("[parser] STRUCT_UNION\n"); }
 	| enum_specifier { vlog("[parser] ENUM\n"); }
 	| TYPE_NAME { vlog("[parser] TYPE_NAME\n"); }
@@ -299,7 +300,7 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1->id); }
+	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1->id); } //$$ = op("declarator", $1, $2); }
 	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); }
 	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); }
 	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); }
@@ -435,8 +436,8 @@ jump_statement
 	;
 
 translation_unit
-	: external_declaration { vlog("[parser] EXTERNAL_DECLARATION\n"); $$ = $1; }
-	| translation_unit external_declaration { vlog("[parser] TRANSLATION_UNIT_EXTERNAL_DECLARATION\n"); $$ = (node*)op("translation_unit", 1, $2); }
+	: external_declaration { vlog("[parser] EXTERNAL_DECLARATION\n"); $$ = $1; parse_tree_head = $$; }
+	| translation_unit external_declaration { vlog("[parser] TRANSLATION_UNIT_EXTERNAL_DECLARATION\n"); $$ = op("translation_unit", 2, $1, $2); parse_tree_head = $$; }
 	;
 
 external_declaration
@@ -445,9 +446,9 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); }
-	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); }
-	| declarator declaration_list compound_statement { vlog("[parser] DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); }
+	: declaration_specifiers declarator declaration_list compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 4, $1, $2, $3, $4); }
+	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); }
+	| declarator declaration_list compound_statement { vlog("[parser] DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); }
 	| declarator compound_statement { vlog("[parser] DECLARATOR_COMPOUND_STATEMENT\n"); }
 	;
 

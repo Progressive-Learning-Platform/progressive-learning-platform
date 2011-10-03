@@ -5,37 +5,38 @@
 #include "parse_tree.h"
 #include "log.h"
 
-node *con(char *s) {
+node *new_node(char *s) {
 	node *n = NULL;
-	
-	vlog("[parse_tree] con: %s\n", s);
 	
 	n = malloc(sizeof(node));
 	if (n == NULL) {
 		err("[parse_tree] cannot allocate node");
 	}
 
-	n->type = type_con;
 	n->id = strdup(s);
 	n->num_children = 0;
 
 	return n;
 }
 
+node *type(char *s) {
+	node *n = new_node(s);
+	vlog("[parse_tree] type: %s\n", s);
+	n->type = type_type;
+	return n;
+}
+
+node *con(char *s) {
+	node *n = new_node(s);
+	vlog("[parse_tree] con: %s\n", s);
+	n->type = type_con;
+	return n;
+}
+
 node *id(char *s) {
-	node *n = NULL;
-	
+	node *n = new_node(s);
 	vlog("[parse_tree] id: %s\n", s);
-
-	n = malloc(sizeof(node));
-	if (n == NULL) {
-		err("[parse_tree] cannot allocate node");
-	}
-
 	n->type = type_id;
-	n->id = strdup(s);
-	n->num_children = 0;
-	
 	return n;
 }
 
@@ -67,6 +68,8 @@ node *add_child(node *parent, node *child) {
 	node *n = NULL;
 	int i;
 
+	vlog("node add\n");
+
 	n = malloc(sizeof(node) + ((parent->num_children + 1) * sizeof(node*)));
 	if (n == NULL) {
 		err("[parse_tree] cannot allocate node");
@@ -85,4 +88,32 @@ node *add_child(node *parent, node *child) {
 	free(parent);
 
 	return n;
+}
+
+void print_tree(node *n, FILE *o, int depth) {
+	/* depth first traversal */
+	int i;	
+
+	/* print ourselves */
+	for (i=0; i<depth; i++)
+		fprintf(o, "\t");
+	switch (n->type) {
+		case type_con:
+			fprintf(o, "constant:");
+			break;
+		case type_id:
+			fprintf(o, "id:");
+			break;
+		case type_op:
+			fprintf(o, "op:");
+			break;
+		case type_type:
+			fprintf(o, "type:");
+			break;
+	}
+	fprintf(o, "%s\n", n->id);
+	
+	/* print children */
+	for (i=0; i<n->num_children; i++)
+		print_tree(n->children[i], o, depth+1);
 }
