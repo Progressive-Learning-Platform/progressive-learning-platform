@@ -19,6 +19,13 @@ node *new_node(char *s) {
 	return n;
 }
 
+node *str(char *s) {
+	node *n = new_node(s);
+	vlog("[parse_tree] string: %s\n", s);
+	n->type = type_string;
+	return n;
+}
+
 node *type(char *s) {
 	node *n = new_node(s);
 	vlog("[parse_tree] type: %s\n", s);
@@ -45,7 +52,7 @@ node *op(char *t, int num_ops, ...) {
 	int i;
 	node *n = NULL;
 
-	vlog("[parse_tree] op: %s\n", t);
+	vlog("[parse_tree] op: %s ", t);
 
 	n = malloc(sizeof(node) + ((num_ops - 1) * sizeof(node*)));
 	if (n == NULL) {
@@ -56,8 +63,11 @@ node *op(char *t, int num_ops, ...) {
 	n->id = strdup(t);
 	n->num_children = num_ops;
 	va_start(ap, num_ops);
-	for (i=0; i<num_ops; i++)
+	for (i=0; i<num_ops; i++) {
 		n->children[i] = va_arg(ap, node*);
+		vlog(": %s ", n->children[i]->id);
+	}
+	vlog("\n");
 	va_end(ap);
 
 	return n;
@@ -68,7 +78,7 @@ node *add_child(node *parent, node *child) {
 	node *n = NULL;
 	int i;
 
-	vlog("node add\n");
+	vlog("[parse_tree] add_node: %s to %s\n", child->id, parent->id);
 
 	n = malloc(sizeof(node) + ((parent->num_children + 1) * sizeof(node*)));
 	if (n == NULL) {
@@ -84,8 +94,8 @@ node *add_child(node *parent, node *child) {
 	n->children[i] = child;
 
 	/* get rid of the old parent */
-	free(parent->id);
-	free(parent);
+	//free(parent->id);
+	//free(parent);
 
 	return n;
 }
@@ -109,6 +119,9 @@ void print_tree(node *n, FILE *o, int depth) {
 			break;
 		case type_type:
 			fprintf(o, "type:");
+			break;
+		case type_string:
+			fprintf(o, "string:");
 			break;
 	}
 	fprintf(o, "%s\n", n->id);
