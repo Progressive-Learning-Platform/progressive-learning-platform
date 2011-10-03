@@ -55,113 +55,113 @@ primary_expression
 	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1->id); /* the lexer already made this object a constant */ }
 	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1->id); /* the lexer already made this object a constant */ } 
 	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1->id); /* the lexer already made this object a string */ }
-	| '(' expression ')' { vlog("[parser] EXPRESSION"); }
+	| '(' expression ')' { vlog("[parser] EXPRESSION"); $$ = op("expression", 1, $2); }
 	;
 
 postfix_expression
-	: primary_expression /*  { vlog("[parser] PRIMARY_EXPRESSION\n"); } */
-	| postfix_expression '[' expression ']' { vlog("[parser] POSTFIX_BRACKET_EXPRESSION\n"); }
-	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); }
-	| postfix_expression '(' argument_expression_list ')' { vlog("[parser] POSTFIX_ARG_EXPRESSION_LIST\n"); }
-	| postfix_expression '.' IDENTIFIER { vlog("[parser] POSTFIX_._IDENTIFIER\n"); }
-	| postfix_expression PTR_OP IDENTIFIER { vlog("[parser] POSTFIX_PTR_OP_IDENTIFIER\n"); }
-	| postfix_expression INC_OP { vlog("[parser] POSTFIX_INC_OP_EXPRESSION\n"); }
-	| postfix_expression DEC_OP { vlog("[parser] POSTFIX_DEC_OP_EXPRESSION\n"); }
+	: primary_expression 
+	| postfix_expression '[' expression ']' { vlog("[parser] POSTFIX_BRACKET_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, $3); }
+	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); $$ = op("postfix_expr_paren", 1, $1); }
+	| postfix_expression '(' argument_expression_list ')' { vlog("[parser] POSTFIX_ARG_EXPRESSION_LIST\n"); $$ = op("postfix_expr_paren", 2, $1, $3); }
+	| postfix_expression '.' IDENTIFIER { vlog("[parser] POSTFIX_._IDENTIFIER\n"); $$ = op("postfix_expr_dot", 2, $1, $3); }
+	| postfix_expression PTR_OP IDENTIFIER { vlog("[parser] POSTFIX_PTR_OP_IDENTIFIER\n"); $$ = op("postfix_expr_arrow", 2, $1, $3); }
+	| postfix_expression INC_OP { vlog("[parser] POSTFIX_INC_OP_EXPRESSION\n"); $$ = op("postfix_expr_inc", 1, $1); }
+	| postfix_expression DEC_OP { vlog("[parser] POSTFIX_DEC_OP_EXPRESSION\n"); $$ = op("postfix_expr_dec", 1, $1); }
 	;
 
 argument_expression_list
-	: assignment_expression /* { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); } */
-	| argument_expression_list ',' assignment_expression { vlog("[parser] ARG_EXPRESSION_LIST_,_ASSIGNMENT_EXPRESSION\n"); }
+	: assignment_expression { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); $$ = op("argument_expr_list", 1, $1); }
+	| argument_expression_list ',' assignment_expression { vlog("[parser] ARG_EXPRESSION_LIST_,_ASSIGNMENT_EXPRESSION\n"); $$ = add_child($1, $3); }
 	;
 
 unary_expression
-	: postfix_expression /* { vlog("[parser] POSTFIX_EXPRESSION\n"); } */
-	| INC_OP unary_expression { vlog("[parser] INC_OP_UNARY_EXPRESSION\n"); }
-	| DEC_OP unary_expression { vlog("[parser] DEC_OP_UNARY_EXPRESSION\n"); }
-	| unary_operator cast_expression { vlog("[parser] UNARY_OP_CAST_EXPRESSION\n"); }
-	| SIZEOF unary_expression { vlog("[parser] SIZEOF_UNARY_EXP\n"); }
-	| SIZEOF '(' type_name ')' { vlog("[parser] SIZEOF_TYPE_NAME\n"); }
+	: postfix_expression
+	| INC_OP unary_expression { vlog("[parser] INC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr_inc", 1, $2); }
+	| DEC_OP unary_expression { vlog("[parser] DEC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr_dec", 1, $2); }
+	| unary_operator cast_expression { vlog("[parser] UNARY_OP_CAST_EXPRESSION\n"); $$ = op("unary_expr", 2, $1, $2); }
+	| SIZEOF unary_expression { vlog("[parser] SIZEOF_UNARY_EXP\n"); $$ = op("sizeof", 1, $1); }
+	| SIZEOF '(' type_name ')' { vlog("[parser] SIZEOF_TYPE_NAME\n"); $$ = op("sizeof", 1, $3); }
 	;
 
 unary_operator
-	: '&' { vlog("[parser] &\n"); }
-	| '*' { vlog("[parser] *\n"); }
-	| '+' { vlog("[parser] +\n"); }
-	| '-' { vlog("[parser] -\n"); }
-	| '~' { vlog("[parser] ~\n"); }
-	| '!' { vlog("[parser] !\n"); }
+	: '&' { vlog("[parser] &\n"); $$ = id("&"); }
+	| '*' { vlog("[parser] *\n"); $$ = id("*"); }
+	| '+' { vlog("[parser] +\n"); $$ = id("+"); }
+	| '-' { vlog("[parser] -\n"); $$ = id("-"); }
+	| '~' { vlog("[parser] ~\n"); $$ = id("~"); }
+	| '!' { vlog("[parser] !\n"); $$ = id("!"); }
 	;
 
 cast_expression
-	: unary_expression /* { vlog("[parser] UNARY_EXPRESSION\n"); } */
-	| '(' type_name ')' cast_expression { vlog("[parser] TYPE_NAME_CAST_EXPRESSION\n"); }
+	: unary_expression
+	| '(' type_name ')' cast_expression { vlog("[parser] TYPE_NAME_CAST_EXPRESSION\n"); $$ = op("cast_expr", 2, $2, $4); }
 	;
 
 multiplicative_expression
-	: cast_expression /* { vlog("[parser] CAST_EXPRESSION\n"); } */
-	| multiplicative_expression '*' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_*_CAST_EXPRESSION\n"); }
-	| multiplicative_expression '/' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_/_CAST_EXPRESSION\n"); }
-	| multiplicative_expression '%' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_MOD_CAST_EXPRESSION\n"); }
+	: cast_expression
+	| multiplicative_expression '*' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_*_CAST_EXPRESSION\n"); $$ = op("multiply", 2, $1, $3); }
+	| multiplicative_expression '/' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_/_CAST_EXPRESSION\n"); $$ = op("divide", 2, $1, $3); }
+	| multiplicative_expression '%' cast_expression { vlog("[parser] MULTIPLICATIVE_EXPRESSION_MOD_CAST_EXPRESSION\n"); $$ = op("mod", 2, $1, $3); }
 	;
 
 additive_expression
-	: multiplicative_expression /* { vlog("[parser] MULTIPLICATIVE_EXPRESSION\n"); } */
-	| additive_expression '+' multiplicative_expression { vlog("[parser] ADDITIVE_EXPRESSION_+_MULTIPLICATIVE_EXPRESSION\n"); $$ = op("+", 2, $1, $3); }
-	| additive_expression '-' multiplicative_expression { vlog("[parser] ADDITIVE_EXPRESSION_-_MULTIPLICATIVE_EXPRESSION\n"); }
+	: multiplicative_expression 
+	| additive_expression '+' multiplicative_expression { vlog("[parser] ADDITIVE_EXPRESSION_+_MULTIPLICATIVE_EXPRESSION\n"); $$ = op("add", 2, $1, $3); }
+	| additive_expression '-' multiplicative_expression { vlog("[parser] ADDITIVE_EXPRESSION_-_MULTIPLICATIVE_EXPRESSION\n"); $$ = op("sub", 2, $1, $3); }
 	;
 
 shift_expression
-	: additive_expression /*  { vlog("[parser] ADDITIVE_EXPRESSION\n"); } */
-	| shift_expression LEFT_OP additive_expression { vlog("[parser] SHIFT_LEFT_ADDITIVE\n"); }
-	| shift_expression RIGHT_OP additive_expression { vlog("[parser] SHIFT_RIGHT_ADDITIVE\n"); }
+	: additive_expression 
+	| shift_expression LEFT_OP additive_expression { vlog("[parser] SHIFT_LEFT_ADDITIVE\n"); $$ = op("shift_left", 2, $1, $3); }
+	| shift_expression RIGHT_OP additive_expression { vlog("[parser] SHIFT_RIGHT_ADDITIVE\n"); $$ = op("shift_right", 2, $1, $3); }
 	;
 
 relational_expression
-	: shift_expression /* { vlog("[parser] SHIFT_EXPRESSION\n"); } */
-	| relational_expression '<' shift_expression { vlog("[parser] RELATIONAL_<_SHIFT\n"); }
-	| relational_expression '>' shift_expression { vlog("[parser] RELATIONAL_>_SIHFT\n"); }
-	| relational_expression LE_OP shift_expression { vlog("[parser] RELATIONAL_LE_SHIFT\n"); }
-	| relational_expression GE_OP shift_expression { vlog("[parser] RELATIONAL_GE_SHIFT\n"); }
+	: shift_expression 
+	| relational_expression '<' shift_expression { vlog("[parser] RELATIONAL_<_SHIFT\n"); $$ = op("less_than", 2, $1, $3); }
+	| relational_expression '>' shift_expression { vlog("[parser] RELATIONAL_>_SIHFT\n"); $$ = op("greater_than", 2, $1, $3); }
+	| relational_expression LE_OP shift_expression { vlog("[parser] RELATIONAL_LE_SHIFT\n"); $$ = op("less_equal_than", 2, $1, $3); }
+	| relational_expression GE_OP shift_expression { vlog("[parser] RELATIONAL_GE_SHIFT\n"); $$ = op("greater_equal_than", 2, $1, $3); }
 	;
 
 equality_expression
-	: relational_expression /* { vlog("[parser] RELATIONAL_EXPRESSION\n"); } */
-	| equality_expression EQ_OP relational_expression { vlog("[parser] EQUALITY_EQ_RELATIONAL\n"); }
-	| equality_expression NE_OP relational_expression { vlog("[parser] EQUALITY_NE_RELATIONAL\n"); }
+	: relational_expression 
+	| equality_expression EQ_OP relational_expression { vlog("[parser] EQUALITY_EQ_RELATIONAL\n"); $$ = op("equality", 2, $1, $3); }
+	| equality_expression NE_OP relational_expression { vlog("[parser] EQUALITY_NE_RELATIONAL\n"); $$ = op("equality_not", 2, $1, $3); }
 	;
 
 and_expression
-	: equality_expression /* { vlog("[parser] EQUALITY_EXPRESSION\n"); } */
-	| and_expression '&' equality_expression { vlog("[parser] AND_EXPRESSION_&_EQUALITY\n"); }
+	: equality_expression 
+	| and_expression '&' equality_expression { vlog("[parser] AND_EXPRESSION_&_EQUALITY\n"); $$ = op("bitwise_and", 2, $1, $3); }
 	;
 
 exclusive_or_expression
-	: and_expression /* { vlog("[parser] AND_EXPRESSION\n"); } */
-	| exclusive_or_expression '^' and_expression { vlog("[parser] XOR_^_AND_EXPRESSION\n"); }
+	: and_expression 
+	| exclusive_or_expression '^' and_expression { vlog("[parser] XOR_^_AND_EXPRESSION\n"); $$ = op("bitwise_xor", 2, $1, $3); }
 	;
 
 inclusive_or_expression
-	: exclusive_or_expression /* { vlog("[parser] XOR_EXPRESSION\n"); } */
-	| inclusive_or_expression '|' exclusive_or_expression { vlog("[parser] OR_|_XOR\n"); }
+	: exclusive_or_expression 
+	| inclusive_or_expression '|' exclusive_or_expression { vlog("[parser] OR_|_XOR\n"); $$ = op("bitwise_or", 2, $1, $3); }
 	;
 
 logical_and_expression
-	: inclusive_or_expression /* { vlog("[parser] OR_EXPRESSION\n"); } */
-	| logical_and_expression AND_OP inclusive_or_expression { vlog("[parser] LOGICAL_AND_&&_OR\n"); }
+	: inclusive_or_expression 
+	| logical_and_expression AND_OP inclusive_or_expression { vlog("[parser] LOGICAL_AND_&&_OR\n"); $$ = op("logical_and", 2, $1, $3); }
 	;
 
 logical_or_expression
-	: logical_and_expression /* { vlog("[parser] LOGICAL_AND\n"); } */
-	| logical_or_expression OR_OP logical_and_expression { vlog("[parser] LOGICAL_OR_||_LOGICAL_AND\n"); }
+	: logical_and_expression 
+	| logical_or_expression OR_OP logical_and_expression { vlog("[parser] LOGICAL_OR_||_LOGICAL_AND\n"); $$ = op("logical_or", 2, $1, $3); }
 	;
 
 conditional_expression
-	: logical_or_expression /* { vlog("[parser] LOGICAL_OR\n"); } */
-	| logical_or_expression '?' expression ':' conditional_expression { vlog("[parser] LOGICAL_OR_?\n"); }
+	: logical_or_expression 
+	| logical_or_expression '?' expression ':' conditional_expression { vlog("[parser] LOGICAL_OR_?\n"); $$ = op("conditional", 3, $1, $3, $5); }
 	;
 
 assignment_expression
-	: conditional_expression /* { vlog("[parser] CONDITIONAL_EXPRESSION\n"); } */
+	: conditional_expression 
 	| unary_expression assignment_operator assignment_expression { vlog("[parser] UNARY_ASSIGNMENT\n"); $$ = op("assignment", 3, $1, $2, $3); }
 	;
 
@@ -180,16 +180,16 @@ assignment_operator
 	;
 
 expression
-	: assignment_expression /* { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); } */
-	| expression ',' assignment_expression { vlog("[parser] EXPRESSION_,_ASSIGNMENT_EXPRESSION\n"); }
+	: assignment_expression { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); $$ = op("expression", 1, $1); }
+	| expression ',' assignment_expression { vlog("[parser] EXPRESSION_,_ASSIGNMENT_EXPRESSION\n"); $$ = add_child($1, $3); }
 	;
 
 constant_expression
-	: conditional_expression /* { vlog("[parser] CONDITIONAL_EXPRESSION\n"); } */
+	: conditional_expression /* why is this here!? */
 	;
 
 declaration
-	: declaration_specifiers ';' { vlog("[parser] DECLARATION_SPECIFIERS_;\n"); }
+	: declaration_specifiers ';' { vlog("[parser] DECLARATION_SPECIFIERS_;\n"); $$ = op("declarator", 1, $1); }
 	| declaration_specifiers init_declarator_list ';' { vlog("[parser] DECLARATION_SPECIFIERS_INIT_DECLARATOR_LIST_;\n"); $$ = op("declarator", 2, $1, $2); }
 	;
 
