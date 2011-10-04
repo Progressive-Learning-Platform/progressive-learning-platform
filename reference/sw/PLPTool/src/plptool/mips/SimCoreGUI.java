@@ -741,9 +741,11 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
                 memMap.removeRow(0);
 
         for(int i = 0; i < sim.bus.getNumOfMods(); i++) {
+            long startAddr = sim.bus.getModStartAddress(i);
+            long endAddr = sim.bus.getModEndAddress(i);
             Object row[] = new Object[] {i, sim.bus.getRefMod(i),
-                                         String.format("0x%08x", sim.bus.getModStartAddress(i)),
-                                         String.format("0x%08x", sim.bus.getModEndAddress(i)),
+                                         (startAddr < 0 ? "Unmapped" : String.format("0x%08x", startAddr)),
+                                         (endAddr < 0 ? "Unmapped" : String.format("0x%08x", endAddr)),
                                          sim.bus.getEnabled(i) };
             memMap.addRow(row);
         }
@@ -769,7 +771,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         updateProgramMemoryTablePC();
     }
 
-    /** release build featuers disabler **/
+    /** release build features disabler **/
     public final void disableFeatures() {
         coreVisPane.setVisible(false);
     }

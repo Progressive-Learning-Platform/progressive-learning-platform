@@ -146,7 +146,30 @@ public class ArchRegistry {
          **********************************************************************/
         else if(arch.equals("plpmips")) {
             plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
+            plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
             plp.sim.bus.enableAllModules();
+        }
+
+        // ... add your simulation core initialization here ... //
+    }
+
+    /**
+     * Additional code after simulation is stopped. Called by the ProjectDriver
+     * when the project exits simulation mode
+     *
+     * @param plp The current instance of the project driver
+     */
+    public static void simulatorStop(ProjectDriver plp) {
+        String arch = plp.getArch();
+
+        if(arch == null)
+            return;
+
+        /**********************************************************************
+         * plpmips SimCore post-simulation
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            
         }
 
         // ... add your simulation core initialization here ... //
@@ -157,11 +180,11 @@ public class ArchRegistry {
      *
      * @param plp The current instance of the project driver
      */
-    public static void launchCLISimulatorInterface(ProjectDriver plp) {
+    public static int launchCLISimulatorInterface(ProjectDriver plp) {
         String arch = plp.getArch();
 
         if(arch == null)
-            return;
+            return Constants.PLP_GENERIC_ERROR;
 
         /**********************************************************************
          * plpmips SimCore CLI interface
@@ -171,10 +194,12 @@ public class ArchRegistry {
         }
 
         else
-            Msg.E("The ISA " + arch + " does not have a registered" +
-                  " CLI for the simulator.", Constants.PLP_ISA_NO_SIM_CLI, null);
+            return Msg.E("The ISA " + arch + " does not have a registered" +
+                   " CLI for the simulator.", Constants.PLP_ISA_NO_SIM_CLI, null);
 
         // ... add your simulation core instantiation here ... //
+
+        return Constants.PLP_OK;
     }
 
     /**

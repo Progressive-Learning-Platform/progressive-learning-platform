@@ -17,57 +17,62 @@
  */
 
 package plptool.mods;
-import plptool.PLPSimBusModule;
 import plptool.Constants;
-
+import plptool.PLPSimBusModule;
+import plptool.Msg;
 
 /**
+ * PLP Switches I/O module.
  *
- * Simple timer module that increments at every cycle, is writable as well.
- *
- * @author fritz
+ * @see PLPSimBusModule
+ * @author wira
  */
-public class Timer extends PLPSimBusModule {
+public class Button extends PLPSimBusModule {
 
+    private boolean pressed;
     private plptool.PLPSimCore sim;
+    private long bit;
+    private long mask;
 
-    public Timer(long addr, plptool.PLPSimCore sim) {
-        super(addr, addr, true);
+    public Button(long bit, long mask, plptool.PLPSimCore sim) {
+        super(-1, -1, true);
+        pressed = false;
         this.sim = sim;
+        this.bit = bit;
+        this.mask = mask;
     }
 
     public int eval() {
-        if (super.isInitialized(super.startAddr)) {
-            long timer = (Long)super.read(super.startAddr) & 0xffffffffL;
-            timer++;
-            if(timer == 0xffffffffL)
-                sim.setIRQ(2);
-            else
-                sim.maskIRQ(0xfffffffdL);
+        if(!enabled)
+            return Constants.PLP_OK;
 
-            super.write(super.startAddr, timer, false);
-        } else {
-            super.write(super.startAddr,(long) 0,false);
-        }
+        if(pressed) {
+            Msg.D("Setting IRQ", 4, this);
+            sim.setIRQ(bit);
+        } else
+            sim.maskIRQ(mask);
+
         return Constants.PLP_OK;
     }
 
-    public int gui_eval(Object x) {
-        //No GUI
-	return Constants.PLP_OK;
+    public void setPressedState(boolean s) {
+        pressed = s;
     }
 
-    @Override public void reset() {
-        super.writeReg(startAddr, new Long(0L), false);
+    public int gui_eval(Object x) {
+        return Constants.PLP_OK;
     }
 
     public String introduce() {
-        return "Timer";
+        return "Interrupt Button";
+    }
+
+    @Override public void reset() {
+        // nothing, read only module
     }
 
     @Override
     public String toString() {
-        return "Timer";
+        return "Interrupt Button";
     }
-
 }

@@ -1072,6 +1072,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimUART = new javax.swing.JToggleButton();
         btnSimVGA = new javax.swing.JToggleButton();
         btnSimPLPID = new javax.swing.JToggleButton();
+        btnSimButtonInterrupt = new javax.swing.JToggleButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -1236,11 +1237,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 576, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 611, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1254,7 +1255,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1273,7 +1274,7 @@ public class Develop extends javax.swing.JFrame {
         devMainPane.setLayout(devMainPaneLayout);
         devMainPaneLayout.setHorizontalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1550,6 +1551,18 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         toolbar.add(btnSimPLPID);
+
+        btnSimButtonInterrupt.setText(resourceMap.getString("btnSimButtonInterrupt.text")); // NOI18N
+        btnSimButtonInterrupt.setFocusable(false);
+        btnSimButtonInterrupt.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimButtonInterrupt.setName("btnSimButtonInterrupt"); // NOI18N
+        btnSimButtonInterrupt.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimButtonInterrupt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimButtonInterruptActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnSimButtonInterrupt);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -2864,6 +2877,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimulateActionPerformed
 
+    private void btnSimButtonInterruptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimButtonInterruptActionPerformed
+        plptool.mods.Button btn = (plptool.mods.Button) plp.sim.bus.getRefMod(1);
+        btn.setPressedState(btnSimButtonInterrupt.isSelected());
+    }//GEN-LAST:event_btnSimButtonInterruptActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -2941,6 +2959,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnProgram;
     private javax.swing.JButton btnSave;
+    private javax.swing.JToggleButton btnSimButtonInterrupt;
     private javax.swing.JToggleButton btnSimLEDs;
     private javax.swing.JToggleButton btnSimPLPID;
     private javax.swing.JButton btnSimReset;
