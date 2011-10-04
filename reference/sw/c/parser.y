@@ -194,17 +194,17 @@ declaration
 	;
 
 declaration_specifiers
-	: storage_class_specifier { vlog("[parser] STORAGE_CLASS_SPECIFIER\n"); } 
-	| storage_class_specifier declaration_specifiers { vlog("[parser] STORAGE_CLASS_SPECIFIER_DECLARATION_SPECIFIERS\n"); } 
-	| type_specifier { vlog("[parser] DECLARATION_SPECIFIER_TYPE_SPECIFIER\n"); } 
-	| type_specifier declaration_specifiers { vlog("[parser] TYPE_SPECIFIER_DECLARATION_SPECIFIERS\n"); } 
-	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); } 
-	| type_qualifier declaration_specifiers { vlog("[parser] TYPE_QUALIFIER_DECLARATION_SPECIFIERS\n"); } 
+	: storage_class_specifier { vlog("[parser] STORAGE_CLASS_SPECIFIER\n"); $$ = op("declaration_specifier", 1, $1); } 
+	| storage_class_specifier declaration_specifiers { vlog("[parser] STORAGE_CLASS_SPECIFIER_DECLARATION_SPECIFIERS\n"); $$ = add_child($2, $1); } 
+	| type_specifier { vlog("[parser] DECLARATION_SPECIFIER_TYPE_SPECIFIER\n"); $$ = op("declaration_specifier", 1, $1); }
+	| type_specifier declaration_specifiers { vlog("[parser] TYPE_SPECIFIER_DECLARATION_SPECIFIERS\n"); $$ = add_child($2, $1); } 
+	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); $$ = op("declaration_specifier", 1, $1); } 
+	| type_qualifier declaration_specifiers { vlog("[parser] TYPE_QUALIFIER_DECLARATION_SPECIFIERS\n"); $$ = add_child($2, $1); } 
 	;
 
 init_declarator_list
-	: init_declarator { vlog("[parser] INIT_DECLARATOR\n"); } 
-	| init_declarator_list ',' init_declarator { vlog("[parser] INIT_DECLARATOR_LIST_,_INIT_DECLARATOR\n"); } 
+	: init_declarator { vlog("[parser] INIT_DECLARATOR\n"); $$ = op("init_declarator", 1, $1); } 
+	| init_declarator_list ',' init_declarator { vlog("[parser] INIT_DECLARATOR_LIST_,_INIT_DECLARATOR\n"); $$ = add_child($1, $2); } 
 	;
 
 init_declarator
@@ -213,11 +213,11 @@ init_declarator
 	;
 
 storage_class_specifier
-	: TYPEDEF { vlog("[parser] TYPEDEF\n"); }
-	| EXTERN { vlog("[parser] EXTERN\n"); }
-	| STATIC { vlog("[parser] STATIC\n"); }
-	| AUTO { vlog("[parser] AUTO\n"); }
-	| REGISTER { vlog("[parser] REGISTER\n"); }
+	: TYPEDEF { vlog("[parser] TYPEDEF\n"); $$ = type("typedef"); }
+	| EXTERN { vlog("[parser] EXTERN\n"); $$ = type("extern"); }
+	| STATIC { vlog("[parser] STATIC\n"); $$ = type("static"); }
+	| AUTO { vlog("[parser] AUTO\n"); $$ = type("auto"); }
+	| REGISTER { vlog("[parser] REGISTER\n"); $$ = type("register"); }
 	;
 
 type_specifier
@@ -230,20 +230,20 @@ type_specifier
 	| DOUBLE { vlog("[parser] DOUBLE\n"); $$ = type("double"); }
 	| SIGNED { vlog("[parser] SIGNED\n"); $$ = type("signed"); }
 	| UNSIGNED { vlog("[parser] UNSIGNED\n"); $$ = type("unsigned"); }
-	| struct_or_union_specifier { vlog("[parser] STRUCT_UNION\n"); }
-	| enum_specifier { vlog("[parser] ENUM\n"); }
-	| TYPE_NAME { vlog("[parser] TYPE_NAME\n"); }
+	| struct_or_union_specifier { vlog("[parser] STRUCT_UNION\n"); $$ = type("struct_union"); }
+	| enum_specifier { vlog("[parser] ENUM\n"); $$ = type("enum"); }
+	| TYPE_NAME { vlog("[parser] TYPE_NAME\n"); /* currently unsupported */ }
 	;
 
 struct_or_union_specifier
-	: struct_or_union IDENTIFIER '{' struct_declaration_list '}' { vlog("[parser] STRUCT_IDENTIFIER_{}\n"); }
-	| struct_or_union '{' struct_declaration_list '}' { vlog("[parser] STRUCT_{}\n"); }
-	| struct_or_union IDENTIFIER { vlog("[parser] STRUCT_IDENTIFIER\n"); }
+	: struct_or_union IDENTIFIER '{' struct_declaration_list '}' { vlog("[parser] STRUCT_IDENTIFIER_{}\n"); $$ = op("struct_union", 3, $1, $2, $4); }
+	| struct_or_union '{' struct_declaration_list '}' { vlog("[parser] STRUCT_{}\n"); $$ = op("struct_union", 2, $1, $3); }
+	| struct_or_union IDENTIFIER { vlog("[parser] STRUCT_IDENTIFIER\n"); $$ = op("struct_union", 2, $1, $2); }
 	;
 
 struct_or_union
-	: STRUCT { vlog("[parser] STRUCT\n"); }
-	| UNION { vlog("[parser] UNION\n"); }
+	: STRUCT { vlog("[parser] STRUCT\n"); $$ = type("struct"); }
+	| UNION { vlog("[parser] UNION\n"); $$ = type("union"); }
 	;
 
 struct_declaration_list
