@@ -7,7 +7,7 @@
 #define YYSTYPE node *
 
 extern char yytext[];
-extern int column;
+extern int column, line;
 extern symbol_table *sym;
 extern node *parse_tree_head;
 
@@ -16,8 +16,9 @@ extern int yylex (void);
 void yyerror(s)
 char *s;
 {
-	fflush(stdout);
-	printf("\n%*s\n%*s\n", column, "^", column, s);
+//	fflush(stdout);
+//	printf("\n%*s\n%*s\n", column, "^", column, s);
+	err("[pcc] syntax error at %d:%d\n", line, column); 
 }
 
 %}
@@ -61,12 +62,12 @@ primary_expression
 postfix_expression
 	: primary_expression 
 	| postfix_expression '[' expression ']' { vlog("[parser] POSTFIX_BRACKET_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, $3); }
-	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); $$ = op("postfix_expr_paren", 1, $1); }
-	| postfix_expression '(' argument_expression_list ')' { vlog("[parser] POSTFIX_ARG_EXPRESSION_LIST\n"); $$ = op("postfix_expr_paren", 2, $1, $3); }
-	| postfix_expression '.' IDENTIFIER { vlog("[parser] POSTFIX_._IDENTIFIER\n"); $$ = op("postfix_expr_dot", 2, $1, $3); }
-	| postfix_expression PTR_OP IDENTIFIER { vlog("[parser] POSTFIX_PTR_OP_IDENTIFIER\n"); $$ = op("postfix_expr_arrow", 2, $1, $3); }
-	| postfix_expression INC_OP { vlog("[parser] POSTFIX_INC_OP_EXPRESSION\n"); $$ = op("postfix_expr_inc", 1, $1); }
-	| postfix_expression DEC_OP { vlog("[parser] POSTFIX_DEC_OP_EXPRESSION\n"); $$ = op("postfix_expr_dec", 1, $1); }
+	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); $$ = op("postfix_expr", 1, $1); }
+	| postfix_expression '(' argument_expression_list ')' { vlog("[parser] POSTFIX_ARG_EXPRESSION_LIST\n"); $$ = op("postfix_expr", 2, $1, $3); }
+	| postfix_expression '.' IDENTIFIER { vlog("[parser] POSTFIX_._IDENTIFIER\n"); $$ = op("postfix_expr", 2, $1, $3); }
+	| postfix_expression PTR_OP IDENTIFIER { vlog("[parser] POSTFIX_PTR_OP_IDENTIFIER\n"); $$ = op("postfix_expr", 2, $1, $3); }
+	| postfix_expression INC_OP { vlog("[parser] POSTFIX_INC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 1, $1); }
+	| postfix_expression DEC_OP { vlog("[parser] POSTFIX_DEC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 1, $1); }
 	;
 
 argument_expression_list
@@ -76,8 +77,8 @@ argument_expression_list
 
 unary_expression
 	: postfix_expression
-	| INC_OP unary_expression { vlog("[parser] INC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr_inc", 1, $2); }
-	| DEC_OP unary_expression { vlog("[parser] DEC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr_dec", 1, $2); }
+	| INC_OP unary_expression { vlog("[parser] INC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr", 1, $2); }
+	| DEC_OP unary_expression { vlog("[parser] DEC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr", 1, $2); }
 	| unary_operator cast_expression { vlog("[parser] UNARY_OP_CAST_EXPRESSION\n"); $$ = op("unary_expr", 2, $1, $2); }
 	| SIZEOF unary_expression { vlog("[parser] SIZEOF_UNARY_EXP\n"); $$ = op("sizeof", 1, $1); }
 	| SIZEOF '(' type_name ')' { vlog("[parser] SIZEOF_TYPE_NAME\n"); $$ = op("sizeof", 1, $3); }
@@ -247,134 +248,134 @@ struct_or_union
 	;
 
 struct_declaration_list
-	: struct_declaration { vlog("[parser] STRUCT_DECLARATION\n"); } 
-	| struct_declaration_list struct_declaration  { vlog("[parser] STRUCT_DECLARATION_LIST\n"); } 
+	: struct_declaration { vlog("[parser] STRUCT_DECLARATION\n"); $$ = op("struct_declaration_list", 1, $1); } 
+	| struct_declaration_list struct_declaration  { vlog("[parser] STRUCT_DECLARATION_LIST\n"); $$ = add_child($1, $2); } 
 	;
 
 struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';'  { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); } 
+	: specifier_qualifier_list struct_declarator_list ';'  { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); $$ = op("struct_declaration", 2, $1, $2); } 
 	;
 
 specifier_qualifier_list
-	: type_specifier specifier_qualifier_list { vlog("[parser] TYPE_SPECIFIER_SPEC_QUALIFIER_LIST\n"); }
-	| type_specifier { vlog("[parser] SPECIFIER_QUALIFIER_LIST_TYPE_SPECIFIER\n"); }
-	| type_qualifier specifier_qualifier_list { vlog("[parser] TYPE_QUALIFIER_SPEC_QUALIFIER_LIST\n"); }
-	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); }
+	: type_specifier specifier_qualifier_list { vlog("[parser] TYPE_SPECIFIER_SPEC_QUALIFIER_LIST\n"); $$ = add_child($2, $1); }
+	| type_specifier { vlog("[parser] SPECIFIER_QUALIFIER_LIST_TYPE_SPECIFIER\n"); $$ = op("specifier_qualifier_list", 1, $1); }
+	| type_qualifier specifier_qualifier_list { vlog("[parser] TYPE_QUALIFIER_SPEC_QUALIFIER_LIST\n"); $$ = add_child($2, $1); }
+	| type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); $$ = op("specifier_qualifier_list", 1, $1); }
 	;
 
 struct_declarator_list
-	: struct_declarator { vlog("[parser] STRUCT_DECLARATOR\n"); }
-	| struct_declarator_list ',' struct_declarator { vlog("[parser] STRUCT_DECLARATOR_LIST_,_STRUCT_DECLARATOR\n"); }
+	: struct_declarator { vlog("[parser] STRUCT_DECLARATOR\n"); $$ = op("struct_declarator_list", 1, $1); }
+	| struct_declarator_list ',' struct_declarator { vlog("[parser] STRUCT_DECLARATOR_LIST_,_STRUCT_DECLARATOR\n"); $$ = add_child($1, $2); }
 	;
 
 struct_declarator
-	: declarator { vlog("[parser] DECLARATOR\n"); }
-	| ':' constant_expression { vlog("[parser] :_CONSTANT\n"); }
-	| declarator ':' constant_expression { vlog("[parser] DECLARATOR_:_CONSTANT\n"); }
+	: declarator { vlog("[parser] DECLARATOR\n"); $$ = op("struct_declarator", 1, $1); }
+	| ':' constant_expression { vlog("[parser] :_CONSTANT\n"); $$ = op("struct_declarator", 1, $2); }
+	| declarator ':' constant_expression { vlog("[parser] DECLARATOR_:_CONSTANT\n"); $$ = op("struct_declarator", 2, $1, $3); }
 	;
 
 enum_specifier
-	: ENUM '{' enumerator_list '}' { vlog("[parser] ENUM_{}\n"); }
-	| ENUM IDENTIFIER '{' enumerator_list '}' { vlog("[parser] ENUM_IDENTIFIER_{}\n"); }
-	| ENUM IDENTIFIER { vlog("[parser] ENUM_IDENTIFIER\n"); }
+	: ENUM '{' enumerator_list '}' { vlog("[parser] ENUM_{}\n"); $$ = op("enum_specifier", 1, $3); }
+	| ENUM IDENTIFIER '{' enumerator_list '}' { vlog("[parser] ENUM_IDENTIFIER_{}\n"); $$ = op("enum_specifier", 2, $2, $4); }
+	| ENUM IDENTIFIER { vlog("[parser] ENUM_IDENTIFIER\n"); $$ = op("enum_specifier", 1, $2); }
 	;
 
 enumerator_list
-	: enumerator { vlog("[parser] ENUM\n"); }
-	| enumerator_list ',' enumerator { vlog("[parser] ENUM_LIST_,_ENUM\n"); }
+	: enumerator { vlog("[parser] ENUM\n"); $$ = op("enum_list", 1, $1); }
+	| enumerator_list ',' enumerator { vlog("[parser] ENUM_LIST_,_ENUM\n"); $$ = add_child($1, $2); }
 	;
 
 enumerator
-	: IDENTIFIER { vlog("[parser] ENUMERATOR_IDENTIFIER: %s\n", $1->id); }
-	| IDENTIFIER '=' constant_expression { vlog("[parser] ENUMERATOR_IDENTIFIER_=_CONSTANT\n"); }
+	: IDENTIFIER { vlog("[parser] ENUMERATOR_IDENTIFIER: %s\n", $1->id); $$ = op("enumerator", 1, $1); }
+	| IDENTIFIER '=' constant_expression { vlog("[parser] ENUMERATOR_IDENTIFIER_=_CONSTANT\n"); $$ = op("enumerator", 2, $1, $3); }
 	;
 
 type_qualifier
-	: CONST { vlog("[parser] CONST\n"); }
-	| VOLATILE { vlog("[parser] VOLATILE\n"); }
+	: CONST { vlog("[parser] CONST\n"); $$ = type("const"); }
+	| VOLATILE { vlog("[parser] VOLATILE\n"); $$ = type("volatile"); }
 	;
 
 declarator
-	: pointer direct_declarator { vlog("[parser] POINTER_DIRECT_DECLARATOR\n"); $$ = op("pointer_declarator", 2, $1, $2); }
-	| direct_declarator { vlog("[parser] DIRECT_DECLARATOR\n"); }
+	: pointer direct_declarator { vlog("[parser] POINTER_DIRECT_DECLARATOR\n"); $$ = op("declarator", 2, $1, $2); }
+	| direct_declarator { vlog("[parser] DIRECT_DECLARATOR\n"); $$ = op("declarator", 1, $1); }
 	;
 
 direct_declarator
-	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1->id); }
-	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); }
-	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); }
-	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); }
-	| direct_declarator '(' parameter_type_list ')' { vlog("[parser] DIRECT_DECLARATOR_(_PARAM_TYPE_LIST_)\n"); $$ = op("declarator", 2, $1, $3); }
-	| direct_declarator '(' identifier_list ')' { vlog("[parser] DIRECT_DECLARATOR_(_IDENTIFIER_LIST_)\n"); }
-	| direct_declarator '(' ')' { vlog("[parser] DIRECT_DECLARATOR_()\n"); }
+	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1->id); $$ = op("direct_declarator", 1, $1); }
+	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); $$ = op("direct_declarator", 1, $2); }
+	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); $$ = add_child($1, $3); }
+	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); $$ = op("direct_declarator", 1, $1); }
+	| direct_declarator '(' parameter_type_list ')' { vlog("[parser] DIRECT_DECLARATOR_(_PARAM_TYPE_LIST_)\n"); $$ = add_child($1, $3); }
+	| direct_declarator '(' identifier_list ')' { vlog("[parser] DIRECT_DECLARATOR_(_IDENTIFIER_LIST_)\n"); $$ = add_child($1, $3); }
+	| direct_declarator '(' ')' { vlog("[parser] DIRECT_DECLARATOR_()\n"); $$ = op("direct_declarator", 1, $1); }
 	;
 
 pointer
 	: '*' { vlog("[parser] POINTER_*\n"); $$ = op("pointer", 0); }
-	| '*' type_qualifier_list { vlog("[parser] POINTER_*_TYPE_QUALIFIER_LIST\n"); }
-	| '*' pointer { vlog("[parser] POINTER_*_POINTER\n"); }
-	| '*' type_qualifier_list pointer { vlog("[parser] POINTER_*_TYPE_QUALIFIER_LIST_POINTER\n"); }
+	| '*' type_qualifier_list { vlog("[parser] POINTER_*_TYPE_QUALIFIER_LIST\n"); $$ = op("pointer", 1, $2); }
+	| '*' pointer { vlog("[parser] POINTER_*_POINTER\n"); $$ = op("pointer", 1, $2); }
+	| '*' type_qualifier_list pointer { vlog("[parser] POINTER_*_TYPE_QUALIFIER_LIST_POINTER\n"); $$ = op("pointer", 2, $2, $3); }
 	;
 
 type_qualifier_list
-	: type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); }
-	| type_qualifier_list type_qualifier { vlog("[parser] TYPE_QUALIFIER_LIST_TYPE_QUALIFIER\n"); }
+	: type_qualifier { vlog("[parser] TYPE_QUALIFIER\n"); $$ = op("type_qualifier_list", 1, $1); }
+	| type_qualifier_list type_qualifier { vlog("[parser] TYPE_QUALIFIER_LIST_TYPE_QUALIFIER\n"); $$ = add_child($1, $2); }
 	;
 
 
 parameter_type_list
-	: parameter_list { vlog("[parser] PARAMETER_LIST\n"); }
-	| parameter_list ',' ELLIPSIS { vlog("[parser] PARAMETER_LIST_,_ELLIPSIS\n"); }
+	: parameter_list { vlog("[parser] PARAMETER_LIST\n"); $$ = op("parameter_type_list", 1, $1); }
+	| parameter_list ',' ELLIPSIS { vlog("[parser] PARAMETER_LIST_,_ELLIPSIS\n"); $$ = add_child($1, $3); }
 	;
 
 parameter_list
-	: parameter_declaration { vlog("[parser] PARAMETER_DECLARATION\n"); $$ = op("parameter_list", 1, $1); }
-	| parameter_list ',' parameter_declaration { vlog("[parser] PARAMETER_LIST_,_PARAMETER_DECLARATION\n"); }
+	: parameter_declaration { vlog("[parser] PARAMETER_DECLARATION\n"); $$ = op("parameter_list", 1, $1); $$ = op("parameter_list", 1, $1); }
+	| parameter_list ',' parameter_declaration { vlog("[parser] PARAMETER_LIST_,_PARAMETER_DECLARATION\n"); $$ = add_child($1, $3); }
 	;
 
 parameter_declaration
-	: declaration_specifiers declarator { vlog("[parser] DECLARATION_SPEC_DECLARATOR\n"); $$ = op("declaration", 2, $1, $2); }
-	| declaration_specifiers abstract_declarator { vlog("[parser] DECLARATION_SPEC_ABSTRACT_DECLARATOR\n"); }
-	| declaration_specifiers { vlog("[parser] DECLARATION_SPEC\n"); }
+	: declaration_specifiers declarator { vlog("[parser] DECLARATION_SPEC_DECLARATOR\n"); $$ = op("parameter_declaration", 2, $1, $2); }
+	| declaration_specifiers abstract_declarator { vlog("[parser] DECLARATION_SPEC_ABSTRACT_DECLARATOR\n"); $$ = op("parameter_declaration", 2, $1, $2); }
+	| declaration_specifiers { vlog("[parser] DECLARATION_SPEC\n"); $$ = op("parameter_declaration", 1, $1); }
 	;
 
 identifier_list
-	: IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_IDENTIFIER: %s\n", $1->id); }
-	| identifier_list ',' IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_,_IDENTIFIER\n"); }
+	: IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_IDENTIFIER: %s\n", $1->id); $$ = op("identifier_list", 1, $1); }
+	| identifier_list ',' IDENTIFIER { vlog("[parser] IDENTIFIER_LIST_,_IDENTIFIER\n"); $$ = add_child($1, $3); }
 	;
 
 type_name
-	: specifier_qualifier_list { vlog("[parser] SPECIFIER_QUALIFIER_LIST\n"); }
-	| specifier_qualifier_list abstract_declarator { vlog("[parser] SPECIFIER_QUALIFIER_LIST_ABSTRACT_DECLARATOR\n"); }
+	: specifier_qualifier_list { vlog("[parser] SPECIFIER_QUALIFIER_LIST\n"); $$ = op("type_name", 1, $1); }
+	| specifier_qualifier_list abstract_declarator { vlog("[parser] SPECIFIER_QUALIFIER_LIST_ABSTRACT_DECLARATOR\n"); $$ = op("type_name", 2, $1, $2); }
 	;
 
 abstract_declarator
-	: pointer { vlog("[parser] POINTER\n"); }
-	| direct_abstract_declarator { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR\n"); }
-	| pointer direct_abstract_declarator { vlog("[parser] POINTER_DIRECT_ABSTRACT_DECLARATOR\n"); }
+	: pointer { vlog("[parser] POINTER\n"); $$ = op("abstract_declarator", 1, $1); }
+	| direct_abstract_declarator { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR\n"); $$ = op("abstract_declarator", 1, $1); }
+	| pointer direct_abstract_declarator { vlog("[parser] POINTER_DIRECT_ABSTRACT_DECLARATOR\n"); $$ = op("abstract_declarator", 2, $1, $2); }
 	;
 
 direct_abstract_declarator
-	: '(' abstract_declarator ')' { vlog("[parser] (_ABSTRACT_DECLARATOR_)\n"); }
-	| '[' ']' { vlog("[parser] []\n"); }
-	| '[' constant_expression ']' { vlog("[parser] [_CONSTANT_]\n"); }
-	| direct_abstract_declarator '[' ']' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_[]\n"); }
-	| direct_abstract_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_[_CONSTANT_]\n"); }
-	| '(' ')' { vlog("[parser] ()\n"); }
-	| '(' parameter_type_list ')' { vlog("[parser] (_PARAM_TYPE_LIST_)\n"); }
-	| direct_abstract_declarator '(' ')' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_()\n"); }
-	| direct_abstract_declarator '(' parameter_type_list ')' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_(_PARAM_TYPE_LIST_)\n"); }
+	: '(' abstract_declarator ')' { vlog("[parser] (_ABSTRACT_DECLARATOR_)\n"); $$ = op("direct_abstract_declarator", 1, $2); }
+	| '[' ']' { vlog("[parser] []\n"); $$ = op("direct_abstract_declarator", 0); }
+	| '[' constant_expression ']' { vlog("[parser] [_CONSTANT_]\n"); $$ = op("direct_abstract_declarator", 1, $2); }
+	| direct_abstract_declarator '[' ']' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_[]\n"); /* do nothing */}
+	| direct_abstract_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_[_CONSTANT_]\n"); $$ = add_child($1, $3); }
+	| '(' ')' { vlog("[parser] ()\n"); $$ = op("direct_abstract_declarator", 0); }
+	| '(' parameter_type_list ')' { vlog("[parser] (_PARAM_TYPE_LIST_)\n"); $$ = op("direct_abstract_declarator", 1, $2); }
+	| direct_abstract_declarator '(' ')' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_()\n"); /* do nothing */}
+	| direct_abstract_declarator '(' parameter_type_list ')' { vlog("[parser] DIRECT_ABSTRACT_DECLARATOR_(_PARAM_TYPE_LIST_)\n"); $$ = add_child($1, $3); }
 	;
 
 initializer
-	: assignment_expression { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); }
-	| '{' initializer_list '}' { vlog("[parser] {_INIT_LIST_}\n"); }
-	| '{' initializer_list ',' '}' { vlog("[parser] {_INIT_LIST_,_}\n"); }
+	: assignment_expression { vlog("[parser] ASSIGNMENT_EXPRESSION\n"); $$ = op("initializer", 1, $1); }
+	| '{' initializer_list '}' { vlog("[parser] {_INIT_LIST_}\n"); $$ = op("initializer", 1, $2); }
+	| '{' initializer_list ',' '}' { vlog("[parser] {_INIT_LIST_,_}\n"); $$ = op("initializer", 1, $2); }
 	;
 
 initializer_list
-	: initializer { vlog("[parser] INITIALIZER\n"); }
-	| initializer_list ',' initializer { vlog("[parser] INITIALIZER_LIST_,_INITIALIZER\n"); }
+	: initializer { vlog("[parser] INITIALIZER\n"); $$ = op("initializer_list", 1, $1); }
+	| initializer_list ',' initializer { vlog("[parser] INITIALIZER_LIST_,_INITIALIZER\n"); $$ = add_child($1, $3); }
 	;
 
 statement
@@ -387,16 +388,16 @@ statement
 	;
 
 labeled_statement
-	: IDENTIFIER ':' statement { vlog("[parser] IDENTIFIER_:_STATEMENT\n"); }
-	| CASE constant_expression ':' statement { vlog("[parser] CASE_CONSTANT_:_STATEMENT\n"); }
-	| DEFAULT ':' statement { vlog("[parser] DEFAULT_:_STATEMENT\n"); }
+	: IDENTIFIER ':' statement { vlog("[parser] IDENTIFIER_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $1, $3); }
+	| CASE constant_expression ':' statement { vlog("[parser] CASE_CONSTANT_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $2, $4); }
+	| DEFAULT ':' statement { vlog("[parser] DEFAULT_:_STATEMENT\n"); $$ = op("labeled_statement", 1, $3); }
 	;
 
 compound_statement
-	: '{' '}' { vlog("[parser] {}\n"); }
-	| '{' statement_list '}' { vlog("[parser] {_STATEMENT_LIST_}\n"); }
-	| '{' declaration_list '}' { vlog("[parser] {_DECLARATION_LIST_}\n"); }
-	| '{' declaration_list statement_list '}' { vlog("[parser] {_DECLARATION_LIST_STATEMENT_LIST_}\n"); $$ = op("compound", 2, $2, $3); }
+	: '{' '}' { vlog("[parser] {}\n"); $$ = op("compound_statement", 0); }
+	| '{' statement_list '}' { vlog("[parser] {_STATEMENT_LIST_}\n"); $$ = op("compound_statement", 1, $2); }
+	| '{' declaration_list '}' { vlog("[parser] {_DECLARATION_LIST_}\n"); $$ = op("compound_statement", 1, $2); }
+	| '{' declaration_list statement_list '}' { vlog("[parser] {_DECLARATION_LIST_STATEMENT_LIST_}\n"); $$ = op("compound_statement", 2, $2, $3); }
 	;
 
 declaration_list
@@ -405,34 +406,34 @@ declaration_list
 	;
 
 statement_list
-	: statement { vlog("[parser] STATEMENT\n"); $$ = op("statement", 1, $1); }
+	: statement { vlog("[parser] STATEMENT\n"); $$ = op("statement_list", 1, $1); }
 	| statement_list statement { vlog("[parser] STATEMENT_LIST_STATEMENT\n"); $$ = add_child($1, $2); }
 	;
 
 expression_statement
-	: ';' { vlog("[parser] ;\n"); }
-	| expression ';' { vlog("[parser] EXPRESSION_;\n"); }
+	: ';' { vlog("[parser] ;\n"); $$ = op("expression_statement", 0); }
+	| expression ';' { vlog("[parser] EXPRESSION_;\n"); $$ = op("expression_statement", 1, $1); }
 	;
 
 selection_statement
-	: IF '(' expression ')' statement %prec IFX { vlog("[parser] IF_(_EXPRESSION_)_STATEMENT\n"); }
-	| IF '(' expression ')' statement ELSE statement { vlog("[parser] IF_(_EXPRESSION_)_STATEMENT_ELSE_STATEMENT\n"); }
-	| SWITCH '(' expression ')' statement { vlog("[parser] SWITCH_(_EXPRESSION_)_STATEMENT\n"); }
+	: IF '(' expression ')' statement %prec IFX { vlog("[parser] IF_(_EXPRESSION_)_STATEMENT\n"); $$ = op("selection_statement", 2, $3, $5); }
+	| IF '(' expression ')' statement ELSE statement { vlog("[parser] IF_(_EXPRESSION_)_STATEMENT_ELSE_STATEMENT\n"); $$ = op("selection_statement", 3, $3, $5, $7); }
+	| SWITCH '(' expression ')' statement { vlog("[parser] SWITCH_(_EXPRESSION_)_STATEMENT\n"); $$ = op("selection_statement", 2, $3, $5); }
 	;
 
 iteration_statement
-	: WHILE '(' expression ')' statement { vlog("[parser] WHILE_(_EXPRESSION_)_STATEMENT\n"); }
-	| DO statement WHILE '(' expression ')' ';' { vlog("[parser] DO_STATEMENT_WHILE_(_EXPRESSION_)_;\n"); }
-	| FOR '(' expression_statement expression_statement ')' statement { vlog("[parser] FOR_(_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_)_STATEMENT\n"); }
-	| FOR '(' expression_statement expression_statement expression ')' statement { vlog("[parser] FOR_(_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_EXPRESSION_)_STATEMENT\n"); }
+	: WHILE '(' expression ')' statement { vlog("[parser] WHILE_(_EXPRESSION_)_STATEMENT\n"); $$ = op("iteration_statement", 2, $3, $5); }
+	| DO statement WHILE '(' expression ')' ';' { vlog("[parser] DO_STATEMENT_WHILE_(_EXPRESSION_)_;\n"); $$ = op("iteration_statement", 2, $2, $5); }
+	| FOR '(' expression_statement expression_statement ')' statement { vlog("[parser] FOR_(_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_)_STATEMENT\n"); $$ = op("iteration_statement", 3, $3, $4, $6); }
+	| FOR '(' expression_statement expression_statement expression ')' statement { vlog("[parser] FOR_(_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_EXPRESSION_)_STATEMENT\n"); $$ = op("iteration_statement", 4, $3, $4, $5, $7); }
 	;
 
 jump_statement
-	: GOTO IDENTIFIER ';' { vlog("[parser] GOTO_IDENTIFIER\n"); }
-	| CONTINUE ';' { vlog("[parser] CONTINUE\n"); }
-	| BREAK ';' { vlog("[parser] BREAK\n"); }
-	| RETURN ';' { vlog("[parser] RETURN\n"); }
-	| RETURN expression ';' { vlog("[parser] RETURN_EXPRESSION\n"); $$ = op("return", 1, $2); }
+	: GOTO IDENTIFIER ';' { vlog("[parser] GOTO_IDENTIFIER\n"); $$ = op("jump_statement", 1, $2); }
+	| CONTINUE ';' { vlog("[parser] CONTINUE\n"); $$ = op("jump_statement", 0); }
+	| BREAK ';' { vlog("[parser] BREAK\n"); $$ = op("jump_statement", 0); }
+	| RETURN ';' { vlog("[parser] RETURN\n"); $$ = op("jump_statement", 0); }
+	| RETURN expression ';' { vlog("[parser] RETURN_EXPRESSION\n"); $$ = op("jump_statement", 1, $2); }
 	;
 
 translation_unit
@@ -449,7 +450,7 @@ function_definition
 	: declaration_specifiers declarator declaration_list compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 4, $1, $2, $3, $4); }
 	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); }
 	| declarator declaration_list compound_statement { vlog("[parser] DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); }
-	| declarator compound_statement { vlog("[parser] DECLARATOR_COMPOUND_STATEMENT\n"); }
+	| declarator compound_statement { vlog("[parser] DECLARATOR_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 2, $1, $2); }
 	;
 
 %%
