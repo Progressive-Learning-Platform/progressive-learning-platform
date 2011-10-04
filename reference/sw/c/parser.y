@@ -7,7 +7,7 @@
 #define YYSTYPE node *
 
 extern char yytext[];
-extern int column;
+extern int column, line;
 extern symbol_table *sym;
 extern node *parse_tree_head;
 
@@ -16,8 +16,9 @@ extern int yylex (void);
 void yyerror(s)
 char *s;
 {
-	fflush(stdout);
-	printf("\n%*s\n%*s\n", column, "^", column, s);
+//	fflush(stdout);
+//	printf("\n%*s\n%*s\n", column, "^", column, s);
+	err("[pcc] syntax error at %d:%d\n", line, column); 
 }
 
 %}

@@ -148,6 +148,7 @@ loop:
 
 
 int column = 0;
+int line = 0;
 
 void count_no_log()
 {
@@ -167,8 +168,10 @@ void count()
 	int i;
 
 	for (i = 0; yytext[i] != '\0'; i++)
-		if (yytext[i] == '\n')
+		if (yytext[i] == '\n') {
 			column = 0;
+			line++;
+		}
 		else if (yytext[i] == '\t')
 			column += 8 - (column % 8);
 		else
