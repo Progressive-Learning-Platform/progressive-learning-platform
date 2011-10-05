@@ -907,6 +907,11 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int desimulate() {
+        if(!sim_mode)
+            return Constants.PLP_OK;
+
+        ArchRegistry.simulatorStop(this);
+
         if(ioreg != null && ioreg.getNumOfModsAttached() > 0) {
             smods = ioreg.createPreset();
             ioreg.removeAllModules();
@@ -977,7 +982,7 @@ public class ProjectDriver {
             } catch(Exception e) {}
         }
 
-        if(g) {
+        if(g && g_simctrl != null) {
             g_dev.stopSimState();
             g_simctrl.stopSimState();
         }

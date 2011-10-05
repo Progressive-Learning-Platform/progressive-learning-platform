@@ -22,7 +22,7 @@ import plptool.PLPSimBusModule;
 import plptool.Msg;
 
 /**
- * PLP Switches I/O module.
+ * PLP Button Interrupt module.
  *
  * @see PLPSimBusModule
  * @author wira
