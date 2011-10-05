@@ -292,6 +292,7 @@ public class Asm extends plptool.PLPAsm {
         String delimiters = "[ ,\t]+|[()]";
         String lineDelim  = "\\r?\\n";
         String[] asmLines  = topLevelAsm.getAsmString().split(lineDelim);
+        String[] commentSplit;
         String[] asmTokens;
         String savedActiveFile;
         String tempLabel;
@@ -315,16 +316,28 @@ public class Asm extends plptool.PLPAsm {
         while(i < asmLines.length) {
             j = 0;
             asmLines[i] = asmLines[i].trim();
-            asmTokens = asmLines[i].split(delimiters);
-
-            Msg.D(i + ": " + asmLines[i] + " tl: " +
+            commentSplit = asmLines[i].split("#");
+            
+            if(commentSplit.length > 0) {
+                asmTokens = commentSplit[0].split(delimiters);
+                
+                Msg.D(i + ": " + asmLines[i] + " tl: " +
                      asmTokens.length, 5, this);
-            Msg.D("<<<" + asmTokens[0] + ">>>", 5, this);
+                Msg.D("<<<" + asmTokens[0] + ">>>", 5, this);
+
+
+            } else
+                asmTokens = null;
 
             i++;
 
+            if(asmTokens == null || asmTokens[0].equals("")) {
+                appendPreprocessedAsm("ASM__SKIP__", i, true);
+                directiveOffset++;
+            }
+
             // Include statement
-            if(asmTokens[0].equals(".include")) {
+            else if(asmTokens[0].equals(".include")) {
                 if(asmTokens.length < 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error",
@@ -488,7 +501,7 @@ public class Asm extends plptool.PLPAsm {
             }
 
             // Comments
-            else if(asmLines[i - 1].equals("") || asmTokens[0].charAt(0) == '#') {
+            else if(asmLines[i - 1].equals("") || (asmTokens[0].length() > 0 && asmTokens[0].charAt(0) == '#')) {
                 appendPreprocessedAsm("ASM__SKIP__", i, true);
                 directiveOffset++;
             }
@@ -496,7 +509,7 @@ public class Asm extends plptool.PLPAsm {
             // Label handler
             //   Everything after the label is IGNORED, it has to be on its own
             //   line
-            else if(asmTokens[0].charAt(asmTokens[0].length() - 1) == ':') {
+            else if(asmTokens[0].length() > 1 && asmTokens[0].charAt(asmTokens[0].length() - 1) == ':') {
                 tempLabel = asmTokens[0].substring(0, asmTokens[0].length() - 1);
                 if(symTable.containsKey(tempLabel)) {
                     error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
@@ -517,161 +530,213 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
 
-                String tString[] = asmLines[i - 1].split("[ \t]+", 2);
+                    String tString[] = asmLines[i - 1].split("[ \t]+", 2);
 
-                Msg.D("l: " + tString.length + " :" + tString[tString.length - 1], 5, this);
+                    Msg.D("l: " + tString.length + " :" + tString[tString.length - 1], 5, this);
 
-                // strip quotes
-                if(tString[1].charAt(0) == '\"') {
-                    tString[1] = tString[1].substring(1, tString[1].length());
+                    // strip quotes
+                    if(tString[1].charAt(0) == '\"') {
+                        tString[1] = tString[1].substring(1, tString[1].length());
 
-                    if(tString[1].charAt(tString[1].length() - 1) != '\"') {
-                        error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): "
-                                          + "Invalid string literal.",
-                                          Constants.PLP_ASM_INVALID_STRING, this);
+                        if(tString[1].charAt(tString[1].length() - 1) != '\"') {
+                            error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): "
+                                              + "Invalid string literal.",
+                                              Constants.PLP_ASM_INVALID_STRING, this);
+                        }
+
+                        tString[1] = tString[1].substring(0, tString[1].length() - 1);
                     }
+                    Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
 
-                    tString[1] = tString[1].substring(0, tString[1].length() - 1);
-                }
-                Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
+                    // check for escaped characters
+                    for(j = 0; j < tString[1].length(); j++) {
+                        if(tString[1].charAt(j) == '\\' && j != tString[1].length() - 1) {
+                            switch(tString[1].charAt(j + 1)) {
 
-                // check for escaped characters
-                for(j = 0; j < tString[1].length(); j++) {
-                    if(tString[1].charAt(j) == '\\' && j != tString[1].length() - 1) {
-                        switch(tString[1].charAt(j + 1)) {
+                                // Linefeed (0xA)
+                                case 'n':
+                                    tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\n").toString();
+                                    break;
 
-                            // Linefeed (0xA)
-                            case 'n':
-                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\n").toString();
-                                break;
-                                
-                            // Carriage return (0xD)
-                            case 'r':
-                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\r").toString();
-                                break;
+                                // Carriage return (0xD)
+                                case 'r':
+                                    tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\r").toString();
+                                    break;
 
-                            // Tab
-                            case 't':
-                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\t").toString();
-                                break;
+                                // Tab
+                                case 't':
+                                    tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\t").toString();
+                                    break;
 
-                            // Backslash
-                            case '\\':
-                                tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\\").toString();
-                                break;
+                                // Backslash
+                                case '\\':
+                                    tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\\").toString();
+                                    break;
 
-                                
-                            default:
-                                Msg.W("preprocess(" + curActiveFile + ":" + i + "): "
-                                        + "Unable to escape character \\" + tString[1].charAt(j + 1), this);
+
+                                default:
+                                    Msg.W("preprocess(" + curActiveFile + ":" + i + "): "
+                                            + "Unable to escape character \\" + tString[1].charAt(j + 1), this);
+                            }
                         }
                     }
-                }
 
-                // check if we need to append a null character for .asciiz ...
-                int strLen = tString[1].length() + ((asmTokens[0].equals(".asciiz")) ? 1 : 0);
+                    // check if we need to append a null character for .asciiz ...
+                    int strLen = tString[1].length() + ((asmTokens[0].equals(".asciiz")) ? 1 : 0);
 
-                // ... and go ahead and do that if we do
-                if(strLen > tString[1].length())
-                    tString[1] += '\0';
-
-                Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
-
-                // pad with zeroes if we the string length is not word-aligned
-                if(strLen % 4 != 0) {
-                    strLen = strLen + 4 - (strLen % 4);
-                    
-                    for(j = 0; j < (4 - (strLen % 4)); j++)
+                    // ... and go ahead and do that if we do
+                    if(strLen > tString[1].length())
                         tString[1] += '\0';
-                }
 
-                // add ASM__WORD__ 2nd pass directives and we're done
-                for(j = 0; j < strLen; j++) {
-                    if(j % 4 == 0)
-                        appendPreprocessedAsm("ASM__WORD__ 0x", i, false);
+                    Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 5, this);
 
-                    appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
+                    // pad with zeroes if we the string length is not word-aligned
+                    if(strLen % 4 != 0) {
+                        strLen = strLen + 4 - (strLen % 4);
 
-                    // advance address on every 4th byte (on next iteration)
-                    if((j + 1) % 4 == 0 && j > 0) {
-                        regionMap.add(curRegion);
-                        curAddr += 4;
-                        appendPreprocessedAsm("", i, true);
+                        for(j = 0; j < (4 - (strLen % 4)); j++)
+                            tString[1] += '\0';
                     }
-                }
 
-                Msg.D("pr: " + tString[1], 5, this);
+                    // add ASM__WORD__ 2nd pass directives and we're done
+                    for(j = 0; j < strLen; j++) {
+                        if(j % 4 == 0)
+                            appendPreprocessedAsm("ASM__WORD__ 0x", i, false);
+
+                        appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
+
+                        // advance address on every 4th byte (on next iteration)
+                        if((j + 1) % 4 == 0 && j > 0) {
+                            regionMap.add(curRegion);
+                            curAddr += 4;
+                            appendPreprocessedAsm("", i, true);
+                        }
+                    }
+
+                    Msg.D("pr: " + tString[1], 5, this);
                 }
             }
 
             // Pseudo-ops
             else if(asmTokens[0].equals("nop")) {
-                appendPreprocessedAsm("sll $0,$0,0", i, true);
-                regionMap.add(curRegion);
-                curAddr += 4;
+                if(asmTokens.length != 1) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("sll $0,$0,0", i, true);
+                    regionMap.add(curRegion);
+                    curAddr += 4;
+                }
             }
 
             // copy register
             else if(asmTokens[0].equals("move")) {
-                appendPreprocessedAsm("or " + asmTokens[1] + ",$0," + asmTokens[2], i, true);
-                regionMap.add(curRegion);
-                curAddr += 4;
+                if(asmTokens.length != 3) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("or " + asmTokens[1] + ",$0," + asmTokens[2], i, true);
+                    regionMap.add(curRegion);
+                    curAddr += 4;
+                }
             }
 
             // branch always
             else if(asmTokens[0].equals("b")) {
-                appendPreprocessedAsm("beq $0,$0," + asmTokens[1], i, true);
-                regionMap.add(curRegion);
-                curAddr += 4;
+                if(asmTokens.length != 2) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("beq $0,$0," + asmTokens[1], i, true);
+                    regionMap.add(curRegion);
+                    curAddr += 4;
+                }
             }
 
             // load-immediate
             else if(asmTokens[0].equals("li")) {
-                appendPreprocessedAsm("lui " + asmTokens[1] + ",$_hi:" + asmTokens[2], i, true);
-                appendPreprocessedAsm("ori " + asmTokens[1] + "," + asmTokens[1] + ",$_lo:" + asmTokens[2], i, true);
-                regionMap.add(curRegion);
-                regionMap.add(curRegion);
-                curAddr += 8;
+                if(asmTokens.length != 3) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("lui " + asmTokens[1] + ",$_hi:" + asmTokens[2], i, true);
+                    appendPreprocessedAsm("ori " + asmTokens[1] + "," + asmTokens[1] + ",$_lo:" + asmTokens[2], i, true);
+                    regionMap.add(curRegion);
+                    regionMap.add(curRegion);
+                    curAddr += 8;
+                }
             }
 
             // load-from-memory
             else if(asmTokens[0].equals("lwm")) {
-                appendPreprocessedAsm("lui $at,$_hi:" + asmTokens[2], i, true);
-                appendPreprocessedAsm("ori $at,$at,$_lo:" + asmTokens[2], i, true);
-                appendPreprocessedAsm("lw " + asmTokens[1] + ",0($at)", i, true);
-                regionMap.add(curRegion);
-                regionMap.add(curRegion);
-                regionMap.add(curRegion);
-                curAddr += 12;
+                if(asmTokens.length != 3) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("lui $at,$_hi:" + asmTokens[2], i, true);
+                    appendPreprocessedAsm("ori $at,$at,$_lo:" + asmTokens[2], i, true);
+                    appendPreprocessedAsm("lw " + asmTokens[1] + ",0($at)", i, true);
+                    regionMap.add(curRegion);
+                    regionMap.add(curRegion);
+                    regionMap.add(curRegion);
+                    curAddr += 12;
+                }
             }
 
             // store-to-memory
             else if(asmTokens[0].equals("swm")) {
-                appendPreprocessedAsm("lui $at,$_hi:" + asmTokens[2], i, true);
-                appendPreprocessedAsm("ori $at,$at,$_lo:" + asmTokens[2], i, true);
-                appendPreprocessedAsm("sw " + asmTokens[1] + ",0($at)", i, true);
-                regionMap.add(curRegion);
-                regionMap.add(curRegion);
-                regionMap.add(curRegion);
-                curAddr += 12;
+                if(asmTokens.length != 3) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("lui $at,$_hi:" + asmTokens[2], i, true);
+                    appendPreprocessedAsm("ori $at,$at,$_lo:" + asmTokens[2], i, true);
+                    appendPreprocessedAsm("sw " + asmTokens[1] + ",0($at)", i, true);
+                    regionMap.add(curRegion);
+                    regionMap.add(curRegion);
+                    regionMap.add(curRegion);
+                    curAddr += 12;
+                }
             }
 
-            // push register onto stack
+            // push register onto stack-- we modify the stack pointer first so
+            // if the CPU is interrupted between the two instructions, the
+            // data written won't get clobbered
             else if(asmTokens[0].equals("push")) {
-                appendPreprocessedAsm("sw " + asmTokens[1] + ", 0($sp)", i, true);
-                appendPreprocessedAsm("addiu $sp, $sp, -4", i, true);
-                regionMap.add(curRegion);
-                regionMap.add(curRegion);
-                curAddr += 8;
+                if(asmTokens.length != 2) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("addiu $sp, $sp, -4", i, true);
+                    appendPreprocessedAsm("sw " + asmTokens[1] + ", 4($sp)", i, true);
+                    regionMap.add(curRegion);
+                    regionMap.add(curRegion);
+                    curAddr += 8;
+                }
             }
 
-            // pop register from stack
+            // pop data from stack onto a register-- in the pop case, we want to
+            // load first so if the CPU is interrupted we have the data copied
+            // already
             else if(asmTokens[0].equals("pop")) {
-                appendPreprocessedAsm("addiu $sp, $sp, 4", i, true);
-                appendPreprocessedAsm("lw " + asmTokens[1] + ", 0($sp)", i, true);
-                regionMap.add(curRegion);
-                regionMap.add(curRegion);
-                curAddr += 8;
+                if(asmTokens.length != 2) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("lw " + asmTokens[1] + ", 4($sp)", i, true);
+                    appendPreprocessedAsm("addiu $sp, $sp, 4", i, true);
+                    regionMap.add(curRegion);
+                    regionMap.add(curRegion);
+                    curAddr += 8;
+                }
             }
 
             // Instructions
@@ -702,6 +767,8 @@ public class Asm extends plptool.PLPAsm {
         } catch(Exception e) {
             error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " + e,
                               Constants.PLP_GENERIC_ERROR, this);
+
+            Msg.printStackTrace(e);
         }
 
         if(error > 0)
