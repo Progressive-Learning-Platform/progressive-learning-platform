@@ -53,7 +53,7 @@ public class ArchRegistry {
      * @param asms ArrayList of source objects
      * @return Asm instance of the ISA
      */
-    public static PLPAsm createAssembler(ProjectDriver plp, ArrayList<PLPAsmSource> asms) {
+    public static PLPAsm createAssembler(final ProjectDriver plp, ArrayList<PLPAsmSource> asms) {
         String arch = plp.getArch();
 
         if(arch == null)
@@ -82,7 +82,7 @@ public class ArchRegistry {
      * be loaded
      * @return Asm instance of the ISA
      */
-    public static PLPAsm createAssembler(ProjectDriver plp, String asmStr, String asmPath) {
+    public static PLPAsm createAssembler(final ProjectDriver plp, String asmStr, String asmPath) {
         String arch = plp.getArch();
 
         if(arch == null)
@@ -107,7 +107,7 @@ public class ArchRegistry {
      * @param plp The current instance of the project driver
      * @return SimCore instance of the ISA
      */
-    public static PLPSimCore createSimCore(ProjectDriver plp) {
+    public static PLPSimCore createSimCore(final ProjectDriver plp) {
         String arch = plp.getArch();
 
         if(arch == null)
@@ -135,7 +135,7 @@ public class ArchRegistry {
      *
      * @param plp The current instance of the project driver
      */
-    public static void simulatorInitialization(ProjectDriver plp) {
+    public static void simulatorInitialization(final ProjectDriver plp) {
         String arch = plp.getArch();
 
         if(arch == null)
@@ -148,6 +148,17 @@ public class ArchRegistry {
             plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
             plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
             plp.sim.bus.enableAllModules();
+
+            if(plp.g()) {
+                final javax.swing.JToggleButton btnInt = new javax.swing.JToggleButton("Button Interrupt");
+                btnInt.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        ((plptool.mods.Button) plp.sim.bus.getRefMod(1)).setPressedState(btnInt.isSelected());
+                    }
+                });
+
+                plp.g_dev.addButton(btnInt);
+            }
         }
 
         // ... add your simulation core initialization here ... //
@@ -159,7 +170,7 @@ public class ArchRegistry {
      *
      * @param plp The current instance of the project driver
      */
-    public static void simulatorStop(ProjectDriver plp) {
+    public static void simulatorStop(final ProjectDriver plp) {
         String arch = plp.getArch();
 
         if(arch == null)
@@ -169,7 +180,8 @@ public class ArchRegistry {
          * plpmips SimCore post-simulation
          **********************************************************************/
         else if(arch.equals("plpmips")) {
-            
+            if(plp.g() && plp.g_dev != null)
+                plp.g_dev.removeLastButton();
         }
 
         // ... add your simulation core initialization here ... //
