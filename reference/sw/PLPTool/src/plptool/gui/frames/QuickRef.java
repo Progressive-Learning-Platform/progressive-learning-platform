@@ -135,13 +135,13 @@ public class QuickRef extends javax.swing.JFrame {
         data[1][0] = "<font color=blue><b>b</b></font>     label";             data[1][1] = "beq $0, $0, label";
         data[2][0] = "<font color=blue><b>move</b></font>  $rd, $rs";          data[2][1] = "or  $rd, $0, $rs";
         data[3][0] = "<font color=blue><b>li</b></font>    $rd, imm32";        data[3][1] = "lui $rd, imm32 &gt;&gt; 16<br />";
-                                                data[3][1] += "ori $rd, $rd, imm32 & 0xffff";
+                                                                               data[3][1] += "ori $rd, $rd, imm32 & 0xffff";
         data[4][0] = "<font color=blue><b>li</b></font>    $rd, label";        data[4][1] = "lui $rd, label[31:16]<br />";
-                                                data[4][1] += "ori $rd, $rd, label[15:0]";
-        data[5][0] = "<font color=blue><b>push</b></font>  $rt";               data[5][1] = "sw $rt, 0($sp)<br />";
-                                                data[5][1] += "addiu $sp, $sp, -4";
-        data[6][0] = "<font color=blue><b>pop</b></font>   $rt";               data[6][1] = "addiu $sp, $sp, 4<br />";
-                                                data[6][1] += "lw $rt, 0($sp)";
+                                                                               data[4][1] += "ori $rd, $rd, label[15:0]";
+        data[5][0] = "<font color=blue><b>push</b></font>  $rt";               data[5][1] = "addiu $sp, $sp, -4<br />";
+                                                                               data[5][1] += "sw $rt, 4($sp)";
+        data[6][0] = "<font color=blue><b>pop</b></font>   $rt";               data[6][1] = "lw $rt, 4($sp)<br />";
+                                                                               data[6][1] += "addiu $sp, $sp, 4";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";

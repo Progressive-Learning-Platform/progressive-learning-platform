@@ -47,7 +47,6 @@ public class Button extends PLPSimBusModule {
             return Constants.PLP_OK;
 
         if(pressed) {
-            Msg.D("Setting IRQ", 4, this);
             sim.setIRQ(bit);
         } else
             sim.maskIRQ(mask);

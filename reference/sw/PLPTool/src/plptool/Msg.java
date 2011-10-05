@@ -221,7 +221,7 @@ public class Msg {
         for(int i = 0; i < outputs.size(); i++) {
             StyledDocument a_doc = outputs.get(i).getStyledDocument();
             a_doc.insertString(a_doc.getLength(), txt, attrib);
-            outputs.get(i).setCaretPosition(doc.getLength() - 1);
+            outputs.get(i).setCaretPosition(a_doc.getLength() - 1);
         }
 
         output.setCaretPosition(doc.getLength() - 1);
@@ -255,5 +255,15 @@ public class Msg {
         } catch(Exception e) {
 
         }
+    }
+
+    /**
+     * Prints the stack trace if debug level is >= 10
+     *
+     * @param e
+     */
+    public static void printStackTrace(Exception e) {
+        if(Constants.debugLevel >= 10)
+            e.printStackTrace();
     }
 }

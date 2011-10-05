@@ -366,9 +366,9 @@ public class SimCore extends PLPSimCore {
             Msg.D("instrAddr diff: " + diff, 3, this);
             sim_flags |= Constants.PLP_SIM_IRQ;
            
-            if(diff == 8) {
+            if(diff == 8 || Config.simFunctional) {
                 sim_flags |= Constants.PLP_SIM_IRQ_SERVICED;
-                irq_ret = mem_stage.i_instrAddr; // address to return to
+                irq_ret = (Config.simFunctional ? pc.eval() : mem_stage.i_instrAddr); // address to return to
                 int_state--;
                 IRQAck = 1;
                 Msg.D("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret), 3, this);
