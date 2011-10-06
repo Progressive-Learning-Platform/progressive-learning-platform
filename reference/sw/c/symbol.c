@@ -32,6 +32,21 @@ void new_symbol(symbol_table *t, char *v) {
 	t->s = symbol;
 }
 
+symbol* find_symbol(symbol_table *t, char *v) {
+	symbol *curr;
+	if (t == NULL)
+		return NULL;
+	curr = t->s;
+	/* search up from here, looking for the requested symbol */
+	while (curr != NULL) {
+		if (curr->value == v)
+			return curr;
+		curr = curr->up;
+	}
+	return find_symbol(t->parent, v);
+}
+	
+
 symbol_table* new_symbol_table(symbol_table *t) {
 	symbol_table *table = malloc(sizeof(symbol_table));
 	table->s = NULL;
