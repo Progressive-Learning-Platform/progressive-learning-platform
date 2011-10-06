@@ -1130,6 +1130,7 @@ public class Develop extends javax.swing.JFrame {
         menuToolbar = new javax.swing.JCheckBoxMenuItem();
         menuProjectPane = new javax.swing.JCheckBoxMenuItem();
         menuOutputPane = new javax.swing.JCheckBoxMenuItem();
+        menuClearOutputPane = new javax.swing.JMenuItem();
         rootmenuProject = new javax.swing.JMenu();
         menuAssemble = new javax.swing.JMenuItem();
         menuSimulate = new javax.swing.JCheckBoxMenuItem();
@@ -1246,10 +1247,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1270,11 +1271,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 611, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1288,7 +1289,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1311,7 +1312,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1786,6 +1787,17 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuView.add(menuOutputPane);
+
+        menuClearOutputPane.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+        menuClearOutputPane.setMnemonic('C');
+        menuClearOutputPane.setText(resourceMap.getString("menuClearOutputPane.text")); // NOI18N
+        menuClearOutputPane.setName("menuClearOutputPane"); // NOI18N
+        menuClearOutputPane.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuClearOutputPaneActionPerformed(evt);
+            }
+        });
+        rootmenuView.add(menuClearOutputPane);
 
         jMenuBar1.add(rootmenuView);
 
@@ -2556,7 +2568,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnProgramActionPerformed
 
     private void menuQuickRefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuickRefActionPerformed
-        plp.g_qref.setVisible(true);
+        plp.showQuickRef();
     }//GEN-LAST:event_menuQuickRefActionPerformed
 
     private void menuManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuManualActionPerformed
@@ -2900,6 +2912,10 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimulateActionPerformed
 
+    private void menuClearOutputPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClearOutputPaneActionPerformed
+        txtOutput.setText("");
+    }//GEN-LAST:event_menuClearOutputPaneActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3009,6 +3025,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
     private javax.swing.JMenuItem menuClearBreakpoints;
+    private javax.swing.JMenuItem menuClearOutputPane;
     private javax.swing.JMenuItem menuCopy;
     private javax.swing.JMenuItem menuCut;
     private javax.swing.JMenuItem menuDeleteASM;

@@ -149,11 +149,12 @@ public class ArchRegistry {
             plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
             plp.sim.bus.enableAllModules();
 
+            // add our button interrupt to g_dev toolbar
             if(plp.g()) {
                 final javax.swing.JToggleButton btnInt = new javax.swing.JToggleButton();
                 btnInt.setIcon(new javax.swing.ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(plp.g_dev.getClass().getResource("resources/toolbar_exclamation.png"))));
                 btnInt.setToolTipText("Button Interrupt (Toggle button)");
-                btnInt.setOpaque(true);
+                btnInt.setOpaque(false);
                 btnInt.setMargin(new java.awt.Insets(2, 0, 2, 0));
                 btnInt.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -165,7 +166,7 @@ public class ArchRegistry {
             }
         }
 
-        // ... add your simulation core initialization here ... //
+        // ... add your pre-simulation code here ... //
     }
 
     /**
@@ -188,7 +189,7 @@ public class ArchRegistry {
                 plp.g_dev.removeLastButton();
         }
 
-        // ... add your simulation core initialization here ... //
+        // ... add your post-simulation code here ... //
     }
 
     /**
@@ -213,7 +214,7 @@ public class ArchRegistry {
             return Msg.E("The ISA " + arch + " does not have a registered" +
                    " CLI for the simulator.", Constants.PLP_ISA_NO_SIM_CLI, null);
 
-        // ... add your simulation core instantiation here ... //
+        // ... add your simulation CLI interface instantiation here ... //
 
         return Constants.PLP_OK;
     }
@@ -263,6 +264,25 @@ public class ArchRegistry {
         }
 
         // ... add your serial programmer instantiation here ... //
+
+        else
+            return null;
+    }
+
+    public static String getQuickReferenceString(ProjectDriver plp) {
+        String arch = plp.getArch();
+
+        if(arch == null)
+            return null;
+
+        /**********************************************************************
+         * plpmips quick reference text text
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            return plptool.mips.ArchHelper.getQuickReferenceString();
+        }
+
+        // ... add your quick reference text here ... //
 
         else
             return null;

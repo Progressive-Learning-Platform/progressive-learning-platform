@@ -82,21 +82,33 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
-        System.out.println("\n" + Constants.copyrightString);
-        System.out.println();
+
+        // Silent mode
+        if(args.length >= 1 && args[0].equals("--suppress-output")) {
+            Msg.silent = true;
+            if(args.length > 1) {
+                String[] newargs = new String[args.length - 1];
+                System.arraycopy(args, 1, newargs, 0, newargs.length);
+                args = newargs;
+            } else
+                args = new String[0];
+        }
+
+        Msg.M("\n" + Constants.copyrightString);
+        Msg.M("");
 
         java.io.File fileToOpen = null;
 
         // Print buildinfo and quit
         if(args.length == 1 && args[0].equals("--buildinfo")) {
-            System.out.println(plptool.Version.stamp);
+            Msg.M(plptool.Version.stamp);
             return;
         }
 
         // Debug level setting
         if(args.length >= 2 && args[0].equals("-d")) {
             Constants.debugLevel = Integer.parseInt(args[1]);
-            System.out.println("Debug level set to " + Constants.debugLevel);
+            Msg.M("Debug level set to " + Constants.debugLevel);
             if(args.length > 2) {
                 String[] newargs = new String[args.length - 2];
                 System.arraycopy(args, 2, newargs, 0, newargs.length);
@@ -108,7 +120,7 @@ public class PLPToolApp extends SingleFrameApplication {
         // Classroom mode
         if(args.length >= 2 && args[0].equals("-x")) {
             plptool.Config.devFontSize = Integer.parseInt(args[1]);
-            System.out.println("Classroom Demo Mode");
+            Msg.M("Classroom Demo Mode");
             if(args.length > 2) {
                 String[] newargs = new String[args.length - 2];
                 System.arraycopy(args, 2, newargs, 0, newargs.length);

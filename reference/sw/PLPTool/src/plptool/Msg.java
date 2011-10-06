@@ -63,6 +63,11 @@ public class Msg {
     public static int errorCounter = 0;
 
     /**
+     * Silent mode.
+     */
+    public static boolean silent = false;
+
+    /**
      * This function either prints out an error message to stdout or the
      * specified JTextArea in the output pointer.
      *
@@ -123,6 +128,8 @@ public class Msg {
      * @param objIdentifier The object invoking this call.
      */
     public static void I(String infoStr, Object objIdentifier) {
+        if(silent) return;
+
         if(objIdentifier != null)
             if(output == null)
                 System.out.println(objIdentifier.toString() + ": " + infoStr);
@@ -170,6 +177,8 @@ public class Msg {
      * @param msgStr Message string
      */
     public static void M(String msgStr) {
+        if(silent) return;
+
         if(output == null)
             System.out.println(msgStr);
         else {
@@ -183,6 +192,8 @@ public class Msg {
      * @param msgStr Message string
      */
     public static void m(String msgStr) {
+        if(silent) return;
+
         if(output == null)
             System.out.print(msgStr);
         else {

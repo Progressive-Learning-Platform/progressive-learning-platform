@@ -163,7 +163,7 @@ public class ProjectDriver {
             //this.g_simsh.getSimDesktop().add(this.g_ioreg);
             this.g_about = new AboutBoxDialog(this.g_dev);
             this.g_opts = new OptionsFrame(this);
-            this.g_qref = new QuickRef();
+            this.g_qref = new QuickRef(this);
             this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
             this.g_find = new FindAndReplace(this);
@@ -1341,6 +1341,14 @@ public class ProjectDriver {
         }
 
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Display the Quick Reference window
+     */
+    public void showQuickRef() {
+        g_qref = new QuickRef(this);
+        g_qref.setVisible(true);
     }
 
     /**
