@@ -131,7 +131,7 @@ public class Preset {
                        0xf0000000L,
                        0xf0400000L},
 
-            new Long[]{0x400L,
+            new Long[]{0x800L,
                        0x1000000L,
                        1L,
                        1L,
@@ -151,7 +151,7 @@ public class Preset {
             new Long[]{0x0L,
                        0x10000000L},
 
-            new Long[]{0x400L,
+            new Long[]{0x800L,
                        0x1000000L}
         },
 

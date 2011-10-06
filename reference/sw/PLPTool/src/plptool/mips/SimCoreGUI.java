@@ -85,8 +85,8 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         tblRegFile.setValueAt("23: $s7", 23, 0);
         tblRegFile.setValueAt("24: $t8", 24, 0);
         tblRegFile.setValueAt("25: $t9", 25, 0);
-        tblRegFile.setValueAt("26: $k0", 26, 0);
-        tblRegFile.setValueAt("27: $k1", 27, 0);
+        tblRegFile.setValueAt("26: $i0", 26, 0);
+        tblRegFile.setValueAt("27: $i1", 27, 0);
         tblRegFile.setValueAt("28: $gp", 28, 0);
         tblRegFile.setValueAt("29: $sp", 29, 0);
         tblRegFile.setValueAt("30: $fp", 30, 0);

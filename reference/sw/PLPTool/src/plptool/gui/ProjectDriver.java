@@ -1363,6 +1363,10 @@ public class ProjectDriver {
         if(updateDevelop)
             g_dev.updateComponents();
 
+        if(sim_mode) {
+            g_dev.updateStatText();
+        }
+
         if(ioreg != null)
             ioreg.gui_eval();
 
