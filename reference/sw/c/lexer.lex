@@ -10,12 +10,14 @@ IS			(u|U|l|L)*
 #include "parser.tab.h"
 #include "parse_tree.h"
 #include "log.h"
-
+#include "symbol.h"
 
 void count();
 void count_no_log();
 void comment();
-int check_type();
+int check_type(char*);
+
+extern symbol_table *sym;
 
 %}
 
@@ -57,7 +59,7 @@ int check_type();
 "volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
 
-{L}({L}|{D})*		{ yylval = id((char*)yytext); count(); return(check_type()); }
+{L}({L}|{D})*		{ /*yylval = id((char*)yytext);*/ count(); return(check_type((char*)yytext)); }
 
 0[xX]{H}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 0{D}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
@@ -182,7 +184,7 @@ void count()
 }
 
 
-int check_type()
+int check_type(char *t)
 {
 /*
 * pseudo code --- this is what it should check
@@ -196,6 +198,10 @@ int check_type()
 /*
 *	it actually will only return IDENTIFIER
 */
+	symbol *s = find_symbol(sym, t);
 
+	if (s != NULL)
+		if (s->xtype == xtype_typedef)
+			return(TYPE_NAME);
 	return(IDENTIFIER);
 }
