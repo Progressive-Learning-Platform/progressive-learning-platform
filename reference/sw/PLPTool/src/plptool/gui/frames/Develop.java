@@ -206,12 +206,8 @@ public class Develop extends javax.swing.JFrame {
                             return;
                         }
 
-                        lblSimStat.setText(
-                            (Config.simFunctional ? "Functional " : "") + "Simulation Mode - " +
-                            "Cycles / step: " + Config.simCyclesPerStep + " - " +
-                            "Cycle: " + plp.sim.getInstrCount()
-                        );
-
+                        updateStatText();
+                        
                         final int lineNum = plp.asm.getLineNumMapper()[pc_index];
                         int fileNum = plp.asm.getFileMapper()[pc_index];
 
@@ -242,6 +238,14 @@ public class Develop extends javax.swing.JFrame {
             if(plp.g_simrun != null)
                 plp.g_simrun.stepCount = -1;
         }
+    }
+
+    public void updateStatText() {
+        lblSimStat.setText(
+                    (Config.simFunctional ? "Functional " : "") + "Simulation Mode - " +
+                    "Cycles / step: " + Config.simCyclesPerStep + " - " +
+                    "Cycle: " + plp.sim.getInstrCount()
+                );
     }
 
     private void repaintLater() {
@@ -2495,11 +2499,13 @@ public class Develop extends javax.swing.JFrame {
         } else if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             modified = true;
+        } else if (evt.getKeyCode() == evt.VK_DELETE || evt.getKeyCode() == evt.VK_BACK_SPACE) {
+            modified = true;
         } else if ((int)evt.getKeyChar() == 127) {
-            deleteOccured = true;
+            //deleteOccured = true;
             modified = true;
         } else if ((int)evt.getKeyChar() == 8) {
-            deleteOccured = true;
+            //deleteOccured = true;
             modified = true;
         } else if ((int)evt.getKeyChar() == 24) {
             deleteOccured = true;
@@ -2519,7 +2525,7 @@ public class Develop extends javax.swing.JFrame {
         }
 
         if(modified) {
-            Msg.D("Text has been modified.", 5, this);
+            Msg.D("Text has been modified.", 9, this);
             plp.setModified();
 
             if(txtEditor.isEditable()) {

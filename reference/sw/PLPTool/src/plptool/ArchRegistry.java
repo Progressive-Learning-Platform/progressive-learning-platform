@@ -150,7 +150,11 @@ public class ArchRegistry {
             plp.sim.bus.enableAllModules();
 
             if(plp.g()) {
-                final javax.swing.JToggleButton btnInt = new javax.swing.JToggleButton("Button Interrupt");
+                final javax.swing.JToggleButton btnInt = new javax.swing.JToggleButton();
+                btnInt.setIcon(new javax.swing.ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(plp.g_dev.getClass().getResource("resources/toolbar_exclamation.png"))));
+                btnInt.setToolTipText("Button Interrupt (Toggle button)");
+                btnInt.setOpaque(true);
+                btnInt.setMargin(new java.awt.Insets(2, 0, 2, 0));
                 btnInt.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent e) {
                         ((plptool.mods.Button) plp.sim.bus.getRefMod(1)).setPressedState(btnInt.isSelected());
