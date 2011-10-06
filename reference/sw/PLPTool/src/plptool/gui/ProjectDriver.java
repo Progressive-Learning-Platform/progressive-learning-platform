@@ -1357,16 +1357,11 @@ public class ProjectDriver {
      */
     public void updateComponents(boolean updateDevelop) {
         try {
-        g_sim.updateComponents();
+        if(g_sim != null)
+            g_sim.updateComponents();
         
         if(updateDevelop)
             g_dev.updateComponents();
-
-        g_dev.setLblSimStatText(
-                "Simulation Mode - " +
-                "Cycles / step: " + Config.simCyclesPerStep + " - " +
-                "Cycle: " + sim.getInstrCount()
-            );
 
         if(ioreg != null)
             ioreg.gui_eval();

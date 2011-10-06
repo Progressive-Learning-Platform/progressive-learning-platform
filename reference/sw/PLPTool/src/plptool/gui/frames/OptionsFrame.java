@@ -86,6 +86,8 @@ public class OptionsFrame extends javax.swing.JFrame {
         if(plp.g_simctrl != null)
             plp.g_simctrl.updateSlider();
 
+        plp.updateComponents(true);
+
         try {
             int chunkSize = Integer.parseInt(prgMaxChunkSize.getText());
             if(chunkSize % 4 != 0) {
