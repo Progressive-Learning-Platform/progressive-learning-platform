@@ -195,36 +195,42 @@ public class Develop extends javax.swing.JFrame {
     public void updateComponents() {
         try {
         if(plp.isSimulating()) {
-            plptool.mips.SimCore sim = (plptool.mips.SimCore) plp.sim;
-            int pc_index = plp.asm.lookupAddrIndex(sim.id_stage.i_instrAddr);
-            if(pc_index == -1 || sim.isStalled()) {
-                tln.setHighlight(-1);
-                return;
-            }
 
-            lblSimStat.setText(
-                "Simulation Mode - " +
-                "Cycles / step: " + Config.simCyclesPerStep + " - " +
-                "Cycle: " + plp.sim.getInstrCount()
-            );
+            SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        plptool.mips.SimCore sim = (plptool.mips.SimCore) plp.sim;
+                        int pc_index = plp.asm.lookupAddrIndex(sim.id_stage.i_instrAddr);
+                        if(pc_index == -1 || sim.isStalled()) {
+                            tln.setHighlight(-1);
+                            return;
+                        }
 
-            final int lineNum = plp.asm.getLineNumMapper()[pc_index];
-            int fileNum = plp.asm.getFileMapper()[pc_index];
-            
-            int yPos = (lineNum - 1) * txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
-            int viewPortY = scroller.getViewport().getViewPosition().y;
+                        lblSimStat.setText(
+                            (Config.simFunctional ? "Functional " : "") + "Simulation Mode - " +
+                            "Cycles / step: " + Config.simCyclesPerStep + " - " +
+                            "Cycle: " + plp.sim.getInstrCount()
+                        );
 
-            if(yPos > (viewPortY + scroller.getHeight()) || yPos < viewPortY)
-                scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
+                        final int lineNum = plp.asm.getLineNumMapper()[pc_index];
+                        int fileNum = plp.asm.getFileMapper()[pc_index];
 
-            if(plp.open_asm != fileNum) {
-                plp.open_asm = fileNum;
-                //plp.refreshProjectView(false);
-                safeRefresh(false);
-            } else {
-                tln.setHighlight(lineNum - 1);
-                repaintLater();
-            }
+                        int yPos = (lineNum - 1) * txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
+                        int viewPortY = scroller.getViewport().getViewPosition().y;
+
+                        if(yPos > (viewPortY + scroller.getHeight()) || yPos < viewPortY)
+                            scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
+
+                        if(plp.open_asm != fileNum) {
+                            plp.open_asm = fileNum;
+                            //plp.refreshProjectView(false);
+                            safeRefresh(false);
+                        } else {
+                            tln.setHighlight(lineNum - 1);
+                            repaintLater();
+                        }
+                    }
+                });
         }
         } catch(Exception e) {
             JOptionPane.showMessageDialog(this, "Looks like the GUI is being refreshed too fast!\n" +

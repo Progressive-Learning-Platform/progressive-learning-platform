@@ -124,6 +124,11 @@ public class SimCore extends PLPSimCore {
      public long IRQAck;
 
 
+     /**
+      * Functional mode return address for interrupts
+      */
+     private long functional_ret;
+
     /**
      * Simulator plp constructor.
      *
@@ -285,12 +290,16 @@ public class SimCore extends PLPSimCore {
         }
 
         // pc update logic (input side IF)
-        if(ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_pcsrc == 1)
+        if(ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_pcsrc == 1) {
             pc.write(ex_stage.ctl_branchtarget);
-        else if(ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_jump == 1)
+            functional_ret = pc.input();
+        } else if (ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_jump == 1) {
             pc.write(ex_stage.ctl_jumptarget);
-        else if(!if_stall)
+            functional_ret = pc.input();
+        } else if (!if_stall) {
             pc.write(pc.eval() + 4);
+            functional_ret = pc.eval();
+        }
 
         // Evaluate modules attached to the bus
         ret += bus.eval();
@@ -368,7 +377,7 @@ public class SimCore extends PLPSimCore {
            
             if(diff == 8 || Config.simFunctional) {
                 sim_flags |= Constants.PLP_SIM_IRQ_SERVICED;
-                irq_ret = (Config.simFunctional ? pc.eval() : mem_stage.i_instrAddr); // address to return to
+                irq_ret = (Config.simFunctional ? functional_ret : mem_stage.i_instrAddr); // address to return to
                 int_state--;
                 IRQAck = 1;
                 Msg.D("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret), 3, this);
@@ -434,6 +443,10 @@ public class SimCore extends PLPSimCore {
 
         id_stage.hot = true;
         visibleAddr = addr;
+
+        Msg.D("fetch(): PC input side: "  + String.format("0x%08x", pc.input())
+                  + " - PC output side: " + String.format("0x%08x", pc.eval()),
+                     5, this);
 
         return Constants.PLP_OK;
     }
