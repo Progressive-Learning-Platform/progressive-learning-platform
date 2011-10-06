@@ -23,14 +23,6 @@ char *s;
 
 %}
 
-/*
-%union {
-	char *val;
-	struct node *n;
-};
-*/
-%defines 
-
 %token IDENTIFIER CONSTANT STRING_LITERAL 
 %token SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
@@ -46,8 +38,6 @@ char *s;
 
 %nonassoc IFX
 %nonassoc ELSE
-
-/*%type <n> translation_unit external_declaration*/
 
 %start translation_unit
 %%
@@ -233,7 +223,7 @@ type_specifier
 	| UNSIGNED { vlog("[parser] UNSIGNED\n"); $$ = type("unsigned"); }
 	| struct_or_union_specifier { vlog("[parser] STRUCT_UNION\n"); $$ = type("struct_union"); }
 	| enum_specifier { vlog("[parser] ENUM\n"); $$ = type("enum"); }
-	| TYPE_NAME { vlog("[parser] TYPE_NAME\n"); /* currently unsupported */ }
+	| TYPE_NAME { vlog("[parser] TYPE_NAME\n"); $$ = type($1->id); }
 	;
 
 struct_or_union_specifier

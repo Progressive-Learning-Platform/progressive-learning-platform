@@ -6,11 +6,11 @@ extern symbol_table *sym;
 
 /* lookup a symbol in the current scope */
 int lookup(char *s) {
-	symbol_list *curr = sym->s;
+	symbol *curr = sym->s;
 	while (curr != NULL) {
 		if (curr->value == s)
 			return 1;
-		curr = curr->next;
+		curr = curr->up;
 	}
 	return 0;	
 }
@@ -26,19 +26,48 @@ void insert(char *s) {
 
 void new_symbol(symbol_table *t, char *v) {
 	/* insert our new symbol to the top of the list */
-	symbol_list *symbol = malloc(sizeof(symbol_list));
-	symbol->next = t->s;
+	symbol *symbol = malloc(sizeof(symbol));
+	symbol->up = t->s;
 	symbol->value = v;
 	t->s = symbol;
 }
 
+symbol* find_symbol(symbol_table *t, char *v) {
+	symbol *curr;
+	if (t == NULL)
+		return NULL;
+	curr = t->s;
+	/* search up from here, looking for the requested symbol */
+	while (curr != NULL) {
+		if (curr->value == v)
+			return curr;
+		curr = curr->up;
+	}
+	return find_symbol(t->parent, v);
+}
+	
+
 symbol_table* new_symbol_table(symbol_table *t) {
 	symbol_table *table = malloc(sizeof(symbol_table));
-	table->child = NULL;
-	table->parent = t;
 	table->s = NULL;
-	if (t != NULL)
-		t->child = table;
+	table->num_children = 0;
+	if (t == NULL) {
+		/* brand new global table */
+		table->parent = NULL;
+	} else {
+		/* create a new child table */
+		int i;
+		symbol_table *n  = malloc(sizeof(symbol_table) + (sizeof(symbol_table*) * (t->num_children+1)));
+		for (i=0; i < t->num_children; i++)
+			n->children[i] = t->children[i];
+		n->children[i] = table;
+		n->parent = t->parent;
+		n->num_children = t->num_children + 1;
+		n->s = t->s;
+		free(t->children);
+		free(t);
+		table->parent = n;
+	} 
 	return table;
 }
 
