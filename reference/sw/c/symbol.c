@@ -81,7 +81,7 @@ node* new_symbol(symbol_table *t, node *n) {
 	s->value = NULL;
 
 	/* get the id and all attributes for this symbol */
-	print_tree(n, stdout, 0); 
+	//print_tree(n, stdout, 0); 
 	
 	/* the first child node should be the types and attributes */
 	if (strcmp(n->children[0]->id,"declaration_specifier") != 0) {
@@ -155,8 +155,12 @@ symbol* find_symbol(symbol_table *t, char *v) {
 
 symbol_table* new_symbol_table(symbol_table *t) {
 	symbol_table *table = malloc(sizeof(symbol_table));
+
+	vlog("[symbol] creating new table\n");
+
 	table->s = NULL;
 	table->num_children = 0;
+
 	if (t == NULL) {
 		/* brand new global table */
 		table->parent = NULL;
@@ -170,10 +174,25 @@ symbol_table* new_symbol_table(symbol_table *t) {
 		n->parent = t->parent;
 		n->num_children = t->num_children + 1;
 		n->s = t->s;
-		free(t->children);
 		free(t);
 		table->parent = n;
 	} 
 	return table;
 }
 
+void print_symbols(symbol_table* t, FILE* o, int depth) {
+	/* print all of my symbols and then call my child to do the same */
+	symbol *curr = NULL;
+	int i;
+	if (t == NULL) 
+		return;
+	curr = t->s;
+	while (curr != NULL) {
+		for (i=0; i<depth; i++)
+			fprintf(o, "\t");
+		fprintf(o, "id: %s, type: %s, attributes: 0x%08x\n", curr->value, curr->type, curr->attr);
+		curr = curr->up;
+	}
+	for (i=0; i<t->num_children; i++)
+		print_symbols(t->children[i], o, depth+1);
+}

@@ -159,6 +159,12 @@ int main(int argc, char *argv[]) {
 		print_tree(parse_tree_head, PARSE_OUTPUT, 0);
 	}
 
+	/* print the symbol table */
+	if (SYMBOL_OUTPUT != NULL) {
+		vlog("[pcc] printing symbol table\n");
+		print_symbols(sym, SYMBOL_OUTPUT, 0);
+	}
+
 	vlog("[pcc] closing files\n");
 	fclose(FILE_INPUT);
 	fclose(FILE_OUTPUT);
