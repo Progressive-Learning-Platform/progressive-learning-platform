@@ -1,6 +1,8 @@
 #ifndef SYMBOL
 #define SYMBOL
 
+#include "parse_tree.h"
+
 /* symbol type */
 typedef enum {
         type_label,
@@ -37,8 +39,9 @@ typedef struct symbol_table_t {
 	struct symbol_table_t *children[];
 } symbol_table;
 
-void new_symbol(symbol_table*, char*);
+node* new_symbol(symbol_table*, node*);
 symbol *find_symbol(symbol_table*, char*);
 symbol_table* new_symbol_table(symbol_table*);
+
 
 #endif 

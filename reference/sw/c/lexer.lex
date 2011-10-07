@@ -59,7 +59,7 @@ extern symbol_table *sym;
 "volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
 
-{L}({L}|{D})*		{ /*yylval = id((char*)yytext);*/ count(); return(check_type((char*)yytext)); }
+{L}({L}|{D})*		{ yylval = id((char*)yytext); count(); return(check_type((char*)yytext)); }
 
 0[xX]{H}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
 0{D}+{IS}?		{ yylval = con((char*)yytext); count(); return(CONSTANT); }
@@ -198,10 +198,13 @@ int check_type(char *t)
 /*
 *	it actually will only return IDENTIFIER
 */
+	vlog("[lexer] check_type: %s : ", t);
 	symbol *s = find_symbol(sym, t);
-
-	if (s != NULL)
+	if (s != NULL) {
 		if (s->xtype == xtype_typedef)
 			return(TYPE_NAME);
+		vlog("TYPE_NAME\n");
+	}
+	vlog("IDENTIFIER\n");
 	return(IDENTIFIER);
 }

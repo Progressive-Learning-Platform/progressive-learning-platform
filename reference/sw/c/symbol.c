@@ -1,6 +1,9 @@
+#include <stdio.h>
+#include <string.h>
 #include "symbol.h"
 #include <stdlib.h>
 #include "log.h"
+#include "parse_tree.h"
 
 extern symbol_table *sym;
 
@@ -15,21 +18,14 @@ int lookup(char *s) {
 	return 0;	
 }
 	
-void insert(char *s) {
-	int found = lookup(s);
-	if (!found) {
-		new_symbol(sym, s);
-	} else {
-		err("[parser] token %s already defined in this scope\n", s);
-	}
-}
+node* new_symbol(symbol_table *t, node *n) {
+	/* get the id and all attributes for this symbol */
+	print_tree(n, stdout, 0); 
+	
+	/* check to see if it already exists */
 
-void new_symbol(symbol_table *t, char *v) {
-	/* insert our new symbol to the top of the list */
-	symbol *symbol = malloc(sizeof(symbol));
-	symbol->up = t->s;
-	symbol->value = v;
-	t->s = symbol;
+	/* create the symbol */
+	return n;
 }
 
 symbol* find_symbol(symbol_table *t, char *v) {
@@ -39,7 +35,7 @@ symbol* find_symbol(symbol_table *t, char *v) {
 	curr = t->s;
 	/* search up from here, looking for the requested symbol */
 	while (curr != NULL) {
-		if (curr->value == v)
+		if (strcmp(curr->value,v) == 0)
 			return curr;
 		curr = curr->up;
 	}
