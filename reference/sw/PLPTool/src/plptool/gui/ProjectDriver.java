@@ -963,7 +963,7 @@ public class ProjectDriver {
         g_simrun.start();
 
         if(g) {
-            g_dev.runSimState();
+            g_dev.simRun();
             g_simctrl.runSimState();
         }
 

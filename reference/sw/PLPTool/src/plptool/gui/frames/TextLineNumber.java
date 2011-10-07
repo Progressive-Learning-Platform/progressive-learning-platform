@@ -13,6 +13,8 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
+import plptool.Msg;
+
 import plptool.gui.ProjectDriver;
 
 /**
@@ -361,6 +363,7 @@ public class TextLineNumber extends JPanel
 			return "";
 	}
 
+
         protected int getLineNumber(int rowStartOffset) {
             Element root = component.getDocument().getDefaultRootElement();
             int index = root.getElementIndex( rowStartOffset );
@@ -545,7 +548,51 @@ public class TextLineNumber extends JPanel
             if(!plp.isSimulating())
                 return;
            // apply breakpoint
+            
+            try {
 
+            Rectangle clip = plp.g_dev.getScroller().getViewport().getBounds();
+
+            int rowStartOffset = component.viewToModel( new Point(0, 0) );
+            int endOffset = component.viewToModel( new Point(0, component.getHeight()) );
+            int y;
+            int mouse_y;
+            int end_y;
+            int lineNumber;
+            long addr;
+
+            while(rowStartOffset <= endOffset) {
+                y = getOffsetY(rowStartOffset, component.getFontMetrics(component.getFont()));
+                end_y = y + component.getFontMetrics(component.getFont()).getHeight();
+                mouse_y = e.getY() + component.getFontMetrics(component.getFont()).getHeight();
+
+                Msg.D("mouse_y: " + e.getY() +
+                      " - y: " + y +
+                      " - end_y: " + end_y +
+                      " - lineNumber: " + getLineNumber(rowStartOffset), 5, this);
+
+                if(mouse_y >= y && mouse_y <= end_y) {
+                    lineNumber = getLineNumber(rowStartOffset);
+                    addr = plp.asm.getAddrFromFileMetadata(plp.open_asm, lineNumber);
+
+                    if(addr != -1) {
+                        if(!plp.sim.breakpoints.isBreakpoint(addr)) {
+                            plptool.Msg.M("New breakpoint set at: " + plp.asms.get(plp.open_asm).getAsmFilePath() + "(" + lineNumber + "): " +
+                                     String.format("0x%02x", addr));
+                            plp.sim.breakpoints.add(addr, plp.open_asm, lineNumber);
+
+                        } else {
+                            plptool.Msg.M("Removing breakpoint.");
+                            plp.sim.breakpoints.remove(addr);
+                        }
+                        this.repaint();
+                    }
+                }
+
+                rowStartOffset = Utilities.getRowEnd(component, rowStartOffset) + 1;
+            }
+
+            /*
             int height = component.getFontMetrics(component.getFont()).getHeight();
             int line = e.getY() / height + 1;
             long addr = plp.asm.getAddrFromFileMetadata(plp.open_asm, line);
@@ -562,6 +609,16 @@ public class TextLineNumber extends JPanel
                 }
                 this.repaint();
             }
+            */
+
+            } catch(BadLocationException ble) {
+
+            }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "tlh";
     }
 }

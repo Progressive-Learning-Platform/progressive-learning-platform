@@ -637,22 +637,23 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimWatcherActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
-                  <Properties>
-                    <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
-                  </Properties>
-                </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimControl">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                       <KeyStroke key="Ctrl+R"/>
                     </Property>
                     <Property name="text" type="java.lang.String" resourceKey="menuSimControl.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="menuSimControl.icon"/>
                     <Property name="name" type="java.lang.String" value="menuSimControl" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimControlActionPerformed"/>
                   </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
+                  </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimIO">
                   <Properties>
@@ -921,7 +922,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="464" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="473" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -996,11 +997,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="829" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="830" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="611" max="32767" attributes="0"/>
+                              <EmptySpace pref="625" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1018,7 +1019,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="293" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="406" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1285,6 +1286,23 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimResetActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JToggleButton" name="btnSimControl">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="btnSimControl.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="btnSimControl.text"/>
+            <Property name="toolTipText" type="java.lang.String" resourceKey="btnSimControl.toolTipText"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+              <Insets value="[2, 0, 2, 0]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="btnSimControl" noResource="true"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimControlActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JToolBar$Separator" name="separatorSimControl">

@@ -38,7 +38,7 @@ public class SimControl extends javax.swing.JFrame {
     public SimControl(ProjectDriver plp) {
         initComponents();
         this.plp = plp;
-        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_run.png")));
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_remote.png")));
         updateSlider();
         this.setLocationRelativeTo(null);
 
