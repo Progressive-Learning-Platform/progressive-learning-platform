@@ -10,15 +10,23 @@ extern symbol_table *sym;
 typedef struct id_chain_t {
 	struct id_chain_t *up;
 	char *id;
+	int pointer;
 } id_chain;
 
 id_chain* get_ids(id_chain* i, node *n) {
 	/* is the current node an id? */
 	if (n != NULL) {
-		if (strcmp(n->id, "direct_declarator") == 0) {
+		if (strcmp(n->id, "declarator") == 0) {
+			/* declarators either have children[0] as the direct declarator or a pointer note */
 			id_chain *t = malloc(sizeof(id_chain));
 			t->up = i;
-			t->id = n->children[0]->id;
+			if (strcmp(n->children[0]->id, "pointer") == 0) {
+				t->pointer = 1;
+				t->id = n->children[1]->children[0]->id;
+			} else {
+				t->pointer = 0;
+				t->id = n->children[0]->children[0]->id;
+			}
 			i = t;
 			vlog("[symbol] found id %s\n", i->id);
 		} else {
@@ -108,7 +116,9 @@ node* new_symbol(symbol_table *t, node *n) {
 				id_chain *d = ids;
 				if (lookup(ids->id)) {
 					err("[symbol] symbol %s already declared in this scope\n", ids->id);
-				} 
+				}
+				if (ids->pointer)
+					s->attr |= ATTR_POINTER; 
 				s->value = ids->id;
 				t->s = s;
 				vlog("[symbol] created symbol: %s, type %s, attr 0x%08x\n", s->value, s->type, s->attr);
