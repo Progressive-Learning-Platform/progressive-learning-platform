@@ -739,7 +739,7 @@ public class Asm extends plptool.PLPAsm {
                 }
             }
 
-            // Save registers and call function
+            // Save registers and call a function
             else if(asmTokens[0].equals("call")) {
                 if(asmTokens.length != 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
@@ -780,7 +780,7 @@ public class Asm extends plptool.PLPAsm {
                 }
             }
 
-            // Restore registers and return from callee function
+            // Restore registers and return from callee. NOT INTERRUPT SAFE.
             else if(asmTokens[0].equals("return")) {
                 if(asmTokens.length != 1) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
@@ -819,6 +819,98 @@ public class Asm extends plptool.PLPAsm {
                         regionMap.add(curRegion);
 
                     curAddr += 108;
+                }
+            }
+
+            // Save all non-zero registers to stack
+            else if(asmTokens[0].equals("save")) {
+                if(asmTokens.length != 1) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("addiu $sp, $sp, -120", i, true);
+                    appendPreprocessedAsm("sw $1, 4($sp)", i, true);
+                    appendPreprocessedAsm("sw $2, 8($sp)", i, true);
+                    appendPreprocessedAsm("sw $3, 12($sp)", i, true);
+                    appendPreprocessedAsm("sw $4, 16($sp)", i, true);
+                    appendPreprocessedAsm("sw $5, 20($sp)", i, true);
+                    appendPreprocessedAsm("sw $6, 24($sp)", i, true);
+                    appendPreprocessedAsm("sw $7, 28($sp)", i, true);
+                    appendPreprocessedAsm("sw $8, 32($sp)", i, true);
+                    appendPreprocessedAsm("sw $9, 36($sp)", i, true);
+                    appendPreprocessedAsm("sw $10, 40($sp)", i, true);
+                    appendPreprocessedAsm("sw $11, 44($sp)", i, true);
+                    appendPreprocessedAsm("sw $12, 48($sp)", i, true);
+                    appendPreprocessedAsm("sw $13, 52($sp)", i, true);
+                    appendPreprocessedAsm("sw $14, 56($sp)", i, true);
+                    appendPreprocessedAsm("sw $15, 60($sp)", i, true);
+                    appendPreprocessedAsm("sw $16, 64($sp)", i, true);
+                    appendPreprocessedAsm("sw $17, 68($sp)", i, true);
+                    appendPreprocessedAsm("sw $18, 72($sp)", i, true);
+                    appendPreprocessedAsm("sw $19, 76($sp)", i, true);
+                    appendPreprocessedAsm("sw $20, 80($sp)", i, true);
+                    appendPreprocessedAsm("sw $21, 84($sp)", i, true);
+                    appendPreprocessedAsm("sw $22, 88($sp)", i, true);
+                    appendPreprocessedAsm("sw $23, 92($sp)", i, true);
+                    appendPreprocessedAsm("sw $24, 96($sp)", i, true);
+                    appendPreprocessedAsm("sw $25, 100($sp)", i, true);
+                    appendPreprocessedAsm("sw $26, 104($sp)", i, true);
+                    appendPreprocessedAsm("sw $27, 108($sp)", i, true);
+                    appendPreprocessedAsm("sw $28, 112($sp)", i, true);
+                    appendPreprocessedAsm("sw $30, 116($sp)", i, true);
+                    appendPreprocessedAsm("sw $31, 120($sp)", i, true);
+
+                    for(int k = 0; k < 31; k++)
+                        regionMap.add(curRegion);
+
+                    curAddr += 124;
+                }
+            }
+
+            // Restore all non-zero registers from the stack
+            else if(asmTokens[0].equals("restore")) {
+                if(asmTokens.length != 1) {
+                   error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Pseudo-op syntax error.",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else {
+                    appendPreprocessedAsm("lw $1, 4($sp)", i, true);
+                    appendPreprocessedAsm("lw $2, 8($sp)", i, true);
+                    appendPreprocessedAsm("lw $3, 12($sp)", i, true);
+                    appendPreprocessedAsm("lw $4, 16($sp)", i, true);
+                    appendPreprocessedAsm("lw $5, 20($sp)", i, true);
+                    appendPreprocessedAsm("lw $6, 24($sp)", i, true);
+                    appendPreprocessedAsm("lw $7, 28($sp)", i, true);
+                    appendPreprocessedAsm("lw $8, 32($sp)", i, true);
+                    appendPreprocessedAsm("lw $9, 36($sp)", i, true);
+                    appendPreprocessedAsm("lw $10, 40($sp)", i, true);
+                    appendPreprocessedAsm("lw $11, 44($sp)", i, true);
+                    appendPreprocessedAsm("lw $12, 48($sp)", i, true);
+                    appendPreprocessedAsm("lw $13, 52($sp)", i, true);
+                    appendPreprocessedAsm("lw $14, 56($sp)", i, true);
+                    appendPreprocessedAsm("lw $15, 60($sp)", i, true);
+                    appendPreprocessedAsm("lw $16, 64($sp)", i, true);
+                    appendPreprocessedAsm("lw $17, 68($sp)", i, true);
+                    appendPreprocessedAsm("lw $18, 72($sp)", i, true);
+                    appendPreprocessedAsm("lw $19, 76($sp)", i, true);
+                    appendPreprocessedAsm("lw $20, 80($sp)", i, true);
+                    appendPreprocessedAsm("lw $21, 84($sp)", i, true);
+                    appendPreprocessedAsm("lw $22, 88($sp)", i, true);
+                    appendPreprocessedAsm("lw $23, 92($sp)", i, true);
+                    appendPreprocessedAsm("lw $24, 96($sp)", i, true);
+                    appendPreprocessedAsm("lw $25, 100($sp)", i, true);
+                    appendPreprocessedAsm("lw $26, 104($sp)", i, true);
+                    appendPreprocessedAsm("lw $27, 108($sp)", i, true);
+                    appendPreprocessedAsm("lw $28, 112($sp)", i, true);
+                    appendPreprocessedAsm("lw $30, 116($sp)", i, true);
+                    appendPreprocessedAsm("lw $31, 120($sp)", i, true);
+                    appendPreprocessedAsm("addiu $sp, $sp, 120", i, true);
+
+                    for(int k = 0; k < 31; k++)
+                        regionMap.add(curRegion);
+
+                    curAddr += 124;
                 }
             }
 

@@ -35,8 +35,8 @@ public class Config {
     public static boolean simForwardingUnit                = true;
     public static boolean simDynamicMemoryAllocation       = false;
     public static boolean simRefreshGUIDuringSimRun        = true;
-    public static boolean simRefreshDevDuringSimRun        = false;
-    public static int     simRunnerDelay                   = 1;
+    public static boolean simRefreshDevDuringSimRun        = true;
+    public static int     simRunnerDelay                   = 100;
     public static boolean cfgVerbose                       = true;
     public static boolean simBusReturnsZeroForUninitRegs   = true;
     public static boolean simAllowExecutionOfArbitraryMem  = true;
@@ -46,7 +46,7 @@ public class Config {
     public static boolean simIgnoreSavedSimState           = false;
     public static int     simCyclesPerStep                 = 1;
     public static boolean simHighlightLine                 = false;
-    public static boolean simFunctional                    = false;
+    public static boolean simFunctional                    = true;
 
     public static double  relativeDefaultWindowWidth       = 0.8;
     public static double  relativeDefaultWindowHeight      = 0.8;

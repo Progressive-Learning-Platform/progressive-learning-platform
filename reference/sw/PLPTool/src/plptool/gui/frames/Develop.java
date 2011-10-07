@@ -278,6 +278,9 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.setBackground(Config.devBackground);
         txtEditor.setForeground(Config.devForeground);
         styles = setupHighlighting();
+
+        safeRefresh(true);
+        repaintLater();
     }
 
     public void notifyplpModified() {
@@ -290,6 +293,10 @@ public class Develop extends javax.swing.JFrame {
 
     public javax.swing.JTextPane getOutput() {
         return txtOutput;
+    }
+
+    public javax.swing.JScrollPane getScroller() {
+        return scroller;
     }
 
     public javax.swing.JEditorPane getEditor() {
@@ -356,7 +363,7 @@ public class Develop extends javax.swing.JFrame {
         plp.plpfile = null;
         plp.setUnModified();
         txtCurFile.setText("No file open");
-        endSim();
+        simEnd();
         //plp.refreshProjectView(false);
         safeRefresh(false);
     }
@@ -377,7 +384,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimulate.setEnabled(false);
         btnProgram.setEnabled(false);
         menuQuickProgram.setEnabled(false);
-        endSim();
+        simEnd();
      }
 
     public final  void enableSimControls() {
@@ -753,7 +760,21 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
-    public void beginSim() {
+    private void simReset() {
+        if(plp.g_simrun != null)
+            plp.stopSimulation();
+        plp.sim.reset();
+
+        tln.setHighlight(-1);
+        tlh.setY(-1);
+        repaintLater();
+        plp.open_asm = 0;
+        plp.updateComponents(true);
+        //plp.refreshProjectView(false);
+        safeRefresh(false);
+    }
+
+    public void simBegin() {
         if(plp.simulate() == Constants.PLP_OK) {
             menuSimulate.setSelected(true);
             txtEditor.setEditable(false);
@@ -761,6 +782,7 @@ public class Develop extends javax.swing.JFrame {
             btnSimulate.setSelected(true);
             btnSimRun.setVisible(true);
             separatorSim.setVisible(true);
+            btnSimControl.setVisible(true);
             btnSimReset.setVisible(true);
             btnSimStep.setVisible(true);
             btnWatcher.setVisible(true);
@@ -775,10 +797,10 @@ public class Develop extends javax.swing.JFrame {
             lblSimStat.setText("Simulation Mode");
             updateIOFramesVisibility();
         } else
-            endSim();
+            simEnd();
     }
 
-    public void endSim() {
+    public void simEnd() {
 
         txtEditor.setEditable(true);
         txtEditor.getCaret().setVisible(true);
@@ -794,6 +816,7 @@ public class Develop extends javax.swing.JFrame {
             plp.stopSimulation();
             plp.desimulate();
         }
+        btnSimControl.setVisible(false);
         rootmenuSim.setEnabled(false);
         btnSimulate.setSelected(false);
         btnSimRun.setSelected(false);
@@ -873,6 +896,9 @@ public class Develop extends javax.swing.JFrame {
 
             case Constants.PLP_TOOLFRAME_SIMRUN:
                 return btnSimRun;
+
+            case Constants.PLP_TOOLFRAME_SIMCTRL:
+                return btnSimControl;
 
             case Constants.PLP_TOOLFRAME_SIMLEDS:
                 return btnSimLEDs;
@@ -1003,7 +1029,7 @@ public class Develop extends javax.swing.JFrame {
         }
     }
     
-    private void stepSim() {
+    private void simStep() {
         boolean breakpoint = false;
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
             plp.sim.step();
@@ -1025,7 +1051,7 @@ public class Develop extends javax.swing.JFrame {
         repaintLater();
     }
 
-    public void runSimState() {
+    public void simRun() {
         tlh.setY(-1);
         repaintLater();
         menuSimRun.setSelected(true);
@@ -1097,6 +1123,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimStep = new javax.swing.JButton();
         btnSimRun = new javax.swing.JToggleButton();
         btnSimReset = new javax.swing.JButton();
+        btnSimControl = new javax.swing.JToggleButton();
         separatorSimControl = new javax.swing.JToolBar.Separator();
         btnCPU = new javax.swing.JToggleButton();
         btnWatcher = new javax.swing.JToggleButton();
@@ -1163,8 +1190,8 @@ public class Develop extends javax.swing.JFrame {
         menuSimTools = new javax.swing.JMenu();
         menuSimView = new javax.swing.JCheckBoxMenuItem();
         menuSimWatcher = new javax.swing.JCheckBoxMenuItem();
-        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuSimControl = new javax.swing.JCheckBoxMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuSimIO = new javax.swing.JCheckBoxMenuItem();
         menuSimAsmView = new javax.swing.JMenuItem();
         menuIOReg = new javax.swing.JMenu();
@@ -1247,10 +1274,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1271,11 +1298,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 611, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1289,7 +1316,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1312,7 +1339,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1462,6 +1489,21 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         toolbar.add(btnSimReset);
+
+        btnSimControl.setIcon(resourceMap.getIcon("btnSimControl.icon")); // NOI18N
+        btnSimControl.setText(resourceMap.getString("btnSimControl.text")); // NOI18N
+        btnSimControl.setToolTipText(resourceMap.getString("btnSimControl.toolTipText")); // NOI18N
+        btnSimControl.setFocusable(false);
+        btnSimControl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimControl.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimControl.setName("btnSimControl"); // NOI18N
+        btnSimControl.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimControl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimControlActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnSimControl);
 
         separatorSimControl.setName("separatorSimControl"); // NOI18N
         toolbar.add(separatorSimControl);
@@ -2108,11 +2150,9 @@ public class Develop extends javax.swing.JFrame {
         });
         menuSimTools.add(menuSimWatcher);
 
-        jSeparator3.setName("jSeparator3"); // NOI18N
-        menuSimTools.add(jSeparator3);
-
         menuSimControl.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         menuSimControl.setText(resourceMap.getString("menuSimControl.text")); // NOI18N
+        menuSimControl.setIcon(resourceMap.getIcon("menuSimControl.icon")); // NOI18N
         menuSimControl.setName("menuSimControl"); // NOI18N
         menuSimControl.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2120,6 +2160,9 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         menuSimTools.add(menuSimControl);
+
+        jSeparator3.setName("jSeparator3"); // NOI18N
+        menuSimTools.add(jSeparator3);
 
         menuSimIO.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuSimIO.setMnemonic('R');
@@ -2634,11 +2677,11 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuPrintActionPerformed
 
     private void menuSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimStepActionPerformed
-        stepSim();
+        simStep();
     }//GEN-LAST:event_menuSimStepActionPerformed
 
     private void menuExitSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitSimActionPerformed
-        endSim();
+        simEnd();
         //plp.refreshProjectView(false);
         safeRefresh(false);
     }//GEN-LAST:event_menuExitSimActionPerformed
@@ -2693,13 +2736,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSimViewActionPerformed
 
     private void menuSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimResetActionPerformed
-        if(plp.g_simrun != null)
-            plp.stopSimulation();
-        plp.sim.reset();
-        
-        plp.updateComponents(true);
-        //plp.refreshProjectView(false);
-        safeRefresh(false);
+        simReset();
     }//GEN-LAST:event_menuSimResetActionPerformed
 
     private void menuSimLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimLEDsActionPerformed
@@ -2729,9 +2766,9 @@ public class Develop extends javax.swing.JFrame {
     private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
         if(btnSimulate.isSelected()) {
             if(plp.isAssembled())
-                beginSim();
+                simBegin();
         } else {
-            endSim();
+            simEnd();
             //plp.refreshProjectView(false);
             safeRefresh(false);
         }
@@ -2746,17 +2783,11 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimRunActionPerformed
 
     private void btnSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimStepActionPerformed
-        stepSim();
+        simStep();
     }//GEN-LAST:event_btnSimStepActionPerformed
 
     private void btnSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimResetActionPerformed
-        if(plp.g_simrun != null)
-            plp.stopSimulation();
-        plp.sim.reset();
-
-        plp.updateComponents(true);
-        //plp.refreshProjectView(false);
-        safeRefresh(false);
+        simReset();
     }//GEN-LAST:event_btnSimResetActionPerformed
 
     private void menuStep1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep1ActionPerformed
@@ -2829,6 +2860,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSimControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimControlActionPerformed
         plp.g_simctrl.setVisible(menuSimControl.isSelected());
+        btnSimControl.setSelected(menuSimControl.isSelected());
     }//GEN-LAST:event_menuSimControlActionPerformed
 
     private void btnWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWatcherActionPerformed
@@ -2904,9 +2936,9 @@ public class Develop extends javax.swing.JFrame {
     private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
         if(menuSimulate.isSelected()) {
             if(plp.isAssembled())
-                beginSim();
+                simBegin();
         } else {
-            endSim();
+            simEnd();
             //plp.refreshProjectView(false);
             safeRefresh(false);
         }
@@ -2915,6 +2947,11 @@ public class Develop extends javax.swing.JFrame {
     private void menuClearOutputPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClearOutputPaneActionPerformed
         txtOutput.setText("");
     }//GEN-LAST:event_menuClearOutputPaneActionPerformed
+
+    private void btnSimControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimControlActionPerformed
+        plp.g_simctrl.setVisible(btnSimControl.isSelected());
+        menuSimControl.setSelected(btnSimControl.isSelected());
+    }//GEN-LAST:event_btnSimControlActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
@@ -2993,6 +3030,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnProgram;
     private javax.swing.JButton btnSave;
+    private javax.swing.JToggleButton btnSimControl;
     private javax.swing.JToggleButton btnSimLEDs;
     private javax.swing.JToggleButton btnSimPLPID;
     private javax.swing.JButton btnSimReset;
