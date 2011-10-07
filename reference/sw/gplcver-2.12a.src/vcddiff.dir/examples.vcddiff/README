@@ -1,0 +1,24 @@
+
+This directory contains some simple examples to demonstrate the use
+of vcddiff.  To run the tests, execute the shell script: vcddiff_test.sh.
+This will run four examples using the dump files provided and print out the
+differences.  
+
+To run vcddiff just give two dump files to compare.  This script runs
+the following four tests.  The '//' comment lines below give the expected
+output for each of the tests.
+
+$  vcddiff example.dump example.dump   
+// no differences since it is the same file
+
+$   vcddiff example.dump example_map_nochg.dump   
+// no differences since it is the same file, except for different identifiers
+                                        
+$   vcddiff example.dump example2.dump   
+// will print the differences between the files 
+
+$   vcddiff --state example.dump example2.dump   
+// will print the differences between the files in the state form, since the
+   --state command is given 
+
+For more information see README.vcddiff in the top level directory.
