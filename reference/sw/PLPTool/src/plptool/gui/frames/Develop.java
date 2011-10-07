@@ -414,6 +414,8 @@ public class Develop extends javax.swing.JFrame {
             case 2:
                 return;
             default:
+                if(plp.isSimulating())
+                    simEnd();
                 plp.create();
                 //undoManager = new DoManager(txtEditor.getText());
         }
@@ -434,6 +436,8 @@ public class Develop extends javax.swing.JFrame {
                 int retVal = fc.showOpenDialog(null);
 
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                    if(plp.isSimulating())
+                        simEnd();
                     plp.curdir = fc.getSelectedFile().getParent();
                     plp.open(fc.getSelectedFile().getAbsolutePath(), true);
                 }
@@ -808,6 +812,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimRun.setSelected(false);
         menuSimView.setSelected(false);
         menuSimWatcher.setSelected(false);
+        menuSimControl.setSelected(false);
         menuSimIO.setSelected(false);
         tln.setHighlight(-1);
         tlh.setY(-1);
@@ -821,6 +826,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimulate.setSelected(false);
         btnSimRun.setSelected(false);
         btnCPU.setSelected(false);
+        btnSimControl.setSelected(false);
         btnWatcher.setSelected(false);
         btnSimStep.setVisible(false);
         btnSimReset.setVisible(false);
