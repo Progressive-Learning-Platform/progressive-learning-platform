@@ -20,6 +20,8 @@
 #define ATTR_GLOBAL	0x00002000
 #define ATTR_TEMPORARY	0x00004000
 
+#define ATTR_POINTER	0x00008000
+
 typedef struct symbol_t {
 	unsigned int		attr;
 	char *			type;
