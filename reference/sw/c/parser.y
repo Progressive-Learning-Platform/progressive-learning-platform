@@ -180,8 +180,8 @@ constant_expression
 	;
 
 declaration
-	: declaration_specifiers ';' { vlog("[parser] DECLARATION_SPECIFIERS_;\n"); $$ = op("declarator", 1, $1); }
-	| declaration_specifiers init_declarator_list ';' { vlog("[parser] DECLARATION_SPECIFIERS_INIT_DECLARATOR_LIST_;\n"); $$ = op("declarator", 2, $1, $2); }
+	: declaration_specifiers ';' { vlog("[parser] DECLARATION_SPECIFIERS_;\n"); $$ = op("declaration", 1, $1); $$ = new_symbol(sym, $$); }
+	| declaration_specifiers init_declarator_list ';' { vlog("[parser] DECLARATION_SPECIFIERS_INIT_DECLARATOR_LIST_;\n"); $$ = op("declaration", 2, $1, $2); $$ = new_symbol(sym, $$); }
 	;
 
 declaration_specifiers
@@ -194,13 +194,13 @@ declaration_specifiers
 	;
 
 init_declarator_list
-	: init_declarator { vlog("[parser] INIT_DECLARATOR\n"); $$ = op("init_declarator", 1, $1); } 
-	| init_declarator_list ',' init_declarator { vlog("[parser] INIT_DECLARATOR_LIST_,_INIT_DECLARATOR\n"); $$ = add_child($1, $2); } 
+	: init_declarator { vlog("[parser] INIT_DECLARATOR\n"); $$ = op("init_declarator_list", 1, $1); } 
+	| init_declarator_list ',' init_declarator { vlog("[parser] INIT_DECLARATOR_LIST_,_INIT_DECLARATOR\n"); $$ = add_child($1, $3); } 
 	;
 
 init_declarator
 	: declarator { vlog("[parser] DECLARATOR\n"); } 
-	| declarator '=' initializer { vlog("[parser] DECLARATOR_=_INITIALIZER\n"); $$ = op("initializer", 2, $1, $3); }
+	| declarator '=' initializer { vlog("[parser] DECLARATOR_=_INITIALIZER\n"); $$ = op("init_declarator", 2, $1, $3); }
 	;
 
 storage_class_specifier
@@ -378,9 +378,9 @@ statement
 	;
 
 labeled_statement
-	: IDENTIFIER ':' statement { vlog("[parser] IDENTIFIER_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $1, $3); }
-	| CASE constant_expression ':' statement { vlog("[parser] CASE_CONSTANT_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $2, $4); }
-	| DEFAULT ':' statement { vlog("[parser] DEFAULT_:_STATEMENT\n"); $$ = op("labeled_statement", 1, $3); }
+	: IDENTIFIER ':' statement { vlog("[parser] IDENTIFIER_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $1, $3); $$ = new_symbol(sym, $1); }
+	| CASE constant_expression ':' statement { vlog("[parser] CASE_CONSTANT_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $2, $4); $$ = new_symbol(sym, $1); }
+	| DEFAULT ':' statement { vlog("[parser] DEFAULT_:_STATEMENT\n"); $$ = op("labeled_statement", 1, $3); $$ = new_symbol(sym, $1); }
 	;
 
 compound_statement
