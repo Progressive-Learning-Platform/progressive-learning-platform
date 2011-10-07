@@ -4,11 +4,6 @@ typedef struct fritz_t {
 } fritz;
 
 int main(void) {
-	enum {
-		david,
-		fritz
-	} stuff;
-
 	int *g;
 
 	auto register int a;
