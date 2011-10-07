@@ -414,6 +414,8 @@ public class Develop extends javax.swing.JFrame {
             case 2:
                 return;
             default:
+                if(plp.isSimulating())
+                    simEnd();
                 plp.create();
                 //undoManager = new DoManager(txtEditor.getText());
         }
@@ -434,6 +436,8 @@ public class Develop extends javax.swing.JFrame {
                 int retVal = fc.showOpenDialog(null);
 
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                    if(plp.isSimulating())
+                        simEnd();
                     plp.curdir = fc.getSelectedFile().getParent();
                     plp.open(fc.getSelectedFile().getAbsolutePath(), true);
                 }
