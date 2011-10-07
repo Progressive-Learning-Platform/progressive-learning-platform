@@ -157,8 +157,10 @@ void count_no_log()
 	int i;
 
 	for (i = 0; yytext[i] != '\0'; i++)
-		if (yytext[i] == '\n')
+		if (yytext[i] == '\n') {
 			column = 0;
+			line++;
+		}
 		else if (yytext[i] == '\t')
 			column += 8 - (column % 8);
 		else
@@ -201,7 +203,7 @@ int check_type(char *t)
 	vlog("[lexer] check_type: %s : ", t);
 	symbol *s = find_symbol(sym, t);
 	if (s != NULL) {
-		if (s->type & TYPE_TYPEDEF)
+		if (s->attr & ATTR_TYPEDEF)
 			return(TYPE_NAME);
 		vlog("TYPE_NAME\n");
 	}
