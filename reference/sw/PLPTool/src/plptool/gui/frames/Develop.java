@@ -812,6 +812,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimRun.setSelected(false);
         menuSimView.setSelected(false);
         menuSimWatcher.setSelected(false);
+        menuSimControl.setSelected(false);
         menuSimIO.setSelected(false);
         tln.setHighlight(-1);
         tlh.setY(-1);
@@ -825,6 +826,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimulate.setSelected(false);
         btnSimRun.setSelected(false);
         btnCPU.setSelected(false);
+        btnSimControl.setSelected(false);
         btnWatcher.setSelected(false);
         btnSimStep.setVisible(false);
         btnSimReset.setVisible(false);
