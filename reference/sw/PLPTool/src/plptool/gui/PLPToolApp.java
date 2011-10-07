@@ -41,6 +41,11 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     @Override protected void startup() {
 
+        if(java.awt.GraphicsEnvironment.isHeadless()) {
+            Msg.E("Can not launch GUI in a headless environment!", Constants.PLP_GENERIC_ERROR, null);
+            System.exit(-1);
+        }
+
         if(serialTerminal) {
             plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
 

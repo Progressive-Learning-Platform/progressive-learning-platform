@@ -244,7 +244,7 @@ public class ProjectFileManipulator {
         System.out.println("       Assemble <plpfile>.");
         System.out.println();
         System.out.println("  -i <asm 1> <asm 2> ...");
-        System.out.println("       Import <asm-x> into <plpfile>. Creates <plpfile> if it does not exist.");
+        System.out.println("       Import <asm-x> into <plpfile>.");
         System.out.println();
         System.out.println("  -d <directory>");
         System.out.println("       Import all files within <directory> into <plpfile>.");
