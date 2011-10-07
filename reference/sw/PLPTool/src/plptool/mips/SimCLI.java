@@ -532,7 +532,7 @@ public class SimCLI {
                 Msg.M("\nMiscellaneous.");
                 Msg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
                 Msg.M("\n silent\n\tToggle silent mode (default off).");
-                Msg.M("\n functionalsim\n\tToggle functional simulation mode (default off).");
+                Msg.M("\n cycleaccurate\n\tToggle cycle-accurate simulation mode (default off).");
 
                 break;
         }
