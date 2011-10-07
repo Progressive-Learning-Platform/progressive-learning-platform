@@ -95,8 +95,8 @@ L?\"(\\.|[^\\"])*\"	{ yylval = str((char*)yytext); count(); return(STRING_LITERA
 "=="			{ count(); return(EQ_OP); }
 "!="			{ count(); return(NE_OP); }
 ";"			{ count(); return(';'); }
-("{"|"<%")		{ count(); return('{'); }
-("}"|"%>")		{ count(); return('}'); }
+("{"|"<%")		{ count(); sym = new_symbol_table(sym); return('{'); }
+("}"|"%>")		{ count(); sym = sym->parent; return('}'); }
 ","			{ count(); return(','); }
 ":"			{ count(); return(':'); }
 "="			{ count(); return('='); }

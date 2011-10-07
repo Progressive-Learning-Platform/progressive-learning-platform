@@ -39,6 +39,6 @@ typedef struct symbol_table_t {
 node* new_symbol(symbol_table*, node*);
 symbol *find_symbol(symbol_table*, char*);
 symbol_table* new_symbol_table(symbol_table*);
-
+void print_symbols(symbol_table*, FILE*, int);
 
 #endif 
