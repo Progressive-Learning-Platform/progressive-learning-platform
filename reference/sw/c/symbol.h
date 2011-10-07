@@ -3,32 +3,24 @@
 
 #include "parse_tree.h"
 
-/* symbol type */
-typedef enum {
-        type_label,
-        type_struct,
-        type_enum_constant,
-        type_enum,
-	type_constant,
-	type_function,
-	type_global,
-	type_temporary
-} sym_type;
-
-typedef enum {
-	xtype_none,
-	xtype_auto,
-	xtype_register,
-	xtype_static,
-	xtype_extern,
-	xtype_typedef,
-	xtype_enum
-} sym_xtype;
+#define TYPE_LABEL 	0x00000001
+#define TYPE_STRUCT 	0x00000002
+#define TYPE_ENUM_CONST	0x00000004
+#define TYPE_ENUM	0x00000008
+#define TYPE_CONSTANT	0x00000010
+#define TYPE_FUNCTION	0x00000020
+#define TYPE_GLOBAL	0x00000040
+#define TYPE_TEMPORARY	0x00000080
+#define TYPE_AUTO	0x00000100
+#define TYPE_REGISTER	0x00000200
+#define TYPE_STATIC	0x00000400
+#define TYPE_EXTERN	0x00000800
+#define TYPE_TYPEDEF	0x00001000
+#define TYPE_UNSIGNED	0x00002000
 
 typedef struct symbol_t {
-	sym_type 	type;
-	sym_xtype 	xtype;
-	char *		value;
+	unsigned int		type;
+	char *			value;
 	struct symbol_t *	up;
 } symbol;
 	

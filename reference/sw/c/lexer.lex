@@ -201,7 +201,7 @@ int check_type(char *t)
 	vlog("[lexer] check_type: %s : ", t);
 	symbol *s = find_symbol(sym, t);
 	if (s != NULL) {
-		if (s->xtype == xtype_typedef)
+		if (s->type & TYPE_TYPEDEF)
 			return(TYPE_NAME);
 		vlog("TYPE_NAME\n");
 	}

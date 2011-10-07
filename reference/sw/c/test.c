@@ -1,13 +1,20 @@
+typedef struct fritz_t {
+	int x;
+	int y;
+} fritz;
+
 int main(void) {
 	enum {
 		david,
 		fritz
 	} stuff;
 
-	int a;
-	int b = 5;
+	int *g;
+
+	auto register int a;
+	const int b = 5;
 	char *q = "boo";
-	int c = a + b;
+	volatile int c = a + b;
 	int d,e;
 	a = 22;
 

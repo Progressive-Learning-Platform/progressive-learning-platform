@@ -19,10 +19,17 @@ int lookup(char *s) {
 }
 	
 node* new_symbol(symbol_table *t, node *n) {
+	symbol *s = malloc(sizeof(symbol));
+
+	s->up = t->s;
+	s->type = 0;
+	s->value = NULL;
+
 	/* get the id and all attributes for this symbol */
 	print_tree(n, stdout, 0); 
 	
-	/* check to see if it already exists */
+		
+
 
 	/* create the symbol */
 	return n;
