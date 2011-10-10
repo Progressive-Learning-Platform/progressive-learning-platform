@@ -14,13 +14,8 @@
 #define ATTR_UNSIGNED	0x00000100
 #define ATTR_SIGNED	0x00000200
 #define ATTR_VOLATILE	0x00000400
-
-#define ATTR_LABEL 	0x00000800
-#define ATTR_FUNCTION	0x00001000
-#define ATTR_GLOBAL	0x00002000
-#define ATTR_TEMPORARY	0x00004000
-
-#define ATTR_POINTER	0x00008000
+#define ATTR_FUNCTION	0x00000800
+#define ATTR_POINTER	0x00001000
 
 typedef struct symbol_t {
 	unsigned int		attr;
@@ -33,10 +28,12 @@ typedef struct symbol_table_t {
 	struct symbol_table_t *parent;
 	int num_children;
 	symbol *s;
+	symbol *assoc; /* symbol tables can have an associated symbol, ie a function they are the symbol table for. this is backpatched */
 	struct symbol_table_t *children[];
 } symbol_table;
 
-node* new_symbol(symbol_table*, node*);
+node* install_symbol(symbol_table*, node*);
+node* install_function(symbol_table*, node*);
 symbol *find_symbol(symbol_table*, char*);
 symbol_table* new_symbol_table(symbol_table*);
 void print_symbols(symbol_table*, FILE*, int);

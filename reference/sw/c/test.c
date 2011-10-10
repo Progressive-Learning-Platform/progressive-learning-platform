@@ -3,7 +3,7 @@ typedef struct fritz_t {
 	int y;
 } fritz;
 
-int foo(void *a);
+int *foo(void *a);
 
 int main(void) {
 	int *g;

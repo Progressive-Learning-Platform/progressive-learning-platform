@@ -72,7 +72,7 @@ char* match_type(char *t) {
 	return NULL;
 }
 	
-node* new_symbol(symbol_table *t, node *n) {
+node* install_symbol(symbol_table *t, node *n) {
 	symbol *s = malloc(sizeof(symbol));
 
 	s->up = t->s;
@@ -160,6 +160,7 @@ symbol_table* new_symbol_table(symbol_table *t) {
 
 	table->s = NULL;
 	table->num_children = 0;
+	table->assoc = NULL;
 
 	if (t == NULL) {
 		/* brand new global table */
@@ -172,6 +173,7 @@ symbol_table* new_symbol_table(symbol_table *t) {
 			n->children[i] = t->children[i];
 		n->children[i] = table;
 		n->parent = t->parent;
+		n->assoc = t->assoc;
 		n->num_children = t->num_children + 1;
 		n->s = t->s;
 		free(t);
@@ -181,9 +183,9 @@ symbol_table* new_symbol_table(symbol_table *t) {
 }
 
 void print_symbols(symbol_table* t, FILE* o, int depth) {
-	/* print all of my symbols and then call my child to do the same */
+	/* print all of my symbols and then call my children to do the same */
 	symbol *curr = NULL;
-	int i;
+	int i,j;
 	if (t == NULL) 
 		return;
 	curr = t->s;
@@ -191,8 +193,47 @@ void print_symbols(symbol_table* t, FILE* o, int depth) {
 		for (i=0; i<depth; i++)
 			fprintf(o, "\t");
 		fprintf(o, "id: %s, type: %s, attributes: 0x%08x\n", curr->value, curr->type, curr->attr);
+		/* print any symbol tables that are subordinate to this symbol */
+		for(j=0; j<t->num_children; j++)
+			if (t->children[j]->assoc == curr)
+				print_symbols(t->children[j], o, depth+1);
 		curr = curr->up;
 	}
 	for (i=0; i<t->num_children; i++)
-		print_symbols(t->children[i], o, depth+1);
+		if (t->children[i]->assoc == NULL)
+			print_symbols(t->children[i], o, depth+1);
 }
+
+node* install_function(symbol_table *t, node *n) {
+	/* function definition nodes are one of four types:
+		1: specifiers, declarator, declaration list, compound statement
+		2: specifiers, declarator, compound statement
+		3: declarator, declaration list, compound statement
+		4: declarator, compound statement
+	*/
+	vlog("[symbol] installing function handler\n"); 
+
+	if (strcmp(n->id, "function_definition") != 0) {
+		err("[symbol] did not find function definition\n");
+	}
+	if (strcmp(n->children[0]->id, "declaration_specifier") == 0) {
+		node *d = op("declaration", 2, n->children[0], op("init_declarator_list", 1, n->children[1]));
+		install_symbol(t, d); /* install the function */
+		if (strcmp(n->children[2]->id, "declaration_list") == 0) {
+			/* type 1 */
+		}
+	} else {
+		node *d = op("declaration", 2, op("declaration_specifier", 1, type("void")), op("init_declarator_list", 1, n->children[0]));
+		install_symbol(t, d); /* install the function */
+		if (strcmp(n->children[1]->id, "declaration_list") == 0) {
+			/* type 3 */
+		}
+	}
+	t->s->attr |= ATTR_FUNCTION;
+
+	/* the last created symbol table should be the one associated with this function. */
+	t->children[t->num_children-1]->assoc = t->s;
+
+	return n;
+}
+		
