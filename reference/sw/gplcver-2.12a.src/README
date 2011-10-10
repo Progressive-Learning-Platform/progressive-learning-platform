@@ -1,0 +1,80 @@
+GPL Cver  
+
+  ------------------------------------------------------------------------
+Cver is a full 1995 IEEE P1364 standard Verilog simulator.  It also
+implements some of the 2001 P1364 standard features.  All three
+PLI interfaces (tf_, acc_, and vpi_) are implemented as defined
+in the IEEE 2001 P1364 LRM.
+
+
+A. OBTAINING GPL CVER
+
+GPL Cver is a copyrighted work (Pragmatic C Software Corp. owns the
+copyright); it is not shareware or in the public domain.
+
+Versions of Cver entitled "GPL Cver" are distributed with the GNU General
+Public License, which allows free use, and free copying and redistribution
+under certain conditions (including, in some cases, commercial
+distribution).  The home page for GPL Cver is:
+
+     http://www.pragmatic-c.com/gpl-cver
+
+You can always download the latest GPL Cver release from that site.
+
+GPL Cver is an older version of Cver that is released under the GNU
+General Public License.  A newer and faster commercial version of Cver
+is available from Pragmatic C Software Corp.
+
+
+B. WHAT PLATFORMS DOES GPL CVER RUN ON?
+
+Pre-compiled binaries and pre-built make files are available for
+X86 Linux, Sparc Solaris, Apple Mac OSX, and Cygwin (a Linux-like 
+envirnoment for Windows, make file only).  Because Cver is an interpreter, 
+it should easily port to any system that supports the gcc GNU C compiler.  The 
+main porting complication is usually related to Cver's use of dlsym/dlopen 
+programming dynamic library linking. 
+
+
+C. WHICH GPL CVER FILE SHOULD I DOWNLOAD? 
+
+After clicking on the source or binaries (for now the links to to the
+same download instructions), select which bzipped tar file to download.
+If you intend to run GPL CVER on one of the platforms for which pre-built
+binaries exist, download that file.   If you intend to run on another
+platform or want to make your own binary, click on the source bzipped
+tar file.  After bunzipping and untarring, the four files are identical
+except the binary files contain cver compiled for the given platform
+in the bin directory.
+
+D. WHAT OTHER PROGRAMS ARE INCLUDED IN THE GPL CVER RELEASE
+
+Vcddiff
+   Current GPL Cver release includes a program similar to the Unix
+   diff command called vcddiff.  It is a specialized diff that understands
+   Verilog VCD files.  It is also distributed with the GNU General Public
+   License, which allows free use, and free copying and redistribution.
+   Vcddiff is a copyrighted work (Pragmatic C Software Corp. owns the
+   copyright); it is not shareware or in the public domain.
+
+   vcddiff is contained in the vcddiff.dir directory at the top level
+   of the directory produced when the release tarball is untarred.
+   The src directory contains instructions and pre-build make files
+   for the normal three platforms (X86 Linux, Sparc Solaris, and Mac OSX).
+   Run the tests in the examples.vcddiff directory in the vcddiff.dir
+   directory.  For more information see th README files each of those
+   directories.
+   
+
+E. WHERE TO GO NEXT
+
+   After obtaining the GPL Cver tar ball, start by reading the README file.
+Instructions for building a new GPL Cver binary from source are in
+the INSTALL file.  There are various README and LICENSE files contained
+in the top level of the GPL Cver release directory tree.  Cver documentation
+is in the "doc" directory.
+
+
+F. GETTING HELP OR REPORTING BUGS
+
+  Send email to avanvick@pragmatic-c.com.
