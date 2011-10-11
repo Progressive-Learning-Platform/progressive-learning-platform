@@ -157,17 +157,17 @@ assignment_expression
 	;
 
 assignment_operator
-	: '=' { vlog("[parser] =\n"); $$ = op("=", 0);}
-	| MUL_ASSIGN { vlog("[parser] *=\n"); $$ = op("*=", 0); }
-	| DIV_ASSIGN { vlog("[parser] /=\n"); $$ = op("/=", 0); }
-	| MOD_ASSIGN { vlog("[parser] MOD=\n"); $$ = op("MOD=", 0); }
-	| ADD_ASSIGN { vlog("[parser] +=\n"); $$ = op("+=", 0); }
-	| SUB_ASSIGN { vlog("[parser] -=\n"); $$ = op("-=", 0); }
-	| LEFT_ASSIGN { vlog("[parser] <<=\n"); $$ = op("<<=", 0); }
-	| RIGHT_ASSIGN { vlog("[parser] >>=\n"); $$ = op(">>=", 0); }
-	| AND_ASSIGN { vlog("[parser] &=\n"); $$ = op("&=", 0); }
-	| XOR_ASSIGN { vlog("[parser] ^=\n"); $$ = op("^=", 0); }
-	| OR_ASSIGN { vlog("[parser] |=\n"); $$ = op("|=", 0); }
+	: '=' { vlog("[parser] =\n"); $$ = op("assign", 0);}
+	| MUL_ASSIGN { vlog("[parser] *=\n"); $$ = op("assign_mul", 0); }
+	| DIV_ASSIGN { vlog("[parser] /=\n"); $$ = op("assign_div", 0); }
+	| MOD_ASSIGN { vlog("[parser] MOD=\n"); $$ = op("assign_mod", 0); }
+	| ADD_ASSIGN { vlog("[parser] +=\n"); $$ = op("assign_add", 0); }
+	| SUB_ASSIGN { vlog("[parser] -=\n"); $$ = op("assign_sub", 0); }
+	| LEFT_ASSIGN { vlog("[parser] <<=\n"); $$ = op("assign_sll", 0); }
+	| RIGHT_ASSIGN { vlog("[parser] >>=\n"); $$ = op("assign_srl", 0); }
+	| AND_ASSIGN { vlog("[parser] &=\n"); $$ = op("assign_and", 0); }
+	| XOR_ASSIGN { vlog("[parser] ^=\n"); $$ = op("assign_xor", 0); }
+	| OR_ASSIGN { vlog("[parser] |=\n"); $$ = op("assign_or", 0); }
 	;
 
 expression
