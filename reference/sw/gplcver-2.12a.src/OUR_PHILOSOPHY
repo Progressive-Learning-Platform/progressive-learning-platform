@@ -1,0 +1,51 @@
+
+                 PHILOSOPHICAL JUSTIFICATION OF GPL CVER
+
+  We believe strongly that software should be distributed with source. 
+  This allows users to study and understand Verilog algorithms as part
+  of the circuit verification process. 
+
+  However, since Pragmatic C is a commercial enterprise with salaries
+  to pay, it does not make sense to release our software using only
+  the open source model.  Namely, we are releasing an older version
+  called GPL Cver under the GNU General Public License (GPL) and a new
+  compiled version called CVC under a commercial license.  We have chosen to
+  release the older GPL Cver version using the GNU GPL license because it 
+  is currently the most popular free software license and because it allows the
+  widest distribution. 
+
+  We are not sure if the GNU development model will work with Ecad software
+  tools such as Verilog simulators so we have not yet set up a formal system
+  for user contributions.  One problem is that much of the current Cver
+  behavior is the result of commercial users reporting mismatches with
+  the de facto standard Cadence Verilog XL (TM) simulator.
+
+  We think that the combination of GPL and compiled CVC
+  is particularly good for Ecad software.  The GPL version allows 
+  archiving the exact simulator source used for circuit sign off  
+  along with design data so if there is a need for future changes, 
+  the full set of design data (i.e. including the simulator used to process
+  the data) can be retrieved to recreate the exact sign off conditions. 
+
+  Since we are concerned about the high unemployment rate among programmers
+  and design engineers, we want to encourage people to write their own
+  commercial Ecad programs that communicate with Cver using the IEEE P1364
+  Verilog HDL standard PLI API.  We believe that whoever wrote the PLI
+  program should be able to select the type of license for software for
+  which they hold the copyright.  Also, we believe that the GPL does not
+  prohibit commercial programs (or any non GPL licensed programs for that
+  matter) from being dynamically loaded and run by GPL Cver using the PLI API.
+  We think the Linux operating system analogy applies.  Namely, it is
+  acceptable to have Linux load executable programs (such as dynamically
+  linked .so PLI programs) not licensed under GPL or LGPL.  We believe GPL
+  Cver loading and execution of commercial programs is the same as Linux OS
+  executing commercial programs that communicate through the standardized
+  system call API.  However, we are not lawyers so you should consult a lawyer
+  to help you decide how to license your PLI programs.
+
+  We would like to hear your problems and suggestions (seen email to
+  avanvick@pragmatic-c.com)
+
+--
+  TM - Verilog XL is a trademark of Cadence Design Systems, Inc.
+  to GNU type group software development.
