@@ -22,6 +22,9 @@ import plptool.Config;
 import plptool.gui.ProjectDriver;
 import plptool.Msg;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+
 /**
  *
  * @author wira
@@ -52,6 +55,19 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
 
+        Msg.D("Loading system fonts...", 2, null);
+        Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+
+        cmbFontName.removeAllItems();
+        cmbFontName.addItem("Monospaced");
+        for(int i = 0; i < fonts.length; i++) {
+            cmbFontName.addItem(fonts[i].getFontName());
+        }
+        cmbFontName.setSelectedIndex(0);
+
+        txtFontPreview.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        
+
         reloadConfig();
     }
 
@@ -77,10 +93,12 @@ public class OptionsFrame extends javax.swing.JFrame {
         Config.simHighlightLine = simHighlightLine.isSelected();
         Config.simFunctional = simFunctional.isSelected();
 
+        Config.devFont = (String) cmbFontName.getSelectedItem();
+
         if(cmbFontSize.getItemCount() > 0) {
             Config.devFontSize = (Integer) cmbFontSize.getItemAt(cmbFontSize.getSelectedIndex());
             plp.g_dev.changeFormatting();
-            plp.refreshProjectView(false);
+            //plp.refreshProjectView(false);
         }
 
         if(plp.g_simctrl != null)
@@ -146,6 +164,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         editorSyntaxHighlighting = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
         cmbFontSize = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        cmbFontName = new javax.swing.JComboBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtFontPreview = new javax.swing.JTextArea();
         paneSim = new javax.swing.JPanel();
         sSimSpeed = new javax.swing.JSlider();
         jLabel1 = new javax.swing.JLabel();
@@ -199,6 +221,26 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
+
+        cmbFontName.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbFontName.setName("cmbFontName"); // NOI18N
+        cmbFontName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbFontNameActionPerformed(evt);
+            }
+        });
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        txtFontPreview.setColumns(20);
+        txtFontPreview.setEditable(false);
+        txtFontPreview.setRows(5);
+        txtFontPreview.setText(resourceMap.getString("txtFontPreview.text")); // NOI18N
+        txtFontPreview.setName("txtFontPreview"); // NOI18N
+        jScrollPane1.setViewportView(txtFontPreview);
+
         javax.swing.GroupLayout paneEditorLayout = new javax.swing.GroupLayout(paneEditor);
         paneEditor.setLayout(paneEditorLayout);
         paneEditorLayout.setHorizontalGroup(
@@ -206,11 +248,16 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(paneEditorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
                     .addComponent(editorSyntaxHighlighting)
                     .addGroup(paneEditorLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbFontSize, 0, 394, Short.MAX_VALUE)))
+                        .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbFontSize, 0, 394, Short.MAX_VALUE)
+                            .addComponent(cmbFontName, 0, 394, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneEditorLayout.setVerticalGroup(
@@ -218,11 +265,17 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(paneEditorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(editorSyntaxHighlighting)
+                .addGap(18, 18, 18)
+                .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(cmbFontName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(347, Short.MAX_VALUE))
+                    .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(144, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
@@ -489,6 +542,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbFontSizePropertyChange
 
     private void cmbFontSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFontSizeActionPerformed
+        txtFontPreview.setFont(new Font(txtFontPreview.getFont().getName(), Font.PLAIN, (Integer) cmbFontSize.getSelectedItem()));
         triggerChange();
     }//GEN-LAST:event_cmbFontSizeActionPerformed
 
@@ -522,13 +576,21 @@ public class OptionsFrame extends javax.swing.JFrame {
             Msg.W("The simulation may need to be restarted.", null);
     }//GEN-LAST:event_simFunctionalActionPerformed
 
+    private void cmbFontNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFontNameActionPerformed
+        txtFontPreview.setFont(new Font((String) cmbFontName.getSelectedItem(), Font.PLAIN, txtFontPreview.getFont().getSize()));
+        triggerChange();
+    }//GEN-LAST:event_cmbFontNameActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApply;
     private javax.swing.JButton btnClose;
+    private javax.swing.JComboBox cmbFontName;
     private javax.swing.JComboBox cmbFontSize;
     private javax.swing.JCheckBox editorSyntaxHighlighting;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblMaxChunkSize;
     private javax.swing.JLabel lblPrgWarning;
     private javax.swing.JLabel lblReadTimeout;
@@ -546,6 +608,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox simNoExecute;
     private javax.swing.JCheckBox simRefreshDev;
     private javax.swing.JTabbedPane tabsOptions;
+    private javax.swing.JTextArea txtFontPreview;
     // End of variables declaration//GEN-END:variables
 
 }

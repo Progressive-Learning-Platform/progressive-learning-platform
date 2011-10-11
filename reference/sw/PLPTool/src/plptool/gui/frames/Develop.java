@@ -275,12 +275,18 @@ public class Develop extends javax.swing.JFrame {
     public void changeFormatting() {
         java.awt.Font newFont = new java.awt.Font(Config.devFont, java.awt.Font.PLAIN, Config.devFontSize);
         txtEditor.setFont(newFont);
+        tln.setUpdateFont(true);
         txtEditor.setBackground(Config.devBackground);
         txtEditor.setForeground(Config.devForeground);
         styles = setupHighlighting();
-
-        safeRefresh(true);
+        this.syntaxHighlight();        
+        txtEditor.repaint();
         repaintLater();
+        txtEditor.revalidate();
+        if(!plp.isSimulating())
+            plp.refreshProjectView(true);
+        txtEditor.setText("");
+        plp.refreshProjectView(false);
     }
 
     public void notifyplpModified() {
