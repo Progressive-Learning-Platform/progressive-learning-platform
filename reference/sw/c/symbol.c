@@ -54,7 +54,6 @@ int match_attr(char* t) {
 	return  
 	strcmp(t, "struct_union")	== 0	? ATTR_STRUCT	: 
 	strcmp(t, "enum") 		== 0	? ATTR_ENUM	:
-	strcmp(t, "const") 		== 0	? ATTR_CONSTANT	:
 	strcmp(t, "auto") 		== 0	? ATTR_AUTO	:
 	strcmp(t, "register") 		== 0	? ATTR_REGISTER	:
 	strcmp(t, "static") 		== 0	? ATTR_STATIC	:

@@ -378,9 +378,9 @@ statement
 	;
 
 labeled_statement
-	: IDENTIFIER ':' statement { vlog("[parser] IDENTIFIER_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $1, $3); $$ = install_symbol(sym, $1); }
-	| CASE constant_expression ':' statement { vlog("[parser] CASE_CONSTANT_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $2, $4); $$ = install_symbol(sym, $1); }
-	| DEFAULT ':' statement { vlog("[parser] DEFAULT_:_STATEMENT\n"); $$ = op("labeled_statement", 1, $3); $$ = install_symbol(sym, $1); }
+	: IDENTIFIER ':' statement { vlog("[parser] IDENTIFIER_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $1, $3); }
+	| CASE constant_expression ':' statement { vlog("[parser] CASE_CONSTANT_:_STATEMENT\n"); $$ = op("labeled_statement", 2, $2, $4); }
+	| DEFAULT ':' statement { vlog("[parser] DEFAULT_:_STATEMENT\n"); $$ = op("labeled_statement", 1, $3); }
 	;
 
 compound_statement

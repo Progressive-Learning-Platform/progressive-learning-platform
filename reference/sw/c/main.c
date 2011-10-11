@@ -25,7 +25,9 @@ static FILE *FILE_OUTPUT = NULL;
 static FILE *PARSE_OUTPUT = NULL;
 static FILE *SYMBOL_OUTPUT = NULL;
 
-symbol_table *sym = NULL;
+symbol_table *sym = NULL;	/* scoped symbol tables */
+symbol *constants = NULL;	/* constants */
+symbol *labels	  = NULL;	/* labels */
 node *parse_tree_head = NULL;
 
 void print_usage(void) {
