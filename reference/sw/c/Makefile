@@ -1,7 +1,8 @@
 all: clean build nolog
 
 CC = gcc
-CFLAGS = -O2 -Wall
+CFLAGS = -O2 -Wall -g
+
 LDFLAGS = 
 
 FILES=\
