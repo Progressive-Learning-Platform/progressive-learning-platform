@@ -23,11 +23,21 @@ for x in handlers:
 }
 """
 
-#for x in range(count,512):
-#        outfile.write('\t\tRAM[' + str(x) + '] = 32\'h00000000;\n');
-
-#outfile.write(post)
+# now generate the handle function
+print """void handle(node *n) {
+"""
+for x in handlers:
+	if x != handlers[0]:
+		print "else",
+	else:
+		print "\t",
+	print '''if (strcmp(n->id,"''' + x + '''") == 0) {
+		vlog("[code_gen] handle: ''' + x + ''' \\n");
+		handle_''' + x + '''(n);
+	}''',
+print """
+}
+"""
 
 infile.close()
-#outfile.close()
 
