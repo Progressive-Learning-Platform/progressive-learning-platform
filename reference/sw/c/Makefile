@@ -9,6 +9,8 @@ FILES=\
 	main\
 	symbol\
 	parse_tree\
+	code_gen\
+	handlers\
 	lex.yy\
 	parser.tab\
 	

@@ -18,10 +18,14 @@ for line in infile:
         count = count + 1
 
 for x in handlers:
-	print "void handler_" + x + """(node *n) {
-	err("[code_gen] handler_""" + x + """ not implemented\\n");
+	print "void handle_" + x + """(node *n) {
+	err("[code_gen] handle_""" + x + """ not implemented\\n");
 }
 """
+
+#generate the handler declarations
+for x in handlers:
+	print "void handle_" + x + """(node *);"""
 
 # now generate the handle function
 print """void handle(node *n) {
