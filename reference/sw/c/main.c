@@ -5,6 +5,7 @@
 #include "log.h"
 #include "symbol.h"
 #include "parse_tree.h"
+#include "code_gen.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -155,6 +156,9 @@ int main(int argc, char *argv[]) {
 
 	log("[pcc] starting frontend\n");
 	yyparse();
+
+	/* call the backend to compile the parse tree, starting from the head */
+	handle(parse_tree_head);
 
 	/* print the parse tree */
 	if (PARSE_OUTPUT != NULL) {
