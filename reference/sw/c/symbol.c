@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include "symbol.h"
 #include <stdlib.h>
+#include "types.h"
+#include "symbol.h"
 #include "log.h"
 #include "parse_tree.h"
 
@@ -85,7 +86,6 @@ node* install_symbol(symbol_table *t, node *n) {
 	/* the first child node should be the types and attributes */
 	if (strcmp(n->children[0]->id,"declaration_specifier") != 0) {
 		err("[symbol] cannot extract type/attr information\n");
-		exit(-1);
 	} else {
 		/* all children of declaration_specifiers should be type:id */
 		node *types = n->children[0];
@@ -163,8 +163,8 @@ symbol_table* new_symbol_table(symbol_table *t) {
 	} else {
 		/* create a new child table */
 		t = realloc(t, sizeof(symbol_table) + (sizeof(symbol_table*) * (t->num_children+1)));
-		t->children[t->num_children] = table;
 		t->num_children++;
+		t->children[t->num_children-1] = table;
 		table->parent = t;
 	} 
 	return table;

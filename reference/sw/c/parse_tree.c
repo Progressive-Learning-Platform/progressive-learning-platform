@@ -3,7 +3,10 @@
 #include <stdarg.h>
 #include <string.h>
 #include "parse_tree.h"
+#include "symbol.h"
 #include "log.h"
+
+extern symbol_table* sym;
 
 node *new_node(char *s) {
 	node *n = NULL;
@@ -15,6 +18,7 @@ node *new_node(char *s) {
 
 	n->id = strdup(s);
 	n->num_children = 0;
+	n->t = sym;
 
 	return n;
 }
@@ -61,6 +65,7 @@ node *op(char *t, int num_ops, ...) {
 
 	n->type = type_op;
 	n->id = strdup(t);
+	n->t = sym;
 	n->num_children = num_ops;
 	va_start(ap, num_ops);
 	for (i=0; i<num_ops; i++) {
@@ -75,29 +80,17 @@ node *op(char *t, int num_ops, ...) {
 
 node *add_child(node *parent, node *child) {
 	/* create a new node with +1 children and return that, deleting the current parent */
-	node *n = NULL;
-	int i;
-
 	vlog("[parse_tree] add_node: %s to %s\n", child->id, parent->id);
 
-	n = malloc(sizeof(node) + ((parent->num_children + 1) * sizeof(node*)));
-	if (n == NULL) {
-		err("[parse_tree] cannot allocate node");
+	parent = realloc(parent, sizeof(node) + ((parent->num_children + 1) * sizeof(node*)));
+	if (parent == NULL) {
+		err("[parse_tree] cannot reallocate node");
 	}
 
-	n->type = parent->type;
-	n->id = strdup(parent->id);
-	n->num_children = parent->num_children+1;
-	
-	for (i=0; i<parent->num_children; i++)
-		n->children[i] = parent->children[i];
-	n->children[i] = child;
+	parent->num_children++;
+	parent->children[parent->num_children-1] = child;
 
-	/* get rid of the old parent */
-	//free(parent->id);
-	//free(parent);
-
-	return n;
+	return parent;
 }
 
 void print_tree(node *n, FILE *o, int depth) {
