@@ -40,10 +40,10 @@ id_chain* get_ids(id_chain* i, node *n) {
 }
 
 /* lookup a symbol in the current scope */
-int lookup(char *s) {
-	symbol *curr = sym->s;
+int lookup(symbol_table* t, char *s) {
+	symbol *curr = t->s;
 	while (curr != NULL) {
-		if (curr->value == s)
+		if (strcmp(curr->value, s) == 0)
 			return 1;
 		curr = curr->up;
 	}
@@ -105,33 +105,29 @@ node* install_symbol(symbol_table *t, node *n) {
 		}
 		/* now we get the id of the symbol */
 		/* the next child should be a init_declarator_list, with one or more direct_declarators buried inside, among other things */
-		if (strcmp(decs->id, "init_declarator_list") != 0) {
-			err("[symbol] missing init_declarator_list\n");
-		} else {
-			/* just do a search for "direct_declarator", and return each one's children[0]->id field, which is an identifier */
-			id_chain *ids = get_ids(NULL, decs);
-			if (ids == NULL) 
-				err("[symbol] no declarators found\n");
-			while (ids != NULL) {
-				id_chain *d = ids;
-				if (lookup(ids->id)) {
-					err("[symbol] symbol %s already declared in this scope\n", ids->id);
-				}
-				if (ids->pointer)
-					s->attr |= ATTR_POINTER; 
-				s->value = ids->id;
-				t->s = s;
-				vlog("[symbol] created symbol: %s, type %s, attr 0x%08x\n", s->value, s->type, s->attr);
-				if (ids->up != NULL) {
-					s = malloc(sizeof(symbol));
-					s->up = t->s;
-					s->attr = t->s->attr;
-					s->type = t->s->type;
-					s->value = NULL;
-				}
-				ids = ids->up;
-				free(d);
+		/* just do a search for "direct_declarator", and return each one's children[0]->id field, which is an identifier */
+		id_chain *ids = get_ids(NULL, decs);
+		if (ids == NULL) 
+			err("[symbol] no declarators found\n");
+		while (ids != NULL) {
+			id_chain *d = ids;
+			if (lookup(t, ids->id)) {
+				err("[symbol] symbol %s already declared in this scope\n", ids->id);
 			}
+			if (ids->pointer)
+				s->attr |= ATTR_POINTER; 
+			s->value = ids->id;
+			t->s = s;
+			vlog("[symbol] created symbol: %s, type %s, attr 0x%08x\n", s->value, s->type, s->attr);
+			if (ids->up != NULL) {
+				s = malloc(sizeof(symbol));
+				s->up = t->s;
+				s->attr = t->s->attr;
+				s->type = t->s->type;
+				s->value = NULL;
+			}
+			ids = ids->up;
+			free(d);
 		}
 	}	
 		
@@ -215,13 +211,16 @@ node* install_function(symbol_table *t, node *n) {
 		if (strcmp(n->children[2]->id, "declaration_list") == 0) {
 			/* type 1 */
 		}
+		install_parameters(t->children[t->num_children-1], n->children[1]);
 	} else {
 		node *temp_node = op("declaration", 2, op("declaration_specifier", 1, type("void")), op("init_declarator_list", 1, n->children[0]));
 		install_symbol(t, temp_node); /* install the function */
 		if (strcmp(n->children[1]->id, "declaration_list") == 0) {
 			/* type 3 */
 		}
+		install_parameters(t->children[t->num_children-1], n->children[0]);
 	}
+
 	t->s->attr |= ATTR_FUNCTION;
 
 	/* the last created symbol table should be the one associated with this function. */
@@ -229,4 +228,13 @@ node* install_function(symbol_table *t, node *n) {
 
 	return n;
 }
-		
+
+void install_parameters(symbol_table *t, node *n) {
+	int i;
+	if (n->children[0]->num_children == 1)
+		return;
+	n = n->children[0]->children[1]->children[0]; /* the parameter list */
+	/* each of n's children is a parameter declaration */
+	for (i=0; i<n->num_children; i++)
+		install_symbol(t, n->children[i]);
+}

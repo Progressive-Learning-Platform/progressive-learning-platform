@@ -5,7 +5,7 @@ typedef struct fritz_t {
 
 int *foo(void *a);
 
-int main(void) {
+int main(int a, int b) {
 	int *g;
 
 	auto register int a;
