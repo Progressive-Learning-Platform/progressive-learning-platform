@@ -26,9 +26,8 @@ typedef struct symbol_t {
 	
 typedef struct symbol_table_t {
 	struct symbol_table_t *parent;
-	int num_children;
 	symbol *s;
-	symbol *assoc; /* symbol tables can have an associated symbol, ie a function they are the symbol table for. this is backpatched */
+	int num_children;
 	struct symbol_table_t *children[];
 } symbol_table;
 

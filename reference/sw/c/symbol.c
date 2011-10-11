@@ -160,7 +160,7 @@ symbol_table* new_symbol_table(symbol_table *t) {
 
 	table->s = NULL;
 	table->num_children = 0;
-	table->assoc = NULL;
+//	table->assoc = NULL;
 
 	if (t == NULL) {
 		/* brand new global table */
@@ -173,7 +173,7 @@ symbol_table* new_symbol_table(symbol_table *t) {
 			n->children[i] = t->children[i];
 		n->children[i] = table;
 		n->parent = t->parent;
-		n->assoc = t->assoc;
+//		n->assoc = t->assoc;
 		n->num_children = t->num_children + 1;
 		n->s = t->s;
 		free(t);
@@ -195,12 +195,12 @@ void print_symbols(symbol_table* t, FILE* o, int depth) {
 		fprintf(o, "id: %s, type: %s, attributes: 0x%08x\n", curr->value, curr->type, curr->attr);
 		/* print any symbol tables that are subordinate to this symbol */
 		for(j=0; j<t->num_children; j++)
-			if (t->children[j]->assoc == curr)
+//			if (t->children[j]->assoc == curr)
 				print_symbols(t->children[j], o, depth+1);
 		curr = curr->up;
 	}
 	for (i=0; i<t->num_children; i++)
-		if (t->children[i]->assoc == NULL)
+//		if (t->children[i]->assoc == NULL)
 			print_symbols(t->children[i], o, depth+1);
 }
 
@@ -232,7 +232,7 @@ node* install_function(symbol_table *t, node *n) {
 	t->s->attr |= ATTR_FUNCTION;
 
 	/* the last created symbol table should be the one associated with this function. */
-	t->children[t->num_children-1]->assoc = t->s;
+//	t->children[t->num_children-1]->assoc = t->s;
 
 	return n;
 }
