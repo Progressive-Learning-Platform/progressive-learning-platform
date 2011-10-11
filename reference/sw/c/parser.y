@@ -437,10 +437,10 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 4, $1, $2, $3, $4); $$ = install_function(sym, $$);}
-	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); $$ = install_function(sym, $$); }
-	| declarator declaration_list compound_statement { vlog("[parser] DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); $$ = install_function(sym, $$); }
-	| declarator compound_statement { vlog("[parser] DECLARATOR_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 2, $1, $2); $$ = install_function(sym, $$); }
+	: declaration_specifiers declarator declaration_list compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 4, $1, $2, $3, $4); /* $$ = install_function(sym, $$); */ }
+	| declaration_specifiers declarator compound_statement { vlog("[parser] DECLARATION_SPECIFIERS_DECLARATOR_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); /*$$ = install_function(sym, $$); */}
+	| declarator declaration_list compound_statement { vlog("[parser] DECLARATOR_DECLARATION_LIST_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 3, $1, $2, $3); /*$$ = install_function(sym, $$); */}
+	| declarator compound_statement { vlog("[parser] DECLARATOR_COMPOUND_STATEMENT\n"); $$ = op("function_definition", 2, $1, $2); /*$$ = install_function(sym, $$); */}
 	;
 
 %%

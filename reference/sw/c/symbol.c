@@ -217,14 +217,14 @@ node* install_function(symbol_table *t, node *n) {
 		err("[symbol] did not find function definition\n");
 	}
 	if (strcmp(n->children[0]->id, "declaration_specifier") == 0) {
-		node *d = op("declaration", 2, n->children[0], op("init_declarator_list", 1, n->children[1]));
-		install_symbol(t, d); /* install the function */
+		node *temp_node = op("declaration", 2, n->children[0], op("init_declarator_list", 1, n->children[1]));
+		install_symbol(t, temp_node); /* install the function */
 		if (strcmp(n->children[2]->id, "declaration_list") == 0) {
 			/* type 1 */
 		}
 	} else {
-		node *d = op("declaration", 2, op("declaration_specifier", 1, type("void")), op("init_declarator_list", 1, n->children[0]));
-		install_symbol(t, d); /* install the function */
+		node *temp_node = op("declaration", 2, op("declaration_specifier", 1, type("void")), op("init_declarator_list", 1, n->children[0]));
+		install_symbol(t, temp_node); /* install the function */
 		if (strcmp(n->children[1]->id, "declaration_list") == 0) {
 			/* type 3 */
 		}
