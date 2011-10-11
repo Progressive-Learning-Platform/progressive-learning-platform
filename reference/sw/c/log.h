@@ -4,9 +4,10 @@
 #include <stdio.h>
 
 extern int LOG_LEVEL;
+extern int STOP_ERROR;
 
 #define log(...) if(LOG_LEVEL>=1){printf(__VA_ARGS__);}
-#define err(...) fprintf(stderr,__VA_ARGS__)
+#define err(...) { fprintf(stderr, "ERROR: "); fprintf(stderr,__VA_ARGS__); if (STOP_ERROR) exit(-1); }
 #define vlog(...) if(LOG_LEVEL>=2){printf(__VA_ARGS__);}
 
 #endif 

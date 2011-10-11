@@ -15,6 +15,7 @@ extern void yyset_in  (FILE * in_str  );
 extern int yyparse(void);
 
 int LOG_LEVEL = 0;
+int STOP_ERROR = 1;
 
 static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
@@ -38,6 +39,7 @@ void print_usage(void) {
 	printf("-d [0,1,2]	debug level (0=off (default), 1=on, 2=verbose)\n");
 	printf("-s		print symbol table to <output name>.symbol\n");
 	printf("-p		print parse tree to <output name>.parse\n");
+	printf("-e		do not stop compiling on errors\n");
 }
 
 void handle_opts(int argc, char *argv[]) {
@@ -52,7 +54,7 @@ void handle_opts(int argc, char *argv[]) {
 
 	opterr = 0;
 	
-	while ((c = getopt(argc, argv, "d:o:sp")) != -1)
+	while ((c = getopt(argc, argv, "d:o:spe")) != -1)
 		switch (c) {
 			case 'd':
 				dvalue = optarg;
@@ -66,9 +68,12 @@ void handle_opts(int argc, char *argv[]) {
 			case 'p':
 				pparse = 1;
 				break;
+			case 'e':
+				STOP_ERROR = 0;
+				break;
 			default:
 				print_usage();
-				exit(1);
+				exit(-1);
 		}
 
 	if (dvalue != NULL) {
@@ -89,7 +94,7 @@ void handle_opts(int argc, char *argv[]) {
 		S_FILE_INPUT = ivalue;
 	} else {
 		print_usage();
-		exit(1);
+		exit(-1);
 	}
 
 	if (ovalue != NULL) {
@@ -124,12 +129,10 @@ int main(int argc, char *argv[]) {
 	FILE_INPUT = fopen(S_FILE_INPUT,"r");
 	if (FILE_INPUT == NULL) {
 		err("[pcc] cannot open input file: %s\n", S_FILE_INPUT);
-		exit(1);
 	}
 	FILE_OUTPUT = fopen(S_FILE_OUTPUT,"w");
 	if (FILE_OUTPUT == NULL) {
 		err("[pcc] cannot open output file: %s\n", S_FILE_OUTPUT);
-		exit(1);
 	}
 	yyset_in(FILE_INPUT);
 
@@ -137,7 +140,6 @@ int main(int argc, char *argv[]) {
 		SYMBOL_OUTPUT = fopen(S_SYMBOL_OUTPUT, "w");
 		if (SYMBOL_OUTPUT == NULL) {
 			err("[pcc] cannot open symbol table output file: %s\n", S_SYMBOL_OUTPUT);
-			exit(1);
 		}
 	}
 
@@ -145,7 +147,6 @@ int main(int argc, char *argv[]) {
 		PARSE_OUTPUT = fopen(S_PARSE_OUTPUT, "w");
 		if (PARSE_OUTPUT == NULL) {
 			err("[pcc] cannot open parse tree output file: %s\n", S_PARSE_OUTPUT);
-			exit(1);
 		}
 	}
 

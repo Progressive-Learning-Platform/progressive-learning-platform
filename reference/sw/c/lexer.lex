@@ -135,17 +135,17 @@ void comment()
 	char c, c1;
 
 loop:
-	while ((c = input()) != '*' && c != 0)
-		putchar(c);
+	while ((c = input()) != '*' && c != 0);
+//		putchar(c);
 
 	if ((c1 = input()) != '/' && c != 0)
 	{
-		unput(c1);
+		//unput(c1);
 		goto loop;
 	}
 
-	if (c != 0)
-		putchar(c1);
+//	if (c != 0)
+//		putchar(c1);
 }
 
 
