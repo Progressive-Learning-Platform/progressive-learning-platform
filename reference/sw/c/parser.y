@@ -46,7 +46,7 @@ primary_expression
 	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1->id); /* the lexer already made this object a constant */ }
 	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1->id); /* the lexer already made this object a constant */ } 
 	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1->id); /* the lexer already made this object a string */ }
-	| '(' expression ')' { vlog("[parser] EXPRESSION"); $$ = op("expression", 1, $2); }
+	| '(' expression ')' { vlog("[parser] EXPRESSION"); /* no bother */ }
 	;
 
 postfix_expression
@@ -319,7 +319,7 @@ parameter_type_list
 	;
 
 parameter_list
-	: parameter_declaration { vlog("[parser] PARAMETER_DECLARATION\n"); $$ = op("parameter_list", 1, $1); $$ = op("parameter_list", 1, $1); }
+	: parameter_declaration { vlog("[parser] PARAMETER_DECLARATION\n"); $$ = op("parameter_list", 1, $1); }
 	| parameter_list ',' parameter_declaration { vlog("[parser] PARAMETER_LIST_,_PARAMETER_DECLARATION\n"); $$ = add_child($1, $3); }
 	;
 
