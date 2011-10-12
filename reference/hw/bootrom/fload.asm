@@ -12,7 +12,7 @@ nop
 fritz_propaganda:
 	.asciiz "Meine Ruh' ist hin,\nMein Herz ist schwer;\nIch finde sie nimmer\nund nimmermehr."
 version_string:
-	.asciiz "plp-3.2"
+	.asciiz "plp-3.3"
 memory_test:
 	.asciiz "starting memory test..."
 memory_done:
@@ -69,7 +69,7 @@ flash_leds_loop2:
 
 #more seven segment
 sseg_version:
-	li $a0, 0x30a4ffff
+	li $a0, 0x30b0ffff
 	jal libplp_sseg_write_raw
 	nop
 	j flash_leds_loop2
