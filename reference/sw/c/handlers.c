@@ -171,11 +171,33 @@ void handle_declaration_specifier(node *n) {
 }
 
 void handle_init_declarator_list(node *n) {
-	err("[code_gen] handle_init_declarator_list not implemented\n");
+	/* init_declarator_lists have one or more init_declarators */
+	int i;
+	for (i=0; i<n->num_children; i++)
+		handle(n->children[i]);
 }
 
 void handle_init_declarator(node *n) {
-	err("[code_gen] handle_init_declarator not implemented\n");
+	int offset;
+	char *id;
+
+	/* init declarators may or may not have an initializer, if not, set the value to 0 */
+	if (n->num_children == 2)  /* we have an initializer */
+		sprintf(buffer, "li $t0, %s\n", n->children[1]->children[0]->id);
+	else
+		sprintf(buffer, "move $t0, $zero");
+	emit(buffer);
+
+	/* get the id */
+	if (n->children[0]->num_children == 1)
+		id = n->children[0]->children[0]->children[0]->id;
+	else
+		id = n->children[0]->children[1]->children[0]->id;	
+
+	/* now make the assignment */
+	offset = get_offset(n->t, id);
+	sprintf(buffer, "sw $t0, %d($sp)\n", offset);
+	emit(buffer);
 }
 
 void handle_struct_union(node *n) {

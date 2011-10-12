@@ -3,6 +3,7 @@
 #include "types.h"
 
 void handle(node *);
-void emit(char *); 
+void emit(char *);
+int get_offset(symbol_table*, char*);
 
 #endif
