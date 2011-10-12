@@ -10,7 +10,7 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "Meine Ruh' ist hin,\nMein Herz ist schwer;\nIch finde sie nimmer\nund nimmermehr."
+	.asciiz "You great star, what would your happiness be had you not those for whom you shine?"
 version_string:
 	.asciiz "plp-3.3"
 memory_test:
