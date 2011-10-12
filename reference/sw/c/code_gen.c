@@ -9,6 +9,8 @@
 extern FILE* FILE_OUTPUT;
 extern char *program;
 
+int gen_label_index = 0;
+
 void handle(node *n) {
 
 	if (strcmp(n->id,"postfix_expr") == 0) {
@@ -263,4 +265,11 @@ int get_offset(symbol_table *t, char *s) {
 	
 	/* if we get here, we need to look up another table */
 	return offset + get_offset(t->parent, s);	
+}
+
+char* gen_label(void) {
+	char *ret = malloc(11*sizeof(char));
+	sprintf(ret, "PCC_%06d", gen_label_index);
+	gen_label_index++;
+	return ret;
 }

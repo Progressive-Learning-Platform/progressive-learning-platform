@@ -52,12 +52,12 @@ primary_expression
 postfix_expression
 	: primary_expression 
 	| postfix_expression '[' expression ']' { vlog("[parser] POSTFIX_BRACKET_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, $3); }
-	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); $$ = op("postfix_expr", 1, $1); }
+	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, id("paren")); }
 	| postfix_expression '(' argument_expression_list ')' { vlog("[parser] POSTFIX_ARG_EXPRESSION_LIST\n"); $$ = op("postfix_expr", 2, $1, $3); }
 	| postfix_expression '.' IDENTIFIER { vlog("[parser] POSTFIX_._IDENTIFIER\n"); $$ = op("postfix_expr", 2, $1, $3); }
 	| postfix_expression PTR_OP IDENTIFIER { vlog("[parser] POSTFIX_PTR_OP_IDENTIFIER\n"); $$ = op("postfix_expr", 2, $1, $3); }
-	| postfix_expression INC_OP { vlog("[parser] POSTFIX_INC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 1, $1); }
-	| postfix_expression DEC_OP { vlog("[parser] POSTFIX_DEC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 1, $1); }
+	| postfix_expression INC_OP { vlog("[parser] POSTFIX_INC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, id("inc")); }
+	| postfix_expression DEC_OP { vlog("[parser] POSTFIX_DEC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, id("dec")); }
 	;
 
 argument_expression_list
@@ -67,8 +67,8 @@ argument_expression_list
 
 unary_expression
 	: postfix_expression
-	| INC_OP unary_expression { vlog("[parser] INC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr", 1, $2); }
-	| DEC_OP unary_expression { vlog("[parser] DEC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr", 1, $2); }
+	| INC_OP unary_expression { vlog("[parser] INC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr", 2, id("inc"), $2); }
+	| DEC_OP unary_expression { vlog("[parser] DEC_OP_UNARY_EXPRESSION\n"); $$ = op("unary_expr", 2, id("dec"), $2); }
 	| unary_operator cast_expression { vlog("[parser] UNARY_OP_CAST_EXPRESSION\n"); $$ = op("unary_expr", 2, $1, $2); }
 	| SIZEOF unary_expression { vlog("[parser] SIZEOF_UNARY_EXP\n"); $$ = op("sizeof", 1, $1); }
 	| SIZEOF '(' type_name ')' { vlog("[parser] SIZEOF_TYPE_NAME\n"); $$ = op("sizeof", 1, $3); }
