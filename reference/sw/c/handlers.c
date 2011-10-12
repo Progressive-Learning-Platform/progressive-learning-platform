@@ -11,9 +11,33 @@
 extern symbol *labels;
 extern symbol *constants;
 char buffer[1024];
+int adjust = 0;
 
 void handle_postfix_expr(node *n) {
-	err("[code_gen] handle_postfix_expr not implemented\n");
+	/* get the id or constant or handle the first child */
+	if (n->children[0]->type == type_id) {
+		int o = get_offset(n->t, n->children[0]->id);
+		sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
+		emit(buffer);
+	} else if (n->children[0]->type == type_con) {
+		sprintf(buffer, "li $t0, %s\n", n->children[0]->id);
+		emit(buffer);
+	} else {
+		handle(n->children[0]);
+	}
+
+	/* result is in $t0 */
+	if (n->children[1]->type == type_id) {
+		if (strcmp(n->children[1]->id,"inc") == 0) {
+			sprintf(buffer, "addiu $t0, $t0, 1\n");
+		} else {
+			err("[code_gen] postfix expressions are broken!\n");
+		} 
+			
+	} else {
+		err("[code_gen] postfix expressions are broken!\n");
+	}
+	emit(buffer);
 }
 
 void handle_argument_expr_list(node *n) {
@@ -21,7 +45,40 @@ void handle_argument_expr_list(node *n) {
 }
 
 void handle_unary_expr(node *n) {
-	err("[code_gen] handle_unary_expr not implemented\n");
+	/* unary expressions just mutate the second child somehow */
+	/* handle the second child first */
+	/* the second child may be an id or a constant */
+	if (n->children[1]->type == type_id) {
+		int o = get_offset(n->t, n->children[1]->id);
+		sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
+		emit(buffer);
+	} else if (n->children[1]->type == type_con) {
+		sprintf(buffer, "li $t0, %s\n", n->children[1]->id);
+		emit(buffer);
+	} else {
+		handle(n->children[1]);
+	}
+	/* result is in $t0 */
+	if (strcmp(n->children[0]->id, "inc") == 0) {
+		sprintf(buffer, "addiu $t0, $t0, 1\n");
+	} else if (strcmp(n->children[0]->id, "dec") == 0) {
+		sprintf(buffer, "addiu $t0, $t0, -1\n");
+	} else if (strcmp(n->children[0]->id, "&") == 0) {
+		err("[code_gen] reference not implemented yet");
+	} else if (strcmp(n->children[0]->id, "*") == 0) {
+		sprintf(buffer, "lw $t0, 0($t0)\n");
+	} else if (strcmp(n->children[0]->id, "+") == 0) {
+		err("[code_gen] unary + not implemented yet");
+	} else if (strcmp(n->children[0]->id, "-") == 0) {
+		err("[code_gen] unary - not implemented yet");
+	} else if (strcmp(n->children[0]->id, "~") == 0) {
+		sprintf(buffer, "nor $t0, $t0, $t0\n");
+	} else if (strcmp(n->children[0]->id, "!") == 0) {
+		sprintf(buffer, "sltiu $t0, $t0, 1\n");
+	} else {
+		err("[code_gen] unknown error\n");
+	}
+	emit(buffer);
 }
 
 void handle_sizeof(node *n) {
@@ -109,7 +166,58 @@ void handle_conditional(node *n) {
 }
 
 void handle_assignment(node *n) {
-	err("[code_gen] handle_assignment not implemented\n");
+	/* assignments have an lvalue that's either an id or a pointer expression */
+	int o;
+
+	/* if the lvalue is just an id, just get a pointer to it ourselves */
+	if (n->children[0]->type == type_id) {
+		o = get_offset(n->t, n->children[0]->id);
+		sprintf(buffer, "addiu $t0, $sp, %d\n", o + (4*adjust));
+		emit(buffer);
+	} else {
+		handle(n->children[0]);
+	}
+	sprintf(buffer, "push $t0\n"); adjust++;
+	emit(buffer);
+	/* the rvalue may just be an id or constant or string as well */
+	if (n->children[2]->type == type_id) {
+		o = get_offset(n->t, n->children[2]->id);
+		sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
+		emit(buffer);
+	} else if (n->children[2]->type == type_con) {
+		sprintf(buffer, "li $t0, %s\n", n->children[2]->id);
+		emit(buffer);
+	} else {
+		handle(n->children[2]);
+	}
+	sprintf(buffer, "pop $t1\n"); adjust--;
+	emit(buffer);
+
+	/* now make the assignment $t1 = $t0 */
+	if (strcmp(n->children[1]->id, "assign") == 0) {
+		sprintf(buffer, "sw $t0, 0($t1)\n");
+	} else if (strcmp(n->children[1]->id, "assign_mul") == 0) {
+		sprintf(buffer, "lw $t2, 0($t1)\nmullo $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+	} else if (strcmp(n->children[1]->id, "assign_div") == 0) {
+		err("[code_gen] division not supported\n");
+	} else if (strcmp(n->children[1]->id, "assign_mod") == 0) {
+		err("[code_gen] modulo not supported\n");
+	} else if (strcmp(n->children[1]->id, "assign_add") == 0) {
+		sprintf(buffer, "lw $t2, 0($t1)\naddu $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+	} else if (strcmp(n->children[1]->id, "assign_sub") == 0) {
+		sprintf(buffer, "lw $t2, 0($t1)\nsubu $t0, $t2, $t0\nsw $t0, 0($t1)\n");
+	} else if (strcmp(n->children[1]->id, "assign_sll") == 0) {
+		err("[code_gen] shift assign not currently implemented\n");
+	} else if (strcmp(n->children[1]->id, "assign_srl") == 0) {
+		err("[code_gen] shift assign not currently implemented\n");
+	} else if (strcmp(n->children[1]->id, "assign_and") == 0) {
+		sprintf(buffer, "lw $t2, 0($t1)\nand $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+	} else if (strcmp(n->children[1]->id, "assign_xor") == 0) {
+		err("[code_gen] xor assign not currently implemented\n");
+	} else if (strcmp(n->children[1]->id, "assign_or") == 0) {
+		sprintf(buffer, "lw $t2, 0($t1)\nor $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+	}
+	emit(buffer);
 }
 
 void handle_assign(node *n) {
@@ -157,7 +265,50 @@ void handle_assign_or(node *n) {
 }
 
 void handle_expression(node *n) {
-	err("[code_gen] handle_expression not implemented\n");
+	/* expressions can be one or more of:
+		assignment
+		conditional
+		logical_or
+		logical_and
+		bitwise_or
+		bitwise_xor
+		bitwise_and
+		equality
+		equality_not
+		less_than
+		greater_than
+		less_equal_than
+		greater_equal_than
+		shift_left
+		shift_right
+		add
+		sub
+		multiply
+		divide
+		mod
+		cast_expr
+		unary_expr
+		sizeof
+		postfix_expr
+		(id,constant,string,(expression))
+	*/
+	/* there are handlers for all except id,constant,string */
+	int i;
+	for (i=0; i<n->num_children; i++) {
+		if (n->children[i]->type == type_id) {
+			int o = get_offset(n->t, n->children[i]->id);
+			sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
+			emit(buffer);
+		} else if (n->children[i]->type == type_con) {
+			sprintf(buffer, "li $t0, %s\n", n->children[i]->id);
+			emit(buffer);
+		} else if (n->children[i]->type == type_string) {
+			err("string literal not implemented yet\n");
+		} else {
+			handle(n->children[i]);
+		}
+	}
+		
 }
 
 void handle_declaration(node *n) {
@@ -196,7 +347,7 @@ void handle_init_declarator(node *n) {
 
 	/* now make the assignment */
 	offset = get_offset(n->t, id);
-	sprintf(buffer, "sw $t0, %d($sp)\n", offset);
+	sprintf(buffer, "sw $t0, %d($sp)\n", offset + (4*adjust));
 	emit(buffer);
 }
 
@@ -314,11 +465,16 @@ void handle_declaration_list(node *n) {
 }
 
 void handle_statement_list(node *n) {
-	err("[code_gen] handle_statement_list not implemented\n");
+	/* just a bunch of statements, call handle on them */
+	int i;
+	for (i=0; i<n->num_children; i++)
+		handle(n->children[i]);
 }
 
 void handle_expression_statement(node *n) {
-	err("[code_gen] handle_expression_statement not implemented\n");
+	/* it's either a ; or an expression */
+	if (n->num_children == 1)
+		handle(n->children[0]);
 }
 
 void handle_selection_statement(node *n) {
@@ -326,7 +482,28 @@ void handle_selection_statement(node *n) {
 }
 
 void handle_iteration_statement(node *n) {
-	err("[code_gen] handle_iteration_statement not implemented\n");
+	/* iteration statements can be of four types:
+	1	while   : expression statement
+	2	do while: statement expression
+	3	for     : expression_statement expression_statement statement
+	4	for	: expression_statement expression_statement expression statement
+	*/
+	char *loop_label = gen_label();
+	char *loop_label_done = gen_label();
+	if (strcmp(n->children[0]->id, "expression") == 0) {
+		/* type 1, while loop */
+		/* handle the expression first, then test, then execute the statement, then jump back */
+		sprintf(buffer, "%s:\n", loop_label);
+		emit(buffer);
+		handle(n->children[0]);
+		sprintf(buffer, "beq $zero, $t0, %s\nnop\n", loop_label_done);
+		emit(buffer);
+		handle(n->children[1]);
+		sprintf(buffer, "j %s\nnop\n%s:\n", loop_label, loop_label_done);
+		emit(buffer);
+	} else {
+		err("this iteration statement not implemented yet");
+	}
 }
 
 void handle_jump_statement(node *n) {
@@ -350,7 +527,7 @@ void handle_function_definition(node *n) {
 	int d_index;	
 	char *function_name;
 	int i;
-	symbol_table *scope;
+	symbol_table *scope = NULL;
 	symbol *curr;
 
 	/* emit a label for the function name */

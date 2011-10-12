@@ -5,5 +5,6 @@ void main(void c) {
 	while (1) {
 		*leds = a;
 		a++;
+		
 	}
 }
