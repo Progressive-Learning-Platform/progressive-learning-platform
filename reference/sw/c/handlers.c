@@ -2,6 +2,7 @@
 /* each handle must call handle(node*) for children nodes, or just return */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parse_tree.h"
 #include "symbol.h"
 #include "log.h"
@@ -9,6 +10,7 @@
 
 extern symbol *labels;
 extern symbol *constants;
+char buffer[1024];
 
 void handle_postfix_expr(node *n) {
 	err("[code_gen] handle_postfix_expr not implemented\n");
@@ -159,7 +161,9 @@ void handle_expression(node *n) {
 }
 
 void handle_declaration(node *n) {
-	err("[code_gen] handle_declaration not implemented\n");
+	/* we only care to call the init_declarator_list */
+	if (n->num_children == 2)
+		handle(n->children[1]);
 }
 
 void handle_declaration_specifier(node *n) {
@@ -267,11 +271,24 @@ void handle_labeled_statement(node *n) {
 }
 
 void handle_compound_statement(node *n) {
-	err("[code_gen] handle_compound_statement not implemented\n");
+	/* compound statements have four types:
+		no children
+		statement_list
+		declaration_list
+		declaration_list statement_list
+	*/
+	
+	/* but who cares, just call handle on the children */
+	int i;
+	for (i=0; i<n->num_children; i++)
+		handle(n->children[i]);		
 }
 
 void handle_declaration_list(node *n) {
-	err("[code_gen] handle_declaration_list not implemented\n");
+	/* just call on the children */
+	int i;
+	for (i=0; i<n->num_children; i++)
+		handle(n->children[i]);
 }
 
 void handle_statement_list(node *n) {
@@ -295,9 +312,58 @@ void handle_jump_statement(node *n) {
 }
 
 void handle_translation_unit(node *n) {
-	err("[code_gen] handle_translation_unit not implemented\n");
+	/* translation units have external declarations and function declarations, just call handle on my children */
+	int i;
+	for (i=0; i<n->num_children; i++)
+		handle(n->children[i]);
 }
 
 void handle_function_definition(node *n) {
-	err("[code_gen] handle_function_definition not implemented\n");
+	/* function definitions are one of four types:
+		specifiers declarator declarations compound
+		specifiers declarator compound
+		declarator declarations compound
+		declarator compound
+	*/
+	int d_index;	
+	char *function_name;
+	int i;
+	symbol_table *scope;
+	symbol *curr;
+
+	/* emit a label for the function name */
+	if (strcmp(n->children[0]->id, "declarator") == 0)
+		d_index = 0;
+	else
+		d_index = 1;
+	function_name = n->children[d_index]->children[0]->children[0]->id;
+	
+	/* emit the function name */
+	sprintf(buffer,"%s:\n",function_name);
+	emit(buffer);
+
+	/* reserve space on the stack for declarations related to this function (parameters and declarations) */
+	curr = n->t->s;
+	while (strcmp(curr->value, function_name) != 0)
+		curr = curr->up;
+	/* start by finding the child symbol table that has assoc == n */
+	for (i=0; i<n->t->num_children; i++) {
+		if (n->t->children[i]->assoc == curr) {
+			scope = n->t->children[i];
+			break;
+		}
+	}
+	/* add up the symbols */
+	i=0;
+	curr = scope->s;
+	while (curr != NULL) {
+		i++;
+		curr = curr->up;
+	}
+
+	sprintf(buffer, "addiu $sp, $sp, -%d\n", i*4);
+	emit(buffer);
+	
+	/* call handle on the compound statement */
+	handle(n->children[n->num_children-1]);
 }

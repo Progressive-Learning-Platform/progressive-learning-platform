@@ -7,7 +7,7 @@
 #include "handlers.h"
 
 extern FILE* FILE_OUTPUT;
-char *program = NULL;
+extern char *program;
 
 void handle(node *n) {
 
@@ -234,5 +234,10 @@ void handle(node *n) {
 }
 
 void emit(char *s) {
-
+	if (program == NULL) {
+		program = strdup(s);
+	} else {
+		program = realloc(program, (strlen(program)+strlen(s))*sizeof(char));
+		program = strcat(program, s);
+	}
 }

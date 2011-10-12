@@ -31,6 +31,7 @@ symbol_table *sym = NULL;	/* scoped symbol tables */
 symbol *constants = NULL;	/* constants */
 symbol *labels	  = NULL;	/* labels */
 node *parse_tree_head = NULL;
+char *program = NULL;
 
 void print_usage(void) {
 	printf("pcc - plp c compiler\n\n");
@@ -159,6 +160,7 @@ int main(int argc, char *argv[]) {
 
 	/* call the backend to compile the parse tree, starting from the head */
 	handle(parse_tree_head);
+	fprintf(FILE_OUTPUT, "%s", program);
 
 	/* print the parse tree */
 	if (PARSE_OUTPUT != NULL) {
