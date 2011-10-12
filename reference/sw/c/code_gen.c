@@ -241,3 +241,26 @@ void emit(char *s) {
 		program = strcat(program, s);
 	}
 }
+
+int get_offset(symbol_table *t, char *s) {
+	int offset = 0;
+	symbol *curr;
+
+	if (t == NULL) {
+		err("[code_gen] %s undeclared\n", s);
+		return offset;
+	}
+
+	curr = t->s;
+
+	/* look up in the current symbol table, then up to the next, and so forth */
+	while (curr != NULL) {
+		if (strcmp(curr->value,s) == 0)
+			return offset;
+		offset += 4;
+		curr = curr->up;
+	}
+	
+	/* if we get here, we need to look up another table */
+	return offset + get_offset(t->parent, s);	
+}
