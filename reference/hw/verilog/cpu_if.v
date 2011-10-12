@@ -84,7 +84,7 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 			pc <= pc;
 			p_inst <= p_inst;
 			int_state <= next_int_state;
-		end else if (flush && !rst && !stall) begin
+		end else if ((flush || int_flush) && !rst && !stall) begin
 			p_pc <= 0;
 			p_inst <= 0;
 			pc <= next_pc;
