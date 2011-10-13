@@ -8,36 +8,50 @@
 #include "log.h"
 #include "code_gen.h"
 
+#define e(...) { sprintf(buffer, __VA_ARGS__); emit(buffer); }
+#define o(x) (get_offset(x->t, x->id) + (4*adjust))
+#define push(x) { e("push %s\n", x); adjust++; }
+#define pop(x) { e("pop %s\n", x); adjust--; }
+
 extern symbol *labels;
 extern symbol *constants;
 char buffer[1024];
 int adjust = 0;
+int LVALUE = 0;
+
+void handle_identifier(node *n) {
+	if (LVALUE) {
+		/* grab the identifier and put a pointer to it in t0 */
+		e("addiu $t0, $sp, %d\n", o(n));
+	} else {
+		/* grab the identifier and dereference it */
+		e("lw $t0, %d($sp)\n", o(n));	
+	}
+}
+
+void handle_constant(node *n) {
+	e("li $t0, %s\n", n->id);
+}
+
+void handle_string(node *n) {
+	err("[code_gen] handle_string not implemented\n");
+}
 
 void handle_postfix_expr(node *n) {
-	/* get the id or constant or handle the first child */
-	if (n->children[0]->type == type_id) {
-		int o = get_offset(n->t, n->children[0]->id);
-		sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
-		emit(buffer);
-	} else if (n->children[0]->type == type_con) {
-		sprintf(buffer, "li $t0, %s\n", n->children[0]->id);
-		emit(buffer);
-	} else {
-		handle(n->children[0]);
-	}
+	int prev_lvalue;
+	
+	/* the first child is always grabbed as a reference */
+	prev_lvalue = LVALUE;
+	handle(n->children[0]);
+	FRITZ
 
-	/* result is in $t0 */
-	if (n->children[1]->type == type_id) {
-		if (strcmp(n->children[1]->id,"inc") == 0) {
-			sprintf(buffer, "addiu $t0, $t0, 1\n");
-		} else {
-			err("[code_gen] postfix expressions are broken!\n");
-		} 
-			
-	} else {
-		err("[code_gen] postfix expressions are broken!\n");
-	}
-	emit(buffer);
+	if (strcmp(n->children[1]->id, "expression") == 0) {
+		prev_lvalue = LVALUE;
+		LVALUE = 0;
+		handle(n->children[1]);
+		p
+		LVALUE = prev_lvalue;
+		
 }
 
 void handle_argument_expr_list(node *n) {
@@ -45,40 +59,45 @@ void handle_argument_expr_list(node *n) {
 }
 
 void handle_unary_expr(node *n) {
-	/* unary expressions just mutate the second child somehow */
-	/* handle the second child first */
-	/* the second child may be an id or a constant */
-	if (n->children[1]->type == type_id) {
-		int o = get_offset(n->t, n->children[1]->id);
-		sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
-		emit(buffer);
-	} else if (n->children[1]->type == type_con) {
-		sprintf(buffer, "li $t0, %s\n", n->children[1]->id);
-		emit(buffer);
-	} else {
-		handle(n->children[1]);
-	}
-	/* result is in $t0 */
 	if (strcmp(n->children[0]->id, "inc") == 0) {
-		sprintf(buffer, "addiu $t0, $t0, 1\n");
+		if (LVALUE) {
+			err("[code_gen] invalid lvalue\n");
+		} else {
+			/* preincrement the value and return it in t0 */
+			LVALUE = 1;
+			handle(n->children[1]);
+			LVALUE = 0;
+			e("lw $t1, 0($t0)\n");
+			e("addiu $t1, $t1, 1\n");
+			e("sw $t1, 0($t0)\n");
+			e("move $t0, $t1\n");
+		}
 	} else if (strcmp(n->children[0]->id, "dec") == 0) {
-		sprintf(buffer, "addiu $t0, $t0, -1\n");
+		if (LVALUE) {
+			err("[code_gen] invalid lvalue\n");
+		} else {
+			/* predecrement the value and return it in t0 */
+			LVALUE = 1;
+			handle(n->children[1]);
+			LVALUE = 0;
+			e("lw $t1, 0($t0)\n");
+			e("addiu $t1, $t1, -1\n");
+			e("sw $t1, 0($t0)\n");
+			e("move $t0, $t1\n");
+		}
 	} else if (strcmp(n->children[0]->id, "&") == 0) {
-		err("[code_gen] reference not implemented yet");
+		int prev_lvalue = LVALUE;
+		LVALUE = 1;
+		handle(n->children[1]);
+		LVALUE = prev_lvalue;
 	} else if (strcmp(n->children[0]->id, "*") == 0) {
-		sprintf(buffer, "lw $t0, 0($t0)\n");
-	} else if (strcmp(n->children[0]->id, "+") == 0) {
-		err("[code_gen] unary + not implemented yet");
-	} else if (strcmp(n->children[0]->id, "-") == 0) {
-		err("[code_gen] unary - not implemented yet");
-	} else if (strcmp(n->children[0]->id, "~") == 0) {
-		sprintf(buffer, "nor $t0, $t0, $t0\n");
-	} else if (strcmp(n->children[0]->id, "!") == 0) {
-		sprintf(buffer, "sltiu $t0, $t0, 1\n");
+		int prev_lvalue = LVALUE;
+		LVALUE = 0;
+		handle(n->children[1]);
+		LVALUE = prev_lvalue;
 	} else {
-		err("[code_gen] unknown error\n");
-	}
-	emit(buffer);
+		err("[code_gen] unary expressions not fully implemented\n");
+	}			
 }
 
 void handle_sizeof(node *n) {
@@ -166,58 +185,42 @@ void handle_conditional(node *n) {
 }
 
 void handle_assignment(node *n) {
-	/* assignments have an lvalue that's either an id or a pointer expression */
-	int o;
+	/* get the lvalue */
+	LVALUE = 1;
+	handle(n->children[0]);
+	LVALUE = 0;	
 
-	/* if the lvalue is just an id, just get a pointer to it ourselves */
-	if (n->children[0]->type == type_id) {
-		o = get_offset(n->t, n->children[0]->id);
-		sprintf(buffer, "addiu $t0, $sp, %d\n", o + (4*adjust));
-		emit(buffer);
-	} else {
-		handle(n->children[0]);
-	}
-	sprintf(buffer, "push $t0\n"); adjust++;
-	emit(buffer);
-	/* the rvalue may just be an id or constant or string as well */
-	if (n->children[2]->type == type_id) {
-		o = get_offset(n->t, n->children[2]->id);
-		sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
-		emit(buffer);
-	} else if (n->children[2]->type == type_con) {
-		sprintf(buffer, "li $t0, %s\n", n->children[2]->id);
-		emit(buffer);
-	} else {
-		handle(n->children[2]);
-	}
-	sprintf(buffer, "pop $t1\n"); adjust--;
-	emit(buffer);
+	push("$t0");
+
+	/* and get the rvalue */
+	handle(n->children[2]);
+
+	pop("$t1");
 
 	/* now make the assignment $t1 = $t0 */
 	if (strcmp(n->children[1]->id, "assign") == 0) {
-		sprintf(buffer, "sw $t0, 0($t1)\n");
+		e("sw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_mul") == 0) {
-		sprintf(buffer, "lw $t2, 0($t1)\nmullo $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\nmullo $t0, $t0, $t2\nsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_div") == 0) {
 		err("[code_gen] division not supported\n");
 	} else if (strcmp(n->children[1]->id, "assign_mod") == 0) {
 		err("[code_gen] modulo not supported\n");
 	} else if (strcmp(n->children[1]->id, "assign_add") == 0) {
-		sprintf(buffer, "lw $t2, 0($t1)\naddu $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\naddu $t0, $t0, $t2\nsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_sub") == 0) {
-		sprintf(buffer, "lw $t2, 0($t1)\nsubu $t0, $t2, $t0\nsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\nsubu $t0, $t2, $t0\nsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_sll") == 0) {
 		err("[code_gen] shift assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_srl") == 0) {
 		err("[code_gen] shift assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_and") == 0) {
-		sprintf(buffer, "lw $t2, 0($t1)\nand $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\nand $t0, $t0, $t2\nsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_xor") == 0) {
 		err("[code_gen] xor assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_or") == 0) {
-		sprintf(buffer, "lw $t2, 0($t1)\nor $t0, $t0, $t2\nsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\nor $t0, $t0, $t2\nsw $t0, 0($t1)\n");
 	}
-	emit(buffer);
 }
 
 void handle_assign(node *n) {
@@ -294,21 +297,8 @@ void handle_expression(node *n) {
 	*/
 	/* there are handlers for all except id,constant,string */
 	int i;
-	for (i=0; i<n->num_children; i++) {
-		if (n->children[i]->type == type_id) {
-			int o = get_offset(n->t, n->children[i]->id);
-			sprintf(buffer, "lw $t0, %d($sp)\n", o + (4*adjust));
-			emit(buffer);
-		} else if (n->children[i]->type == type_con) {
-			sprintf(buffer, "li $t0, %s\n", n->children[i]->id);
-			emit(buffer);
-		} else if (n->children[i]->type == type_string) {
-			err("string literal not implemented yet\n");
-		} else {
-			handle(n->children[i]);
-		}
-	}
-		
+	for (i=0; i<n->num_children; i++)
+		handle(n->children[i]);
 }
 
 void handle_declaration(node *n) {
@@ -329,26 +319,22 @@ void handle_init_declarator_list(node *n) {
 }
 
 void handle_init_declarator(node *n) {
-	int offset;
-	char *id;
+	node *x;
 
 	/* init declarators may or may not have an initializer, if not, set the value to 0 */
 	if (n->num_children == 2)  /* we have an initializer */
-		sprintf(buffer, "li $t0, %s\n", n->children[1]->children[0]->id);
+		handle(n->children[1]);
 	else
-		sprintf(buffer, "move $t0, $zero");
-	emit(buffer);
+		e("move $t0, $zero\n");
 
 	/* get the id */
 	if (n->children[0]->num_children == 1)
-		id = n->children[0]->children[0]->children[0]->id;
+		x = n->children[0]->children[0]->children[0];
 	else
-		id = n->children[0]->children[1]->children[0]->id;	
+		x = n->children[0]->children[1]->children[0];
 
 	/* now make the assignment */
-	offset = get_offset(n->t, id);
-	sprintf(buffer, "sw $t0, %d($sp)\n", offset + (4*adjust));
-	emit(buffer);
+	e("sw $t0, %d($sp)\n", o(x));
 }
 
 void handle_struct_union(node *n) {
@@ -432,7 +418,7 @@ void handle_direct_abstract_declarator(node *n) {
 }
 
 void handle_initializer(node *n) {
-	err("[code_gen] handle_initializer not implemented\n");
+	handle(n->children[0]);
 }
 
 void handle_initializer_list(node *n) {

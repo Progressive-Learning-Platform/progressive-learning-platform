@@ -12,6 +12,16 @@ extern char *program;
 int gen_label_index = 0;
 
 void handle(node *n) {
+	if (n->type == type_id) {
+		vlog("[code_gen] handle: identifier\n");
+		handle_identifier(n);
+	} else if (n->type == type_con) {
+		vlog("[code_gen] handle: constant\n");
+		handle_constant(n);
+	} else if (n->type == type_string) {
+		vlog("[code_gen] handle: string constant\n");
+		handle_string(n);
+	} else {
 
 	if (strcmp(n->id,"postfix_expr") == 0) {
 		vlog("[code_gen] handle: postfix_expr \n");
@@ -233,6 +243,8 @@ void handle(node *n) {
 		vlog("[code_gen] handle: function_definition \n");
 		handle_function_definition(n);
 	} 
+
+	}
 }
 
 void emit(char *s) {

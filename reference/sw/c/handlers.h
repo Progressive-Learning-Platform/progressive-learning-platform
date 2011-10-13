@@ -2,6 +2,9 @@
 #define HANDLERS
 #include "types.h"
 
+void handle_identifier(node *);
+void handle_constant(node *);
+void handle_string(node *);
 void handle_postfix_expr(node *);
 void handle_argument_expr_list(node *);
 void handle_unary_expr(node *);
