@@ -56,13 +56,21 @@ void handle_postfix_expr(node *n) {
 			e("sw $t2, 0($t0)\n");
 			e("move $t0, $t1\n");
 		}
+	} else if (strcmp(n->children[1]->id, "argument_expr_list") == 0) {
+		/* function call */
+		handle(n->children[1]);
+		e("call %s\n", n->children[0]->id);
 	} else {
 		err("[code_gen] postfix expressions not fully implemented\n");
 	}	
 }
 
 void handle_argument_expr_list(node *n) {
-	err("[code_gen] handle_argument_expr_list not implemented\n");
+	int i;
+	for (i=0; i<n->num_children; i++) {
+		handle(n->children[i]);
+		push("$t0");
+	}
 }
 
 void handle_unary_expr(node *n) {
@@ -128,7 +136,11 @@ void handle_mod(node *n) {
 }
 
 void handle_add(node *n) {
-	err("[code_gen] handle_add not implemented\n");
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("addu $t0, $t0, $t1\n");
 }
 
 void handle_sub(node *n) {
@@ -506,7 +518,15 @@ void handle_iteration_statement(node *n) {
 }
 
 void handle_jump_statement(node *n) {
-	err("[code_gen] handle_jump_statement not implemented\n");
+	node *t = n->children[0];
+	if (strcmp(t->id, "return") == 0) {
+		if (n->num_children == 2)
+			handle(n->children[1]);
+			e("move $v0, $t0\n");
+		e("return\n");
+	} else {
+		err("[code_gen] jump statements not fully implemented\n");
+	}
 }
 
 void handle_translation_unit(node *n) {

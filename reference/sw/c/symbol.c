@@ -156,13 +156,14 @@ symbol_table* new_symbol_table(symbol_table *t) {
 	table->s = NULL;
 	table->num_children = 0;
 	table->assoc = NULL;
+	table->children = NULL;
 
 	if (t == NULL) {
 		/* brand new global table */
 		table->parent = NULL;
 	} else {
 		/* create a new child table */
-		t = realloc(t, sizeof(symbol_table) + (sizeof(symbol_table*) * (t->num_children+1)));
+		t->children = realloc(t->children, (sizeof(symbol_table*) * (t->num_children+1)));
 		t->num_children++;
 		t->children[t->num_children-1] = table;
 		table->parent = t;
@@ -207,6 +208,9 @@ node* install_function(symbol_table *t, node *n) {
 	if (strcmp(n->children[0]->id, "declaration_specifier") == 0) {
 		node *temp_node = op("declaration", 2, n->children[0], op("init_declarator_list", 1, n->children[1]));
 		install_symbol(t, temp_node); /* install the function */
+		/* the last created symbol table should be the one associated with this function. */
+		t->children[t->num_children-1]->assoc = t->s;
+
 		if (strcmp(n->children[2]->id, "declaration_list") == 0) {
 			/* type 1 */
 		}
@@ -214,6 +218,8 @@ node* install_function(symbol_table *t, node *n) {
 	} else {
 		node *temp_node = op("declaration", 2, op("declaration_specifier", 1, type("void")), op("init_declarator_list", 1, n->children[0]));
 		install_symbol(t, temp_node); /* install the function */
+		/* the last created symbol table should be the one associated with this function. */
+		t->children[t->num_children-1]->assoc = t->s;
 		if (strcmp(n->children[1]->id, "declaration_list") == 0) {
 			/* type 3 */
 		}
@@ -222,8 +228,6 @@ node* install_function(symbol_table *t, node *n) {
 
 	t->s->attr |= ATTR_FUNCTION;
 
-	/* the last created symbol table should be the one associated with this function. */
-	t->children[t->num_children-1]->assoc = t->s;
 
 	return n;
 }

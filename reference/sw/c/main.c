@@ -17,6 +17,7 @@ extern int yyparse(void);
 
 int LOG_LEVEL = 0;
 int STOP_ERROR = 1;
+int NO_COMPILE = 0;
 
 static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
@@ -42,6 +43,7 @@ void print_usage(void) {
 	printf("-s		print symbol table to <output name>.symbol\n");
 	printf("-p		print parse tree to <output name>.parse\n");
 	printf("-e		do not stop compiling on errors\n");
+	printf("-f		run the front end only, do not call handle() on the parse tree\n");
 }
 
 void handle_opts(int argc, char *argv[]) {
@@ -56,7 +58,7 @@ void handle_opts(int argc, char *argv[]) {
 
 	opterr = 0;
 	
-	while ((c = getopt(argc, argv, "d:o:spe")) != -1)
+	while ((c = getopt(argc, argv, "d:o:spef")) != -1)
 		switch (c) {
 			case 'd':
 				dvalue = optarg;
@@ -72,6 +74,9 @@ void handle_opts(int argc, char *argv[]) {
 				break;
 			case 'e':
 				STOP_ERROR = 0;
+				break;
+			case 'f':
+				NO_COMPILE = 1;
 				break;
 			default:
 				print_usage();
@@ -158,10 +163,6 @@ int main(int argc, char *argv[]) {
 	log("[pcc] starting frontend\n");
 	yyparse();
 
-	/* call the backend to compile the parse tree, starting from the head */
-	handle(parse_tree_head);
-	fprintf(FILE_OUTPUT, "%s", program);
-
 	/* print the parse tree */
 	if (PARSE_OUTPUT != NULL) {
 		vlog("[pcc] printing parse tree\n");
@@ -172,6 +173,12 @@ int main(int argc, char *argv[]) {
 	if (SYMBOL_OUTPUT != NULL) {
 		vlog("[pcc] printing symbol table\n");
 		print_symbols(sym, SYMBOL_OUTPUT, 0);
+	}
+
+	/* call the backend to compile the parse tree, starting from the head */
+	if (NO_COMPILE == 0) {
+		handle(parse_tree_head);
+		fprintf(FILE_OUTPUT, "%s", program);
 	}
 
 	vlog("[pcc] closing files\n");
