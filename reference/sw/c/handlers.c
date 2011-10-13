@@ -42,16 +42,23 @@ void handle_postfix_expr(node *n) {
 	
 	/* the first child is always grabbed as a reference */
 	prev_lvalue = LVALUE;
+	LVALUE = 1;
 	handle(n->children[0]);
-	FRITZ
+	LVALUE = prev_lvalue;
 
-	if (strcmp(n->children[1]->id, "expression") == 0) {
-		prev_lvalue = LVALUE;
-		LVALUE = 0;
-		handle(n->children[1]);
-		p
-		LVALUE = prev_lvalue;
-		
+	if (strcmp(n->children[1]->id, "inc") == 0) {
+		if (LVALUE) {
+			err("[code_gen] invalid lvalue\n");
+		} else {
+			/* post increment */
+			e("lw $t1, 0($t0)\n");
+			e("addiu $t2, $t1, 1\n");
+			e("sw $t2, 0($t0)\n");
+			e("move $t0, $t1\n");
+		}
+	} else {
+		err("[code_gen] postfix expressions not fully implemented\n");
+	}	
 }
 
 void handle_argument_expr_list(node *n) {
@@ -137,7 +144,13 @@ void handle_shift_right(node *n) {
 }
 
 void handle_less_than(node *n) {
-	err("[code_gen] handle_less_than not implemented\n");
+	/* TODO: HANDLE UNSIGNED COMPARE */
+	/* return 1 if child 0 < child 1 */
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("slt $t0, $t1, $t0\n");
 }
 
 void handle_greater_than(node *n) {

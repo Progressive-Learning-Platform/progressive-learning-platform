@@ -106,7 +106,7 @@ node* install_symbol(symbol_table *t, node *n) {
 		/* the next child should be a init_declarator_list, with one or more direct_declarators buried inside, among other things */
 		/* just do a search for "direct_declarator", and return each one's children[0]->id field, which is an identifier */
 		id_chain *ids = get_ids(NULL, decs);
-		if (ids == NULL) 
+		if (ids == NULL && strcmp(n->id, "parameter_declaration") != 0) 
 			err("[symbol] no declarators found\n");
 		while (ids != NULL) {
 			id_chain *d = ids;

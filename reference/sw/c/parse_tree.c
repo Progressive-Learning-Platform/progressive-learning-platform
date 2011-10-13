@@ -7,6 +7,8 @@
 #include "log.h"
 
 extern symbol_table* sym;
+extern int line;
+extern int column;
 
 node *new_node(char *s) {
 	node *n = NULL;
@@ -19,6 +21,8 @@ node *new_node(char *s) {
 	n->id = strdup(s);
 	n->num_children = 0;
 	n->t = sym;
+	n->line = line;
+	n->column = column;
 
 	return n;
 }
@@ -58,7 +62,7 @@ node *op(char *t, int num_ops, ...) {
 
 	vlog("[parse_tree] op: %s ", t);
 
-	n = malloc(sizeof(node) + ((num_ops - 1) * sizeof(node*)));
+	n = malloc(sizeof(node) + ((num_ops) * sizeof(node*)));
 	if (n == NULL) {
 		err("[parse_tree] cannot allocate node");
 	}
@@ -66,6 +70,8 @@ node *op(char *t, int num_ops, ...) {
 	n->type = type_op;
 	n->id = strdup(t);
 	n->t = sym;
+	n->line = line;
+	n->column = column;
 	n->num_children = num_ops;
 	va_start(ap, num_ops);
 	for (i=0; i<num_ops; i++) {
