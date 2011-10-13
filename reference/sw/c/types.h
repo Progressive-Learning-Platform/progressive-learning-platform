@@ -43,6 +43,8 @@ typedef struct node_t {
         node_type type;                 /* node type */
         char *id;                       /* the node id field, contains a constant if type_con, variable name if type_id, a keyword if type_op */
         symbol_table* t;                /* the symbol table (scope) associated with this node */
+	int line;			/* line number in the source that this node represents */
+	int column;			/* column that this node represents */
         int num_children;               /* number of values in the next field */
         struct node_t *children[];      /* an array of child nodes */
 } node;

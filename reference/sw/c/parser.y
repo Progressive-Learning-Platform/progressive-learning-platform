@@ -16,8 +16,6 @@ extern int yylex (void);
 void yyerror(s)
 char *s;
 {
-//	fflush(stdout);
-//	printf("\n%*s\n%*s\n", column, "^", column, s);
 	err("[pcc] syntax error at %d:%d\n", line, column); 
 }
 
@@ -54,8 +52,8 @@ postfix_expression
 	| postfix_expression '[' expression ']' { vlog("[parser] POSTFIX_BRACKET_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, $3); }
 	| postfix_expression '(' ')' { vlog("[parser] POSTFIX_PAREN_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, id("paren")); }
 	| postfix_expression '(' argument_expression_list ')' { vlog("[parser] POSTFIX_ARG_EXPRESSION_LIST\n"); $$ = op("postfix_expr", 2, $1, $3); }
-	| postfix_expression '.' IDENTIFIER { vlog("[parser] POSTFIX_._IDENTIFIER\n"); $$ = op("postfix_expr", 2, $1, $3); }
-	| postfix_expression PTR_OP IDENTIFIER { vlog("[parser] POSTFIX_PTR_OP_IDENTIFIER\n"); $$ = op("postfix_expr", 2, $1, $3); }
+	| postfix_expression '.' IDENTIFIER { vlog("[parser] POSTFIX_._IDENTIFIER\n"); $$ = op("postfix_expr", 3, $1, id("dot"), $3); }
+	| postfix_expression PTR_OP IDENTIFIER { vlog("[parser] POSTFIX_PTR_OP_IDENTIFIER\n"); $$ = op("postfix_expr", 3, $1, id("ptr"), $3); }
 	| postfix_expression INC_OP { vlog("[parser] POSTFIX_INC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, id("inc")); }
 	| postfix_expression DEC_OP { vlog("[parser] POSTFIX_DEC_OP_EXPRESSION\n"); $$ = op("postfix_expr", 2, $1, id("dec")); }
 	;
