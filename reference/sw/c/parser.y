@@ -417,11 +417,11 @@ iteration_statement
 	;
 
 jump_statement
-	: GOTO IDENTIFIER ';' { vlog("[parser] GOTO_IDENTIFIER\n"); $$ = op("jump_statement", 1, $2); }
-	| CONTINUE ';' { vlog("[parser] CONTINUE\n"); $$ = op("jump_statement", 0); }
-	| BREAK ';' { vlog("[parser] BREAK\n"); $$ = op("jump_statement", 0); }
-	| RETURN ';' { vlog("[parser] RETURN\n"); $$ = op("jump_statement", 0); }
-	| RETURN expression ';' { vlog("[parser] RETURN_EXPRESSION\n"); $$ = op("jump_statement", 1, $2); }
+	: GOTO IDENTIFIER ';' { vlog("[parser] GOTO_IDENTIFIER\n"); $$ = op("jump_statement", 2, id("goto"), $2); }
+	| CONTINUE ';' { vlog("[parser] CONTINUE\n"); $$ = op("jump_statement", 1, id("continue")); }
+	| BREAK ';' { vlog("[parser] BREAK\n"); $$ = op("jump_statement", 1, id("break")); }
+	| RETURN ';' { vlog("[parser] RETURN\n"); $$ = op("jump_statement", 1, id("return")); }
+	| RETURN expression ';' { vlog("[parser] RETURN_EXPRESSION\n"); $$ = op("jump_statement", 2, id("return"), $2); }
 	;
 
 translation_unit

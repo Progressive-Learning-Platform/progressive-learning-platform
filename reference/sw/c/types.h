@@ -27,7 +27,7 @@ typedef struct symbol_table_t {
         symbol *s;
         symbol *assoc;
         int num_children;
-        struct symbol_table_t *children[];
+        struct symbol_table_t **children;
 } symbol_table;
 
 /* node types */
