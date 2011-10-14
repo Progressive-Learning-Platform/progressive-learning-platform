@@ -1347,6 +1347,9 @@ public class ProjectDriver {
      * Display the Quick Reference window
      */
     public void showQuickRef() {
+        if(g_qref != null)
+            g_qref.dispose();
+
         g_qref = new QuickRef(this);
         g_qref.setVisible(true);
     }
