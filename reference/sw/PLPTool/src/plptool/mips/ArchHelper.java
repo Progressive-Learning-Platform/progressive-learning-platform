@@ -108,7 +108,7 @@ public class ArchHelper {
         str += "<a name=\"p\" /><h1>Pseudo-operations</h1>";
         str += "<table border=1 width=\"100%\"";
 
-        data = new String[7][2];
+        data = new String[11][2];
 
         data[0][0] = "<font color=blue><b>nop</b></font>";                     data[0][1] = "sll $0, $0, 0";
         data[1][0] = "<font color=blue><b>b</b></font>     label";             data[1][1] = "beq $0, $0, label";
@@ -121,6 +121,10 @@ public class ArchHelper {
                                                                                data[5][1] += "sw $rt, 4($sp)";
         data[6][0] = "<font color=blue><b>pop</b></font>   $rt";               data[6][1] = "lw $rt, 4($sp)<br />";
                                                                                data[6][1] += "addiu $sp, $sp, 4";
+        data[7][0] = "<font color=blue><b>call</b></font>  label";             data[7][1] = "Save $aX, $tX, and $ra to stack and call function";
+        data[8][0] = "<font color=blue><b>return</b></font>";                  data[8][1] = "Restore $aX, $tX, and $ra from stack and return";
+        data[9][0] = "<font color=blue><b>save</b></font>";                    data[9][1] = "Save all registers except for $zero and $ra to stack";
+        data[10][0] = "<font color=blue><b>restore</b></font>";                data[10][1] = "Restore all registers saved by 'save' in reverse order";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
