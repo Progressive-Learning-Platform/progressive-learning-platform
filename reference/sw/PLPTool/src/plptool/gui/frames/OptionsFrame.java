@@ -39,17 +39,19 @@ public class OptionsFrame extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         cmbFontSize.removeAllItems();
+        cmbFontSize.addItem(Config.devFontSize);
         cmbFontSize.addItem(8);
         cmbFontSize.addItem(10);
         cmbFontSize.addItem(11);
         cmbFontSize.addItem(12);
+        cmbFontSize.addItem(13);
         cmbFontSize.addItem(14);
         cmbFontSize.addItem(16);
         cmbFontSize.addItem(24);
         cmbFontSize.addItem(36);
         cmbFontSize.addItem(48);
         cmbFontSize.addItem(72);
-        cmbFontSize.setSelectedIndex(3);
+        cmbFontSize.setSelectedIndex(0);
 
         prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
@@ -58,12 +60,16 @@ public class OptionsFrame extends javax.swing.JFrame {
         Msg.D("Loading system fonts...", 2, null);
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 
+        int presetFont = -1;
         cmbFontName.removeAllItems();
         cmbFontName.addItem("Monospaced");
         for(int i = 0; i < fonts.length; i++) {
+            if(fonts[i].getFontName().equals(Config.devFont))
+                presetFont = i;
             cmbFontName.addItem(fonts[i].getFontName());
         }
-        cmbFontName.setSelectedIndex(0);
+        presetFont++;
+        cmbFontName.setSelectedIndex(presetFont != -1 ? presetFont : 0);
 
         txtFontPreview.setFont(new Font("Monospaced", Font.PLAIN, 12));
         

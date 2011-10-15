@@ -18,7 +18,6 @@
 
 package plptool.gui;
 
-import java.awt.Color;
 import plptool.*;
 import plptool.gui.frames.*;
 import plptool.mods.Preset;
@@ -160,7 +159,6 @@ public class ProjectDriver {
             this.g_err = new SimErrorFrame();
             this.g_dev = new Develop(this);
             this.g_ioreg = new IORegistryFrame(this);
-            //this.g_simsh.getSimDesktop().add(this.g_ioreg);
             this.g_about = new AboutBoxDialog(this.g_dev);
             this.g_opts = new OptionsFrame(this);
             this.g_qref = new QuickRef(this);
@@ -180,6 +178,19 @@ public class ProjectDriver {
             this.g_dev.setVisible(true);
         }
 
+        // check for JRE version
+
+        String tokens[] = System.getProperty("java.version").split("\\.");
+        int major = Integer.parseInt(tokens[0]);
+        int minor = Integer.parseInt(tokens[1]);
+
+        if((major == Constants.minimumJREMajorVersion && minor < Constants.minimumJREMinorVersion) ||
+            major  < Constants.minimumJREMajorVersion) {
+            Msg.W("You are running an older Java Runtime Environment version." +
+                  " Some functionalities may not work as intended. " +
+                  "Please upgrade to at least JRE version 1.5", null);
+        }
+
         // check for rxtx native libaries
         serial_support = true;
 
@@ -193,19 +204,6 @@ public class ProjectDriver {
                   "same directory and you run the batch file associated with " +
                   "your version of Windows (32- or 64-bit)", null);
             serial_support = false;
-        }
-
-        // check for JRE version
-        
-        String tokens[] = System.getProperty("java.version").split("\\.");
-        int major = Integer.parseInt(tokens[0]);
-        int minor = Integer.parseInt(tokens[1]);
-
-        if((major == Constants.minimumJREMajorVersion && minor < Constants.minimumJREMinorVersion) ||
-            major  < Constants.minimumJREMajorVersion) {
-            Msg.W("You are running an older Java Runtime Environment version." +
-                  " Some functionalities may not work as intended. " +
-                  "Please upgrade to at least JRE version 1.5", null);
         }
     }
 
@@ -227,6 +225,90 @@ public class ProjectDriver {
      */
     public String getArch() {
         return arch;
+    }
+
+    /**
+     * Attempt to load configuration from ~/.plp/config
+     */
+    public static void loadConfig() {
+        File config = new File(System.getProperty("user.home") + "/.plp/config");
+
+        if(config.exists() && !config.isDirectory()) {
+            Msg.D("Loading config from " + config.getAbsolutePath(), 2, null);
+            try {
+                FileInputStream in = new FileInputStream(config);
+
+                String tokens[];
+                byte[] str = new byte[(int) config.length()];
+                in.read(str);
+                in.close();
+                String lines[] = new String(str).toString().split("\\r?\\n");
+
+                for(int i = 0; i < lines.length; i++) {
+                    tokens = lines[i].split("::");
+
+                    if(tokens[0].equals("devFont")) {
+                        Config.devFont = tokens[1];
+                    } else if(tokens[0].equals("devFontSize")) {
+                        Config.devFontSize = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devSyntaxHighlighting")) {
+                        Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
+                    }
+                }
+
+            } catch(Exception e) {
+                Msg.E("Failed to load PLPTool configuration from disk.",
+                      Constants.PLP_BACKEND_LOAD_CONFIG_FAILED, null);
+            }
+        }
+    }
+
+    /**
+     * Save PLPTool configuration to ~/.plp/config
+     */
+    public static void saveConfig() {
+        File configDir = new File(System.getProperty("user.home") + "/.plp");
+
+        if(!configDir.exists()) {
+            try {
+                if(!configDir.mkdir()) {
+                    Msg.W("Failed to save PLPTool configuration: " +
+                          "Unable to create directory $[USER]/.plp", null);
+                }
+            } catch(Exception e) {
+                Msg.E("Failed to save PLPTool configuration to disk.",
+                      Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
+            }
+        }
+
+        File config = new File(System.getProperty("user.home") + "/.plp/config");
+
+        if(config != null) {
+            Msg.D("Saving config to " + config.getAbsolutePath(), 2, null);
+            try {
+                FileWriter out = new FileWriter(config);
+                out.write("devFont::" + Config.devFont + "\n");
+                out.write("devFontSize::" + Config.devFontSize + "\n");
+                out.write("devSyntaxHighlighting::" + Config.devSyntaxHighlighting + "\n");
+                out.close();
+
+            } catch(Exception e) {
+                Msg.E("Failed to save PLPTool configuration to disk.",
+                      Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
+            }
+        }
+    }
+
+    /**
+     * Delete ~/.plp/config
+     */
+    public static void removeConfig() {
+        File config = new File(System.getProperty("user.home") + "/.plp/config");
+
+        if(config.exists()) {
+            Msg.M("Removing " + config.getAbsolutePath());
+            config.delete();
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,9 +75,57 @@ public class Config {
 
     public static int     devMaxUndoEntries                = 64000;
 
-
     //                                                        RTYPE              ITYPE              BRANCH             JUMP               MEMTYPE            NOP                    REG                IMM                  LABEL            COMMENT              SYS
     public static Color[]   syntaxColors                   = {new Color(0,0,255),new Color(0,0,255),new Color(0,0,255),new Color(0,0,255),new Color(0,0,255),new Color(127,127,127),new Color(255,0,0),new Color(255,153,0),new Color(0,0,0),new Color(0, 153, 0),new Color(204, 0, 102)};
     public static boolean[] syntaxBold                     = {false,             false,             false,             false,             false,             false,                 false,             false,               true,            false,               false};
     public static boolean[] syntaxItalic                   = {false,             false,             false,             false,             false,             false,                 false,             false,               false,           false,               false};
+
+    public static void resetConfig() {
+        cfgInstrPretty                   = true;
+
+        cfgArch                          = "plpmips";
+
+        hostIsLinux                      = false;
+
+        simForwardingUnit                = true;
+        simDynamicMemoryAllocation       = false;
+        simRefreshGUIDuringSimRun        = true;
+        simRefreshDevDuringSimRun        = false;
+        simRunnerDelay                   = 100;
+        cfgVerbose                       = true;
+        simBusReturnsZeroForUninitRegs   = true;
+        simAllowExecutionOfArbitraryMem  = true;
+        simDumpTraceOnFailedEvaluation   = false;
+        simDefaultRAMSize                = 0x1000000;
+        simRAMStartingAddress            = 0x10000000;
+        simIgnoreSavedSimState           = false;
+        simCyclesPerStep                 = 1;
+        simHighlightLine                 = false;
+        simFunctional                    = true;
+
+        relativeDefaultWindowWidth       = 0.8;
+        relativeDefaultWindowHeight      = 0.8;
+
+        threadedModRefreshRate           = 100;
+        threadedModEnabled               = true;
+
+        prgProgramInChunks               = true;
+        prgMaxChunkSize                  = 2048; //16384;
+        prgReadTimeout                   = 500;
+        prgNexys3ProgramWorkaround       = true;
+
+        devSyntaxHighlighting            = true;
+        devSyntaxHighlightOnAssemble     = false;
+        nothighlighting                  = true;
+        filetoolarge                     = 10000;
+
+        maxUndoLength                    = 20;
+
+        devFont                          = "Monospaced";
+        devFontSize                      = 12;
+        devBackground                    = Color.WHITE;
+        devForeground                    = Color.BLACK;
+
+        devMaxUndoEntries                = 64000;
+    }
 }

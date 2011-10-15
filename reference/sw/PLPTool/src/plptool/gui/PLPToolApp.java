@@ -42,16 +42,17 @@ public class PLPToolApp extends SingleFrameApplication {
     @Override protected void startup() {
 
         if(java.awt.GraphicsEnvironment.isHeadless()) {
-            Msg.E("Can not launch GUI in a headless environment!", Constants.PLP_GENERIC_ERROR, null);
+            Msg.E("Can not launch GUI in a headless environment!",
+                  Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV, null);
             System.exit(-1);
         }
 
         if(serialTerminal) {
             plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
-
             term.setVisible(true);
-        }
-        else {
+            
+        } else {
+            ProjectDriver.loadConfig();
             ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, "plpmips"); // default to plpmips for now
             if(Constants.debugLevel > 0) {
                 con = new ConsoleFrame(plp);
@@ -107,6 +108,12 @@ public class PLPToolApp extends SingleFrameApplication {
         // Print buildinfo and quit
         if(args.length == 1 && args[0].equals("--buildinfo")) {
             Msg.M(plptool.Version.stamp);
+            return;
+        }
+
+        // Remove config file / reset config and quit
+        if(args.length == 1 && args[0].equals("--removeconfig")) {
+            ProjectDriver.removeConfig();
             return;
         }
 
