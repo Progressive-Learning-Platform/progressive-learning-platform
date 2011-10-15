@@ -411,6 +411,7 @@ public class Develop extends javax.swing.JFrame {
             case 2:
                 return;
             default:
+                ProjectDriver.saveConfig();
                 System.exit(0);
         }
     }

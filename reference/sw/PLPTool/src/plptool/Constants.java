@@ -119,6 +119,9 @@ public class Constants {
     public static final int PLP_BACKEND_THREAD_EXCEPTION         = 1034;
     public static final int PLP_BACKEND_NO_NATIVE_SERIAL_LIBS    = 1035;
     public static final int PLP_BACKEND_ASM_DOES_NOT_EXIST       = 1036;
+    public static final int PLP_BACKEND_SAVE_CONFIG_FAILED       = 1037;
+    public static final int PLP_BACKEND_LOAD_CONFIG_FAILED       = 1038;
+    public static final int PLP_BACKEND_GUI_ON_HEADLESS_ENV      = 1039;
 
     // Framework errors
     public static final int PLP_ISA_NO_SIM_CLI                   = 2048;
