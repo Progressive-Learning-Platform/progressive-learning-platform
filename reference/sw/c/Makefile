@@ -62,10 +62,10 @@ clean.bison:
 
 build.link:
 	+@echo link
-	+@$(CC) $(LDFLAGS) -o pcc $(OBJECTS) >>link.build.out 2>&1 || (echo LINK FAIL $*; cat link.build.out; exit 1)
+	+@$(CC) $(LDFLAGS) -o plpcc $(OBJECTS) >>link.build.out 2>&1 || (echo LINK FAIL $*; cat link.build.out; exit 1)
 
 clean: clean.flex clean.bison clean.files
-	+@rm -f pcc
+	+@rm -f plpcc
 
 build: build.flex build.bison build.files build.link
 

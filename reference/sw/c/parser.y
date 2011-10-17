@@ -16,7 +16,7 @@ extern int yylex (void);
 void yyerror(s)
 char *s;
 {
-	err("[pcc] syntax error at %d:%d\n", line, column); 
+	err("[plpcc] syntax error at %d:%d\n", line, column); 
 }
 
 %}
