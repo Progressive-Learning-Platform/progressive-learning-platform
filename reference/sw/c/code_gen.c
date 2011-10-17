@@ -281,7 +281,7 @@ int get_offset(symbol_table *t, char *s) {
 
 char* gen_label(void) {
 	char *ret = malloc(11*sizeof(char));
-	sprintf(ret, "PCC_%06d", gen_label_index);
+	sprintf(ret, "PLPCC_%06d", gen_label_index);
 	gen_label_index++;
 	return ret;
 }
