@@ -20,6 +20,7 @@ package plptool.gui;
 
 import plptool.Constants;
 import plptool.Msg;
+import plptool.mips.MIPSInstr;
 
 import java.io.*;
 
