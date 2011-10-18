@@ -1,0 +1,192 @@
+/*
+    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
+package plptool.gui;
+
+import plptool.gui.frames.ConsoleFrame;
+import plptool.gui.frames.SimShell;
+import org.jdesktop.application.Application;
+import org.jdesktop.application.SingleFrameApplication;
+import plptool.Msg;
+import plptool.Constants;
+
+/**
+ * The main class of the application.
+ */
+public class PLPToolApp extends SingleFrameApplication {
+    
+    SimShell simUI;
+    static String plpFilePath = null;
+    static boolean open = false;
+    static boolean serialTerminal = false;
+    ConsoleFrame con;
+
+    /**
+     * At startup create and show the main frame of the application.
+     */
+    @Override protected void startup() {
+
+        if(java.awt.GraphicsEnvironment.isHeadless()) {
+            Msg.E("Can not launch GUI in a headless environment!",
+                  Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV, null);
+            System.exit(-1);
+        }
+
+        if(serialTerminal) {
+            plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
+            term.setVisible(true);
+            
+        } else {
+            ProjectDriver.loadConfig();
+            ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, "plpmips"); // default to plpmips for now
+            if(Constants.debugLevel > 0) {
+                con = new ConsoleFrame(plp);
+                con.setVisible(true);
+            }
+            plp.app = this;
+
+            Msg.output = plp.g_dev.getOutput();
+            if(plpFilePath != null)
+                plp.open(plpFilePath, true);
+        }
+
+        // show(mainWindow);
+    }
+
+    /**
+     * This method is to initialize the specified window by injecting resources.
+     * Windows shown in our application come fully initialized from the GUI
+     * builder, so this additional configuration is not needed.
+     */
+    @Override protected void configureWindow(java.awt.Window root) {
+    }
+
+    /**
+     * A convenient static getter for the application instance.
+     * @return the instance of PLPToolApp
+     */
+    public static PLPToolApp getApplication() {
+        return Application.getInstance(PLPToolApp.class);
+    }
+
+    /**
+     * Main method launching the application.
+     */
+    public static void main(String[] args) {
+
+        // Silent mode
+        if(args.length >= 1 && args[0].equals("--suppress-output")) {
+            Msg.silent = true;
+            if(args.length > 1) {
+                String[] newargs = new String[args.length - 1];
+                System.arraycopy(args, 1, newargs, 0, newargs.length);
+                args = newargs;
+            } else
+                args = new String[0];
+        }
+
+        Msg.M("\n" + Constants.copyrightString);
+        Msg.M("");
+
+        java.io.File fileToOpen = null;
+
+        // Print buildinfo and quit
+        if(args.length == 1 && args[0].equals("--buildinfo")) {
+            Msg.M(plptool.Version.stamp);
+            return;
+        }
+
+        // Remove config file / reset config and quit
+        if(args.length == 1 && args[0].equals("--removeconfig")) {
+            ProjectDriver.removeConfig();
+            return;
+        }
+
+        // Debug level setting
+        if(args.length >= 2 && args[0].equals("-d")) {
+            Constants.debugLevel = Integer.parseInt(args[1]);
+            Msg.M("Debug level set to " + Constants.debugLevel);
+            if(args.length > 2) {
+                String[] newargs = new String[args.length - 2];
+                System.arraycopy(args, 2, newargs, 0, newargs.length);
+                args = newargs;
+            } else
+                args = new String[0];
+        }
+
+        // Classroom mode
+        if(args.length >= 2 && args[0].equals("-x")) {
+            plptool.Config.devFontSize = Integer.parseInt(args[1]);
+            Msg.M("Classroom Demo Mode");
+            if(args.length > 2) {
+                String[] newargs = new String[args.length - 2];
+                System.arraycopy(args, 2, newargs, 0, newargs.length);
+                args = newargs;
+            } else
+                args = new String[0];
+        }
+
+        if(Constants.debugLevel >= 1)
+            plptool.PLPToolbox.getOS(true);
+
+        if(args.length == 1) {
+            fileToOpen = new java.io.File(args[0]);
+        }
+
+        if(args.length == 1 && args[0].equals("--serialterminal")) {
+            serialTerminal = true;
+            launch(PLPToolApp.class, args);
+        } else if(args.length > 0 && args[0].equals("-s")) {
+            if(args.length != 2) {
+                System.out.println("Usage: PLPTool -s <plpfile>");
+            } else {
+                ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
+                if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
+                if(plp.asm.isAssembled())
+                    plp.simulate();
+            }
+        } else  if(args.length > 0 && args[0].equals("-plp")) {
+            ProjectFileManipulator.CLI(args);
+        } else if(args.length == 1 && fileToOpen != null && fileToOpen.exists()) {
+            open = true;
+            plpFilePath = args[0];
+            launch(PLPToolApp.class, args);
+        } else if(args.length == 0) {
+            launch(PLPToolApp.class, args);
+        } else {
+            Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
+            System.out.println();
+            System.out.println("Usage:\n");
+            System.out.println("  java -jar PLPTool.jar");
+            System.out.println("       Launch PLP Tool GUI");
+            System.out.println();
+            System.out.println("  java -jar PLPTool.jar <plpfile>");
+            System.out.println("       Launch PLP Tool GUI and open <plpfile>");
+            System.out.println();
+            System.out.println("Non-GUI options:\n");
+            System.out.println("  -s   <plpfile>");
+            System.out.println("       Launch the command line simulator to simulate <plpfile>.");
+            System.out.println();
+            System.out.println("  -plp <plpfile> [command]");
+            System.out.println("       If no command is specified, print out the list of source files contained in <plpfile>.");
+            System.out.println("       This will also create <plpfile> if it does not exist with main.asm as source file.");
+            System.out.println();
+            ProjectFileManipulator.helpMessage();
+        }
+    }
+}
