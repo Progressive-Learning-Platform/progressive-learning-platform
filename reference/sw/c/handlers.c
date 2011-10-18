@@ -7,9 +7,11 @@
 #include "symbol.h"
 #include "log.h"
 #include "code_gen.h"
+#include "handlers.h"
 
 #define e(...) { sprintf(buffer, __VA_ARGS__); emit(buffer); }
-#define o(x) (get_offset(x->t, x->id) + (4*adjust))
+#define o(x) (get_offset(x->t, x->id) < 0 ? get_offset(x->t, x->id) : get_offset(x->t, x->id) + (4 * adjust))
+#define r(x) (get_offset(x->t, x->id) < 0 ? "$gp" : "$sp")
 #define push(x) { e("push %s\n", x); adjust++; }
 #define pop(x) { e("pop %s\n", x); adjust--; }
 
@@ -19,13 +21,42 @@ char buffer[1024];
 int adjust = 0;
 int LVALUE = 0;
 
+int get_offset(symbol_table *t, char *s) {
+	int offset = 0;
+	int parent_offset = 0;
+	symbol *curr;
+
+	if (t == NULL) {
+		err("[code_gen] %s undeclared\n", s);
+		return offset;
+	}
+
+	curr = t->s;
+
+	/* look up in the current symbol table, then up to the next, and so forth */
+	while (curr != NULL) {
+		if (strcmp(curr->value,s) == 0) {
+			if (t->parent == NULL)
+				/* this is the global symbol table, return a negative offset, as it will be indexed in the global pointer */	
+				return -offset;
+			return offset;
+		}
+		offset += 4;
+		curr = curr->up;
+	}
+	
+	/* if we get here, we need to look up another table */
+	parent_offset = get_offset(t->parent, s);
+	return parent_offset < 0 ? parent_offset : offset + parent_offset;
+}
+
 void handle_identifier(node *n) {
 	if (LVALUE) {
 		/* grab the identifier and put a pointer to it in t0 */
-		e("addiu $t0, $sp, %d\n", o(n));
+		e("addiu $t0, %s, %d\n", r(n), o(n));
 	} else {
 		/* grab the identifier and dereference it */
-		e("lw $t0, %d($sp)\n", o(n));	
+		e("lw $t0, %d(%s)\n", o(n), r(n));	
 	}
 }
 
@@ -359,7 +390,7 @@ void handle_init_declarator(node *n) {
 		x = n->children[0]->children[1]->children[0];
 
 	/* now make the assignment */
-	e("sw $t0, %d($sp)\n", o(x));
+	e("sw $t0, %d(%s)\n", o(x), r(x));
 }
 
 void handle_struct_union(node *n) {

@@ -2,6 +2,7 @@
 #define HANDLERS
 #include "types.h"
 
+int get_offset(symbol_table*, char*);
 void handle_identifier(node *);
 void handle_constant(node *);
 void handle_string(node *);
