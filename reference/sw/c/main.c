@@ -107,7 +107,7 @@ void handle_opts(int argc, char *argv[]) {
 	if (ovalue != NULL) {
 		S_FILE_OUTPUT = ovalue;
 	} else {
-		S_FILE_OUTPUT = malloc(9);
+		S_FILE_OUTPUT = malloc(11);
 		sprintf(S_FILE_OUTPUT,"plpcc.out");
 	}
 	log("[plpcc] output file: %s\n", S_FILE_OUTPUT);
