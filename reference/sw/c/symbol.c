@@ -113,6 +113,8 @@ node* install_symbol(symbol_table *t, node *n) {
 			if (lookup(t, ids->id)) {
 				err("[symbol] symbol %s already declared in this scope\n", ids->id);
 			}
+			if (strcmp(n->id, "parameter_declaration") == 0)
+				s->attr |= ATTR_PARAM;
 			if (ids->pointer)
 				s->attr |= ATTR_POINTER; 
 			s->value = ids->id;
