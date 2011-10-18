@@ -74,8 +74,14 @@ char* match_type(char *t) {
 	
 node* install_symbol(symbol_table *t, node *n) {
 	symbol *s = malloc(sizeof(symbol));
+	symbol *end = t->s;
 
-	s->up = t->s;
+	/* we want the end of the list to keep things in order in the backend */
+	if (end != NULL)
+		while (end->up != NULL)
+			end = end->up;
+
+	s->up = NULL;
 	s->attr = 0;
 	s->type = NULL;
 	s->value = NULL;
@@ -118,11 +124,16 @@ node* install_symbol(symbol_table *t, node *n) {
 			if (ids->pointer)
 				s->attr |= ATTR_POINTER; 
 			s->value = ids->id;
-			t->s = s;
+			if (end == NULL) /* first node */
+				t->s = s;
+			else
+				end->up = s;
 			vlog("[symbol] created symbol: %s, type %s, attr 0x%08x\n", s->value, s->type, s->attr);
 			if (ids->up != NULL) {
+				end = s;
 				s = malloc(sizeof(symbol));
-				s->up = t->s;
+				end->up = s;
+				s->up = NULL;
 				s->attr = t->s->attr;
 				s->type = t->s->type;
 				s->value = NULL;
@@ -211,7 +222,7 @@ node* install_function(symbol_table *t, node *n) {
 		node *temp_node = op("declaration", 2, n->children[0], op("init_declarator_list", 1, n->children[1]));
 		install_symbol(t, temp_node); /* install the function */
 		/* the last created symbol table should be the one associated with this function. */
-		t->children[t->num_children-1]->assoc = t->s;
+		t->children[t->num_children-1]->assoc = get_last_symbol(t);
 
 		if (strcmp(n->children[2]->id, "declaration_list") == 0) {
 			/* type 1 */
@@ -221,7 +232,7 @@ node* install_function(symbol_table *t, node *n) {
 		node *temp_node = op("declaration", 2, op("declaration_specifier", 1, type("void")), op("init_declarator_list", 1, n->children[0]));
 		install_symbol(t, temp_node); /* install the function */
 		/* the last created symbol table should be the one associated with this function. */
-		t->children[t->num_children-1]->assoc = t->s;
+		t->children[t->num_children-1]->assoc = get_last_symbol(t);
 		if (strcmp(n->children[1]->id, "declaration_list") == 0) {
 			/* type 3 */
 		}
@@ -242,4 +253,14 @@ void install_parameters(symbol_table *t, node *n) {
 	/* each of n's children is a parameter declaration */
 	for (i=0; i<n->num_children; i++)
 		install_symbol(t, n->children[i]);
+}
+
+symbol *get_last_symbol(symbol_table *t) {
+	symbol *ret = NULL;
+	symbol *curr = t->s;
+	while (curr != NULL) {
+		ret = curr;
+		curr = curr->up;
+	}
+	return ret;
 }

@@ -8,5 +8,6 @@ symbol *find_symbol(symbol_table*, char*);
 symbol_table* new_symbol_table(symbol_table*);
 void print_symbols(symbol_table*, FILE*, int);
 void install_parameters(symbol_table*, node*);
+symbol *get_last_symbol(symbol_table*);
 
 #endif 

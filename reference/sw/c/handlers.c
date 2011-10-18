@@ -10,20 +10,22 @@
 #include "handlers.h"
 
 #define e(...) { sprintf(buffer, __VA_ARGS__); emit(buffer); }
-#define o(x) (get_reg(x->t, x->id) == 0 ? get_offset(x->t, x->id) + 4 : get_offset(x->t, x->id))
-#define r(x) (get_reg(x->t, x->id) == 0 ? "$fp" : "$gp")
-#define push(x) { e("push %s\n", x); }
-#define pop(x) { e("pop %s\n", x); }
+#define o(x) (get_reg(x->t, x->id) == 0 ? get_offset(x->t, x->id) + (adjust * 4) : get_offset(x->t, x->id))
+#define r(x) (get_reg(x->t, x->id) == 0 ? "$sp" : "$gp")
+#define push(x) { e("push %s\n", x); adjust++; }
+#define pop(x) { e("pop %s\n", x); adjust--; }
 
 extern symbol *labels;
 extern symbol *constants;
 char buffer[1024];
+int adjust = 1;
 int LVALUE = 0;
 int params = 0;
+int locals = 0;
 
 void epilogue(void) {
-	e("addiu $sp, $sp, %d\n", params * 4);
-	params = 0;
+	e("addiu $sp, $sp, %d\n", locals);
+	e("return\n");
 }
 
 /* 0 = sp, 1 = gp */
@@ -119,11 +121,23 @@ void handle_postfix_expr(node *n) {
 			e("sw $t2, 0($t0)\n");
 			e("move $t0, $t1\n");
 		}
+	} else if (strcmp(n->children[1]->id, "dec") == 0) {
+		if (LVALUE) {
+			err("[code_gen] invalid lvalue\n");
+		} else {
+			/* post deccrement */
+			e("lw $t1, 0($t0)\n");
+			e("addiu $t2, $t1, -1\n");
+			e("sw $t2, 0($t0)\n");
+			e("move $t0, $t1\n");
+		}
 	} else if (strcmp(n->children[1]->id, "argument_expr_list") == 0) {
 		/* function call */
 		handle(n->children[1]);
 		e("call %s\n", n->children[0]->id);
-		epilogue();
+		e("addiu $sp, $sp, %d\n", params * 4);
+		e("move $t0, $v0\n");
+		params = 0;
 	} else {
 		err("[code_gen] postfix expressions not fully implemented\n");
 	}	
@@ -131,8 +145,8 @@ void handle_postfix_expr(node *n) {
 
 void handle_argument_expr_list(node *n) {
 	int i;
-	for (i=0; i<n->num_children; i++) {
-		handle(n->children[i]);
+	for (i=n->num_children; i>0; i--) {
+		handle(n->children[i-1]);
 		push("$t0");
 		params++;
 	}
@@ -243,15 +257,19 @@ void handle_greater_equal_than(node *n) {
 }
 
 void handle_equality(node *n) {
+	/* TODO: implement a better equivalence routine */
+	char *neq = gen_label();
+	char *done = gen_label();
 	handle(n->children[0]);
 	push("$t0");
 	handle(n->children[1]);
 	pop("$t1");
-	e("nor $t2, $t0, $t0\n"); /* ~t0 */
-	e("nor $t3, $t1, $t1\n"); /* ~t1 */
-	e("and $t4, $t0, $t3\n"); /* t0 & ~t1 */
-	e("and $t5, $t1, $t2\n"); /* t1 & ~t0 */
-	e("or $t0, $t4, $t5\n");  /* t0 = xnor = equality */
+	e("subu $t0, $t0, $t1\n"); /* if t0 == t1, t0 will be 0 */
+	e("bne $t0, $zero, %s\nnop\n", neq);
+	e("ori $t0, $zero, 1\nj %s\nnop\n", done);
+	e("%s:\n", neq);
+	e("move $t0, $zero\n");
+	e("%s:\n", done);
 }
 
 void handle_equality_not(node *n) {
@@ -608,7 +626,7 @@ void handle_jump_statement(node *n) {
 		if (n->num_children == 2)
 			handle(n->children[1]);
 			e("move $v0, $t0\n");
-		e("return\n");
+		epilogue();
 	} else {
 		err("[code_gen] jump statements not fully implemented\n");
 	}
@@ -667,8 +685,10 @@ void handle_function_definition(node *n) {
 
 	sprintf(buffer, "addiu $sp, $sp, -%d\n", i*4);
 	emit(buffer);
-	e("move $fp, $sp\n");
+	locals = i*4;
 	
 	/* call handle on the compound statement */
 	handle(n->children[n->num_children-1]);
+
+	epilogue();
 }
