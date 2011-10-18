@@ -248,10 +248,15 @@ void handle(node *n) {
 }
 
 void emit(char *s) {
+	int tab = 0;
+	/* check to see if we need to insert a tab or not */
+	if (s[strlen(s)-2] != ':')
+		tab = 1;
 	if (program == NULL) {
-		program = strdup(s);
+		program = strdup(s); /* first emit from the compiler will ALWAYS be a label */
 	} else {
-		program = realloc(program, (strlen(program)+strlen(s)+1)*sizeof(char));
+		program = realloc(program, (strlen(program)+strlen(s)+(tab ? 2 : 1))*sizeof(char));
+		if (tab) program = strcat(program, "\t");
 		program = strcat(program, s);
 	}
 }
