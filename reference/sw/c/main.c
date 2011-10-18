@@ -35,8 +35,8 @@ node *parse_tree_head = NULL;
 char *program = NULL;
 
 void print_usage(void) {
-	printf("pcc - plp c compiler\n\n");
-	printf("usage: pcc <options> <input file(s)>\n");
+	printf("plpcc - plp c compiler\n\n");
+	printf("usage: plpcc <options> <input file(s)>\n");
 	printf("options:\n");
 	printf("-o <filename>	output filename\n");
 	printf("-d [0,1,2]	debug level (0=off (default), 1=on, 2=verbose)\n");
@@ -85,14 +85,14 @@ void handle_opts(int argc, char *argv[]) {
 
 	if (dvalue != NULL) {
 		LOG_LEVEL = atoi(dvalue);
-		vlog("[pcc] setting log level: %d\n", LOG_LEVEL);
+		vlog("[plpcc] setting log level: %d\n", LOG_LEVEL);
 	}
 
 	/* grab remaining values as inputs */
 	if (optind < argc) {
 		while (optind < argc) {
 			ivalue = argv[optind];
-			log("[pcc] input file: %s\n", argv[optind]);
+			log("[plpcc] input file: %s\n", argv[optind]);
 			optind++;
 		}
 	}
@@ -107,21 +107,21 @@ void handle_opts(int argc, char *argv[]) {
 	if (ovalue != NULL) {
 		S_FILE_OUTPUT = ovalue;
 	} else {
-		S_FILE_OUTPUT = malloc(9);
-		sprintf(S_FILE_OUTPUT,"pcc.out");
+		S_FILE_OUTPUT = malloc(11);
+		sprintf(S_FILE_OUTPUT,"plpcc.out");
 	}
-	log("[pcc] output file: %s\n", S_FILE_OUTPUT);
+	log("[plpcc] output file: %s\n", S_FILE_OUTPUT);
 
 	if (psymbol) {
 		S_SYMBOL_OUTPUT = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) + 8));
 		sprintf(S_SYMBOL_OUTPUT, "%s.symbol", S_FILE_OUTPUT);
-		log("[pcc] symbol table output: %s\n", S_SYMBOL_OUTPUT);
+		log("[plpcc] symbol table output: %s\n", S_SYMBOL_OUTPUT);
 	}
 
 	if (pparse) {
 		S_PARSE_OUTPUT = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) + 7));
 		sprintf(S_PARSE_OUTPUT, "%s.parse", S_FILE_OUTPUT);
-		log("[pcc] parse tree output: %s\n", S_PARSE_OUTPUT);
+		log("[plpcc] parse tree output: %s\n", S_PARSE_OUTPUT);
 	}
 	
 }
@@ -132,46 +132,46 @@ int main(int argc, char *argv[]) {
 	handle_opts(argc, argv);	
 
 	/* open files */
-	vlog("[pcc] opening files\n");
+	vlog("[plpcc] opening files\n");
 	FILE_INPUT = fopen(S_FILE_INPUT,"r");
 	if (FILE_INPUT == NULL) {
-		err("[pcc] cannot open input file: %s\n", S_FILE_INPUT);
+		err("[plpcc] cannot open input file: %s\n", S_FILE_INPUT);
 	}
 	FILE_OUTPUT = fopen(S_FILE_OUTPUT,"w");
 	if (FILE_OUTPUT == NULL) {
-		err("[pcc] cannot open output file: %s\n", S_FILE_OUTPUT);
+		err("[plpcc] cannot open output file: %s\n", S_FILE_OUTPUT);
 	}
 	yyset_in(FILE_INPUT);
 
 	if (S_SYMBOL_OUTPUT != NULL) {
 		SYMBOL_OUTPUT = fopen(S_SYMBOL_OUTPUT, "w");
 		if (SYMBOL_OUTPUT == NULL) {
-			err("[pcc] cannot open symbol table output file: %s\n", S_SYMBOL_OUTPUT);
+			err("[plpcc] cannot open symbol table output file: %s\n", S_SYMBOL_OUTPUT);
 		}
 	}
 
 	if (S_PARSE_OUTPUT != NULL) {
 		PARSE_OUTPUT = fopen(S_PARSE_OUTPUT, "w");
 		if (PARSE_OUTPUT == NULL) {
-			err("[pcc] cannot open parse tree output file: %s\n", S_PARSE_OUTPUT);
+			err("[plpcc] cannot open parse tree output file: %s\n", S_PARSE_OUTPUT);
 		}
 	}
 
 	/* create an empty symbol table */
 	sym = new_symbol_table(NULL);
 
-	log("[pcc] starting frontend\n");
+	log("[plpcc] starting frontend\n");
 	yyparse();
 
 	/* print the parse tree */
 	if (PARSE_OUTPUT != NULL) {
-		vlog("[pcc] printing parse tree\n");
+		vlog("[plpcc] printing parse tree\n");
 		print_tree(parse_tree_head, PARSE_OUTPUT, 0);
 	}
 
 	/* print the symbol table */
 	if (SYMBOL_OUTPUT != NULL) {
-		vlog("[pcc] printing symbol table\n");
+		vlog("[plpcc] printing symbol table\n");
 		print_symbols(sym, SYMBOL_OUTPUT, 0);
 	}
 
@@ -181,10 +181,10 @@ int main(int argc, char *argv[]) {
 		fprintf(FILE_OUTPUT, "%s", program);
 	}
 
-	vlog("[pcc] closing files\n");
+	vlog("[plpcc] closing files\n");
 	fclose(FILE_INPUT);
 	fclose(FILE_OUTPUT);
 
-	log("[pcc] done\n");
+	log("[plpcc] done\n");
 	return 0;
 }
