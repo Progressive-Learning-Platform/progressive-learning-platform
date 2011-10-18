@@ -31,6 +31,7 @@ public class FindAndReplace extends javax.swing.JFrame {
     private ProjectDriver plp;
     private boolean haveTriedFromTop;
     private int curIndex;
+    private String searchStr;
 
     /** Creates new form FindAndReplace */
     public FindAndReplace(ProjectDriver plp) {
@@ -40,6 +41,7 @@ public class FindAndReplace extends javax.swing.JFrame {
         haveTriedFromTop = false;
         this.plp = plp;
         curIndex = 0;
+        searchStr = "";
     }
 
     public void setCurIndex(int curIndex) {
@@ -66,11 +68,17 @@ public class FindAndReplace extends javax.swing.JFrame {
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(FindAndReplace.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
+        setAlwaysOnTop(true);
         setName("Form"); // NOI18N
         setResizable(false);
 
         txtFind.setText(resourceMap.getString("txtFind.text")); // NOI18N
         txtFind.setName("txtFind"); // NOI18N
+        txtFind.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtFindFocusGained(evt);
+            }
+        });
         txtFind.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtFindKeyPressed(evt);
@@ -79,6 +87,11 @@ public class FindAndReplace extends javax.swing.JFrame {
 
         txtReplace.setText(resourceMap.getString("txtReplace.text")); // NOI18N
         txtReplace.setName("txtReplace"); // NOI18N
+        txtReplace.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtReplaceFocusGained(evt);
+            }
+        });
 
         btnGo.setMnemonic('N');
         btnGo.setText(resourceMap.getString("btnGo.text")); // NOI18N
@@ -179,18 +192,23 @@ public class FindAndReplace extends javax.swing.JFrame {
 
         int caret = plp.g_dev.getEditor().getText().indexOf(txtFind.getText(), curIndex);
 
+        if(!txtFind.getText().equals(searchStr)) {
+            haveTriedFromTop = false;
+            searchStr = txtFind.getText();
+        }
+
         if(caret > -1) {
             haveTriedFromTop = false;
             findAndReplaceString(caret);
         } else if(!haveTriedFromTop) {
-            haveTriedFromTop = true;
-
             caret = plp.g_dev.getEditor().getText().indexOf(txtFind.getText(), 0);
 
             if(caret > -1)
                 findAndReplaceString(caret);
-            else
+            else {
                 Msg.M("String not found: \"" + txtFind.getText() + "\"");
+                haveTriedFromTop = true;
+            }
         }
         else
             Msg.M("String not found: \"" + txtFind.getText() + "\"");
@@ -224,6 +242,16 @@ public class FindAndReplace extends javax.swing.JFrame {
 
         Msg.M(replaceCount + " instances of \"" + txtFind.getText() + "\" replaced.");
     }//GEN-LAST:event_btnReplaceAllActionPerformed
+
+    private void txtReplaceFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtReplaceFocusGained
+        txtReplace.setSelectionStart(0);
+        txtReplace.setSelectionEnd(txtReplace.getText().length());
+    }//GEN-LAST:event_txtReplaceFocusGained
+
+    private void txtFindFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFindFocusGained
+        txtFind.setSelectionStart(0);
+        txtFind.setSelectionEnd(txtFind.getText().length());
+    }//GEN-LAST:event_txtFindFocusGained
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
