@@ -256,31 +256,8 @@ void emit(char *s) {
 	}
 }
 
-int get_offset(symbol_table *t, char *s) {
-	int offset = 0;
-	symbol *curr;
-
-	if (t == NULL) {
-		err("[code_gen] %s undeclared\n", s);
-		return offset;
-	}
-
-	curr = t->s;
-
-	/* look up in the current symbol table, then up to the next, and so forth */
-	while (curr != NULL) {
-		if (strcmp(curr->value,s) == 0)
-			return offset;
-		offset += 4;
-		curr = curr->up;
-	}
-	
-	/* if we get here, we need to look up another table */
-	return offset + get_offset(t->parent, s);	
-}
-
 char* gen_label(void) {
-	char *ret = malloc(11*sizeof(char));
+	char *ret = malloc(13*sizeof(char));
 	sprintf(ret, "PLPCC_%06d", gen_label_index);
 	gen_label_index++;
 	return ret;
