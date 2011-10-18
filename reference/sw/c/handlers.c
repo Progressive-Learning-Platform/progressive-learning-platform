@@ -10,8 +10,8 @@
 #include "handlers.h"
 
 #define e(...) { sprintf(buffer, __VA_ARGS__); emit(buffer); }
-#define o(x) (get_reg(x->t, x->id) == 0 ? get_offset(x->t, x->id) + (adjust * 4) : get_offset(x->t, x->id))
-#define r(x) (get_reg(x->t, x->id) == 0 ? "$sp" : "$gp")
+#define o(x) (get_offset(x->t, x->id) + (adjust * 4))
+#define g(x) (is_global(x->t, x->id))
 #define push(x) { e("push %s\n", x); adjust++; }
 #define pop(x) { e("pop %s\n", x); adjust--; }
 
@@ -28,8 +28,8 @@ void epilogue(void) {
 	e("return\n");
 }
 
-/* 0 = sp, 1 = gp */
-int get_reg(symbol_table *t, char *s) {
+/* 0 = local, 1 = global */
+int is_global(symbol_table *t, char *s) {
 	symbol *curr;
 
 	if (t == NULL) {
@@ -48,12 +48,11 @@ int get_reg(symbol_table *t, char *s) {
 		}
 		curr = curr->up;
 	}
-	return get_reg(t->parent, s);
+	return is_global(t->parent, s);
 }
 
 int get_offset(symbol_table *t, char *s) {
 	int offset = 0;
-	int parent_offset = 0;
 	symbol *curr;
 
 	if (t == NULL) {
@@ -66,9 +65,6 @@ int get_offset(symbol_table *t, char *s) {
 	/* look up in the current symbol table, then up to the next, and so forth */
 	while (curr != NULL) {
 		if (strcmp(curr->value,s) == 0) {
-			if (t->parent == NULL)
-				/* this is the global symbol table, return a negative offset, as it will be indexed in the global pointer */	
-				return -offset;
 			if (curr->attr & ATTR_PARAM)
 				/* if this is a parameter, then add another 92 bytes to the offset, to get past the saved state of the caller */
 				return offset + 92;
@@ -80,17 +76,27 @@ int get_offset(symbol_table *t, char *s) {
 	}
 	
 	/* if we get here, we need to look up another table */
-	parent_offset = get_offset(t->parent, s);
-	return get_reg(t->parent, s) ? parent_offset : offset + parent_offset;
+	return offset + get_offset(t->parent, s);
 }
 
 void handle_identifier(node *n) {
 	if (LVALUE) {
-		/* grab the identifier and put a pointer to it in t0 */
-		e("addiu $t0, %s, %d\n", r(n), o(n));
+		if (g(n)) {
+			/* just grab the global named pointer */
+			e("li $t0, %s\n", n->id);
+		} else {
+			/* grab the identifier and put a pointer to it in t0 */
+			e("addiu $t0, $sp, %d\n", o(n));
+		}
 	} else {
-		/* grab the identifier and dereference it */
-		e("lw $t0, %d(%s)\n", o(n), r(n));	
+		if (g(n)) {
+			/* grab and dereference */
+			e("li $t0, %s\n", n->id);
+			e("lw $t0, 0($t0)\n");
+		} else {
+			/* grab the identifier and dereference it */
+			e("lw $t0, %d($sp)\n", o(n));	
+		}
 	}
 }
 
@@ -436,21 +442,34 @@ void handle_init_declarator_list(node *n) {
 
 void handle_init_declarator(node *n) {
 	node *x;
+	int prev_lvalue;
 
-	/* init declarators may or may not have an initializer, if not, set the value to 0 */
-	if (n->num_children == 2)  /* we have an initializer */
-		handle(n->children[1]);
-	else
-		e("move $t0, $zero\n");
-
-	/* get the id */
+	/* get the id node */
 	if (n->children[0]->num_children == 1)
 		x = n->children[0]->children[0]->children[0];
 	else
 		x = n->children[0]->children[1]->children[0];
 
-	/* now make the assignment */
-	e("sw $t0, %d(%s)\n", o(x), r(x));
+	if (g(x)) {
+		/* global declaration */
+		/* this is a special case, where we need to actually grab the constant value ourselves */
+		/* By definition, global declarations may only be initialized to constants */
+		e("%s:\n", x->id);
+		if (n->num_children == 2) {
+			e(".word %s\n", n->children[1]->children[0]->id);
+		} else {
+			e(".word 0\n");
+		}
+	} else { /* a local variable initializer */
+		/* init declarators may or may not have an initializer, if not, set the value to 0 */
+		if (n->num_children == 2) { /* we have an initializer */
+			handle(n->children[1]);
+		} else {
+			e("move $t0, $zero\n");
+		}
+		/* now make the assignment, we can safely use o(x), because we know it's going to be on the stack */
+		e("sw $t0, %d($sp)\n", o(x));
+	}
 }
 
 void handle_struct_union(node *n) {
