@@ -10,16 +10,44 @@
 #include "handlers.h"
 
 #define e(...) { sprintf(buffer, __VA_ARGS__); emit(buffer); }
-#define o(x) (get_offset(x->t, x->id) < 0 ? get_offset(x->t, x->id) : get_offset(x->t, x->id) + (4 * adjust))
-#define r(x) (get_offset(x->t, x->id) < 0 ? "$gp" : "$sp")
-#define push(x) { e("push %s\n", x); adjust++; }
-#define pop(x) { e("pop %s\n", x); adjust--; }
+#define o(x) (get_reg(x->t, x->id) == 0 ? get_offset(x->t, x->id) + 4 : get_offset(x->t, x->id))
+#define r(x) (get_reg(x->t, x->id) == 0 ? "$fp" : "$gp")
+#define push(x) { e("push %s\n", x); }
+#define pop(x) { e("pop %s\n", x); }
 
 extern symbol *labels;
 extern symbol *constants;
 char buffer[1024];
-int adjust = 0;
 int LVALUE = 0;
+int params = 0;
+
+void epilogue(void) {
+	e("addiu $sp, $sp, %d\n", params * 4);
+	params = 0;
+}
+
+/* 0 = sp, 1 = gp */
+int get_reg(symbol_table *t, char *s) {
+	symbol *curr;
+
+	if (t == NULL) {
+		err("[code_gen] %s undeclared\n", s);
+		return 0;
+	}
+
+	curr = t->s;
+	
+	while (curr != NULL) {
+		if (strcmp(curr->value,s) == 0) {
+			if (t->parent == NULL)
+				return 1;
+			else
+				return 0;
+		}
+		curr = curr->up;
+	}
+	return get_reg(t->parent, s);
+}
 
 int get_offset(symbol_table *t, char *s) {
 	int offset = 0;
@@ -39,15 +67,19 @@ int get_offset(symbol_table *t, char *s) {
 			if (t->parent == NULL)
 				/* this is the global symbol table, return a negative offset, as it will be indexed in the global pointer */	
 				return -offset;
+			if (curr->attr & ATTR_PARAM)
+				/* if this is a parameter, then add another 92 bytes to the offset, to get past the saved state of the caller */
+				return offset + 92;
 			return offset;
 		}
-		offset += 4;
+		if (!(curr->attr & ATTR_FUNCTION))
+			offset += 4;
 		curr = curr->up;
 	}
 	
 	/* if we get here, we need to look up another table */
 	parent_offset = get_offset(t->parent, s);
-	return parent_offset < 0 ? parent_offset : offset + parent_offset;
+	return get_reg(t->parent, s) ? parent_offset : offset + parent_offset;
 }
 
 void handle_identifier(node *n) {
@@ -91,6 +123,7 @@ void handle_postfix_expr(node *n) {
 		/* function call */
 		handle(n->children[1]);
 		e("call %s\n", n->children[0]->id);
+		epilogue();
 	} else {
 		err("[code_gen] postfix expressions not fully implemented\n");
 	}	
@@ -101,6 +134,7 @@ void handle_argument_expr_list(node *n) {
 	for (i=0; i<n->num_children; i++) {
 		handle(n->children[i]);
 		push("$t0");
+		params++;
 	}
 }
 
@@ -209,7 +243,15 @@ void handle_greater_equal_than(node *n) {
 }
 
 void handle_equality(node *n) {
-	err("[code_gen] handle_equality not implemented\n");
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("nor $t2, $t0, $t0\n"); /* ~t0 */
+	e("nor $t3, $t1, $t1\n"); /* ~t1 */
+	e("and $t4, $t0, $t3\n"); /* t0 & ~t1 */
+	e("and $t5, $t1, $t2\n"); /* t1 & ~t0 */
+	e("or $t0, $t4, $t5\n");  /* t0 = xnor = equality */
 }
 
 void handle_equality_not(node *n) {
@@ -520,7 +562,19 @@ void handle_expression_statement(node *n) {
 }
 
 void handle_selection_statement(node *n) {
-	err("[code_gen] handle_selection_statement not implemented\n");
+	if (n->num_children == 3) { /* if else statement */
+		char *selection_label_else = gen_label();
+		char *selection_label_done = gen_label();
+		handle(n->children[0]);
+		e("beq $t0, $zero, %s\nnop\n", selection_label_else);
+		handle(n->children[1]);
+		e("j %s\nnop\n", selection_label_done);
+		e("%s:\n", selection_label_else);
+		handle(n->children[2]);
+		e("%s:\n", selection_label_done);
+	} else {
+		err("selection statement not fully implemented\n");
+	}
 }
 
 void handle_iteration_statement(node *n) {
@@ -591,7 +645,7 @@ void handle_function_definition(node *n) {
 	sprintf(buffer,"%s:\n",function_name);
 	emit(buffer);
 
-	/* reserve space on the stack for declarations related to this function (parameters and declarations) */
+	/* reserve space on the stack for declarations related to this function (declarations only, parameters are pushed on the stack by the caller) */
 	curr = n->t->s;
 	while (strcmp(curr->value, function_name) != 0)
 		curr = curr->up;
@@ -606,12 +660,14 @@ void handle_function_definition(node *n) {
 	i=0;
 	curr = scope->s;
 	while (curr != NULL) {
-		i++;
+		if (!(curr->attr & ATTR_PARAM))
+			i++;
 		curr = curr->up;
 	}
 
 	sprintf(buffer, "addiu $sp, $sp, -%d\n", i*4);
 	emit(buffer);
+	e("move $fp, $sp\n");
 	
 	/* call handle on the compound statement */
 	handle(n->children[n->num_children-1]);

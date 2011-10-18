@@ -13,6 +13,7 @@
 #define ATTR_VOLATILE   0x00000200
 #define ATTR_FUNCTION   0x00000400
 #define ATTR_POINTER    0x00000800
+#define ATTR_PARAM	0x00001000
 
 /* symbol table types */
 typedef struct symbol_t {

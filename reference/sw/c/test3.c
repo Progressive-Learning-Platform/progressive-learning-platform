@@ -3,6 +3,6 @@ int f(int b) {
 }
 
 int main(void) {
-	int a = 0;
+	int a = 20;
 	int b = f(a);
 }

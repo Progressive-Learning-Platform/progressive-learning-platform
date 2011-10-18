@@ -251,7 +251,7 @@ void emit(char *s) {
 	if (program == NULL) {
 		program = strdup(s);
 	} else {
-		program = realloc(program, (strlen(program)+strlen(s))*sizeof(char));
+		program = realloc(program, (strlen(program)+strlen(s)+1)*sizeof(char));
 		program = strcat(program, s);
 	}
 }
