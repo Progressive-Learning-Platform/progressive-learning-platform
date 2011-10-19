@@ -61,7 +61,7 @@ void handle_opts(int argc, char *argv[]) {
 
 	opterr = 0;
 	
-	while ((c = getopt(argc, argv, "d:o:spef")) != -1)
+	while ((c = getopt(argc, argv, "d:o:spefa")) != -1)
 		switch (c) {
 			case 'd':
 				dvalue = optarg;
