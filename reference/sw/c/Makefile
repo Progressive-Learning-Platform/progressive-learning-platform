@@ -95,7 +95,7 @@ clean: clean.flex clean.bison clean.files clean.files_standalone clean.files_jni
 
 %.build_jni:
 	+@echo jni $*
-	+@$(CC) $(JNI_OPTS) $(JNI_INCLUDE) $(OBJECTS) $*.c -o libplpcclib.so >> build_jni.out 2>&1 || (echo JNI FAIL; cat build_jni.out; exit 1)
+	+@$(CC) $(CFLAGS) $(JNI_OPTS) $(JNI_INCLUDE) $(OBJECTS) $*.c -o libplpcclib.so >> build_jni.out 2>&1 || (echo JNI FAIL; cat build_jni.out; exit 1)
 
 build: build.flex build.bison build.files build.files_standalone build.link
 
