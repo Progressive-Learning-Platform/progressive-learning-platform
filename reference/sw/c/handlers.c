@@ -8,8 +8,10 @@
 #include "log.h"
 #include "code_gen.h"
 #include "handlers.h"
+#include "line.h"
 
-#define e(...) { sprintf(buffer, __VA_ARGS__); emit(buffer); }
+#define e(...) { v(n); sprintf(buffer, __VA_ARGS__); emit(buffer); }
+#define v(x) { if (!is_visited(n->line) && ANNOTATE_SOURCE) { visit(n->line); sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line)); emit(buffer); }}
 #define o(x) (get_offset(x->t, x->id) + (adjust * 4))
 #define g(x) (is_global(x->t, x->id))
 #define push(x) { e("push %s\n", x); adjust++; }
@@ -17,13 +19,14 @@
 
 extern symbol *labels;
 extern symbol *constants;
+extern int ANNOTATE_SOURCE;
 char buffer[1024];
 int adjust = 1;
 int LVALUE = 0;
 int params = 0;
 int locals = 0;
 
-void epilogue(void) {
+void epilogue(node *n) {
 	e("addiu $sp, $sp, %d\n", locals);
 	e("return\n");
 }
@@ -56,7 +59,7 @@ int get_offset(symbol_table *t, char *s) {
 	symbol *curr;
 
 	if (t == NULL) {
-		err("[code_gen] %s undeclared\n", s);
+		err("code_gen] %s undeclared\n", s);
 		return offset;
 	}
 
@@ -105,7 +108,7 @@ void handle_constant(node *n) {
 }
 
 void handle_string(node *n) {
-	err("[code_gen] handle_string not implemented\n");
+	lerr(n->line, "[code_gen] handle_string not implemented\n");
 }
 
 void handle_postfix_expr(node *n) {
@@ -119,7 +122,7 @@ void handle_postfix_expr(node *n) {
 
 	if (strcmp(n->children[1]->id, "inc") == 0) {
 		if (LVALUE) {
-			err("[code_gen] invalid lvalue\n");
+			lerr(n->line, "[code_gen] invalid lvalue\n");
 		} else {
 			/* post increment */
 			e("lw $t1, 0($t0)\n");
@@ -129,7 +132,7 @@ void handle_postfix_expr(node *n) {
 		}
 	} else if (strcmp(n->children[1]->id, "dec") == 0) {
 		if (LVALUE) {
-			err("[code_gen] invalid lvalue\n");
+			lerr(n->line, "[code_gen] invalid lvalue\n");
 		} else {
 			/* post deccrement */
 			e("lw $t1, 0($t0)\n");
@@ -145,7 +148,7 @@ void handle_postfix_expr(node *n) {
 		e("move $t0, $v0\n");
 		params = 0;
 	} else {
-		err("[code_gen] postfix expressions not fully implemented\n");
+		lerr(n->line, "[code_gen] postfix expressions not fully implemented\n");
 	}	
 }
 
@@ -161,7 +164,7 @@ void handle_argument_expr_list(node *n) {
 void handle_unary_expr(node *n) {
 	if (strcmp(n->children[0]->id, "inc") == 0) {
 		if (LVALUE) {
-			err("[code_gen] invalid lvalue\n");
+			lerr(n->line, "[code_gen] invalid lvalue\n");
 		} else {
 			/* preincrement the value and return it in t0 */
 			LVALUE = 1;
@@ -174,7 +177,7 @@ void handle_unary_expr(node *n) {
 		}
 	} else if (strcmp(n->children[0]->id, "dec") == 0) {
 		if (LVALUE) {
-			err("[code_gen] invalid lvalue\n");
+			lerr(n->line, "[code_gen] invalid lvalue\n");
 		} else {
 			/* predecrement the value and return it in t0 */
 			LVALUE = 1;
@@ -196,28 +199,28 @@ void handle_unary_expr(node *n) {
 		handle(n->children[1]);
 		LVALUE = prev_lvalue;
 	} else {
-		err("[code_gen] unary expressions not fully implemented\n");
+		lerr(n->line, "[code_gen] unary expressions not fully implemented\n");
 	}			
 }
 
 void handle_sizeof(node *n) {
-	err("[code_gen] handle_sizeof not implemented\n");
+	lerr(n->line, "[code_gen] handle_sizeof not implemented\n");
 }
 
 void handle_cast_expr(node *n) {
-	err("[code_gen] handle_cast_expr not implemented\n");
+	lerr(n->line, "[code_gen] handle_cast_expr not implemented\n");
 }
 
 void handle_multiply(node *n) {
-	err("[code_gen] handle_multiply not implemented\n");
+	lerr(n->line, "[code_gen] handle_multiply not implemented\n");
 }
 
 void handle_divide(node *n) {
-	err("[code_gen] handle_divide not implemented\n");
+	lerr(n->line, "[code_gen] handle_divide not implemented\n");
 }
 
 void handle_mod(node *n) {
-	err("[code_gen] handle_mod not implemented\n");
+	lerr(n->line, "[code_gen] handle_mod not implemented\n");
 }
 
 void handle_add(node *n) {
@@ -229,15 +232,15 @@ void handle_add(node *n) {
 }
 
 void handle_sub(node *n) {
-	err("[code_gen] handle_sub not implemented\n");
+	lerr(n->line, "[code_gen] handle_sub not implemented\n");
 }
 
 void handle_shift_left(node *n) {
-	err("[code_gen] handle_shift_left not implemented\n");
+	lerr(n->line, "[code_gen] handle_shift_left not implemented\n");
 }
 
 void handle_shift_right(node *n) {
-	err("[code_gen] handle_shift_right not implemented\n");
+	lerr(n->line, "[code_gen] handle_shift_right not implemented\n");
 }
 
 void handle_less_than(node *n) {
@@ -251,15 +254,15 @@ void handle_less_than(node *n) {
 }
 
 void handle_greater_than(node *n) {
-	err("[code_gen] handle_greater_than not implemented\n");
+	lerr(n->line, "[code_gen] handle_greater_than not implemented\n");
 }
 
 void handle_less_equal_than(node *n) {
-	err("[code_gen] handle_less_equal_than not implemented\n");
+	lerr(n->line, "[code_gen] handle_less_equal_than not implemented\n");
 }
 
 void handle_greater_equal_than(node *n) {
-	err("[code_gen] handle_greater_equal_than not implemented\n");
+	lerr(n->line, "[code_gen] handle_greater_equal_than not implemented\n");
 }
 
 void handle_equality(node *n) {
@@ -282,31 +285,31 @@ void handle_equality(node *n) {
 }
 
 void handle_equality_not(node *n) {
-	err("[code_gen] handle_equality_not not implemented\n");
+	lerr(n->line, "[code_gen] handle_equality_not not implemented\n");
 }
 
 void handle_bitwise_and(node *n) {
-	err("[code_gen] handle_bitwise_and not implemented\n");
+	lerr(n->line, "[code_gen] handle_bitwise_and not implemented\n");
 }
 
 void handle_bitwise_xor(node *n) {
-	err("[code_gen] handle_bitwise_xor not implemented\n");
+	lerr(n->line, "[code_gen] handle_bitwise_xor not implemented\n");
 }
 
 void handle_bitwise_or(node *n) {
-	err("[code_gen] handle_bitwise_or not implemented\n");
+	lerr(n->line, "[code_gen] handle_bitwise_or not implemented\n");
 }
 
 void handle_logical_and(node *n) {
-	err("[code_gen] handle_logical_and not implemented\n");
+	lerr(n->line, "[code_gen] handle_logical_and not implemented\n");
 }
 
 void handle_logical_or(node *n) {
-	err("[code_gen] handle_logical_or not implemented\n");
+	lerr(n->line, "[code_gen] handle_logical_or not implemented\n");
 }
 
 void handle_conditional(node *n) {
-	err("[code_gen] handle_conditional not implemented\n");
+	lerr(n->line, "[code_gen] handle_conditional not implemented\n");
 }
 
 void handle_assignment(node *n) {
@@ -328,21 +331,21 @@ void handle_assignment(node *n) {
 	} else if (strcmp(n->children[1]->id, "assign_mul") == 0) {
 		e("lw $t2, 0($t1)\n\tmullo $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_div") == 0) {
-		err("[code_gen] division not supported\n");
+		lerr(n->line, "[code_gen] division not supported\n");
 	} else if (strcmp(n->children[1]->id, "assign_mod") == 0) {
-		err("[code_gen] modulo not supported\n");
+		lerr(n->line, "[code_gen] modulo not supported\n");
 	} else if (strcmp(n->children[1]->id, "assign_add") == 0) {
 		e("lw $t2, 0($t1)\n\taddu $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_sub") == 0) {
 		e("lw $t2, 0($t1)\n\tsubu $t0, $t2, $t0\n\tsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_sll") == 0) {
-		err("[code_gen] shift assign not currently implemented\n");
+		lerr(n->line, "[code_gen] shift assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_srl") == 0) {
-		err("[code_gen] shift assign not currently implemented\n");
+		lerr(n->line, "[code_gen] shift assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_and") == 0) {
 		e("lw $t2, 0($t1)\n\tand $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_xor") == 0) {
-		err("[code_gen] xor assign not currently implemented\n");
+		lerr(n->line, "[code_gen] xor assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_or") == 0) {
 		e("lw $t2, 0($t1)\n\tor $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
 	}
@@ -389,7 +392,7 @@ void handle_declaration(node *n) {
 }
 
 void handle_declaration_specifier(node *n) {
-	err("[code_gen] handle_declaration_specifier not implemented\n");
+	lerr(n->line, "[code_gen] handle_declaration_specifier not implemented\n");
 }
 
 void handle_init_declarator_list(node *n) {
@@ -431,39 +434,39 @@ void handle_init_declarator(node *n) {
 }
 
 void handle_struct_union(node *n) {
-	err("[code_gen] handle_struct_union not implemented\n");
+	lerr(n->line, "[code_gen] handle_struct_union not implemented\n");
 }
 
 void handle_struct_declaration_list(node *n) {
-	err("[code_gen] handle_struct_declaration_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_struct_declaration_list not implemented\n");
 }
 
 void handle_struct_declaration(node *n) {
-	err("[code_gen] handle_struct_declaration not implemented\n");
+	lerr(n->line, "[code_gen] handle_struct_declaration not implemented\n");
 }
 
 void handle_specifier_qualifier_list(node *n) {
-	err("[code_gen] handle_specifier_qualifier_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_specifier_qualifier_list not implemented\n");
 }
 
 void handle_struct_declarator_list(node *n) {
-	err("[code_gen] handle_struct_declarator_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_struct_declarator_list not implemented\n");
 }
 
 void handle_struct_declarator(node *n) {
-	err("[code_gen] handle_struct_declarator not implemented\n");
+	lerr(n->line, "[code_gen] handle_struct_declarator not implemented\n");
 }
 
 void handle_enum_specifier(node *n) {
-	err("[code_gen] handle_enum_specifier not implemented\n");
+	lerr(n->line, "[code_gen] handle_enum_specifier not implemented\n");
 }
 
 void handle_enum_list(node *n) {
-	err("[code_gen] handle_enum_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_enum_list not implemented\n");
 }
 
 void handle_enumerator(node *n) {
-	err("[code_gen] handle_enumerator not implemented\n");
+	lerr(n->line, "[code_gen] handle_enumerator not implemented\n");
 }
 
 void handle_declarator(node *n) {
@@ -475,43 +478,43 @@ void handle_declarator(node *n) {
 }
 
 void handle_direct_declarator(node *n) {
-	err("[code_gen] handle_direct_declarator not implemented\n");
+	lerr(n->line, "[code_gen] handle_direct_declarator not implemented\n");
 }
 
 void handle_pointer(node *n) {
-	err("[code_gen] handle_pointer not implemented\n");
+	lerr(n->line, "[code_gen] handle_pointer not implemented\n");
 }
 
 void handle_type_qualifier_list(node *n) {
-	err("[code_gen] handle_type_qualifier_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_type_qualifier_list not implemented\n");
 }
 
 void handle_parameter_type_list(node *n) {
-	err("[code_gen] handle_parameter_type_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_parameter_type_list not implemented\n");
 }
 
 void handle_parameter_list(node *n) {
-	err("[code_gen] handle_parameter_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_parameter_list not implemented\n");
 }
 
 void handle_parameter_declaration(node *n) {
-	err("[code_gen] handle_parameter_declaration not implemented\n");
+	lerr(n->line, "[code_gen] handle_parameter_declaration not implemented\n");
 }
 
 void handle_identifier_list(node *n) {
-	err("[code_gen] handle_identifier_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_identifier_list not implemented\n");
 }
 
 void handle_type_name(node *n) {
-	err("[code_gen] handle_type_name not implemented\n");
+	lerr(n->line, "[code_gen] handle_type_name not implemented\n");
 }
 
 void handle_abstract_declarator(node *n) {
-	err("[code_gen] handle_abstract_declarator not implemented\n");
+	lerr(n->line, "[code_gen] handle_abstract_declarator not implemented\n");
 }
 
 void handle_direct_abstract_declarator(node *n) {
-	err("[code_gen] handle_direct_abstract_declarator not implemented\n");
+	lerr(n->line, "[code_gen] handle_direct_abstract_declarator not implemented\n");
 }
 
 void handle_initializer(node *n) {
@@ -519,11 +522,11 @@ void handle_initializer(node *n) {
 }
 
 void handle_initializer_list(node *n) {
-	err("[code_gen] handle_initializer_list not implemented\n");
+	lerr(n->line, "[code_gen] handle_initializer_list not implemented\n");
 }
 
 void handle_labeled_statement(node *n) {
-	err("[code_gen] handle_labeled_statement not implemented\n");
+	lerr(n->line, "[code_gen] handle_labeled_statement not implemented\n");
 }
 
 void handle_compound_statement(node *n) {
@@ -572,7 +575,7 @@ void handle_selection_statement(node *n) {
 		handle(n->children[2]);
 		e("%s:\n", selection_label_done);
 	} else {
-		err("selection statement not fully implemented\n");
+		lerr(n->line, "selection statement not fully implemented\n");
 	}
 }
 
@@ -597,7 +600,7 @@ void handle_iteration_statement(node *n) {
 		sprintf(buffer, "j %s\nnop\n%s:\n", loop_label, loop_label_done);
 		emit(buffer);
 	} else {
-		err("this iteration statement not implemented yet");
+		lerr(n->line, "this iteration statement not implemented yet");
 	}
 }
 
@@ -607,9 +610,9 @@ void handle_jump_statement(node *n) {
 		if (n->num_children == 2)
 			handle(n->children[1]);
 			e("move $v0, $t0\n");
-		epilogue();
+		epilogue(n);
 	} else {
-		err("[code_gen] jump statements not fully implemented\n");
+		lerr(n->line, "[code_gen] jump statements not fully implemented\n");
 	}
 }
 
@@ -641,8 +644,7 @@ void handle_function_definition(node *n) {
 	function_name = n->children[d_index]->children[0]->children[0]->id;
 	
 	/* emit the function name */
-	sprintf(buffer,"%s:\n",function_name);
-	emit(buffer);
+	e("%s:\n",function_name);
 
 	/* reserve space on the stack for declarations related to this function (declarations only, parameters are pushed on the stack by the caller) */
 	curr = n->t->s;
@@ -664,12 +666,11 @@ void handle_function_definition(node *n) {
 		curr = curr->up;
 	}
 
-	sprintf(buffer, "addiu $sp, $sp, -%d\n", i*4);
-	emit(buffer);
+	e("addiu $sp, $sp, -%d\n", i*4);
 	locals = i*4;
 	
 	/* call handle on the compound statement */
 	handle(n->children[n->num_children-1]);
 
-	epilogue();
+	epilogue(n);
 }

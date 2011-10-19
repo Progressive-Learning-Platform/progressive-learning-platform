@@ -3,6 +3,7 @@
 #include "log.h"
 #include "parse_tree.h"
 #include "symbol.h"
+#include "line.h"
 
 #define YYSTYPE node *
 
@@ -16,7 +17,7 @@ extern int yylex (void);
 void yyerror(s)
 char *s;
 {
-	err("[plpcc] syntax error at %d:%d\n", line, column); 
+	lerr(line, "[plpcc] syntax error\n"); 
 }
 
 %}

@@ -217,7 +217,7 @@ void handle(node *n) {
 void emit(char *s) {
 	int tab = 0;
 	/* check to see if we need to insert a tab or not */
-	if (s[strlen(s)-2] != ':')
+	if (s[strlen(s)-2] != ':' && s[0] != '#')
 		tab = 1;
 	if (program == NULL) {
 		program = strdup(s); /* first emit from the compiler will ALWAYS be a label */
