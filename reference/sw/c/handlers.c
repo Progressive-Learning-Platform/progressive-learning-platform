@@ -83,19 +83,19 @@ void handle_identifier(node *n) {
 	if (LVALUE) {
 		if (g(n)) {
 			/* just grab the global named pointer */
-			e("li $t0, %s\n", n->id);
+			e("li $t0, %s # *%s\n", n->id, n->id);
 		} else {
 			/* grab the identifier and put a pointer to it in t0 */
-			e("addiu $t0, $sp, %d\n", o(n));
+			e("addiu $t0, $sp, %d # *%s\n", o(n), n->id);
 		}
 	} else {
 		if (g(n)) {
 			/* grab and dereference */
 			e("li $t0, %s\n", n->id);
-			e("lw $t0, 0($t0)\n");
+			e("lw $t0, 0($t0) # %s\n", n->id);
 		} else {
 			/* grab the identifier and dereference it */
-			e("lw $t0, %d($sp)\n", o(n));	
+			e("lw $t0, %d($sp) # %s\n", o(n), n->id);	
 		}
 	}
 }
@@ -348,50 +348,6 @@ void handle_assignment(node *n) {
 	}
 }
 
-void handle_assign(node *n) {
-	err("[code_gen] handle_assign not implemented\n");
-}
-
-void handle_assign_mul(node *n) {
-	err("[code_gen] handle_assign_mul not implemented\n");
-}
-
-void handle_assign_div(node *n) {
-	err("[code_gen] handle_assign_div not implemented\n");
-}
-
-void handle_assign_mod(node *n) {
-	err("[code_gen] handle_assign_mod not implemented\n");
-}
-
-void handle_assign_add(node *n) {
-	err("[code_gen] handle_assign_add not implemented\n");
-}
-
-void handle_assign_sub(node *n) {
-	err("[code_gen] handle_assign_sub not implemented\n");
-}
-
-void handle_assign_sll(node *n) {
-	err("[code_gen] handle_assign_sll not implemented\n");
-}
-
-void handle_assign_srl(node *n) {
-	err("[code_gen] handle_assign_srl not implemented\n");
-}
-
-void handle_assign_and(node *n) {
-	err("[code_gen] handle_assign_and not implemented\n");
-}
-
-void handle_assign_xor(node *n) {
-	err("[code_gen] handle_assign_xor not implemented\n");
-}
-
-void handle_assign_or(node *n) {
-	err("[code_gen] handle_assign_or not implemented\n");
-}
-
 void handle_expression(node *n) {
 	/* expressions can be one or more of:
 		assignment
@@ -445,7 +401,6 @@ void handle_init_declarator_list(node *n) {
 
 void handle_init_declarator(node *n) {
 	node *x;
-	int prev_lvalue;
 
 	/* get the id node */
 	if (n->children[0]->num_children == 1)
@@ -512,7 +467,11 @@ void handle_enumerator(node *n) {
 }
 
 void handle_declarator(node *n) {
-	err("[code_gen] handle_declarator not implemented\n");
+	/* declarators can have a direct_declarator or a pointer / dd pair */
+	if (n->num_children == 2)
+		handle(n->children[1]);
+	else
+		handle(n->children[0]);
 }
 
 void handle_direct_declarator(node *n) {

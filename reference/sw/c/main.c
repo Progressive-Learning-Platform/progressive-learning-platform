@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 /* lexer/parser externs */
-extern void yyset_in  (FILE * in_str  );
+extern void yyset_in (FILE * in_str);
 extern int yyparse(void);
 
 int LOG_LEVEL = 0;

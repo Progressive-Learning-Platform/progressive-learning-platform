@@ -98,39 +98,6 @@ void handle(node *n) {
 	} else if (strcmp(n->id,"assignment") == 0) {
 		vlog("[code_gen] handle: assignment \n");
 		handle_assignment(n);
-	} else if (strcmp(n->id,"assign") == 0) {
-		vlog("[code_gen] handle: assign \n");
-		handle_assign(n);
-	} else if (strcmp(n->id,"assign_mul") == 0) {
-		vlog("[code_gen] handle: assign_mul \n");
-		handle_assign_mul(n);
-	} else if (strcmp(n->id,"assign_div") == 0) {
-		vlog("[code_gen] handle: assign_div \n");
-		handle_assign_div(n);
-	} else if (strcmp(n->id,"assign_mod") == 0) {
-		vlog("[code_gen] handle: assign_mod \n");
-		handle_assign_mod(n);
-	} else if (strcmp(n->id,"assign_add") == 0) {
-		vlog("[code_gen] handle: assign_add \n");
-		handle_assign_add(n);
-	} else if (strcmp(n->id,"assign_sub") == 0) {
-		vlog("[code_gen] handle: assign_sub \n");
-		handle_assign_sub(n);
-	} else if (strcmp(n->id,"assign_sll") == 0) {
-		vlog("[code_gen] handle: assign_sll \n");
-		handle_assign_sll(n);
-	} else if (strcmp(n->id,"assign_srl") == 0) {
-		vlog("[code_gen] handle: assign_srl \n");
-		handle_assign_srl(n);
-	} else if (strcmp(n->id,"assign_and") == 0) {
-		vlog("[code_gen] handle: assign_and \n");
-		handle_assign_and(n);
-	} else if (strcmp(n->id,"assign_xor") == 0) {
-		vlog("[code_gen] handle: assign_xor \n");
-		handle_assign_xor(n);
-	} else if (strcmp(n->id,"assign_or") == 0) {
-		vlog("[code_gen] handle: assign_or \n");
-		handle_assign_or(n);
 	} else if (strcmp(n->id,"expression") == 0) {
 		vlog("[code_gen] handle: expression \n");
 		handle_expression(n);

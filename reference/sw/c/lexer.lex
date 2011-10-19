@@ -188,18 +188,6 @@ void count()
 
 int check_type(char *t)
 {
-/*
-* pseudo code --- this is what it should check
-*
-*	if (yytext == type_name)
-*		return(TYPE_NAME);
-*
-*	return(IDENTIFIER);
-*/
-
-/*
-*	it actually will only return IDENTIFIER
-*/
 	vlog("[lexer] check_type: %s : ", t);
 	symbol *s = find_symbol(sym, t);
 	if (s != NULL) {
