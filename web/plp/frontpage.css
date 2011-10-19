@@ -51,6 +51,8 @@ span.keyword {
 }
 #banner {
   float: right;
+  text-align: center;
+  width: 160px;
 }
 
 #resources h3 {
