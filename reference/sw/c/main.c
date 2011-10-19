@@ -6,6 +6,7 @@
 #include "symbol.h"
 #include "parse_tree.h"
 #include "code_gen.h"
+#include "line.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -18,6 +19,7 @@ extern int yyparse(void);
 int LOG_LEVEL = 0;
 int STOP_ERROR = 1;
 int NO_COMPILE = 0;
+int ANNOTATE_SOURCE = 1;
 
 static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
@@ -44,6 +46,7 @@ void print_usage(void) {
 	printf("-p		print parse tree to <output name>.parse\n");
 	printf("-e		do not stop compiling on errors\n");
 	printf("-f		run the front end only, do not call handle() on the parse tree\n");
+	printf("-a		do not annotate output with original source\n");
 }
 
 void handle_opts(int argc, char *argv[]) {
@@ -77,6 +80,9 @@ void handle_opts(int argc, char *argv[]) {
 				break;
 			case 'f':
 				NO_COMPILE = 1;
+				break;
+			case 'a':
+				ANNOTATE_SOURCE = 0;
 				break;
 			default:
 				print_usage();
@@ -156,6 +162,9 @@ int main(int argc, char *argv[]) {
 			err("[plpcc] cannot open parse tree output file: %s\n", S_PARSE_OUTPUT);
 		}
 	}
+
+	/* grab the lines from the source for error handling and annotation */
+	build_lines(S_FILE_INPUT);
 
 	/* create an empty symbol table */
 	sym = new_symbol_table(NULL);

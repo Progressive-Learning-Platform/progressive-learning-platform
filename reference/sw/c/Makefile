@@ -10,6 +10,7 @@ FILES=\
 	symbol\
 	parse_tree\
 	code_gen\
+	line\
 	handlers\
 	lex.yy\
 	parser.tab\

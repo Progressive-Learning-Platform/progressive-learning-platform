@@ -5,6 +5,7 @@
 #include "symbol.h"
 #include "log.h"
 #include "parse_tree.h"
+#include "line.h"
 
 extern symbol_table *sym;
 
@@ -29,7 +30,7 @@ id_chain* get_ids(id_chain* i, node *n) {
 				t->id = n->children[0]->children[0]->id;
 			}
 			i = t;
-			vlog("[symbol] found id %s\n", i->id);
+			lvlog(n->line, "[symbol] found id %s\n", i->id);
 		} else {
 			int j;
 			/* call this on all children */
@@ -91,7 +92,7 @@ node* install_symbol(symbol_table *t, node *n) {
 	
 	/* the first child node should be the types and attributes */
 	if (strcmp(n->children[0]->id,"declaration_specifier") != 0) {
-		err("[symbol] cannot extract type/attr information\n");
+		lerr(n->line, "[symbol] cannot extract type/attr information\n");
 	} else {
 		/* all children of declaration_specifiers should be type:id */
 		node *types = n->children[0];
@@ -99,7 +100,7 @@ node* install_symbol(symbol_table *t, node *n) {
 		int i;
 		for (i=0; i<types->num_children; i++) {
 			if (types->children[i]->type != type_type) {
-				err("[symbol] found non-type in type specifiers\n");
+				lerr(n->line, "[symbol] found non-type in type specifiers\n");
 			} else {
 				char *type = match_type(types->children[i]->id);
 				if (type == NULL)
@@ -113,11 +114,11 @@ node* install_symbol(symbol_table *t, node *n) {
 		/* just do a search for "direct_declarator", and return each one's children[0]->id field, which is an identifier */
 		id_chain *ids = get_ids(NULL, decs);
 		if (ids == NULL && strcmp(n->id, "parameter_declaration") != 0) 
-			err("[symbol] no declarators found\n");
+			lerr(n->line, "[symbol] no declarators found\n");
 		while (ids != NULL) {
 			id_chain *d = ids;
 			if (lookup(t, ids->id)) {
-				err("[symbol] symbol %s already declared in this scope\n", ids->id);
+				lerr(n->line, "[symbol] symbol %s already declared in this scope\n", ids->id);
 			}
 			if (strcmp(n->id, "parameter_declaration") == 0)
 				s->attr |= ATTR_PARAM;
