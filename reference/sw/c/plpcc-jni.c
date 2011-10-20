@@ -76,10 +76,11 @@ JNIEXPORT jstring JNICALL Java_plptool_interfaces_PLPCC_nativeCompile
 	return (*env)->NewStringUTF(env, program);
 }
 
-JNIEXPORT jint JNICALL Java_plptool_interfaces_PLPCC_testLink
+JNIEXPORT jstring JNICALL Java_plptool_interfaces_PLPCC_testLink
 	(JNIEnv *env, jobject jobj) {
 
 	printf("PLPCC JNI: Test link.\n");
+	const char *str = "plpcclib";
 
-	return NULL;
+	return (*env)->NewStringUTF(env, str);
 }
