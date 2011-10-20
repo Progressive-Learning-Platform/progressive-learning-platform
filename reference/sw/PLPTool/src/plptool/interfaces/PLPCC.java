@@ -60,7 +60,7 @@ public class PLPCC {
 	}
 
         System.out.println("PLPCC-JNI Version: " + version);
-        String assembly = PLPCC.nativeCompile(0, str);
+        String assembly = PLPCC.nativeCompile(2, str);
 
         System.out.println(assembly);
     }

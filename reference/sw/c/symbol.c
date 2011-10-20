@@ -21,6 +21,9 @@ id_chain* get_ids(id_chain* i, node *n) {
 		if (strcmp(n->id, "declarator") == 0) {
 			/* declarators either have children[0] as the direct declarator or a pointer note */
 			id_chain *t = malloc(sizeof(id_chain));
+			if (t == NULL) {
+				err("[symbol] cannot allocate id_chain\n");
+			}
 			t->up = i;
 			if (strcmp(n->children[0]->id, "pointer") == 0) {
 				t->pointer = 1;
@@ -133,7 +136,9 @@ node* install_symbol(symbol_table *t, node *n) {
 			if (ids->up != NULL) {
 				end = s;
 				s = malloc(sizeof(symbol));
-				end->up = s;
+				if (s == NULL) {
+					err("[symbol] cannot allocate symbol\n");
+				}
 				s->up = NULL;
 				s->attr = t->s->attr;
 				s->type = t->s->type;
@@ -178,6 +183,9 @@ symbol_table* new_symbol_table(symbol_table *t) {
 	} else {
 		/* create a new child table */
 		t->children = realloc(t->children, (sizeof(symbol_table*) * (t->num_children+1)));
+		if (t->children == NULL) {
+			err("[symbol] cannot realloc children\n");
+		}
 		t->num_children++;
 		t->children[t->num_children-1] = table;
 		table->parent = t;
