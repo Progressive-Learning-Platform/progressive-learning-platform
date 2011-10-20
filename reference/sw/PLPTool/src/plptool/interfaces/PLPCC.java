@@ -19,6 +19,8 @@
 package plptool.interfaces;
 
 import java.util.*;
+import java.io.FileReader;
+import java.io.File;
 import plptool.Constants;
 
 /**
@@ -27,8 +29,8 @@ import plptool.Constants;
  */
 public class PLPCC {
 
-    native String nativeCompile(String input);
-    native String testLink();
+    static native String nativeCompile(int logLevel, String input);
+    static native String getVersion();
 
     static {
         System.loadLibrary("plpcclib");
@@ -36,29 +38,29 @@ public class PLPCC {
 
     public static void main(String args[]) {
         System.out.println("PLPCC Java Interface");
+	String str = "";
+        String version = PLPCC.getVersion();
 
-        if(args.length == 0) return;
+        if(args.length != 1) return;
 
-        String str =
-                "int depth = 10;\n" +
-                "int fib(int fn1, int fn2) {\n" +
-                "   int fn0 = fn1 + fn2;\n" +
-                "   depth--;\n" +
-                "   if (depth == 0)\n" +
-                "       return fn0;\n" +
-                "   else\n" +
-                "       return fib(fn0, fn1);\n" +
-                "}" +
-                "\n\n" +
-                "void main(void) {\n" +
-                "    fib(1,0);\n" +
-                "}\n";
+	try {
+		System.out.println("Compiling " + args[0]);
+		File f = new File(args[0]);
 
+		if(!f.exists()) return;
 
-        PLPCC cc = new PLPCC();
-        String test = cc.testLink();
-        System.out.println(test);
-        String assembly = cc.nativeCompile(str);
+		FileReader in = new FileReader(f);
+		char[] buf = new char[(int) f.length()];
+		in.read(buf, 0, buf.length);
+		in.close();
+		str = new String(buf);
+
+	} catch(Exception e) {
+
+	}
+
+        System.out.println("PLPCC-JNI Version: " + version);
+        String assembly = PLPCC.nativeCompile(0, str);
 
         System.out.println(assembly);
     }
