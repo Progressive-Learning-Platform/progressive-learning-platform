@@ -1,7 +1,7 @@
 all: clean build nolog
 
 CC = gcc
-CFLAGS = -O2 -Wall -g
+CFLAGS = -O2 -Wall -g -fPIC
 
 LDFLAGS = 
 
@@ -26,7 +26,7 @@ OBJECTS_JNI = $(addsuffix .o, $(FILES_JNI))
 
 #for making a java so
 JNI_INCLUDE = -I/usr/lib/jvm/java-6-openjdk/include/
-JNI_OPTS = -shared -Wl,-soname,libplpcc.so
+JNI_OPTS = -shared -Wl,-soname,libplpcclib.so
 
 clean.files: $(addsuffix .clean, $(FILES))
 build.files: $(addsuffix .build, $(FILES))

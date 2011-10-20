@@ -54,20 +54,16 @@ void build_jni_lines(const char* str) {
 }
 
 JNIEXPORT jstring JNICALL Java_plptool_interfaces_PLPCC_nativeCompile
-	(JNIEnv *env, jobject jobj, jstring input) {
+	(JNIEnv *env, jobject jobj, jint log_level, jstring input) {
 	printf("PLPCC JNI: nativeCompile called.\n");
 	jboolean iscopy;
-
 	const char *str = (*env)->GetStringUTFChars(env, input, &iscopy);
 
-	// source_lines[][]
-	// visited[]
-	// num_lines
-
+	LOG_LEVEL = log_level;
 	build_jni_lines(str);
 
 	/* create an empty symbol table */
-    sym = new_symbol_table(NULL);
+	sym = new_symbol_table(NULL);
 
 	yy_scan_string(str);
 	yyparse();
@@ -76,11 +72,11 @@ JNIEXPORT jstring JNICALL Java_plptool_interfaces_PLPCC_nativeCompile
 	return (*env)->NewStringUTF(env, program);
 }
 
-JNIEXPORT jstring JNICALL Java_plptool_interfaces_PLPCC_testLink
+JNIEXPORT jstring JNICALL Java_plptool_interfaces_PLPCC_getVersion
 	(JNIEnv *env, jobject jobj) {
 
-	printf("PLPCC JNI: Test link.\n");
-	const char *str = "plpcclib";
+	printf("PLPCC JNI: Version 3.4\n");
+	const char *str = "3.4";
 
 	return (*env)->NewStringUTF(env, str);
 }
