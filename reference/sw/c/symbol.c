@@ -96,7 +96,7 @@ node* install_symbol(symbol_table *t, node *n) {
 	} else {
 		/* all children of declaration_specifiers should be type:id */
 		node *types = n->children[0];
-		node *decs  = n->children[1];
+		node *decs  = n->num_children > 1 ? n->children[1] : NULL;
 		int i;
 		for (i=0; i<types->num_children; i++) {
 			if (types->children[i]->type != type_type) {
