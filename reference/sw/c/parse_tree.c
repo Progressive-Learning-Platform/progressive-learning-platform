@@ -15,10 +15,13 @@ node *new_node(char *s) {
 	
 	n = malloc(sizeof(node));
 	if (n == NULL) {
-		err("[parse_tree] cannot allocate node");
+		err("[parse_tree] cannot allocate node\n");
 	}
 
 	n->id = strdup(s);
+	if (n->id == NULL) {
+		err("[parse_tree] strdup failed in new_node\n");
+	}
 	n->num_children = 0;
 	n->t = sym;
 	n->line = line;
