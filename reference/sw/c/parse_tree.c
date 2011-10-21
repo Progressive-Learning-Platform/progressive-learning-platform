@@ -72,6 +72,9 @@ node *op(char *t, int num_ops, ...) {
 
 	n->type = type_op;
 	n->id = strdup(t);
+	if (n->id == NULL) {
+		err("strdup failed to allocate\n");
+	}
 	n->t = sym;
 	n->line = line;
 	n->column = column;

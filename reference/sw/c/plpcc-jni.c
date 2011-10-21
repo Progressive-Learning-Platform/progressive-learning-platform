@@ -13,7 +13,7 @@ extern int yy_scan_string(const char*);
 extern int yyparse(void);
 
 int LOG_LEVEL = 2;
-int STOP_ERROR = 0;
+int STOP_ERROR = 1;
 int NO_COMPILE = 0;
 int ANNOTATE_SOURCE = 1;
 
