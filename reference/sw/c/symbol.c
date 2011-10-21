@@ -78,7 +78,11 @@ char* match_type(char *t) {
 	
 node* install_symbol(symbol_table *t, node *n) {
 	symbol *s = malloc(sizeof(symbol));
-	symbol *end = t->s;
+	symbol *end;
+	if (s == NULL) {
+		err("[symbol] could not allocate symbol\n");
+	}
+	end = t->s;
 
 	/* we want the end of the list to keep things in order in the backend */
 	if (end != NULL)
@@ -169,6 +173,9 @@ symbol* find_symbol(symbol_table *t, char *v) {
 
 symbol_table* new_symbol_table(symbol_table *t) {
 	symbol_table *table = malloc(sizeof(symbol_table));
+	if (table == NULL) {
+		err("[symbol] could not allocate new table\n");
+	}
 
 	vlog("[symbol] creating new table\n");
 

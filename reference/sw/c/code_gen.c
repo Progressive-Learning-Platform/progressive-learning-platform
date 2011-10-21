@@ -221,8 +221,14 @@ void emit(char *s) {
 		tab = 1;
 	if (program == NULL) {
 		program = strdup(s); /* first emit from the compiler will ALWAYS be a label */
+		if (program == NULL) {
+			err("emit strdup failed\n");
+		}
 	} else {
 		program = realloc(program, (strlen(program)+strlen(s)+(tab ? 2 : 1))*sizeof(char));
+		if (program == NULL) {
+			err("emit realloc failed\n");
+		}
 		if (tab) program = strcat(program, "\t");
 		program = strcat(program, s);
 	}
@@ -230,6 +236,9 @@ void emit(char *s) {
 
 char* gen_label(void) {
 	char *ret = malloc(13*sizeof(char));
+	if (ret == NULL) {
+		err("genlabel malloc failed\n");
+	}
 	sprintf(ret, "PLPCC_%06d", gen_label_index);
 	gen_label_index++;
 	return ret;
