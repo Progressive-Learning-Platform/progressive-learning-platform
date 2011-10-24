@@ -478,7 +478,8 @@ void handle_declarator(node *n) {
 }
 
 void handle_direct_declarator(node *n) {
-	lerr(n->line, "[code_gen] handle_direct_declarator not implemented\n");
+	/* do nothing with direct declarators, the symbol already exists */
+	/* this is the place to initialize direct declarators to 0 if we need to */
 }
 
 void handle_pointer(node *n) {
@@ -591,17 +592,33 @@ void handle_iteration_statement(node *n) {
 	if (strcmp(n->children[0]->id, "expression") == 0) {
 		/* type 1, while loop */
 		/* handle the expression first, then test, then execute the statement, then jump back */
-		sprintf(buffer, "%s:\n", loop_label);
-		emit(buffer);
+		e("%s:\n", loop_label);
 		handle(n->children[0]);
-		sprintf(buffer, "beq $zero, $t0, %s\nnop\n", loop_label_done);
-		emit(buffer);
+		e("beq $zero, $t0, %s\n", loop_label_done);
+		e("nop\n");
 		handle(n->children[1]);
-		sprintf(buffer, "j %s\nnop\n%s:\n", loop_label, loop_label_done);
-		emit(buffer);
+		e("j %s\n", loop_label);
+		e("nop\n");
+		e("%s:\n", loop_label_done);
+	} else if (n->num_children > 2) {
+		/* type 3 or 4, for loop */ 
+		handle(n->children[0]); /* initial expression */
+		e("%s:\n", loop_label); /* beginning of for loop */
+		handle(n->children[1]); /* condition, with result in $t0 */
+		e("beq $t0, $zero, %s\n", loop_label_done);
+		e("nop\n");
+		if (n->num_children == 3) { /* no last statement */
+			handle(n->children[2]);
+		} else { 
+			handle(n->children[3]); /* statement */
+			handle(n->children[2]); /* last expression */
+		}
+		e("j %s\n", loop_label);
+		e("nop\n");
+		e("%s:\n", loop_label_done);
 	} else {
 		lerr(n->line, "this iteration statement not implemented yet");
-	}
+	} 
 }
 
 void handle_jump_statement(node *n) {
