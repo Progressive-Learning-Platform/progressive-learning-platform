@@ -7,7 +7,6 @@
 #include "handlers.h"
 
 extern FILE* FILE_OUTPUT;
-extern char *program;
 
 int gen_label_index = 0;
 
@@ -214,24 +213,25 @@ void handle(node *n) {
 	}
 }
 
-void emit(char *s) {
+char* emit(char* p, char *s) {
 	int tab = 0;
 	/* check to see if we need to insert a tab or not */
-	if (s[strlen(s)-2] != ':' && s[0] != '#')
+	if (s[strlen(s)-2] != ':' && s[0] != '#' && s[strlen(s)-3] != '"')
 		tab = 1;
-	if (program == NULL) {
-		program = strdup(s); /* first emit from the compiler will ALWAYS be a label */
-		if (program == NULL) {
+	if (p == NULL) {
+		p = strdup(s); /* first emit from the compiler will ALWAYS be a label */
+		if (p == NULL) {
 			err("emit strdup failed\n");
 		}
 	} else {
-		program = realloc(program, (strlen(program)+strlen(s)+(tab ? 2 : 1))*sizeof(char));
-		if (program == NULL) {
+		p = realloc(p, (strlen(p)+strlen(s)+(tab ? 2 : 1))*sizeof(char));
+		if (p == NULL) {
 			err("emit realloc failed\n");
 		}
-		if (tab) program = strcat(program, "\t");
-		program = strcat(program, s);
+		if (tab) p = strcat(p, "\t");
+		p = strcat(p, s);
 	}
+	return p;
 }
 
 char* gen_label(void) {

@@ -3,7 +3,7 @@
 #include "types.h"
 
 void handle(node *);
-void emit(char *);
+char* emit(char *, char *);
 char *gen_label(void);
 
 #endif
