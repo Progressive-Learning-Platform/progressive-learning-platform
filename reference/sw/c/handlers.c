@@ -10,13 +10,15 @@
 #include "handlers.h"
 #include "line.h"
 
-#define e(...) { v(n); sprintf(buffer, __VA_ARGS__); emit(buffer); }
-#define v(x) { if (!is_visited(n->line) && ANNOTATE_SOURCE) { visit(n->line); sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line)); emit(buffer); }}
+#define e(...) { v(n); sprintf(buffer, __VA_ARGS__); program = emit(program, buffer); }
+#define v(x) { if (!is_visited(n->line) && ANNOTATE_SOURCE) { visit(n->line); sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line)); program = emit(program, buffer); }}
 #define o(x) (get_offset(x->t, x->id) + (adjust * 4))
 #define g(x) (is_global(x->t, x->id))
 #define push(x) { e("push %s\n", x); adjust++; }
 #define pop(x) { e("pop %s\n", x); adjust--; }
 
+extern char *program;
+char *strings = NULL;
 extern symbol *labels;
 extern symbol *constants;
 extern int ANNOTATE_SOURCE;
@@ -108,7 +110,17 @@ void handle_constant(node *n) {
 }
 
 void handle_string(node *n) {
-	lerr(n->line, "[code_gen] handle_string not implemented\n");
+	char *s = gen_label();
+	/* we use emit() to add to the string table */
+	sprintf(buffer, "%s:\n", s);
+	strings = emit(strings, buffer);
+	sprintf(buffer, ".asciiz %s\n", n->id);
+	strings = emit(strings, buffer);
+	
+	/* get a pointer to our string in $t0 */
+	e("li $t0, %s\n", s);
+
+	/* the translation unit handler will emit the strings string at the end of the program */
 }
 
 void handle_postfix_expr(node *n) {
@@ -638,6 +650,11 @@ void handle_translation_unit(node *n) {
 	int i;
 	for (i=0; i<n->num_children; i++)
 		handle(n->children[i]);
+	/* emit the strings if there are any */
+	if (strings != NULL) {
+		e("%s\n", strings);
+	}
+
 }
 
 void handle_function_definition(node *n) {
