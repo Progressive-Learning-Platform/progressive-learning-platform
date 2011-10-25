@@ -211,7 +211,7 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
-     * Returns the width of the address space
+     * Return the width of the address space
      *
      * @return The width of the address space in (long)
      */
@@ -223,7 +223,7 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
-     * Returns the end of the address space
+     * Return the end of the address space
      *
      * @return Final address in (long)
      */
@@ -232,7 +232,7 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
-     * Returns the beginning of the address space
+     * Return the beginning of the address space
      *
      * @return Starting address in (long)
      */
@@ -255,7 +255,7 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
-     * Returns whether the module is enabled
+     * Return whether the module is enabled
      *
      * @return Status of module in (boolean)
      */
@@ -264,7 +264,7 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
-     * Returns whether the specified register contains an instruction or not
+     * Return whether the specified register contains an instruction or not
      *
      * @param addr Address to read from
      * @return Whether the specified register contains instruction or not
@@ -277,7 +277,7 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
-     * Returns whether the registers of the module are word-aligned
+     * Return whether the registers of the module are word-aligned
      *
      * @return Whether the registers of the module are word-aligned
      */

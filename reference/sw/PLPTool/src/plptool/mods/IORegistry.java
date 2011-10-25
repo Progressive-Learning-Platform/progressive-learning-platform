@@ -74,7 +74,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 12;
+    private final int NUMBER_OF_MODULES = 11;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];

@@ -56,7 +56,7 @@ public class Asm extends plptool.PLPAsm {
     private int         curRegion;
 
     /**
-     * PLPAsm constructor. Reads file described by strFilePath if strAsm is
+     * PLPAsm constructor. Read file described by strFilePath if strAsm is
      * null, will attach strAsm to be assembled otherwise.
      *
      * @see preprocess(int)
@@ -1312,7 +1312,7 @@ public class Asm extends plptool.PLPAsm {
     }
     
     /**
-     * Returns whether the object code entry in the given index is an instruction
+     * Return whether the object code entry in the given index is an instruction
      * (zero) or not (non-zero)
      *
      * @return Returns the entry type ID
@@ -1323,7 +1323,7 @@ public class Asm extends plptool.PLPAsm {
     }
 
     /**
-     * Returns the string representation of an opcode
+     * Return the string representation of an opcode
      *
      * @return Returns instruction opcode in String
      * @param instrOpCode the opcode of the instruction in (byte)
@@ -1344,7 +1344,7 @@ public class Asm extends plptool.PLPAsm {
     }
 
         /**
-     * Returns the string representation of a function
+     * Return the string representation of a function
      *
      * @return Returns instruction opcode in String
      * @param instrFunct the opcode of the instruction in (byte)
@@ -1381,7 +1381,7 @@ public class Asm extends plptool.PLPAsm {
     }
 
     /**
-     * Takes in a string and attempts to parse it as a 16 bit number. This
+     * Take in a string and attempts to parse it as a 16 bit number. This
      * 16-bit number is stored in int primitive (32-bit data type) to
      * preserve all 16-bits of data since Java doesn't have unsigned data
      * types. Higher 2-bytes of the number are masked.
@@ -1408,7 +1408,7 @@ public class Asm extends plptool.PLPAsm {
     }
 
     /**
-     * Takes in a string and attempts to parse it as a 32 bit number. This
+     * Take in a string and attempts to parse it as a 32 bit number. This
      * 32-bit number is stored in long primitive (64-bit data type) to
      * preserve all 32-bits of data since Java doesn't have unsigned data
      * types. Higher 4-bytes of the number are masked.

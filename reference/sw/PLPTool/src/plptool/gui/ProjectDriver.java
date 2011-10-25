@@ -60,6 +60,7 @@ public class ProjectDriver {
      * open_asm     - current open ASM file in the gui
      * curdir       - current working directory for the project
      * arch         - active ISA for this project
+	 * sim_mode		- denotes whether the project is in simulation mode
      */ // --
 
     public File                    plpfile;
@@ -312,7 +313,7 @@ public class ProjectDriver {
     }
 
     /**
-     * Initializes plp project data structures
+     * Initialize plp project data structures
      *
      * @return PLP_OK
      */
@@ -344,7 +345,7 @@ public class ProjectDriver {
     }
 
     /**
-     * Initializes project data structures and attempt to import the specified
+     * Initialize project data structures and attempt to import the specified
      * assembly source file into the project.
      *
      * @param asmPath Path to ASM file to import
@@ -380,7 +381,7 @@ public class ProjectDriver {
     }
 
     /**
-     * Saves current project state to the file specified by plpfile.
+     * Save current project state to the file specified by plpfile.
      *
      * @return PLP_OK on successful save, error code otherwise
      */
@@ -594,7 +595,7 @@ public class ProjectDriver {
     }
 
     /**
-     * Opens plp file specified by path.
+     * Open plp file specified by path.
      *
      * @param path Path to project file to load.
      * @return PLP_OK on successful operation, error code otherwise
@@ -717,6 +718,8 @@ public class ProjectDriver {
                         + " you save the project.", this);
             }
         }
+
+        tIn.close();
         
         if(asmIndex == 0) {
             return Msg.E("open(" + path + "): no .asm files found.",

@@ -38,7 +38,7 @@ public class PLPCC {
 
     public static void main(String args[]) {
         System.out.println("PLPCC Java Interface");
-	String str = "";
+		String str = "";
         String version = PLPCC.getVersion();
 
         if(args.length != 1) return;

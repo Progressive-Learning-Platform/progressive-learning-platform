@@ -105,7 +105,7 @@ public abstract class PLPAsm {
     abstract public int assemble();
 
     /**
-     * Appends the preprocessed assembly string. This method also updates
+     * Append the preprocessed assembly string. This method also updates
      * the assembly file and line number mapping for error reporting purposes.
      *
      * @param index The 'preprocessed assembly' line number.
@@ -137,7 +137,7 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Returns the object code array attached to this assembler object.
+     * Return the object code array attached to this assembler object.
      *
      * @return Returns the object code as array of longs.
      */
@@ -146,7 +146,7 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Returns the instruction addresses array attached to this assembler object.
+     * Return the instruction addresses array attached to this assembler object.
      *
      * @return Returns the address table as array of longs.
      */
@@ -155,7 +155,7 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Returns the symbol table attached to this assembler object.
+     * Return the symbol table attached to this assembler object.
      *
      * @return Returns the symbol table as a HashMap.
      */
@@ -243,7 +243,7 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Attaches a new symbol table to this assembler object
+     * Attach a new symbol table to this assembler object
      *
      * @param symTable New symbol table to attach
      */
@@ -252,7 +252,7 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Returns the region map
+     * Return the region map
      *
      * @return The region map
      */
@@ -321,7 +321,7 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Returns whether the source files attached to this assembler have
+     * Return whether the source files attached to this assembler have
      * been successfully assembled.
      *
      * @return Returns boolean true if all sources are assembled, false
@@ -332,7 +332,7 @@ public abstract class PLPAsm {
     }
 
     /**
-     * Returns the sourceList attached to this assembly.
+     * Return the sourceList attached to this assembly.
      *
      * @return Returns sourceList as ArrayList
      */
