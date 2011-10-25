@@ -58,6 +58,7 @@ JNIEXPORT jstring JNICALL Java_plptool_interfaces_PLPCC_nativeCompile
 	printf("PLPCC JNI: nativeCompile called.\n");
 	jboolean iscopy;
 	const char *str = (*env)->GetStringUTFChars(env, input, &iscopy);
+	printf("%s\n", str);
 
 	LOG_LEVEL = log_level;
 	build_jni_lines(str);

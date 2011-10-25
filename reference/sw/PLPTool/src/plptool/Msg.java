@@ -122,7 +122,7 @@ public class Msg {
     }
 
     /**
-     * Prints an informative message to the current output object.
+     * Print an informative message to the current output object.
      *
      * @param infoStr Information string to print out.
      * @param objIdentifier The object invoking this call.
@@ -145,7 +145,7 @@ public class Msg {
     }
 
     /**
-     * Prints out a debug message if the current debug level is lower or
+     * Print out a debug message if the current debug level is lower or
      * equal to the requested level.
      *
      * @param debugStr Debug string to print out.
@@ -269,7 +269,7 @@ public class Msg {
     }
 
     /**
-     * Prints the stack trace if debug level is >= 10
+     * Print the stack trace if debug level is >= 10
      *
      * @param e
      */

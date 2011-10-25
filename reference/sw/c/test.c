@@ -1,10 +1,10 @@
-/*typedef struct fritz_t {
+typedef struct fritz_t {
 	int x;
 	int y;
 } fritz;
 
 int *foo(void *a);
-*/
+
 int main(int a, int b) {
 	int *g;
 
@@ -18,3 +18,4 @@ int main(int a, int b) {
 	return 0;
 		
 }
+
