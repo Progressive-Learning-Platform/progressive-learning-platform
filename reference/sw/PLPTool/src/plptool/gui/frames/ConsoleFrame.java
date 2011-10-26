@@ -187,6 +187,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_dev.getEditor().print();
                 }
             }
+            else if(command.equals("visualizememory")) {
+                if(plp.isSimulating()) {
+                    (new plptool.mips.visualizer.MemoryVisualization(plp)).setVisible(true);
+                }
+            }
             else if(command.equals("ignoresavedmods")) {
                 plptool.Config.simIgnoreSavedSimState = true;
             }
