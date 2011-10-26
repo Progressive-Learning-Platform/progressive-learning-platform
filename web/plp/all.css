@@ -116,12 +116,12 @@ h1#title {
 
 /* Content */
 #content {
-  clear: both;
+  clear: left;
   padding: 0;
   position: relative;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
-  border-top: solid 1px #aaa;
+  /*border-top: solid 1px #aaa;*/
   border-bottom: solid 1px #aaa;
 }
 .left-column {
@@ -132,7 +132,8 @@ h1#title {
 }
 .right-column {
   width: 49%;
-  float: right;
+  float: right; 
+  clear: none;
 }
 .end-columns {
   clear: both;
