@@ -1,0 +1,8 @@
+yaccviso is an excellent tool for generating graphs of the parser bnf:
+http://lo-res.org/~aaron/yaccviso/
+
+atul's mini c compiler in python provided some interesting hints:
+http://people.cs.uchicago.edu/~varmaa/mini_c/
+
+Tom Niemann's "A compact guide to Lex and Yacc" is indispensible 
+
