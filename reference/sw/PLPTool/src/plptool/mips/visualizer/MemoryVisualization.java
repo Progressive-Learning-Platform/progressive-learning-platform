@@ -235,7 +235,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
                 if(spVal >= 0 && spVal >= startAddr + addrOffset*i && spVal < startAddr + addrOffset*i + addrOffset) {
                     g.setColor(Color.red);
                     int xPoints[] = {W - 40 - 2*addrStrOffset - 30 - rightOffset, W - 40 - 2*addrStrOffset - 30 - rightOffset, W - 40 - 2*addrStrOffset - 10 - rightOffset};
-                    int yPoints[] = {topOffset + i*rowH + 10, topOffset + (i+1)*rowH - 10, topOffset + i*rowH + rowH / 2};
+                    int yPoints[] = {topOffset + i*rowH + rowH / 2 - 5, topOffset + i*rowH + rowH / 2 + 5, topOffset + i*rowH + rowH / 2};
                     g.fillPolygon(xPoints, yPoints, 3);
                     //g.drawString("$sp -->", W - 50 - 2*addrStrOffset - g.getFontMetrics().stringWidth("$sp -->") - rightOffset, topOffset + i*rowH + stringYOffset);
                     oldSpVal = spVal;
