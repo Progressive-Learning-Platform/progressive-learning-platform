@@ -780,7 +780,17 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
      * @param memVis Reference to the memory visualizer
      */
     public void attachMemoryVisualizer(MemoryVisualization memVis) {
+        if(memVis != null)
+            disposeMemoryVisualizer();
+
         this.memVis = memVis;
+    }
+
+    public void disposeMemoryVisualizer() {
+        if(memVis != null) {
+            this.memVis.setVisible(false);
+            this.memVis.dispose();
+        }
     }
 
     /** release build features disabler **/

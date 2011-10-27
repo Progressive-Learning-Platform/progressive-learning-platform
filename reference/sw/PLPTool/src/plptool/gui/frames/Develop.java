@@ -1101,6 +1101,25 @@ public class Develop extends javax.swing.JFrame {
 
     }
 
+    public void addSimToolItem(javax.swing.JMenuItem item) {
+        menuSimTools.add(item);
+    }
+
+    public void removeLastSimToolItem() {
+        Msg.D("Removing simulation tools menu item.", 4, null);
+
+        menuSimTools.remove(menuSimTools.getMenuComponentCount() - 1);
+
+        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                menuSimTools.revalidate();
+                                menuSimTools.repaint();
+                            }
+                        });
+    }
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
