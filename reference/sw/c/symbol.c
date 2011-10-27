@@ -12,8 +12,39 @@ extern symbol_table *sym;
 typedef struct id_chain_t {
 	struct id_chain_t *up;
 	char *id;
+	int size;
 	int pointer;
 } id_chain;
+
+/* get the size for this direct declarator. This can be a really tall order, 
+as the size on direct declarators can be many things. For example:
+
+int a;
+int a[5];
+int a[5][10][200][1000][1];
+int a[5+CONSTANT];
+*/
+
+int get_ids_size(node *n) {
+	/* for now we only support non-array types and array types of 1 dimension with no 
+	 * computed size (ie constant only) */
+	if (n->num_children == 1)
+		return 1;
+	else if (n->num_children == 2) {
+		if (strcmp(n->children[1]->id, "constant_expression") == 0) {
+			if (n->children[1]->children[0]->type == type_con) {
+				char *endp;
+				return strtol(n->children[1]->children[0]->id,&endp,0);
+			} else {
+				err("[symbol] non-literal constant array declarations not currently supported\n");
+			}
+		} else {
+			return 1; /* this is for function declarations, array declarations without size specifiers */
+		}
+	} else {
+		err("[symbol] multi-dimensional arrays not currently supported\n");
+	}
+}
 
 id_chain* get_ids(id_chain* i, node *n) {
 	/* is the current node an id? */
@@ -28,9 +59,11 @@ id_chain* get_ids(id_chain* i, node *n) {
 			if (strcmp(n->children[0]->id, "pointer") == 0) {
 				t->pointer = 1;
 				t->id = n->children[1]->children[0]->id;
+				t->size = get_ids_size(n->children[1]->children[0]);
 			} else {
 				t->pointer = 0;
 				t->id = n->children[0]->children[0]->id;
+				t->size = get_ids_size(n->children[0]->children[0]);
 			}
 			i = t;
 			lvlog(n->line, "[symbol] found id %s\n", i->id);
@@ -95,7 +128,6 @@ node* install_symbol(symbol_table *t, node *n) {
 	s->value = NULL;
 
 	/* get the id and all attributes for this symbol */
-	//print_tree(n, stdout, 0); 
 	
 	/* the first child node should be the types and attributes */
 	if (strcmp(n->children[0]->id,"declaration_specifier") != 0) {
