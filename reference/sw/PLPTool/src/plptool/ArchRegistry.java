@@ -164,6 +164,21 @@ public class ArchRegistry {
 
                 plp.g_dev.addButton(btnInt);
             }
+
+            // add our custom simulation tools
+            if(plp.g()) {
+                final javax.swing.JMenuItem menuMemoryVisualizer = new javax.swing.JMenuItem();
+                menuMemoryVisualizer.setText("PLP CPU Memory Visualizer");
+                menuMemoryVisualizer.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        plptool.mips.visualizer.MemoryVisualization memvis = new plptool.mips.visualizer.MemoryVisualization(plp);
+                        ((plptool.mips.SimCoreGUI) plp.g_sim).attachMemoryVisualizer(memvis);
+                        memvis.setVisible(true);
+                    }
+                });
+
+                plp.g_dev.addSimToolItem(menuMemoryVisualizer);
+            }
         }
 
         // ... add your pre-simulation code here ... //
@@ -185,8 +200,11 @@ public class ArchRegistry {
          * plpmips SimCore post-simulation
          **********************************************************************/
         else if(arch.equals("plpmips")) {
-            if(plp.g() && plp.g_dev != null)
+            if(plp.g() && plp.g_dev != null) {
                 plp.g_dev.removeLastButton();
+                plp.g_dev.removeLastSimToolItem();
+                ((plptool.mips.SimCoreGUI) plp.g_sim).disposeMemoryVisualizer();
+            }
         }
 
         // ... add your post-simulation code here ... //
