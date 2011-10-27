@@ -29,11 +29,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTextField;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JOptionPane;
 import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
 import plptool.PLPToolbox;
-import plptool.gui.ProjectDriver;
+import plptool.mips.visualizer.*;
 
 /**
  *
@@ -42,6 +41,7 @@ import plptool.gui.ProjectDriver;
 public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     private plptool.gui.ProjectDriver plp;
+    private MemoryVisualization memVis;
     private long old_pc;
     private String lastCLCommand = "";
 
@@ -768,22 +768,26 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             tblRegFile.setValueAt(String.format("0x%08x", ((SimCore)sim).regfile.read(i)), i, 1);
         }
 
+        if(memVis != null)
+            memVis.updateVisualization();
+
         updateProgramMemoryTablePC();
+    }
+
+    /**
+     * Attach a memory visualization frame
+     *
+     * @param memVis Reference to the memory visualizer
+     */
+    public void attachMemoryVisualizer(MemoryVisualization memVis) {
+        this.memVis = memVis;
     }
 
     /** release build features disabler **/
     public final void disableFeatures() {
         coreVisPane.setVisible(false);
     }
-/*
-    public javax.swing.JTextArea getSimCLOutput() {
-        return simCLOutput;
-    }
 
-    public javax.swing.JTextField getSimCLConsole() {
-        return simCLConsole;
-    }
-*/
     public final void clearProgramMemoryTable() {
         javax.swing.table.DefaultTableModel program = (javax.swing.table.DefaultTableModel) tblProgram.getModel();
 

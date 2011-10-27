@@ -20,6 +20,7 @@ package plptool.mips.visualizer;
 
 import plptool.gui.ProjectDriver;
 import plptool.*;
+import plptool.mips.*;
 import javax.swing.*;
 import java.awt.*;
 
@@ -30,6 +31,7 @@ import java.awt.*;
 public class MemoryVisualization extends javax.swing.JFrame {
 
     private ProjectDriver plp;
+    private SimCore sim;
     private DrawPanel canvas;
 
     protected long startAddr = -1;
@@ -42,7 +44,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
         canvas.setSize(container.getWidth(), container.getHeight());
         container.add(canvas);
         container.revalidate();
-
+        this.sim = (SimCore) plp.sim;
         this.plp = plp;
     }
     
@@ -66,9 +68,10 @@ public class MemoryVisualization extends javax.swing.JFrame {
         container = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(MemoryVisualization.class);
+        setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(MemoryVisualization.class);
         txtStartAddr.setText(resourceMap.getString("txtStartAddr.text")); // NOI18N
         txtStartAddr.setName("txtStartAddr"); // NOI18N
 
@@ -112,7 +115,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
                 .addComponent(txtEndAddr, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnVisualize, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
             .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -160,27 +163,69 @@ public class MemoryVisualization extends javax.swing.JFrame {
 
         @Override
         public void paint(Graphics g) {
+            g.setFont(new Font("Monospaced", Font.BOLD, 12));
+            FontMetrics fm = g.getFontMetrics();
+            int addrStrOffset = fm.stringWidth("0x00000000");
+            this.setSize(this.getParent().getWidth(), this.getParent().getHeight());
             int W = this.getWidth();
             int H = this.getHeight();
+            int fontHeight = g.getFontMetrics().getHeight();
+
             g.setColor(Color.white);
             g.fillRect(0, 0, W, H);
-            long locs = (endAddr - startAddr) / 4;
+            long locs = (endAddr - startAddr) / 4 + 1;
 
-            if(locs < 1)
+            if(locs < 1 || startAddr < 0 || endAddr < 0)
                 return;
-            
-            int rowH = H / (int) locs;
 
-            Msg.D("locs: " + locs + " - rowH: " + rowH, 1, null);
+            int topOffset = fm.getHeight() + 10;
+            int rowH = (H - topOffset) / (int) locs;
 
-            int i;
-            
+            g.setColor(new Color(240, 240, 240));
+            g.fillRect(0, 0, W, topOffset);
+            g.setColor(Color.black);
+            g.drawString("Contents", W - 10 - addrStrOffset, 5 + fm.getHeight());
+            g.drawString("Address", W - 30 - 2*addrStrOffset, 5 + fm.getHeight());
+
+            int stringYOffset = (rowH - fontHeight) / 2 + fontHeight;
+
+            boolean drawStr = (rowH > stringYOffset);
+
+            long addrOffset = 4;
+
+            // if the user wants to see more than 32 memory locations, we do
+            // a special case
+            int i = 5;
+            while(locs > Math.pow(2, i) && i < 32)
+                i++;
+
+            // too big, user wants to visualize more than 32-bit address space
+            if(i == 32)
+                return;
+
             for(i = 0; i < locs; i++) {
-                g.setColor(Color.red);
-                g.drawString(String.format("0x%08x", plp.sim.bus.read(startAddr + 4*i)), W / 2, 10 + i*rowH);
-                g.setColor(Color.gray);
-                g.drawString(String.format("0x%08x",startAddr + 4*i), 10, 10 + i*rowH);
-                g.drawRect(10, i * rowH, W - 10, rowH);
+                if(sim.regfile.read(29) >= startAddr + addrOffset*i && sim.regfile.read(29) < startAddr + addrOffset*i + addrOffset) {
+                    g.setColor(Color.red);
+                    g.drawString("$sp -->", W - 50 - 2*addrStrOffset - g.getFontMetrics().stringWidth("$sp -->"), topOffset + i*rowH + stringYOffset);
+                }
+                
+                if(sim.bus.isInstr(startAddr + addrOffset*i))
+                    g.setColor(new Color(200, 200, 255));
+                else if (!sim.bus.isMapped(startAddr + addrOffset*i))
+                    g.setColor(new Color(255, 200, 200));
+                else if (!sim.bus.isInitialized(startAddr + addrOffset*i))
+                    g.setColor(new Color(225, 225, 225));
+                else
+                    g.setColor(new Color(190, 190, 190));
+
+                g.fillRect(W - 20 - addrStrOffset, topOffset + i * rowH, 20 + addrStrOffset, rowH);
+
+                if(drawStr) {
+                    g.setColor(Color.black);
+                    g.drawString(String.format("0x%08x", plp.sim.bus.read(startAddr + addrOffset*i)), W - 10 - addrStrOffset, topOffset + i*rowH + stringYOffset);
+                    g.setColor(plp.sim.visibleAddr == startAddr + addrOffset*i ? Color.red : Color.gray);
+                    g.drawString(String.format("0x%08x", startAddr + addrOffset*i), W - 10 - 2*addrStrOffset - 20, topOffset + i*rowH + stringYOffset);
+                }
             }
         }
     }
