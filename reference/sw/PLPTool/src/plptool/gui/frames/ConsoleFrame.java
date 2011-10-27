@@ -187,9 +187,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_dev.getEditor().print();
                 }
             }
-            else if(command.equals("visualizememory")) {
+            else if(command.equals("vismem")) {
                 if(plp.isSimulating()) {
-                    (new plptool.mips.visualizer.MemoryVisualization(plp)).setVisible(true);
+                    plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
+                    ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);
+                    memVis.setVisible(true);
                 }
             }
             else if(command.equals("ignoresavedmods")) {
