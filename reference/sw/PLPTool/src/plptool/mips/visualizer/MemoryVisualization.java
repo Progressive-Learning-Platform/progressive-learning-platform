@@ -22,7 +22,11 @@ import plptool.gui.ProjectDriver;
 import plptool.*;
 import plptool.mips.*;
 import javax.swing.*;
+import javax.imageio.*;
+import java.awt.image.*;
 import java.awt.*;
+import java.net.*;
+import java.io.*;
 
 /**
  *
@@ -33,6 +37,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
     private ProjectDriver plp;
     private SimCore sim;
     private DrawPanel canvas;
+    private BufferedImage img;
 
     protected long startAddr = -1;
     protected long endAddr = -1;
@@ -46,6 +51,16 @@ public class MemoryVisualization extends javax.swing.JFrame {
         container.revalidate();
         this.sim = (SimCore) plp.sim;
         this.plp = plp;
+    }
+
+    public void setBG(String path) {
+        try {
+            URL u = new URL(path);
+            img = ImageIO.read(u);
+
+        } catch(Exception e) {
+            Msg.E("Unable to fetch kitten image, boo!", Constants.PLP_OK, null);
+        }
     }
     
     public void updateVisualization() {
@@ -155,9 +170,11 @@ public class MemoryVisualization extends javax.swing.JFrame {
 
     class DrawPanel extends JPanel {
         private ProjectDriver plp;
+        private long oldSpVal;
 
         public DrawPanel(ProjectDriver plp) {
             super();
+            oldSpVal = -1;
             this.plp = plp;
         }
 
@@ -169,44 +186,59 @@ public class MemoryVisualization extends javax.swing.JFrame {
             this.setSize(this.getParent().getWidth(), this.getParent().getHeight());
             int W = this.getWidth();
             int H = this.getHeight();
-            int fontHeight = g.getFontMetrics().getHeight();
-
-            g.setColor(Color.white);
-            g.fillRect(0, 0, W, H);
+            int fontHeight = g.getFontMetrics().getDescent();
             long locs = (endAddr - startAddr) / 4 + 1;
+
+            g.setColor(Color.black);
+            g.fillRect(0, 0, W, H);
+
+            if(img != null) {
+                g.drawImage(img, 0, 0, null);
+            }
 
             if(locs < 1 || startAddr < 0 || endAddr < 0)
                 return;
 
             int topOffset = fm.getHeight() + 10;
-            int rowH = (H - topOffset) / (int) locs;
+            int rightOffset = 50;
 
             g.setColor(new Color(240, 240, 240));
             g.fillRect(0, 0, W, topOffset);
             g.setColor(Color.black);
-            g.drawString("Contents", W - 10 - addrStrOffset, 5 + fm.getHeight());
-            g.drawString("Address", W - 30 - 2*addrStrOffset, 5 + fm.getHeight());
-
-            int stringYOffset = (rowH - fontHeight) / 2 + fontHeight;
-
-            boolean drawStr = (rowH > stringYOffset);
-
-            long addrOffset = 4;
+            g.drawString("Contents", W - 10 - addrStrOffset - rightOffset, 5 + fm.getHeight());
+            g.drawString("Address", W - 30 - 2*addrStrOffset - rightOffset, 5 + fm.getHeight());
+            g.drawString("$sp", W - 40 - 2*addrStrOffset - 30 - rightOffset, 5 + fm.getHeight());
 
             // if the user wants to see more than 32 memory locations, we do
             // a special case
-            int i = 5;
-            while(locs > Math.pow(2, i) && i < 32)
-                i++;
+            int yScaleFactor = 5;
+            while(locs > Math.pow(2, yScaleFactor) && yScaleFactor < 32)
+                yScaleFactor++;
 
             // too big, user wants to visualize more than 32-bit address space
-            if(i == 32)
+            if(yScaleFactor == 32)
                 return;
+            
+            long addrOffset = 4;
+            if(yScaleFactor > 5) {
+                locs /= (long) Math.pow(2, yScaleFactor - 5);
+                addrOffset *= Math.pow(2, yScaleFactor - 5);
+            }
 
-            for(i = 0; i < locs; i++) {
-                if(sim.regfile.read(29) >= startAddr + addrOffset*i && sim.regfile.read(29) < startAddr + addrOffset*i + addrOffset) {
+            int rowH = (H - topOffset) / (int) locs;
+            int stringYOffset = (rowH - fontHeight) / 2 + fontHeight;
+            boolean drawStr = (rowH > stringYOffset);
+
+            for(int i = 0; i < locs; i++) {
+                Long spVal = sim.regfile.read(29);
+                if(spVal == null) spVal = oldSpVal;
+                if(spVal >= 0 && spVal >= startAddr + addrOffset*i && spVal < startAddr + addrOffset*i + addrOffset) {
                     g.setColor(Color.red);
-                    g.drawString("$sp -->", W - 50 - 2*addrStrOffset - g.getFontMetrics().stringWidth("$sp -->"), topOffset + i*rowH + stringYOffset);
+                    int xPoints[] = {W - 40 - 2*addrStrOffset - 30 - rightOffset, W - 40 - 2*addrStrOffset - 30 - rightOffset, W - 40 - 2*addrStrOffset - 10 - rightOffset};
+                    int yPoints[] = {topOffset + i*rowH + 10, topOffset + (i+1)*rowH - 10, topOffset + i*rowH + rowH / 2};
+                    g.fillPolygon(xPoints, yPoints, 3);
+                    //g.drawString("$sp -->", W - 50 - 2*addrStrOffset - g.getFontMetrics().stringWidth("$sp -->") - rightOffset, topOffset + i*rowH + stringYOffset);
+                    oldSpVal = spVal;
                 }
                 
                 if(sim.bus.isInstr(startAddr + addrOffset*i))
@@ -218,13 +250,17 @@ public class MemoryVisualization extends javax.swing.JFrame {
                 else
                     g.setColor(new Color(190, 190, 190));
 
-                g.fillRect(W - 20 - addrStrOffset, topOffset + i * rowH, 20 + addrStrOffset, rowH);
+                g.fillRect(W - 20 - addrStrOffset - rightOffset, topOffset + i * rowH, 20 + addrStrOffset, rowH);
+                g.setColor(new Color(25, 25, 25));
+                g.drawLine(0, topOffset + (i+1) * rowH, W, topOffset + (i+1) * rowH);
 
                 if(drawStr) {
-                    g.setColor(Color.black);
-                    g.drawString(String.format("0x%08x", plp.sim.bus.read(startAddr + addrOffset*i)), W - 10 - addrStrOffset, topOffset + i*rowH + stringYOffset);
-                    g.setColor(plp.sim.visibleAddr == startAddr + addrOffset*i ? Color.red : Color.gray);
-                    g.drawString(String.format("0x%08x", startAddr + addrOffset*i), W - 10 - 2*addrStrOffset - 20, topOffset + i*rowH + stringYOffset);
+                    if(yScaleFactor <= 5) {
+                        g.setColor(Color.black);
+                        g.drawString(String.format("0x%08x", plp.sim.bus.read(startAddr + addrOffset*i)), W - 10 - addrStrOffset - rightOffset, topOffset + i*rowH + stringYOffset);
+                    }
+                    g.setColor(plp.sim.visibleAddr == startAddr + addrOffset*i ? Color.red : Color.white);
+                    g.drawString(String.format("0x%08x", startAddr + addrOffset*i), W - 10 - 2*addrStrOffset - 20 - rightOffset, topOffset + i*rowH + stringYOffset);
                 }
             }
         }

@@ -194,6 +194,14 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     memVis.setVisible(true);
                 }
             }
+            else if(command.equals("vismem with cat")) {
+                if(plp.isSimulating()) {
+                    plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
+                    memVis.setBG("http://upload.wikimedia.org/wikipedia/commons/e/ef/Curious_kitten.jpg");
+                    ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);
+                    memVis.setVisible(true);
+                }
+            }
             else if(command.equals("ignoresavedmods")) {
                 plptool.Config.simIgnoreSavedSimState = true;
             }
