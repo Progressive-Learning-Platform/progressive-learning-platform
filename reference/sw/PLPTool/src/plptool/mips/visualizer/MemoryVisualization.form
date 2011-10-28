@@ -40,7 +40,7 @@
                       <Component id="btnVisualize" min="-2" pref="120" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="16" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -70,12 +70,18 @@
         <Property name="text" type="java.lang.String" resourceKey="txtStartAddr.text"/>
         <Property name="name" type="java.lang.String" value="txtStartAddr" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtStartAddrKeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="txtOffset">
       <Properties>
         <Property name="text" type="java.lang.String" resourceKey="txtOffset.text"/>
         <Property name="name" type="java.lang.String" value="txtOffset" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtOffsetKeyPressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnVisualize">
       <Properties>

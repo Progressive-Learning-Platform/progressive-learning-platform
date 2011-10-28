@@ -91,9 +91,19 @@ public class MemoryVisualization extends javax.swing.JFrame {
 
         txtStartAddr.setText(resourceMap.getString("txtStartAddr.text")); // NOI18N
         txtStartAddr.setName("txtStartAddr"); // NOI18N
+        txtStartAddr.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtStartAddrKeyPressed(evt);
+            }
+        });
 
         txtOffset.setText(resourceMap.getString("txtOffset.text")); // NOI18N
         txtOffset.setName("txtOffset"); // NOI18N
+        txtOffset.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtOffsetKeyPressed(evt);
+            }
+        });
 
         btnVisualize.setText(resourceMap.getString("btnVisualize.text")); // NOI18N
         btnVisualize.setName("btnVisualize"); // NOI18N
@@ -140,7 +150,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
                         .addComponent(txtOffset, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnVisualize, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -180,6 +190,16 @@ public class MemoryVisualization extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_btnVisualizeActionPerformed
+
+    private void txtStartAddrKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtStartAddrKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnVisualizeActionPerformed(null);
+    }//GEN-LAST:event_txtStartAddrKeyPressed
+
+    private void txtOffsetKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtOffsetKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnVisualizeActionPerformed(null);
+    }//GEN-LAST:event_txtOffsetKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -230,7 +250,6 @@ public class MemoryVisualization extends javax.swing.JFrame {
             g.setColor(new Color(240, 240, 240));
             g.fillRect(0, 1, W, topOffset - 1);
             g.setColor(Color.black);
-            g.drawString("" + Constants.versionString, 5, 4 + fm.getHeight());
             g.drawString("Contents", W - 10 - addrStrOffset - rightOffset, 4 + fm.getHeight());
             g.drawString("Address", W - 30 - 2*addrStrOffset - rightOffset, 4 + fm.getHeight());
             g.drawString("$sp", W - 40 - 2*addrStrOffset - 30 - rightOffset, 4 + fm.getHeight());
@@ -299,6 +318,16 @@ public class MemoryVisualization extends javax.swing.JFrame {
                     g.drawString(String.format("0x%08x", startAddr + addrOffset*i), W - 10 - 2*addrStrOffset - 20 - rightOffset, topOffset + i*rowH + stringYOffset);
                 }
             }
+
+            g.setColor(Color.white);
+            if(yScaleFactor >= 23)
+                g.drawString((int) (Math.pow(2, (yScaleFactor - 23))) + " Mbytes / div", 5, topOffset + fm.getDescent() + 10);
+            else if(yScaleFactor >= 13)
+                g.drawString((int) (Math.pow(2, (yScaleFactor - 13))) + " Kbytes / div", 5, topOffset + fm.getDescent() + 10);
+            else
+                g.drawString((int) (Math.pow(2, (yScaleFactor - 5))) * 4 + " bytes / div", 5, topOffset + fm.getDescent() + 10);
+
+            g.drawString(locs + " entries", 5, topOffset + 2*fm.getDescent() + 20);
         }
     }
 }
