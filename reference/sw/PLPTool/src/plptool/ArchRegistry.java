@@ -46,7 +46,7 @@ public class ArchRegistry {
                                     };
 
     /**
-     * This method returns a new instance of the ISA assembler when given an
+     * Return a new instance of the ISA assembler when given an
      * ArrayList of source files.
      *
      * @param plp The current instance of the project driver backend
@@ -73,7 +73,7 @@ public class ArchRegistry {
     }
 
     /**
-     * This method returns a new instance of the ISA assembler when given an
+     * Return a new instance of the ISA assembler when given an
      * either the string for the source code or just the path.
      *
      * @param plp The current instance of the project driver
@@ -102,7 +102,7 @@ public class ArchRegistry {
     }
 
     /**
-     * This method returns a new instance of the simulation core.
+     * Return a new instance of the simulation core.
      *
      * @param plp The current instance of the project driver
      * @return SimCore instance of the ISA
@@ -145,51 +145,7 @@ public class ArchRegistry {
          * plpmips SimCore initialization
          **********************************************************************/
         else if(arch.equals("plpmips")) {
-            plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
-            plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
-            plp.sim.bus.enableAllModules();
-
-            // add our button interrupt to g_dev toolbar
-            if(plp.g()) {
-                final javax.swing.JToggleButton btnInt = new javax.swing.JToggleButton();
-                btnInt.setIcon(new javax.swing.ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(plp.g_dev.getClass().getResource("resources/toolbar_exclamation.png"))));
-                btnInt.setToolTipText("Button Interrupt (Toggle button)");
-                btnInt.setOpaque(false);
-                btnInt.setMargin(new java.awt.Insets(2, 0, 2, 0));
-                btnInt.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ((plptool.mods.Button) plp.sim.bus.getRefMod(1)).setPressedState(btnInt.isSelected());
-                    }
-                });
-
-                plp.g_dev.addButton(btnInt);
-            }
-
-            // add our custom simulation tools
-            if(plp.g()) {
-                final javax.swing.JMenuItem menuMemoryVisualizer = new javax.swing.JMenuItem();
-                menuMemoryVisualizer.setText("Create a PLP CPU Memory Visualizer");
-                menuMemoryVisualizer.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        plptool.mips.visualizer.MemoryVisualization memvis = new plptool.mips.visualizer.MemoryVisualization(plp);
-                        ((plptool.mips.SimCoreGUI) plp.g_sim).attachMemoryVisualizer(memvis);
-                        memvis.setVisible(true);
-                    }
-                });
-
-                final javax.swing.JMenuItem menuForgetMemoryVisualizer = new javax.swing.JMenuItem();
-                menuForgetMemoryVisualizer.setText("Remove Memory Visualizers from Project");
-                menuForgetMemoryVisualizer.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ((plptool.mips.SimCoreGUI) plp.g_sim).disposeMemoryVisualizers();
-                        ((plptool.mips.SimCoreGUI) plp.g_sim).updateAttributeForMemoryVisualizers();
-                    }
-                });
-
-                plp.g_dev.addSimToolSeparator();
-                plp.g_dev.addSimToolItem(menuMemoryVisualizer);
-                plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
-            }
+            plptool.mips.ArchHelper.doPreSimulationRoutine(plp);
         }
 
         // ... add your pre-simulation code here ... //
@@ -197,7 +153,7 @@ public class ArchRegistry {
 
     /**
      * Additional code after simulation is stopped. Called by the ProjectDriver
-     * when the project exits simulation mode
+     * immediately after the project exits simulation mode
      *
      * @param plp The current instance of the project driver
      */
@@ -211,16 +167,7 @@ public class ArchRegistry {
          * plpmips SimCore post-simulation
          **********************************************************************/
         else if(arch.equals("plpmips")) {
-            plptool.mips.SimCoreGUI g_sim = ((plptool.mips.SimCoreGUI) plp.g_sim);
-
-            if(plp.g() && plp.g_dev != null) {
-                plp.g_dev.removeLastButton();
-                plp.g_dev.removeLastSimToolItem();
-                plp.g_dev.removeLastSimToolItem();
-                plp.g_dev.removeLastSimToolItem();
-                
-                g_sim.disposeMemoryVisualizers();
-            }
+            plptool.mips.ArchHelper.doPostSimulationRoutine(plp);
         }
 
         // ... add your post-simulation code here ... //
@@ -244,17 +191,17 @@ public class ArchRegistry {
             plptool.mips.SimCLI.simCL(plp);
         }
 
+        // ... add your simulation CLI interface instantiation here ... //
+
         else
             return Msg.E("The ISA " + arch + " does not have a registered" +
                    " CLI for the simulator.", Constants.PLP_ISA_NO_SIM_CLI, null);
-
-        // ... add your simulation CLI interface instantiation here ... //
 
         return Constants.PLP_OK;
     }
 
     /**
-     * This method returns a new instance of the simulation core frame.
+     * Return a new instance of the simulation core frame.
      *
      * @param plp The current instance of the project driver
      * @return SimCoreGUI instance of the ISA
@@ -361,7 +308,10 @@ public class ArchRegistry {
 
     /**
      * Set architecture-specific simulation configuration to the current
-     * open project driver
+     * open project driver. ProjectDriver.open() will pass an array of String
+     * tokens split with the string "::" as the delimiter. For example,
+     * the line in config file "foo::bar" will be passed on to this function
+     * as {"foo", "bar"} in configStr
      *
      * @param plp The current instance of the project driver
      * @param configStr Configuration string saved in plp.simconfig

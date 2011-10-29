@@ -500,7 +500,6 @@ public class ProjectDriver {
             smods = ioreg.createPreset();
 
         if(smods != null && smods.size() > 0) {
-
             str += "MODS\n";
 
             for(i = 0; i < smods.size(); i++) {
@@ -516,14 +515,11 @@ public class ProjectDriver {
                     str += smods.getY(i) + "::";      //7
                     str += smods.getW(i) + "::";  //8
                     str += smods.getH(i);        //9
-                }
-                else {
+                } else {
                     str += "noframe";
                 }
-
                 str += "\n";
             }
-
             str += "END\n";
         }
 

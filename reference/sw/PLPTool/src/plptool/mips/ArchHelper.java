@@ -23,6 +23,67 @@ package plptool.mips;
  * @author wira
  */
 public class ArchHelper {
+    public static void doPreSimulationRoutine(final plptool.gui.ProjectDriver plp) {
+        plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
+        plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
+        plp.sim.bus.enableAllModules();
+
+        // add our button interrupt to g_dev toolbar
+        if(plp.g()) {
+            final javax.swing.JToggleButton btnInt = new javax.swing.JToggleButton();
+            btnInt.setIcon(new javax.swing.ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(plp.g_dev.getClass().getResource("resources/toolbar_exclamation.png"))));
+            btnInt.setToolTipText("Button Interrupt (Toggle button)");
+            btnInt.setOpaque(false);
+            btnInt.setMargin(new java.awt.Insets(2, 0, 2, 0));
+            btnInt.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    ((plptool.mods.Button) plp.sim.bus.getRefMod(1)).setPressedState(btnInt.isSelected());
+                }
+            });
+
+            plp.g_dev.addButton(btnInt);
+        }
+
+        // add our custom simulation tools menu entries
+        if(plp.g()) {
+            final javax.swing.JMenuItem menuMemoryVisualizer = new javax.swing.JMenuItem();
+            menuMemoryVisualizer.setText("Create a PLP CPU Memory Visualizer");
+            menuMemoryVisualizer.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    plptool.mips.visualizer.MemoryVisualization memvis = new plptool.mips.visualizer.MemoryVisualization(plp);
+                    ((plptool.mips.SimCoreGUI) plp.g_sim).attachMemoryVisualizer(memvis);
+                    memvis.setVisible(true);
+                }
+            });
+
+            final javax.swing.JMenuItem menuForgetMemoryVisualizer = new javax.swing.JMenuItem();
+            menuForgetMemoryVisualizer.setText("Remove Memory Visualizers from Project");
+            menuForgetMemoryVisualizer.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    ((plptool.mips.SimCoreGUI) plp.g_sim).disposeMemoryVisualizers();
+                    ((plptool.mips.SimCoreGUI) plp.g_sim).updateAttributeForMemoryVisualizers();
+                }
+            });
+
+            plp.g_dev.addSimToolSeparator();
+            plp.g_dev.addSimToolItem(menuMemoryVisualizer);
+            plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
+        }
+    }
+
+    public static void doPostSimulationRoutine(final plptool.gui.ProjectDriver plp) {
+        plptool.mips.SimCoreGUI g_sim = ((plptool.mips.SimCoreGUI) plp.g_sim);
+
+        if(plp.g() && plp.g_dev != null) {
+            plp.g_dev.removeLastButton();
+            plp.g_dev.removeLastSimToolItem();
+            plp.g_dev.removeLastSimToolItem();
+            plp.g_dev.removeLastSimToolItem();
+
+            g_sim.disposeMemoryVisualizers();
+        }
+    }
+
     public static String getQuickReferenceString() {
         String str = "";
 
