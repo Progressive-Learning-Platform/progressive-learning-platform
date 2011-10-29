@@ -168,7 +168,7 @@ public class ArchRegistry {
             // add our custom simulation tools
             if(plp.g()) {
                 final javax.swing.JMenuItem menuMemoryVisualizer = new javax.swing.JMenuItem();
-                menuMemoryVisualizer.setText("PLP CPU Memory Visualizer");
+                menuMemoryVisualizer.setText("Create a PLP CPU Memory Visualizer");
                 menuMemoryVisualizer.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent e) {
                         plptool.mips.visualizer.MemoryVisualization memvis = new plptool.mips.visualizer.MemoryVisualization(plp);
@@ -177,7 +177,18 @@ public class ArchRegistry {
                     }
                 });
 
+                final javax.swing.JMenuItem menuForgetMemoryVisualizer = new javax.swing.JMenuItem();
+                menuForgetMemoryVisualizer.setText("Remove Memory Visualizers from Project");
+                menuForgetMemoryVisualizer.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        ((plptool.mips.SimCoreGUI) plp.g_sim).disposeMemoryVisualizers();
+                        ((plptool.mips.SimCoreGUI) plp.g_sim).updateAttributeForMemoryVisualizers();
+                    }
+                });
+
+                plp.g_dev.addSimToolSeparator();
                 plp.g_dev.addSimToolItem(menuMemoryVisualizer);
+                plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
             }
         }
 
@@ -200,10 +211,15 @@ public class ArchRegistry {
          * plpmips SimCore post-simulation
          **********************************************************************/
         else if(arch.equals("plpmips")) {
+            plptool.mips.SimCoreGUI g_sim = ((plptool.mips.SimCoreGUI) plp.g_sim);
+
             if(plp.g() && plp.g_dev != null) {
                 plp.g_dev.removeLastButton();
                 plp.g_dev.removeLastSimToolItem();
-                ((plptool.mips.SimCoreGUI) plp.g_sim).disposeMemoryVisualizer();
+                plp.g_dev.removeLastSimToolItem();
+                plp.g_dev.removeLastSimToolItem();
+                
+                g_sim.disposeMemoryVisualizers();
             }
         }
 
@@ -287,6 +303,12 @@ public class ArchRegistry {
             return null;
     }
 
+    /**
+     * Return a QuickReference string for the IDE
+     *
+     * @param plp The current instance of the project driver
+     * @return QuickReference string to display (HTML formatted)
+     */
     public static String getQuickReferenceString(ProjectDriver plp) {
         String arch = plp.getArch();
 
@@ -304,6 +326,70 @@ public class ArchRegistry {
 
         else
             return null;
+    }
+
+    /**
+     * Save architecture-specific simulation configuration to PLP file
+     *
+     * @param plp The current instance of the project driver
+     * @return Additional configuration string to save to plp.simconfig
+     */
+    public static String getArchSpecificSimStates(ProjectDriver plp) {
+        String ret = "";
+        String arch = plp.getArch();
+
+        if(arch == null)
+            ;
+
+        /**********************************************************************
+         * plpmips additional simulation states
+         **********************************************************************/
+        else if (arch.equals("plpmips")) {
+            // check if we have saved memory visualizer entries in pAttrSet
+            Object[][] attrSet = (Object[][]) plp.getProjectAttribute("plpmips_memory_visualizer");
+
+            if(attrSet != null) {
+                ret += "plpmips_memory_visualizer::";
+                for(int i = 0; i < attrSet.length; i++) {
+                    ret += attrSet[i][0] + "-" + attrSet[i][1] + ":";
+                }
+            }
+        }
+
+        return ret + "\n";
+    }
+
+    /**
+     * Set architecture-specific simulation configuration to the current
+     * open project driver
+     *
+     * @param plp The current instance of the project driver
+     * @param configStr Configuration string saved in plp.simconfig
+     */
+    public static void setArchSpecificSimStates(ProjectDriver plp, String[] configStr) {
+        String arch = plp.getArch();
+
+        if(arch == null)
+            ;
+
+        /**********************************************************************
+         * plpmips additional simulation states
+         **********************************************************************/
+        else if (arch.equals("plpmips")) {
+            if(configStr[0].equals("plpmips_memory_visualizer")) {
+                String[] tokens = configStr[1].split(":");
+                Object[][] attrSet = new Object[tokens.length][2];
+                for(int j = 0; j < tokens.length; j++) {
+                    String tempTokens[] = tokens[j].split("-");
+                    Msg.D("plpmips_memory_visualizer load: " + tempTokens[0] + "-" + tempTokens[1], 4, null);
+                    Long[] temp = new Long[2];
+                    temp[0] = new Long(Long.parseLong(tempTokens[0]));
+                    temp[1] = new Long(Long.parseLong(tempTokens[1]));
+                    attrSet[j] = temp;
+                }
+                plp.addProjectAttribute("plpmips_memory_visualizer", attrSet);
+            }
+        }
     }
 
     /**
