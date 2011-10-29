@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.DefaultCellEditor;
 import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
 import plptool.PLPToolbox;
 import plptool.mips.visualizer.*;
 
@@ -41,7 +42,7 @@ import plptool.mips.visualizer.*;
 public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     private plptool.gui.ProjectDriver plp;
-    private MemoryVisualization memVis;
+    private ArrayList<MemoryVisualization> memoryVisualizers;
     private long old_pc;
     private String lastCLCommand = "";
 
@@ -55,6 +56,8 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         sim.bus.eval();
 
         initComponents();
+
+        memoryVisualizers = new ArrayList<MemoryVisualization>();
 
         renderer.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         tblRegFile.setDefaultRenderer(tblRegFile.getColumnClass(2), renderer);
@@ -102,6 +105,22 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
         clearProgramMemoryTable();
         fillProgramMemoryTable();
+
+        // check if we have saved memory visualizer entries in pAttrSet
+        Object[][] attrSet = (Object[][]) plp.getProjectAttribute("plpmips_memory_visualizer");
+        
+        if(attrSet != null) {
+            plptool.Msg.D("we have " + attrSet.length + " memory visualizers saved in project driver.", 4, this);
+
+            for(int i = 0; i < attrSet.length; i++) {
+                plptool.Msg.D("attaching memory visualizer " + String.format("(%08x-%08x)", attrSet[i][0], attrSet[i][1]), 3, this);
+                plptool.mips.visualizer.MemoryVisualization memvis = new plptool.mips.visualizer.MemoryVisualization(plp);
+                memvis.setAddresses((Long[]) attrSet[i]);
+                memvis.visualize();
+                attachMemoryVisualizer(memvis);
+                memvis.setVisible(true);
+            }
+        }
 
         updateComponents();
         coreMainPane.setSelectedIndex(2);
@@ -768,8 +787,8 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             tblRegFile.setValueAt(String.format("0x%08x", ((SimCore)sim).regfile.read(i)), i, 1);
         }
 
-        if(memVis != null)
-            memVis.updateVisualization();
+        for(int i = 0; i < memoryVisualizers.size(); i++)
+            memoryVisualizers.get(i).updateVisualization();
 
         updateProgramMemoryTablePC();
     }
@@ -780,17 +799,43 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
      * @param memVis Reference to the memory visualizer
      */
     public void attachMemoryVisualizer(MemoryVisualization memVis) {
-        if(memVis != null)
-            disposeMemoryVisualizer();
-
-        this.memVis = memVis;
+        plptool.Msg.D("Attaching a memory visualizer", 4, this);
+        memVis.setFrameID(memoryVisualizers.size());
+        memoryVisualizers.add(memVis);
+        updateAttributeForMemoryVisualizers();
     }
 
-    public void disposeMemoryVisualizer() {
-        if(memVis != null) {
-            this.memVis.setVisible(false);
-            this.memVis.dispose();
+    public void disposeMemoryVisualizers() {
+        for(int i = 0; i < memoryVisualizers.size(); i++) {
+            plptool.Msg.D("Disposing memory visualizer " + i, 4, this);
+            memoryVisualizers.get(i).dispose();
         }
+
+        memoryVisualizers.clear();
+    }
+
+    public void disposeMemoryVisualizer(int index) {
+        memoryVisualizers.get(index).dispose();
+        for(int i = index + 1; i < memoryVisualizers.size(); i++)
+            memoryVisualizers.get(i).setFrameID(i - 1);
+        memoryVisualizers.remove(index);
+        updateAttributeForMemoryVisualizers();
+    }
+
+    public void updateAttributeForMemoryVisualizers() {
+        plp.deleteProjectAttribute("plpmips_memory_visualizer");
+        Object[][] attrSet = new Object[memoryVisualizers.size()][];
+        for(int i = 0; i < memoryVisualizers.size(); i++) {
+            attrSet[i] = memoryVisualizers.get(i).getAddresses();
+            plptool.Msg.D("adding attribute " + String.format("(%08x-%08x)", attrSet[i][0], attrSet[i][1]), 3, this);
+        }
+
+        if(memoryVisualizers.size() > 0)
+            plp.addProjectAttribute("plpmips_memory_visualizer", attrSet);
+    }
+
+    public ArrayList<MemoryVisualization> getMemoryVisualizerArray() {
+        return memoryVisualizers;
     }
 
     /** release build features disabler **/
@@ -876,6 +921,11 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     public DefaultTableModel getRegFileValues() {
         return (DefaultTableModel) tblRegFile.getModel();
+    }
+
+    @Override
+    public String toString() {
+        return "plptool.mips.SimCoreGUI";
     }
 
     private javax.swing.table.DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();

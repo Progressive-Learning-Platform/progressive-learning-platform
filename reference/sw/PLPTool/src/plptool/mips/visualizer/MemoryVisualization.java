@@ -39,6 +39,8 @@ public class MemoryVisualization extends javax.swing.JFrame {
     private DrawPanel canvas;
     private BufferedImage img;
 
+    private int frameID = -1;
+
     protected long startAddr = -1;
     protected long endAddr = -1;
 
@@ -54,6 +56,10 @@ public class MemoryVisualization extends javax.swing.JFrame {
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_memvis.png")));
     }
 
+    public void setFrameID(int id) {
+        this.frameID = id;
+    }
+
     public void setBG(String path) {
         try {
             URL u = new URL(path);
@@ -66,6 +72,22 @@ public class MemoryVisualization extends javax.swing.JFrame {
     
     public void updateVisualization() {
         canvas.repaint();
+    }
+
+    public void visualize() {
+        btnVisualizeActionPerformed(null);
+    }
+    
+    public Long[] getAddresses() {
+        Long[] ret = {startAddr, endAddr};
+
+        return ret;
+    }
+
+    public void setAddresses(Long[] addresses) {
+        txtStartAddr.setText(String.format("0x%08x", addresses[0]));
+        long offset = addresses[1] - addresses[0];
+        txtOffset.setText("" + offset);
     }
 
     /** This method is called from within the constructor to
@@ -88,6 +110,11 @@ public class MemoryVisualization extends javax.swing.JFrame {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(MemoryVisualization.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         txtStartAddr.setText(resourceMap.getString("txtStartAddr.text")); // NOI18N
         txtStartAddr.setName("txtStartAddr"); // NOI18N
@@ -120,7 +147,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
         container.setLayout(containerLayout);
         containerLayout.setHorizontalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 442, Short.MAX_VALUE)
+            .addGap(0, 446, Short.MAX_VALUE)
         );
         containerLayout.setVerticalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,7 +211,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
                 endAddr = base + offset;
             }
 
-            
+            ((plptool.mips.SimCoreGUI) plp.g_sim).updateAttributeForMemoryVisualizers();
             updateVisualization();
         } catch(Exception e) {
 
@@ -200,6 +227,10 @@ public class MemoryVisualization extends javax.swing.JFrame {
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
             btnVisualizeActionPerformed(null);
     }//GEN-LAST:event_txtOffsetKeyPressed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        ((plptool.mips.SimCoreGUI) plp.g_sim).disposeMemoryVisualizer(frameID);
+    }//GEN-LAST:event_formWindowClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

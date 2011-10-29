@@ -36,6 +36,7 @@ import java.io.FileWriter;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.tree.*;
 import javax.swing.table.DefaultTableModel;
@@ -134,6 +135,9 @@ public class ProjectDriver {
     // Others
     public SerialTerminal          term;        // Serial terminal
     public NumberConverter         nconv;       // Number converter
+
+    // Miscellaneous project attributes persistence support
+    private HashMap<String, Object> pAttrSet;
 
     /**
      * The constructor for the project driver.
@@ -327,6 +331,7 @@ public class ProjectDriver {
         smods = null;
         watcher = null;
         arch = "plpmips";
+        pAttrSet = new HashMap<String, Object>();
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -363,6 +368,7 @@ public class ProjectDriver {
         smods = null;
         watcher = null;
         arch = "plpmips";
+        pAttrSet = new HashMap<String, Object>();
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -466,6 +472,71 @@ public class ProjectDriver {
             tOut.closeArchiveEntry();
         }
 
+        // Write simulation configuration
+        Msg.D("Writing out simulation configuration...", 2, this);
+        entry = new TarArchiveEntry("plp.simconfig");
+        String str = "";
+
+        str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
+        str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
+        str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
+        str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
+
+
+        if(watcher != null) {
+            str += "WATCHER\n";
+
+            for(i = 0; i < watcher.getRowCount(); i++) {
+                str += watcher.getValueAt(i, 0) + "::";
+                str += watcher.getValueAt(i, 1) + "\n";
+            }
+
+            str += "END\n";
+        }
+
+        Msg.D("-- saving mods info...", 2, this);
+
+        if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
+            smods = ioreg.createPreset();
+
+        if(smods != null && smods.size() > 0) {
+
+            str += "MODS\n";
+
+            for(i = 0; i < smods.size(); i++) {
+                str += smods.getType(i) + "::";     //0
+                str +="RESERVED_FIELD::";       //1
+                str += smods.getAddress(i) + "::";      //2
+                str += smods.getSize(i) + "::";  //3
+
+                if(smods.getHasFrame(i)) {
+                    str += "frame::" ;              //4
+                    str += smods.getVisible(i) + "::"; //5
+                    str += smods.getX(i) + "::";      //6
+                    str += smods.getY(i) + "::";      //7
+                    str += smods.getW(i) + "::";  //8
+                    str += smods.getH(i);        //9
+                }
+                else {
+                    str += "noframe";
+                }
+
+                str += "\n";
+            }
+
+            str += "END\n";
+        }
+
+        str += "ISASPECIFIC\n";
+        str += ArchRegistry.getArchSpecificSimStates(this);
+        str += "END\n";
+
+        entry.setSize(str.length());
+        tOut.putArchiveEntry(entry);
+        tOut.write(str.getBytes());
+        tOut.flush();
+        tOut.closeArchiveEntry();
+
         if(asm != null && asm.isAssembled() && objCode != null) {
             // Write hex image
             Msg.D("Writing out verilog hex code...", 2, this);
@@ -493,68 +564,6 @@ public class ProjectDriver {
                 data[4*i+3] = (byte) (objCode[i]);
             }
             tOut.write(data);
-            tOut.flush();
-            tOut.closeArchiveEntry();
-
-
-            // Write simulation configuration
-            Msg.D("Writing out simulation configuration...", 2, this);
-            entry = new TarArchiveEntry("plp.simconfig");
-            String str = "";
-
-            str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
-            str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
-            str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
-            str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
-
-
-            if(watcher != null) {
-                str += "WATCHER\n";
-
-                for(i = 0; i < watcher.getRowCount(); i++) {
-                    str += watcher.getValueAt(i, 0) + "::";
-                    str += watcher.getValueAt(i, 1) + "\n";
-                }
-
-                str += "END\n";
-            }
-
-            Msg.D("-- saving mods info...", 2, this);
-
-            if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
-                smods = ioreg.createPreset();
-
-            if(smods != null && smods.size() > 0) {
-
-                str += "MODS\n";
-
-                for(i = 0; i < smods.size(); i++) {
-                    str += smods.getType(i) + "::";     //0
-                    str +="RESERVED_FIELD::";       //1
-                    str += smods.getAddress(i) + "::";      //2
-                    str += smods.getSize(i) + "::";  //3
-
-                    if(smods.getHasFrame(i)) {
-                        str += "frame::" ;              //4
-                        str += smods.getVisible(i) + "::"; //5
-                        str += smods.getX(i) + "::";      //6
-                        str += smods.getY(i) + "::";      //7
-                        str += smods.getW(i) + "::";  //8
-                        str += smods.getH(i);        //9
-                    }
-                    else {
-                        str += "noframe";
-                    }
-
-                    str += "\n";
-                }
-
-                str += "END\n";
-            }
-
-            entry.setSize(str.length());
-            tOut.putArchiveEntry(entry);
-            tOut.write(str.getBytes());
             tOut.flush();
             tOut.closeArchiveEntry();
 
@@ -615,6 +624,7 @@ public class ProjectDriver {
         asms = new ArrayList<PLPAsmSource>();
         smods = null;
         watcher = null;
+        pAttrSet = new HashMap<String, Object>();
 
         try {
 
@@ -710,6 +720,16 @@ public class ProjectDriver {
                             i++;
                         }
                     }
+
+                    if(lines[i].equals("ISASPECIFIC")) {
+                        i++;
+
+                        while(i < lines.length && !lines[i].equals("END")) {
+                            tokens = lines[i].split("::");
+                            ArchRegistry.setArchSpecificSimStates(this, tokens);
+                            i++;
+                        }
+                    }
                 }
             }
             else {
@@ -764,6 +784,68 @@ public class ProjectDriver {
         }
 
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Get the project attributes set hashmap
+     *
+     * @return Project attributes hashmap
+     */
+    public HashMap<String, Object> getProjectAttributeSet() {
+        return pAttrSet;
+    }
+
+    /**
+     * Add a project attribute to the set
+     *
+     * @param key Attribute key
+     * @param value Attribute value
+     */
+    public void addProjectAttribute(String key, Object value) {
+        if(pAttrSet.containsKey(key))
+            pAttrSet.remove(key);
+
+        Msg.D("add attr " + key + ":" + value, 3, this);
+        pAttrSet.put(key, value);
+    }
+
+    /**
+     * Set a new value to a project attribute
+     *
+     * @param key Attribute key
+     * @param value New attribute value
+     * @return True if successful, false if key doesn't exist
+     */
+    public boolean setProjectAttribute(String key, Object value) {
+        if(pAttrSet.containsKey(key)) {
+            Msg.D("set attr " + key + ":" + value, 3, this);
+            pAttrSet.remove(key);
+            pAttrSet.put(key, value);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get a project attribute
+     *
+     * @param key Attribute key
+     * @return Attribute value if attribute exists, null otherwise
+     */
+    public Object getProjectAttribute(String key) {
+        Msg.D("get attr " + key, 3, this);
+        return pAttrSet.get(key);
+    }
+
+    /**
+     * Remove specified attribute
+     *
+     * @param key Attribute key
+     */
+    public void deleteProjectAttribute(String key) {
+        if(pAttrSet.containsKey(key))
+            pAttrSet.remove(key);
     }
 
     /**

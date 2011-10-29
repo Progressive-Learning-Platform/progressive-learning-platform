@@ -186,6 +186,7 @@ public class SimCore extends PLPSimCore {
         IRQ = 0;
         IRQAck = 0;
         pc.reset(startAddr);
+        visibleAddr = startAddr;
         instructionCount = 0;
         sim_flags = (long) 0;
         ex_continue = false;

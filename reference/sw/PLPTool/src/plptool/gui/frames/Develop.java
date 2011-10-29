@@ -1105,6 +1105,10 @@ public class Develop extends javax.swing.JFrame {
         menuSimTools.add(item);
     }
 
+    public void addSimToolSeparator() {
+        menuSimTools.addSeparator();
+    }
+
     public void removeLastSimToolItem() {
         Msg.D("Removing simulation tools menu item.", 4, null);
 
