@@ -33,13 +33,13 @@ public class Bus extends Signal {
         super.edges.add(new BusEdge(time, signal));
     }
 
-    public int getSignal(double time) {
-        LineEdge tempEdge;
+    public long getSignal(double time) {
+        BusEdge tempEdge;
 
         for(int i = 0; i < super.edges.size(); i++) {
-            tempEdge = (LineEdge) super.edges.get(i);
+            tempEdge = (BusEdge) super.edges.get(i);
             if(tempEdge.getTime() == time)
-                return tempEdge.getSignal() ? 1 : 0;
+                return tempEdge.getSignal();
         }
 
         return -1;

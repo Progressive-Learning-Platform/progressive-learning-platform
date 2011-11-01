@@ -39,6 +39,7 @@ import java.util.ArrayList;
 public class DiagramCanvas extends JPanel implements MouseListener {
     private final int DEFAULT_X_AXIS_HEIGHT_PIXELS = 60;
     private final int DEFAULT_SIGNAL_SLANT_PIXELS = 0;
+    private final int DEFAULT_BUS_SLANT_PIXELS = 4;
 
     private TimingDiagram tD;
     private XAxis axis;
@@ -105,7 +106,7 @@ public class DiagramCanvas extends JPanel implements MouseListener {
         Graphics2D ig = image.createGraphics();
 
         ig.setFont(new Font("Monospaced", Font.BOLD, 12));
-        int domainIntervalWidth = W / axis.getIntervals();
+        double domainIntervalWidth = W / (double) axis.getIntervals();
         ig.setColor(background);
         ig.fillRect(0, 0, W, H);
 
@@ -126,10 +127,10 @@ public class DiagramCanvas extends JPanel implements MouseListener {
         for(int i = 0; i < axis.getIntervals(); i++) {
             ig.setColor(minorGrid);
             ig.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 3.0f, new float[] {5.0f,7.0f}, 0.0f));
-            ig.drawLine(i*domainIntervalWidth, 0, i*domainIntervalWidth, H);
+            ig.drawLine((int) (i*domainIntervalWidth), 0, (int) (i*domainIntervalWidth), H);
             ig.setColor(textColor);
             ig.setStroke(new BasicStroke(1.2f));
-            ig.drawString(String.format("%d", (int) (i*interval + domainStart)), i*domainIntervalWidth+5, (H-xAxisHeight) + g.getFontMetrics().getHeight()+20);
+            ig.drawString(String.format("%d", (int) (i*interval + domainStart)), (int) (i*domainIntervalWidth+5), (H-xAxisHeight) + g.getFontMetrics().getHeight()+20);
         }
         ig.drawLine(0, H - xAxisHeight + 10, W, H - xAxisHeight + 10);
 
@@ -156,7 +157,7 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                     LineEdge edge = (LineEdge) edgesWithinRange.get(j);
                     LineEdge nextEdge = (LineEdge) edgesWithinRange.get(j+1);
                     boolean change = edge.getSignal() != nextEdge.getSignal();
-                    boolean risingEdge = !edge.getSignal() && nextEdge.getSignal();
+                    boolean risingEdge = edge.getSignal() == 0 && nextEdge.getSignal() == 1;
 
                     if(j == 0 && edge.getTime() != domainStart) {
                         ArrayList<LineEdge> edgesBeforeDomainStart = tD.getSignal(i).getEdgesWithinRange(0, domainStart);
@@ -167,15 +168,15 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                             LineEdge lastEdge = edgesBeforeDomainStart.get(edgesBeforeDomainStart.size()-1);
                             boolean firstChange = lastEdge.getSignal() != edge.getSignal();
                             ig.drawLine(0,
-                                        (int) ((i+(lastEdge.getSignal() ? .20 : .80))*sigHeight),
+                                        (int) ((i+(lastEdge.getSignal() == 1 ? .20 : .80))*sigHeight),
                                         (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (firstChange ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
-                                        (int) ((i+(lastEdge.getSignal() ? .20 : .80))*sigHeight));
-                            if(lastEdge.getSignal() && !edge.getSignal())
+                                        (int) ((i+(lastEdge.getSignal() == 1 ? .20 : .80))*sigHeight));
+                            if(lastEdge.getSignal() == 1 && edge.getSignal() == 0)
                                 ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
                                            (int) ((i+.20)*sigHeight),
                                            (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
                                            (int) ((i+.80)*sigHeight));
-                            else if(!lastEdge.getSignal() && edge.getSignal())
+                            else if(lastEdge.getSignal() == 0 && edge.getSignal() == 1)
                                 ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
                                            (int) ((i+.20)*sigHeight),
                                            (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
@@ -185,9 +186,9 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                     ig.setColor(defaultSignalColor);
 
                     ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
-                               (int) ((i+(edge.getSignal() ? .20 : .80))*sigHeight),
+                               (int) ((i+(edge.getSignal() == 1 ? .20 : .80))*sigHeight),
                                (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
-                               (int) ((i+(edge.getSignal() ? .20 : .80))*sigHeight));
+                               (int) ((i+(edge.getSignal() == 1 ? .20 : .80))*sigHeight));
                     if(change && !risingEdge)
                         ig.drawLine((int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
                                    (int) ((i+.20)*sigHeight),
@@ -213,41 +214,41 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                             boolean firstChange = lastEdge.getSignal() != edge.getSignal();
                             ig.drawLine(0,
                                         (int) ((i+.20)*sigHeight),
-                                        (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (firstChange ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                                        (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (firstChange ? -1 : 1)*this.DEFAULT_BUS_SLANT_PIXELS,
                                         (int) ((i+.20)*sigHeight));
                             ig.drawLine(0,
                                         (int) ((i+.80)*sigHeight),
-                                        (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (firstChange ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                                        (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (firstChange ? -1 : 1)*this.DEFAULT_BUS_SLANT_PIXELS,
                                         (int) ((i+.80)*sigHeight));
                             ig.drawString(String.format("%08x", lastEdge.getSignal()), 10, (int)((i+.5)*sigHeight));
-                            ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                            ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_BUS_SLANT_PIXELS,
                                        (int) ((i+.20)*sigHeight),
-                                       (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                                       (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                        (int) ((i+.80)*sigHeight));
-                            ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                            ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                        (int) ((i+.20)*sigHeight),
-                                       (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                                       (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_BUS_SLANT_PIXELS,
                                        (int) ((i+.80)*sigHeight));
                         }
                     }
                     ig.setColor(defaultSignalColor);
 
                     ig.drawString(String.format("%08x", edge.getSignal()), (int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + 10, (int)((i+.5)*sigHeight));
-                    ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                    ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.20)*sigHeight),
-                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.20)*sigHeight));
-                    ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                    ig.drawLine((int) ((edge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.80)*sigHeight),
-                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.80)*sigHeight));
-                    ig.drawLine((int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                    ig.drawLine((int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.20)*sigHeight),
-                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.80)*sigHeight));
-                    ig.drawLine((int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                    ig.drawLine((int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.20)*sigHeight),
-                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                               (int) ((nextEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.80)*sigHeight));
                 }
             }
@@ -262,20 +263,20 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                     secondFromLastEdge = (LineEdge) signal.getEdgesWithinRange(0, domainStart).get(signal.getEdgesWithinRange(0, domainStart).size()-1);
                     boolean change = secondFromLastEdge.getSignal() != lastEdge.getSignal();
                     ig.drawLine(0,
-                            (int) ((i+(secondFromLastEdge.getSignal() ? .20 : .80))*sigHeight),
+                            (int) ((i+(secondFromLastEdge.getSignal() == 1 ? .20 : .80))*sigHeight),
                             (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
-                            (int) ((i+(secondFromLastEdge.getSignal() ? .20 : .80))*sigHeight));
+                            (int) ((i+(secondFromLastEdge.getSignal() == 1 ? .20 : .80))*sigHeight));
                 } else {
                     ig.setColor(new Color(200, 200, 200));
                     ig.fillRect(0, (int)((i+0.2)*sigHeight), (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W), (int)(i+0.6*sigHeight));
                 }
                 ig.setColor(defaultSignalColor);
                 ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
-                               (int) ((i+(lastEdge.getSignal() ? .20 : .80))*sigHeight),
+                               (int) ((i+(lastEdge.getSignal() == 1 ? .20 : .80))*sigHeight),
                                W,
-                               (int) ((i+(lastEdge.getSignal() ? .20 : .80))*sigHeight));
+                               (int) ((i+(lastEdge.getSignal() == 1 ? .20 : .80))*sigHeight));
                 if(secondFromLastEdge != null && lastEdge.getSignal() != secondFromLastEdge.getSignal()) {
-                    if(secondFromLastEdge.getSignal() && !lastEdge.getSignal()) {
+                    if(secondFromLastEdge.getSignal() == 1 && lastEdge.getSignal() == 0) {
                         ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
                                    (int) ((i+.20)*sigHeight),
                                    (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
@@ -298,11 +299,11 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                     ig.drawString(String.format("%08x", secondFromLastEdge.getSignal()), 10, (int)((i+.5)*sigHeight));
                     ig.drawLine(0,
                             (int) ((i+.20)*sigHeight),
-                            (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                            (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_BUS_SLANT_PIXELS,
                             (int) ((i+.20)*sigHeight));
                     ig.drawLine(0,
                             (int) ((i+.80)*sigHeight),
-                            (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                            (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + (change ? -1 : 1)*this.DEFAULT_BUS_SLANT_PIXELS,
                             (int) ((i+.80)*sigHeight));
                 } else {
                     ig.setColor(new Color(200, 200, 200));
@@ -310,22 +311,22 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                 }
                 ig.setColor(defaultSignalColor);
                 ig.drawString(String.format("%08x", lastEdge.getSignal()), (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + 10, (int)((i+.5)*sigHeight));
-                ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                             (int) ((i+.20)*sigHeight),
                             W,
                             (int) ((i+.20)*sigHeight));
-                ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                             (int) ((i+.80)*sigHeight),
                             W,
                             (int) ((i+.80)*sigHeight));
                 if(secondFromLastEdge != null && lastEdge.getSignal() != secondFromLastEdge.getSignal()) {
-                    ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                    ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.20)*sigHeight),
-                               (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                               (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.80)*sigHeight));
-                    ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                    ig.drawLine((int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) + this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.20)*sigHeight),
-                               (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_SIGNAL_SLANT_PIXELS,
+                               (int) ((lastEdge.getTime() - domainStart) / (domainEnd - domainStart) * W) - this.DEFAULT_BUS_SLANT_PIXELS,
                                (int) ((i+.80)*sigHeight));
                 }
             }
@@ -334,9 +335,9 @@ public class DiagramCanvas extends JPanel implements MouseListener {
             if(signal instanceof Line && edgesWithinRange.isEmpty() && signal.getEdgesWithinRange(0, domainStart).size() > 0) {
                 ArrayList<LineEdge> edges = signal.getEdgesWithinRange(0, domainStart);
                 ig.drawLine(0,
-                            (int) ((i+((edges.get(edges.size() - 1)).getSignal() ? 0.20 : 0.80)) * sigHeight),
+                            (int) ((i+((edges.get(edges.size() - 1)).getSignal() == 1 ? 0.20 : 0.80)) * sigHeight),
                             W,
-                            (int) ((i+((edges.get(edges.size() - 1)).getSignal() ? 0.20 : 0.80)) * sigHeight));
+                            (int) ((i+((edges.get(edges.size() - 1)).getSignal() == 1 ? 0.20 : 0.80)) * sigHeight));
             } else if(signal instanceof Bus && edgesWithinRange.isEmpty() && signal.getEdgesWithinRange(0, domainStart).size() > 0) {
                 ArrayList<BusEdge> edges = signal.getEdgesWithinRange(0, domainStart);
                 ig.drawString(String.format("%08x", (edges.get(edges.size() - 1)).getSignal()), 10, (int)((i+.5)*sigHeight));
@@ -349,6 +350,12 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                             W,
                             (int) ((i+.80) * sigHeight));
             }
+
+            // Empty
+            if(edgesWithinRange.isEmpty() && signal.getEdgesWithinRange(0, domainStart).isEmpty()) {
+                ig.setColor(new Color(200, 200, 200));
+                            ig.fillRect(0, (int)((i+0.2)*sigHeight),W, (int)(i+0.6*sigHeight));
+            }
         }
 
         ig.setColor(Color.red);
@@ -356,6 +363,18 @@ public class DiagramCanvas extends JPanel implements MouseListener {
             ig.drawLine(yCursor, 0, yCursor, H);
             double xVal = (yCursor / (double)W) * (domainEnd - domainStart);
             ig.drawString(String.format("%.2f", xVal+domainStart), yCursor+5, H-5);
+
+            for(int i = 0; i < numberOfSignals; i++) {
+                int yPos = (i+1)*sigHeight;
+                Signal signal = tD.getSignal(i);
+                if(signal instanceof Bus) {
+                    ArrayList<BusEdge> edges = signal.getEdgesWithinRange(0, xVal+domainStart);
+                    if(edges.size() > 0) {
+                        String value = String.format("%08x", edges.get(edges.size() - 1).getSignal());
+                        ig.drawString(value, yCursor+5, yPos);
+                    }
+                }
+            }
         }
 
         g.drawImage(image, 0, 0, this);

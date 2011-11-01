@@ -29,7 +29,7 @@ public class Line extends Signal {
         super();
     }
 
-    public void addEdge(double time, boolean signal) {
+    public void addEdge(double time, int signal) {
         super.edges.add(new LineEdge(time, signal));
     }
 
@@ -39,7 +39,7 @@ public class Line extends Signal {
         for(int i = 0; i < super.edges.size(); i++) {
             tempEdge = (LineEdge) super.edges.get(i);
             if(tempEdge.getTime() == time)
-                return tempEdge.getSignal() ? 1 : 0;
+                return tempEdge.getSignal();
         }
 
         return -1;
