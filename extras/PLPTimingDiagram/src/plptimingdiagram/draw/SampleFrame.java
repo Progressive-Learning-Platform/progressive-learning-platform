@@ -23,6 +23,7 @@ public class SampleFrame extends javax.swing.JFrame {
     private DiagramCanvas canvas;
     private TimingDiagram tD;
     private XAxis axis;
+    private CrazyThread cT;
 
     /** Creates new form SampleFrame */
     public SampleFrame() {
@@ -36,40 +37,47 @@ public class SampleFrame extends javax.swing.JFrame {
 
         tD.addSignal(new Line());
         tD.addSignal(new Line());
+        tD.addSignal(new Bus());
         tD.addSignal(new Line());
 
-
         tD.getSignal(0).setName("Signal Number One");
-        tD.getSignal(0).addEdge(new LineEdge(0, false));
-        tD.getSignal(0).addEdge(new LineEdge(10, true));
-        tD.getSignal(0).addEdge(new LineEdge(20, false));
-        tD.getSignal(0).addEdge(new LineEdge(30, true));
-        tD.getSignal(0).addEdge(new LineEdge(40, false));
-        tD.getSignal(0).addEdge(new LineEdge(50, true));
-        tD.getSignal(0).addEdge(new LineEdge(60, false));
-        tD.getSignal(0).addEdge(new LineEdge(70, true));
-        tD.getSignal(0).addEdge(new LineEdge(80, false));
-        tD.getSignal(0).addEdge(new LineEdge(90, true));
-        tD.getSignal(0).addEdge(new LineEdge(100, false));
+        tD.getSignal(0).addEdge(new LineEdge(50, false));
+        tD.getSignal(0).addEdge(new LineEdge(60, true));
+        tD.getSignal(0).addEdge(new LineEdge(70, false));
+        tD.getSignal(0).addEdge(new LineEdge(80, true));
+        tD.getSignal(0).addEdge(new LineEdge(90, false));
+        tD.getSignal(0).addEdge(new LineEdge(100, true));
+        tD.getSignal(0).addEdge(new LineEdge(110, false));
+        tD.getSignal(0).addEdge(new LineEdge(111, true));
+        tD.getSignal(0).addEdge(new LineEdge(112, false));
+        tD.getSignal(0).addEdge(new LineEdge(113, true));
+        tD.getSignal(0).addEdge(new LineEdge(114, false));
+        tD.getSignal(0).addEdge(new LineEdge(115, true));
+        tD.getSignal(0).addEdge(new LineEdge(116, false));
+        tD.getSignal(0).addEdge(new LineEdge(117, true));
+        tD.getSignal(0).addEdge(new LineEdge(118, false));
+        tD.getSignal(0).addEdge(new LineEdge(130, false));
+        tD.getSignal(0).addEdge(new LineEdge(140, true));
+        tD.getSignal(0).addEdge(new LineEdge(150, false));
 
         tD.getSignal(1).setName("Signal Number Two");
-        tD.getSignal(1).addEdge(new LineEdge(0, false));
-        tD.getSignal(1).addEdge(new LineEdge(10, true));
-        tD.getSignal(1).addEdge(new LineEdge(60, false));
-        tD.getSignal(1).addEdge(new LineEdge(80, true));
-        tD.getSignal(1).addEdge(new LineEdge(85, false));
-        tD.getSignal(1).addEdge(new LineEdge(90, true));
-        tD.getSignal(1).addEdge(new LineEdge(95, false));
+        tD.getSignal(1).addEdge(new LineEdge(50, false));
+        tD.getSignal(1).addEdge(new LineEdge(60, true));
+        tD.getSignal(1).addEdge(new LineEdge(110, false));
+        tD.getSignal(1).addEdge(new LineEdge(130, true));
+        tD.getSignal(1).addEdge(new LineEdge(135, false));
+        tD.getSignal(1).addEdge(new LineEdge(140, true));
+        tD.getSignal(1).addEdge(new LineEdge(145, false));
 
-        tD.getSignal(2).setName("Atrocious Signal");
-        tD.getSignal(2).addEdge(new LineEdge(0, false));
-        tD.getSignal(2).addEdge(new LineEdge(10, true));
-        tD.getSignal(2).addEdge(new LineEdge(20, false));
-        tD.getSignal(2).addEdge(new LineEdge(25, true));
-        tD.getSignal(2).addEdge(new LineEdge(35, false));
-        tD.getSignal(2).addEdge(new LineEdge(50, true));
-        tD.getSignal(2).addEdge(new LineEdge(60, false));
-        tD.getSignal(2).addEdge(new LineEdge(80, true));
+
+        tD.getSignal(2).setName("Bus Signal");
+        tD.getSignal(2).addEdge(new BusEdge(90, 0xeeffeeffL));
+        tD.getSignal(2).addEdge(new BusEdge(120, 0xaaffeeffL));
+        tD.getSignal(2).addEdge(new BusEdge(150, 0xeeffccffL));
+
+        tD.getSignal(3).setName("Another signal down here");
+        tD.getSignal(3).addEdge(new LineEdge(90, true));
+        tD.getSignal(3).addEdge(new LineEdge(120, false));
 
 
     }
@@ -85,9 +93,9 @@ public class SampleFrame extends javax.swing.JFrame {
 
         container = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jToggleButton1 = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,13 +112,6 @@ public class SampleFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Wira's Awesome Timing Diagram Library");
 
-        jButton1.setText("Run CrazyThread");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         jButton2.setText("Shift Domain by 5");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -125,6 +126,13 @@ public class SampleFrame extends javax.swing.JFrame {
             }
         });
 
+        jToggleButton1.setText("Run");
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -132,12 +140,12 @@ public class SampleFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addGap(20, 20, 20)
+                .addComponent(jToggleButton1)
                 .addContainerGap())
             .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -147,9 +155,9 @@ public class SampleFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jButton1)
                     .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jToggleButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -157,19 +165,29 @@ public class SampleFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        (new CrazyThread(tD, axis, canvas)).start();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(cT != null) cT.stop = true;
         axis.setDomain(axis.getDomainStart()+5, axis.getDomainEnd()+5);
         canvas.repaint();
+        jToggleButton1.setSelected(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if(cT != null) cT.stop = true;
         axis.setDomain(0, 100);
         canvas.repaint();
+        jToggleButton1.setSelected(false);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        if(jToggleButton1.isSelected()) {
+            cT = new CrazyThread(tD, axis, canvas);
+            cT.start();
+        } else {
+            cT.stop = true;
+            cT = null;
+        }
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     /**
     * @param args the command line arguments
@@ -184,16 +202,17 @@ public class SampleFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel container;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables
 
     class CrazyThread extends Thread {
         private TimingDiagram tD;
         private XAxis axis;
         private DiagramCanvas canvas;
+        public boolean stop = false;
 
         public CrazyThread(TimingDiagram tD, XAxis axis, DiagramCanvas canvas) {
             super();
@@ -204,11 +223,13 @@ public class SampleFrame extends javax.swing.JFrame {
 
         @Override
         public void run() {
+            double i = axis.getDomainStart();
             try {
-                for(int i = 0; i < 1000; i++) {
+                while(!stop) {
                     axis.setDomain(1*i, 100+1*i);
                     canvas.repaint();
                     Thread.sleep(50);
+                    i+=1;
                 }
             } catch(Exception e) {
 

@@ -29,8 +29,8 @@ public class Bus extends Signal {
         super();
     }
 
-    public void addEdge(double time, boolean signal) {
-        super.edges.add(new LineEdge(time, signal));
+    public void addEdge(double time, long signal) {
+        super.edges.add(new BusEdge(time, signal));
     }
 
     public int getSignal(double time) {
