@@ -41,43 +41,49 @@ public class SampleFrame extends javax.swing.JFrame {
         tD.addSignal(new Line());
 
         tD.getSignal(0).setName("Signal Number One");
-        tD.getSignal(0).addEdge(new LineEdge(50, false));
-        tD.getSignal(0).addEdge(new LineEdge(60, true));
-        tD.getSignal(0).addEdge(new LineEdge(70, false));
-        tD.getSignal(0).addEdge(new LineEdge(80, true));
-        tD.getSignal(0).addEdge(new LineEdge(90, false));
-        tD.getSignal(0).addEdge(new LineEdge(100, true));
-        tD.getSignal(0).addEdge(new LineEdge(110, false));
-        tD.getSignal(0).addEdge(new LineEdge(111, true));
-        tD.getSignal(0).addEdge(new LineEdge(112, false));
-        tD.getSignal(0).addEdge(new LineEdge(113, true));
-        tD.getSignal(0).addEdge(new LineEdge(114, false));
-        tD.getSignal(0).addEdge(new LineEdge(115, true));
-        tD.getSignal(0).addEdge(new LineEdge(116, false));
-        tD.getSignal(0).addEdge(new LineEdge(117, true));
-        tD.getSignal(0).addEdge(new LineEdge(118, false));
-        tD.getSignal(0).addEdge(new LineEdge(130, false));
-        tD.getSignal(0).addEdge(new LineEdge(140, true));
-        tD.getSignal(0).addEdge(new LineEdge(150, false));
+        tD.getSignal(0).addEdge(new LineEdge(50, 0));
+        tD.getSignal(0).addEdge(new LineEdge(60, 1));
+        tD.getSignal(0).addEdge(new LineEdge(70, 0));
+        tD.getSignal(0).addEdge(new LineEdge(80, 1));
+        tD.getSignal(0).addEdge(new LineEdge(90, 0));
+        tD.getSignal(0).addEdge(new LineEdge(100, 1));
+        tD.getSignal(0).addEdge(new LineEdge(110, 0));
+        tD.getSignal(0).addEdge(new LineEdge(111, 1));
+        tD.getSignal(0).addEdge(new LineEdge(112, 0));
+        tD.getSignal(0).addEdge(new LineEdge(113, 1));
+        tD.getSignal(0).addEdge(new LineEdge(114, 0));
+        tD.getSignal(0).addEdge(new LineEdge(115, 1));
+        tD.getSignal(0).addEdge(new LineEdge(116, 0));
+        tD.getSignal(0).addEdge(new LineEdge(117, 1));
+        tD.getSignal(0).addEdge(new LineEdge(118, 0));
+        tD.getSignal(0).addEdge(new LineEdge(130, 0));
+        tD.getSignal(0).addEdge(new LineEdge(140, 1));
+        tD.getSignal(0).addEdge(new LineEdge(150, 0));
 
         tD.getSignal(1).setName("Signal Number Two");
-        tD.getSignal(1).addEdge(new LineEdge(50, false));
-        tD.getSignal(1).addEdge(new LineEdge(60, true));
-        tD.getSignal(1).addEdge(new LineEdge(110, false));
-        tD.getSignal(1).addEdge(new LineEdge(130, true));
-        tD.getSignal(1).addEdge(new LineEdge(135, false));
-        tD.getSignal(1).addEdge(new LineEdge(140, true));
-        tD.getSignal(1).addEdge(new LineEdge(145, false));
+        tD.getSignal(1).addEdge(new LineEdge(50, 0));
+        tD.getSignal(1).addEdge(new LineEdge(60, 1));
+        tD.getSignal(1).addEdge(new LineEdge(110, 0));
+        tD.getSignal(1).addEdge(new LineEdge(130, 1));
+        tD.getSignal(1).addEdge(new LineEdge(135, 0));
+        tD.getSignal(1).addEdge(new LineEdge(140, 1));
+        tD.getSignal(1).addEdge(new LineEdge(145, 0));
 
 
         tD.getSignal(2).setName("Bus Signal");
         tD.getSignal(2).addEdge(new BusEdge(90, 0xeeffeeffL));
         tD.getSignal(2).addEdge(new BusEdge(120, 0xaaffeeffL));
-        tD.getSignal(2).addEdge(new BusEdge(150, 0xeeffccffL));
+        tD.getSignal(2).addEdge(new BusEdge(150, 0xeebL));
+        tD.getSignal(2).addEdge(new BusEdge(180, 0xbeefL));
+        tD.getSignal(2).addEdge(new BusEdge(200, 0x2L));
+        tD.getSignal(2).addEdge(new BusEdge(220, 0x5L));
+        tD.getSignal(2).addEdge(new BusEdge(235, 0x6L));
+        tD.getSignal(2).addEdge(new BusEdge(250, 0x8L));
+
 
         tD.getSignal(3).setName("Another signal down here");
-        tD.getSignal(3).addEdge(new LineEdge(90, true));
-        tD.getSignal(3).addEdge(new LineEdge(120, false));
+        tD.getSignal(3).addEdge(new LineEdge(90, 1));
+        tD.getSignal(3).addEdge(new LineEdge(120, 0));
 
 
     }

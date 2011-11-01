@@ -24,9 +24,9 @@ package plptimingdiagram.signals;
  */
 public class LineEdge {
     private double time;
-    private boolean signal;
+    private int signal;
 
-    public LineEdge(double time, boolean signal) {
+    public LineEdge(double time, int signal) {
         this.time = time;
         this.signal = signal;
     }
@@ -35,11 +35,11 @@ public class LineEdge {
         return time;
     }
 
-    public boolean getSignal() {
+    public int getSignal() {
         return signal;
     }
 
-    public void setTimeAndSignal(double time, boolean signal) {
+    public void setTimeAndSignal(double time, int signal) {
         this.time = time;
         this.signal = signal;
     }
