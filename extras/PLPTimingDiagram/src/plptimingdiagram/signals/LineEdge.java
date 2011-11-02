@@ -22,7 +22,7 @@ package plptimingdiagram.signals;
  *
  * @author wira
  */
-public class LineEdge {
+public class LineEdge extends Edge {
     private double time;
     private int signal;
 

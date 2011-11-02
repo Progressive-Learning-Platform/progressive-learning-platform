@@ -18,45 +18,10 @@
 
 package plptimingdiagram.signals;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author wira
  */
-abstract public class Signal {
-    private Object meta;
-    protected ArrayList<Edge> edges;
-    protected Object[] range;
-    private String name;
-
-    public Signal(ArrayList edges) {
-        this.edges = edges;
-    }
-
-    public Signal() {
-        this.edges = new ArrayList<Edge>();
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Edge getEdge(int index) {
-        return edges.get(index);
-    }
-
-    public void addEdge(Edge edge) {
-        edges.add(edge);
-    }
-
-    public int getNumberOfEdges() {
-        return edges.size();
-    }
-
-    abstract public ArrayList getEdgesWithinRange(double startTime, double endTime);
+public class Edge {
+    
 }
