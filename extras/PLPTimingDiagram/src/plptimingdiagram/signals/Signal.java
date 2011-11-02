@@ -58,5 +58,9 @@ abstract public class Signal {
         return edges.size();
     }
 
+    public void clearEdges() {
+        edges.clear();
+    }
+
     abstract public ArrayList getEdgesWithinRange(double startTime, double endTime);
 }

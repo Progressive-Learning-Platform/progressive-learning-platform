@@ -22,6 +22,6 @@ package plptimingdiagram.signals;
  *
  * @author wira
  */
-public class Edge {
+abstract public class Edge {
     
 }
