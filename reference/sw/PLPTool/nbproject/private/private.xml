@@ -2,9 +2,9 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/F:/plp/reference/sw/PLPTool/src/plptool/gui/PLPToolApp.java</file>
-        <file>file:/F:/plp/reference/sw/PLPTool/src/plptool/gui/ProjectDriver.java</file>
-        <file>file:/F:/plp/reference/sw/PLPTool/src/plptool/ArchRegistry.java</file>
-        <file>file:/F:/plp/reference/sw/PLPTool/src/plptool/mips/ArchHelper.java</file>
+        <file>file:/home/wira/Documents/progressive-learning-platform/reference/sw/PLPTool/src/plptool/gui/ProjectDriver.java</file>
+        <file>file:/home/wira/Documents/progressive-learning-platform/reference/sw/PLPTool/src/plptool/ArchRegistry.java</file>
+        <file>file:/home/wira/Documents/progressive-learning-platform/reference/sw/PLPTool/src/plptool/mips/SimCore.java</file>
+        <file>file:/home/wira/Documents/progressive-learning-platform/reference/sw/PLPTool/src/plptool/mips/ArchHelper.java</file>
     </open-files>
 </project-private>

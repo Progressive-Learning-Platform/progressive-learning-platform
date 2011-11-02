@@ -22,7 +22,7 @@ package plptimingdiagram.signals;
  *
  * @author wira
  */
-public class BusEdge {
+public class BusEdge extends Edge {
     private double time;
     private long signal;
 
