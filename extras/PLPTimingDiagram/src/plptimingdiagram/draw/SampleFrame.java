@@ -1,12 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
 
-/*
- * SampleFrame.java
- *
- * Created on Oct 31, 2011, 10:33:32 PM
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 package plptimingdiagram.draw;
@@ -29,7 +36,7 @@ public class SampleFrame extends javax.swing.JFrame {
     public SampleFrame() {
         initComponents();
         tD = new TimingDiagram();
-        axis = new XAxis(0, 100, 10);
+        axis = new XAxis(0, 1000000, 10);
         canvas = new DiagramCanvas(tD, axis);
         canvas.setSize(container.getWidth(), container.getHeight());
         container.add(canvas);
@@ -41,49 +48,49 @@ public class SampleFrame extends javax.swing.JFrame {
         tD.addSignal(new Line());
 
         tD.getSignal(0).setName("Signal Number One");
-        tD.getSignal(0).addEdge(new LineEdge(50, 0));
-        tD.getSignal(0).addEdge(new LineEdge(60, 1));
-        tD.getSignal(0).addEdge(new LineEdge(70, 0));
-        tD.getSignal(0).addEdge(new LineEdge(80, 1));
-        tD.getSignal(0).addEdge(new LineEdge(90, 0));
-        tD.getSignal(0).addEdge(new LineEdge(100, 1));
-        tD.getSignal(0).addEdge(new LineEdge(110, 0));
-        tD.getSignal(0).addEdge(new LineEdge(111, 1));
-        tD.getSignal(0).addEdge(new LineEdge(112, 0));
-        tD.getSignal(0).addEdge(new LineEdge(113, 1));
-        tD.getSignal(0).addEdge(new LineEdge(114, 0));
-        tD.getSignal(0).addEdge(new LineEdge(115, 1));
-        tD.getSignal(0).addEdge(new LineEdge(116, 0));
-        tD.getSignal(0).addEdge(new LineEdge(117, 1));
-        tD.getSignal(0).addEdge(new LineEdge(118, 0));
-        tD.getSignal(0).addEdge(new LineEdge(130, 0));
-        tD.getSignal(0).addEdge(new LineEdge(140, 1));
-        tD.getSignal(0).addEdge(new LineEdge(150, 0));
+        tD.getSignal(0).addEdge(new LineEdge(500000, 0));
+        tD.getSignal(0).addEdge(new LineEdge(600000, 1));
+        tD.getSignal(0).addEdge(new LineEdge(700000, 0));
+        tD.getSignal(0).addEdge(new LineEdge(800000, 1));
+        tD.getSignal(0).addEdge(new LineEdge(900000, 0));
+        tD.getSignal(0).addEdge(new LineEdge(1000000, 1));
+        tD.getSignal(0).addEdge(new LineEdge(1000500, 0));
+        tD.getSignal(0).addEdge(new LineEdge(1000600, 1));
+        tD.getSignal(0).addEdge(new LineEdge(1000700, 0));
+        tD.getSignal(0).addEdge(new LineEdge(1000800, 1));
+        tD.getSignal(0).addEdge(new LineEdge(1140000, 0));
+        tD.getSignal(0).addEdge(new LineEdge(1150000, 1));
+        tD.getSignal(0).addEdge(new LineEdge(1160000, 0));
+        tD.getSignal(0).addEdge(new LineEdge(1170000, 1));
+        tD.getSignal(0).addEdge(new LineEdge(1180000, 0));
+        tD.getSignal(0).addEdge(new LineEdge(1300000, 0));
+        tD.getSignal(0).addEdge(new LineEdge(1400000, 1));
+        tD.getSignal(0).addEdge(new LineEdge(1500000, 0));
 
         tD.getSignal(1).setName("Signal Number Two");
-        tD.getSignal(1).addEdge(new LineEdge(50, 0));
-        tD.getSignal(1).addEdge(new LineEdge(60, 1));
-        tD.getSignal(1).addEdge(new LineEdge(110, 0));
-        tD.getSignal(1).addEdge(new LineEdge(130, 1));
-        tD.getSignal(1).addEdge(new LineEdge(135, 0));
-        tD.getSignal(1).addEdge(new LineEdge(140, 1));
-        tD.getSignal(1).addEdge(new LineEdge(145, 0));
+        tD.getSignal(1).addEdge(new LineEdge(500000, 0));
+        tD.getSignal(1).addEdge(new LineEdge(600000, 1));
+        tD.getSignal(1).addEdge(new LineEdge(1100000, 0));
+        tD.getSignal(1).addEdge(new LineEdge(1300000, 1));
+        tD.getSignal(1).addEdge(new LineEdge(1350000, 0));
+        tD.getSignal(1).addEdge(new LineEdge(1400000, 1));
+        tD.getSignal(1).addEdge(new LineEdge(1450000, 0));
 
 
         tD.getSignal(2).setName("Bus Signal");
-        tD.getSignal(2).addEdge(new BusEdge(90, 0xeeffeeffL));
-        tD.getSignal(2).addEdge(new BusEdge(120, 0xaaffeeffL));
-        tD.getSignal(2).addEdge(new BusEdge(150, 0xeebL));
-        tD.getSignal(2).addEdge(new BusEdge(180, 0xbeefL));
-        tD.getSignal(2).addEdge(new BusEdge(200, 0x2L));
-        tD.getSignal(2).addEdge(new BusEdge(220, 0x5L));
-        tD.getSignal(2).addEdge(new BusEdge(235, 0x6L));
-        tD.getSignal(2).addEdge(new BusEdge(250, 0x8L));
+        tD.getSignal(2).addEdge(new BusEdge(900000, 0xeeffeeffL));
+        tD.getSignal(2).addEdge(new BusEdge(1200000, 0xaaffeeffL));
+        tD.getSignal(2).addEdge(new BusEdge(1500000, 0xeebL));
+        tD.getSignal(2).addEdge(new BusEdge(1800000, 0xbeefL));
+        tD.getSignal(2).addEdge(new BusEdge(2000000, 0x2L));
+        tD.getSignal(2).addEdge(new BusEdge(2050000, 0x5L));
+        tD.getSignal(2).addEdge(new BusEdge(2100000, 0x6L));
+        tD.getSignal(2).addEdge(new BusEdge(2150000, 0x8L));
 
 
         tD.getSignal(3).setName("Another signal down here");
-        tD.getSignal(3).addEdge(new LineEdge(90, 1));
-        tD.getSignal(3).addEdge(new LineEdge(120, 0));
+        tD.getSignal(3).addEdge(new LineEdge(900000, 1));
+        tD.getSignal(3).addEdge(new LineEdge(1200000, 0));
 
 
     }
@@ -102,6 +109,12 @@ public class SampleFrame extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
+        jPanel1 = new javax.swing.JPanel();
+        sigSlant = new javax.swing.JSlider();
+        busSlant = new javax.swing.JSlider();
+        axisStart = new javax.swing.JTextField();
+        axisEnd = new javax.swing.JTextField();
+        axisSet = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -109,11 +122,11 @@ public class SampleFrame extends javax.swing.JFrame {
         container.setLayout(containerLayout);
         containerLayout.setHorizontalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 672, Short.MAX_VALUE)
+            .addGap(0, 717, Short.MAX_VALUE)
         );
         containerLayout.setVerticalGroup(
             containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
+            .addGap(0, 302, Short.MAX_VALUE)
         );
 
         jLabel1.setText("Wira's Awesome Timing Diagram Library");
@@ -139,6 +152,71 @@ public class SampleFrame extends javax.swing.JFrame {
             }
         });
 
+        sigSlant.setMaximum(10);
+        sigSlant.setValue(0);
+        sigSlant.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sigSlantMouseReleased(evt);
+            }
+        });
+        sigSlant.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sigSlantStateChanged(evt);
+            }
+        });
+        sigSlant.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                sigSlantPropertyChange(evt);
+            }
+        });
+
+        busSlant.setMaximum(10);
+        busSlant.setValue(0);
+        busSlant.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                busSlantStateChanged(evt);
+            }
+        });
+        busSlant.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                busSlantPropertyChange(evt);
+            }
+        });
+
+        axisSet.setText("New Axis");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(sigSlant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(busSlant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(axisStart, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(axisEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(axisSet)
+                .addContainerGap(81, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(axisStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(axisEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(axisSet))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(busSlant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(sigSlant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -154,6 +232,7 @@ public class SampleFrame extends javax.swing.JFrame {
                 .addComponent(jToggleButton1)
                 .addContainerGap())
             .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -165,7 +244,9 @@ public class SampleFrame extends javax.swing.JFrame {
                     .addComponent(jButton3)
                     .addComponent(jToggleButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -173,14 +254,14 @@ public class SampleFrame extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if(cT != null) cT.stop = true;
-        axis.setDomain(axis.getDomainStart()+5, axis.getDomainEnd()+5);
+        axis.setDomain(axis.getDomainStart()+50000, axis.getDomainEnd()+50000);
         canvas.repaint();
         jToggleButton1.setSelected(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if(cT != null) cT.stop = true;
-        axis.setDomain(0, 100);
+        axis.setDomain(0, 1000000);
         canvas.repaint();
         jToggleButton1.setSelected(false);
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -195,6 +276,31 @@ public class SampleFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
+    private void sigSlantPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_sigSlantPropertyChange
+
+    }//GEN-LAST:event_sigSlantPropertyChange
+
+    private void busSlantPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_busSlantPropertyChange
+    }//GEN-LAST:event_busSlantPropertyChange
+
+    private void sigSlantStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sigSlantStateChanged
+        if(canvas != null) {
+            canvas.setTransitionSlantPixels(sigSlant.getValue(), busSlant.getValue());
+            canvas.repaint();
+        }
+    }//GEN-LAST:event_sigSlantStateChanged
+
+    private void sigSlantMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sigSlantMouseReleased
+
+    }//GEN-LAST:event_sigSlantMouseReleased
+
+    private void busSlantStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_busSlantStateChanged
+        if(canvas != null) {
+            canvas.setTransitionSlantPixels(sigSlant.getValue(), busSlant.getValue());
+            canvas.repaint();
+        }
+    }//GEN-LAST:event_busSlantStateChanged
+
     /**
     * @param args the command line arguments
     */
@@ -207,11 +313,17 @@ public class SampleFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField axisEnd;
+    private javax.swing.JButton axisSet;
+    private javax.swing.JTextField axisStart;
+    private javax.swing.JSlider busSlant;
     private javax.swing.JPanel container;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JSlider sigSlant;
     // End of variables declaration//GEN-END:variables
 
     class CrazyThread extends Thread {
@@ -229,10 +341,11 @@ public class SampleFrame extends javax.swing.JFrame {
 
         @Override
         public void run() {
-            double i = axis.getDomainStart();
+            double i = 0;
+            double domainStart = axis.getDomainStart();
             try {
                 while(!stop) {
-                    axis.setDomain(1*i, 100+1*i);
+                    axis.setDomain(domainStart+10000*i, domainStart+1000000+10000*i);
                     canvas.repaint();
                     Thread.sleep(50);
                     i+=1;
