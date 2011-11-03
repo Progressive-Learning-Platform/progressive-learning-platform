@@ -122,7 +122,7 @@ public class DiagramCanvas extends JPanel implements MouseListener {
         W = this.getWidth();
         int numberOfSignals = tD.getNumberOfSignals();
         if(numberOfSignals > 0)
-            sigHeight = (H - xAxisHeight) / numberOfSignals;
+            sigHeight = 45; //(H - xAxisHeight) / numberOfSignals;
         Graphics2D g = (Graphics2D) g1;
         BufferedImage image = new BufferedImage(W, H, BufferedImage.TYPE_INT_RGB);
         Graphics2D ig = image.createGraphics();
@@ -256,7 +256,7 @@ public class DiagramCanvas extends JPanel implements MouseListener {
                 else if(signal.getEdgesWithinRange(0, domainStart).size() > 0) {
                     secondFromLastEdge = (BusEdge) signal.getEdgesWithinRange(0, domainStart).get(signal.getEdgesWithinRange(0, domainStart).size()-1);
                     boolean change = secondFromLastEdge.getSignal() != lastEdge.getSignal();
-                    this.drawBusSignal(ig, i, domainStart, lastEdge.getTime(), lastEdge.getSignal(), change);
+                    this.drawBusSignal(ig, i, domainStart, lastEdge.getTime(), secondFromLastEdge.getSignal(), change);
                 } else {
                     ig.setColor(new Color(200, 200, 200));
                     this.drawUnknownSignal(ig, i, domainStart, lastEdge.getTime(), true);
@@ -300,7 +300,7 @@ public class DiagramCanvas extends JPanel implements MouseListener {
             ig.drawString(String.format("%.2f", xVal+domainStart), yCursor+5, H-5);
 
             for(int i = 0; i < numberOfSignals; i++) {
-                int yPos = (i+1)*sigHeight - 5;
+                int yPos = (i+1)*sigHeight + yMargin - 5;
                 Signal signal = tD.getSignal(i);
                 if(signal instanceof Bus) {
                     ArrayList<BusEdge> edges = signal.getEdgesWithinRange(0, xVal+domainStart);
@@ -402,6 +402,12 @@ public class DiagramCanvas extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent me) {
+        if(me.getClickCount()==2 && me.getX() < xOffset && sigHeight > 0) {
+            int index = me.getY() / sigHeight;
+            if(index < tD.getNumberOfSignals())
+                tD.removeSignal(index);
+        }
+        
         setYCursor(me.getX());
         repaint();
     }

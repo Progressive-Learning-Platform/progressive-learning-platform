@@ -73,20 +73,16 @@ public class BusMonitor extends PLPSimBusModule {
         }
 
         public void addAddressToMonitor(long addr) {
-            boolean found = false;
-
             for(int i = 0; i < addresses.size(); i++) {
                 if(addresses.get(i) == addr)
-                    found = true;
+                    addresses.remove(i);
             }
 
-            if(!found) {
-                addresses.add(addr);
-                oldValues.add(-1L);
-                Bus newSignal = new Bus();
-                newSignal.setName(String.format("Bus: 0x%08x", addr));
-                tD.addSignal(newSignal);
-            }
+            addresses.add(addr);
+            oldValues.add(-1L);
+            Bus newSignal = new Bus();
+            newSignal.setName(String.format("0x%08x", addr));
+            tD.addSignal(newSignal);
         }
 
         public TimingDiagram getTimingDiagram() {

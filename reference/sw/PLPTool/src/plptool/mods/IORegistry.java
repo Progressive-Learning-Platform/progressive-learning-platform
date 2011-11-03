@@ -235,7 +235,7 @@ public class IORegistry {
         mods[11][0] = "Bus Monitor";
         mods[11][1] = false;
         mods[11][2] = 1;
-        mods[11][3] = "Monitors bus addresess and updates the timing diagram";
+        mods[11][3] = "Monitors bus addresses and updates the timing diagram";
         mods[11][4] = true;
         mods[11][5] = false;
 
