@@ -43,6 +43,11 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         canvasContainer.add(canvas);
     }
 
+    private void updateRangeFields() {
+        txtStart.setText(""+(int)axis.getDomainStart());
+        txtEnd.setText(""+(int)axis.getDomainEnd());
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -64,7 +69,13 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         btnAddLocation = new javax.swing.JButton();
         btnZoomIn = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
+        btnCursorToStart = new javax.swing.JButton();
+        btnCursorToEnd = new javax.swing.JButton();
+        btnShiftLeft = new javax.swing.JButton();
+        btnShiftRight = new javax.swing.JButton();
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(BusMonitorFrame.class);
+        setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
 
         canvasContainer.setName("canvasContainer"); // NOI18N
@@ -73,14 +84,13 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         canvasContainer.setLayout(canvasContainerLayout);
         canvasContainerLayout.setHorizontalGroup(
             canvasContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 649, Short.MAX_VALUE)
+            .addGap(0, 634, Short.MAX_VALUE)
         );
         canvasContainerLayout.setVerticalGroup(
             canvasContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 295, Short.MAX_VALUE)
         );
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(BusMonitorFrame.class);
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
@@ -88,7 +98,9 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         txtStart.setName("txtStart"); // NOI18N
 
         txtEnd.setText(resourceMap.getString("txtEnd.text")); // NOI18N
+        txtEnd.setMinimumSize(new java.awt.Dimension(12, 20));
         txtEnd.setName("txtEnd"); // NOI18N
+        txtEnd.setPreferredSize(new java.awt.Dimension(12, 20));
 
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
@@ -139,6 +151,38 @@ public class BusMonitorFrame extends javax.swing.JFrame {
             }
         });
 
+        btnCursorToStart.setText(resourceMap.getString("btnCursorToStart.text")); // NOI18N
+        btnCursorToStart.setName("btnCursorToStart"); // NOI18N
+        btnCursorToStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCursorToStartActionPerformed(evt);
+            }
+        });
+
+        btnCursorToEnd.setText(resourceMap.getString("btnCursorToEnd.text")); // NOI18N
+        btnCursorToEnd.setName("btnCursorToEnd"); // NOI18N
+        btnCursorToEnd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCursorToEndActionPerformed(evt);
+            }
+        });
+
+        btnShiftLeft.setText(resourceMap.getString("btnShiftLeft.text")); // NOI18N
+        btnShiftLeft.setName("btnShiftLeft"); // NOI18N
+        btnShiftLeft.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShiftLeftActionPerformed(evt);
+            }
+        });
+
+        btnShiftRight.setText(resourceMap.getString("btnShiftRight.text")); // NOI18N
+        btnShiftRight.setName("btnShiftRight"); // NOI18N
+        btnShiftRight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShiftRightActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -146,30 +190,38 @@ public class BusMonitorFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtStart, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(txtStart, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSimEndCopy)
+                        .addComponent(btnCursorToStart, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnUpdate)))
-                .addContainerGap(142, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAddLocation)
-                .addGap(18, 18, 18)
-                .addComponent(btnZoomIn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnZoomOut)
-                .addContainerGap(168, Short.MAX_VALUE))
+                        .addComponent(btnCursorToEnd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSimEndCopy)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnUpdate))
+                            .addComponent(jLabel2)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAddLocation)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnZoomIn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnZoomOut)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnShiftLeft)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnShiftRight)))
+                .addContainerGap(46, Short.MAX_VALUE))
             .addComponent(canvasContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -181,7 +233,9 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                     .addComponent(txtLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAddLocation)
                     .addComponent(btnZoomIn)
-                    .addComponent(btnZoomOut))
+                    .addComponent(btnZoomOut)
+                    .addComponent(btnShiftLeft)
+                    .addComponent(btnShiftRight))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(canvasContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -191,6 +245,8 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCursorToStart)
+                    .addComponent(btnCursorToEnd)
                     .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimEndCopy)
                     .addComponent(btnUpdate))
@@ -205,7 +261,13 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimEndCopyActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        axis.setDomain(PLPToolbox.parseNum(txtStart.getText()), PLPToolbox.parseNum(txtEnd.getText()));
+        long start = PLPToolbox.parseNum(txtStart.getText());
+        long end = PLPToolbox.parseNum(txtEnd.getText());
+
+        if(end <= start)
+            return;
+        
+        axis.setDomain(start, end);
         canvas.repaint();
     }//GEN-LAST:event_btnUpdateActionPerformed
 
@@ -217,11 +279,12 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
         double start = axis.getDomainStart();
         double end = axis.getDomainEnd();
-        double center = canvas.getYCursorTime();
+        double center = canvas.getYCursorTime()+start;
 
         if(center >= 0) {
             double margin = (end-start) / 4;
             axis.setDomain(start+margin, end-margin);
+            updateRangeFields();
             canvas.repaint();
         }
     }//GEN-LAST:event_btnZoomInActionPerformed
@@ -229,17 +292,54 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
         double start = axis.getDomainStart();
         double end = axis.getDomainEnd();
-        double center = canvas.getYCursorTime();
+        double center = canvas.getYCursorTime()+start;
 
         if(center >= 0) {
             double margin = (end-start) / 2;
             axis.setDomain(start-margin, end+margin);
+            updateRangeFields();
             canvas.repaint();
         }
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
+    private void btnCursorToStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCursorToStartActionPerformed
+        double cur = canvas.getYCursorTime()+axis.getDomainStart();
+        if(cur >= 0) {
+            txtStart.setText(""+(int)cur);
+        }
+    }//GEN-LAST:event_btnCursorToStartActionPerformed
+
+    private void btnCursorToEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCursorToEndActionPerformed
+        double cur = canvas.getYCursorTime()+axis.getDomainStart();
+        if(cur >= 0) {
+            txtEnd.setText(""+(int)cur);
+        }
+    }//GEN-LAST:event_btnCursorToEndActionPerformed
+
+    private void btnShiftLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShiftLeftActionPerformed
+        double start = axis.getDomainStart();
+        double end = axis.getDomainEnd();
+        double shift = 0.10 * (end-start);
+        axis.setDomain(start-shift, end-shift);
+        updateRangeFields();
+        canvas.repaint();
+    }//GEN-LAST:event_btnShiftLeftActionPerformed
+
+    private void btnShiftRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShiftRightActionPerformed
+        double start = axis.getDomainStart();
+        double end = axis.getDomainEnd();
+        double shift = 0.10 * (end-start);
+        axis.setDomain(start+shift, end+shift);
+        updateRangeFields();
+        canvas.repaint();
+    }//GEN-LAST:event_btnShiftRightActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddLocation;
+    private javax.swing.JButton btnCursorToEnd;
+    private javax.swing.JButton btnCursorToStart;
+    private javax.swing.JButton btnShiftLeft;
+    private javax.swing.JButton btnShiftRight;
     private javax.swing.JButton btnSimEndCopy;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JButton btnZoomIn;
