@@ -202,6 +202,10 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     memVis.setVisible(true);
                 }
             }
+            else if(command.equals("visprog")){
+                plptool.mips.visualizer.ProgramVisualization progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
+                progVis.printProgram();
+            }
             else if(command.equals("ignoresavedmods")) {
                 plptool.Config.simIgnoreSavedSimState = true;
             }
