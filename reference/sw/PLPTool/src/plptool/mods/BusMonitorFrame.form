@@ -43,6 +43,8 @@
                               <Component id="btnSimEndCopy" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="18" pref="18" max="-2" attributes="0"/>
                               <Component id="btnUpdate" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="chkDeltaCursor" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -63,7 +65,7 @@
                       <Component id="btnShiftRight" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="46" max="32767" attributes="0"/>
+              <EmptySpace pref="50" max="32767" attributes="0"/>
           </Group>
           <Component id="canvasContainer" alignment="0" max="32767" attributes="0"/>
       </Group>
@@ -96,6 +98,7 @@
                   <Component id="txtEnd" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnSimEndCopy" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnUpdate" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="chkDeltaCursor" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -242,6 +245,15 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnShiftRightActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="chkDeltaCursor">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="chkDeltaCursor.text"/>
+        <Property name="name" type="java.lang.String" value="chkDeltaCursor" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkDeltaCursorActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
