@@ -41,6 +41,7 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         canvas = new DiagramCanvas(busMon.getTimingDiagram(), axis);
         canvas.setSize(canvasContainer.getWidth(), canvasContainer.getHeight());
         canvasContainer.add(canvas);
+        canvas.setHoverCursorEnable(false);
     }
 
     private void updateRangeFields() {
@@ -73,6 +74,7 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         btnCursorToEnd = new javax.swing.JButton();
         btnShiftLeft = new javax.swing.JButton();
         btnShiftRight = new javax.swing.JButton();
+        chkDeltaCursor = new javax.swing.JCheckBox();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(BusMonitorFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -183,6 +185,14 @@ public class BusMonitorFrame extends javax.swing.JFrame {
             }
         });
 
+        chkDeltaCursor.setText(resourceMap.getString("chkDeltaCursor.text")); // NOI18N
+        chkDeltaCursor.setName("chkDeltaCursor"); // NOI18N
+        chkDeltaCursor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkDeltaCursorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -205,7 +215,9 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnSimEndCopy)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnUpdate))
+                                .addComponent(btnUpdate)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(chkDeltaCursor))
                             .addComponent(jLabel2)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
@@ -221,7 +233,7 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                         .addComponent(btnShiftLeft)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnShiftRight)))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
             .addComponent(canvasContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -249,7 +261,8 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                     .addComponent(btnCursorToEnd)
                     .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimEndCopy)
-                    .addComponent(btnUpdate))
+                    .addComponent(btnUpdate)
+                    .addComponent(chkDeltaCursor))
                 .addContainerGap())
         );
 
@@ -277,29 +290,13 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddLocationActionPerformed
 
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
-        double start = axis.getDomainStart();
-        double end = axis.getDomainEnd();
-        double center = canvas.getYCursorTime()+start;
-
-        if(center >= 0) {
-            double margin = (end-start) / 4;
-            axis.setDomain(start+margin, end-margin);
-            updateRangeFields();
-            canvas.repaint();
-        }
+        canvas.doZoomInOnCursor(2.0);
+        updateRangeFields();
     }//GEN-LAST:event_btnZoomInActionPerformed
 
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-        double start = axis.getDomainStart();
-        double end = axis.getDomainEnd();
-        double center = canvas.getYCursorTime()+start;
-
-        if(center >= 0) {
-            double margin = (end-start) / 2;
-            axis.setDomain(start-margin, end+margin);
-            updateRangeFields();
-            canvas.repaint();
-        }
+        canvas.doZoomOutOnCursor(2.0);
+        updateRangeFields();
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnCursorToStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCursorToStartActionPerformed
@@ -317,22 +314,22 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCursorToEndActionPerformed
 
     private void btnShiftLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShiftLeftActionPerformed
-        double start = axis.getDomainStart();
-        double end = axis.getDomainEnd();
-        double shift = 0.10 * (end-start);
-        axis.setDomain(start-shift, end-shift);
+        canvas.doLeftShift(0.10);
         updateRangeFields();
-        canvas.repaint();
     }//GEN-LAST:event_btnShiftLeftActionPerformed
 
     private void btnShiftRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShiftRightActionPerformed
-        double start = axis.getDomainStart();
-        double end = axis.getDomainEnd();
-        double shift = 0.10 * (end-start);
-        axis.setDomain(start+shift, end+shift);
+        canvas.doRightShift(0.10);
         updateRangeFields();
-        canvas.repaint();
     }//GEN-LAST:event_btnShiftRightActionPerformed
+
+    private void chkDeltaCursorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkDeltaCursorActionPerformed
+        canvas.setHoverCursorEnable(chkDeltaCursor.isSelected());
+
+        if(!chkDeltaCursor.isSelected()) {
+            canvas.clearHoverCursor();
+        }
+    }//GEN-LAST:event_chkDeltaCursorActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddLocation;
@@ -345,6 +342,7 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
     private javax.swing.JPanel canvasContainer;
+    private javax.swing.JCheckBox chkDeltaCursor;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
