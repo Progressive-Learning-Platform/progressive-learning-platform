@@ -52,8 +52,8 @@ public class BusMonitor extends PLPSimBusModule {
 
         public int eval() {
             for(int i = 0; i < addresses.size(); i++) {
-                long value = (Long) sim.bus.read(addresses.get(i));
-                if(oldValues.get(i) != value) {
+                Long value = (Long) sim.bus.read(addresses.get(i));
+                if(value != null && oldValues.get(i) != value) {
                     tD.getSignal(i).addEdge(new BusEdge(sim.getInstrCount(), value));
                     oldValues.set(i, value);
                 }
@@ -87,6 +87,18 @@ public class BusMonitor extends PLPSimBusModule {
 
         public TimingDiagram getTimingDiagram() {
             return tD;
+        }
+
+        public void setTimingDiagram(TimingDiagram tD) {
+            this.tD = tD;
+
+            addresses = new ArrayList<Long>();
+            oldValues = new ArrayList<Long>();
+
+            for(int i = 0; i < tD.getNumberOfSignals(); i++) {
+                addresses.add(Long.parseLong(tD.getSignal(i).getName().substring(2), 16));
+                oldValues.add(-1L);
+            }
         }
 
         public PLPSimCore getSimCore() {
