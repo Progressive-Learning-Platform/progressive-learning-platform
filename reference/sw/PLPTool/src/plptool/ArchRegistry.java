@@ -291,17 +291,11 @@ public class ArchRegistry {
         /**********************************************************************
          * plpmips additional simulation states
          **********************************************************************/
-        else if (arch.equals("plpmips")) {
-            // check if we have saved memory visualizer entries in pAttrSet
-            Object[][] attrSet = (Object[][]) plp.getProjectAttribute("plpmips_memory_visualizer");
-
-            if(attrSet != null) {
-                ret += "plpmips_memory_visualizer::";
-                for(int i = 0; i < attrSet.length; i++) {
-                    ret += attrSet[i][0] + "-" + attrSet[i][1] + ":";
-                }
-            }
+        else if(arch.equals("plpmips")) {
+            return plptool.mips.ArchHelper.getArchSpecificSimStates(plp);
         }
+
+        // ... add your additional simulation states to be saved to project file here ... //
 
         return ret + "\n";
     }
@@ -319,27 +313,17 @@ public class ArchRegistry {
     public static void setArchSpecificSimStates(ProjectDriver plp, String[] configStr) {
         String arch = plp.getArch();
 
-        if(arch == null)
+        if(arch == null || configStr.length == 0)
             ;
 
         /**********************************************************************
          * plpmips additional simulation states
          **********************************************************************/
-        else if (arch.equals("plpmips")) {
-            if(configStr[0].equals("plpmips_memory_visualizer")) {
-                String[] tokens = configStr[1].split(":");
-                Object[][] attrSet = new Object[tokens.length][2];
-                for(int j = 0; j < tokens.length; j++) {
-                    String tempTokens[] = tokens[j].split("-");
-                    Msg.D("plpmips_memory_visualizer load: " + tempTokens[0] + "-" + tempTokens[1], 4, null);
-                    Long[] temp = new Long[2];
-                    temp[0] = new Long(Long.parseLong(tempTokens[0]));
-                    temp[1] = new Long(Long.parseLong(tempTokens[1]));
-                    attrSet[j] = temp;
-                }
-                plp.addProjectAttribute("plpmips_memory_visualizer", attrSet);
-            }
+        else if(arch.equals("plpmips")) {
+            plptool.mips.ArchHelper.setArchSpecificSimStates(plp, configStr);
         }
+
+        // ... add your additional simulation states loaded from project file here ... //
     }
 
     /**

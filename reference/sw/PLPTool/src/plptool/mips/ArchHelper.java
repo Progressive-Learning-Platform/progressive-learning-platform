@@ -18,12 +18,20 @@
 
 package plptool.mips;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author wira
  */
 public class ArchHelper {
+    private static boolean busMonitorAttached;
+    private static int busMonitorModulePosition;
+    private static plptool.mods.BusMonitor busMonitor;
+    private static plptool.mods.BusMonitorFrame busMonitorFrame;
+    
     public static void doPreSimulationRoutine(final plptool.gui.ProjectDriver plp) {
+        busMonitorAttached = false;
         plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
         plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
         plp.sim.bus.enableAllModules();
@@ -65,9 +73,49 @@ public class ArchHelper {
                 }
             });
 
+            // Add bus monitor checkbox menu
+            final javax.swing.JCheckBoxMenuItem menuBusMonitor = new javax.swing.JCheckBoxMenuItem();
+            menuBusMonitor.setText("Display Bus Monitor Timing Diagram");
+            menuBusMonitor.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if(menuBusMonitor.isSelected()) {
+                        if(!busMonitorAttached) {
+                            busMonitor = new plptool.mods.BusMonitor(plp.sim);
+                            plp.sim.bus.add(busMonitor);
+                            busMonitorModulePosition = plp.sim.bus.getNumOfMods() - 1;
+                            plp.sim.bus.enableMod(busMonitorModulePosition);
+                            busMonitorFrame = new plptool.mods.BusMonitorFrame((plptool.mods.BusMonitor)plp.sim.bus.getRefMod(busMonitorModulePosition));
+                            busMonitorAttached = true;
+                        }
+                        busMonitorFrame.setVisible(true);
+                    } else
+                        busMonitorFrame.setVisible(false);
+                }
+            });
+
+            // Restore saved timing diagram from project attributes, if it exists
+            plptimingdiagram.TimingDiagram savedTD = (plptimingdiagram.TimingDiagram) plp.getProjectAttribute("plpmips_timingdiagram");
+            if(savedTD != null) {
+                plptool.Msg.D("Attempting to load timing diagram from project attributes.", 3, null);
+                busMonitor = new plptool.mods.BusMonitor(plp.sim);
+                busMonitor.setTimingDiagram(savedTD);
+                plp.sim.bus.add(busMonitor);
+                busMonitorModulePosition = plp.sim.bus.getNumOfMods() - 1;
+                plp.sim.bus.enableMod(busMonitorModulePosition);
+                busMonitorFrame = new plptool.mods.BusMonitorFrame((plptool.mods.BusMonitor)plp.sim.bus.getRefMod(busMonitorModulePosition));
+                Boolean b = (Boolean) plp.getProjectAttribute("plpmips_timingdiagram_framevisibility");
+                if(b != null) {
+                    busMonitorFrame.setVisible(b);
+                    menuBusMonitor.setSelected(b);
+                }
+                busMonitorAttached = true;
+                plptool.Msg.D("Timing diagram loaded!", 3, null);
+            }
+
             plp.g_dev.addSimToolSeparator();
             plp.g_dev.addSimToolItem(menuMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
+            plp.g_dev.addSimToolItem(menuBusMonitor);
         }
     }
 
@@ -79,9 +127,70 @@ public class ArchHelper {
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
+            plp.g_dev.removeLastSimToolItem();
+
+            if(busMonitor != null && busMonitorAttached) {
+                plp.addProjectAttribute("plpmips_timingdiagram", busMonitor.getTimingDiagram());
+                plp.addProjectAttribute("plpmips_timingdiagram_framevisibility", busMonitorFrame.isVisible());
+                busMonitorFrame.dispose();
+                busMonitorFrame = null;
+                busMonitor = null;
+            }
 
             g_sim.disposeMemoryVisualizers();
         }
+    }
+
+    public static void setArchSpecificSimStates(final plptool.gui.ProjectDriver plp, String[] configStr) {
+        if(configStr[0].equals("plpmips_memory_visualizer")) {
+            String[] tokens = configStr[1].split(":");
+            Object[][] attrSet = new Object[tokens.length][2];
+            for(int j = 0; j < tokens.length; j++) {
+                String tempTokens[] = tokens[j].split("-");
+                plptool.Msg.D("plpmips_memory_visualizer load: " + tempTokens[0] + "-" + tempTokens[1], 4, null);
+                Long[] temp = new Long[2];
+                temp[0] = new Long(Long.parseLong(tempTokens[0]));
+                temp[1] = new Long(Long.parseLong(tempTokens[1]));
+                attrSet[j] = temp;
+            }
+            plp.addProjectAttribute("plpmips_memory_visualizer", attrSet);
+        } else if(configStr[0].equals("plpmips_timingdiagram")) {
+            plptimingdiagram.TimingDiagram tD = new plptimingdiagram.TimingDiagram();
+            String[] tokens = configStr[1].split(":");
+            for(int j = 0; j < tokens.length; j++) {
+                plptimingdiagram.signals.Bus busSignal = new plptimingdiagram.signals.Bus();
+                busSignal.setName(tokens[j]);
+                tD.addSignal(busSignal);
+                plptool.Msg.D("plpmips_timingdiagram load: " + tokens[j], 4, null);
+            }
+            plp.addProjectAttribute("plpmips_timingdiagram", tD);
+        }
+    }
+
+    public static String getArchSpecificSimStates(final plptool.gui.ProjectDriver plp) {
+        // check if we have saved memory visualizer entries in pAttrSet
+        String ret = "";
+        Object[][] attrSet = (Object[][]) plp.getProjectAttribute("plpmips_memory_visualizer");
+
+        if(attrSet != null) {
+            ret += "plpmips_memory_visualizer::";
+            for(int i = 0; i < attrSet.length; i++) {
+                ret += attrSet[i][0] + "-" + attrSet[i][1] + ":";
+            }
+        }
+        ret += "\n";
+
+        // check for bus monitor timing diagram settings
+        plptimingdiagram.TimingDiagram tD = (plptimingdiagram.TimingDiagram) plp.getProjectAttribute("plpmips_timingdiagram");
+        if(tD != null) {
+            ret += "plpmips_timingdiagram::";
+            for(int i = 0; i < tD.getNumberOfSignals(); i++) {
+                ret += tD.getSignal(i).getName() + ":";
+            }
+        }
+        ret += "\n";
+
+        return ret;
     }
 
     public static String getQuickReferenceString() {

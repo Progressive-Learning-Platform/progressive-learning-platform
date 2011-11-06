@@ -36,6 +36,7 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     /** Creates new form BusMonitorFrame */
     public BusMonitorFrame(BusMonitor busMon) {
         initComponents();
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/timingdiagram.png")));
         this.busMon = busMon;
         this.axis = new XAxis(0, 100000, 10);
         canvas = new DiagramCanvas(busMon.getTimingDiagram(), axis);
