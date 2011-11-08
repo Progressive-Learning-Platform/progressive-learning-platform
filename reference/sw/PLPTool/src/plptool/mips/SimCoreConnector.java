@@ -46,6 +46,7 @@ public class SimCoreConnector extends PLPSimBusModule {
     }
 
     public void reset() {
+        v.reset();
         v.update();
     }
 
