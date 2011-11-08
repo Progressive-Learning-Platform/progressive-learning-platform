@@ -68,27 +68,7 @@ public class CPUVisualization extends javax.swing.JFrame {
         }
 
         l1.clearFwdFlags();
-        long f = sim.getFlags();
-        if((f & Constants.PLP_SIM_FWD_EX_EX_ITYPE) == Constants.PLP_SIM_FWD_EX_EX_ITYPE)
-            l1.setFwdExEx();
-        if((f & Constants.PLP_SIM_FWD_EX_EX_RTYPE) == Constants.PLP_SIM_FWD_EX_EX_RTYPE)
-            l1.setFwdExEx();
-        if((f & Constants.PLP_SIM_FWD_MEM_EX_RTYPE) == Constants.PLP_SIM_FWD_MEM_EX_RTYPE)
-            l1.setFwdMemEx();
-        if((f & Constants.PLP_SIM_FWD_MEM_EX_ITYPE) == Constants.PLP_SIM_FWD_MEM_EX_ITYPE)
-            l1.setFwdMemEx();
-        if((f & Constants.PLP_SIM_FWD_MEM_EX_LW) == Constants.PLP_SIM_FWD_MEM_EX_LW)
-            l1.setFwdMemEx();
-        if((f & Constants.PLP_SIM_FWD_MEM_MEM) == Constants.PLP_SIM_FWD_MEM_MEM)
-            l1.setFwdMemMem();
-        if((f & Constants.PLP_SIM_IF_STALL_SET) == Constants.PLP_SIM_IF_STALL_SET)
-            ;
-        if((f & Constants.PLP_SIM_ID_STALL_SET) == Constants.PLP_SIM_ID_STALL_SET)
-            ;
-        if((f & Constants.PLP_SIM_EX_STALL_SET) == Constants.PLP_SIM_EX_STALL_SET)
-            ;
-        if((f & Constants.PLP_SIM_MEM_STALL_SET) == Constants.PLP_SIM_MEM_STALL_SET)
-            ;
+
 
         clrSelector[0] = sim.id_stage.if_count % 5;
         clrSelector[1] = sim.id_stage.id_count % 5;
@@ -96,11 +76,10 @@ public class CPUVisualization extends javax.swing.JFrame {
         clrSelector[3] = sim.mem_stage.count % 5;
         clrSelector[4] = sim.wb_stage.count % 5;
 
-        for(int i = 0; i < 5; i++) {
-            System.out.print(clrSelector[i] + " ");
-        }
-        System.out.println();
+        if(sim.getInstrCount() <= 0)
+            reset();
 
+        l1.setColorSelector(clrSelector);
         l1.repaint();
     }
 
