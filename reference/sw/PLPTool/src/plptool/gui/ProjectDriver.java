@@ -258,6 +258,8 @@ public class ProjectDriver {
                         Config.devFontSize = Integer.parseInt(tokens[1]);
                     } else if(tokens[0].equals("devSyntaxHighlighting")) {
                         Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("simFunctional")) {
+                        Config.simFunctional = Boolean.parseBoolean(tokens[1]);
                     }
                 }
 
@@ -295,6 +297,7 @@ public class ProjectDriver {
                 out.write("devFont::" + Config.devFont + "\n");
                 out.write("devFontSize::" + Config.devFontSize + "\n");
                 out.write("devSyntaxHighlighting::" + Config.devSyntaxHighlighting + "\n");
+                out.write("simFunctional::" + Config.simFunctional + "\n");
                 out.close();
 
             } catch(Exception e) {

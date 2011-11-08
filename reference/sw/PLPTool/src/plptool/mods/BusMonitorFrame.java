@@ -52,7 +52,8 @@ public class BusMonitorFrame extends javax.swing.JFrame {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 setVisible(false);
-                menu.setSelected(false);
+                if(menu != null)
+                    menu.setSelected(false);
             }
 
             @Override public void windowOpened(java.awt.event.WindowEvent evt) { }

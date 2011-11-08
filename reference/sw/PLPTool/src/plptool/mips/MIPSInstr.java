@@ -61,6 +61,13 @@ public class MIPSInstr {
         return (int) (instr & consts.J_MASK);
     }
 
+    public static String mnemonic(long instr) {
+        if(opcode(instr) != 0)
+            return Asm.lookupInstrOpcode(opcode(instr));
+        else
+            return Asm.lookupInstrFunct(funct(instr));
+    }
+
     public static String format(long instr) {
         String ret = "";
         int instrType;

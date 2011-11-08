@@ -99,18 +99,16 @@ public class ArchHelper {
             menuCpuVis.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     if(menuCpuVis.isSelected()) {
-                        plp.sim.bus.getRefMod(2).enable();
-                        cpuVis.setVisible(true);           
+                        cpuVis.setVisible(true);
+                        ((SimCoreGUI) plp.g_sim).attachCPUVisualizer(cpuVis);
                     } else {
-                        plp.sim.bus.getRefMod(2).disable();
                         cpuVis.setVisible(false);
                     }
                 }
             });
 
             cpuVis = new plptool.mips.visualizer.CPUVisualization((SimCore) plp.sim, menuCpuVis);
-            plp.sim.bus.add(new SimCoreConnector(cpuVis));
-
+            
             // Restore saved timing diagram from project attributes, if it exists
             plptimingdiagram.TimingDiagram savedTD = (plptimingdiagram.TimingDiagram) plp.getProjectAttribute("plpmips_timingdiagram");
             if(savedTD != null) {

@@ -30,9 +30,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-import plptool.gui.ProjectDriver;
-import plptool.mips.SimCore;
-import plptool.mips.Asm;
+import plptool.mips.*;
+import plptool.Constants;
 
 /**
  *
@@ -55,20 +54,46 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
     private Color clrCanvasBG = Color.black;
     private Color clrCanvasText = Color.white;
     private Color clrIdleStage = new Color(15, 15, 15);
-    private Color clrActiveIFStage = new Color(0, 0, 150);
-    private Color clrActiveIDStage = new Color(0, 150, 150);
-    private Color clrActiveEXStage = new Color(0, 150, 0);
-    private Color clrActiveMEMStage = new Color(150, 150, 0);
-    private Color clrActiveWBStage = new Color(150, 0, 0);
     private Color clrIdleLabel = Color.darkGray;
     private Color clrActiveLabel = Color.white;
-    private Color[] clrInstr = {new Color(0, 150, 0), new Color(0, 150, 150), new Color(0, 150, 0), new Color(150, 150, 0), new Color(150, 0, 0)};
+    private Color[] clrInstr = {new Color(0, 0, 150), new Color(0, 150, 150), new Color(0, 150, 0), new Color(150, 150, 0), new Color(150, 0, 0)};
+    private Color clrArrow = new Color(200, 185, 0);
+    private Color clrMemOutArrow = Color.blue;
+    private Color clrMemInArrow = Color.red;
 
     private int[] clrSelector = {0, 0, 0, 0, 0};
 
     private int xLeftOffset = 10;
     private int yTopOffset = 200;
     private int stageBlockW = 150;
+    private int stageBlockH = 150;
+    private int arrowSpacing = (int)(stageBlockH/6.0);
+    private int arrowHeight = (int)((stageBlockH - (3*stageBlockH/6.0))/2.0);
+
+    private int[] id_out_arrow_xcoords = {xLeftOffset+2*stageBlockW+stageSpacing-(int)(stageBlockW/4.0),
+                                          xLeftOffset+2*stageBlockW+2*stageSpacing+(int)(stageBlockW/5.0),
+                                          xLeftOffset+2*stageBlockW+2*stageSpacing+(int)(stageBlockW/4.0),
+                                          xLeftOffset+2*stageBlockW+2*stageSpacing+(int)(stageBlockW/5.0),
+                                          xLeftOffset+2*stageBlockW+stageSpacing-(int)(stageBlockW/4.0)};
+
+    private int[] id_out_1_arrow_ycoords = {yTopOffset+(int)(stageBlockH/6.0),
+                                            yTopOffset+(int)(stageBlockH/6.0),
+                                            yTopOffset+(int)(stageBlockH/6.0+arrowHeight/2.0),
+                                            yTopOffset+(int)(stageBlockH/6.0)+arrowHeight,
+                                            yTopOffset+(int)(stageBlockH/6.0)+arrowHeight};
+    private int[] id_out_2_arrow_ycoords = {yTopOffset+(int)(2*stageBlockH/6.0+arrowHeight),
+                                            yTopOffset+(int)(2*stageBlockH/6.0)+arrowHeight,
+                                            yTopOffset+(int)(2*stageBlockH/6.0+1.5*arrowHeight),
+                                            yTopOffset+(int)(2*stageBlockH/6.0)+2*arrowHeight,
+                                            yTopOffset+(int)(2*stageBlockH/6.0)+2*arrowHeight};
+
+    private int memXStart = xLeftOffset + 3*stageBlockW + 3*stageSpacing;
+
+    private int[] mem_out_xcoords = {memXStart+arrowSpacing, memXStart+arrowSpacing+(int)(arrowHeight/2.0), memXStart+arrowSpacing+arrowHeight};
+    private int[] mem_out_ycoords = {yTopOffset-arrowSpacing, yTopOffset-arrowSpacing-arrowHeight, yTopOffset-arrowSpacing};
+
+    private int[] mem_in_xcoords = {memXStart+2*arrowSpacing+arrowHeight, memXStart+2*arrowSpacing+(int)(1.5*arrowHeight), memXStart+2*arrowSpacing+2*arrowHeight};
+    private int[] mem_in_ycoords = {yTopOffset-arrowSpacing-arrowHeight, yTopOffset-arrowSpacing, yTopOffset-arrowSpacing-arrowHeight};
 
     private Font fontCaption = new Font("Monospaced", Font.BOLD, 12);
     private Font fontStageLabel = new Font("Monospaced", Font.BOLD, 42);
@@ -84,13 +109,8 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         this.instructionsRetired = in;
     }
 
-    public void updateColorSelector(int[] clr) {
-        //clrSelector = clr;
-        clrSelector[0] = 0;
-        clrSelector[1] = 1;
-        clrSelector[2] = 2;
-        clrSelector[3] = 3;
-        clrSelector[4] = 4;
+    public void setColorSelector(int[] clr) {
+        clrSelector = clr;
     }
 
     public void clearFwdFlags() {
@@ -116,7 +136,6 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         this.setSize(this.getParent().getSize());
         H = this.getHeight();
         W = this.getWidth();
-        int stageBlockH = stageBlockW;
 
         Graphics2D g = (Graphics2D) g1;
         BufferedImage image = new BufferedImage(W, H, BufferedImage.TYPE_INT_RGB);
@@ -133,6 +152,9 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         ig.setColor(clrCanvasBG);
         ig.fillRect(0, 0, W, H);
 
+        ig.setStroke(new BasicStroke(1.0f));
+        ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         ig.setColor(sim.id_stage.i_instrAddr == -1 || sim.id_stage.i_bubble ? clrIdleStage : clrInstr[clrSelector[0]]);
         ig.fillRect(xLeftOffset, yTopOffset, stageBlockW, stageBlockH);
         ig.setColor(sim.id_stage.i_instrAddr == -1 || sim.id_stage.i_bubble ? clrIdleLabel : clrActiveLabel);
@@ -140,8 +162,10 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         ig.drawString("IF", labelBaseXPosition-(int)(ig.getFontMetrics().stringWidth("IF")/2.0), yTopOffset+(int)(stageBlockH/2.0+fSH/2.0-fSD));
         ig.setColor(clrCanvasText);
         ig.setFont(fontCaption);
-        if(!sim.id_stage.i_bubble && sim.id_stage.i_instrAddr != -1)
+        if(!sim.id_stage.i_bubble && sim.id_stage.i_instrAddr != -1) {
             ig.drawString(String.format("0x%08x", sim.id_stage.i_instrAddr), xLeftOffset, yTopOffset+stageBlockH+5+fCH);
+            ig.drawString(MIPSInstr.mnemonic(sim.id_stage.i_instruction), xLeftOffset, yTopOffset+stageBlockH+2*(5+fCH));
+        }
 
         ig.setColor(sim.id_stage.instrAddr == -1 || sim.id_stage.bubble ? clrIdleStage : clrInstr[clrSelector[1]]);
         ig.fillRect(xLeftOffset+1*(stageBlockW+stageSpacing), yTopOffset, stageBlockW, stageBlockH);
@@ -150,8 +174,10 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         ig.drawString("ID", labelBaseXPosition+1*(stageBlockW+stageSpacing)-(int)(ig.getFontMetrics().stringWidth("ID")/2.0), yTopOffset+(int)(stageBlockH/2.0+fSH/2.0-fSD));
         ig.setColor(clrCanvasText);
         ig.setFont(fontCaption);
-        if(!sim.id_stage.bubble && sim.id_stage.instrAddr != -1)
+        if(!sim.id_stage.bubble && sim.id_stage.instrAddr != -1) {
             ig.drawString(String.format("0x%08x", sim.id_stage.instrAddr), xLeftOffset+1*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+5+fCH);
+            ig.drawString(MIPSInstr.mnemonic(sim.id_stage.instruction), xLeftOffset+1*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+2*(5+fCH));
+        }
 
         ig.setColor(sim.ex_stage.instrAddr == -1 || sim.ex_stage.bubble ? clrIdleStage : clrInstr[clrSelector[2]]);
         ig.fillRect(xLeftOffset+2*(stageBlockW+stageSpacing), yTopOffset, stageBlockW, stageBlockH);
@@ -160,9 +186,10 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         ig.drawString("EX", labelBaseXPosition+2*(stageBlockW+stageSpacing)-(int)(ig.getFontMetrics().stringWidth("EX")/2.0), yTopOffset+(int)(stageBlockH/2.0+fSH/2.0-fSD));
         ig.setColor(clrCanvasText);
         ig.setFont(fontCaption);
-        if(!sim.ex_stage.bubble && sim.ex_stage.instrAddr != -1)
+        if(!sim.ex_stage.bubble && sim.ex_stage.instrAddr != -1) {
             ig.drawString(String.format("0x%08x", sim.ex_stage.instrAddr), xLeftOffset+2*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+5+fCH);
-
+            ig.drawString(MIPSInstr.mnemonic(sim.ex_stage.instruction), xLeftOffset+2*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+2*(5+fCH));
+        }
 
         ig.setColor(sim.mem_stage.instrAddr == -1 || sim.mem_stage.bubble ? clrIdleStage : clrInstr[clrSelector[3]]);
         ig.fillRect(xLeftOffset+3*(stageBlockW+stageSpacing), yTopOffset, stageBlockW, stageBlockH);
@@ -171,12 +198,20 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         ig.drawString("MEM", labelBaseXPosition+3*(stageBlockW+stageSpacing)-(int)(ig.getFontMetrics().stringWidth("MEM")/2.0), yTopOffset+(int)(stageBlockH/2.0+fSH/2.0-fSD));
         ig.setColor(clrCanvasText);
         ig.setFont(fontCaption);
-        if(!sim.mem_stage.bubble && sim.mem_stage.instrAddr != -1)
+        if(!sim.mem_stage.bubble && sim.mem_stage.instrAddr != -1) {
             ig.drawString(String.format("0x%08x", sim.mem_stage.instrAddr), xLeftOffset+3*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+5+fCH);
+            ig.drawString(MIPSInstr.mnemonic(sim.mem_stage.instruction), xLeftOffset+3*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+2*(5+fCH));
+        }
+        ig.setColor(clrIdleStage);
+        ig.fillPolygon(mem_out_xcoords, mem_out_ycoords, 3);
+        ig.fillPolygon(mem_in_xcoords, mem_in_ycoords, 3);
         if(!sim.mem_stage.bubble && sim.mem_stage.ctl_memwrite == 1) {
-            ig.drawString("WRITE", xLeftOffset+3*(stageBlockW+stageSpacing)+5, yTopOffset+stageBlockH-5-fDH);
+            ig.setColor(clrMemOutArrow);
+            ig.fillPolygon(mem_out_xcoords, mem_out_ycoords, 3);
+
         } else if(!sim.mem_stage.bubble && sim.mem_stage.ctl_memread == 1) {
-            ig.drawString("READ", xLeftOffset+3*(stageBlockW+stageSpacing)+5, yTopOffset+stageBlockH-5-fDH);
+            ig.setColor(clrMemInArrow);
+            ig.fillPolygon(mem_in_xcoords, mem_in_ycoords, 3);
         }
 
 
@@ -187,8 +222,32 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         ig.drawString("WB", labelBaseXPosition+4*(stageBlockW+stageSpacing)-(int)(ig.getFontMetrics().stringWidth("WB")/2.0), yTopOffset+(int)(stageBlockH/2.0+fSH/2.0-fSD));
         ig.setColor(clrCanvasText);
         ig.setFont(fontCaption);
-        if(!sim.wb_stage.bubble && sim.wb_stage.instrAddr != -1)
+        if(!sim.wb_stage.bubble && sim.wb_stage.instrAddr != -1) {
             ig.drawString(String.format("0x%08x", sim.wb_stage.instrAddr), xLeftOffset+4*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+5+fCH);
+            ig.drawString(MIPSInstr.mnemonic(sim.wb_stage.instruction), xLeftOffset+4*(stageBlockW+stageSpacing), yTopOffset+stageBlockH+2*(5+fCH));
+        }
+
+        long f = sim.getFlags();
+        if((f & Constants.PLP_SIM_FWD_EX_EX_ITYPE) == Constants.PLP_SIM_FWD_EX_EX_ITYPE)
+            ;
+        if((f & Constants.PLP_SIM_FWD_EX_EX_RTYPE) == Constants.PLP_SIM_FWD_EX_EX_RTYPE)
+            ;
+        if((f & Constants.PLP_SIM_FWD_MEM_EX_RTYPE) == Constants.PLP_SIM_FWD_MEM_EX_RTYPE)
+            ;
+        if((f & Constants.PLP_SIM_FWD_MEM_EX_ITYPE) == Constants.PLP_SIM_FWD_MEM_EX_ITYPE)
+            ;
+        if((f & Constants.PLP_SIM_FWD_MEM_EX_LW) == Constants.PLP_SIM_FWD_MEM_EX_LW)
+            ;
+        if((f & Constants.PLP_SIM_FWD_MEM_MEM) == Constants.PLP_SIM_FWD_MEM_MEM)
+            ;
+        if((f & Constants.PLP_SIM_IF_STALL_SET) == Constants.PLP_SIM_IF_STALL_SET)
+            ;
+        if((f & Constants.PLP_SIM_ID_STALL_SET) == Constants.PLP_SIM_ID_STALL_SET)
+            ;
+        if((f & Constants.PLP_SIM_EX_STALL_SET) == Constants.PLP_SIM_EX_STALL_SET)
+            ;
+        if((f & Constants.PLP_SIM_MEM_STALL_SET) == Constants.PLP_SIM_MEM_STALL_SET)
+            ;
 
         ig.setColor(clrCanvasText);
         ig.setFont(fontCaption);
