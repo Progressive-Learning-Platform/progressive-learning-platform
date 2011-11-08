@@ -372,7 +372,7 @@ public class IORegistry {
             case 11:
                 module = new BusMonitor(plp.sim);
                 if(plp.g()) {
-                    moduleFrame = new BusMonitorFrame((BusMonitor) module);
+                    moduleFrame = new BusMonitorFrame((BusMonitor) module, null);
                 }
 
                 break;

@@ -214,12 +214,15 @@ public class SimCLI {
             }
         }
         else if(input.equals("listio")) {
-            for(int i = 0; i < core.bus.getNumOfMods(); i++)
+            for(int i = 0; i < core.bus.getNumOfMods(); i++) {
+                long start = core.bus.getModStartAddress(i);
+                long end = core.bus.getModEndAddress(i);
                 Msg.M(i + ": " +
-                                   String.format("0x%08x", core.bus.getModStartAddress(i)) + "-" +
-                                   String.format("0x%08x", core.bus.getModEndAddress(i)) + " " +
+                                   ((start < 0) ? "Unmapped" : String.format("0x%08x", start)) + "-" +
+                                   ((end   < 0) ? "Unmapped" : String.format("0x%08x", end)) + " " +
                                    core.bus.introduceMod(i) +
                                    (core.bus.getEnabled(i) ? " (enabled)" : " (disabled)"));
+            }
         }
         else if(input.equals("enableio")) {
             core.bus.enableAllModules();

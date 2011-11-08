@@ -321,6 +321,7 @@ public class SimCore extends PLPSimCore {
             id_stage.i_instruction = 0;
             id_stage.i_instrAddr = pc.input();
             id_stage.hot = true;
+            id_stage.i_bubble = true;
 
             return Constants.PLP_OK;
 
@@ -334,6 +335,7 @@ public class SimCore extends PLPSimCore {
             ex_stage.i_ctl_branch = 0;
             ex_stage.i_ctl_jump = 0;
             ex_stage.hot = true;
+            ex_stage.i_bubble = true;
             ret = fetch();
             id_stage.hot = false;
             pc.write(old_pc + 4);
@@ -443,6 +445,7 @@ public class SimCore extends PLPSimCore {
         id_stage.i_ctl_pcplus4 = addr + 4;
 
         id_stage.hot = true;
+        id_stage.i_bubble = false;
         visibleAddr = addr;
 
         Msg.D("fetch(): PC input side: "  + String.format("0x%08x", pc.input())
@@ -620,6 +623,8 @@ public class SimCore extends PLPSimCore {
      */
     public class id {
         boolean hot = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
         public long instruction;
         public long instrAddr;
 
@@ -661,6 +666,7 @@ public class SimCore extends PLPSimCore {
         private int eval() {
             try {
 
+            ex_reg.i_bubble = bubble;
             ex_reg.i_instruction = instruction;
             ex_reg.i_instrAddr = instrAddr;
 
@@ -795,6 +801,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             ctl_pcplus4 = i_ctl_pcplus4;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
@@ -812,6 +819,9 @@ public class SimCore extends PLPSimCore {
      */
     public class ex {
         boolean hot = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
+
         public long instruction;
         public long instrAddr;
 
@@ -942,6 +952,7 @@ public class SimCore extends PLPSimCore {
         private int eval() {
             try {
 
+            mem_reg.i_bubble = bubble;
             mem_reg.i_instruction = instruction;
             mem_reg.i_instrAddr = instrAddr;
 
@@ -996,6 +1007,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
 
@@ -1038,6 +1050,9 @@ public class SimCore extends PLPSimCore {
      */
     public class mem {
         boolean hot = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
+
         public long instruction;
         public long instrAddr;
 
@@ -1130,6 +1145,7 @@ public class SimCore extends PLPSimCore {
         private int eval() {
             try {
 
+            wb_reg.i_bubble = bubble;
             wb_reg.i_instruction = instruction;
             wb_reg.i_instrAddr = instrAddr;
 
@@ -1152,10 +1168,11 @@ public class SimCore extends PLPSimCore {
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1) {
-                if(bus.read(fwd_data_alu_result) == null)
+                Long data = (Long) bus.read(fwd_data_alu_result);
+                if(data == null)
                     return Msg.E("The bus returned no data, check previous error.",
                                     Constants.PLP_SIM_BUS_ERROR, this);
-                wb_reg.i_data_memreaddata = (Long) bus.read(fwd_data_alu_result);
+                wb_reg.i_data_memreaddata = data;
             }
 
             if(ctl_memwrite == 1)
@@ -1172,6 +1189,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
             
@@ -1203,6 +1221,9 @@ public class SimCore extends PLPSimCore {
     public class wb {
         boolean hot = false;
         boolean instr_retired = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
+
         public long instruction;
         public long instrAddr;
 
@@ -1298,6 +1319,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
             

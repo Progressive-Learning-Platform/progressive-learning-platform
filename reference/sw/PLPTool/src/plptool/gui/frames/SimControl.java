@@ -178,7 +178,7 @@ public class SimControl extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblStepSize)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtStepSize, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                .addComponent(txtStepSize, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(

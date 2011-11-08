@@ -18,8 +18,6 @@
 
 package plptool.mips;
 
-import javax.swing.JFrame;
-
 /**
  *
  * @author wira
@@ -29,9 +27,11 @@ public class ArchHelper {
     private static int busMonitorModulePosition;
     private static plptool.mods.BusMonitor busMonitor;
     private static plptool.mods.BusMonitorFrame busMonitorFrame;
+    private static plptool.mips.visualizer.CPUVisualization cpuVis;
     
     public static void doPreSimulationRoutine(final plptool.gui.ProjectDriver plp) {
         busMonitorAttached = false;
+
         plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
         plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
         plp.sim.bus.enableAllModules();
@@ -84,7 +84,7 @@ public class ArchHelper {
                             plp.sim.bus.add(busMonitor);
                             busMonitorModulePosition = plp.sim.bus.getNumOfMods() - 1;
                             plp.sim.bus.enableMod(busMonitorModulePosition);
-                            busMonitorFrame = new plptool.mods.BusMonitorFrame((plptool.mods.BusMonitor)plp.sim.bus.getRefMod(busMonitorModulePosition));
+                            busMonitorFrame = new plptool.mods.BusMonitorFrame((plptool.mods.BusMonitor)plp.sim.bus.getRefMod(busMonitorModulePosition), menuBusMonitor);
                             busMonitorAttached = true;
                         }
                         busMonitorFrame.setVisible(true);
@@ -92,6 +92,24 @@ public class ArchHelper {
                         busMonitorFrame.setVisible(false);
                 }
             });
+
+            // Add CPU visualization checkbox menu
+            final javax.swing.JCheckBoxMenuItem menuCpuVis = new javax.swing.JCheckBoxMenuItem();
+            menuCpuVis.setText("Display CPU Visualization");
+            menuCpuVis.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if(menuCpuVis.isSelected()) {
+                        plp.sim.bus.getRefMod(2).enable();
+                        cpuVis.setVisible(true);           
+                    } else {
+                        plp.sim.bus.getRefMod(2).disable();
+                        cpuVis.setVisible(false);
+                    }
+                }
+            });
+
+            cpuVis = new plptool.mips.visualizer.CPUVisualization((SimCore) plp.sim, menuCpuVis);
+            plp.sim.bus.add(new SimCoreConnector(cpuVis));
 
             // Restore saved timing diagram from project attributes, if it exists
             plptimingdiagram.TimingDiagram savedTD = (plptimingdiagram.TimingDiagram) plp.getProjectAttribute("plpmips_timingdiagram");
@@ -102,7 +120,7 @@ public class ArchHelper {
                 plp.sim.bus.add(busMonitor);
                 busMonitorModulePosition = plp.sim.bus.getNumOfMods() - 1;
                 plp.sim.bus.enableMod(busMonitorModulePosition);
-                busMonitorFrame = new plptool.mods.BusMonitorFrame((plptool.mods.BusMonitor)plp.sim.bus.getRefMod(busMonitorModulePosition));
+                busMonitorFrame = new plptool.mods.BusMonitorFrame((plptool.mods.BusMonitor)plp.sim.bus.getRefMod(busMonitorModulePosition), menuBusMonitor);
                 Boolean b = (Boolean) plp.getProjectAttribute("plpmips_timingdiagram_framevisibility");
                 if(b != null) {
                     busMonitorFrame.setVisible(b);
@@ -116,6 +134,7 @@ public class ArchHelper {
             plp.g_dev.addSimToolItem(menuMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuBusMonitor);
+            plp.g_dev.addSimToolItem(menuCpuVis);
         }
     }
 
@@ -124,6 +143,7 @@ public class ArchHelper {
 
         if(plp.g() && plp.g_dev != null) {
             plp.g_dev.removeLastButton();
+            plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
@@ -137,6 +157,8 @@ public class ArchHelper {
                 busMonitor = null;
             }
 
+            cpuVis.dispose();
+            cpuVis = null;
             g_sim.disposeMemoryVisualizers();
         }
     }

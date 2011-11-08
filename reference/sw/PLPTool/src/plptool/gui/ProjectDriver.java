@@ -416,7 +416,7 @@ public class ProjectDriver {
 
         File outFile = plpfile;
 
-        meta = "PLP-3.0\n";
+        meta = "PLP-4.0\n";
 
         if(asm != null && asm.isAssembled() && arch.equals("plpmips")) {
             objCode = asm.getObjectCode();
@@ -648,10 +648,10 @@ public class ProjectDriver {
                 Scanner metaScanner;
 
                 String lines[] = meta.split("\\r?\\n");
-                if(lines[0].equals("PLP-3.0"))  {
+                if(lines[0].equals("PLP-4.0"))  {
 
                 } else {
-                    Msg.W("This is not a PLP-3.0 project file. Opening anyways.", this);
+                    Msg.W("This is not a PLP-4.0 project file. Opening anyways.", this);
 
                 }
 
@@ -1060,6 +1060,7 @@ public class ProjectDriver {
         } else
             ArchRegistry.launchCLISimulatorInterface(this);
 
+        
 
         return Constants.PLP_OK;
     }
