@@ -152,6 +152,28 @@ public class ArchRegistry {
     }
 
     /**
+     * Additional simulation initialization code called after all simulation
+     * elements are initialized
+     *
+     * @param plp
+     */
+    public static void simulatorInitFinal(final ProjectDriver plp) {
+        String arch = plp.getArch();
+
+        if(arch == null)
+            return;
+
+        /**********************************************************************
+         * plpmips SimCore initialization
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            
+        }
+
+        // ... add your pre-simulation code here ... //
+    }
+
+    /**
      * Additional code after simulation is stopped. Called by the ProjectDriver
      * immediately after the project exits simulation mode
      *

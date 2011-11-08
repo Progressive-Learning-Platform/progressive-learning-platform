@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@ package plptool;
  * @author wira
  */
 public class Constants {
-    public static final String versionString = "3.4";
+    public static final String versionString = "4.0";
     public static final String copyrightString =
             "PLP Software Tool version " + versionString + "\n" +
-            "Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia\n" +
+            "Copyright 2010-2011 PLP Contributors\n" +
             "This software is licensed under GPLv3.";
     public static final String manualURI = "http://code.google.com/p/progressive-learning-platform/wiki/UserManual";
     public static final String issueEntryURI = "http://code.google.com/p/progressive-learning-platform/issues/entry";

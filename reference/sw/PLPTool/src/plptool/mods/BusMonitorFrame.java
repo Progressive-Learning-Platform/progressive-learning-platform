@@ -23,6 +23,8 @@ import plptimingdiagram.draw.DiagramCanvas;
 import plptimingdiagram.draw.XAxis;
 import plptool.PLPToolbox;
 
+import javax.swing.JCheckBoxMenuItem;
+
 /**
  *
  * @author wira
@@ -33,8 +35,10 @@ public class BusMonitorFrame extends javax.swing.JFrame {
     private XAxis axis;
     private DiagramCanvas canvas;
 
+    private final JCheckBoxMenuItem menu = null;
+
     /** Creates new form BusMonitorFrame */
-    public BusMonitorFrame(BusMonitor busMon) {
+    public BusMonitorFrame(BusMonitor busMon, final JCheckBoxMenuItem menu) {
         initComponents();
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/timingdiagram.png")));
         this.busMon = busMon;
@@ -43,6 +47,21 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         canvas.setSize(canvasContainer.getWidth(), canvasContainer.getHeight());
         canvasContainer.add(canvas);
         canvas.setHoverCursorEnable(false);
+
+        addWindowListener(new java.awt.event.WindowListener() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                setVisible(false);
+                menu.setSelected(false);
+            }
+
+            @Override public void windowOpened(java.awt.event.WindowEvent evt) { }
+            @Override public void windowDeactivated(java.awt.event.WindowEvent evt) { }
+            @Override public void windowActivated(java.awt.event.WindowEvent evt) { }
+            @Override public void windowDeiconified(java.awt.event.WindowEvent evt) { }
+            @Override public void windowIconified(java.awt.event.WindowEvent evt) { }
+            @Override public void windowClosed(java.awt.event.WindowEvent evt) { }
+        });
     }
 
     private void updateRangeFields() {
@@ -76,7 +95,9 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         btnShiftLeft = new javax.swing.JButton();
         btnShiftRight = new javax.swing.JButton();
         chkDeltaCursor = new javax.swing.JCheckBox();
+        btnClear = new javax.swing.JButton();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(BusMonitorFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
@@ -87,7 +108,7 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         canvasContainer.setLayout(canvasContainerLayout);
         canvasContainerLayout.setHorizontalGroup(
             canvasContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 634, Short.MAX_VALUE)
+            .addGap(0, 638, Short.MAX_VALUE)
         );
         canvasContainerLayout.setVerticalGroup(
             canvasContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,6 +150,11 @@ public class BusMonitorFrame extends javax.swing.JFrame {
 
         txtLocation.setText(resourceMap.getString("txtLocation.text")); // NOI18N
         txtLocation.setName("txtLocation"); // NOI18N
+        txtLocation.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtLocationKeyPressed(evt);
+            }
+        });
 
         btnAddLocation.setText(resourceMap.getString("btnAddLocation.text")); // NOI18N
         btnAddLocation.setName("btnAddLocation"); // NOI18N
@@ -194,6 +220,14 @@ public class BusMonitorFrame extends javax.swing.JFrame {
             }
         });
 
+        btnClear.setText(resourceMap.getString("btnClear.text")); // NOI18N
+        btnClear.setName("btnClear"); // NOI18N
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -223,10 +257,12 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAddLocation)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnClear)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                         .addComponent(btnZoomIn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnZoomOut)
@@ -234,7 +270,7 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                         .addComponent(btnShiftLeft)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnShiftRight)))
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap())
             .addComponent(canvasContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -248,7 +284,8 @@ public class BusMonitorFrame extends javax.swing.JFrame {
                     .addComponent(btnZoomIn)
                     .addComponent(btnZoomOut)
                     .addComponent(btnShiftLeft)
-                    .addComponent(btnShiftRight))
+                    .addComponent(btnShiftRight)
+                    .addComponent(btnClear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(canvasContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -332,8 +369,22 @@ public class BusMonitorFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_chkDeltaCursorActionPerformed
 
+    private void txtLocationKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtLocationKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnAddLocationActionPerformed(null);
+    }//GEN-LAST:event_txtLocationKeyPressed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        busMon.clear();
+        for(int i = 0; i < canvas.getTimingDiagram().getNumberOfSignals(); i++)
+            canvas.getTimingDiagram().removeSignal(0);
+
+        canvas.repaint();
+    }//GEN-LAST:event_btnClearActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddLocation;
+    private javax.swing.JButton btnClear;
     private javax.swing.JButton btnCursorToEnd;
     private javax.swing.JButton btnCursorToStart;
     private javax.swing.JButton btnShiftLeft;
