@@ -27,6 +27,8 @@ import org.jgrapht.graph.*;
 import org.jgrapht.ext.*;
 import org.jgrapht.alg.*;
 
+import javax.swing.*;
+
 /**
  * This does nothing substantial at the moment.
  * @author will
@@ -120,7 +122,7 @@ public class ProgramVisualization {
             Msg.M(programGraph.toString());
         }
         //construct the graph
-        public DirectedGraph<String, DefaultEdge> buildGraph(){
+        public ListenableDirectedGraph<String, DefaultEdge> buildGraph(){
 
             plptool.mips.Formatter progformat = new plptool.mips.Formatter();
             plp.assemble();
@@ -133,7 +135,7 @@ public class ProgramVisualization {
             long branch_imm;
             ArrayList<String> vertices = new ArrayList<String>();
 
-            DirectedGraph<String, DefaultEdge> progGraph = new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+            ListenableDirectedGraph<String, DefaultEdge> progGraph = new ListenableDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
             //jgAdapter = new JGraphModelAdapter<String, DefaultEdge>(progGraph);
             //JGraph jgraph = new JGraph(jgAdapter);
 
