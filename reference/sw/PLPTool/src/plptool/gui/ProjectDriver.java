@@ -172,9 +172,22 @@ public class ProjectDriver {
             this.g_find = new FindAndReplace(this);
             
             java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-            this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+            int X = Config.devWindowPositionX;
+            int Y = Config.devWindowPositionY;
+            int W = Config.devWindowWidth;
+            int H = Config.devWindowHeight;
+            if(X < 0 || Y < 0 || W < 0 || H < 0) {
+                this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
                               (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-            this.g_dev.setLocationRelativeTo(null);
+                this.g_dev.setLocationRelativeTo(null);
+            } else if (X+W <= screenResolution.width && Y+H <= screenResolution.height) {
+                this.g_dev.setSize(W, H);
+                this.g_dev.setLocation(X, Y);
+            } else {
+                this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                              (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
+                this.g_dev.setLocationRelativeTo(null);
+            }
 
             this.g_qref.setLocationRelativeTo(null);
             this.g_find.setLocationRelativeTo(null);
@@ -260,7 +273,16 @@ public class ProjectDriver {
                         Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
                     } else if(tokens[0].equals("simFunctional")) {
                         Config.simFunctional = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("devWindowPositionX")) {
+                        Config.devWindowPositionX = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowPositionY")) {
+                        Config.devWindowPositionY = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowWidth")) {
+                        Config.devWindowWidth = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowHeight")) {
+                        Config.devWindowHeight = Integer.parseInt(tokens[1]);
                     }
+
                 }
 
             } catch(Exception e) {
@@ -298,6 +320,10 @@ public class ProjectDriver {
                 out.write("devFontSize::" + Config.devFontSize + "\n");
                 out.write("devSyntaxHighlighting::" + Config.devSyntaxHighlighting + "\n");
                 out.write("simFunctional::" + Config.simFunctional + "\n");
+                out.write("devWindowPositionX::" + Config.devWindowPositionX + "\n");
+                out.write("devWindowPositionY::" + Config.devWindowPositionY + "\n");
+                out.write("devWindowWidth::" + Config.devWindowWidth + "\n");
+                out.write("devWindowHeight::" + Config.devWindowHeight + "\n");
                 out.close();
 
             } catch(Exception e) {
