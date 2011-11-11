@@ -411,6 +411,10 @@ public class Develop extends javax.swing.JFrame {
             case 2:
                 return;
             default:
+                Config.devWindowPositionX = getX();
+                Config.devWindowPositionY = getY();
+                Config.devWindowWidth = getWidth();
+                Config.devWindowHeight = getHeight();
                 ProjectDriver.saveConfig();
                 System.exit(0);
         }
