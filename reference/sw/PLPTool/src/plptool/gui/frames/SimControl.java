@@ -71,6 +71,8 @@ public class SimControl extends javax.swing.JFrame {
         this.getRootPane().getActionMap().put("STEP", stepAction);
         this.getRootPane().getActionMap().put("RUN", runAction);
         this.getRootPane().getActionMap().put("RESET", resetAction);
+
+        btnOnTop.setToolTipText("This window will always be on top of other windows when this button is selected.");
     }
 
     /** This method is called from within the constructor to
@@ -280,6 +282,12 @@ public class SimControl extends javax.swing.JFrame {
     public void updateSlider() {
         sliderSimSpeed.setValue(Config.simRunnerDelay);
         plp.g_opts.restoreSavedOpts();
+    }
+
+    public void update() {
+        sliderSimSpeed.setValue(Config.simRunnerDelay);
+        txtStepSize.setText("" + Config.simCyclesPerStep);
+        this.setTitle("Simulation Control - Cycle: " + plp.sim.getInstrCount());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1588,6 +1588,9 @@ public class ProjectDriver {
         if(g_asmview != null)
             g_asmview.updatePC();
 
+        if(g_simctrl != null)
+            g_simctrl.update();
+
         } catch(Exception e) {
             // GUI update error has occured
             System.out.println("GUI error has occured. Switch to debug level 2 or above to print stack trace.");
