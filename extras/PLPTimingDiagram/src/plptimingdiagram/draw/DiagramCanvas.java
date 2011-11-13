@@ -48,7 +48,7 @@ public class DiagramCanvas extends JPanel implements MouseListener, MouseMotionL
 
     private boolean cursorEnable = true;
     private boolean hoverCursorEnable = true;
-    private boolean removeOnDoubleClick = true;
+    private boolean removeOnDoubleClick = false;
 
     // Colors
     private Color background = Color.white;
@@ -70,7 +70,6 @@ public class DiagramCanvas extends JPanel implements MouseListener, MouseMotionL
 
     public DiagramCanvas(TimingDiagram tD, XAxis axis) {
         super();
-        System.out.println("New DiagramCanvas");
         this.tD = tD;
         this.axis = axis;
         this.addMouseListener(this);
@@ -124,6 +123,10 @@ public class DiagramCanvas extends JPanel implements MouseListener, MouseMotionL
 
     public int getYCursor() {
         return yCursor;
+    }
+
+    public void setRemoveOnDoubleClick(boolean b) {
+        removeOnDoubleClick = b;
     }
 
     public void doZoomInOnCursor(double ratio) {
@@ -533,7 +536,7 @@ public class DiagramCanvas extends JPanel implements MouseListener, MouseMotionL
 
     @Override
     public void mouseClicked(MouseEvent me) {
-        if(me.getClickCount()==2 && me.getX() < xOffset && sigHeight > 0) {
+        if(removeOnDoubleClick && me.getClickCount()==2 && me.getX() < xOffset && sigHeight > 0) {
             int index = me.getY() / sigHeight;
             if(index < tD.getNumberOfSignals()) {
                 tD.removeSignal(index);
