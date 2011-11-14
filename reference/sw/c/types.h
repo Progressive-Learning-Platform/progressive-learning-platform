@@ -18,7 +18,6 @@
 /* symbol table types */
 typedef struct symbol_t {
         unsigned int            attr;
-	int			size;
         char *                  type;
         char *                  value;
         struct symbol_t *       up;
