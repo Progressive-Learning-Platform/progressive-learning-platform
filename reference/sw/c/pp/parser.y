@@ -4,6 +4,8 @@
 
 extern int column, line;
 extern int yylex (void);
+extern char* program;
+extern char* emit(char*, char*);
 
 void yyerror(s)
 char *s;
@@ -15,10 +17,16 @@ char *s;
 
 %token COMMENT
 
+%start program
 %%
 
-comment
-	: COMMENT { vlog("[pp parser] found comment\n"); emit(" "); } /* replace all comments with a space */
+element
+	: COMMENT { vlog("[pp parser] found comment\n"); program = emit(program, " "); printf("-----%s-----\n", program); } /* replace all comments with a space */
+	;
+
+program
+	: element
+	| program element
 	;
 
 %%
