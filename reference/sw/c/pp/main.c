@@ -3,10 +3,6 @@
 #include <stdlib.h>
 #include "parser.tab.h"
 #include "log.h"
-#include "symbol.h"
-#include "parse_tree.h"
-#include "code_gen.h"
-#include "line.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -35,6 +31,27 @@ symbol *constants = NULL;	/* constants */
 symbol *labels	  = NULL;	/* labels */
 node *parse_tree_head = NULL;
 char *program = NULL;
+
+char* emit(char* p, char *s) {
+        int tab = 0;
+        /* check to see if we need to insert a tab or not */
+        if (s[strlen(s)-2] != ':' && s[0] != '#' && s[strlen(s)-3] != '"')
+                tab = 1;
+        if (p == NULL) {
+                p = strdup(s); /* first emit from the compiler will ALWAYS be a label */
+                if (p == NULL) {
+                        err("emit strdup failed\n");
+                }
+        } else {
+                p = realloc(p, (strlen(p)+strlen(s)+(tab ? 2 : 1))*sizeof(char));
+                if (p == NULL) {
+                        err("emit realloc failed\n");
+                }
+                if (tab) p = strcat(p, "\t");
+                p = strcat(p, s);
+        }
+        return p;
+}
 
 void print_usage(void) {
 	printf("plpcc - plp c compiler\n\n");
