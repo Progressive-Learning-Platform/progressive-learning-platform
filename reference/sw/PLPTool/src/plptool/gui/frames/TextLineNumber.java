@@ -1,5 +1,5 @@
 /*
- * This code is written by Rob Camick of tips4java.wordpress.com
+ * This code is originnaly written by Rob Camick of tips4java.wordpress.com
  */
 
 package plptool.gui.frames;

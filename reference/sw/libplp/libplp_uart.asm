@@ -2,6 +2,44 @@
 #uart routines
 #
 
+libplp_uart_read_word:
+	move $t2, $zero
+	move $t3, $ra
+	jal libplp_uart_read
+	nop
+	sll $t2, $v0, 24
+	jal libplp_uart_read
+	nop
+	sll $t4, $v0, 16
+	or $t2, $t2, $t4
+	jal libplp_uart_read
+	nop
+	sll $t4, $v0, 8
+	or $t2, $t2, $t4
+	jal libplp_uart_read
+	nop
+	or $t2, $t2, $v0
+	jr $t3
+	nop
+
+libplp_uart_write_word:
+	move $t3, $ra
+	move $t2, $a0
+	srl $a0, $t2, 24
+	jal libplp_uart_write
+	nop
+	srl $a0, $t2, 16
+	jal libplp_uart_write
+	nop
+	srl $a0, $t2, 8
+	jal libplp_uart_write
+	nop
+	move $a0, $t2
+	jal libplp_uart_write
+	nop
+	jr $t3
+	nop
+
 libplp_uart_read:
 	lui $t0, 0xf000		#base address for the uart
 libplp_uart_read_loop:

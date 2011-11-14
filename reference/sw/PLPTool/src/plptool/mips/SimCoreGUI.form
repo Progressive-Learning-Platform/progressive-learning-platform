@@ -33,9 +33,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="nextInstr" pref="402" max="32767" attributes="0"/>
+                      <Component id="nextInstr" pref="474" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="coreMainPane" alignment="0" pref="746" max="32767" attributes="0"/>
+                  <Component id="coreMainPane" alignment="0" pref="818" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -110,7 +110,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="lblVis" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="523" max="32767" attributes="0"/>
+                      <EmptySpace pref="595" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -150,7 +150,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="714" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="786" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -236,7 +236,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane3" pref="714" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" pref="786" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -330,7 +330,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" pref="714" max="32767" attributes="0"/>
+                      <Component id="jScrollPane2" pref="786" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -441,7 +441,7 @@
                           <Component id="lblBranchPrdction" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="rdioBrAlways" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="409" max="32767" attributes="0"/>
+                      <EmptySpace pref="481" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -587,9 +587,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane4" alignment="0" pref="714" max="32767" attributes="0"/>
+                          <Component id="jScrollPane4" alignment="0" pref="786" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="simCLConsole" pref="596" max="32767" attributes="0"/>
+                              <Component id="simCLConsole" pref="668" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="simCLExec" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>

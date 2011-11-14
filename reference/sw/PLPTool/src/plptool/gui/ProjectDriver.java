@@ -16,6 +16,14 @@
 
  */
 
+/*
+ * Apache Commons Compress
+ * Copyright 2002-2010 The Apache Software Foundation
+ *
+ * This product includes software developed by
+ * The Apache Software Foundation (http://www.apache.org/).
+ */
+
 package plptool.gui;
 
 import plptool.*;
@@ -36,6 +44,7 @@ import java.io.FileWriter;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.tree.*;
 import javax.swing.table.DefaultTableModel;
@@ -135,6 +144,9 @@ public class ProjectDriver {
     public SerialTerminal          term;        // Serial terminal
     public NumberConverter         nconv;       // Number converter
 
+    // Miscellaneous project attributes persistence support
+    private HashMap<String, Object> pAttrSet;
+
     /**
      * The constructor for the project driver.
      *
@@ -168,9 +180,22 @@ public class ProjectDriver {
             this.g_find = new FindAndReplace(this);
             
             java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-            this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+            int X = Config.devWindowPositionX;
+            int Y = Config.devWindowPositionY;
+            int W = Config.devWindowWidth;
+            int H = Config.devWindowHeight;
+            if(X < 0 || Y < 0 || W < 0 || H < 0) {
+                this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
                               (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-            this.g_dev.setLocationRelativeTo(null);
+                this.g_dev.setLocationRelativeTo(null);
+            } else if (X+W <= screenResolution.width && Y+H <= screenResolution.height) {
+                this.g_dev.setSize(W, H);
+                this.g_dev.setLocation(X, Y);
+            } else {
+                this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                              (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
+                this.g_dev.setLocationRelativeTo(null);
+            }
 
             this.g_qref.setLocationRelativeTo(null);
             this.g_find.setLocationRelativeTo(null);
@@ -254,7 +279,18 @@ public class ProjectDriver {
                         Config.devFontSize = Integer.parseInt(tokens[1]);
                     } else if(tokens[0].equals("devSyntaxHighlighting")) {
                         Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("simFunctional")) {
+                        Config.simFunctional = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("devWindowPositionX")) {
+                        Config.devWindowPositionX = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowPositionY")) {
+                        Config.devWindowPositionY = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowWidth")) {
+                        Config.devWindowWidth = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowHeight")) {
+                        Config.devWindowHeight = Integer.parseInt(tokens[1]);
                     }
+
                 }
 
             } catch(Exception e) {
@@ -291,6 +327,11 @@ public class ProjectDriver {
                 out.write("devFont::" + Config.devFont + "\n");
                 out.write("devFontSize::" + Config.devFontSize + "\n");
                 out.write("devSyntaxHighlighting::" + Config.devSyntaxHighlighting + "\n");
+                out.write("simFunctional::" + Config.simFunctional + "\n");
+                out.write("devWindowPositionX::" + Config.devWindowPositionX + "\n");
+                out.write("devWindowPositionY::" + Config.devWindowPositionY + "\n");
+                out.write("devWindowWidth::" + Config.devWindowWidth + "\n");
+                out.write("devWindowHeight::" + Config.devWindowHeight + "\n");
                 out.close();
 
             } catch(Exception e) {
@@ -327,6 +368,7 @@ public class ProjectDriver {
         smods = null;
         watcher = null;
         arch = "plpmips";
+        pAttrSet = new HashMap<String, Object>();
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -363,6 +405,7 @@ public class ProjectDriver {
         smods = null;
         watcher = null;
         arch = "plpmips";
+        pAttrSet = new HashMap<String, Object>();
 
         meta =  "PLP-3.0\n";
         meta += "START=0x0\n";
@@ -410,7 +453,7 @@ public class ProjectDriver {
 
         File outFile = plpfile;
 
-        meta = "PLP-3.0\n";
+        meta = "PLP-4.0\n";
 
         if(asm != null && asm.isAssembled() && arch.equals("plpmips")) {
             objCode = asm.getObjectCode();
@@ -466,6 +509,67 @@ public class ProjectDriver {
             tOut.closeArchiveEntry();
         }
 
+        // Write simulation configuration
+        Msg.D("Writing out simulation configuration...", 2, this);
+        entry = new TarArchiveEntry("plp.simconfig");
+        String str = "";
+
+        str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
+        str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
+        str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
+        str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
+
+
+        if(watcher != null) {
+            str += "WATCHER\n";
+
+            for(i = 0; i < watcher.getRowCount(); i++) {
+                str += watcher.getValueAt(i, 0) + "::";
+                str += watcher.getValueAt(i, 1) + "\n";
+            }
+
+            str += "END\n";
+        }
+
+        Msg.D("-- saving mods info...", 2, this);
+
+        if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
+            smods = ioreg.createPreset();
+
+        if(smods != null && smods.size() > 0) {
+            str += "MODS\n";
+
+            for(i = 0; i < smods.size(); i++) {
+                str += smods.getType(i) + "::";     //0
+                str +="RESERVED_FIELD::";       //1
+                str += smods.getAddress(i) + "::";      //2
+                str += smods.getSize(i) + "::";  //3
+
+                if(smods.getHasFrame(i)) {
+                    str += "frame::" ;              //4
+                    str += smods.getVisible(i) + "::"; //5
+                    str += smods.getX(i) + "::";      //6
+                    str += smods.getY(i) + "::";      //7
+                    str += smods.getW(i) + "::";  //8
+                    str += smods.getH(i);        //9
+                } else {
+                    str += "noframe";
+                }
+                str += "\n";
+            }
+            str += "END\n";
+        }
+
+        str += "ISASPECIFIC\n";
+        str += ArchRegistry.getArchSpecificSimStates(this);
+        str += "END\n";
+
+        entry.setSize(str.length());
+        tOut.putArchiveEntry(entry);
+        tOut.write(str.getBytes());
+        tOut.flush();
+        tOut.closeArchiveEntry();
+
         if(asm != null && asm.isAssembled() && objCode != null) {
             // Write hex image
             Msg.D("Writing out verilog hex code...", 2, this);
@@ -493,68 +597,6 @@ public class ProjectDriver {
                 data[4*i+3] = (byte) (objCode[i]);
             }
             tOut.write(data);
-            tOut.flush();
-            tOut.closeArchiveEntry();
-
-
-            // Write simulation configuration
-            Msg.D("Writing out simulation configuration...", 2, this);
-            entry = new TarArchiveEntry("plp.simconfig");
-            String str = "";
-
-            str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
-            str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
-            str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
-            str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
-
-
-            if(watcher != null) {
-                str += "WATCHER\n";
-
-                for(i = 0; i < watcher.getRowCount(); i++) {
-                    str += watcher.getValueAt(i, 0) + "::";
-                    str += watcher.getValueAt(i, 1) + "\n";
-                }
-
-                str += "END\n";
-            }
-
-            Msg.D("-- saving mods info...", 2, this);
-
-            if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
-                smods = ioreg.createPreset();
-
-            if(smods != null && smods.size() > 0) {
-
-                str += "MODS\n";
-
-                for(i = 0; i < smods.size(); i++) {
-                    str += smods.getType(i) + "::";     //0
-                    str +="RESERVED_FIELD::";       //1
-                    str += smods.getAddress(i) + "::";      //2
-                    str += smods.getSize(i) + "::";  //3
-
-                    if(smods.getHasFrame(i)) {
-                        str += "frame::" ;              //4
-                        str += smods.getVisible(i) + "::"; //5
-                        str += smods.getX(i) + "::";      //6
-                        str += smods.getY(i) + "::";      //7
-                        str += smods.getW(i) + "::";  //8
-                        str += smods.getH(i);        //9
-                    }
-                    else {
-                        str += "noframe";
-                    }
-
-                    str += "\n";
-                }
-
-                str += "END\n";
-            }
-
-            entry.setSize(str.length());
-            tOut.putArchiveEntry(entry);
-            tOut.write(str.getBytes());
             tOut.flush();
             tOut.closeArchiveEntry();
 
@@ -615,6 +657,7 @@ public class ProjectDriver {
         asms = new ArrayList<PLPAsmSource>();
         smods = null;
         watcher = null;
+        pAttrSet = new HashMap<String, Object>();
 
         try {
 
@@ -642,10 +685,10 @@ public class ProjectDriver {
                 Scanner metaScanner;
 
                 String lines[] = meta.split("\\r?\\n");
-                if(lines[0].equals("PLP-3.0"))  {
+                if(lines[0].equals("PLP-4.0"))  {
 
                 } else {
-                    Msg.W("This is not a PLP-3.0 project file. Opening anyways.", this);
+                    Msg.W("This is not a PLP-4.0 project file. Opening anyways.", this);
 
                 }
 
@@ -710,6 +753,16 @@ public class ProjectDriver {
                             i++;
                         }
                     }
+
+                    if(lines[i].equals("ISASPECIFIC")) {
+                        i++;
+
+                        while(i < lines.length && !lines[i].equals("END")) {
+                            tokens = lines[i].split("::");
+                            ArchRegistry.setArchSpecificSimStates(this, tokens);
+                            i++;
+                        }
+                    }
                 }
             }
             else {
@@ -764,6 +817,68 @@ public class ProjectDriver {
         }
 
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Get the project attributes set hashmap
+     *
+     * @return Project attributes hashmap
+     */
+    public HashMap<String, Object> getProjectAttributeSet() {
+        return pAttrSet;
+    }
+
+    /**
+     * Add a project attribute to the set
+     *
+     * @param key Attribute key
+     * @param value Attribute value
+     */
+    public void addProjectAttribute(String key, Object value) {
+        if(pAttrSet.containsKey(key))
+            pAttrSet.remove(key);
+
+        Msg.D("add attr " + key + ":" + value, 3, this);
+        pAttrSet.put(key, value);
+    }
+
+    /**
+     * Set a new value to a project attribute
+     *
+     * @param key Attribute key
+     * @param value New attribute value
+     * @return True if successful, false if key doesn't exist
+     */
+    public boolean setProjectAttribute(String key, Object value) {
+        if(pAttrSet.containsKey(key)) {
+            Msg.D("set attr " + key + ":" + value, 3, this);
+            pAttrSet.remove(key);
+            pAttrSet.put(key, value);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get a project attribute
+     *
+     * @param key Attribute key
+     * @return Attribute value if attribute exists, null otherwise
+     */
+    public Object getProjectAttribute(String key) {
+        Msg.D("get attr " + key, 3, this);
+        return pAttrSet.get(key);
+    }
+
+    /**
+     * Remove specified attribute
+     *
+     * @param key Attribute key
+     */
+    public void deleteProjectAttribute(String key) {
+        if(pAttrSet.containsKey(key))
+            pAttrSet.remove(key);
     }
 
     /**
@@ -982,6 +1097,7 @@ public class ProjectDriver {
         } else
             ArchRegistry.launchCLISimulatorInterface(this);
 
+        
 
         return Constants.PLP_OK;
     }
@@ -1471,6 +1587,9 @@ public class ProjectDriver {
 
         if(g_asmview != null)
             g_asmview.updatePC();
+
+        if(g_simctrl != null)
+            g_simctrl.update();
 
         } catch(Exception e) {
             // GUI update error has occured

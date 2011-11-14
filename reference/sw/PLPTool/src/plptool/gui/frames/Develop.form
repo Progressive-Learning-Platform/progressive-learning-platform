@@ -482,6 +482,11 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimResetActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator11">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="jSeparator11" noResource="true"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimRun">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
@@ -602,11 +607,11 @@
                 <Property name="name" type="java.lang.String" value="jSeparator9" noResource="true"/>
               </Properties>
             </MenuItem>
-            <Menu class="javax.swing.JMenu" name="menuSimTools">
+            <Menu class="javax.swing.JMenu" name="jMenu1">
               <Properties>
-                <Property name="mnemonic" type="int" value="84"/>
-                <Property name="text" type="java.lang.String" resourceKey="menuSimTools.text"/>
-                <Property name="name" type="java.lang.String" value="menuSimTools" noResource="true"/>
+                <Property name="mnemonic" type="int" value="86"/>
+                <Property name="text" type="java.lang.String" resourceKey="jMenu1.text"/>
+                <Property name="name" type="java.lang.String" value="jMenu1" noResource="true"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimView">
@@ -650,11 +655,15 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSimControlActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
-                  <Properties>
-                    <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
-                  </Properties>
-                </MenuItem>
+              </SubComponents>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="menuSimTools">
+              <Properties>
+                <Property name="mnemonic" type="int" value="84"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuSimTools.text"/>
+                <Property name="name" type="java.lang.String" value="menuSimTools" noResource="true"/>
+              </Properties>
+              <SubComponents>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuSimIO">
                   <Properties>
                     <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
@@ -922,7 +931,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="473" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="464" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -997,11 +1006,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="830" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="829" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="625" max="32767" attributes="0"/>
+                              <EmptySpace pref="611" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1019,7 +1028,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="413" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="401" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
