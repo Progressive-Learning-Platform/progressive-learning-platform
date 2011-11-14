@@ -8,6 +8,9 @@ E			[Ee][+-]?{D}+
 #include "parser.tab.h"
 #include "log.h"
 
+extern char* program;
+
+extern char* emit(char*, char*);
 void count();
 void count_no_log();
 void comment();
@@ -20,8 +23,8 @@ void single_line_comment();
 %%
 "/*"			{ comment(); return(COMMENT); }
 "//"			{ single_line_comment(); return(COMMENT); }
-[ \t\v\n\f]		{ count_no_log(); }
-.			{ yylval = (char*)yytext; count(); }
+[ \t\v\n\f]		{ count_no_log(); program = emit(program, (char*)yytext); }
+.			{ count(); program = emit(program, (char*)yytext); }
 
 %%
 
