@@ -187,10 +187,28 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.g_dev.getEditor().print();
                 }
             }
-            else if(command.equals("visualizememory")) {
+            else if(command.equals("vismem")) {
                 if(plp.isSimulating()) {
-                    (new plptool.mips.visualizer.MemoryVisualization(plp)).setVisible(true);
+                    plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
+                    ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);
+                    memVis.setVisible(true);
                 }
+            }
+            else if(command.equals("vismem with cat")) {
+                if(plp.isSimulating()) {
+                    plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
+                    memVis.setBG("http://upload.wikimedia.org/wikipedia/commons/e/ef/Curious_kitten.jpg");
+                    ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);
+                    memVis.setVisible(true);
+                }
+            }
+            else if(command.equals("visprog")){
+                plptool.mips.visualizer.ProgramVisualization progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
+                //progVis.printProgram();
+                plptool.mips.visualizer.ProgramVisualization.programGraph progGraph = progVis.new programGraph();
+                plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph);
+                progGraph.initGraph();
+                progVisFrame.setVisible(true);
             }
             else if(command.equals("ignoresavedmods")) {
                 plptool.Config.simIgnoreSavedSimState = true;

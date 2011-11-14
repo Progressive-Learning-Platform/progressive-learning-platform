@@ -186,12 +186,18 @@ public class SimCore extends PLPSimCore {
         IRQ = 0;
         IRQAck = 0;
         pc.reset(startAddr);
+        visibleAddr = startAddr;
         instructionCount = 0;
         sim_flags = (long) 0;
         ex_continue = false;
         ex_stall = false;
         if_stall = false;
         int_state = 0;
+        id_stage.if_count = 0;
+        id_stage.id_count = 0;
+        ex_stage.count = 0;
+        mem_stage.count = 0;
+        wb_stage.count = 0;
         flushpipeline();
 
         Msg.M("core: reset");
@@ -320,6 +326,7 @@ public class SimCore extends PLPSimCore {
             id_stage.i_instruction = 0;
             id_stage.i_instrAddr = pc.input();
             id_stage.hot = true;
+            id_stage.i_bubble = true;
 
             return Constants.PLP_OK;
 
@@ -333,6 +340,7 @@ public class SimCore extends PLPSimCore {
             ex_stage.i_ctl_branch = 0;
             ex_stage.i_ctl_jump = 0;
             ex_stage.hot = true;
+            ex_stage.i_bubble = true;
             ret = fetch();
             id_stage.hot = false;
             pc.write(old_pc + 4);
@@ -415,7 +423,7 @@ public class SimCore extends PLPSimCore {
         long addr = pc.eval();
 
         // fetch instruction / frontend stage
-        if(!bus.isMapped(addr)) {
+        if(!bus.isMapped(addr) || addr < 0) {
             if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
             return Msg.E("fetch(): PC points to unmapped address. Halt."
                          + " pc=" + String.format("0x%08x", addr),
@@ -426,7 +434,6 @@ public class SimCore extends PLPSimCore {
 
         if(ret == null) {
             if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
-
             return Msg.E("fetch(): Unable to fetch next instruction from the bus."
                          + " pc=" + String.format("0x%08x", addr),
                          Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
@@ -442,7 +449,9 @@ public class SimCore extends PLPSimCore {
         id_stage.i_ctl_pcplus4 = addr + 4;
 
         id_stage.hot = true;
+        id_stage.i_bubble = false;
         visibleAddr = addr;
+        id_stage.if_count++;
 
         Msg.D("fetch(): PC input side: "  + String.format("0x%08x", pc.input())
                   + " - PC output side: " + String.format("0x%08x", pc.eval()),
@@ -618,7 +627,11 @@ public class SimCore extends PLPSimCore {
      * this class.
      */
     public class id {
+        public int if_count = 0;
+        public int id_count = 0;
         boolean hot = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
         public long instruction;
         public long instrAddr;
 
@@ -660,6 +673,7 @@ public class SimCore extends PLPSimCore {
         private int eval() {
             try {
 
+            ex_reg.i_bubble = bubble;
             ex_reg.i_instruction = instruction;
             ex_reg.i_instrAddr = instrAddr;
 
@@ -669,6 +683,8 @@ public class SimCore extends PLPSimCore {
             }
 
             if(instrAddr == -1) return Constants.PLP_OK; // cleared
+
+            if(!bubble) id_count++;
 
             byte opcode      = (byte) MIPSInstr.opcode(instruction);
             byte funct       = (byte) MIPSInstr.funct(instruction);
@@ -794,6 +810,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             ctl_pcplus4 = i_ctl_pcplus4;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
@@ -810,7 +827,12 @@ public class SimCore extends PLPSimCore {
      * ALU modules are attached to this class.
      */
     public class ex {
+        public int count = 0;
+
         boolean hot = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
+
         public long instruction;
         public long instrAddr;
 
@@ -941,6 +963,7 @@ public class SimCore extends PLPSimCore {
         private int eval() {
             try {
 
+            mem_reg.i_bubble = bubble;
             mem_reg.i_instruction = instruction;
             mem_reg.i_instrAddr = instrAddr;
 
@@ -950,6 +973,8 @@ public class SimCore extends PLPSimCore {
             }
 
             if(instrAddr == -1) return Constants.PLP_OK; // cleared
+
+            if(!bubble) count++;
 
             mem_reg.i_fwd_ctl_memtoreg = fwd_ctl_memtoreg;
             mem_reg.i_fwd_ctl_regwrite = fwd_ctl_regwrite;
@@ -995,6 +1020,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
 
@@ -1036,7 +1062,12 @@ public class SimCore extends PLPSimCore {
      * with the outside world aside from fetching instructions in IF stage.
      */
     public class mem {
+        public int count = 0;
+
         boolean hot = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
+
         public long instruction;
         public long instrAddr;
 
@@ -1129,6 +1160,7 @@ public class SimCore extends PLPSimCore {
         private int eval() {
             try {
 
+            wb_reg.i_bubble = bubble;
             wb_reg.i_instruction = instruction;
             wb_reg.i_instrAddr = instrAddr;
 
@@ -1138,6 +1170,8 @@ public class SimCore extends PLPSimCore {
             }
 
             if(instrAddr == -1) return Constants.PLP_OK; // cleared
+
+            if(!bubble) count++;
 
             wb_reg.i_instruction = instruction;
             wb_reg.i_instrAddr = instrAddr;
@@ -1151,10 +1185,11 @@ public class SimCore extends PLPSimCore {
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
             if(ctl_memread == 1) {
-                if(bus.read(fwd_data_alu_result) == null)
+                Long data = (Long) bus.read(fwd_data_alu_result);
+                if(data == null)
                     return Msg.E("The bus returned no data, check previous error.",
                                     Constants.PLP_SIM_BUS_ERROR, this);
-                wb_reg.i_data_memreaddata = (Long) bus.read(fwd_data_alu_result);
+                wb_reg.i_data_memreaddata = data;
             }
 
             if(ctl_memwrite == 1)
@@ -1171,6 +1206,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
             
@@ -1200,8 +1236,13 @@ public class SimCore extends PLPSimCore {
      * stage.
      */
     public class wb {
+        public int count = 0;
+
         boolean hot = false;
-        boolean instr_retired = false;
+        public boolean instr_retired = false;
+        public boolean bubble = false;
+        public boolean i_bubble = false;
+
         public long instruction;
         public long instrAddr;
 
@@ -1281,6 +1322,8 @@ public class SimCore extends PLPSimCore {
 
             if(instrAddr == -1) return Constants.PLP_OK; // cleared
 
+            if(!bubble) count++;
+
             long internal_2x1 = (ctl_jal == 0) ?
                                  data_alu_result : ctl_linkaddr;
 
@@ -1297,6 +1340,7 @@ public class SimCore extends PLPSimCore {
         }
 
         private void clock() {
+            bubble = i_bubble;
             instruction = i_instruction;
             instrAddr = i_instrAddr;
             

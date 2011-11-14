@@ -71,6 +71,8 @@ public class SimControl extends javax.swing.JFrame {
         this.getRootPane().getActionMap().put("STEP", stepAction);
         this.getRootPane().getActionMap().put("RUN", runAction);
         this.getRootPane().getActionMap().put("RESET", resetAction);
+
+        btnOnTop.setToolTipText("This window will always be on top of other windows when this button is selected.");
     }
 
     /** This method is called from within the constructor to
@@ -87,6 +89,7 @@ public class SimControl extends javax.swing.JFrame {
         btnSimRun = new javax.swing.JToggleButton();
         btnSimReset = new javax.swing.JButton();
         sliderSimSpeed = new javax.swing.JSlider();
+        btnOnTop = new javax.swing.JToggleButton();
         txtStepSize = new javax.swing.JTextField();
         lblStepSize = new javax.swing.JLabel();
 
@@ -153,6 +156,18 @@ public class SimControl extends javax.swing.JFrame {
         });
         toolBar.add(sliderSimSpeed);
 
+        btnOnTop.setText(resourceMap.getString("btnOnTop.text")); // NOI18N
+        btnOnTop.setFocusable(false);
+        btnOnTop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnOnTop.setName("btnOnTop"); // NOI18N
+        btnOnTop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnOnTop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOnTopActionPerformed(evt);
+            }
+        });
+        toolBar.add(btnOnTop);
+
         txtStepSize.setText(resourceMap.getString("txtStepSize.text")); // NOI18N
         txtStepSize.setName("txtStepSize"); // NOI18N
         txtStepSize.addActionListener(new java.awt.event.ActionListener() {
@@ -173,12 +188,12 @@ public class SimControl extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+            .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblStepSize)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtStepSize, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addComponent(txtStepSize, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -250,6 +265,10 @@ public class SimControl extends javax.swing.JFrame {
         plp.g_dev.safeRefresh(false);
     }//GEN-LAST:event_btnSimResetActionPerformed
 
+    private void btnOnTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOnTopActionPerformed
+        this.setAlwaysOnTop(btnOnTop.isSelected());
+    }//GEN-LAST:event_btnOnTopActionPerformed
+
     public void runSimState() {
         btnSimRun.setSelected(true);
         btnSimStep.setEnabled(false);
@@ -265,7 +284,14 @@ public class SimControl extends javax.swing.JFrame {
         plp.g_opts.restoreSavedOpts();
     }
 
+    public void update() {
+        sliderSimSpeed.setValue(Config.simRunnerDelay);
+        txtStepSize.setText("" + Config.simCyclesPerStep);
+        this.setTitle("Simulation Control - Cycle: " + plp.sim.getInstrCount());
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton btnOnTop;
     private javax.swing.JButton btnSimReset;
     private javax.swing.JToggleButton btnSimRun;
     private javax.swing.JButton btnSimStep;

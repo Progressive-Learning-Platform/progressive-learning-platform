@@ -46,7 +46,7 @@ public class ArchRegistry {
                                     };
 
     /**
-     * This method returns a new instance of the ISA assembler when given an
+     * Return a new instance of the ISA assembler when given an
      * ArrayList of source files.
      *
      * @param plp The current instance of the project driver backend
@@ -73,7 +73,7 @@ public class ArchRegistry {
     }
 
     /**
-     * This method returns a new instance of the ISA assembler when given an
+     * Return a new instance of the ISA assembler when given an
      * either the string for the source code or just the path.
      *
      * @param plp The current instance of the project driver
@@ -102,7 +102,7 @@ public class ArchRegistry {
     }
 
     /**
-     * This method returns a new instance of the simulation core.
+     * Return a new instance of the simulation core.
      *
      * @param plp The current instance of the project driver
      * @return SimCore instance of the ISA
@@ -145,25 +145,29 @@ public class ArchRegistry {
          * plpmips SimCore initialization
          **********************************************************************/
         else if(arch.equals("plpmips")) {
-            plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
-            plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
-            plp.sim.bus.enableAllModules();
+            plptool.mips.ArchHelper.doPreSimulationRoutine(plp);
+        }
 
-            // add our button interrupt to g_dev toolbar
-            if(plp.g()) {
-                final javax.swing.JToggleButton btnInt = new javax.swing.JToggleButton();
-                btnInt.setIcon(new javax.swing.ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(plp.g_dev.getClass().getResource("resources/toolbar_exclamation.png"))));
-                btnInt.setToolTipText("Button Interrupt (Toggle button)");
-                btnInt.setOpaque(false);
-                btnInt.setMargin(new java.awt.Insets(2, 0, 2, 0));
-                btnInt.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ((plptool.mods.Button) plp.sim.bus.getRefMod(1)).setPressedState(btnInt.isSelected());
-                    }
-                });
+        // ... add your pre-simulation code here ... //
+    }
 
-                plp.g_dev.addButton(btnInt);
-            }
+    /**
+     * Additional simulation initialization code called after all simulation
+     * elements are initialized
+     *
+     * @param plp
+     */
+    public static void simulatorInitFinal(final ProjectDriver plp) {
+        String arch = plp.getArch();
+
+        if(arch == null)
+            return;
+
+        /**********************************************************************
+         * plpmips SimCore initialization
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            
         }
 
         // ... add your pre-simulation code here ... //
@@ -171,7 +175,7 @@ public class ArchRegistry {
 
     /**
      * Additional code after simulation is stopped. Called by the ProjectDriver
-     * when the project exits simulation mode
+     * immediately after the project exits simulation mode
      *
      * @param plp The current instance of the project driver
      */
@@ -185,8 +189,7 @@ public class ArchRegistry {
          * plpmips SimCore post-simulation
          **********************************************************************/
         else if(arch.equals("plpmips")) {
-            if(plp.g() && plp.g_dev != null)
-                plp.g_dev.removeLastButton();
+            plptool.mips.ArchHelper.doPostSimulationRoutine(plp);
         }
 
         // ... add your post-simulation code here ... //
@@ -210,17 +213,17 @@ public class ArchRegistry {
             plptool.mips.SimCLI.simCL(plp);
         }
 
+        // ... add your simulation CLI interface instantiation here ... //
+
         else
             return Msg.E("The ISA " + arch + " does not have a registered" +
                    " CLI for the simulator.", Constants.PLP_ISA_NO_SIM_CLI, null);
-
-        // ... add your simulation CLI interface instantiation here ... //
 
         return Constants.PLP_OK;
     }
 
     /**
-     * This method returns a new instance of the simulation core frame.
+     * Return a new instance of the simulation core frame.
      *
      * @param plp The current instance of the project driver
      * @return SimCoreGUI instance of the ISA
@@ -269,6 +272,12 @@ public class ArchRegistry {
             return null;
     }
 
+    /**
+     * Return a QuickReference string for the IDE
+     *
+     * @param plp The current instance of the project driver
+     * @return QuickReference string to display (HTML formatted)
+     */
     public static String getQuickReferenceString(ProjectDriver plp) {
         String arch = plp.getArch();
 
@@ -286,6 +295,57 @@ public class ArchRegistry {
 
         else
             return null;
+    }
+
+    /**
+     * Save architecture-specific simulation configuration to PLP file
+     *
+     * @param plp The current instance of the project driver
+     * @return Additional configuration string to save to plp.simconfig
+     */
+    public static String getArchSpecificSimStates(ProjectDriver plp) {
+        String ret = "";
+        String arch = plp.getArch();
+
+        if(arch == null)
+            ;
+
+        /**********************************************************************
+         * plpmips additional simulation states
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            return plptool.mips.ArchHelper.getArchSpecificSimStates(plp);
+        }
+
+        // ... add your additional simulation states to be saved to project file here ... //
+
+        return ret + "\n";
+    }
+
+    /**
+     * Set architecture-specific simulation configuration to the current
+     * open project driver. ProjectDriver.open() will pass an array of String
+     * tokens split with the string "::" as the delimiter. For example,
+     * the line in config file "foo::bar" will be passed on to this function
+     * as {"foo", "bar"} in configStr
+     *
+     * @param plp The current instance of the project driver
+     * @param configStr Configuration string saved in plp.simconfig
+     */
+    public static void setArchSpecificSimStates(ProjectDriver plp, String[] configStr) {
+        String arch = plp.getArch();
+
+        if(arch == null || configStr.length == 0)
+            ;
+
+        /**********************************************************************
+         * plpmips additional simulation states
+         **********************************************************************/
+        else if(arch.equals("plpmips")) {
+            plptool.mips.ArchHelper.setArchSpecificSimStates(plp, configStr);
+        }
+
+        // ... add your additional simulation states loaded from project file here ... //
     }
 
     /**

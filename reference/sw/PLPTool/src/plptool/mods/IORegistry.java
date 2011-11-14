@@ -74,7 +74,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 11;
+    private final int NUMBER_OF_MODULES = 12;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -229,6 +229,16 @@ public class IORegistry {
         mods[10][4] = true;
         mods[10][5] = false;
 
+        /* ********************************************************************/
+        // Bus Monitor
+
+        mods[11][0] = "Bus Monitor";
+        mods[11][1] = false;
+        mods[11][2] = 1;
+        mods[11][3] = "Monitors bus addresses and updates the timing diagram";
+        mods[11][4] = true;
+        mods[11][5] = false;
+
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -354,6 +364,16 @@ public class IORegistry {
             // Interrupt Controller is summoned
             case 10:
                 module = new InterruptController(addr, plp.sim);
+
+                break;
+
+            /******************************************************************/
+            // Bus monitor is summoned
+            case 11:
+                module = new BusMonitor(plp.sim);
+                if(plp.g()) {
+                    moduleFrame = new BusMonitorFrame((BusMonitor) module, null);
+                }
 
                 break;
 
