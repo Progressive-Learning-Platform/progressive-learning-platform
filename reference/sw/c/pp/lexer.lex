@@ -23,6 +23,7 @@ void single_line_comment();
 %%
 "/*"			{ comment(); return(COMMENT); }
 "//"			{ single_line_comment(); return(COMMENT); }
+"\\\n"			{ count(); /* don't emit anything, including the newline */ }
 [ \t\v\n\f]		{ count_no_log(); program = emit(program, (char*)yytext); }
 .			{ count(); program = emit(program, (char*)yytext); }
 

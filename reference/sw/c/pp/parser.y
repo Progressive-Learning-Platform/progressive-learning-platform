@@ -21,7 +21,7 @@ char *s;
 %%
 
 element
-	: COMMENT { vlog("[pp parser] found comment\n"); program = emit(program, " "); printf("-----%s-----\n", program); } /* replace all comments with a space */
+	: COMMENT { vlog("[pp parser] found comment\n"); program = emit(program, " "); } /* replace all comments with a space */
 	;
 
 program
