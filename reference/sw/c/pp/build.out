@@ -1,0 +1,6 @@
+make[1]: Entering directory `/home/fritz/plp/reference/sw/c/pp'
+build lexer
+BUILD FAIL lexer
+flex: can't open lexer.lex
+make[1]: *** [build.flex] Error 1
+make[1]: Leaving directory `/home/fritz/plp/reference/sw/c/pp'
