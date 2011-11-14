@@ -12,13 +12,8 @@ FILES_JNI=\
 	plpcc-jni\
 
 FILES=\
-	symbol\
-	parse_tree\
-	code_gen\
-	line\
-	handlers\
 	lex.yy\
-	parser.tab\
+	parser.tab\	
 	
 OBJECTS = $(addsuffix .o, $(FILES))
 OBJECTS_STANDALONE = $(addsuffix .o, $(FILES_STANDALONE))
@@ -34,9 +29,6 @@ clean.files_standalone: $(addsuffix .clean, $(FILES_STANDALONE))
 clean.files_jni: $(addsuffix .clean, $(FILES_JNI))
 build.files_standalone: $(addsuffix .build, $(FILES_STANDALONE))
 build_jni.files_jni: $(addsuffix .build_jni, $(FILES_JNI))
-
-
-
 
 nolog:
 	+@rm -f flex.build.out bison.build.out build.out link.build.out build_jni.out
@@ -80,7 +72,7 @@ clean.bison:
 
 clean.files_jni:
 	+@echo clean jni
-	+@rm -f libplpcclib.so
+	+@rm -f libplppplib.so
 
 %.build:
 	+@echo build $*
@@ -88,14 +80,14 @@ clean.files_jni:
 
 build.link:
 	+@echo link
-	+@$(CC) $(LDFLAGS) -o plpcc $(OBJECTS) $(OBJECTS_STANDALONE) >>link.build.out 2>&1 || (echo LINK FAIL $*; cat link.build.out; exit 1)
+	+@$(CC) $(LDFLAGS) -o plppp $(OBJECTS) $(OBJECTS_STANDALONE) >>link.build.out 2>&1 || (echo LINK FAIL $*; cat link.build.out; exit 1)
 
 clean: clean.flex clean.bison clean.files clean.files_standalone clean.files_jni
-	+@rm -f plpcc
+	+@rm -f plppp
 
 %.build_jni:
 	+@echo jni $*
-	+@$(CC) $(CFLAGS) $(JNI_OPTS) $(JNI_INCLUDE) $(OBJECTS) $*.c -o libplpcclib.so >> build_jni.out 2>&1 || (echo JNI FAIL; cat build_jni.out; exit 1)
+	+@$(CC) $(CFLAGS) $(JNI_OPTS) $(JNI_INCLUDE) $(OBJECTS) $*.c -o libplppplib.so >> build_jni.out 2>&1 || (echo JNI FAIL; cat build_jni.out; exit 1)
 
 build: build.flex build.bison build.files build.files_standalone build.link
 
