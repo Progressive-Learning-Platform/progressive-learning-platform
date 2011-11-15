@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "parser.tab.h"
 #include "log.h"
+#include "defines.h"
 
 /* for getopts */
 #include <ctype.h>
@@ -17,10 +18,13 @@ int STOP_ERROR = 1;
 
 static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
+static char *S_DEFINE_OUTPUT = NULL;
 static FILE *FILE_INPUT = NULL;
 static FILE *FILE_OUTPUT = NULL;
+static FILE *FILE_DEFINE = NULL;
 
 char *program = NULL;
+define *defines = NULL;
 
 char* emit(char* p, char *s) {
         if (p == NULL) {
@@ -45,6 +49,7 @@ void print_usage(void) {
 	printf("-o <filename>	output filename\n");
 	printf("-d [0,1,2]	debug level (0=off (default), 1=on, 2=verbose)\n");
 	printf("-e		do not stop preprocessing on errors\n");
+	printf("-p		print defines\n");
 }
 
 void handle_opts(int argc, char *argv[]) {
@@ -53,10 +58,11 @@ void handle_opts(int argc, char *argv[]) {
 	char *ovalue = NULL;
 
 	int c;
+	int pdefine = 0;
 
 	opterr = 0;
 	
-	while ((c = getopt(argc, argv, "d:o:spefa")) != -1)
+	while ((c = getopt(argc, argv, "d:o:pe")) != -1)
 		switch (c) {
 			case 'd':
 				dvalue = optarg;
@@ -66,6 +72,9 @@ void handle_opts(int argc, char *argv[]) {
 				break;
 			case 'e':
 				STOP_ERROR = 0;
+				break;
+			case 'p':
+				pdefine = 1;
 				break;
 			default:
 				print_usage();
@@ -100,6 +109,13 @@ void handle_opts(int argc, char *argv[]) {
 		sprintf(S_FILE_OUTPUT,"plppp.out");
 	}
 	log("[plppp] output file: %s\n", S_FILE_OUTPUT);
+
+	if (pdefine) {
+                S_DEFINE_OUTPUT = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) + 8));
+                sprintf(S_DEFINE_OUTPUT, "%s.define", S_FILE_OUTPUT);
+                log("[plppp] defines output: %s\n", S_DEFINE_OUTPUT);
+        }
+
 }
 
 int main(int argc, char *argv[]) {
@@ -119,8 +135,18 @@ int main(int argc, char *argv[]) {
 	}
 	yyset_in(FILE_INPUT);
 
+	/* create our first define */
+	defines = install_define(defines,"WIRA","brengsek");
+
 	log("[plppp] starting preprocessor\n");
 	yyparse();
+
+	/* print the defines */
+        if (S_DEFINE_OUTPUT != NULL) {
+                vlog("[plppp] printing defines\n");
+		FILE_DEFINE = fopen(S_DEFINE_OUTPUT, "w");
+                print_defines(FILE_DEFINE, defines);
+        }
 
 	fprintf(FILE_OUTPUT, "%s", program);
 
