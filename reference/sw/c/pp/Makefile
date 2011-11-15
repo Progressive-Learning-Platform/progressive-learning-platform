@@ -13,7 +13,8 @@ FILES_JNI=\
 
 FILES=\
 	lex.yy\
-	parser.tab\	
+	parser.tab\
+	defines\
 	
 OBJECTS = $(addsuffix .o, $(FILES))
 OBJECTS_STANDALONE = $(addsuffix .o, $(FILES_STANDALONE))
