@@ -23,8 +23,11 @@ void single_line_comment();
 %%
 "/*"			{ comment(); return(COMMENT); }
 "//"			{ single_line_comment(); return(COMMENT); }
-"\\\n"			{ count(); /* don't emit anything, including the newline */ }
+"#include"		{ count(); return(INCLUDE); }
+\"(\\.|[^\\"])*\"	{ count(); yylval = (char*)yytext; return(INC_STRING); }
+\<(\\.|[^\\"\\n])*\>	{ count(); yylval = (char*)yytext; return(INC_BRACKET); }
 [ \t\v\n\f]		{ count_no_log(); program = emit(program, (char*)yytext); }
+<<EOF>>			{ yypop_buffer_state(); if (!YY_CURRENT_BUFFER) { yyterminate(); } }
 .			{ count(); program = emit(program, (char*)yytext); }
 
 %%
@@ -87,4 +90,13 @@ void count()
 	vlog("[pp lexer] : %s\n", yytext);
 }
 
-
+void handle_include(char* i) {
+	char *s = strdup(i+1);
+	s[strlen(s)-1] = '\0';
+	yyin = fopen(s, "r");
+	if (yyin == NULL) {
+		err("[pp lexer] cannot open include: %s\n", s);
+	}
+	yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+	BEGIN(INITIAL);
+}
