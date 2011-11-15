@@ -24,11 +24,14 @@ void single_line_comment();
 "/*"			{ comment(); return(COMMENT); }
 "//"			{ single_line_comment(); return(COMMENT); }
 "#include"		{ count(); return(INCLUDE); }
-\"(\\.|[^\\"])*\"	{ count(); yylval = (char*)yytext; return(INC_STRING); }
+"#define"		{ count(); return(DEFINE); }
+\"(\\.|[^\\"\\n])*\"	{ count(); yylval = (char*)yytext; return(INC_STRING); }
 \<(\\.|[^\\"\\n])*\>	{ count(); yylval = (char*)yytext; return(INC_BRACKET); }
-[ \t\v\n\f]		{ count_no_log(); program = emit(program, (char*)yytext); }
+{L}({L}|{D})*		{ count(); yylval = (char*)yytext; return(IDENTIFIER); }
+[ \t\v\f]		{ count_no_log(); program = emit(program, (char*)yytext); }
+\n			{ count_no_log(); return(NEWLINE); }
 <<EOF>>			{ yypop_buffer_state(); if (!YY_CURRENT_BUFFER) { yyterminate(); } }
-.			{ count(); program = emit(program, (char*)yytext); }
+.			{ count(); yylval = (char*)yytext; return(TEXT); }
 
 %%
 
@@ -100,3 +103,4 @@ void handle_include(char* i) {
 	yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
 	BEGIN(INITIAL);
 }
+
