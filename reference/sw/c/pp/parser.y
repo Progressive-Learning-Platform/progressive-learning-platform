@@ -25,10 +25,12 @@ void start_define(char *s) {
 }
 
 void handle_text(char *s) {
-	if (define_mode)
+	if (define_mode) { /* are we setting up a define? */
 		define_buffer = emit(define_buffer,s);
-	else
-		define_buffer = emit(program,s);
+	} else { /* is the identifier a define? */
+		char *expansion = find_define(defines, s);
+		program = emit(program, expansion == NULL ? s : expansion);
+	}
 }
 
 void end_define(void) {
@@ -37,6 +39,8 @@ void end_define(void) {
 		defines = install_define(defines, define_ident, define_buffer);
 		free(define_ident);
 		free(define_buffer);
+	} else {
+		program = emit(program, "\n");
 	}
 }
 
