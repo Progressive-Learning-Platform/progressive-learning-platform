@@ -19,6 +19,9 @@ char *define_buffer = NULL;
 char *define_ident = NULL;
 
 void start_define(char *s) {
+	if (define_mode == 1) {
+		err("[pp parser] define within a define\n");
+	}
 	define_ident = strdup(s);
 	define_mode = 1;
 	define_buffer = NULL;
@@ -53,20 +56,26 @@ char *s;
 %}
 
 %token COMMENT INCLUDE INC_STRING INC_BRACKET DEFINE IDENTIFIER NEWLINE TEXT
+%token WS
 
 %start program
 %%
 
 element
 	: COMMENT { vlog("[pp parser] found comment\n"); program = emit(program, " "); } /* replace all comments with a space */
-	| INCLUDE INC_STRING { vlog("[pp parser] include: %s\n", $2); handle_include($2); }
-	| INCLUDE INC_BRACKET { vlog("[pp parser] include: %s\n", $2); handle_include($2); }
+	| INCLUDE WS INC_STRING { vlog("[pp parser] include: %s\n", $3); handle_include($3); }
+	| INCLUDE WS INC_BRACKET { vlog("[pp parser] include: %s\n", $3); handle_include($3); }
 	| INC_STRING { vlog("[pp parser] string without inlude: %s\n", $1); program = emit(program, $1); }
 	| INC_BRACKET { vlog("[pp parser] bracket without inlude: %s\n", $1); program = emit(program, $1); }
-	| DEFINE IDENTIFIER { vlog("[pp parser] define : %s\n", $2); start_define($2); }
+	| DEFINE WS IDENTIFIER '(' ')' { vlog("[pp parser] function like define: %s\n", $3); start_define($3); }
+	| DEFINE WS IDENTIFIER WS { vlog("[pp parser] define : %s\n", $3); start_define($3); }
+	| DEFINE WS IDENTIFIER NEWLINE { vlog("[pp parser] empty define: %s\n", $3); defines = install_define(defines, $3, NULL); }
 	| IDENTIFIER { vlog("[pp parser] identifier %s\n", $1); handle_text($1); }
 	| TEXT { vlog("[pp parser] text %s\n", $1); handle_text($1); }
 	| NEWLINE { end_define(); }
+	| WS { program = emit(program, $1); }
+	| '(' { handle_text("("); }
+	| ')' { handle_text(")"); }
 	;
 
 program
