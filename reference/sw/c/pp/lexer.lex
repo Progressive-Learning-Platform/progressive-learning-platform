@@ -28,7 +28,9 @@ void single_line_comment();
 \"(\\.|[^\\"\\n])*\"	{ count(); yylval = (char*)yytext; return(INC_STRING); }
 \<(\\.|[^\\"\\n])*\>	{ count(); yylval = (char*)yytext; return(INC_BRACKET); }
 {L}({L}|{D})*		{ count(); yylval = (char*)yytext; return(IDENTIFIER); }
-[ \t\v\f]		{ count_no_log(); program = emit(program, (char*)yytext); }
+"("			{ count(); return('('); }
+")"			{ count(); return(')'); }
+[ \t\v\f]*		{ count_no_log(); yylval = (char*)yytext; return(WS); }
 \n			{ count_no_log(); return(NEWLINE); }
 <<EOF>>			{ yypop_buffer_state(); if (!YY_CURRENT_BUFFER) { yyterminate(); } }
 .			{ count(); yylval = (char*)yytext; return(TEXT); }
