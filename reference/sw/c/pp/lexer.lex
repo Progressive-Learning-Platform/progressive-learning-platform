@@ -25,15 +25,15 @@ void single_line_comment();
 "//"			{ single_line_comment(); return(COMMENT); }
 "#include"		{ count(); return(INCLUDE); }
 "#define"		{ count(); return(DEFINE); }
-\"(\\.|[^\\"\\n])*\"	{ count(); yylval = (char*)yytext; return(INC_STRING); }
-\<(\\.|[^\\"\\n])*\>	{ count(); yylval = (char*)yytext; return(INC_BRACKET); }
-{L}({L}|{D})*		{ count(); yylval = (char*)yytext; return(IDENTIFIER); }
+\"(\\.|[^\\"\\n])*\"	{ count(); yylval = strdup((char*)yytext); return(INC_STRING); }
+\<(\\.|[^\\"\\n])*\>	{ count(); yylval = strdup((char*)yytext); return(INC_BRACKET); }
+{L}({L}|{D})*		{ count(); yylval = strdup((char*)yytext); return(IDENTIFIER); }
 "("			{ count(); return('('); }
 ")"			{ count(); return(')'); }
-[ \t\v\f]*		{ count_no_log(); yylval = (char*)yytext; return(WS); }
+[ \t\v\f]*		{ count_no_log(); return(WS); }
 \n			{ count_no_log(); return(NEWLINE); }
 <<EOF>>			{ yypop_buffer_state(); if (!YY_CURRENT_BUFFER) { yyterminate(); } }
-.			{ count(); yylval = (char*)yytext; return(TEXT); }
+.			{ count(); yylval = strdup((char*)yytext); return(TEXT); }
 
 %%
 
@@ -92,7 +92,7 @@ void count()
 			column++;
 
 	/* log all tokens */
-	vlog("[pp lexer] : %s\n", yytext);
+	vlog("[pp lexer] : \"%s\"\n", yytext);
 }
 
 void handle_include(char* i) {
