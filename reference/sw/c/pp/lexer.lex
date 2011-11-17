@@ -30,6 +30,7 @@ void single_line_comment();
 {L}({L}|{D})*		{ count(); yylval = strdup((char*)yytext); return(IDENTIFIER); }
 "("			{ count(); return('('); }
 ")"			{ count(); return(')'); }
+","			{ count(); return(','); }
 [ \t\v\f]*		{ count_no_log(); return(WS); }
 \n			{ count_no_log(); return(NEWLINE); }
 <<EOF>>			{ yypop_buffer_state(); if (!YY_CURRENT_BUFFER) { yyterminate(); } }
