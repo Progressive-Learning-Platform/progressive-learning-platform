@@ -1,6 +1,5 @@
 #!/bin/bash
 
-VERSION=3.2
 DATE=`date +%y%m%d`
 
 # we assume that /backup/fritz/buildbot has a valid hg repo in it
@@ -28,7 +27,7 @@ sh scripts/build_nexys3_linux.sh > build_nexys3_log
 
 #update the PLPTool nightly version
 cd ../sw/PLPTool/src/plptool
-sed -i "s/public final.*/public final static String stamp =\"${VERSION}-nightly-${DATE}\";/g" Version.java 
+sed -i "s/\"\(.*\)\"/\"\1-${DATE}\"/g" Version.java 
 
 #build PLPTool
 cd ../..
