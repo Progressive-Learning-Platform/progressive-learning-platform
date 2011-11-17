@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "defines.h"
+#include "log.h"
 
 define* install_define(define *d, char* m, char *e) {
 	if (e == NULL) {
-		e = malloc(1);
-		*e = '\0';
+		e = malloc(2);
+		sprintf(e, " ");
 	}
+
+	vlog("[pp defines] installing define %s : %s\n", m, e);
 
 	/* base case, if d is null, it's a new list */
 	if (d == NULL) {

@@ -1,6 +1,6 @@
 some text
 
-#define DAVID fritz
+#define DAVID fritz /* and a comment */
 
 #define ONE "two three"
 ONE
