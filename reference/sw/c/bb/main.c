@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 /* libarchive */
+#include <fcntl.h>
 #include <archive.h>
 #include <archive_entry.h>
 
@@ -18,11 +19,9 @@
 
 int LOG_LEVEL = 0;
 
-static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
-static FILE *FILE_INPUT = NULL;
-static FILE *FILE_OUTPUT = NULL;
 
+char **files = NULL;
 char *entrypoint = NULL;
 char *metafile = NULL;
 
@@ -81,7 +80,7 @@ char *build_metafile(char *f) {
 }
 
 void print_usage(void) {
-	printf("plpbb - plp binary builder\n\n");
+	printf("plpbb - plp binary blob\n\n");
 	printf("usage: plpbb <options> <input files>\n");
 	printf("options:\n");
 	printf("-o <filename>	output filename\n");
@@ -100,7 +99,6 @@ void print_builtin(void) {
 
 void handle_opts(int argc, char *argv[]) {
 	char *dvalue = NULL;
-	char *ivalue = NULL;
 	char *ovalue = NULL;
 
 	int c;
@@ -136,15 +134,14 @@ void handle_opts(int argc, char *argv[]) {
 
 	/* grab remaining values as inputs */
 	if (optind < argc) {
+		int index = 0;
+		files = malloc(sizeof(char*) * (argc-optind));
 		while (optind < argc) {
-			ivalue = argv[optind];
+			files[index] = argv[optind];
 			log("[plpbb] input file: %s\n", argv[optind]);
 			optind++;
+			index++;
 		}
-	}
-
-	if (ivalue != NULL) {
-		S_FILE_INPUT = ivalue;
 	} else {
 		print_usage();
 		exit(-1);
@@ -160,6 +157,59 @@ void handle_opts(int argc, char *argv[]) {
 
 }
 
+void write_archive(char *o, char **files) {
+	struct archive *a;
+	struct archive_entry *entry;
+	struct stat st;
+	char buff[BUFFER];
+	int len;
+	int fd;
+	a = archive_write_new();
+	archive_write_set_format_pax_restricted(a);
+	archive_write_open_filename(a, o);
+
+	/* put the metafile and entrypoint in there */
+	entry = archive_entry_new();
+	archive_entry_set_pathname(entry, "plp.metafile");
+	archive_entry_set_size(entry, strlen(metafile));
+	archive_entry_set_filetype(entry, AE_IFREG);
+	archive_entry_set_perm(entry, 0644);
+	archive_write_header(a, entry);
+	archive_write_data(a, metafile, strlen(metafile));
+	archive_entry_free(entry);
+	
+	entry = archive_entry_new();
+	archive_entry_set_pathname(entry, "entrypoint.asm");
+	archive_entry_set_size(entry, strlen(entrypoint));
+	archive_entry_set_filetype(entry, AE_IFREG);
+	archive_entry_set_perm(entry, 0644);
+	archive_write_header(a, entry);
+	archive_write_data(a, entrypoint, strlen(entrypoint));
+	archive_entry_free(entry);
+
+	if (files != NULL) {
+		while (*files) {
+			stat(*files, &st);
+			entry = archive_entry_new();
+			archive_entry_set_pathname(entry, *files);
+			archive_entry_set_size(entry, st.st_size);
+			archive_entry_set_filetype(entry, AE_IFREG);
+			archive_entry_set_perm(entry, 0644);
+			archive_write_header(a, entry);
+			fd = open(*files, O_RDONLY);
+			len = read(fd, buff, sizeof(buff));
+			while (len > 0) {
+				archive_write_data(a, buff, len);
+				len = read(fd, buff, sizeof(buff));
+			}
+			close(fd);
+			archive_entry_free(entry);
+			files++;
+		}
+	}
+	archive_write_close(a);
+}	
+
 int main(int argc, char *argv[]) {
 
 	/* process arguments */
@@ -173,20 +223,8 @@ int main(int argc, char *argv[]) {
 	metafile = build_metafile(metafile);	
 	vlog("[plpbb] metafile is: \n%s\n", metafile);
 
-	/* open files */
-	vlog("[plpbb] opening files\n");
-	FILE_INPUT = fopen(S_FILE_INPUT,"r");
-	if (FILE_INPUT == NULL) {
-		err("[plpbb] cannot open input file: %s\n", S_FILE_INPUT);
-	}
-	FILE_OUTPUT = fopen(S_FILE_OUTPUT,"w");
-	if (FILE_OUTPUT == NULL) {
-		err("[plpbb] cannot open output file: %s\n", S_FILE_OUTPUT);
-	}
-
-	vlog("[plpbb] closing files\n");
-	fclose(FILE_INPUT);
-	fclose(FILE_OUTPUT);
+	log("[plpbb] building archive: %s\n", S_FILE_OUTPUT);
+	write_archive(S_FILE_OUTPUT, files);
 
 	log("[plpbb] done\n");
 	return 0;
