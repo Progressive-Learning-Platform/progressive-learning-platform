@@ -338,7 +338,7 @@ public class Asm extends plptool.PLPAsm {
 
             // Include statement
             else if(asmTokens[0].equals(".include")) {
-                if(asmTokens.length < 2) {
+                if(asmTokens.length != 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error for .include",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
@@ -382,7 +382,7 @@ public class Asm extends plptool.PLPAsm {
 
             // .org directive
             else if(asmTokens[0].equals(".org")) {
-                if(asmTokens.length < 2) {
+                if(asmTokens.length != 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error for .org",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
@@ -470,7 +470,7 @@ public class Asm extends plptool.PLPAsm {
             // .word directive:
             //   Initialize current memory address to a value
             else if(asmTokens[0].equals(".word")) {
-                if(asmTokens.length < 2) {
+                if(asmTokens.length != 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error for .word",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
@@ -485,7 +485,7 @@ public class Asm extends plptool.PLPAsm {
             //   Assigns space for a variable, takes number of words as an
             //   argument
             else if(asmTokens[0].equals(".space")) {
-                if(asmTokens.length < 2) {
+                if(asmTokens.length != 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error for .space",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
@@ -504,7 +504,7 @@ public class Asm extends plptool.PLPAsm {
             //  Adds the user-specified symbol and its associated value to the
             //  symbol table
             else if(asmTokens[0].contains(".equ")) {
-                if(asmTokens.length < 3) {
+                if(asmTokens.length != 3) {
                     error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
                                      "Directive syntax error for .equ",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
