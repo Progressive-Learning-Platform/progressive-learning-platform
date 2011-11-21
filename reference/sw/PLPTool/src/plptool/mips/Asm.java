@@ -340,7 +340,7 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].equals(".include")) {
                 if(asmTokens.length < 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
-                                     "Directive syntax error",
+                                     "Directive syntax error for .include",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
 
@@ -384,7 +384,7 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].equals(".org")) {
                 if(asmTokens.length < 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
-                                     "Directive syntax error",
+                                     "Directive syntax error for .org",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
 
@@ -401,7 +401,7 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].equals(".text")) {
                 if(asmTokens.length < 1 || asmTokens.length > 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
-                                     "Directive syntax error",
+                                     "Directive syntax error .text",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 
                 
@@ -437,7 +437,7 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].equals(".data")) {
                 if(asmTokens.length < 1 || asmTokens.length > 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
-                                     "Directive syntax error",
+                                     "Directive syntax error for .data",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
               
                 } else if(curRegion != 2) {
@@ -472,7 +472,7 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].equals(".word")) {
                 if(asmTokens.length < 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
-                                     "Directive syntax error",
+                                     "Directive syntax error for .word",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
                     appendPreprocessedAsm("ASM__WORD__ " + asmTokens[1], i, true);
@@ -487,7 +487,7 @@ public class Asm extends plptool.PLPAsm {
             else if(asmTokens[0].equals(".space")) {
                 if(asmTokens.length < 2) {
                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
-                                     "Directive syntax error",
+                                     "Directive syntax error for .space",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
                 
@@ -497,6 +497,31 @@ public class Asm extends plptool.PLPAsm {
                     appendPreprocessedAsm("ASM__ORG__ " + curAddr, i, true);
                     directiveOffset++;
                     regionMap.add(curRegion);
+                }
+            }
+
+            // .equ directive
+            //  Adds the user-specified symbol and its associated value to the
+            //  symbol table
+            else if(asmTokens[0].contains(".equ")) {
+                if(asmTokens.length < 3) {
+                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                     "Directive syntax error for .equ",
+                                     Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
+                } else if(symTable.containsKey(asmTokens[1])) {
+                    error++; Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                      "symbol \"" + asmTokens[1] + "\" is already defined.",
+                                      Constants.PLP_ASM_DUPLICATE_LABEL, this);
+                } else {
+                    long val = sanitize32bits(asmTokens[2]);
+                    if(val < 0) {
+                        error++;
+                        Msg.E("preprocess(" + curActiveFile + ":" + i + "): " +
+                                      "Unable to process the value \"" + asmTokens[2] + "\"",
+                                      Constants.PLP_NUMBER_ERROR, this);
+                    } else {
+                        symTable.put(asmTokens[1], val);
+                    }
                 }
             }
 

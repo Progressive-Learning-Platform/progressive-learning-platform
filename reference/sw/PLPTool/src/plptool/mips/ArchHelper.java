@@ -298,7 +298,7 @@ public class ArchHelper {
         str += "<a name=\"p\" /><h1>Pseudo-operations</h1>";
         str += "<table border=1 width=\"100%\"";
 
-        data = new String[11][2];
+        data = new String[13][2];
 
         data[0][0] = "<font color=blue><b>nop</b></font>";                     data[0][1] = "sll $0, $0, 0";
         data[1][0] = "<font color=blue><b>b</b></font>     label";             data[1][1] = "beq $0, $0, label";
@@ -315,6 +315,8 @@ public class ArchHelper {
         data[8][0] = "<font color=blue><b>return</b></font>";                  data[8][1] = "Restore $aX, $tX, and $ra from stack and return";
         data[9][0] = "<font color=blue><b>save</b></font>";                    data[9][1] = "Save all registers except for $zero and $ra to stack";
         data[10][0] = "<font color=blue><b>restore</b></font>";                data[10][1] = "Restore all registers saved by 'save' in reverse order";
+        data[11][0] = "<font color=blue><b>lwm</b></font> $rt, imm32/label";         data[11][1] = "Load the value from a memory location into $rt";
+        data[12][0] = "<font color=blue><b>swm</b></font> $rt, imm32/label";         data[12][1] = "Store the value in $rt to a memory location";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
@@ -327,7 +329,7 @@ public class ArchHelper {
         str += "<a name=\"d\" /><h1>Assembler Directives</h1>";
         str += "<table border=1 width=\"100%\"";
 
-        data = new String[6][2];
+        data = new String[7][2];
 
         data[0][0] = ".org <i>address</i>";                data[0][1] = "Place subsequent statements starting from <i>address</i>";
         data[1][0] = "<i>label</i>:";                data[1][1] = "Label current memory location as <i>label</i>";
@@ -335,6 +337,7 @@ public class ArchHelper {
         data[3][0] = ".ascii \"<i>string</i>\"";     data[3][1] = "Place <i>string</i> starting from the current address";
         data[4][0] = ".asciiz \"<i>string</i>\"";    data[4][1] = "Place null-terminated <i>string</i> starting from the current address";
         data[5][0] = ".space <i>value</i>";          data[5][1] = "Reserve <i>value</i> words starting from the current address";
+        data[6][0] = ".equ <i>symbol</i> <i>value</i>";          data[6][1] = "Add a symbol and its associated value to the symbol table (a constant)";
 
 
         for(int i = 0; i < data.length; i++) {
