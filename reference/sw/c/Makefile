@@ -1,6 +1,7 @@
-all:	build
+all: clean build
 
 DIRS=\
+	pp\
 	cc\
 
 clean.dirs:	$(addsuffix .clean, $(DIRS))
@@ -24,6 +25,7 @@ clean_bin:
 copy_bin:
 	+@echo copy
 	+@mkdir bin
+	+@cp pp/plppp bin
 	+@cp cc/plpcc bin
 
 clean: clean.dirs clean_bin
