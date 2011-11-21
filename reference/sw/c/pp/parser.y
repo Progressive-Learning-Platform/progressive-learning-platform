@@ -14,51 +14,95 @@ extern char* program;
 extern char* emit(char*, char*);
 
 extern define *defines;
-int define_mode = 0;
-int if_mode = 0;
 char *define_buffer = NULL;
 char *define_ident = NULL;
 
+enum define_mode_t {
+	DEF_FALSE,
+	DEF_TRUE
+};
+
+enum if_mode_t {
+	IF_NONE,
+	IF_FALSE,
+	IF_TRUE
+};
+
+enum define_mode_t define_mode;
+enum if_mode_t if_mode;
+
 void start_define(char *s) {
-	if (define_mode == 1) {
-		err("[pp parser] define within a define\n");
+	if (if_mode != IF_FALSE) {
+		if (define_mode == DEF_TRUE) {
+			err("[pp parser] define within a define\n");
+		}
+		define_ident = strdup(s);
+		define_mode = DEF_TRUE;
+		define_buffer = NULL;
 	}
-	define_ident = strdup(s);
-	define_mode = 1;
-	define_buffer = NULL;
 }
 
 void handle_text(char *s) {
-	if (define_mode) { /* are we setting up a define? */
-		define_buffer = emit(define_buffer,s);
-	} else { /* is the identifier a define? */
-		char *expansion = find_define(defines, s);
-		program = emit(program, expansion == NULL ? s : expansion);
+	if (if_mode != IF_FALSE) {
+		if (define_mode == DEF_TRUE) { /* are we setting up a define? */
+			define_buffer = emit(define_buffer,s);
+		} else { /* is the identifier a define? */
+			char *expansion = find_define(defines, s);
+			program = emit(program, expansion == NULL ? s : expansion);
+		}
 	}
 }
 
 void end_define(void) {
-	if (define_mode) {
-		define_mode = 0;
-		defines = install_define(defines, define_ident, define_buffer);
-		free(define_ident);
-		free(define_buffer);
+	if (if_mode != IF_FALSE) {
+		if (define_mode == DEF_TRUE) {
+			define_mode = DEF_FALSE;
+			defines = install_define(defines, define_ident, define_buffer);
+			free(define_ident);
+			free(define_buffer);
+		} else {
+			program = emit(program, "\n");
+		}
+	}
+}
+
+void start_ifdef(char *s) {
+	if (if_mode != IF_NONE) {
+		err("[pp parser] nested ifdef not currently allowed\n");
+	}
+	if (find_define(defines, s) != NULL) { /* it is defined */
+		if_mode = IF_TRUE;
 	} else {
-		program = emit(program, "\n");
+		if_mode = IF_FALSE;
 	}
 }
 
-start_ifdef(char *s) {
-	if_mode = 1;
-	if (find_define(s) == NULL) { /* it is defined */
-		if_mode = 2;
+void start_ifndef(char *s) {
+	if (if_mode != IF_NONE) {
+		err("[pp parser] nested ifdef not currently allowed\n");
+	}	
+	if (find_define(defines, s) == NULL) {
+		if_mode = IF_TRUE;
+	} else {
+		if_mode = IF_FALSE;
 	}
 }
 
-start_ifndef(char *s) {
-	if_mode = 1;
-	if (find_define(s) != NULL) {
-		if_mode = 2;
+void handle_else(void) {
+	if (if_mode == IF_NONE) {
+		err("[pp parser] #else encountered without ifdef/ifndef/if\n");
+	} else if (if_mode == IF_TRUE) {
+		if_mode = IF_FALSE;
+	} else {
+		if_mode = IF_TRUE;
+	}
+}
+
+void handle_endif(void) {
+	if (if_mode == IF_NONE) {
+		err("[pp parser] #endif encountered without ifdef/ifndef/if\n");
+	} else {
+		if_mode = IF_NONE;
 	}
 }
 
@@ -84,7 +128,7 @@ element
 	| INC_BRACKET { vlog("[pp parser] bracket without inlude: %s\n", $1); program = emit(program, $1); free($1); }
 	| DEFINE WS IDENTIFIER '(' ')' WS { vlog("[pp parser] function like define: %s\n", $3); $3 = realloc($3, strlen($3)+3); $3 = strcat($3,"()"); start_define($3); free($3); }
 	| DEFINE WS IDENTIFIER WS { vlog("[pp parser] define : %s\n", $3); start_define($3); free($3); }
-	| DEFINE WS IDENTIFIER NEWLINE { vlog("[pp parser] empty define: %s\n", $3); install_define(defines, $3, NULL); free($3); }
+	| DEFINE WS IDENTIFIER NEWLINE { vlog("[pp parser] empty define: %s\n", $3); if (define_mode == DEF_FALSE) {install_define(defines, $3, NULL); free($3); } else { err("[pp parser] define within a define\n"); } }
 	| IFDEF WS IDENTIFIER { vlog("[pp parser] IFDEF: %s\n", $3); start_ifdef($3); free($3); }
 	| IFNDEF WS IDENTIFIER { vlog("[pp parser] IFNDEF: %s\n", $3); start_ifndef($3); free($3); }
 	| ELSE { vlog("[pp parser] ELSE\n"); handle_else(); }
