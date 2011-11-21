@@ -25,12 +25,15 @@ void single_line_comment();
 "//"			{ single_line_comment(); return(COMMENT); }
 "#include"		{ count(); return(INCLUDE); }
 "#define"		{ count(); return(DEFINE); }
+"#ifdef"		{ count(); return(IFDEF); }
+"#ifndef"		{ count(); return(IFNDEF); }
+"#else"			{ count(); return(ELSE); }
+"#endif"		{ count(); return(ENDIF); }
 \"(\\.|[^\\"\\n])*\"	{ count(); yylval = strdup((char*)yytext); return(INC_STRING); }
 \<(\\.|[^\\"\\n])*\>	{ count(); yylval = strdup((char*)yytext); return(INC_BRACKET); }
 {L}({L}|{D})*		{ count(); yylval = strdup((char*)yytext); return(IDENTIFIER); }
 "("			{ count(); return('('); }
 ")"			{ count(); return(')'); }
-","			{ count(); return(','); }
 [ \t\v\f]*		{ count_no_log(); return(WS); }
 \n			{ count_no_log(); return(NEWLINE); }
 <<EOF>>			{ yypop_buffer_state(); if (!YY_CURRENT_BUFFER) { yyterminate(); } }

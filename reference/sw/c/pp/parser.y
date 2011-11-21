@@ -15,6 +15,7 @@ extern char* emit(char*, char*);
 
 extern define *defines;
 int define_mode = 0;
+int if_mode = 0;
 char *define_buffer = NULL;
 char *define_ident = NULL;
 
@@ -47,6 +48,20 @@ void end_define(void) {
 	}
 }
 
+start_ifdef(char *s) {
+	if_mode = 1;
+	if (find_define(s) == NULL) { /* it is defined */
+		if_mode = 2;
+	}
+}
+
+start_ifndef(char *s) {
+	if_mode = 1;
+	if (find_define(s) != NULL) {
+		if_mode = 2;
+	}
+}
+
 void yyerror(s)
 char *s;
 {
@@ -56,7 +71,7 @@ char *s;
 %}
 
 %token COMMENT INCLUDE INC_STRING INC_BRACKET DEFINE IDENTIFIER NEWLINE TEXT
-%token WS
+%token WS IFDEF IFNDEF ELSE ENDIF
 
 %start program
 %%
@@ -67,10 +82,13 @@ element
 	| INCLUDE WS INC_BRACKET { vlog("[pp parser] include: %s\n", $3); handle_include($3); free($3); }
 	| INC_STRING { vlog("[pp parser] string without inlude: %s\n", $1); program = emit(program, $1); free($1); }
 	| INC_BRACKET { vlog("[pp parser] bracket without inlude: %s\n", $1); program = emit(program, $1); free($1); }
-	| DEFINE WS IDENTIFIER '(' ARGUMENT_LIST ')' WS { vlog("[pp parser] macro with arguments %s : %s\n", $3, $5); start_define($3, $5); free($3); free($5); }
 	| DEFINE WS IDENTIFIER '(' ')' WS { vlog("[pp parser] function like define: %s\n", $3); $3 = realloc($3, strlen($3)+3); $3 = strcat($3,"()"); start_define($3); free($3); }
 	| DEFINE WS IDENTIFIER WS { vlog("[pp parser] define : %s\n", $3); start_define($3); free($3); }
 	| DEFINE WS IDENTIFIER NEWLINE { vlog("[pp parser] empty define: %s\n", $3); install_define(defines, $3, NULL); free($3); }
+	| IFDEF WS IDENTIFIER { vlog("[pp parser] IFDEF: %s\n", $3); start_ifdef($3); free($3); }
+	| IFNDEF WS IDENTIFIER { vlog("[pp parser] IFNDEF: %s\n", $3); start_ifndef($3); free($3); }
+	| ELSE { vlog("[pp parser] ELSE\n"); handle_else(); }
+	| ENDIF { vlog("[pp parser] ENDIF\n"); handle_endif(); }
 	| IDENTIFIER '(' ')' { $3 = realloc($3, strlen($3)+3); $3 = strcat($3, "()"); vlog("[pp parser] identifier: %s\n", $1); handle_text($1); free($1); }
 	| IDENTIFIER { vlog("[pp parser] identifier %s\n", $1); handle_text($1); free($1); }
 	| TEXT { vlog("[pp parser] text %s\n", $1); handle_text($1); free($1); }
