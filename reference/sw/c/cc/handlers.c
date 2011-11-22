@@ -159,6 +159,9 @@ void handle_postfix_expr(node *n) {
 		e("addiu $sp, $sp, %d\n", params * 4);
 		e("move $t0, $v0\n");
 		params = 0;
+	} else if (strcmp(n->children[1]->id, "paren") == 0) {
+		/* function call without arguments */
+		e("call %s\n", n->children[0]->id);
 	} else {
 		lerr(n->line, "[code_gen] postfix expressions not fully implemented\n");
 	}	
@@ -210,6 +213,9 @@ void handle_unary_expr(node *n) {
 		LVALUE = 0;
 		handle(n->children[1]);
 		LVALUE = prev_lvalue;
+		if (!LVALUE) { /* dereference it */
+			e("lw $t0, 0($t0)\n");
+		}
 	} else {
 		lerr(n->line, "[code_gen] unary expressions not fully implemented\n");
 	}			
