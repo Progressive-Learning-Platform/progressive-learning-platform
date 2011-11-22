@@ -34,7 +34,7 @@ log.link:
 
 build.link:
 	+@echo link
-	+@$(CC) $(LDFLAGS) -o plpbb $(OBJECTS) >>link.build.out 2>&1 || (echo LINK FAIL $*; cat link.build.out; exit 1)
+	+$(CC) $(LDFLAGS) -o plpbb $(OBJECTS) >>link.build.out 2>&1 || (echo LINK FAIL $*; cat link.build.out; exit 1)
 
 clean: clean.files 
 	+@rm -f plpbb

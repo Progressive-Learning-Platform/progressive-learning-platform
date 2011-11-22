@@ -162,6 +162,7 @@ void handle_postfix_expr(node *n) {
 	} else if (strcmp(n->children[1]->id, "paren") == 0) {
 		/* function call without arguments */
 		e("call %s\n", n->children[0]->id);
+		e("move $t0, $v0\n");
 	} else {
 		lerr(n->line, "[code_gen] postfix expressions not fully implemented\n");
 	}	

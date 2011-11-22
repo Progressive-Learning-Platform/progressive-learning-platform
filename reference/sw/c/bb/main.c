@@ -14,7 +14,6 @@
 #include <archive_entry.h>
 
 #include "builtins.h"
-
 #define BUFFER 8192
 
 int LOG_LEVEL = 0;
