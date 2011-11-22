@@ -163,6 +163,18 @@ void handle_postfix_expr(node *n) {
 		/* function call without arguments */
 		e("call %s\n", n->children[0]->id);
 		e("move $t0, $v0\n");
+	} else if (strcmp(n->children[1]->id, "expression") == 0) {
+		/* array index */
+		push("$t0");
+		prev_lvalue = LVALUE;
+		LVALUE = 0;
+		handle(n->children[1]); /* the offset in the array */
+		LVALUE = prev_lvalue;
+		pop("$t1");
+		e("addu $t0, $t0, $t1\n");
+		if (!LVALUE) { /* dereference it */
+			e("lw $t0, 0($t0)\n");
+		}
 	} else {
 		lerr(n->line, "[code_gen] postfix expressions not fully implemented\n");
 	}	
@@ -472,17 +484,17 @@ void handle_init_declarator(node *n) {
 				int i;
 				for (i=0; i<n->children[1]->children[0]->num_children; i++) {
 					handle(n->children[1]->children[0]->children[i]);
-				FRITZ	
+					e("sw $t0, %d($sp)\n", o(x)+(4*i));
 				}
-
-
-
-			handle(n->children[1]);
+			} else {
+				handle(n->children[1]);
+				e("sw $t0, %d($sp)\n", o(x));
+			}
 		} else {
-			e("move $t0, $zero\n");
+			/* we could initialize values to zero here, but we won't. */
+			/*e("move $t0, $zero\n");
+			e("sw $t0, %d($sp)\n", o(x));*/
 		}
-		/* now make the assignment, we can safely use o(x), because we know it's going to be on the stack */
-		e("sw $t0, %d($sp)\n", o(x));
 	}
 }
 
