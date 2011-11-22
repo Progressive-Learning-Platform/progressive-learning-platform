@@ -293,10 +293,10 @@ direct_declarator
 	: IDENTIFIER { vlog("[parser] DIRECT_DECLARATOR_IDENTIFIER: %s\n", $1->id); $$ = op("direct_declarator", 1, $1); }
 	| '(' declarator ')' { vlog("[parser] (_DECLARATOR_)\n"); $$ = op("direct_declarator", 1, $2); }
 	| direct_declarator '[' constant_expression ']' { vlog("[parser] DIRECT_DECLARATOR_[_CONSTANT_]\n"); $$ = add_child($1, $3); }
-	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); $$ = op("direct_declarator", 1, $1); }
+	| direct_declarator '[' ']' { vlog("[parser] DIRECT_DECLARATOR_[]\n"); }
 	| direct_declarator '(' parameter_type_list ')' { vlog("[parser] DIRECT_DECLARATOR_(_PARAM_TYPE_LIST_)\n"); $$ = add_child($1, $3); }
 	| direct_declarator '(' identifier_list ')' { vlog("[parser] DIRECT_DECLARATOR_(_IDENTIFIER_LIST_)\n"); $$ = add_child($1, $3); }
-	| direct_declarator '(' ')' { vlog("[parser] DIRECT_DECLARATOR_()\n"); $$ = op("direct_declarator", 1, $1); }
+	| direct_declarator '(' ')' { vlog("[parser] DIRECT_DECLARATOR_()\n"); }
 	;
 
 pointer

@@ -20,6 +20,7 @@ typedef struct symbol_t {
         unsigned int            attr;
         char *                  type;
         char *                  value;
+	int 			size;
         struct symbol_t *       up;
 } symbol;
 

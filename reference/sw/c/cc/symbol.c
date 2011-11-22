@@ -12,8 +12,27 @@ extern symbol_table *sym;
 typedef struct id_chain_t {
 	struct id_chain_t *up;
 	char *id;
+	int size;
 	int pointer;
 } id_chain;
+
+/* return the size of the declaration, in words */
+int get_size(node *n) {
+	/* n should always be a direct_declarator */
+	if (strcmp(n->id, "direct_declarator") != 0) {
+		err("[symbol] get_size: direct_declarator not found\n");
+	}
+	
+	if (n->num_children == 1) {
+		return 1;
+	} else {
+		int size = 1;
+		int i;
+		for (i=1; i<n->num_children; i++)
+			size *= atol(n->children[i]->id);
+		return size;
+	}
+}
 
 id_chain* get_ids(id_chain* i, node *n) {
 	/* is the current node an id? */
@@ -25,16 +44,24 @@ id_chain* get_ids(id_chain* i, node *n) {
 				err("[symbol] cannot allocate id_chain\n");
 			}
 			t->up = i;
+			/* also check for array declarations, by looking for a constant node next to the id */
 			if (strcmp(n->children[0]->id, "pointer") == 0) {
 				t->pointer = 1;
 				t->id = n->children[1]->children[0]->id;
+				t->size = get_size(n->children[1]);
 			} else {
 				t->pointer = 0;
 				t->id = n->children[0]->children[0]->id;
+				t->size = get_size(n->children[0]);
 			}
 			i = t;
 			lvlog(n->line, "[symbol] found id %s\n", i->id);
-		} else {
+		} else if (strcmp(n->id, "initializer_list") == 0) {
+			/* the number of initializers set the size multiplier for the last generated id ala:
+			 * int b[] = {1,2,3}; has size 3
+			 */
+			i->size *= n->num_children;
+		}else {
 			int j;
 			/* call this on all children */
 			for (j=0; j<n->num_children; j++)
@@ -132,6 +159,7 @@ node* install_symbol(symbol_table *t, node *n) {
 			if (ids->pointer)
 				s->attr |= ATTR_POINTER; 
 			s->value = ids->id;
+			s->size  = ids->size;
 			if (end == NULL) /* first node */
 				t->s = s;
 			else
@@ -210,7 +238,7 @@ void print_symbols(symbol_table* t, FILE* o, int depth) {
 	while (curr != NULL) {
 		for (i=0; i<depth; i++)
 			fprintf(o, "\t");
-		fprintf(o, "id: %s, type: %s, attributes: 0x%08x\n", curr->value, curr->type, curr->attr);
+		fprintf(o, "id: %s, type: %s, size: %d, attributes: 0x%08x\n", curr->value, curr->type, curr->size, curr->attr);
 		/* print any symbol tables that are subordinate to this symbol */
 		for(j=0; j<t->num_children; j++)
 			if (t->children[j]->assoc == curr)
