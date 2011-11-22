@@ -198,7 +198,7 @@ init_declarator_list
 	;
 
 init_declarator
-	: declarator { vlog("[parser] DECLARATOR\n"); } 
+	: declarator { vlog("[parser] DECLARATOR\n"); $$ = op("init_declarator", 1, $1); } 
 	| declarator '=' initializer { vlog("[parser] DECLARATOR_=_INITIALIZER\n"); $$ = op("init_declarator", 2, $1, $3); }
 	;
 
