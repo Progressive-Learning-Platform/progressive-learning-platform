@@ -436,13 +436,47 @@ void handle_init_declarator(node *n) {
 		/* By definition, global declarations may only be initialized to constants */
 		e("%s:\n", x->id);
 		if (n->num_children == 2) {
-			e(".word %s\n", n->children[1]->children[0]->id);
+			/* this gets ugly...
+			 * nodes are either initializer->constant or
+			 * initializer->initializer_list->initializer->constant (with multiple initializers
+			 */
+			if (strcmp(n->children[1]->children[0]->id, "initializer_list") == 0) { /* mutliple initializers {1,2,3,4...} */
+				int i;
+				for (i=0; i<n->children[1]->children[0]->num_children; i++) {
+					if (strcmp(n->children[1]->children[0]->children[i]->children[0]->id, "unary_expr") == 0) { /* this is a hack to detect negative numbers */
+						e(".word -%s\n", n->children[1]->children[0]->children[i]->children[0]->children[1]->id);
+					} else {
+						e(".word %s\n", n->children[1]->children[0]->children[i]->children[0]->id);
+					}
+				}
+			} else { /* single initializer */
+				e(".word %s\n", n->children[1]->children[0]->id);
+			}
 		} else {
-			e(".word 0\n");
+			/* it may still be an array declaration, just without an initializer, check the size on x */
+			symbol *s = find_symbol(x->t, x->id);
+			if (s == NULL) {
+				e(".word 0\n");
+			} else {
+				e(".space %d\n", s->size);
+			}
 		}
 	} else { /* a local variable initializer */
 		/* init declarators may or may not have an initializer, if not, set the value to 0 */
 		if (n->num_children == 2) { /* we have an initializer */
+			 /* this gets ugly...
+                         * nodes are either initializer->constant or
+                         * initializer->initializer_list->initializer->constant (with multiple initializers
+                         */
+                        if (strcmp(n->children[1]->children[0]->id, "initializer_list") == 0) { /* mutliple initializers {1,2,3,4...} */
+				int i;
+				for (i=0; i<n->children[1]->children[0]->num_children; i++) {
+					handle(n->children[1]->children[0]->children[i]);
+				FRITZ	
+				}
+
+
+
 			handle(n->children[1]);
 		} else {
 			e("move $t0, $zero\n");
@@ -703,7 +737,7 @@ void handle_function_definition(node *n) {
 	curr = scope->s;
 	while (curr != NULL) {
 		if (!(curr->attr & ATTR_PARAM))
-			i++;
+			i += curr->size;
 		curr = curr->up;
 	}
 
