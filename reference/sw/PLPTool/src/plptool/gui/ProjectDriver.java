@@ -715,6 +715,7 @@ public class ProjectDriver {
                     if(asmName.endsWith(".asm")) {
                         asmFileOrder.put(asmName, new Integer(asmOrder));
                         asmOrder++;
+                        asms.add(null);
                     }
                 }
             }
@@ -735,7 +736,7 @@ public class ProjectDriver {
                           "the meta file. This file will be removed when the project " +
                           "is saved.", this);
                 else
-                    asms.add(order, new PLPAsmSource(metaStr, entry.getName(), order));
+                    asms.set(order, new PLPAsmSource(metaStr, entry.getName(), order));
 
             } else if(entry.getName().equals("plp.metafile")) {
                 // we've done reading the metafile
@@ -833,7 +834,7 @@ public class ProjectDriver {
         open_asm = 0;
 
         for(int i = 0; i < asms.size(); i++)
-            Msg.I(i + ": " + asms.get(i).getAsmFilePath(), this);
+            Msg.I(i + ": " + asms.get(i).getAsmFilePath(), null);
 
         if(g) refreshProjectView(false);
         if(!dirty && assemble) assemble();
