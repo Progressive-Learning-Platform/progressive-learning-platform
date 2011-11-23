@@ -735,7 +735,7 @@ public class ProjectDriver {
                           "the meta file. This file will be removed when the project " +
                           "is saved.", this);
                 else
-                    asms.add(new PLPAsmSource(metaStr, entry.getName(), order));
+                    asms.add(order, new PLPAsmSource(metaStr, entry.getName(), order));
 
             } else if(entry.getName().equals("plp.metafile")) {
                 // we've done reading the metafile
