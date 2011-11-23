@@ -228,25 +228,25 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         }
 
         long f = sim.getFlags();
-        if((f & Constants.PLP_SIM_FWD_EX_EX_ITYPE) == Constants.PLP_SIM_FWD_EX_EX_ITYPE)
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE)
             ;
-        if((f & Constants.PLP_SIM_FWD_EX_EX_RTYPE) == Constants.PLP_SIM_FWD_EX_EX_RTYPE)
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE)
             ;
-        if((f & Constants.PLP_SIM_FWD_MEM_EX_RTYPE) == Constants.PLP_SIM_FWD_MEM_EX_RTYPE)
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE)
             ;
-        if((f & Constants.PLP_SIM_FWD_MEM_EX_ITYPE) == Constants.PLP_SIM_FWD_MEM_EX_ITYPE)
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE)
             ;
-        if((f & Constants.PLP_SIM_FWD_MEM_EX_LW) == Constants.PLP_SIM_FWD_MEM_EX_LW)
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW) == SimCore.PLP_SIM_FWD_MEM_EX_LW)
             ;
-        if((f & Constants.PLP_SIM_FWD_MEM_MEM) == Constants.PLP_SIM_FWD_MEM_MEM)
+        if((f & SimCore.PLP_SIM_FWD_MEM_MEM) == SimCore.PLP_SIM_FWD_MEM_MEM)
             ;
-        if((f & Constants.PLP_SIM_IF_STALL_SET) == Constants.PLP_SIM_IF_STALL_SET)
+        if((f & SimCore.PLP_SIM_IF_STALL_SET) == SimCore.PLP_SIM_IF_STALL_SET)
             ;
-        if((f & Constants.PLP_SIM_ID_STALL_SET) == Constants.PLP_SIM_ID_STALL_SET)
+        if((f & SimCore.PLP_SIM_ID_STALL_SET) == SimCore.PLP_SIM_ID_STALL_SET)
             ;
-        if((f & Constants.PLP_SIM_EX_STALL_SET) == Constants.PLP_SIM_EX_STALL_SET)
+        if((f & SimCore.PLP_SIM_EX_STALL_SET) == SimCore.PLP_SIM_EX_STALL_SET)
             ;
-        if((f & Constants.PLP_SIM_MEM_STALL_SET) == Constants.PLP_SIM_MEM_STALL_SET)
+        if((f & SimCore.PLP_SIM_MEM_STALL_SET) == SimCore.PLP_SIM_MEM_STALL_SET)
             ;
 
         ig.setColor(clrCanvasText);
