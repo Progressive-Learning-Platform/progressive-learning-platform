@@ -67,6 +67,10 @@ public class PLPToolbox {
         }
     }
 
+    public static String format32Hex(long num) {
+        return String.format("0x%08x", num);
+    }
+
     // Convert 32-bit word to printable ASCII
     public static String asciiWord(long word) {
         String tStr = "";

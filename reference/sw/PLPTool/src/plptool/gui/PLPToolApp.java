@@ -153,13 +153,16 @@ public class PLPToolApp extends SingleFrameApplication {
             serialTerminal = true;
             launch(PLPToolApp.class, args);
         } else if(args.length > 0 && args[0].equals("-s")) {
-            if(args.length != 2) {
-                System.out.println("Usage: PLPTool -s <plpfile>");
-            } else {
+            if(args.length == 2) {
                 ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
                 if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
                 if(plp.asm.isAssembled())
                     plp.simulate();
+                plp.getArch().launchSimulatorCLI();
+            } else if(args.length == 3) {
+
+            } else {
+                System.out.println("Usage: PLPTool -s <plpfile> [script]");
             }
         } else  if(args.length > 0 && args[0].equals("-plp")) {
             ProjectFileManipulator.CLI(args);
@@ -180,8 +183,9 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("       Launch PLP Tool GUI and open <plpfile>");
             System.out.println();
             System.out.println("Non-GUI options:\n");
-            System.out.println("  -s   <plpfile>");
-            System.out.println("       Launch the command line simulator to simulate <plpfile>.");
+            System.out.println("  -s   <plpfile> [script]");
+            System.out.println("       Launch the command line simulator to simulate <plpfile>. Providing a [script] will ");
+            System.out.println("       make the simulation non-interactive.");
             System.out.println();
             System.out.println("  -plp <plpfile> [command]");
             System.out.println("       If no command is specified, print out the list of source files contained in <plpfile>.");

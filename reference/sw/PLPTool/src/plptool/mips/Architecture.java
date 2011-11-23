@@ -64,10 +64,19 @@ public class Architecture extends PLPArchitecture {
         sim.setStartAddr(plp.asm.getAddrTable()[0]);
         return sim;
     }
+    
+    public PLPSimCoreGUI createSimCoreGUI() {
+        return new plptool.mips.SimCoreGUI(plp);
+    }
+
+    public PLPSerialProgrammer createProgrammer() {
+        return new SerialProgrammer(plp);
+    }
 
     /**
      * Perform simulator initialization
      */
+    @Override
     public void simulatorInitialization() {
         busMonitorAttached = false;
 
@@ -175,13 +184,10 @@ public class Architecture extends PLPArchitecture {
         }
     }
 
-    public void simulatorInitializationFinal() {
-        // we don't have to do anything here
-    }
-
     /**
      * Post-simulation routine, clean up our mess with Develop
      */
+    @Override
     public void simulatorStop() {
         plptool.mips.SimCoreGUI g_sim = ((plptool.mips.SimCoreGUI) plp.g_sim);
 
@@ -207,18 +213,12 @@ public class Architecture extends PLPArchitecture {
         }
     }
 
+    @Override
     public void launchSimulatorCLI() {
         SimCLI.simCL(plp);
     }
 
-    public PLPSimCoreGUI createSimCoreGUI() {
-        return new plptool.mips.SimCoreGUI(plp);
-    }
-
-    public PLPSerialProgrammer createProgrammer() {
-        return new SerialProgrammer(plp);
-    }
-
+    @Override
     public String saveArchSpecificSimStates() {
         // check if we have saved memory visualizer entries in pAttrSet
         String ret = "";
@@ -245,6 +245,7 @@ public class Architecture extends PLPArchitecture {
         return ret;
     }
 
+    @Override
     public void restoreArchSpecificSimStates(String[] configStr) {
         if(configStr[0].equals("plpmips_memory_visualizer")) {
             String[] tokens = configStr[1].split(":");
@@ -270,7 +271,13 @@ public class Architecture extends PLPArchitecture {
             plp.addProjectAttribute("plpmips_timingdiagram", tD);
         }
     }
+    
+    @Override
+    public void simCLICommand(String cmd) {
+        SimCLI.simCLCommand(cmd, plp);
+    }
 
+    @Override
     public String getQuickReferenceString() {
         String str = "";
 

@@ -33,6 +33,7 @@ import plptool.Config;
 public class SimCLI {
     
     static boolean silent = false;
+    static boolean prompt = true;
 
     public static void simCLCommand(String input, plptool.gui.ProjectDriver plp) {
         if(plp != null && plp.g())
@@ -78,7 +79,7 @@ public class SimCLI {
                     }
                     time = System.currentTimeMillis();
                 }
-                for(int i = 0; i < steps && Msg.lastError == 0; i++) {
+                for(int i = 0; i < steps && Msg.lastError == 0 && !core.breakpoints.isBreakpoint(core.visibleAddr); i++) {
                     if(core.step() != Constants.PLP_OK)
                     Msg.E("Simulation is stale. Please reset.",
                              Constants.PLP_SIM_STALE, null);
@@ -91,6 +92,9 @@ public class SimCLI {
                         core.printfrontend();
                         Msg.M("-------------------------------------");
                     }
+
+                    if(core.breakpoints.isBreakpoint(core.visibleAddr))
+                        Msg.M("Breakpoint at " + PLPToolbox.format32Hex(core.visibleAddr));
                 }
                 if(steps > Constants.PLP_LONG_SIM)
                     Msg.M("That took " + (System.currentTimeMillis() - time) + " milliseconds.");
@@ -384,6 +388,27 @@ public class SimCLI {
                 Msg.M("Functional simulation mode on.");
             }
         }
+        else if(tokens[0].equals("bp") && tokens.length > 1) {
+            if(tokens[1].equals("set") && tokens.length == 3) {
+                long addr = PLPToolbox.parseNum(tokens[2]);
+                core.breakpoints.add(addr, plp.asm.getFileIndex(addr), plp.asm.getLineNum(addr));
+                Msg.M("Breakpoint set " + PLPToolbox.format32Hex(addr));
+            }
+            else if(tokens[1].equals("list")) {
+                Msg.M("Breakpoints:");
+                for(int i = 0; i < core.breakpoints.size(); i++) {
+                    Msg.M(i + "\t" + PLPToolbox.format32Hex(core.breakpoints.getBreakpointAddress(i)));
+                }
+            }
+            else if(tokens[1].equals("clear")) {
+                core.breakpoints.clear();
+            }
+            else if(tokens[1].equals("remove") && tokens.length == 3) {
+                core.breakpoints.removeBreakpoint(PLPToolbox.parseNumInt(tokens[2]));
+            }
+            else
+                simCLHelp(6);
+        }
         else if(input.equals("mod_forwarding")) {
             Msg.M("EX->EX R-type: " + core.forwarding.ex_ex_rtype);
             Msg.M("EX->EX I-type: " + core.forwarding.ex_ex_itype);
@@ -439,18 +464,22 @@ public class SimCLI {
         else if(input.equals("help misc")) {
             simCLHelp(5);
         }
+        else if(input.equals("help bp")) {
+            simCLHelp(6);
+        }
         else {
             simCLHelp(0);
         }
 
-        Msg.M("");
-
         if(Msg.lastError != 0 && plp.g())
             plp.g_err.setError(Msg.lastError);
 
-        Msg.m(String.format("%08x", core.getFlags()) +
-                             " " + core.getInstrCount() +
-                             " sim > ");
+        if(prompt) {
+            Msg.M("");
+            Msg.m(String.format("%08x", core.getFlags()) +
+                                 " " + core.getInstrCount() +
+                                 " sim > ");
+        }
     }
 
     public static void simCL(plptool.gui.ProjectDriver plp) {
@@ -482,6 +511,7 @@ public class SimCLI {
                 Msg.M("\n help sim\n\tList general simulator commands.");
                 Msg.M("\n help print\n\tList commands to print various simulator information to screen.");
                 Msg.M("\n help bus\n\tList I/O bus commands.");
+                Msg.M("\n help bp\n\tList breakpoint commands.");
                 Msg.M("\n help mods\n\tList PLP modules commands.");
                 Msg.M("\n help misc\n\tMiscellaneous commands.");
 
@@ -536,6 +566,13 @@ public class SimCLI {
                 Msg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
                 Msg.M("\n silent\n\tToggle silent mode (default off).");
                 Msg.M("\n cycleaccurate\n\tToggle cycle-accurate simulation mode (default off).");
+
+            case 6:
+                Msg.M("\nBreakpoints.");
+                Msg.M("\n bp set <address>\n\tSet a breakpoint at <address>.");
+                Msg.M("\n bp list\n\tList breakpoints and their indices.");
+                Msg.M("\n bp remove <index>\n\tRemove breakpoint specified by <index>, as listed in 'bp list' command.");
+                Msg.M("\n bp clear\n\tClear all breakpoints.");
 
                 break;
         }

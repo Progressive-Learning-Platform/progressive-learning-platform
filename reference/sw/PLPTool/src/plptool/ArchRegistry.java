@@ -41,19 +41,18 @@ public class ArchRegistry {
      */
     public static PLPArchitecture getArchitectureMetaClass(ProjectDriver plp, int index) {
         
-        PLPArchitecture arch = null;
-        
         switch(index) {
             
             /*****************************************************************/
-            /* PLP MIPS Architecture Meta Class Instantation                 */
+            /* PLP MIPS Architecture Meta Class Instantiation                */
             /*****************************************************************/
             case 0:
-                arch = new plptool.mips.Architecture(ISA_PLPMIPS, plp);
+                return new plptool.mips.Architecture(ISA_PLPMIPS, plp);
                 
-            // ... Add your meta class instantiation here ... ///              
+            // ... Add your meta class instantiation here ... ///
+
+            default:
+                return null;
         }
-        
-        return arch;
     }
 }

@@ -26,8 +26,6 @@ import plptool.PLPSimBus;
 import plptool.PLPSimCore;
 import plptool.PLPSimRegModule;
 
-import java.util.ArrayList;
-
 /**
  * mips.SimCore is the PLP MIPS Architecture Simulator. This class
  * contains core functionality of the simulator: the CPU itself, memory

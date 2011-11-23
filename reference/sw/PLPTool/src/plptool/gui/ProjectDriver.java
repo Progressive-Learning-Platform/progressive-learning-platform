@@ -1137,11 +1137,8 @@ public class ProjectDriver {
         }
         else if (applet) {
             // do nothing
-        } else
-            arch.launchSimulatorCLI();
-
+        }
         
-
         return Constants.PLP_OK;
     }
 

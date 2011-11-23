@@ -25,7 +25,7 @@ import plptool.gui.ProjectDriver;
  * ProjectDriver class depends on the extension of this class to perform
  * ISA specific actions such as creating an assembler, simulation routines,
  * etc. See plptool.mips.Architecture for an example implementation. This
- * class hass access to the currently active ProjectDriver instance 'plp'
+ * class has access to the currently active ProjectDriver instance 'plp'
  *
  * @author wira
  */
@@ -101,6 +101,8 @@ public abstract class PLPArchitecture {
         return hasProgrammer;
     }
 
+/*********************** FRAMEWORK INITIALIZATIONS ***************************/
+
     /**
      * Return a new instance of the ISA assembler.
      *
@@ -116,31 +118,6 @@ public abstract class PLPArchitecture {
     abstract public PLPSimCore createSimCore();
 
     /**
-     * Additional simulation initialization code. Called by the ProjectDriver
-     * AFTER the I/O registry has been initialized but before I/O module
-     * presets are loaded to the simulation
-     *
-     */
-    abstract public void simulatorInitialization();
-
-    /**
-     * Additional simulation initialization code called after all simulation
-     * elements are initialized
-     */
-    abstract public void simulatorInitializationFinal();
-
-    /**
-     * Additional code after simulation is stopped. Called by the ProjectDriver
-     * immediately after the project exits simulation mode
-     */
-    abstract public void simulatorStop();
-
-    /**
-     * Launch a CLI for the simulator (if one is implemented)
-     */
-    abstract public void launchSimulatorCLI();
-
-    /**
      * Return a new instance of the simulation core frame.
      *
      * @return SimCoreGUI instance of the ISA
@@ -154,19 +131,46 @@ public abstract class PLPArchitecture {
      */
     abstract public PLPSerialProgrammer createProgrammer();
 
+/*********************** OVERRIDABLE METHODS *********************************/
+
+    /**
+     * Additional simulation initialization code. Called by the ProjectDriver
+     * AFTER the I/O registry has been initialized but before I/O module
+     * presets are loaded to the simulation
+     *
+     */
+    public void simulatorInitialization() {}
+
+    /**
+     * Additional simulation initialization code called after all simulation
+     * elements are initialized
+     */
+    public void simulatorInitializationFinal() {}
+
+    /**
+     * Additional code after simulation is stopped. Called by the ProjectDriver
+     * immediately after the project exits simulation mode
+     */
+    public void simulatorStop() {}
+
+    /**
+     * Launch a CLI for the simulator (if one is implemented)
+     */
+    public void launchSimulatorCLI() {}
+
     /**
      * Return a QuickReference string for the IDE
      *
      * @return QuickReference string to display (HTML formatted)
      */
-    abstract public String getQuickReferenceString();
+    public String getQuickReferenceString() {return null;}
 
     /**
      * Save architecture-specific simulation configuration to PLP file
      *
      * @return Additional configuration string to save to plp.simconfig
      */
-    abstract public String saveArchSpecificSimStates();
+    public String saveArchSpecificSimStates() {return "";}
 
     /**
      * Set architecture-specific simulation configuration to the current
@@ -177,7 +181,23 @@ public abstract class PLPArchitecture {
      *
      * @param configStr Configuration string saved in plp.simconfig
      */
-    abstract public void restoreArchSpecificSimStates(String[] configStr);
+    public void restoreArchSpecificSimStates(String[] configStr) {}
+
+    /**
+     * CLI Simulation command, called when PLPTool is being run in scripted
+     * simulation mode from command line. This function interprets a
+     * simulation script line.
+     * 
+     * @param cmd
+     */
+    public void simCLICommand(String cmd) {}
+
+    /**
+     * User-defined hook function
+     *
+     * @param param Reference of parameters to pass
+     */
+    public void hook(Object param) {}
 
     public boolean equals(String str) {
         return identifier.equals(str);
