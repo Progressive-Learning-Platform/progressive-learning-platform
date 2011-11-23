@@ -296,12 +296,40 @@ void handle_shift_left(node *n) {
 	/* shifting is a mess with plp, as there is no r-type shift instruction.
 	 * so we're *stuck* with a loop structure to shift... YECH! 
 	 */
-	
-	lerr(n->line, "[code_gen] handle_shift_left not implemented\n");
+	char *loop = gen_label();
+	char *done = gen_label();
+	handle(n->children[1]); /* the shift amount */
+	push("$t0");
+	handle(n->children[0]); /* the thing to shift */
+	pop("$t1");
+	e("%s:\n", loop);
+	e("beq $t1, $zero, %s\n", done);
+	e("nop\n");
+	e("sll $t0, $t0, 1\n");
+	e("addiu $t1, $t1, -1\n");
+	e("j %s\n", loop);
+	e("nop\n");
+	e("%s:\n", done);
 }
 
 void handle_shift_right(node *n) {
-	lerr(n->line, "[code_gen] handle_shift_right not implemented\n");
+	/* shifting is a mess with plp, as there is no r-type shift instruction.
+	 * so we're *stuck* with a loop structure to shift... YECH! 
+	 */
+	char *loop = gen_label();
+	char *done = gen_label();
+	handle(n->children[1]); /* the shift amount */
+	push("$t0");
+	handle(n->children[0]); /* the thing to shift */
+	pop("$t1");
+	e("%s:\n", loop);
+	e("beq $t1, $zero, %s\n", done);
+	e("nop\n");
+	e("srl $t0, $t0, 1\n");
+	e("addiu $t1, $t1, -1\n");
+	e("j %s\n", loop);
+	e("nop\n");
+	e("%s:\n", done);
 }
 
 void handle_less_than(node *n) {
@@ -315,7 +343,13 @@ void handle_less_than(node *n) {
 }
 
 void handle_greater_than(node *n) {
-	lerr(n->line, "[code_gen] handle_greater_than not implemented\n");
+	/* TODO: unsigned */
+	/* return 1 if child 0 > child 1 */
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("slt $t0, $t0, $t1\n");
 }
 
 void handle_less_equal_than(node *n) {
@@ -328,29 +362,40 @@ void handle_greater_equal_than(node *n) {
 
 void handle_equality(node *n) {
 	/* TODO: implement a better equivalence routine */
-	char *neq = gen_label();
 	char *done = gen_label();
 	handle(n->children[0]);
 	push("$t0");
 	handle(n->children[1]);
 	pop("$t1");
-	e("subu $t0, $t0, $t1\n"); /* if t0 == t1, t0 will be 0 */
-	e("bne $t0, $zero, %s\n", neq);
+	e("move $t2, $t0\n");
+	e("move $t0, $zero\n");
+	e("bne $t1, $t2, %s\n", done);
 	e("nop\n");
 	e("ori $t0, $zero, 1\n");
-	e("j %s\n", done);
-	e("nop\n");
-	e("%s:\n", neq);
-	e("move $t0, $zero\n");
 	e("%s:\n", done);
 }
 
 void handle_equality_not(node *n) {
-	lerr(n->line, "[code_gen] handle_equality_not not implemented\n");
+	/* TODO: implement a better equivalence routine */
+	char *done = gen_label();
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("move $t2, $t0\n");
+	e("move $t0, $zero\n");
+	e("beq $t1, $t2, %s\n", done);
+	e("nop\n");
+	e("ori $t0, $zero, 1\n");
+	e("%s:\n", done);
 }
 
 void handle_bitwise_and(node *n) {
-	lerr(n->line, "[code_gen] handle_bitwise_and not implemented\n");
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("and $t0, $t0, $t1\n");
 }
 
 void handle_bitwise_xor(node *n) {
@@ -358,19 +403,63 @@ void handle_bitwise_xor(node *n) {
 }
 
 void handle_bitwise_or(node *n) {
-	lerr(n->line, "[code_gen] handle_bitwise_or not implemented\n");
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("or $t0, $t0, $t1\n");
 }
 
 void handle_logical_and(node *n) {
-	lerr(n->line, "[code_gen] handle_logical_and not implemented\n");
+	char *done = gen_label();
+
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+
+	e("move $t2, $t0\n");
+	e("move $t0, $zero\n");
+	e("beq $t1, $zero, %s\n", done);
+	e("nop\n");
+	e("beq $t2, $zero, %s\n", done);
+	e("nop\n");
+	e("ori $t0, $zero, 1\n");
+	e("%s:\n", done);
 }
 
 void handle_logical_or(node *n) {
-	lerr(n->line, "[code_gen] handle_logical_or not implemented\n");
+	char *done = gen_label();
+	char *next = gen_label();
+
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+
+	e("move $t2, $t0\n");
+	e("move $t0, $zero\n");
+	e("beq $t1, $zero, %s\n", next);
+	e("nop\n");
+	e("ori $t0, $zero, 1\n");
+	e("%s:\n", next);
+	e("beq $t2, $zero, %s\n", done);
+	e("nop\n");
+	e("ori $t0, $zero, 1\n");
+	e("%s:\n", done);
 }
 
 void handle_conditional(node *n) {
-	lerr(n->line, "[code_gen] handle_conditional not implemented\n");
+	char *fail = gen_label();
+	char *done = gen_label();
+	handle(n->children[0]);
+	e("beq $t0, $zero, %s\n", fail);
+	e("nop\n");
+	handle(n->children[1]);
+	e("j %s\n", done);
+	e("%s:\n", fail);
+	handle(n->children[2]);
+	e("%s:\n", done);
 }
 
 void handle_assignment(node *n) {
@@ -390,25 +479,35 @@ void handle_assignment(node *n) {
 	if (strcmp(n->children[1]->id, "assign") == 0) {
 		e("sw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_mul") == 0) {
-		e("lw $t2, 0($t1)\n\tmullo $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\n");
+		e("mullo $t0, $t0, $t2\n");
+		e("sw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_div") == 0) {
 		lerr(n->line, "[code_gen] division not supported\n");
 	} else if (strcmp(n->children[1]->id, "assign_mod") == 0) {
 		lerr(n->line, "[code_gen] modulo not supported\n");
 	} else if (strcmp(n->children[1]->id, "assign_add") == 0) {
-		e("lw $t2, 0($t1)\n\taddu $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\n");
+		e("addu $t0, $t0, $t2\n");
+		e("sw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_sub") == 0) {
-		e("lw $t2, 0($t1)\n\tsubu $t0, $t2, $t0\n\tsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\n");
+		e("subu $t0, $t2, $t0\n");
+		e("sw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_sll") == 0) {
 		lerr(n->line, "[code_gen] shift assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_srl") == 0) {
 		lerr(n->line, "[code_gen] shift assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_and") == 0) {
-		e("lw $t2, 0($t1)\n\tand $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\n");
+		e("and $t0, $t0, $t2\n");
+		e("sw $t0, 0($t1)\n");
 	} else if (strcmp(n->children[1]->id, "assign_xor") == 0) {
 		lerr(n->line, "[code_gen] xor assign not currently implemented\n");
 	} else if (strcmp(n->children[1]->id, "assign_or") == 0) {
-		e("lw $t2, 0($t1)\n\tor $t0, $t0, $t2\n\tsw $t0, 0($t1)\n");
+		e("lw $t2, 0($t1)\n");
+		e("or $t0, $t0, $t2\n");
+		e("sw $t0, 0($t1)\n");
 	}
 }
 
