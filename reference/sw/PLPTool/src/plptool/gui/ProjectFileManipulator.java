@@ -20,7 +20,7 @@ package plptool.gui;
 
 import plptool.Constants;
 import plptool.Msg;
-import plptool.mips.MIPSInstr;
+import plptool.ArchRegistry;
 
 import java.io.*;
 
@@ -30,7 +30,7 @@ import java.io.*;
  */
 public class ProjectFileManipulator {
     public static void CLI(String[] args) {
-        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
+        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
 	
         if(args == null || args.length < 2) {
             helpMessage();
@@ -65,7 +65,7 @@ public class ProjectFileManipulator {
             for(int i = 3; i < args.length; i++)
                 if(!plpHandler.exists()) {
                     if(args[i].endsWith(".plp")) {
-                        ProjectDriver tempPlp = new ProjectDriver(Constants.PLP_DEFAULT, "plpmips");
+                        ProjectDriver tempPlp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
                         tempPlp.open(args[i], false);
                         
                     } else if(i == 3)

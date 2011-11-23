@@ -54,7 +54,7 @@ public class QuickRef extends javax.swing.JFrame {
 
         this.setLocationRelativeTo(null);
 
-        str = ArchRegistry.getQuickReferenceString(plp);
+        str = plp.getArch().getQuickReferenceString();
 
         txtHTML.setText(str);
         txtHTML.setCaretPosition(0);
