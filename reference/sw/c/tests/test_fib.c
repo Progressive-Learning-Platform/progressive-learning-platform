@@ -1,5 +1,12 @@
 /* fibonacci sequence */
 
+/* tests: 
+	global variables
+	return statements
+	function calls
+	recursion
+*/
+
 int depth = 10;
 
 int fib(int fn1, int fn2) {

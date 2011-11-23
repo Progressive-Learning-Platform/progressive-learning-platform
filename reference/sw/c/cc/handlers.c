@@ -261,7 +261,11 @@ void handle_cast_expr(node *n) {
 }
 
 void handle_multiply(node *n) {
-	lerr(n->line, "[code_gen] handle_multiply not implemented\n");
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("mullo $t0, $t0, $t1\n");	
 }
 
 void handle_divide(node *n) {
@@ -281,10 +285,18 @@ void handle_add(node *n) {
 }
 
 void handle_sub(node *n) {
-	lerr(n->line, "[code_gen] handle_sub not implemented\n");
+	handle(n->children[0]);
+	push("$t0");
+	handle(n->children[1]);
+	pop("$t1");
+	e("subu $t0, $t1, $t0\n");
 }
 
 void handle_shift_left(node *n) {
+	/* shifting is a mess with plp, as there is no r-type shift instruction.
+	 * so we're *stuck* with a loop structure to shift... YECH! 
+	 */
+	
 	lerr(n->line, "[code_gen] handle_shift_left not implemented\n");
 }
 
