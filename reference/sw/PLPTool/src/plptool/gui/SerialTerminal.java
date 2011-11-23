@@ -29,10 +29,12 @@ import javax.swing.JTextPane;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.SwingUtilities;
 import java.awt.Color;
 
 import plptool.Msg;
 import plptool.Constants;
+import plptool.Config;
 import plptool.PLPToolbox;
 
 /**
@@ -150,6 +152,27 @@ public class SerialTerminal extends javax.swing.JFrame {
             toWrite = String.format("0x%x ", (int) data);
         else
             toWrite = data + "";
+
+        doc.insertString(doc.getLength(), toWrite, attrib);
+
+        console.setCaretPosition(doc.getLength() - 1);
+    }
+
+    protected void appendStringFormatted(String data, Color color) throws Exception {
+        StyledDocument doc = console.getStyledDocument();
+
+        SimpleAttributeSet attrib = new SimpleAttributeSet();
+        StyleConstants.setBold(attrib, true);
+        StyleConstants.setForeground(attrib, color);
+
+        String toWrite = "";
+
+        if(chkHEX.isSelected()) {
+            for(int i = 0; i < data.length(); i++)
+                toWrite += String.format("0x%x ", (int) data.charAt(i));
+        } else {
+            toWrite = data + "";
+        }
 
         doc.insertString(doc.getLength(), toWrite, attrib);
 
@@ -569,7 +592,9 @@ public class SerialTerminal extends javax.swing.JFrame {
     class SerialStreamReader extends Thread {
         @Override
         public void run() {
-            int data;
+            final byte[] buffer = new byte[Config.serialTerminalBufferSize];
+            int bytes;
+            String str;
 
             try {
                 
@@ -581,9 +606,21 @@ public class SerialTerminal extends javax.swing.JFrame {
             streamReaderRunning = true;
 
             while(!stop) {
-                data = in.read();
-                if(data > -1)
-                    appendByte((char) data, Color.RED);
+
+                bytes = in.read(buffer);
+                if(bytes > 0)
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                appendStringFormatted(new String(buffer), Color.RED);
+                            } catch(Exception e) {
+                                
+                            }
+                        }
+                    });
+
+                Thread.sleep(Config.serialTerminalReadDelayMs);
             }
 
             streamReaderRunning = false;

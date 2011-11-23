@@ -125,6 +125,11 @@ public class Constants {
 
     // Framework errors
     public static final int PLP_ISA_NO_SIM_CLI                   = 2048;
+    public static final int PLP_ISA_NO_ASSEMBLER                 = 2049;
+    public static final int PLP_ISA_NO_CC                        = 2049;
+    public static final int PLP_ISA_NO_SIMCORE                   = 2050;
+    public static final int PLP_ISA_NO_SIMCOREGUI                = 2051;
+    public static final int PLP_ISA_NO_PROGRAMMER                = 2052;
 
     // ProjectDriver modes
     public static final int PLP_DEFAULT                          = 0;
