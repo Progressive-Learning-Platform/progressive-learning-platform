@@ -35,8 +35,12 @@ public class Architecture extends PLPArchitecture {
     private plptool.mods.BusMonitorFrame busMonitorFrame;
     private plptool.mips.visualizer.CPUVisualization cpuVis;
 
-    public Architecture(String identifier, ProjectDriver plp) {
-        super(identifier, plp);
+    public Architecture(int archID, ProjectDriver plp) {
+        super(archID, "plpmips", plp);
+        hasAssembler = true;
+        hasSimCore = true;
+        hasSimCoreGUI = true;
+        hasProgrammer = true;
     }
 
     /**

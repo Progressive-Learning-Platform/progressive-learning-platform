@@ -77,7 +77,7 @@ public class ProjectDriver {
     private boolean                dirty;
     public int                     open_asm;
     public String                  curdir;
-    private String                 arch;
+    private PLPArchitecture        arch;
     private boolean                sim_mode;
 
     /*
@@ -151,12 +151,12 @@ public class ProjectDriver {
      * The constructor for the project driver.
      *
      * @param g Specifies whether we are driving a GUI or not
-     * @param arch The ISA to use for this project
+     * @param archID The ISA to use for this project
      */
-    public ProjectDriver(int modes, String arch) {
+    public ProjectDriver(int modes, int archID) {
         this.g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
         this.applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
-        this.arch = arch;
+        this.arch = ArchRegistry.getArchitectureMetaClass(this, archID);
 
         modified = false;
         plpfile = null;
@@ -239,17 +239,21 @@ public class ProjectDriver {
      * @param arch
      * @return
      */
-    public int setArch(String arch) {
-        this.arch = arch;
+    public int setArch(int archID) {
+        this.arch = ArchRegistry.getArchitectureMetaClass(this, archID);
 
-        return Constants.PLP_OK;
+        if(arch == null)
+            return Msg.E("Invalid ISA ID: " + archID,
+                         Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, this);
+        else
+            return Constants.PLP_OK;
     }
 
     /**
      *
      * @return the current active ISA for the project
      */
-    public String getArch() {
+    public PLPArchitecture getArch() {
         return arch;
     }
 
@@ -367,10 +371,9 @@ public class ProjectDriver {
         open_asm = 0;
         smods = null;
         watcher = null;
-        arch = "plpmips";
         pAttrSet = new HashMap<String, Object>();
 
-        meta =  "PLP-3.0\n";
+        meta =  "PLP-4.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
         dirty = true;
@@ -404,10 +407,9 @@ public class ProjectDriver {
         open_asm = 0;
         smods = null;
         watcher = null;
-        arch = "plpmips";
         pAttrSet = new HashMap<String, Object>();
 
-        meta =  "PLP-3.0\n";
+        meta =  "PLP-4.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
         dirty = true;
@@ -471,7 +473,7 @@ public class ProjectDriver {
             dirty = true;
         }
 
-        meta += "ARCH=" + arch + "\n";
+        meta += "ARCH=" + arch.getID() + "\n";
 
         meta += "\n";
 
@@ -561,7 +563,7 @@ public class ProjectDriver {
         }
 
         str += "ISASPECIFIC\n";
-        str += ArchRegistry.getArchSpecificSimStates(this);
+        str += arch.saveArchSpecificSimStates();
         str += "END\n";
 
         entry.setSize(str.length());
@@ -658,6 +660,7 @@ public class ProjectDriver {
         smods = null;
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
+        HashMap<String, Integer> asmFileOrder = new HashMap<String, Integer>();
 
         try {
 
@@ -667,20 +670,13 @@ public class ProjectDriver {
         String metaStr;
         int asmIndex = 0;
 
+        // Find meta file first
         while((entry = tIn.getNextTarEntry()) != null) {
-            image = new byte[(int) entry.getSize()];
-            tIn.read(image, 0, (int) entry.getSize());
-            metaStr = new String(image);
+            if(entry.getName().equals("plp.metafile")) {
+                image = new byte[(int) entry.getSize()];
+                tIn.read(image, 0, (int) entry.getSize());
+                metaStr = new String(image);
 
-            if(entry.getName().endsWith("asm")) {
-                asms.add(new PLPAsmSource(metaStr, entry.getName(), asmIndex));
-                Msg.I(asmIndex + ": "
-                         + entry.getName()
-                         + " (" + entry.getSize() + " bytes)", null);
-                asmIndex++;
-            }
-
-            else if(entry.getName().equals("plp.metafile")) {
                 meta = metaStr;
                 Scanner metaScanner;
 
@@ -689,28 +685,70 @@ public class ProjectDriver {
 
                 } else {
                     Msg.W("This is not a PLP-4.0 project file. Opening anyways.", this);
-
                 }
 
                 metaScanner = new Scanner(meta);
                 metaScanner.findWithinHorizon("DIRTY=", 0);
                 if(metaScanner.nextInt() == 0)
                     dirty = false;
-                if(metaScanner.findWithinHorizon("ARCH=", 0) != null)
-                    arch = metaScanner.nextLine();
-            }
+                if(metaScanner.findWithinHorizon("ARCH=", 0) != null) {
+                    String temp = metaScanner.nextLine();
+                    if(temp.equals("plpmips")) {
+                        Msg.W("This project file is made by PLPTool version 3 or earlier. " +
+                              "Meta data for this project will be updated when the project " +
+                              "file is saved. Defaulting to plpmips ISA.", this);
+                        arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
+                    } else {
+                        arch = ArchRegistry.getArchitectureMetaClass(this, Integer.parseInt(temp));
+                        if(arch == null) {
+                            Msg.W("Invalid ISA is specified in the project file: '" + arch +
+                                  "'. Assuming plpmips", this);
+                            arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
+                        }
+                    }
+                }
 
-            else if(entry.getName().equals("plp.image")) {
+                // get asm files order
+                int asmOrder = 0;
+                while(metaScanner.hasNext()) {
+                    String asmName = metaScanner.nextLine();
+                    if(asmName.endsWith(".asm")) {
+                        asmFileOrder.put(asmName, new Integer(asmOrder));
+                        asmOrder++;
+                    }
+                }
+            }
+        }
+
+        // reset the tar input stream
+        tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
+
+        while((entry = tIn.getNextTarEntry()) != null) {
+            image = new byte[(int) entry.getSize()];
+            tIn.read(image, 0, (int) entry.getSize());
+            metaStr = new String(image);
+
+            if(entry.getName().endsWith("asm")) {
+                Integer order = (Integer) asmFileOrder.get(entry.getName());
+                if(order == null)
+                    Msg.W("The file '" + entry.getName() + "' is not listed in " +
+                          "the meta file. This file will be removed when the project " +
+                          "is saved.", this);
+                else
+                    asms.add(new PLPAsmSource(metaStr, entry.getName(), order));
+
+            } else if(entry.getName().equals("plp.metafile")) {
+                // we've done reading the metafile
+
+            } else if (entry.getName().equals("plp.image")) {
                 binimage = new byte[(int) entry.getSize()];
                 binimage = image;
-            }
 
-            else if(entry.getName().equals("plp.hex")) {
+            } else if(entry.getName().equals("plp.hex")) {
                 hexstring = new String(image);
-            }
-
+            
             // Restore bus modules states
-            else if(entry.getName().equals("plp.simconfig")) {
+            } else if (entry.getName().equals("plp.simconfig")) {
                 Msg.D("simconfig:\n" + metaStr + "\n", 4, this);
                 String lines[] = metaStr.split("\\r?\\n");
                 int i;
@@ -759,13 +797,12 @@ public class ProjectDriver {
 
                         while(i < lines.length && !lines[i].equals("END")) {
                             tokens = lines[i].split("::");
-                            ArchRegistry.setArchSpecificSimStates(this, tokens);
+                            arch.restoreArchSpecificSimStates(tokens);
                             i++;
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 Msg.W("open(" + path + "): unable to process entry: " +
                         entry.getName() + ". This file will be removed when"
                         + " you save the project.", this);
@@ -774,7 +811,7 @@ public class ProjectDriver {
 
         tIn.close();
         
-        if(asmIndex == 0) {
+        if(asmFileOrder.isEmpty()) {
             return Msg.E("open(" + path + "): no .asm files found.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
@@ -788,17 +825,15 @@ public class ProjectDriver {
 
         if(arch == null) {
             Msg.W("No ISA information specified in the archive, assuming plpmips", this);
-            arch = "plpmips";
-        } else if(arch != null && !ArchRegistry.validateArch(arch)) {
-            Msg.W("Invalid ISA is specified in the project file: '" + arch +
-                  "'. Assuming plpmips", this);
-            arch = "plpmips";
+            arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
         }
-
 
         plpfile = new File(path);
         modified = false;
         open_asm = 0;
+
+        for(int i = 0; i < asms.size(); i++)
+            Msg.I(i + ": " + asms.get(i).getAsmFilePath(), this);
 
         if(g) refreshProjectView(false);
         if(!dirty && assemble) assemble();
@@ -976,6 +1011,9 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int assemble() {
+        if(!arch.hasAssembler())
+            return Msg.E("This ISA does not implement an assembler",
+                         Constants.PLP_ISA_NO_ASSEMBLER, this);
 
         Msg.I("Assembling...", null);
         Msg.errorCounter = 0;
@@ -999,7 +1037,7 @@ public class ProjectDriver {
                             Constants.PLP_BACKEND_EMPTY_ASM_LIST, this);
 
         // ...assemble asm objects... //
-        asm = ArchRegistry.createAssembler(this, asms);
+        asm = arch.createAssembler();
 
         int ret = 0;
 
@@ -1029,6 +1067,10 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int simulate() {
+        if(!arch.hasSimCore())
+            return Msg.E("simulate(): This ISA does not implement a simulation" +
+                         " core.", Constants.PLP_ISA_NO_SIMCORE, this);
+
         Msg.I("Starting simulation...", null);
 
         if(g) this.updateAsm(open_asm, g_dev.getEditor().getText());
@@ -1044,9 +1086,9 @@ public class ProjectDriver {
         if(g && sim_mode)
             desimulate();
 
-        sim = ArchRegistry.createSimCore(this);
+        sim = arch.createSimCore();
         ioreg = new IORegistry(this);
-        ArchRegistry.simulatorInitialization(this);
+        arch.simulatorInitialization();
 
         Msg.D("smods is " + (smods == null ? "null" : "not null")
 	      + " and g is " + g, 3, null);
@@ -1064,7 +1106,7 @@ public class ProjectDriver {
 
         if(g) {
             g_ioreg = new IORegistryFrame(this);
-            g_sim = ArchRegistry.createSimCoreGUI(this);
+            g_sim = arch.createSimCoreGUI();
             g_ioreg.refreshModulesTable();
             g_dev.attachModuleFrameListeners(g_ioreg, Constants.PLP_TOOLFRAME_IOREGISTRY);
             if(g_sim != null) {
@@ -1095,7 +1137,7 @@ public class ProjectDriver {
         else if (applet) {
             // do nothing
         } else
-            ArchRegistry.launchCLISimulatorInterface(this);
+            arch.launchSimulatorCLI();
 
         
 
@@ -1111,7 +1153,7 @@ public class ProjectDriver {
         if(!sim_mode)
             return Constants.PLP_OK;
 
-        ArchRegistry.simulatorStop(this);
+        arch.simulatorStop();
 
         if(ioreg != null && ioreg.getNumOfModsAttached() > 0) {
             smods = ioreg.createPreset();
@@ -1208,6 +1250,10 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int program(String port) {
+        if(!arch.hasProgrammer())
+                return Msg.E("This ISA does implement a board programmer.",
+                             Constants.PLP_ISA_NO_PROGRAMMER, this);
+
         if(!serial_support)
             return Msg.E("No native serial libraries available.",
                          Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, this);
@@ -1221,8 +1267,8 @@ public class ProjectDriver {
             if(asm.getObjectCode().length < 1)
                 return Msg.E("Empty program.",
                              Constants.PLP_PRG_EMPTY_PROGRAM, this);
-
-            prg = ArchRegistry.createProgrammer(this);
+            
+            prg = arch.createProgrammer();
 
             if(prg == null)
                 return Msg.E("The specified ISA does not have the serial " +
@@ -1238,7 +1284,7 @@ public class ProjectDriver {
             if(Config.prgNexys3ProgramWorkaround && PLPToolbox.isHostLinux()) {
                 Msg.D("program: Nexys 3 Linux RXTX workaround engaging...", 2, this);
                 prg.close();
-                prg = ArchRegistry.createProgrammer(this);
+                prg = arch.createProgrammer();
                 prg.connect(port, Constants.PLP_BAUDRATE);
             }
             

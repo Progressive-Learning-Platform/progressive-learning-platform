@@ -124,12 +124,13 @@ public class Constants {
     public static final int PLP_BACKEND_GUI_ON_HEADLESS_ENV      = 1039;
 
     // Framework errors
-    public static final int PLP_ISA_NO_SIM_CLI                   = 2048;
-    public static final int PLP_ISA_NO_ASSEMBLER                 = 2049;
-    public static final int PLP_ISA_NO_CC                        = 2049;
-    public static final int PLP_ISA_NO_SIMCORE                   = 2050;
-    public static final int PLP_ISA_NO_SIMCOREGUI                = 2051;
-    public static final int PLP_ISA_NO_PROGRAMMER                = 2052;
+    public static final int PLP_ISA_INVALID_ARCHITECTURE_ID      = 2048;
+    public static final int PLP_ISA_NO_SIM_CLI                   = 2049;
+    public static final int PLP_ISA_NO_ASSEMBLER                 = 2050;
+    public static final int PLP_ISA_NO_CC                        = 2051;
+    public static final int PLP_ISA_NO_SIMCORE                   = 2052;
+    public static final int PLP_ISA_NO_SIMCOREGUI                = 2053;
+    public static final int PLP_ISA_NO_PROGRAMMER                = 2054;
 
     // ProjectDriver modes
     public static final int PLP_DEFAULT                          = 0;

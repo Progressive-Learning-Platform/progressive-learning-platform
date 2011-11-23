@@ -22,7 +22,7 @@ import gnu.io.SerialPort;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import plptool.Msg;
+import plptool.*;
 
 /**
  *
@@ -124,7 +124,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("reset")) {
                 plp.g_dev.dispose();
                 plp.desimulate();
-                plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, "plpmips");
+                plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, ArchRegistry.ISA_PLPMIPS);
                 plp.g_dev.setVisible(true);
             }
             else if(command.equals("dark")) {

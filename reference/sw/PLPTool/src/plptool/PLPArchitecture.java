@@ -33,14 +33,16 @@ public abstract class PLPArchitecture {
     private String identifier;
     protected ProjectDriver plp;
 
+    protected int     archID;
     protected boolean hasAssembler = false;
     protected boolean hasSimCore = false;
     protected boolean hasSimCoreGUI = false;
     protected boolean hasProgrammer = false;
 
-    public PLPArchitecture(String identifier, ProjectDriver plp) {
+    public PLPArchitecture(int archID, String identifier, ProjectDriver plp) {
         this.identifier = identifier;
         this.plp = plp;
+        this.archID = archID;
     }
 
     /**
@@ -53,22 +55,48 @@ public abstract class PLPArchitecture {
     }
 
     /**
-     * 
+     * Get ISA ID
      *
-     * @return
+     * @return ISA ID specified by the registry
+     */
+    public int getID() {
+        return archID;
+    }
+
+    /**
+     * Does this ISA implement the assembler class
+     *
+     * @return boolean specifying whether the ISA implements the assembler
      */
     public boolean hasAssembler() {
         return hasAssembler;
     }
 
+    /**
+     * Does this ISA implement the simulation core
+     *
+     * @return boolean specifying whether the ISA implements the simulation core
+     */
     public boolean hasSimCore() {
         return hasSimCore;
     }
 
+    /**
+     * Does this ISA implement the simulation core GUI frame
+     *
+     * @return boolean specifying whether the ISA implements the simulation core
+     *         GUI frame
+     */
     public boolean hasSimCoreGUI() {
         return hasSimCoreGUI;
     }
 
+    /**
+     * Does this ISA implement the programmer class
+     *
+     * @return boolean specifying whether the ISA implements the board
+     *         programmer class
+     */
     public boolean hasProgrammer() {
         return hasProgrammer;
     }
