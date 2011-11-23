@@ -76,10 +76,14 @@ public class Config {
     public static int     devMaxUndoEntries                = 64000;
 
     public static boolean devWindowSettingSet              = false;
-    public static int     devWindowPositionX              = -1;
-    public static int     devWindowPositionY              = -1;
+    public static int     devWindowPositionX               = -1;
+    public static int     devWindowPositionY               = -1;
     public static int     devWindowWidth                   = -1;
     public static int     devWindowHeight                  = -1;
+
+
+    public static int     serialTerminalReadDelayMs        = 10;
+    public static int     serialTerminalBufferSize         = 64;
 
     //                                                        RTYPE              ITYPE              BRANCH             JUMP               MEMTYPE            NOP                    REG                IMM                  LABEL            COMMENT              SYS
     public static Color[]   syntaxColors                   = {new Color(0,0,255),new Color(0,0,255),new Color(0,0,255),new Color(0,0,255),new Color(0,0,255),new Color(127,127,127),new Color(255,0,0),new Color(255,153,0),new Color(0,0,0),new Color(0, 153, 0),new Color(204, 0, 102)};
