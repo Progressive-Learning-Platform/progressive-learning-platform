@@ -1223,6 +1223,12 @@ public class ProjectDriver {
                              Constants.PLP_PRG_EMPTY_PROGRAM, this);
 
             prg = ArchRegistry.createProgrammer(this);
+
+            if(prg == null)
+                return Msg.E("The specified ISA does not have the serial " +
+                             "programmer implemented.",
+                             Constants.PLP_ISA_NO_PROGRAMMER, this);
+
             int ret = prg.connect(port, Constants.PLP_BAUDRATE);
             if(ret != Constants.PLP_OK)
                 return ret;
