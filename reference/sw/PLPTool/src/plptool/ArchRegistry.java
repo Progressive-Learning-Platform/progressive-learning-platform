@@ -18,20 +18,12 @@
 
 package plptool;
 
-import java.util.ArrayList;
 import plptool.gui.ProjectDriver;
-
-/*****************************************************************************
- * IMPORT YOUR ISA PACKAGE HERE
- *****************************************************************************/
-import plptool.mips.*;
-
-// ...add 3rd party packages... //
 
 /**
  * This class associates an ISA implementation to its member classes.
- * Developers porting an ISA to PLP system will have to register their
- * implementation here. Starting with importing their package above.
+ * Developers porting an ISA to PLP Tool framework will have to register their
+ * implementation here.
  *
  * @author wira
  */

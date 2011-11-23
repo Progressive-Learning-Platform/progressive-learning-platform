@@ -1407,8 +1407,13 @@ public class ProjectDriver {
      * @return PLP_OK
      */
     public int newAsm(String name) {
-        asms.add(new PLPAsmSource("# New ASM File", name, asms.size()));
+        for(int i = 0; i < asms.size(); i++) {
+            if(asms.get(i).getAsmFilePath().equals(name))
+                return Msg.E("The file '" + name + "' already exists in " +
+                             "the project.", Constants.PLP_BACKEND_IMPORT_CONFLICT, this);
+        }
 
+        asms.add(new PLPAsmSource("# New ASM File", name, asms.size()));
         modified = true;
 
         if(g) refreshProjectView(true);

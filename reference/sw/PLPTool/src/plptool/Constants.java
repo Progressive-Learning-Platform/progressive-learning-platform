@@ -139,22 +139,6 @@ public class Constants {
     public static final int PLP_GUI_APPLET                       = 4;
     public static final int PLP_NON_INTERACTIVE                  = 8;
 
-    // Simulator flags
-    public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFF80;
-    public static final long PLP_SIM_FWD_EX_EX_RTYPE             = 0x00000001;
-    public static final long PLP_SIM_FWD_EX_EX_ITYPE             = 0x00000002;
-    public static final long PLP_SIM_FWD_EX_RF                   = 0x00000004;
-    public static final long PLP_SIM_FWD_MEM_MEM                 = 0x00000008;
-    public static final long PLP_SIM_FWD_MEM_EX_RTYPE            = 0x00000010;
-    public static final long PLP_SIM_FWD_MEM_EX_ITYPE            = 0x00000020;
-    public static final long PLP_SIM_FWD_MEM_EX_LW               = 0x00000040;
-    public static final long PLP_SIM_IF_STALL_SET                = 0x00000100;
-    public static final long PLP_SIM_ID_STALL_SET                = 0x00000200;
-    public static final long PLP_SIM_EX_STALL_SET                = 0x00000400;
-    public static final long PLP_SIM_MEM_STALL_SET               = 0x00000800;
-    public static final long PLP_SIM_IRQ                         = 0x10000000;
-    public static final long PLP_SIM_IRQ_SERVICED                = 0x20000000;
-
     // General
     public static final int PLP_NUMBER_ERROR                     = -1;
     public static final int PLP_OK                               = 0;
