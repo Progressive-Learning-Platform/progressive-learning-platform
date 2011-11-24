@@ -26,6 +26,10 @@ import plptool.Msg;
 import plptool.Constants;
 import plptool.ArchRegistry;
 
+import java.io.FileInputStream;
+import java.io.File;
+import java.util.Scanner;
+
 /**
  * The main class of the application.
  */
@@ -90,57 +94,57 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {
 
-        // Silent mode
-        if(args.length >= 1 && args[0].equals("--suppress-output")) {
-            Msg.silent = true;
-            if(args.length > 1) {
-                String[] newargs = new String[args.length - 1];
-                System.arraycopy(args, 1, newargs, 0, newargs.length);
-                args = newargs;
-            } else
-                args = new String[0];
+        // Print third party licensing information and quit
+        if(args.length >= 1 && args[0].equals("--license")) {
+            Msg.M(Constants.copyrightString + "\n");
+            Msg.M(Constants.thirdPartyCopyrightString + "\n");
+            return;
         }
 
-        Msg.M("\n" + Constants.copyrightString);
-        Msg.M("");
-
-        java.io.File fileToOpen = null;
-
         // Print buildinfo and quit
-        if(args.length == 1 && args[0].equals("--buildinfo")) {
+        if(args.length >= 1 && args[0].equals("--buildinfo")) {
             Msg.M(plptool.Version.stamp);
             return;
         }
 
         // Remove config file / reset config and quit
-        if(args.length == 1 && args[0].equals("--removeconfig")) {
+        if(args.length >= 1 && args[0].equals("--removeconfig")) {
             ProjectDriver.removeConfig();
             return;
         }
 
-        // Debug level setting
-        if(args.length >= 2 && args[0].equals("-d")) {
-            Constants.debugLevel = Integer.parseInt(args[1]);
-            Msg.M("Debug level set to " + Constants.debugLevel);
-            if(args.length > 2) {
-                String[] newargs = new String[args.length - 2];
-                System.arraycopy(args, 2, newargs, 0, newargs.length);
-                args = newargs;
-            } else
-                args = new String[0];
+        int activeArgIndex = 0;
+        java.io.File fileToOpen = null;
+
+        for(int i = 0; i < args.length; i++) {
+            // Silent mode
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--suppress-output")) {
+                Msg.silent = true;
+                activeArgIndex++;
+            }
+
+            // Suppress warnings
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--suppress-warning")) {
+                Msg.suppressWarnings = true;
+                activeArgIndex++;
+            }
+
+            // Debug level setting
+            if(args.length >= activeArgIndex + 2 && args[i].equals("-d")) {
+                Constants.debugLevel = Integer.parseInt(args[i + 1]);
+                Msg.M("Debug level set to " + Constants.debugLevel);
+                activeArgIndex += 2;
+            }
         }
 
-        // Classroom mode
-        if(args.length >= 2 && args[0].equals("-x")) {
-            plptool.Config.devFontSize = Integer.parseInt(args[1]);
-            Msg.M("Classroom Demo Mode");
-            if(args.length > 2) {
-                String[] newargs = new String[args.length - 2];
-                System.arraycopy(args, 2, newargs, 0, newargs.length);
-                args = newargs;
-            } else
-                args = new String[0];
-        }
+        Msg.M(Constants.copyrightString + "\n");
+
+        if(args.length > activeArgIndex) {
+            String[] newargs = new String[args.length - activeArgIndex];
+            System.arraycopy(args, activeArgIndex, newargs, 0, newargs.length);
+            args = newargs;
+        } else
+            args = new String[0];
 
         if(Constants.debugLevel >= 1)
             plptool.PLPToolbox.getOS(true);
@@ -160,7 +164,19 @@ public class PLPToolApp extends SingleFrameApplication {
                     plp.simulate();
                 plp.getArch().launchSimulatorCLI();
             } else if(args.length == 3) {
-
+                try {
+                    FileInputStream in = new FileInputStream(new File(args[2]));
+                    Scanner sIn = new Scanner(in);
+                    ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
+                    if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
+                    if(plp.asm.isAssembled())
+                        plp.simulate();
+                    Msg.silent = false;
+                    while(sIn.hasNext())
+                        plp.getArch().simCLICommand(sIn.nextLine());
+                } catch(Exception e) {
+                    System.out.println("Unable to open/run the script '" + args[2] + "'");
+                }
             } else {
                 System.out.println("Usage: PLPTool -s <plpfile> [script]");
             }
@@ -173,8 +189,10 @@ public class PLPToolApp extends SingleFrameApplication {
         } else if(args.length == 0) {
             launch(PLPToolApp.class, args);
         } else {
-            Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
-            System.out.println();
+            if(!args[0].equals("--help")) {
+                Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
+                System.out.println();
+            }
             System.out.println("Usage:\n");
             System.out.println("  java -jar PLPTool.jar");
             System.out.println("       Launch PLP Tool GUI");
@@ -185,11 +203,11 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("Non-GUI options:\n");
             System.out.println("  -s   <plpfile> [script]");
             System.out.println("       Launch the command line simulator to simulate <plpfile>. Providing a [script] will ");
-            System.out.println("       make the simulation non-interactive.");
+            System.out.println("       launch the simulator in non-interactive mode.");
             System.out.println();
             System.out.println("  -plp <plpfile> [command]");
             System.out.println("       If no command is specified, print out the list of source files contained in <plpfile>.");
-            System.out.println("       This will also create <plpfile> if it does not exist with main.asm as source file.");
+            System.out.println("       This will also create <plpfile> if it does not exist.");
             System.out.println();
             ProjectFileManipulator.helpMessage();
         }

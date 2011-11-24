@@ -68,6 +68,11 @@ public class Msg {
     public static boolean silent = false;
 
     /**
+     * Suppress warnings.
+     */
+    public static boolean suppressWarnings = false;
+
+    /**
      * This function either prints out an error message to stdout or the
      * specified JTextArea in the output pointer.
      *
@@ -105,6 +110,8 @@ public class Msg {
      * @param objIdentifier A reference to the offending object.
      */
     public static void W(String warningStr, Object objIdentifier) {
+        if(suppressWarnings) return;
+
         if(objIdentifier != null)
             if(output == null)
                 System.out.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr);

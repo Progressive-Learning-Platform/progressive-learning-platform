@@ -26,8 +26,24 @@ public class Constants {
     public static final String versionString = "4.0";
     public static final String copyrightString =
             "PLP Software Tool version " + versionString + "\n" +
-            "Copyright 2010-2011 PLP Contributors\n" +
+            "Copyright 2010-2011 PLP Contributors.\n" +
+            "Run with '--license' option for third party licensing information.\n" +
             "This software is licensed under GPLv3.";
+
+    public static final String thirdPartyCopyrightString =
+            "This software uses the following third party software:\n\n" +
+            "Apache Commons Compress\n" +
+            "Copyright 2002-2010 The Apache Software Foundation\n" +
+            "Licensed under Apache License version 2.0\n\n" +
+            "RXTX\n" +
+            "Copyright 1997-2007 Trent Jarvi tjarvi@qbang.org and others.\n" +
+            "Licensed under LGPL v2.1 + Linking Over Controlled Interface.\n" +
+            "http://users.frii.com/jarvi/rxtx/license.html for more licensing information of this software.\n\n" +
+            "JUNG - Java Universal Network/Graph Framework\n" +
+            "Copyright JUNG Developers\n" +
+            "Licensed under the Berkeley Software Distribution (BSD) License" +
+            "";
+
     public static final String manualURI = "http://code.google.com/p/progressive-learning-platform/wiki/UserManual";
     public static final String issueEntryURI = "http://code.google.com/p/progressive-learning-platform/issues/entry";
     public static final String issueTrackerURI = "http://code.google.com/p/progressive-learning-platform/issues/list";
