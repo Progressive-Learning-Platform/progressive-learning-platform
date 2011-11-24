@@ -70,6 +70,8 @@ public class SimCLI {
             }
             else {
                 Msg.lastError = 0;
+                boolean breakpoint = false;
+                long startCount = 0;
                 int steps = PLPToolbox.parseNumInt(tokens[1]);
                 long time = 0;
                 if(steps > Constants.PLP_LONG_SIM) {
@@ -77,12 +79,13 @@ public class SimCLI {
                         Msg.M("This might take a while, turning on silent mode.");
                         silent = true;
                     }
+                    startCount = core.getInstrCount();
                     time = System.currentTimeMillis();
                 }
-                for(int i = 0; i < steps && Msg.lastError == 0 && !core.breakpoints.isBreakpoint(core.visibleAddr); i++) {
+                for(int i = 0; i < steps && Msg.lastError == 0 && !breakpoint; i++) {
                     if(core.step() != Constants.PLP_OK)
-                    Msg.E("Simulation is stale. Please reset.",
-                             Constants.PLP_SIM_STALE, null);
+                        Msg.E("Simulation is stale. Please reset.",
+                                 Constants.PLP_SIM_STALE, null);
                     else if(!silent) {
                         Msg.M("");
                         core.wb_stage.printinstr();
@@ -92,12 +95,14 @@ public class SimCLI {
                         core.printfrontend();
                         Msg.M("-------------------------------------");
                     }
-
+                    breakpoint = core.breakpoints.isBreakpoint(core.visibleAddr);
                     if(core.breakpoints.isBreakpoint(core.visibleAddr))
-                        Msg.M("Breakpoint at " + PLPToolbox.format32Hex(core.visibleAddr));
+                        Msg.M("--- stopping at breakpoint: " + PLPToolbox.format32Hex(core.visibleAddr));
                 }
                 if(steps > Constants.PLP_LONG_SIM)
-                    Msg.M("That took " + (System.currentTimeMillis() - time) + " milliseconds.");
+                    startCount = core.getInstrCount() - startCount;
+                    Msg.M("--- executed " + startCount + " instructions in " +
+                          (System.currentTimeMillis() - time) + " milliseconds.");
             }
         }
         else if(input.equals("r")) {
@@ -409,6 +414,12 @@ public class SimCLI {
             else
                 simCLHelp(6);
         }
+        else if(tokens[0].equals("echo")) {
+            if(tokens.length == 1)
+                Msg.M("");
+            else
+                Msg.M(input.substring(5, input.length()));
+        }
         else if(input.equals("mod_forwarding")) {
             Msg.M("EX->EX R-type: " + core.forwarding.ex_ex_rtype);
             Msg.M("EX->EX I-type: " + core.forwarding.ex_ex_itype);
@@ -449,6 +460,9 @@ public class SimCLI {
         else if(input.toLowerCase().equals("wira sucks")) {
             Msg.M("No, he doesn't.");
         }
+        else if(input.equals("help")) {
+            simCLHelp(0);
+        }
         else if(input.equals("help sim")) {
             simCLHelp(1);
         }
@@ -468,18 +482,11 @@ public class SimCLI {
             simCLHelp(6);
         }
         else {
-            simCLHelp(0);
+            Msg.M("Unknown command: " + input);
         }
 
         if(Msg.lastError != 0 && plp.g())
-            plp.g_err.setError(Msg.lastError);
-
-        if(prompt) {
-            Msg.M("");
-            Msg.m(String.format("%08x", core.getFlags()) +
-                                 " " + core.getInstrCount() +
-                                 " sim > ");
-        }
+            plp.g_err.setError(Msg.lastError);        
     }
 
     public static void simCL(plptool.gui.ProjectDriver plp) {
@@ -493,8 +500,16 @@ public class SimCLI {
                              " " + plp.sim.getInstrCount() +
                              " sim > ");
 
-        while(!(input = stdIn.readLine().trim()).equals("q"))
-           simCLCommand(input, plp);
+        while(!(input = stdIn.readLine().trim()).equals("q")) {
+            simCLCommand(input, plp);
+           
+            if(prompt) {
+                Msg.M("");
+                Msg.m(String.format("%08x", plp.sim.getFlags()) +
+                                    " " + plp.sim.getInstrCount() +
+                                    " sim > ");
+            }
+        }
 
         plp.ioreg.removeAllModules();
         Msg.M("See ya!");
