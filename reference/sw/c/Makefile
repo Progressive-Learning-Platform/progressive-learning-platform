@@ -4,6 +4,7 @@ DIRS=\
 	pp\
 	cc\
 	bb\
+	plpc\
 
 clean.dirs:	$(addsuffix .clean, $(DIRS))
 build.dirs:	$(addsuffix .build, $(DIRS))
@@ -20,7 +21,7 @@ build.dirs:	$(addsuffix .build, $(DIRS))
 
 clean_bin:
 	+@echo clean binaries
-	-@rm -f bin/plpcc bin/plppp bin/plpbb
+	-@rm -f bin/plpcc bin/plppp bin/plpbb bin/plpc
 	-@rmdir bin
 
 copy_bin:
@@ -29,6 +30,7 @@ copy_bin:
 	+@cp pp/plppp bin
 	+@cp cc/plpcc bin
 	+@cp bb/plpbb bin
+	+@cp plpc/plpc bin
 
 clean: clean.dirs clean_bin
 build: build.dirs copy_bin
