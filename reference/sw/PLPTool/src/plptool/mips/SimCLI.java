@@ -396,8 +396,10 @@ public class SimCLI {
         else if(tokens[0].equals("bp") && tokens.length > 1) {
             if(tokens[1].equals("set") && tokens.length == 3) {
                 long addr = PLPToolbox.parseNum(tokens[2]);
-                core.breakpoints.add(addr, plp.asm.getFileIndex(addr), plp.asm.getLineNum(addr));
-                Msg.M("Breakpoint set " + PLPToolbox.format32Hex(addr));
+                if(addr > -1) {
+                    core.breakpoints.add(addr, plp.asm.getFileIndex(addr), plp.asm.getLineNum(addr));
+                    Msg.M("Breakpoint set " + PLPToolbox.format32Hex(addr));
+                }
             }
             else if(tokens[1].equals("list")) {
                 Msg.M("Breakpoints:");
