@@ -340,6 +340,7 @@ public class SimCLI {
             else {
                 String iAsm = "";
                 long addr;
+                long base = PLPToolbox.tryResolveLabel(tokens[1], asm);
                 for(int j = 2; j < tokens.length; j++)
                     iAsm += tokens[j] + " ";
                 Asm inlineAsm = new Asm(iAsm, "PLPSimCL inline asm");
@@ -347,17 +348,18 @@ public class SimCLI {
                     inlineAsm.setSymTable(plp.asm.getSymTable());
                     inlineAsm.assemble();
                 }
-                if(inlineAsm.isAssembled()) {
+                if(inlineAsm.isAssembled() && base > -1) {
                     Msg.M("\nCode injected:");
                     Msg.M("==============");
                     for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
-                        addr = PLPToolbox.parseNum(tokens[1]) + 4 * j;
+                        addr = base + 4 * j;
                         core.bus.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
                         Msg.M(String.format("%08x", addr) +
                                            "   " + PLPToolbox.asciiWord(inlineAsm.getObjectCode()[j]) +
                                            "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
                     }
-                }
+                } else
+                    Msg.E("Code injection failed.", Constants.PLP_GENERIC_ERROR, null);
             }
         }
         else if(input.equals("pvars")) {
