@@ -46,6 +46,26 @@ public class PLPToolbox {
         }
     }
 
+    public static long parseNumSilent(String number) {
+        try {
+
+        if(number.startsWith("0x") || number.startsWith("0h")) {
+            number = number.substring(2);
+            return Long.parseLong(number, 16);
+        }
+        else if(number.startsWith("0b")) {
+            number = number.substring(2);
+            return Long.parseLong(number, 2);
+        }
+        else
+            return Long.parseLong(number);
+
+        } catch(Exception e) {
+            Msg.lastError = -1;
+            return Constants.PLP_NUMBER_ERROR;
+        }
+    }
+
     public static int parseNumInt(String number) {
         try {
 
@@ -65,6 +85,16 @@ public class PLPToolbox {
             return Msg.E("parseNum: '" + number + "' is not a valid number",
                             Constants.PLP_NUMBER_ERROR, null);
         }
+    }
+
+    public static long tryResolveLabel(String label, PLPAsm asm) {
+        long addr = -1;
+
+        addr = asm.resolveAddress(label);
+        if(addr == -1)
+            addr = parseNumSilent(label);
+
+        return addr;
     }
 
     public static String format32Hex(long num) {

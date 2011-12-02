@@ -343,8 +343,10 @@ public class SimCLI {
                 for(int j = 2; j < tokens.length; j++)
                     iAsm += tokens[j] + " ";
                 Asm inlineAsm = new Asm(iAsm, "PLPSimCL inline asm");
-                if(inlineAsm.preprocess(0) == Constants.PLP_OK)
+                if(inlineAsm.preprocess(0) == Constants.PLP_OK) {
+                    inlineAsm.setSymTable(plp.asm.getSymTable());
                     inlineAsm.assemble();
+                }
                 if(inlineAsm.isAssembled()) {
                     Msg.M("\nCode injected:");
                     Msg.M("==============");
@@ -395,16 +397,24 @@ public class SimCLI {
         }
         else if(tokens[0].equals("bp") && tokens.length > 1) {
             if(tokens[1].equals("set") && tokens.length == 3) {
-                long addr = PLPToolbox.parseNum(tokens[2]);
+                // check if label instead of an address is used
+                long addrLabel = plp.asm.resolveAddress(tokens[2]);
+                long addr = (addrLabel == -1) ? PLPToolbox.parseNumSilent(tokens[2]) : addrLabel;
                 if(addr > -1) {
                     core.breakpoints.add(addr, plp.asm.getFileIndex(addr), plp.asm.getLineNum(addr));
-                    Msg.M("Breakpoint set " + PLPToolbox.format32Hex(addr));
-                }
+                    Msg.M("Breakpoint set at " + PLPToolbox.format32Hex(addr) + (addrLabel != -1 ? " (" + tokens[2] + ")" : ""));
+                } else
+                    Msg.E("'" + tokens[2] + "' is not a valid number or label.",
+                            Constants.PLP_GENERIC_ERROR, null);
             }
             else if(tokens[1].equals("list")) {
                 Msg.M("Breakpoints:");
+                long addr;
+                String label;
                 for(int i = 0; i < core.breakpoints.size(); i++) {
-                    Msg.M(i + "\t" + PLPToolbox.format32Hex(core.breakpoints.getBreakpointAddress(i)));
+                    addr = core.breakpoints.getBreakpointAddress(i);
+                    label = plp.asm.lookupLabel(addr);
+                    Msg.M(i + "\t" + PLPToolbox.format32Hex(addr) + (label != null ? " " + label : ""));
                 }
             }
             else if(tokens[1].equals("clear")) {
@@ -415,6 +425,39 @@ public class SimCLI {
             }
             else
                 simCLHelp(6);
+        }
+        else if(tokens[0].equals("assert")) {
+            if(tokens.length == 4) {
+                int index = PLPToolbox.parseNumInt(tokens[1]);
+                long addr = PLPToolbox.tryResolveLabel(tokens[2], asm);
+                long assertvalue = PLPToolbox.parseNum(tokens[3]);
+                Long value;
+                if(index > -1 && addr > -1 && assertvalue > -1) {
+                    value = (Long) core.bus.getRefMod(index).read(addr);
+                    if(value != null && (long) value == assertvalue)
+                        Msg.M("True");
+                    else
+                        Msg.M("False");
+                } else
+                    Msg.M("False");
+            } else
+                Msg.M("Usage: assert <module index in the BUS> <address/label> <value>");
+        }
+        else if(tokens[0].equals("assertreg")) {
+            if(tokens.length == 3) {
+                long addr = PLPToolbox.parseNum(tokens[1]);
+                long assertvalue = PLPToolbox.parseNum(tokens[2]);
+                Long value;
+                if(addr > -1 && assertvalue > -1) {
+                    value = (Long) core.regfile.read(addr);
+                    if(value != null && (long) value == assertvalue)
+                        Msg.M("True");
+                    else
+                        Msg.M("False");
+                } else
+                    Msg.M("False");
+            } else
+                Msg.M("Usage: assertreg <register address> <value>");
         }
         else if(tokens[0].equals("echo")) {
             if(tokens.length == 1)
@@ -583,10 +626,14 @@ public class SimCLI {
                 Msg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
                 Msg.M("\n silent\n\tToggle silent mode (default off).");
                 Msg.M("\n cycleaccurate\n\tToggle cycle-accurate simulation mode (default off).");
+                Msg.M("\n assert <module index in the BUS> <address/label> <value>\n\tAssert the contents of an address to the specified value.");
+                Msg.M("\n assertreg <register address> <value>\n\tAssert a register's contents to be the specified value.");
+
+                break;
 
             case 6:
                 Msg.M("\nBreakpoints.");
-                Msg.M("\n bp set <address>\n\tSet a breakpoint at <address>.");
+                Msg.M("\n bp set <address/label>\n\tSet a breakpoint at <address> or <label>.");
                 Msg.M("\n bp list\n\tList breakpoints and their indices.");
                 Msg.M("\n bp remove <index>\n\tRemove breakpoint specified by <index>, as listed in 'bp list' command.");
                 Msg.M("\n bp clear\n\tClear all breakpoints.");
