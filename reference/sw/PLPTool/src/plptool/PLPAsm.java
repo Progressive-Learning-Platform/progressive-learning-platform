@@ -159,7 +159,7 @@ public abstract class PLPAsm {
      *
      * @return Returns the symbol table as a HashMap.
      */
-    public HashMap getSymTable() {
+    public HashMap<String, Long> getSymTable() {
         return symTable;
     }
 
