@@ -626,7 +626,7 @@ public class SimCLI {
                 Msg.M("\n asm <address> <asm>\n\tAssemble <asm> and inject code starting at <address>.");
                 Msg.M("\n silent\n\tToggle silent mode (default off).");
                 Msg.M("\n cycleaccurate\n\tToggle cycle-accurate simulation mode (default off).");
-                Msg.M("\n assert <module index in the BUS> <address/label> <value>\n\tAssert the contents of an address to the specified value.");
+                Msg.M("\n assert <module index in the BUS> <address/label> <value>\n\tAssert the contents of an address to be the specified value.");
                 Msg.M("\n assertreg <register address> <value>\n\tAssert a register's contents to be the specified value.");
 
                 break;
