@@ -22,6 +22,7 @@ import plptool.Constants;
 import plptool.Msg;
 import plptool.PLPSimBusModule;
 import plptool.mips.*;
+import plptool.PLPToolbox;
 
 /**
  * PLP interrupt controller
@@ -94,6 +95,20 @@ public class InterruptController extends PLPSimBusModule {
             return (Long) super.readReg(addr) | 0x1L;
         } else
             return super.readReg(addr);
+    }
+
+    @Override
+    public Object hook(Object param) {
+        String args = (String) param;
+        args = args.trim();
+        String tokens[] = args.split("[ ]+");
+        if(tokens[0].equals("stat")) {
+            Msg.M("stat: " + PLPToolbox.format32Hex((Long) super.readReg(startAddr+4) | 0x1L));
+        } else if(tokens[0].equals("mask")) {
+            Msg.M("mask: " + PLPToolbox.format32Hex((Long) super.readReg(startAddr)));
+        }
+
+        return null;
     }
 
     @Override
