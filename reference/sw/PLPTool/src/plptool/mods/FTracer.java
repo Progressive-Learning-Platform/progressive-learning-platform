@@ -30,9 +30,14 @@ import plptool.Msg;
  */
 public class FTracer extends PLPSimBusModule {
 
+    private boolean record = false;
+    private boolean stdout = true;
+    private StringBuilder recordStr;
+
     public FTracer(long addr, long size) {
         super(addr, addr + size, true);
-        Msg.M("TRACER Registered");
+        Msg.M("TRACER Registered - Core reset required");
+        recordStr = new StringBuilder();
     }
 
     public int eval() {
@@ -52,8 +57,16 @@ public class FTracer extends PLPSimBusModule {
     @Override
     public int write(long addr, Object data, boolean isInstr) {
         //trace!
+        String str = "";
         if (!isInstr)
-            Msg.M(String.format("[TRACE] W %08x %08x", addr, data ));
+            str = String.format("[TRACE] W %08x %08x", addr, data );
+        if(stdout && !isInstr)
+            Msg.M(str);
+        if(record) {
+            recordStr.append(str);
+            recordStr.append("\n");
+        }
+        
         return super.writeReg(addr, data, isInstr);
     }
 
@@ -63,8 +76,14 @@ public class FTracer extends PLPSimBusModule {
 
         //trace ret
         char rType = super.isInstr(addr) ? 'I' : 'R';
+        String str = String.format("[TRACE] %c %08x %08x", rType, addr, (Long)ret);
 
-        Msg.M(String.format("[TRACE] %c %08x %08x", rType, addr, (Long)ret));
+        if(stdout)
+            Msg.M(str);
+        if(record) {
+            recordStr.append(str);
+            recordStr.append("\n");
+        }
 
         return ret;
     }
@@ -72,6 +91,35 @@ public class FTracer extends PLPSimBusModule {
     @Override
     public void reset() {
 
+    }
+
+    /**
+     * Add hooks for the command line simulator.
+     *
+     * @param param String passed by the CLI simulator
+     * @return null
+     */
+    @Override
+    public Object hook(Object param) {
+        String args = (String) param;
+        args = args.trim();
+        String tokens[] = args.split("\\s+");
+        
+        if(args.equals("record")) {
+            record = true;
+        } else if (args.equals("stop")) {
+            record = false;
+        } else if(args.equals("stdout on")) {
+            stdout = true;
+        } else if(args.equals("stdout off")) {
+            stdout = false;
+        } else if(args.equals("print")) {
+            Msg.M(recordStr.toString());
+        } else if(args.equals("clear")) {
+            recordStr = new StringBuilder();
+        }
+
+        return null;
     }
 
     @Override

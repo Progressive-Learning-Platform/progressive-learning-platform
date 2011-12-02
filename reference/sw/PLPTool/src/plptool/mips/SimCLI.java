@@ -34,512 +34,576 @@ public class SimCLI {
     
     static boolean silent = false;
     static boolean prompt = true;
+    static SimCore core;
+    static Asm asm;
+    static plptool.mods.IORegistry ioReg;
+    static String input;
+    static String[] tokens;
 
-    public static void simCLCommand(String input, plptool.gui.ProjectDriver plp) {
+    public static void simCLCommand(String cmd, plptool.gui.ProjectDriver plp) {
         if(plp != null && plp.g())
             plp.g_err.clearError();
 
-        SimCore core = (SimCore) plp.sim;
-        Asm asm = (Asm) plp.asm;
-        plptool.mods.IORegistry ioReg = plp.ioreg;
+        core = (SimCore) plp.sim;
+        asm = (Asm) plp.asm;
+        ioReg = plp.ioreg;
+        input = cmd.trim();
 
-        String tokens[] = input.split(" ");
+        tokens = input.split(" ");
         if(input.equals("version")) {
             Msg.M(plptool.Constants.versionString);
         }
-        if(input.equals("i")) {
+        else if(input.equals("i")) {
         }
-        else if(input.equals("s")) {
-            if(core.step() != Constants.PLP_OK)
-                 Msg.E("Simulation is stale. Please reset.",
-                          Constants.PLP_SIM_STALE, null);
-            else if(!silent) {
-                Msg.M("");
-                core.wb_stage.printinstr();
-                core.mem_stage.printinstr();
-                core.ex_stage.printinstr();
-                core.id_stage.printinstr();
-                core.printfrontend();
-                Msg.M("-------------------------------------");
-            }
-        }
+        else if(input.equals("s"))              cmd_s();
+        else if(tokens[0].equals("s"))          cmd_s_arg();
+        else if(input.equals("r"))              cmd_r();
+        else if(input.equals("pram"))           cmd_pram();
+        else if(tokens[0].equals("pram"))       cmd_pram_arg();
+        else if(input.equals("preg"))           cmd_preg();
+        else if(tokens[0].equals("preg"))       cmd_preg_arg();
+        else if(input.equals("pfd"))            cmd_pfd();
+        else if(tokens[0].equals("pprg"))       cmd_pprg();
+        else if(input.equals("pasm"))           cmd_pasm();
+        else if(input.equals("pinstr"))         cmd_pinstr();
+        else if(tokens[0].equals("wpc"))        cmd_wpc();
+        else if(tokens[0].equals("w"))          cmd_w();
+        else if(tokens[0].equals("wbus"))       cmd_wbus();
+        else if(tokens[0].equals("rbus"))       cmd_rbus();
+        else if(input.equals("listio"))         cmd_listio();
+        else if(input.equals("enableio"))       cmd_enableio();
+        else if(tokens[0].equals("enableio"))   cmd_enableio_arg();
+        else if(input.equals("evalio"))         cmd_evalio();
+        else if(tokens[0].equals("evalio"))     cmd_evalio_arg();
+        else if(input.equals("disableio"))      cmd_disableio();
+        else if(tokens[0].equals("disableio"))  cmd_disableio_arg();
+        else if(tokens[0].equals("cleario"))    cmd_cleario();
+        else if(input.equals("listmods"))       cmd_listmods();
+        else if(input.equals("attachedmods"))   cmd_attachedmods();
+        else if(input.equals("listpresets"))    cmd_listpresets();
+        else if(tokens[0].equals("loadpreset")) cmd_loadpreset();
+        else if(tokens[0].equals("addmod"))     cmd_addmod();
+        else if(tokens[0].equals("rmmod"))      cmd_rmmod();
+        else if(tokens[0].equals("j"))          cmd_j();
+        else if(tokens[0].equals("asm"))        cmd_asm();
+        else if(input.equals("pvars"))          cmd_pvars();
+        else if(input.equals("pnextvars"))      cmd_pnextvars();
+        else if(input.equals("silent"))         cmd_silent();
+        else if(input.equals("cycleaccurate"))  cmd_cycleaccurate();
+        else if(tokens[0].equals("bp"))         cmd_bp();
+        else if(tokens[0].equals("assert"))     cmd_assert();
+        else if(tokens[0].equals("assertreg"))  cmd_assertreg();
+        else if(tokens[0].equals("echo"))       cmd_echo();
+        else if(tokens[0].equals("modhook"))    cmd_modhook();
+        else if(input.equals("flags"))          cmd_flags();
+        else if(input.equals("fwd"))            cmd_fwd();
+        else if(input.equals("jvm"))            cmd_jvm();
+        else if(input.equals("help"))           simCLHelp(0);
+        else if(input.equals("help sim"))       simCLHelp(1);
+        else if(input.equals("help print"))     simCLHelp(2);
+        else if(input.equals("help bus"))       simCLHelp(3);
+        else if(input.equals("help mods"))      simCLHelp(4);
+        else if(input.equals("help misc"))      simCLHelp(5);
+        else if(input.equals("help bp"))        simCLHelp(6);
+        else if(input.toLowerCase().equals("wira sucks"))   Msg.M("No, he doesn't.");
+        else Msg.M("Unknown command: " + input);
+        
+        if(Msg.lastError != 0 && plp.g())
+            plp.g_err.setError(Msg.lastError);        
+    }
 
-        else if(tokens[0].equals("s")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: s <number of instructions>");
-            }
-            else {
-                Msg.lastError = 0;
-                boolean breakpoint = false;
-                long startCount = 0;
-                int steps = PLPToolbox.parseNumInt(tokens[1]);
-                long time = 0;
-                if(steps > Constants.PLP_LONG_SIM) {
-                    if(!silent) {
-                        Msg.M("This might take a while, turning on silent mode.");
-                        silent = true;
-                    }
-                    startCount = core.getInstrCount();
-                    time = System.currentTimeMillis();
-                }
-                for(int i = 0; i < steps && Msg.lastError == 0 && !breakpoint; i++) {
-                    if(core.step() != Constants.PLP_OK)
-                        Msg.E("Simulation is stale. Please reset.",
-                                 Constants.PLP_SIM_STALE, null);
-                    else if(!silent) {
-                        Msg.M("");
-                        core.wb_stage.printinstr();
-                        core.mem_stage.printinstr();
-                        core.ex_stage.printinstr();
-                        core.id_stage.printinstr();
-                        core.printfrontend();
-                        Msg.M("-------------------------------------");
-                    }
-                    breakpoint = core.breakpoints.isBreakpoint(core.visibleAddr);
-                    if(core.breakpoints.isBreakpoint(core.visibleAddr))
-                        Msg.M("--- stopping at breakpoint: " + PLPToolbox.format32Hex(core.visibleAddr));
-                }
-                if(steps > Constants.PLP_LONG_SIM)
-                    startCount = core.getInstrCount() - startCount;
-                    Msg.M("--- executed " + startCount + " instructions in " +
-                          (System.currentTimeMillis() - time) + " milliseconds.");
-            }
-        }
-        else if(input.equals("r")) {
-            core.reset();
-            core.printfrontend();
-        }
-        else if(input.equals("pram")) {
-
-            Msg.M("\nMain memory listing");
-            Msg.M("===================");
-            for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
-                if(plp.ioreg.getType(i) == 0) {
-                    Msg.M("Attached memory in bus position " + plp.ioreg.getPositionInBus(i));
-                    ((plptool.mods.MemModule) plp.ioreg.getModule(i)).printAll(core.pc.eval());
-                }
-            }
-        }
-        else if(tokens[0].equals("pram")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: pram <address>");
-            }
-            else {
-                for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
-                    if(plp.ioreg.getType(i) == 0) {
-                        Msg.M("Memory attached in bus position " + plp.ioreg.getPositionInBus(i));
-                        ((plptool.mods.MemModule) plp.ioreg.getModule(i)).print(PLPToolbox.parseNum(tokens[1]));
-                    }
-                }
-            }
-        }
-        else if(input.equals("preg")) {
-            long data;
-            Msg.M("\nRegisters listing");
-            Msg.M("=================");
-            for(int j = 0; j < 32; j++) {
-                data = (Long) core.regfile.read(j);
-                Msg.M(j + "\t" +
-                                   String.format("%08x", data) + "\t" +
-                                   PLPToolbox.asciiWord(data));
-            }
-        }
-        else if(tokens[0].equals("preg")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: preg <address>");
-            }
-            else {
-                long addr = PLPToolbox.parseNum(tokens[1]);
-                core.regfile.print(addr);
-            }
-        }
-        else if(input.equals("pfd")) {
-            Msg.M("\nFrontend / fetch stage state");
-            Msg.M("============================");
-            core.printfrontend();
-        }
-        else if(tokens[0].equals("pprg")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: pprg <index of memory module on the BUS>");
-            }
-            else {
-                Msg.M("\nProgram Listing");
-                Msg.M("===============");
-                core.printProgram(PLPToolbox.parseNumInt(tokens[1]), core.pc.eval());
-            }
-        }
-        else if(input.equals("pasm")) {
-            Formatter.prettyPrint(asm);
-        }
-        else if(input.equals("pinstr")) {
-            Msg.M("\nIn-flight instructions");
-            Msg.M("======================");
+    public static void cmd_s() {
+        if(core.step() != Constants.PLP_OK)
+             Msg.E("Simulation is stale. Please reset.",
+                      Constants.PLP_SIM_STALE, null);
+        else if(!silent) {
+            Msg.M("");
             core.wb_stage.printinstr();
             core.mem_stage.printinstr();
             core.ex_stage.printinstr();
             core.id_stage.printinstr();
             core.printfrontend();
+            Msg.M("-------------------------------------");
         }
-        else if(tokens[0].equals("wpc")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: wpc <address>");
-            }
-            else {
-                core.softreset();
-                core.pc.write(PLPToolbox.parseNum(tokens[1]));
-                core.printfrontend();
-            }
-        }
-        else if(tokens[0].equals("w")) {
-            if(tokens.length != 3) {
-                Msg.M("Usage: w <address> <data>");
-            }
-            else {
-                core.bus.write(PLPToolbox.parseNum(tokens[1]),
-                                  PLPToolbox.parseNum(tokens[2]), false);
-            }
-        }
-        else if(tokens[0].equals("wbus")) {
-            if(tokens.length != 3) {
-                Msg.M("Usage: wbus <address> <data>");
-            }
-            else {
-                core.bus.write(PLPToolbox.parseNum(tokens[1]),
-                                  PLPToolbox.parseNum(tokens[2]), false);
-            }
-        }
-        else if(tokens[0].equals("rbus")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: rbus <address>");
-            }
-            else {
-                long addr = PLPToolbox.parseNum(tokens[1]);
-                Object ret = core.bus.read(addr);
-                if(ret != null) {
-                    long value = (Long) ret;
-                    Msg.M(String.format("0x%08x=", addr) +
-                                       String.format("0x%08x", value));
-                }
-            }
-        }
-        else if(input.equals("listio")) {
-            for(int i = 0; i < core.bus.getNumOfMods(); i++) {
-                long start = core.bus.getModStartAddress(i);
-                long end = core.bus.getModEndAddress(i);
-                Msg.M(i + ": " +
-                                   ((start < 0) ? "Unmapped" : String.format("0x%08x", start)) + "-" +
-                                   ((end   < 0) ? "Unmapped" : String.format("0x%08x", end)) + " " +
-                                   core.bus.introduceMod(i) +
-                                   (core.bus.getEnabled(i) ? " (enabled)" : " (disabled)"));
-            }
-        }
-        else if(input.equals("enableio")) {
-            core.bus.enableAllModules();
-        }
-        else if(tokens[0].equals("enableio")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: enableio <index>");
-            }
-            else {
-                core.bus.enableMod((int) PLPToolbox.parseNum(tokens[1]));
-            }
-        }
-        else if(input.equals("evalio")) {
-            core.bus.eval();
-        }
-        else if(tokens[0].equals("evalio")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: evalio <index>");
-            }
-            else {
-                core.bus.eval((int) PLPToolbox.parseNum(tokens[1]));
-            }
-        }
-        else if(input.equals("disableio")) {
-            core.bus.disableAllModules();
-        }
-        else if(tokens[0].equals("disableio")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: disableio <index>");
-            }
-            else {
-                core.bus.disableMod((int) PLPToolbox.parseNum(tokens[1]));
-            }
-        }
-        else if(tokens[0].equals("cleario")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: cleario <index>");
-            }
-            else {
-                core.bus.clearModRegisters((int) PLPToolbox.parseNum(tokens[1]));
-            }
-        }
-        else if(input.equals("listmods")) {
-            Msg.M("Registered modules:");
-            Object modInfo[][] = ioReg.getAvailableModulesInformation();
-            for(int i = 0; i < modInfo.length; i++) {
-                Msg.M(i + ": " + modInfo[i][0] + " - " + modInfo[i][3]);
-            }
-        }
-        else if(input.equals("attachedmods")) {
-            Msg.M("Attached modules:");
-            Object mods[] = ioReg.getAttachedModules();
-            for(int i = 0; i < mods.length; i++) {
-                Msg.M(i + ": "
-                        + ((plptool.PLPSimBusModule)mods[i]).introduce() +
-                        " - position in bus: " + ioReg.getPositionInBus(i));
-            }
-        }
-        else if(input.equals("listpresets")) {
-            Msg.M("Registered presets:");
-            Object[][] presets = plptool.mods.Preset.presets;
-            for(int i = 0; i < presets.length; i++) {
-                Msg.M(i + ": " + presets[i][0]);
-            }
-        }
-        else if(tokens[0].equals("loadpreset")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: loadpreset <index>");
-            }
-            else {
-                plp.ioreg.loadPredefinedPreset(PLPToolbox.parseNumInt(tokens[1]));
-            }
-        }
-        else if(tokens[0].equals("addmod")) {
-            if(tokens.length != 4) {
-                Msg.M("Usage: addmod <mod ID> <address> <register file size>");
-            }
-            else {
-                ioReg.attachModuleToBus((int) PLPToolbox.parseNum(tokens[1]),
-                                        PLPToolbox.parseNum(tokens[2]),
-                                        PLPToolbox.parseNum(tokens[3]));
-            }
-        }
-        else if(tokens[0].equals("rmmod")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: rmmod <mod index in the REGISTRY>");
-            }
-            else {
-                ioReg.removeModule((int) PLPToolbox.parseNum(tokens[1]));
-            }
-        }
+    }
 
-        else if(tokens[0].equals("j")) {
-            if(tokens.length != 2) {
-                Msg.M("Usage: j <address>");
-            }
-            else {
-                core.pc.write(PLPToolbox.parseNum(tokens[1]));
-                core.printfrontend();
-            }
-        }
-        else if(tokens[0].equals("asm")) {
-            if(tokens.length < 3) {
-                Msg.M("Usage: asm <address> <in-line assembly>");
-            }
-            else {
-                String iAsm = "";
-                long addr;
-                long base = PLPToolbox.tryResolveLabel(tokens[1], asm);
-                for(int j = 2; j < tokens.length; j++)
-                    iAsm += tokens[j] + " ";
-                Asm inlineAsm = new Asm(iAsm, "PLPSimCL inline asm");
-                if(inlineAsm.preprocess(0) == Constants.PLP_OK) {
-                    inlineAsm.setSymTable(plp.asm.getSymTable());
-                    inlineAsm.assemble();
-                }
-                if(inlineAsm.isAssembled() && base > -1) {
-                    Msg.M("\nCode injected:");
-                    Msg.M("==============");
-                    for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
-                        addr = base + 4 * j;
-                        core.bus.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
-                        Msg.M(String.format("%08x", addr) +
-                                           "   " + PLPToolbox.asciiWord(inlineAsm.getObjectCode()[j]) +
-                                           "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
-                    }
-                } else
-                    Msg.E("Code injection failed.", Constants.PLP_GENERIC_ERROR, null);
-            }
-        }
-        else if(input.equals("pvars")) {
-            Msg.M("\nOutput side values of pipeline stages");
-            Msg.M("=====================================");
-            core.wb_stage.printvars();
-            core.mem_stage.printvars();
-            core.ex_stage.printvars();
-            core.id_stage.printvars();
-
-        }
-        else if(input.equals("pnextvars")) {
-            Msg.M("\nInput side values of pipeline registers");
-            Msg.M("=======================================");
-            core.wb_stage.printnextvars();
-            core.mem_stage.printnextvars();
-            core.ex_stage.printnextvars();
-            core.id_stage.printnextvars();
-        }
-        else if(input.equals("silent")) {
-            if(silent) {
-                silent = false;
-                Msg.M("Silent mode off.");
-            } else {
-                silent = true;
-                Msg.M("Silent mode on.");
-            }
-        }
-        else if(input.equals("cycleaccurate")) {
-            if(Config.simFunctional) {
-                Config.simFunctional = false;
-                Msg.M("Functional simulation mode off.");
-            } else {
-                Config.simFunctional = true;
-                Msg.M("Functional simulation mode on.");
-            }
-        }
-        else if(tokens[0].equals("bp") && tokens.length > 1) {
-            if(tokens[1].equals("set") && tokens.length == 3) {
-                // check if label instead of an address is used
-                long addrLabel = plp.asm.resolveAddress(tokens[2]);
-                long addr = (addrLabel == -1) ? PLPToolbox.parseNumSilent(tokens[2]) : addrLabel;
-                if(addr > -1) {
-                    core.breakpoints.add(addr, plp.asm.getFileIndex(addr), plp.asm.getLineNum(addr));
-                    Msg.M("Breakpoint set at " + PLPToolbox.format32Hex(addr) + (addrLabel != -1 ? " (" + tokens[2] + ")" : ""));
-                } else
-                    Msg.E("'" + tokens[2] + "' is not a valid number or label.",
-                            Constants.PLP_GENERIC_ERROR, null);
-            }
-            else if(tokens[1].equals("list")) {
-                Msg.M("Breakpoints:");
-                long addr;
-                String label;
-                for(int i = 0; i < core.breakpoints.size(); i++) {
-                    addr = core.breakpoints.getBreakpointAddress(i);
-                    label = plp.asm.lookupLabel(addr);
-                    Msg.M(i + "\t" + PLPToolbox.format32Hex(addr) + (label != null ? " " + label : ""));
-                }
-            }
-            else if(tokens[1].equals("clear")) {
-                core.breakpoints.clear();
-            }
-            else if(tokens[1].equals("remove") && tokens.length == 3) {
-                core.breakpoints.removeBreakpoint(PLPToolbox.parseNumInt(tokens[2]));
-            }
-            else
-                simCLHelp(6);
-        }
-        else if(tokens[0].equals("assert")) {
-            if(tokens.length == 4) {
-                int index = PLPToolbox.parseNumInt(tokens[1]);
-                long addr = PLPToolbox.tryResolveLabel(tokens[2], asm);
-                long assertvalue = PLPToolbox.parseNum(tokens[3]);
-                Long value;
-                if(index > -1 && addr > -1 && assertvalue > -1) {
-                    value = (Long) core.bus.getRefMod(index).read(addr);
-                    if(value != null && (long) value == assertvalue)
-                        Msg.M("True");
-                    else
-                        Msg.M("False");
-                } else
-                    Msg.M("False");
-            } else
-                Msg.M("Usage: assert <module index in the BUS> <address/label> <value>");
-        }
-        else if(tokens[0].equals("assertreg")) {
-            if(tokens.length == 3) {
-                long addr = PLPToolbox.parseNum(tokens[1]);
-                long assertvalue = PLPToolbox.parseNum(tokens[2]);
-                Long value;
-                if(addr > -1 && assertvalue > -1) {
-                    value = (Long) core.regfile.read(addr);
-                    if(value != null && (long) value == assertvalue)
-                        Msg.M("True");
-                    else
-                        Msg.M("False");
-                } else
-                    Msg.M("False");
-            } else
-                Msg.M("Usage: assertreg <register address> <value>");
-        }
-        else if(tokens[0].equals("echo")) {
-            if(tokens.length == 1)
-                Msg.M("");
-            else
-                Msg.M(input.substring(5, input.length()));
-        }
-        else if(input.equals("mod_forwarding")) {
-            Msg.M("EX->EX R-type: " + core.forwarding.ex_ex_rtype);
-            Msg.M("EX->EX I-type: " + core.forwarding.ex_ex_itype);
-            Msg.M("MEM->EX R-type: " + core.forwarding.mem_ex_rtype);
-            Msg.M("MEM->EX I-type: " + core.forwarding.mem_ex_itype);
-            Msg.M("MEM->EX LW-use: " + core.forwarding.mem_ex_lw);
-        }
-        else if(input.equals("flags")) {
-            long f = core.getFlags();
-            if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE)
-                Msg.M("PLP_SIM_FWD_EX_EX_ITYPE");
-            if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE)
-                Msg.M("PLP_SIM_FWD_EX_EX_RTYPE");
-            if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE)
-                Msg.M("PLP_SIM_FWD_MEM_EX_RTYPE");
-            if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE)
-                Msg.M("PLP_SIM_FWD_MEM_EX_ITYPE");
-            if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW) == SimCore.PLP_SIM_FWD_MEM_EX_LW)
-                Msg.M("PLP_SIM_FWD_MEM_EX_LW");
-            if((f & SimCore.PLP_SIM_FWD_MEM_MEM) == SimCore.PLP_SIM_FWD_MEM_MEM)
-                Msg.M("PLP_SIM_FWD_MEM_MEM");
-            if((f & SimCore.PLP_SIM_IF_STALL_SET) == SimCore.PLP_SIM_IF_STALL_SET)
-                Msg.M("PLP_SIM_IF_STALL_SET");
-            if((f & SimCore.PLP_SIM_ID_STALL_SET) == SimCore.PLP_SIM_ID_STALL_SET)
-                Msg.M("PLP_SIM_ID_STALL_SET");
-            if((f & SimCore.PLP_SIM_EX_STALL_SET) == SimCore.PLP_SIM_EX_STALL_SET)
-                Msg.M("PLP_SIM_EX_STALL_SET");
-            if((f & SimCore.PLP_SIM_MEM_STALL_SET) == SimCore.PLP_SIM_MEM_STALL_SET)
-                Msg.M("PLP_SIM_MEM_STALL_SET");
-
-        }
-        else if(input.equals("jvm")) {
-            Runtime runtime = Runtime.getRuntime();
-            Msg.M("Free JVM memory:     " + runtime.freeMemory());
-            Msg.M("Total JVM memory:    " + runtime.totalMemory());
-            Msg.M("Total - Free (Used): "  + (runtime.totalMemory() -  runtime.freeMemory()));
-        }
-        else if(input.toLowerCase().equals("wira sucks")) {
-            Msg.M("No, he doesn't.");
-        }
-        else if(input.equals("help")) {
-            simCLHelp(0);
-        }
-        else if(input.equals("help sim")) {
-            simCLHelp(1);
-        }
-        else if(input.equals("help print")) {
-            simCLHelp(2);
-        }
-        else if(input.equals("help bus")) {
-            simCLHelp(3);
-        }
-        else if(input.equals("help mods")) {
-            simCLHelp(4);
-        }
-        else if(input.equals("help misc")) {
-            simCLHelp(5);
-        }
-        else if(input.equals("help bp")) {
-            simCLHelp(6);
+    public static void cmd_s_arg() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: s <number of instructions>");
         }
         else {
-            Msg.M("Unknown command: " + input);
+            Msg.lastError = 0;
+            boolean breakpoint = false;
+            long startCount = 0;
+            int steps = PLPToolbox.parseNumInt(tokens[1]);
+            long time = 0;
+            if(steps > Constants.PLP_LONG_SIM) {
+                if(!silent) {
+                    Msg.M("This might take a while, turning on silent mode.");
+                    silent = true;
+                }
+                startCount = core.getInstrCount();
+                time = System.currentTimeMillis();
+            }
+            for(int i = 0; i < steps && Msg.lastError == 0 && !breakpoint; i++) {
+                if(core.step() != Constants.PLP_OK)
+                    Msg.E("Simulation is stale. Please reset.",
+                             Constants.PLP_SIM_STALE, null);
+                else if(!silent) {
+                    Msg.M("");
+                    core.wb_stage.printinstr();
+                    core.mem_stage.printinstr();
+                    core.ex_stage.printinstr();
+                    core.id_stage.printinstr();
+                    core.printfrontend();
+                    Msg.M("-------------------------------------");
+                }
+                breakpoint = core.breakpoints.isBreakpoint(core.visibleAddr);
+                if(core.breakpoints.isBreakpoint(core.visibleAddr))
+                    Msg.M("--- stopping at breakpoint: " + PLPToolbox.format32Hex(core.visibleAddr));
+            }
+            if(steps > Constants.PLP_LONG_SIM)
+                startCount = core.getInstrCount() - startCount;
+                Msg.M("--- executed " + startCount + " instructions in " +
+                      (System.currentTimeMillis() - time) + " milliseconds.");
         }
+    }
 
-        if(Msg.lastError != 0 && plp.g())
-            plp.g_err.setError(Msg.lastError);        
+    public static void cmd_r() {
+        core.reset();
+        core.printfrontend();
+    }
+
+    public static void cmd_wpc() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: wpc <address>");
+        } else {
+            core.softreset();
+            core.pc.write(PLPToolbox.parseNum(tokens[1]));
+            core.printfrontend();
+        }
+    }
+
+    public static void cmd_j() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: j <address>");
+        }
+        else {
+            core.pc.write(PLPToolbox.parseNum(tokens[1]));
+            core.printfrontend();
+        }
+    }
+
+    public static void cmd_w() {
+        if(tokens.length != 3) {
+            Msg.M("Usage: w <address> <data>");
+        } else {
+            core.bus.write(PLPToolbox.parseNum(tokens[1]),
+                              PLPToolbox.parseNum(tokens[2]), false);
+        }
+    }
+
+    public static void cmd_flags() {
+        long f = core.getFlags();
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE)
+            Msg.M("PLP_SIM_FWD_EX_EX_ITYPE");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE)
+            Msg.M("PLP_SIM_FWD_EX_EX_RTYPE");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE)
+            Msg.M("PLP_SIM_FWD_MEM_EX_RTYPE");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE)
+            Msg.M("PLP_SIM_FWD_MEM_EX_ITYPE");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW) == SimCore.PLP_SIM_FWD_MEM_EX_LW)
+            Msg.M("PLP_SIM_FWD_MEM_EX_LW");
+        if((f & SimCore.PLP_SIM_FWD_MEM_MEM) == SimCore.PLP_SIM_FWD_MEM_MEM)
+            Msg.M("PLP_SIM_FWD_MEM_MEM");
+        if((f & SimCore.PLP_SIM_IF_STALL_SET) == SimCore.PLP_SIM_IF_STALL_SET)
+            Msg.M("PLP_SIM_IF_STALL_SET");
+        if((f & SimCore.PLP_SIM_ID_STALL_SET) == SimCore.PLP_SIM_ID_STALL_SET)
+            Msg.M("PLP_SIM_ID_STALL_SET");
+        if((f & SimCore.PLP_SIM_EX_STALL_SET) == SimCore.PLP_SIM_EX_STALL_SET)
+            Msg.M("PLP_SIM_EX_STALL_SET");
+        if((f & SimCore.PLP_SIM_MEM_STALL_SET) == SimCore.PLP_SIM_MEM_STALL_SET)
+            Msg.M("PLP_SIM_MEM_STALL_SET");
+    }
+
+    public static void cmd_fwd() {
+        Msg.M("EX->EX R-type: " + core.forwarding.ex_ex_rtype);
+        Msg.M("EX->EX I-type: " + core.forwarding.ex_ex_itype);
+        Msg.M("MEM->EX R-type: " + core.forwarding.mem_ex_rtype);
+        Msg.M("MEM->EX I-type: " + core.forwarding.mem_ex_itype);
+        Msg.M("MEM->EX LW-use: " + core.forwarding.mem_ex_lw);
+    }
+
+    public static void cmd_pinstr() {
+        Msg.M("\nIn-flight instructions");
+        Msg.M("======================");
+        core.wb_stage.printinstr();
+        core.mem_stage.printinstr();
+        core.ex_stage.printinstr();
+        core.id_stage.printinstr();
+        core.printfrontend();
+    }
+
+    public static void cmd_pvars() {
+        Msg.M("\nOutput side values of pipeline stages");
+        Msg.M("=====================================");
+        core.wb_stage.printvars();
+        core.mem_stage.printvars();
+        core.ex_stage.printvars();
+        core.id_stage.printvars();
+    }
+
+    public static void cmd_pnextvars() {
+        Msg.M("\nInput side values of pipeline registers");
+        Msg.M("=======================================");
+        core.wb_stage.printnextvars();
+        core.mem_stage.printnextvars();
+        core.ex_stage.printnextvars();
+        core.id_stage.printnextvars();
+    }
+
+    public static void cmd_pram() {
+        Msg.M("\nMain memory listing");
+        Msg.M("===================");
+        for(int i = 0; i < ioReg.getNumOfModsAttached(); i++) {
+            if(ioReg.getType(i) == 0) {
+                Msg.M("Attached memory in bus position " + ioReg.getPositionInBus(i));
+                ((plptool.mods.MemModule) ioReg.getModule(i)).printAll(core.pc.eval());
+            }
+        }
+    }
+
+    public static void cmd_pram_arg() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: pram <address>");
+        } else {
+            for(int i = 0; i < ioReg.getNumOfModsAttached(); i++) {
+                if(ioReg.getType(i) == 0) {
+                    Msg.M("Memory attached in bus position " + ioReg.getPositionInBus(i));
+                    ((plptool.mods.MemModule) ioReg.getModule(i)).print(PLPToolbox.parseNum(tokens[1]));
+                }
+            }
+        }
+    }
+
+    public static void cmd_preg() {
+        long data;
+        Msg.M("\nRegisters listing");
+        Msg.M("=================");
+        for(int j = 0; j < 32; j++) {
+            data = (Long) core.regfile.read(j);
+            Msg.M(j + "\t" +
+                               String.format("%08x", data) + "\t" +
+                               PLPToolbox.asciiWord(data));
+        }
+    }
+
+    public static void cmd_preg_arg() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: preg <address>");
+        } else {
+            long addr = PLPToolbox.parseNum(tokens[1]);
+            core.regfile.print(addr);
+        }
+    }
+
+    public static void cmd_pprg() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: pprg <index of memory module on the BUS>");
+        } else {
+            Msg.M("\nProgram Listing");
+            Msg.M("===============");
+            core.printProgram(PLPToolbox.parseNumInt(tokens[1]), core.pc.eval());
+        }
+    }
+
+    public static void cmd_pasm() {
+        Formatter.prettyPrint(asm);
+    }
+
+    public static void cmd_pfd() {
+        Msg.M("\nFrontend / fetch stage state");
+        Msg.M("============================");
+        core.printfrontend();
+    }
+
+    public static void cmd_wbus() {
+        if(tokens.length != 3) {
+            Msg.M("Usage: wbus <address> <data>");
+        } else {
+            core.bus.write(PLPToolbox.parseNum(tokens[1]),
+                              PLPToolbox.parseNum(tokens[2]), false);
+        }
+    }
+
+    public static void cmd_rbus() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: rbus <address>");
+        } else {
+            long addr = PLPToolbox.parseNum(tokens[1]);
+            Object ret = core.bus.read(addr);
+            if(ret != null) {
+                long value = (Long) ret;
+                Msg.M(String.format("0x%08x=", addr) +
+                                   String.format("0x%08x", value));
+            }
+        }
+    }
+
+    public static void cmd_enableio() {
+        core.bus.enableAllModules();
+    }
+
+    public static void cmd_enableio_arg() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: enableio <index>");
+        } else {
+            core.bus.enableMod((int) PLPToolbox.parseNum(tokens[1]));
+        }
+    }
+
+    public static void cmd_disableio() {
+        core.bus.disableAllModules();
+    }
+
+    public static void cmd_disableio_arg() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: disableio <index>");
+        } else {
+            core.bus.disableMod((int) PLPToolbox.parseNum(tokens[1]));
+        }
+    }
+
+    public static void cmd_listio() {
+        for(int i = 0; i < core.bus.getNumOfMods(); i++) {
+            long start = core.bus.getModStartAddress(i);
+            long end = core.bus.getModEndAddress(i);
+            Msg.M(i + ":\t" +
+                               ((start < 0) ? " Unmapped " : String.format("0x%08x", start)) + "-" +
+                               ((end   < 0) ? " Unmapped " : String.format("0x%08x", end)) + "\t" +
+                               core.bus.introduceMod(i) +
+                               (core.bus.getEnabled(i) ? " (enabled)" : " (disabled)"));
+        }
+    }
+
+    public static void cmd_evalio() {
+        core.bus.eval();
+    }
+
+    public static void cmd_evalio_arg() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: evalio <index>");
+        } else {
+            core.bus.eval((int) PLPToolbox.parseNum(tokens[1]));
+        }
+    }
+
+    public static void cmd_cleario() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: cleario <index>");
+        } else {
+            core.bus.clearModRegisters((int) PLPToolbox.parseNum(tokens[1]));
+        }
+    }
+
+    public static void cmd_listmods() {
+        Msg.M("Registered modules:");
+        Object modInfo[][] = ioReg.getAvailableModulesInformation();
+        for(int i = 0; i < modInfo.length; i++) {
+            Msg.M(i + ": " + modInfo[i][0] + " - " + modInfo[i][3]);
+        }
+    }
+
+    public static void cmd_addmod() {
+        if(tokens.length != 4) {
+            Msg.M("Usage: addmod <mod ID> <address> <register file size>");
+        } else {
+            ioReg.attachModuleToBus((int) PLPToolbox.parseNum(tokens[1]),
+                                    PLPToolbox.parseNum(tokens[2]),
+                                    PLPToolbox.parseNum(tokens[3]));
+        }
+    }
+
+    public static void cmd_rmmod() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: rmmod <mod index in the REGISTRY>");
+        } else {
+            ioReg.removeModule((int) PLPToolbox.parseNum(tokens[1]));
+        }
+    }
+
+    public static void cmd_attachedmods() {
+        Msg.M("Attached modules:");
+        Object mods[] = ioReg.getAttachedModules();
+        for(int i = 0; i < mods.length; i++) {
+            Msg.M(i + ": "
+                    + ((plptool.PLPSimBusModule)mods[i]).introduce() +
+                    " - position in bus: " + ioReg.getPositionInBus(i));
+        }
+    }
+
+    public static void cmd_listpresets() {
+        Msg.M("Registered presets:");
+        Object[][] presets = plptool.mods.Preset.presets;
+        for(int i = 0; i < presets.length; i++) {
+            Msg.M(i + ": " + presets[i][0]);
+        }
+    }
+
+    public static void cmd_loadpreset() {
+        if(tokens.length != 2) {
+            Msg.M("Usage: loadpreset <index>");
+        }
+        else {
+            ioReg.loadPredefinedPreset(PLPToolbox.parseNumInt(tokens[1]));
+        }
+    }
+
+    public static void cmd_asm() {
+        if(tokens.length < 3) {
+            Msg.M("Usage: asm <address> <in-line assembly>");
+        } else {
+            String iAsm = "";
+            long addr;
+            long base = PLPToolbox.tryResolveLabel(tokens[1], asm);
+            for(int j = 2; j < tokens.length; j++)
+                iAsm += tokens[j] + " ";
+            Asm inlineAsm = new Asm(iAsm, "PLPSimCL inline asm");
+            if(inlineAsm.preprocess(0) == Constants.PLP_OK) {
+                inlineAsm.setSymTable(asm.getSymTable());
+                inlineAsm.assemble();
+            }
+            if(inlineAsm.isAssembled() && base > -1) {
+                Msg.M("\nCode injected:");
+                Msg.M("==============");
+                for(int j = 0; j < inlineAsm.getObjectCode().length; j++) {
+                    addr = base + 4 * j;
+                    core.bus.write(addr, inlineAsm.getObjectCode()[j], (inlineAsm.isInstruction(j) == 0) ? true : false);
+                    Msg.M(String.format("%08x", addr) +
+                                       "   " + PLPToolbox.asciiWord(inlineAsm.getObjectCode()[j]) +
+                                       "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
+                }
+            } else
+                Msg.E("Code injection failed.", Constants.PLP_GENERIC_ERROR, null);
+        }
+    }
+
+    public static void cmd_silent() {
+        if(silent) {
+            silent = false;
+            Msg.M("Silent mode off.");
+        } else {
+            silent = true;
+            Msg.M("Silent mode on.");
+        }
+    }
+
+    public static void cmd_cycleaccurate() {
+        if(Config.simFunctional) {
+            Config.simFunctional = false;
+            Msg.M("Functional simulation mode off.");
+        } else {
+            Config.simFunctional = true;
+            Msg.M("Functional simulation mode on.");
+        }
+    }
+
+    public static void cmd_assert() {
+        if(tokens.length == 4) {
+            int index = PLPToolbox.parseNumInt(tokens[1]);
+            long addr = PLPToolbox.tryResolveLabel(tokens[2], asm);
+            long assertvalue = PLPToolbox.parseNum(tokens[3]);
+            Long value;
+            if(index > -1 && addr > -1 && assertvalue > -1) {
+                value = (Long) core.bus.getRefMod(index).read(addr);
+                if(value != null && (long) value == assertvalue)
+                    Msg.M("True");
+                else
+                    Msg.M("False");
+            } else
+                Msg.M("False");
+        } else
+            Msg.M("Usage: assert <module index in the BUS> <address/label> <value>");
+    }
+
+    public static void cmd_assertreg() {
+        if(tokens.length == 3) {
+            long addr = PLPToolbox.parseNum(tokens[1]);
+            long assertvalue = PLPToolbox.parseNum(tokens[2]);
+            Long value;
+            if(addr > -1 && assertvalue > -1) {
+                value = (Long) core.regfile.read(addr);
+                if(value != null && (long) value == assertvalue)
+                    Msg.M("True");
+                else
+                    Msg.M("False");
+            } else
+                Msg.M("False");
+        } else
+            Msg.M("Usage: assertreg <register address> <value>");
+    }
+
+    public static void cmd_modhook() {
+        if(tokens.length < 2) {
+            Msg.M("Usage: modhook <module bus index> <params>");
+        } else {
+            int index = PLPToolbox.parseNumInt(tokens[1]);
+            String param = "";
+            for(int i = 2; i < tokens.length; i++)
+                param += (i==2 ? "" : " ") + tokens[i];
+            if(index > -1 && index < core.bus.getNumOfMods())
+                core.bus.getRefMod(index).hook(param);
+        }
+    }
+
+    public static void cmd_echo() {
+        if(tokens.length == 1)
+            Msg.M("");
+        else
+            Msg.M(input.substring(5, input.length()));
+    }
+
+    public static void cmd_bp() {
+        if(tokens.length < 2) {
+            simCLHelp(6);
+        } else if(tokens[1].equals("set") && tokens.length == 3) {
+            // check if label instead of an address is used
+            long addrLabel = asm.resolveAddress(tokens[2]);
+            long addr = (addrLabel == -1) ? PLPToolbox.parseNumSilent(tokens[2]) : addrLabel;
+            if(addr > -1) {
+                core.breakpoints.add(addr, asm.getFileIndex(addr), asm.getLineNum(addr));
+                Msg.M("Breakpoint set at " + PLPToolbox.format32Hex(addr) + (addrLabel != -1 ? " (" + tokens[2] + ")" : ""));
+            } else
+                Msg.E("'" + tokens[2] + "' is not a valid number or label.",
+                        Constants.PLP_GENERIC_ERROR, null);
+        } else if(tokens[1].equals("list")) {
+            Msg.M("Breakpoints:");
+            long addr;
+            String label;
+            for(int i = 0; i < core.breakpoints.size(); i++) {
+                addr = core.breakpoints.getBreakpointAddress(i);
+                label = asm.lookupLabel(addr);
+                Msg.M(i + "\t" + PLPToolbox.format32Hex(addr) + (label != null ? " " + label : ""));
+            }
+        } else if(tokens[1].equals("clear")) {
+            core.breakpoints.clear();
+        } else if(tokens[1].equals("remove") && tokens.length == 3) {
+            core.breakpoints.removeBreakpoint(PLPToolbox.parseNumInt(tokens[2]));
+        } else
+            simCLHelp(6);
+    }
+
+    public static void cmd_jvm() {
+        Runtime runtime = Runtime.getRuntime();
+        Msg.M("Free JVM memory:     " + runtime.freeMemory());
+        Msg.M("Total JVM memory:    " + runtime.totalMemory());
+        Msg.M("Total - Free (Used): "  + (runtime.totalMemory() -  runtime.freeMemory()));
     }
 
     public static void simCL(plptool.gui.ProjectDriver plp) {
         try {
 
-        String input;
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         Msg.M("Welcome to PLP MIPS Simulator Command Line Interface");
         Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
@@ -620,6 +684,8 @@ public class SimCLI {
                 Msg.M("\n addmod <mod ID> <address> <regfile size>\n\tAttach module with <mod ID> starting at <address> with <regfile size> to the registry and the bus.");
                 Msg.M("\n rmmod <index in the REGISTRY>\n\tRemove the module with <index in the REGISTRY> from the registry and the bus.");
                 Msg.M("\n attachedmods\n\tList all modules attached to the simulation.");
+                Msg.M("\n listpresets\n\tList all available modulep resets.");
+                Msg.M("\n loadpreset <index>\n\tLoad a module preset as specified by <index>");
 
                 break;
 
@@ -630,6 +696,7 @@ public class SimCLI {
                 Msg.M("\n cycleaccurate\n\tToggle cycle-accurate simulation mode (default off).");
                 Msg.M("\n assert <module index in the BUS> <address/label> <value>\n\tAssert the contents of an address to be the specified value.");
                 Msg.M("\n assertreg <register address> <value>\n\tAssert a register's contents to be the specified value.");
+                Msg.M("\n modhook <module bus index> <params>\n\tPass <params> to the module's hook function.");
 
                 break;
 

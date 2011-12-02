@@ -310,6 +310,14 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
+     * Overridable module developer-specified generic hook.
+     *
+     * @param param An object to pass to the hook
+     * @return A reference to an object returned from the hook function
+     */
+    public Object hook(Object param) {return null;};
+
+    /**
      * The eval() function represents the behavior of the module itself.
      * For example, an eval function for an array of LED will read its
      * register and light up proper LEDs. Simulation cores will call this

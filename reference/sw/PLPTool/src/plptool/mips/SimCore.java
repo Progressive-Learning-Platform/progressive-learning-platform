@@ -679,7 +679,7 @@ public class SimCore extends PLPSimCore {
         }
 
         public void printinstr() {
-            Msg.M("id:   " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)) +
+            Msg.M("id:   " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)) +
                      " instr: " + String.format("%08x", instruction) +
                      " : " + MIPSInstr.format(instruction));
         }
@@ -915,7 +915,7 @@ public class SimCore extends PLPSimCore {
         public void printvars() {
             Msg.M("EX vars");
             Msg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            Msg.M("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
+            Msg.M("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
 
             // EX stage pipeline registers
             Msg.M("\tfwd_ctl_memtoreg: " + fwd_ctl_memtoreg);
@@ -1128,7 +1128,7 @@ public class SimCore extends PLPSimCore {
         public void printvars() {
             Msg.M("MEM vars");
             Msg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            Msg.M("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
+            Msg.M("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
 
             // MEM stage pipeline registers
             Msg.M("\tfwd_ctl_memtoreg: " + fwd_ctl_memtoreg);
@@ -1291,7 +1291,7 @@ public class SimCore extends PLPSimCore {
         public void printvars() {
             Msg.M("WB vars");
             Msg.M("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            Msg.M("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
+            Msg.M("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
 
             // WB stage pipeline registers
             Msg.M("\tctl_memtoreg: " + ctl_memtoreg);

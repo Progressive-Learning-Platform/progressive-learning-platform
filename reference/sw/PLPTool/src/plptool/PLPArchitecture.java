@@ -193,11 +193,12 @@ public abstract class PLPArchitecture {
     public void simCLICommand(String cmd) {}
 
     /**
-     * User-defined hook function
+     * Overridable developer-specified generic hook.
      *
-     * @param param Reference of parameters to pass
+     * @param param An object to pass to the hook
+     * @return A reference to an object returned from the hook function
      */
-    public void hook(Object param) {}
+    public Object hook(Object param) {return null;}
 
     public boolean equals(String str) {
         return identifier.equals(str);
