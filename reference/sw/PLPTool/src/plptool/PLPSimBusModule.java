@@ -91,7 +91,7 @@ public abstract class PLPSimBusModule extends Thread {
     }
 
     /**
-     * Empty constructor for dynamic module loading
+     * Empty/nullary constructor for dynamic module loading
      */
     public PLPSimBusModule() {}
 

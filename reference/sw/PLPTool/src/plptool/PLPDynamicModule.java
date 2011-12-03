@@ -29,12 +29,18 @@ import java.util.ArrayList;
 public class PLPDynamicModule {
     private static int index = 0;
     private static ArrayList<PLPSimBusModule> dynamicModules;
+    private static boolean warn = false;
 
     public static boolean loadModule(String path, String className) {
-        Msg.M("Loading module class " + className + " from " + path + "...");
+        if(!warn) {
+            Msg.W("YOU ARE LOADING A DYNAMIC MODULE, THIS COULD BE POTENTIALLY DANGEROUS", null);
+            Msg.W("Make sure you only use trusted third party modules!", null);
+            warn = true;
+        }
+        Msg.M("--- Loading module class " + className + " from " + path + "...");
         PLPSimBusModule mod;
         ClassLoader parent = PLPDynamicModule.class.getClassLoader();
-        PLPDynamicModuleClassLoader loader = new PLPDynamicModuleClassLoader(parent, path);
+        PLPDynamicModuleClassLoader loader = new PLPDynamicModuleClassLoader(parent, path, className);
         if(loader == null)
             return false;
         try {
@@ -44,17 +50,18 @@ public class PLPDynamicModule {
             }
             if(dynamicModules == null)
                 dynamicModules = new ArrayList<PLPSimBusModule>();
-            Msg.M("Adding " + className + " to dynamic module registry...");
+            Msg.M("--- Adding " + className + " to dynamic module registry...");
             mod = (PLPSimBusModule) dynamicModuleClass.newInstance();
             dynamicModules.add(mod);
-            Msg.M(mod.toString() + " (class: " + className + ") is attached to index " + index);
+            Msg.M("--- " + mod.toString() + " (class: " + className + ") is attached to index " + index);
             index++;
         } catch(ClassNotFoundException e) {
             Msg.E("The class " + className + " is not found in " + path,
                   Constants.PLP_DBUSMOD_CLASS_NOT_FOUND_ERROR, null);
             return false;
         } catch(InstantiationException e) {
-            Msg.E("Instantiation exception for module " + className,
+            Msg.E("Instantiation exception for module " + className + ". " +
+                  "Dynamic modules have to extend plptool.PLPSimBusModule class.",
                   Constants.PLP_DBUSMOD_INSTANTIATION_ERROR, null);
             return false;
         } catch(IllegalAccessException e) {
@@ -68,20 +75,29 @@ public class PLPDynamicModule {
 
         return true;
     }
+
+    public static PLPSimBusModule getDynamicModule(int index) {
+        if(index < 0 || index >= dynamicModules.size())
+            return null;
+
+        return dynamicModules.get(index);
+    }
 }
 
 class PLPDynamicModuleClassLoader extends ClassLoader {
 
     private String path;
+    private String nameToCheck;
 
-    public PLPDynamicModuleClassLoader(ClassLoader parent, String path) {
+    public PLPDynamicModuleClassLoader(ClassLoader parent, String path, String nameToCheck) {
         super(parent);
         this.path = path;
+        this.nameToCheck = nameToCheck;
     }
 
     @Override
     public Class loadClass(String name) throws ClassNotFoundException {
-        if(name.equals("plptool.PLPSimBusModule"))
+        if(!name.equals(nameToCheck))
             return super.loadClass(name, true);
 
         try {
