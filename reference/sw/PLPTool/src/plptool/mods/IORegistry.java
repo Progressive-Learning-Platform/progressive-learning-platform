@@ -18,7 +18,6 @@
 
 package plptool.mods;
 
-import plptool.PLPSimCore;
 import plptool.PLPSimBusModule;
 import plptool.Constants;
 import plptool.gui.ProjectDriver;

@@ -77,9 +77,9 @@ public abstract class PLPSimBusModule extends Thread {
      * The constructor for the superclass requires the address space and
      * whether the registers of the module are word-aligned
      *
-     * @param startAddr
-     * @param endAddr
-     * @param wordAligned
+     * @param startAddr Starting address of the module's address space
+     * @param endAddr End address of the module's address space
+     * @param wordAligned Whether the module's address space is word aligned
      */
     public PLPSimBusModule(long startAddr, long endAddr, boolean wordAligned) {
         values = new TreeMap<Long, Object>();
@@ -89,6 +89,11 @@ public abstract class PLPSimBusModule extends Thread {
         this.wordAligned = wordAligned;
         enabled = false;
     }
+
+    /**
+     * Empty constructor for dynamic module loading
+     */
+    public PLPSimBusModule() {}
 
     /**
      * Write data to one of the module's registers. Only possible when the
@@ -298,7 +303,6 @@ public abstract class PLPSimBusModule extends Thread {
             return true;
     }
 
-
     /**
      * True if the specified address is initialized. False otherwise
      *
@@ -316,6 +320,21 @@ public abstract class PLPSimBusModule extends Thread {
      * @return A reference to an object returned from the hook function
      */
     public Object hook(Object param) {return null;};
+
+    /**
+     * Reset attributes for dynamically loaded modules
+     *
+     * @param startAddr Starting address of the module's address space
+     * @param endAddr End address of the module's address space
+     * @param wordAligned Whether the module's address space is word aligned
+     */
+    public void setNewParameters(long startAddr, long endAddr, boolean isWordAligned) {
+        values = new TreeMap<Long, Object>();
+        isInstr = new TreeMap<Long, Boolean>();
+        this.startAddr = startAddr;
+        this.endAddr = endAddr;
+        this.wordAligned = isWordAligned;
+    }
 
     /**
      * The eval() function represents the behavior of the module itself.

@@ -25,6 +25,12 @@ import java.awt.event.ActionEvent;
  * @author wira
  */
 public class PLPToolbox {
+    /**
+     * Parse a hexadecimal or binary number into unsigned long
+     *
+     * @param number Hex or binary number
+     * @return number in long, -1 if error occurred
+     */
     public static long parseNum(String number) {
         try {
 
@@ -46,6 +52,13 @@ public class PLPToolbox {
         }
     }
 
+    /**
+     * Parse a hexadecimal or binary number into unsigned long, but stay silent
+     * if parsing failed.
+     *
+     * @param number Hex or binary number
+     * @return number in long, -1 if error occurred
+     */
     public static long parseNumSilent(String number) {
         try {
 
@@ -66,6 +79,12 @@ public class PLPToolbox {
         }
     }
 
+    /**
+     * Parse a hexadecimal or binary number into unsigned int
+     *
+     * @param number Hex or binary number
+     * @return number in int, -1 if error occurred
+     */
     public static int parseNumInt(String number) {
         try {
 
@@ -87,6 +106,15 @@ public class PLPToolbox {
         }
     }
 
+    /**
+     * Try if the given label resolves to an address. If not, parse the
+     * string as an address.
+     *
+     * @param label Label to resolve
+     * @param asm Assembly object
+     * @return The address of label if the label resolves, if not, the address
+     * if it parses as an address, -1 otherwise
+     */
     public static long tryResolveLabel(String label, PLPAsm asm) {
         long addr = -1;
 
@@ -97,6 +125,12 @@ public class PLPToolbox {
         return addr;
     }
 
+    /**
+     * Format a long as 8 digit hexadecimal in String
+     *
+     * @param num Number to format
+     * @return 8 digit hex format of the number in String
+     */
     public static String format32Hex(long num) {
         return String.format("0x%08x", num);
     }

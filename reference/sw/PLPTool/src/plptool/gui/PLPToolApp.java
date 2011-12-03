@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import org.jdesktop.application.SingleFrameApplication;
 import plptool.Msg;
 import plptool.Constants;
 import plptool.ArchRegistry;
+import plptool.PLPDynamicModule;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -135,9 +136,16 @@ public class PLPToolApp extends SingleFrameApplication {
                 Msg.M("Debug level set to " + Constants.debugLevel);
                 activeArgIndex += 2;
             }
+
+            // Dynamic module load
+            if(args.length >= activeArgIndex + 3 && args[i].equals("--load-dynamic-bus-module")) {
+                if(!PLPDynamicModule.loadModule(args[i+2], args[i+1]))
+                    System.exit(-1);
+                activeArgIndex += 3;
+            }
         }
 
-        Msg.M(Constants.copyrightString + "\n");
+        Msg.M("\n" + Constants.copyrightString + "\n");
 
         if(args.length > activeArgIndex) {
             String[] newargs = new String[args.length - activeArgIndex];
