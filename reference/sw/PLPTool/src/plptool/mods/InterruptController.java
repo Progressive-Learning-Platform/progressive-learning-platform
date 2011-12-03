@@ -103,9 +103,9 @@ public class InterruptController extends PLPSimBusModule {
         args = args.trim();
         String tokens[] = args.split("[ ]+");
         if(tokens[0].equals("stat")) {
-            Msg.M("stat: " + PLPToolbox.format32Hex((Long) super.readReg(startAddr+4) | 0x1L));
+            Msg.I("stat=" + PLPToolbox.format32Hex((Long) super.readReg(startAddr+4) | 0x1L), this);
         } else if(tokens[0].equals("mask")) {
-            Msg.M("mask: " + PLPToolbox.format32Hex((Long) super.readReg(startAddr)));
+            Msg.I("mask=" + PLPToolbox.format32Hex((Long) super.readReg(startAddr)), this);
         }
 
         return null;

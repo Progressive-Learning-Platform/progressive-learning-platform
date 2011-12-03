@@ -74,6 +74,14 @@ public abstract class PLPSimBusModule extends Thread {
     protected boolean enabled;
 
     /**
+     * This variables tells the bus whether it actually stores data in the
+     * mapped region. Defaults to false. Useful for modules that need to see
+     * bus accesses but do not require registers (cache simulators, snoopers,
+     * etc)
+     */
+    public boolean phantom;
+
+    /**
      * The constructor for the superclass requires the address space and
      * whether the registers of the module are word-aligned
      *
@@ -88,6 +96,7 @@ public abstract class PLPSimBusModule extends Thread {
         this.endAddr = endAddr;
         this.wordAligned = wordAligned;
         enabled = false;
+        phantom = false;
     }
 
     /**

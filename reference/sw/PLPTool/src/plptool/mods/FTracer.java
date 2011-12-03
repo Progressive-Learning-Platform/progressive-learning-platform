@@ -38,6 +38,7 @@ public class FTracer extends PLPSimBusModule {
         super(addr, addr + size, true);
         Msg.M("TRACER Registered - Core reset required");
         recordStr = new StringBuilder();
+        phantom = true;
     }
 
     public int eval() {

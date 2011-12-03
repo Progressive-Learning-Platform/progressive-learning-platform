@@ -138,8 +138,8 @@ public class PLPToolApp extends SingleFrameApplication {
             }
 
             // Dynamic module load
-            if(args.length >= activeArgIndex + 3 && args[i].equals("--load-dynamic-bus-module")) {
-                if(!PLPDynamicModule.loadModule(args[i+2], args[i+1]))
+            if(args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
+                if(!PLPDynamicModule.loadModuleClass(args[i+2], args[i+1]))
                     System.exit(-1);
                 activeArgIndex += 3;
             }

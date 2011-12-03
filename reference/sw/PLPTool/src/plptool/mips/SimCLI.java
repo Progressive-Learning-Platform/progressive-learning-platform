@@ -79,11 +79,12 @@ public class SimCLI {
         else if(tokens[0].equals("disableio"))      cmd_disableio_arg();
         else if(tokens[0].equals("cleario"))        cmd_cleario();
         else if(input.equals("listmods"))           cmd_listmods();
+        else if(input.equals("listdmods"))          cmd_listdmods();
         else if(input.equals("attachedmods"))       cmd_attachedmods();
         else if(input.equals("listpresets"))        cmd_listpresets();
         else if(tokens[0].equals("loadpreset"))     cmd_loadpreset();
         else if(tokens[0].equals("addmod"))         cmd_addmod();
-        else if(tokens[0].equals("adddynamicmod"))  cmd_adddynamicmod();
+        else if(tokens[0].equals("adddmod"))        cmd_adddmod();
         else if(tokens[0].equals("rmmod"))          cmd_rmmod();
         else if(tokens[0].equals("j"))              cmd_j();
         else if(tokens[0].equals("asm"))            cmd_asm();
@@ -426,14 +427,25 @@ public class SimCLI {
         }
     }
 
-    public static void cmd_adddynamicmod() {
+    public static void cmd_listdmods() {
+        Msg.M("Registered dynamic modules:");
+        for(int i = 0; i < plptool.PLPDynamicModule.getNumberOfClasses(); i++) {
+            Class c = plptool.PLPDynamicModule.getDynamicModuleClass(i);
+            Class sc = c.getSuperclass();
+            Msg.m(i + ":\t" + c.getName());
+            Msg.M((sc != null) ? " extends " + sc.getName() : "");
+
+        }
+    }
+
+    public static void cmd_adddmod() {
         if(tokens.length != 4) {
-            Msg.M("Usage: adddynamicmod <dynamic mod ID> <address> <register file size>");
+            Msg.M("Usage: adddmod <dynamic mod ID> <address> <register file size>");
         } else {
             int index = PLPToolbox.parseNumInt(tokens[1]);
             long startAddr = PLPToolbox.parseNum(tokens[2]);
             long endAddr = PLPToolbox.parseNum(tokens[3]) + startAddr;
-            plptool.PLPSimBusModule mod = plptool.PLPDynamicModule.getDynamicModule(index);
+            plptool.PLPSimBusModule mod = plptool.PLPDynamicModule.newBusModuleInstance(index);
             if(mod != null) {
                 core.bus.add(mod);
                 core.bus.enableMod(core.bus.getNumOfMods() - 1);
@@ -565,12 +577,17 @@ public class SimCLI {
         if(tokens.length < 2) {
             Msg.M("Usage: modhook <module bus index> <params>");
         } else {
-            int index = PLPToolbox.parseNumInt(tokens[1]);
-            String param = "";
-            for(int i = 2; i < tokens.length; i++)
-                param += (i==2 ? "" : " ") + tokens[i];
-            if(index > -1 && index < core.bus.getNumOfMods())
-                core.bus.getRefMod(index).hook(param);
+            try {
+                int index = PLPToolbox.parseNumInt(tokens[1]);
+                String param = "";
+                for(int i = 2; i < tokens.length; i++)
+                    param += (i==2 ? "" : " ") + tokens[i];
+                if(index > -1 && index < core.bus.getNumOfMods())
+                    core.bus.getRefMod(index).hook(param);
+            } catch(Exception e) {
+                Msg.E("Module hook exception",
+                      Constants.PLP_SIM_MODHOOK_ERROR, null);
+            }
         }
     }
 
@@ -622,7 +639,7 @@ public class SimCLI {
         try {
 
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-        Msg.M("Welcome to PLP MIPS Simulator Command Line Interface");
+        Msg.M("Welcome to PLP CPU Simulator Command Line Interface");
         Msg.M("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
         Msg.m(String.format("\n%08x", plp.sim.getFlags()) +
                              " " + plp.sim.getInstrCount() +
