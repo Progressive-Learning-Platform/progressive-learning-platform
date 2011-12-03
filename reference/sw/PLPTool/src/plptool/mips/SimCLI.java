@@ -55,56 +55,57 @@ public class SimCLI {
         }
         else if(input.equals("i")) {
         }
-        else if(input.equals("s"))              cmd_s();
-        else if(tokens[0].equals("s"))          cmd_s_arg();
-        else if(input.equals("r"))              cmd_r();
-        else if(input.equals("pram"))           cmd_pram();
-        else if(tokens[0].equals("pram"))       cmd_pram_arg();
-        else if(input.equals("preg"))           cmd_preg();
-        else if(tokens[0].equals("preg"))       cmd_preg_arg();
-        else if(input.equals("pfd"))            cmd_pfd();
-        else if(tokens[0].equals("pprg"))       cmd_pprg();
-        else if(input.equals("pasm"))           cmd_pasm();
-        else if(input.equals("pinstr"))         cmd_pinstr();
-        else if(tokens[0].equals("wpc"))        cmd_wpc();
-        else if(tokens[0].equals("w"))          cmd_w();
-        else if(tokens[0].equals("wbus"))       cmd_wbus();
-        else if(tokens[0].equals("rbus"))       cmd_rbus();
-        else if(input.equals("listio"))         cmd_listio();
-        else if(input.equals("enableio"))       cmd_enableio();
-        else if(tokens[0].equals("enableio"))   cmd_enableio_arg();
-        else if(input.equals("evalio"))         cmd_evalio();
-        else if(tokens[0].equals("evalio"))     cmd_evalio_arg();
-        else if(input.equals("disableio"))      cmd_disableio();
-        else if(tokens[0].equals("disableio"))  cmd_disableio_arg();
-        else if(tokens[0].equals("cleario"))    cmd_cleario();
-        else if(input.equals("listmods"))       cmd_listmods();
-        else if(input.equals("attachedmods"))   cmd_attachedmods();
-        else if(input.equals("listpresets"))    cmd_listpresets();
-        else if(tokens[0].equals("loadpreset")) cmd_loadpreset();
-        else if(tokens[0].equals("addmod"))     cmd_addmod();
-        else if(tokens[0].equals("rmmod"))      cmd_rmmod();
-        else if(tokens[0].equals("j"))          cmd_j();
-        else if(tokens[0].equals("asm"))        cmd_asm();
-        else if(input.equals("pvars"))          cmd_pvars();
-        else if(input.equals("pnextvars"))      cmd_pnextvars();
-        else if(input.equals("silent"))         cmd_silent();
-        else if(input.equals("cycleaccurate"))  cmd_cycleaccurate();
-        else if(tokens[0].equals("bp"))         cmd_bp();
-        else if(tokens[0].equals("assert"))     cmd_assert();
-        else if(tokens[0].equals("assertreg"))  cmd_assertreg();
-        else if(tokens[0].equals("echo"))       cmd_echo();
-        else if(tokens[0].equals("modhook"))    cmd_modhook();
-        else if(input.equals("flags"))          cmd_flags();
-        else if(input.equals("fwd"))            cmd_fwd();
-        else if(input.equals("jvm"))            cmd_jvm();
-        else if(input.equals("help"))           simCLHelp(0);
-        else if(input.equals("help sim"))       simCLHelp(1);
-        else if(input.equals("help print"))     simCLHelp(2);
-        else if(input.equals("help bus"))       simCLHelp(3);
-        else if(input.equals("help mods"))      simCLHelp(4);
-        else if(input.equals("help misc"))      simCLHelp(5);
-        else if(input.equals("help bp"))        simCLHelp(6);
+        else if(input.equals("s"))                  cmd_s();
+        else if(tokens[0].equals("s"))              cmd_s_arg();
+        else if(input.equals("r"))                  cmd_r();
+        else if(input.equals("pram"))               cmd_pram();
+        else if(tokens[0].equals("pram"))           cmd_pram_arg();
+        else if(input.equals("preg"))               cmd_preg();
+        else if(tokens[0].equals("preg"))           cmd_preg_arg();
+        else if(input.equals("pfd"))                cmd_pfd();
+        else if(tokens[0].equals("pprg"))           cmd_pprg();
+        else if(input.equals("pasm"))               cmd_pasm();
+        else if(input.equals("pinstr"))             cmd_pinstr();
+        else if(tokens[0].equals("wpc"))            cmd_wpc();
+        else if(tokens[0].equals("w"))              cmd_w();
+        else if(tokens[0].equals("wbus"))           cmd_wbus();
+        else if(tokens[0].equals("rbus"))           cmd_rbus();
+        else if(input.equals("listio"))             cmd_listio();
+        else if(input.equals("enableio"))           cmd_enableio();
+        else if(tokens[0].equals("enableio"))       cmd_enableio_arg();
+        else if(input.equals("evalio"))             cmd_evalio();
+        else if(tokens[0].equals("evalio"))         cmd_evalio_arg();
+        else if(input.equals("disableio"))          cmd_disableio();
+        else if(tokens[0].equals("disableio"))      cmd_disableio_arg();
+        else if(tokens[0].equals("cleario"))        cmd_cleario();
+        else if(input.equals("listmods"))           cmd_listmods();
+        else if(input.equals("attachedmods"))       cmd_attachedmods();
+        else if(input.equals("listpresets"))        cmd_listpresets();
+        else if(tokens[0].equals("loadpreset"))     cmd_loadpreset();
+        else if(tokens[0].equals("addmod"))         cmd_addmod();
+        else if(tokens[0].equals("adddynamicmod"))  cmd_adddynamicmod();
+        else if(tokens[0].equals("rmmod"))          cmd_rmmod();
+        else if(tokens[0].equals("j"))              cmd_j();
+        else if(tokens[0].equals("asm"))            cmd_asm();
+        else if(input.equals("pvars"))              cmd_pvars();
+        else if(input.equals("pnextvars"))          cmd_pnextvars();
+        else if(input.equals("silent"))             cmd_silent();
+        else if(input.equals("cycleaccurate"))      cmd_cycleaccurate();
+        else if(tokens[0].equals("bp"))             cmd_bp();
+        else if(tokens[0].equals("assert"))         cmd_assert();
+        else if(tokens[0].equals("assertreg"))      cmd_assertreg();
+        else if(tokens[0].equals("echo"))           cmd_echo();
+        else if(tokens[0].equals("modhook"))        cmd_modhook();
+        else if(input.equals("flags"))              cmd_flags();
+        else if(input.equals("fwd"))                cmd_fwd();
+        else if(input.equals("jvm"))                cmd_jvm();
+        else if(input.equals("help"))               simCLHelp(0);
+        else if(input.equals("help sim"))           simCLHelp(1);
+        else if(input.equals("help print"))         simCLHelp(2);
+        else if(input.equals("help bus"))           simCLHelp(3);
+        else if(input.equals("help mods"))          simCLHelp(4);
+        else if(input.equals("help misc"))          simCLHelp(5);
+        else if(input.equals("help bp"))            simCLHelp(6);
         else if(input.toLowerCase().equals("wira sucks"))   Msg.M("No, he doesn't.");
         else Msg.M("Unknown command: " + input);
         
@@ -422,6 +423,22 @@ public class SimCLI {
             ioReg.attachModuleToBus((int) PLPToolbox.parseNum(tokens[1]),
                                     PLPToolbox.parseNum(tokens[2]),
                                     PLPToolbox.parseNum(tokens[3]));
+        }
+    }
+
+    public static void cmd_adddynamicmod() {
+        if(tokens.length != 4) {
+            Msg.M("Usage: adddynamicmod <dynamic mod ID> <address> <register file size>");
+        } else {
+            int index = PLPToolbox.parseNumInt(tokens[1]);
+            long startAddr = PLPToolbox.parseNum(tokens[2]);
+            long endAddr = PLPToolbox.parseNum(tokens[3]) + startAddr;
+            plptool.PLPSimBusModule mod = plptool.PLPDynamicModule.getDynamicModule(index);
+            if(mod != null) {
+                core.bus.add(mod);
+                core.bus.enableMod(core.bus.getNumOfMods() - 1);
+                core.bus.getRefMod(core.bus.getNumOfMods() - 1).setNewParameters(startAddr, endAddr, true);
+            }
         }
     }
 
