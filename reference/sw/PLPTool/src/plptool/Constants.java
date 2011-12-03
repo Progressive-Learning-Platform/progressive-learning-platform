@@ -139,6 +139,13 @@ public class Constants {
     public static final int PLP_BACKEND_LOAD_CONFIG_FAILED       = 1038;
     public static final int PLP_BACKEND_GUI_ON_HEADLESS_ENV      = 1039;
 
+    public static final int PLP_DBUSMOD_INSTANTIATION_ERROR      = 1040;
+    public static final int PLP_DBUSMOD_PATH_ERROR               = 1041;
+    public static final int PLP_DBUSMOD_CLASS_NOT_FOUND_ERROR    = 1042;
+    public static final int PLP_DBUSMOD_ILLEGAL_ACCESS           = 1043;
+    public static final int PLP_DBUSMOD_FILE_IO_ERROR            = 1044;
+    public static final int PLP_DBUSMOD_GENERIC                  = 1045;
+
     // Framework errors
     public static final int PLP_ISA_INVALID_ARCHITECTURE_ID      = 2048;
     public static final int PLP_ISA_NO_SIM_CLI                   = 2049;
