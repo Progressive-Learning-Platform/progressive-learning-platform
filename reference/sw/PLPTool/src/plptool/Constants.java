@@ -27,8 +27,9 @@ public class Constants {
     public static final String copyrightString =
             "PLP Software Tool version " + versionString + "\n" +
             "Copyright 2010-2011 PLP Contributors.\n" +
-            "Run with '--license' option for third party licensing information.\n" +
-            "This software is licensed under GPLv3.";
+            "This software is licensed under GPLv3.\n" +
+            "Run with '--license' option for third party licensing information."
+            ;
 
     public static final String thirdPartyCopyrightString =
             "This software uses the following third party software:\n\n" +
@@ -107,6 +108,7 @@ public class Constants {
     public static final int PLP_SIM_MODULE_NO_DATA_ON_READ       = 271;
     public static final int PLP_SIM_UNSUPPORTED_ARCHITECTURE     = 272;
     public static final int PLP_SIM_WRONG_MODULE_TYPE            = 273;
+    public static final int PLP_SIM_MODHOOK_ERROR                = 274;
 
     // Programmer errors
     public static final int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
@@ -144,7 +146,7 @@ public class Constants {
     public static final int PLP_DBUSMOD_CLASS_NOT_FOUND_ERROR    = 1042;
     public static final int PLP_DBUSMOD_ILLEGAL_ACCESS           = 1043;
     public static final int PLP_DBUSMOD_FILE_IO_ERROR            = 1044;
-    public static final int PLP_DBUSMOD_GENERIC                  = 1045;
+    public static final int PLP_DBUSMOD_GENERIC                  = 1045;   
 
     // Framework errors
     public static final int PLP_ISA_INVALID_ARCHITECTURE_ID      = 2048;

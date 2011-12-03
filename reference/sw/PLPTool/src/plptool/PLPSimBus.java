@@ -108,9 +108,14 @@ public class PLPSimBus {
         Object[] modules = bus_modules.toArray();
         Object value = null;
         for(int i = modules.length - 1; i >= 0; i--) {
-            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
-               addr <= ((PLPSimBusModule)modules[i]).endAddr())
-                value = ((PLPSimBusModule)modules[i]).read(addr);
+            PLPSimBusModule module = (PLPSimBusModule)modules[i];
+            if(addr >= module.startAddr() &&
+               addr <= module.endAddr()) {
+                if(!module.phantom)
+                    value = module.read(addr);
+                else
+                    module.read(addr);
+            }
         }
 
         if(value != null)
