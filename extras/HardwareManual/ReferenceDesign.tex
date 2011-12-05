@@ -32,7 +32,7 @@ Two files are of interest: '\textbf{top.bit}' and '\textbf{top.mcs}'. The mcs fi
 From there you can configure the FPGA and have at it!
 \pagebreak
 \section{CPU}
-\includegraphics[scale=0.6]{CPUDiagram.png}
+\includegraphics[scale=0.6]{../../images/CPUDiagram.png} 
 
 
 The CPU is a simple, 5-stage pipelined, MIPS-like machine. It implements a subset of the MIPS ISA, described in the user manual.
@@ -47,7 +47,7 @@ All instructions except for load word (lw) resolve in the EX stage. This has imp
 
 \subsection{Forwarding and Hazards}
 
-\includegraphics[scale=0.5]{ForwardsandHazards.png}
+\includegraphics[scale=0.5]{../../images/ForwardsandHazards.png}
 
 The PLP reference design forwards or stalls on all potential data hazards. Forwarding/Hazard logic is shown in the diagram in blue. Below is a table of all potential hazards, how each hazard is avoided, and an instruction sequence that exposes the hazard.
 
@@ -153,7 +153,7 @@ Because the system clock is only 25MHz data writes take 6 cycles (two 16-bit wri
 
 \subsection{Cache}
 
-\includegraphics[scale=0.6]{CACHE.png} 
+\includegraphics[scale=0.6]{../../images/CACHE.png} 
 
 Below the SRAM is a simple cache. This is used because reads to the SRAM are already 4 times slower than the CPU, and the VGA module can hold the SRAM for upwards of 640 cycles at a time, all of which the CPU spends stalled.
 
