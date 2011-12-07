@@ -144,20 +144,44 @@ public class PLPDynamicModule {
     }
 }
 
+/**
+ * PLP dynamic module class loader for the dynamic module framework.
+ *
+ * @author wira
+ */
 class PLPDynamicModuleClassLoader extends ClassLoader {
 
     private String path;
     private String nameToCheck;
 
+    /**
+     * Constructor.
+     *
+     * @param parent Parent classloader, preferably top level
+     */
     public PLPDynamicModuleClassLoader(ClassLoader parent) {
         super(parent);
     }
 
+    /**
+     * Set the path of the class file and the name of the class to load when
+     * loadClass routine is called
+     *
+     * @param path Path to the class file
+     * @param name Name of the class
+     */
     public void setClassToLoad(String path, String name) {
         this.path = path;
         this.nameToCheck = name;
     }
 
+    /**
+     * Load the class specified by 'name'
+     *
+     * @param name Name of the class to load
+     * @return Reference to the Class object
+     * @throws ClassNotFoundException
+     */
     @Override
     public Class loadClass(String name) throws ClassNotFoundException {
         if(!name.equals(nameToCheck))

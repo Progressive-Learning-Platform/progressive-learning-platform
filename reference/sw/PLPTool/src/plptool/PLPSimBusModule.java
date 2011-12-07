@@ -74,7 +74,7 @@ public abstract class PLPSimBusModule extends Thread {
     protected boolean enabled;
 
     /**
-     * This variables tells the bus whether it actually stores data in the
+     * This variable tells the bus whether it actually stores data in the
      * mapped region. Defaults to false. Useful for modules that need to see
      * bus accesses but do not require registers (cache simulators, snoopers,
      * etc)

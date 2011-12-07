@@ -138,10 +138,12 @@ public class PLPToolApp extends SingleFrameApplication {
             }
 
             // Dynamic module load
-            if(args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
-                if(!PLPDynamicModule.loadModuleClass(args[i+2], args[i+1]))
+            if(args.length >= activeArgIndex + 2 && args[i].equals("--load-class")) {
+                File classFile = new File(args[i+1]);
+                String className = classFile.getName().substring(0, classFile.getName().length()-6);
+                if(!PLPDynamicModule.loadModuleClass(args[i+1], className))
                     System.exit(-1);
-                activeArgIndex += 3;
+                activeArgIndex += 2;
             }
         }
 

@@ -28,7 +28,7 @@ public class Constants {
             "PLP Software Tool version " + versionString + "\n" +
             "Copyright 2010-2011 PLP Contributors.\n" +
             "This software is licensed under GPLv3.\n" +
-            "Run with '--license' option for third party licensing information."
+            "Run with '--license' option for licensing information of third party software."
             ;
 
     public static final String thirdPartyCopyrightString =
