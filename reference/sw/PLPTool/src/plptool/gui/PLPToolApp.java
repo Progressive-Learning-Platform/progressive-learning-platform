@@ -25,7 +25,7 @@ import org.jdesktop.application.SingleFrameApplication;
 import plptool.Msg;
 import plptool.Constants;
 import plptool.ArchRegistry;
-import plptool.PLPDynamicModule;
+import plptool.PLPDynamicModuleFramework;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -95,9 +95,11 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {
 
+/******************** RUN AND QUIT COMMANDS ***********************************/
+
         // Print third party licensing information and quit
         if(args.length >= 1 && args[0].equals("--license")) {
-            Msg.M(Constants.copyrightString + "\n");
+            Msg.M("\n" + Constants.copyrightString + "\n");
             Msg.M(Constants.thirdPartyCopyrightString + "\n");
             return;
         }
@@ -106,16 +108,12 @@ public class PLPToolApp extends SingleFrameApplication {
         if(args.length >= 1 && args[0].equals("--buildinfo")) {
             Msg.M(plptool.Version.stamp);
             return;
-        }
-
-        // Remove config file / reset config and quit
-        if(args.length >= 1 && args[0].equals("--removeconfig")) {
-            ProjectDriver.removeConfig();
-            return;
-        }
+        }     
 
         int activeArgIndex = 0;
         java.io.File fileToOpen = null;
+
+/******************* COMMAND LINE ARGUMENTS THAT CAN BE COMBINED **************/
 
         for(int i = 0; i < args.length; i++) {
             // Silent mode
@@ -137,13 +135,18 @@ public class PLPToolApp extends SingleFrameApplication {
                 activeArgIndex += 2;
             }
 
+            // Remove config file / reset config and quit
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--remove-config")) {
+                ProjectDriver.removeConfig();
+                activeArgIndex++;
+            }
+
             // Dynamic module load
-            if(args.length >= activeArgIndex + 2 && args[i].equals("--load-class")) {
+            if(args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
                 File classFile = new File(args[i+1]);
-                String className = classFile.getName().substring(0, classFile.getName().length()-6);
-                if(!PLPDynamicModule.loadModuleClass(args[i+1], className))
+                if(!PLPDynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
                     System.exit(-1);
-                activeArgIndex += 2;
+                activeArgIndex += 3;
             }
         }
 
@@ -158,6 +161,8 @@ public class PLPToolApp extends SingleFrameApplication {
 
         if(Constants.debugLevel >= 1)
             plptool.PLPToolbox.getOS(true);
+
+/****************** EXCLUSIVE ARGUMENTS ***************************************/
 
         if(args.length == 1) {
             fileToOpen = new java.io.File(args[0]);

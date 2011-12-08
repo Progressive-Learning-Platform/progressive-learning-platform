@@ -429,8 +429,8 @@ public class SimCLI {
 
     public static void cmd_listdmods() {
         Msg.M("Registered dynamic modules:");
-        for(int i = 0; i < plptool.PLPDynamicModule.getNumberOfClasses(); i++) {
-            Class c = plptool.PLPDynamicModule.getDynamicModuleClass(i);
+        for(int i = 0; i < plptool.PLPDynamicModuleFramework.getNumberOfClasses(); i++) {
+            Class c = plptool.PLPDynamicModuleFramework.getDynamicModuleClass(i);
             Class sc = c.getSuperclass();
             Msg.m(i + ":\t" + c.getName());
             Msg.M((sc != null) ? " extends " + sc.getName() : "");
@@ -445,7 +445,7 @@ public class SimCLI {
             int index = PLPToolbox.parseNumInt(tokens[1]);
             long startAddr = PLPToolbox.parseNum(tokens[2]);
             long endAddr = PLPToolbox.parseNum(tokens[3]) + startAddr;
-            plptool.PLPSimBusModule mod = plptool.PLPDynamicModule.newBusModuleInstance(index);
+            plptool.PLPSimBusModule mod = plptool.PLPDynamicModuleFramework.newBusModuleInstance(index);
             if(mod != null) {
                 core.bus.add(mod);
                 core.bus.enableMod(core.bus.getNumOfMods() - 1);

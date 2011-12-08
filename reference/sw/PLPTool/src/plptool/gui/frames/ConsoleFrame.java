@@ -158,7 +158,6 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("showoutput")) {
 
             }
-
             else if(command.equals("open_asm")) {
                 plptool.Msg.I("open_asm:" + plp.open_asm, null);
             }
@@ -242,7 +241,24 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("dumpundolist")) {
                 plp.g_dev.getUndoManager().dumpList();
             }
-
+            else if(command.equals("loaddmodclass")) {
+                final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+                int retVal = fc.showOpenDialog(null);
+                if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                    java.io.File file = fc.getSelectedFile();
+                    String shortName = file.getName();
+                    plptool.PLPDynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
+                }          
+            }
+            else if(command.equals("listdmods")) {
+                Msg.M("Registered dynamic modules:");
+                for(int i = 0; i < plptool.PLPDynamicModuleFramework.getNumberOfClasses(); i++) {
+                    Class c = plptool.PLPDynamicModuleFramework.getDynamicModuleClass(i);
+                    Class sc = c.getSuperclass();
+                    Msg.m(i + ":\t" + c.getName());
+                    Msg.M((sc != null) ? " extends " + sc.getName() : "");
+                }
+            }
                 
 
             else if(tokens.length > 1) {
@@ -263,6 +279,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 }
                 if(tokens[0].equals("program")) {
                     plp.program(tokens[1]);
+                }
+                if(tokens[0].equals("checkdmod") && tokens.length == 2) {
+                    out.setText("dmod index: " + plptool.PLPDynamicModuleFramework.isModuleClassRegistered(tokens[1]));
                 }
                 if(tokens[0].equals("opencloseport")) {
                    opencloseport(tokens[1]);
