@@ -27,7 +27,7 @@ import java.util.Iterator;
  *
  * @author wira
  */
-public abstract class PLPAsm {
+public abstract class PLPAsm implements PLPGenericModule {
 
     /**
      * Assembly source files attached to this assembler
@@ -357,4 +357,12 @@ public abstract class PLPAsm {
     public void setAssembled(boolean b) {
         assembled = b;
     }
+
+    /**
+     * Overridable developer-specified generic hook.
+     *
+     * @param param An object to pass to the hook
+     * @return A reference to an object returned from the hook function
+     */
+    public Object hook(Object param) {return null;};
 }

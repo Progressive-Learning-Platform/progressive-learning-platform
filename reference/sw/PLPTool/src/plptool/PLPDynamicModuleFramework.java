@@ -32,7 +32,7 @@ import java.util.ArrayList;
  *
  * @author wira
  */
-public class PLPDynamicModule {
+public class PLPDynamicModuleFramework {
     /**
      * Index tracker for loaded module classes
      */
@@ -69,9 +69,9 @@ public class PLPDynamicModule {
             warn = true;
         }
         Msg.M("--- Loading module class " + className + " from " + path +
-              " (index: " + index + ")...");
+              " [" + index + "]...");
         if(loader == null) {
-            ClassLoader parent = PLPDynamicModule.class.getClassLoader();
+            ClassLoader parent = PLPDynamicModuleFramework.class.getClassLoader();
             loader = new PLPDynamicModuleClassLoader(parent);
         }
         loader.setClassToLoad(path, className);
@@ -89,7 +89,10 @@ public class PLPDynamicModule {
                   Constants.PLP_DBUSMOD_CLASS_NOT_FOUND_ERROR, null);
             return false;
         } catch(Exception e) {
-            e.printStackTrace();
+            Msg.E("Unable to load module. Set debug level to 1 or higher for" +
+                  " stack trace.", Constants.PLP_DBUSMOD_GENERIC, null);
+            if(Constants.debugLevel >= 1)
+                e.printStackTrace();
             return false;
         }
 
@@ -103,9 +106,14 @@ public class PLPDynamicModule {
      * @return Reference to the module class
      */
     public static Class getDynamicModuleClass(int index) {
-        if(index < 0 || index >= dynamicModuleClasses.size())
-            return null;
+        if(dynamicModuleClasses == null)
+            dynamicModuleClasses = new ArrayList<Class>();
 
+        if(index < 0 || index >= dynamicModuleClasses.size()) {
+            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            return null;
+        }
+        
         return dynamicModuleClasses.get(index);
     }
 
@@ -119,6 +127,21 @@ public class PLPDynamicModule {
     }
 
     /**
+     * Check whether the specified module class is registered and return the
+     * index of the class in the list
+     *
+     * @param name Name of the class to look up
+     * @return The index of the class if found, -1 otherwise
+     */
+    public static int isModuleClassRegistered(String name) {
+        for(int i = 0; i < dynamicModuleClasses.size(); i++)
+            if(dynamicModuleClasses.get(i).getName().equals(name))
+                return i;
+
+        return -1;
+    }
+
+    /**
      * Create a new instance of a module class and cast it to PLPSimBusModule.
      *
      * @param index Index of the class
@@ -128,8 +151,8 @@ public class PLPDynamicModule {
      */
     public static PLPSimBusModule newBusModuleInstance(int index) {
         try {
-            PLPSimBusModule mod = (PLPSimBusModule) getDynamicModuleClass(index).newInstance();
-            return mod;
+            Class moduleClass = getDynamicModuleClass(index);
+            return moduleClass == null ? null : (PLPSimBusModule) moduleClass.newInstance();
 
         } catch (InstantiationException e) {
             Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
@@ -184,6 +207,12 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
      */
     @Override
     public Class loadClass(String name) throws ClassNotFoundException {
+        if(findLoadedClass(name) != null) {
+            Msg.E("Class " + name + " is already loaded.",
+                  Constants.PLP_DBUSMOD_GENERIC, null);
+            return null;
+        }
+
         if(!name.equals(nameToCheck))
             return super.loadClass(name, true);
 

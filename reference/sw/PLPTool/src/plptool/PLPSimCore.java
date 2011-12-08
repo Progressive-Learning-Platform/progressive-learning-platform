@@ -18,7 +18,6 @@
 
 package plptool;
 
-import plptool.mods.MemModule;
 import java.util.ArrayList;
 
 /**
@@ -27,7 +26,7 @@ import java.util.ArrayList;
  * @see PLPMIPSSim
  * @author wira
  */
-public abstract class PLPSimCore {
+public abstract class PLPSimCore implements PLPGenericModule {
 
     /**
      * Start address for reset.
@@ -129,6 +128,14 @@ public abstract class PLPSimCore {
      * The simulation runner will check on this address to evaluate breakpoints
      */
     public long visibleAddr;
+
+    /**
+     * Overridable developer-specified generic hook.
+     *
+     * @param param An object to pass to the hook
+     * @return A reference to an object returned from the hook function
+     */
+    public Object hook(Object param) {return null;};
 
     /**
      * Breakpoint module for the simulation

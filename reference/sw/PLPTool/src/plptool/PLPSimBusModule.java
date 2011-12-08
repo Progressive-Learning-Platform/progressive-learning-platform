@@ -33,7 +33,7 @@ import java.util.Iterator;
  * @see PLPSimBus
  * @author wira
  */
-public abstract class PLPSimBusModule extends Thread {
+public abstract class PLPSimBusModule extends Thread implements PLPGenericModule {
     /**
      * Denotes whether this module should run on its own thread. Defaults
      * to false.

@@ -23,7 +23,7 @@ package plptool;
  *
  * @author wira
  */
-public abstract class PLPSerialProgrammer extends Thread {
+public abstract class PLPSerialProgrammer extends Thread implements PLPGenericModule {
     protected plptool.gui.ProjectDriver plp;
 
     public boolean      busy = false;
@@ -56,6 +56,14 @@ public abstract class PLPSerialProgrammer extends Thread {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Overridable developer-specified generic hook.
+     *
+     * @param param An object to pass to the hook
+     * @return A reference to an object returned from the hook function
+     */
+    public Object hook(Object param) {return null;};
 
     abstract public int connect(String portName, int baudRate) throws Exception;
     abstract public int close();
