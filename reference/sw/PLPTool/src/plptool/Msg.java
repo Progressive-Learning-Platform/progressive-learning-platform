@@ -84,17 +84,17 @@ public class Msg {
     public static int E(String errStr, int errorCode, Object objIdentifier) {
         if(objIdentifier != null)
             if(output == null)
-                System.out.println("[ERROR] #" + errorCode + " " + objIdentifier.toString() + ": " + errStr);
+                System.out.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr);
             else {
-                append("[ERROR] ", true, Color.RED);
-                append("#" + errorCode + " " + objIdentifier.toString() + ": " + errStr + "\n");
+                append("[ERROR]", true, Color.RED);
+                append((errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n");
             }
         else
             if(output == null)
-                System.out.println("[ERROR] #" + errorCode + " " + errStr);
+                System.out.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr);
             else {
-                append("[ERROR] ", true, Color.RED);
-                append("#" + errorCode + " " + errStr + "\n");
+                append("[ERROR]", true, Color.RED);
+                append((errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n");
             }
 
         lastError = errorCode;
