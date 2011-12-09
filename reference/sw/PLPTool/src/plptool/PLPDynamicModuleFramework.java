@@ -19,8 +19,12 @@
 package plptool;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
 
 /**
  * PLPDynamicModule is the dynamic module loading framework for PLPTool. The
@@ -218,11 +222,35 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
 
         try {
             File file = new File(path);
-            FileInputStream in = new FileInputStream(file);
-            byte[] data = new byte[(int) file.length()];
-            in.read(data, 0, (int) file.length());
+            String fName = file.getName();
+            Class ret = null;
+            if(fName.endsWith(".class")) {
+                FileInputStream in = new FileInputStream(file);
+                byte[] data = new byte[(int) file.length()];
+                in.read(data, 0, (int) file.length());
 
-            Class ret = defineClass(name, data, 0, data.length);
+                ret = defineClass(name, data, 0, data.length);
+                
+            // http://weblogs.java.net/blog/malenkov/archive/2008/07/how_to_load_cla.html
+            // retrieved 2011-12-09 10:32AM CDT
+            } else if(fName.endsWith(".jar")) {
+                ZipFile jar = new ZipFile(file);
+                ZipEntry jarEntry = jar.getEntry(name.replace(".", "/") + ".class");
+                if(jarEntry == null) {
+                    throw new ClassNotFoundException(name);
+                }
+
+                byte[] array = new byte[1024];
+                InputStream in = jar.getInputStream(jarEntry);
+                ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
+                int length = in.read(array);
+                while(length > 0) {
+                    out.write(array, 0, length);
+                    length = in.read(array);
+                }
+
+                ret = defineClass(name, out.toByteArray(), 0, out.size());
+            }
             return ret;
             
         } catch(Exception e) {
