@@ -22,6 +22,7 @@ import plptool.PLPSimBusModule;
 import plptool.Constants;
 import plptool.gui.ProjectDriver;
 import plptool.Msg;
+import plptool.PLPDynamicModuleFramework;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JFrame;
@@ -242,7 +243,7 @@ public class IORegistry {
     }
 
     /**
-     * Instantiates and attaches a PLPSimBusModule-based module to this I/O
+     * Instantiate and attach a PLPSimBusModule-based module to this I/O
      * registry and to the bus of the given simulation core. This method also
      * associates a module with its internal frame, if GUI representation is
      * implemented. Module developers will have to write their module's
@@ -251,7 +252,6 @@ public class IORegistry {
      * @param index Module type as registered in the constructor.
      * @param addr The starting address of the module's address space.
      * @param size The size of the module's address space.
-     * @param sim Simulation core associated with the main application.
      * @return PLP_OK on completion, or PLP_SIM_INVALID_MODULE if invalid index
      * is specified.
      */
@@ -399,6 +399,39 @@ public class IORegistry {
             //simDesktop.add((JFrame) moduleFrame);
             //((JFrame) moduleFrame).setVisible(true);
         //}
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Instantiate and attach a dynamic PLPSimBusModule-based module to this I/O
+     * registry and to the bus of the given simulation core.
+     * PLPDynamicModuleFramework is called to create a new instance of the
+     * module.
+     *
+     * @param index Index of the dynamic module CLASS
+     * @param addr Starting address of the module's memory map
+     * @param size Number of registers
+     * @param isWordAligned Denote whether the module's address space is word
+     * aligned
+     * @param frame Frame object associated with this module
+     * @return PLP_OK on completion, or PLP_DBUSMOD_INSTANTIATION_ERROR if
+     * the module object failed to initialize
+     */
+    public int attachDynamicModule(int index, long startAddr, long endAddr, boolean isWordAligned, Object frame) {
+        moduleFrames.add(frame);
+        PLPSimBusModule module = PLPDynamicModuleFramework.newBusModuleInstance(index);
+
+        if(module == null)
+            return Constants.PLP_DBUSMOD_INSTANTIATION_ERROR;
+
+        module.setNewParameters(startAddr, endAddr, isWordAligned);
+        module.hook(frame);
+        modules.add(module);
+        type.add(-1); // -1 for dynamic module
+        regSize.add(isWordAligned ? (endAddr-startAddr)/4+1 : endAddr-startAddr+1);
+        module.enable();
+        positionInBus.add(plp.sim.bus.add(module));
 
         return Constants.PLP_OK;
     }

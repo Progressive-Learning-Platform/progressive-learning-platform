@@ -440,17 +440,12 @@ public class SimCLI {
 
     public static void cmd_adddmod() {
         if(tokens.length != 4) {
-            Msg.M("Usage: adddmod <dynamic mod ID> <address> <register file size>");
+            Msg.M("Usage: adddmod <dynamic mod ID> <start address> <end address>");
         } else {
             int index = PLPToolbox.parseNumInt(tokens[1]);
             long startAddr = PLPToolbox.parseNum(tokens[2]);
             long endAddr = PLPToolbox.parseNum(tokens[3]) + startAddr;
-            plptool.PLPSimBusModule mod = plptool.PLPDynamicModuleFramework.newBusModuleInstance(index);
-            if(mod != null) {
-                core.bus.add(mod);
-                core.bus.enableMod(core.bus.getNumOfMods() - 1);
-                core.bus.getRefMod(core.bus.getNumOfMods() - 1).setNewParameters(startAddr, endAddr, true);
-            }
+            ioReg.attachDynamicModule(index, startAddr, endAddr, true, null);
         }
     }
 
