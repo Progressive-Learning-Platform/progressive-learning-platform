@@ -69,7 +69,8 @@ public class ProjectDriver {
      * open_asm     - current open ASM file in the gui
      * curdir       - current working directory for the project
      * arch         - active ISA for this project
-	 * sim_mode		- denotes whether the project is in simulation mode
+     * sim_mode	    - denotes whether the project is in simulation mode
+     * replay       - denotes whether the project is in replay mode
      */ // --
 
     public File                    plpfile;
@@ -79,6 +80,7 @@ public class ProjectDriver {
     public String                  curdir;
     private PLPArchitecture        arch;
     private boolean                sim_mode;
+    private boolean                replay;
 
     /*
      * These variables hold data and information loaded from
@@ -162,6 +164,7 @@ public class ProjectDriver {
         plpfile = null;
         halt = false;
         sim_mode = false;
+        replay = false;
 
         if(applet) asms = new ArrayList<PLPAsmSource>();
 
@@ -701,7 +704,7 @@ public class ProjectDriver {
                     } else {
                         arch = ArchRegistry.getArchitectureMetaClass(this, Integer.parseInt(temp));
                         if(arch == null) {
-                            Msg.W("Invalid ISA is specified in the project file: '" + arch +
+                            Msg.W("Invalid ISA ID is specified in the project file: '" + temp +
                                   "'. Assuming plpmips", this);
                             arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
                         }
@@ -1012,6 +1015,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int assemble() {
+        if(!replay) PLPDynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.ASSEMBLE, -1));
         if(!arch.hasAssembler())
             return Msg.E("This ISA does not implement an assembler",
                          Constants.PLP_ISA_NO_ASSEMBLER, this);
@@ -1068,6 +1072,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int simulate() {
+        if(!replay) PLPDynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.SIMULATE, -1));
         if(!arch.hasSimCore())
             return Msg.E("simulate(): This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
@@ -1148,6 +1153,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int desimulate() {
+        if(!replay) PLPDynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.DESIMULATE, -1));
         if(!sim_mode)
             return Constants.PLP_OK;
 
@@ -1653,6 +1659,41 @@ public class ProjectDriver {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Replay action as specified by the ProjectEvent instance passed to
+     * this function
+     *
+     * @param e ProjectEvent to be replayed
+     */
+    public void replay(ProjectEvent e) {
+        replay = true;
+        switch(e.getIdentifier()) {
+            case ProjectEvent.ASSEMBLE:
+                assemble();
+                break;
+            case ProjectEvent.SIMULATE:
+                g_dev.simBegin();
+                break;
+            case ProjectEvent.DESIMULATE:
+                g_dev.simEnd();
+                break;
+            
+            default:
+                Msg.E("Unknown event ID: " + e.getIdentifier(),
+                      Constants.PLP_GENERIC_ERROR, this);
+        }
+        replay = false;
+    }
+
+    /**
+     * Return whether the project is replaying project events
+     *
+     * @return True if project is being replayed, false otherwise
+     */
+    public boolean isReplaying() {
+        return replay;
     }
 
     /**

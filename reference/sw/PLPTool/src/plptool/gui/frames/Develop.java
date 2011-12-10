@@ -38,8 +38,10 @@ import plptool.Msg;
 import plptool.Constants;
 import plptool.Config;
 import plptool.PLPSimBusModule;
+import plptool.PLPDynamicModuleFramework;
 import plptool.mods.*;
 import plptool.gui.ProjectDriver;
+import plptool.gui.ProjectEvent;
 import plptool.gui.SerialTerminal;
 import plptool.gui.NumberConverter;
 
@@ -1049,12 +1051,14 @@ public class Develop extends javax.swing.JFrame {
     private void simStep() {
         boolean breakpoint = false;
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
+            if(!plp.isReplaying()) PLPDynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));
             plp.sim.step();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                 Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }
+        if(!plp.isReplaying()) PLPDynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1));
         plp.updateComponents(true);
     }
 
