@@ -48,6 +48,11 @@ public class PLPDynamicModuleFramework {
     private static ArrayList<Class> dynamicModuleClasses;
 
     /**
+     * Dynamic module instances holder
+     */
+    private static ArrayList<PLPGenericModule> dynamicModuleInstances;
+
+    /**
      * Boolean to give warning about loading 3rd party modules once
      */
     private static boolean warn = false;
@@ -68,12 +73,12 @@ public class PLPDynamicModuleFramework {
      */
     public static boolean loadModuleClass(String path, String className) {
         if(!warn) {
-            Msg.W("YOU ARE LOADING A DYNAMIC MODULE, THIS COULD BE POTENTIALLY DANGEROUS", null);
+            Msg.W("YOU ARE LOADING A DYNAMIC MODULE, THIS COULD POTENTIALLY BE DANGEROUS", null);
             Msg.W("Make sure you only use trusted third party modules!", null);
             warn = true;
         }
-        Msg.M("--- Loading module class " + className + " from " + path +
-              " [" + index + "]...");
+        Msg.M("[" + index + "] Loading module class " + className + " from " + path +
+              " ...");
         if(loader == null) {
             ClassLoader parent = PLPDynamicModuleFramework.class.getClassLoader();
             loader = new PLPDynamicModuleClassLoader(parent);
@@ -143,6 +148,114 @@ public class PLPDynamicModuleFramework {
                 return i;
 
         return -1;
+    }
+
+    /**
+     * Instantiate a dynamic module as PLPGenericModule and add a reference
+     * to it in the dynamicModuleInstances list.
+     *
+     * @param index Index of the class
+     * @return Index of the new module in the list, -1 if an error occurred
+     */
+    public static int newGenericModuleInstance(int index) {
+        try {
+            Class moduleClass = getDynamicModuleClass(index);
+            if(moduleClass == null)
+                return Constants.PLP_GENERIC_ERROR;
+            if(dynamicModuleInstances == null)
+                dynamicModuleInstances = new ArrayList<PLPGenericModule>();
+            dynamicModuleInstances.add((PLPGenericModule) moduleClass.newInstance());
+            return dynamicModuleInstances.size() - 1;
+
+        } catch (InstantiationException e) {
+            Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
+                  "Generic modules have to extend plptool.PLPGenericModule class.",
+                  Constants.PLP_DBUSMOD_INSTANTIATION_ERROR, null);
+            return Constants.PLP_GENERIC_ERROR;
+        } catch(IllegalAccessException e) {
+            Msg.E("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
+                  Constants.PLP_DBUSMOD_ILLEGAL_ACCESS, null);
+            return Constants.PLP_GENERIC_ERROR;
+        }
+    }
+
+    /**
+     * Return the number of instantiated dynamic module objects
+     *
+     * @return Number of instantiated dynamic module objects
+     */
+    public static int getNumberOfGenericModuleInstances() {
+        return dynamicModuleInstances.size();
+    }
+
+    /**
+     * Return a reference to the specified dynamic module instance
+     *
+     * @param index Index of the module object to return
+     * @return Reference to the specified object
+     */
+    public static PLPGenericModule getGenericModuleInstance(int index) {
+        checkModuleInstancesList();
+        if(index < 0 || index >= dynamicModuleInstances.size()) {
+            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            return null;
+        }
+
+        return dynamicModuleInstances.get(index);
+    }
+
+    /**
+     * Remove the reference to the specified generic module instance
+     *
+     * @param index Index of the object reference in the list
+     * @return The reference to object if found, null otherwise
+     */
+    public static PLPGenericModule removeGenericModuleInstance(int index) {
+        checkModuleInstancesList();
+        if(index < 0 || index >= dynamicModuleInstances.size()) {
+            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            return null;
+        }
+
+        return dynamicModuleInstances.remove(index);
+    }
+
+    /**
+     * Call the hook function to the specified dynamic module instance
+     *
+     * @param index Index of the generic module instance
+     * @param param Parameters to pass to the hook function
+     * @return Object referenced returned by the hook function
+     */
+    public static Object hook(int index, Object param) {
+        checkModuleInstancesList();
+        if(index < 0 || index >= dynamicModuleInstances.size()) {
+            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            return null;
+        }
+
+        return dynamicModuleInstances.get(index).hook(param);
+    }
+
+    /**
+     * Call the hook function of all module instances and pass the same
+     * parameters
+     *
+     * @param param Parameter to pass to all modules
+     */
+    public static void hook(Object param) {
+        checkModuleInstancesList();
+        for(int i = 0; i < dynamicModuleInstances.size(); i++)
+            dynamicModuleInstances.get(i).hook(param);
+    }
+
+    /**
+     * Check if the module instances list is initialized or not. If not,
+     * initialize it.
+     */
+    public static void checkModuleInstancesList() {
+        if(dynamicModuleInstances == null)
+            dynamicModuleInstances = new ArrayList<PLPGenericModule>();
     }
 
     /**
@@ -222,14 +335,19 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
 
         try {
             File file = new File(path);
+            byte[] array = new byte[1024];
+            ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
             String fName = file.getName();
             Class ret = null;
             if(fName.endsWith(".class")) {
                 FileInputStream in = new FileInputStream(file);
-                byte[] data = new byte[(int) file.length()];
-                in.read(data, 0, (int) file.length());
+                int length = in.read(array);
+                while(length > 0) {
+                    out.write(array, 0, length);
+                    length = in.read(array);
+                }
 
-                ret = defineClass(name, data, 0, data.length);
+                ret = defineClass(name, out.toByteArray(), 0, out.size());
                 
             // http://weblogs.java.net/blog/malenkov/archive/2008/07/how_to_load_cla.html
             // retrieved 2011-12-09 10:32AM CDT
@@ -240,9 +358,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                     throw new ClassNotFoundException(name);
                 }
 
-                byte[] array = new byte[1024];
                 InputStream in = jar.getInputStream(jarEntry);
-                ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
                 int length = in.read(array);
                 while(length > 0) {
                     out.write(array, 0, length);

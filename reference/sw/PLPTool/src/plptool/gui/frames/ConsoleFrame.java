@@ -1,12 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
 
-/*
- * PLPConsole.java
- *
- * Created on 14 Des 10, 15:49:21
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 package plptool.gui.frames;
@@ -250,13 +257,21 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plptool.PLPDynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
                 }          
             }
-            else if(command.equals("listdmods")) {
-                Msg.M("Registered dynamic modules:");
+            else if(command.equals("listdmodclasses")) {
+                Msg.M("Registered dynamic module classes:");
                 for(int i = 0; i < plptool.PLPDynamicModuleFramework.getNumberOfClasses(); i++) {
                     Class c = plptool.PLPDynamicModuleFramework.getDynamicModuleClass(i);
                     Class sc = c.getSuperclass();
                     Msg.m(i + ":\t" + c.getName());
                     Msg.M((sc != null) ? " extends " + sc.getName() : "");
+                }
+            }
+            else if(command.equals("listdmods")) {
+                out.setText("");
+                String prev = "";
+                for(int i = 0; i < plptool.PLPDynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
+                    prev = out.getText();
+                    out.setText(prev + i + ":\t" + plptool.PLPDynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
                 }
             }
                 
@@ -266,34 +281,59 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plptool.Config.devFont = tokens[1];
                     plp.g_dev.changeFormatting();
                 }
-                if(tokens[0].equals("fontsize")) {
+                else if(tokens[0].equals("fontsize")) {
                     plptool.Config.devFontSize = Integer.parseInt(tokens[1]);
                     plp.g_dev.changeFormatting();
                 }
-                if(tokens[0].equals("hl")) {
+                else if(tokens[0].equals("hl")) {
                     plptool.Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
                     out.setText("cfgSyntaxHighlighting " + plptool.Config.devSyntaxHighlighting);
                 }
-                if(tokens[0].equals("open")) {
+                else if(tokens[0].equals("open")) {
                     plp.open(tokens[1], true);
                 }
-                if(tokens[0].equals("program")) {
+                else if(tokens[0].equals("program")) {
                     plp.program(tokens[1]);
                 }
-                if(tokens[0].equals("checkdmod") && tokens.length == 2) {
-                    out.setText("dmod index: " + plptool.PLPDynamicModuleFramework.isModuleClassRegistered(tokens[1]));
+                else if(tokens[0].equals("checkdmodclass") && tokens.length == 2) {
+                    out.setText("dmodclass index: " + plptool.PLPDynamicModuleFramework.isModuleClassRegistered(tokens[1]) + "\n");
                 }
-                if(tokens[0].equals("opencloseport")) {
+                else if(tokens[0].equals("newdmod") && tokens.length == 2) {
+                    out.setText("Instantiating new object for " + plptool.PLPDynamicModuleFramework.getDynamicModuleClass(PLPToolbox.parseNumInt(tokens[1])).getName() +"\n");
+                    plptool.PLPDynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                }
+                else if(tokens[0].equals("rmdmod") && tokens.length == 2) {
+                    plptool.PLPDynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                }
+                else if(tokens[0].equals("h") && tokens.length == 2) {
+                    String[] temp = tokens[1].split(" ", 2);
+                    out.setText("hook: " + temp[0] + "-" + temp[1] + "\n");
+                    plptool.PLPDynamicModuleFramework.hook(PLPToolbox.parseNumInt(temp[0]), temp[1]);
+                }
+                else if(tokens[0].equals("hplp") && tokens.length == 2) {
+                    Object ret = plptool.PLPDynamicModuleFramework.hook(PLPToolbox.parseNumInt(tokens[1]), plp);
+                    if(ret != null)
+                        out.setText("Module seems to have ProjectDriver hook.");
+                    else
+                        out.setText("null was returned");
+                }
+                
+                else if(tokens[0].equals("opencloseport")) {
                    opencloseport(tokens[1]);
                 }
 
-                if(tokens[0].equals("simcl") && asmexplorer != null) {
+                else if(tokens[0].equals("simcl") && asmexplorer != null) {
                     String xcmd = "";
                     for(int i = 1; i < tokens.length; i++)
                         xcmd += tokens[i] + ((i != tokens.length - 1) ? " " : "");
                     plptool.mips.SimCLI.simCLCommand(xcmd, plp);
                     asmexplorer.updateTable();
                 }
+                 else {
+                    out.setText(":(");
+                    cmd.setText("");
+                    return;
+                 }
 
             }
             else {
