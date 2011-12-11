@@ -132,6 +132,9 @@ public class PLPDynamicModuleFramework {
      * @return Number of classes loaded
      */
     public static int getNumberOfClasses() {
+        if(dynamicModuleClasses == null)
+            dynamicModuleClasses = new ArrayList<Class>();
+
         return dynamicModuleClasses.size();
     }
 
