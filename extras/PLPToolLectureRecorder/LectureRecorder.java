@@ -11,12 +11,12 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
 	private ProjectDriver plp = null;
 	private ArrayList<ProjectEvent> events;
 
-	@Override
 	public Object hook(Object param) {
 		if(param instanceof String) {
 			if(param.equals("init")) {
 				setTitle("PLPTool Lecture Recorder Module");
 				setSize(400, 300);
+                                setResizable(false);
 
 			} else if(param.equals("show") && init) {
 				this.setVisible(true);
@@ -34,7 +34,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
 		if(param instanceof ProjectDriver) {
 			this.plp = (ProjectDriver) param;
 			events = new ArrayList<ProjectEvent>();
-			System.out.println("LectureRecorder: ProjectDriver attached: " + plp);			
+			System.out.println("LectureRecorder: " + plp + " attached.");			
 			init = true;
 			return param;
 		}
