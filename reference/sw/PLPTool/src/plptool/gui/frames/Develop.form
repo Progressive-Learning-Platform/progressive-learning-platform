@@ -415,9 +415,15 @@
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuDynamicModuleManager">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jSeparator7" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuDynamicModuleManager.text"/>
+                <Property name="name" type="java.lang.String" value="menuDynamicModuleManager" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDynamicModuleManagerActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSerialTerminal">
               <Properties>
@@ -1028,7 +1034,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="411" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="414" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

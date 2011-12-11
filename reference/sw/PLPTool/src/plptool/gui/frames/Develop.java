@@ -1217,6 +1217,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        menuDynamicModuleManager = new javax.swing.JMenuItem();
         menuSerialTerminal = new javax.swing.JMenuItem();
         menuNumberConverter = new javax.swing.JMenuItem();
         rootmenuSim = new javax.swing.JMenu();
@@ -1361,7 +1362,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -2020,9 +2021,16 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuTools.add(menuOptions);
-
-        jSeparator7.setName("jSeparator7"); // NOI18N
         rootmenuTools.add(jSeparator7);
+
+        menuDynamicModuleManager.setText(resourceMap.getString("menuDynamicModuleManager.text")); // NOI18N
+        menuDynamicModuleManager.setName("menuDynamicModuleManager"); // NOI18N
+        menuDynamicModuleManager.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDynamicModuleManagerActionPerformed(evt);
+            }
+        });
+        rootmenuTools.add(menuDynamicModuleManager);
 
         menuSerialTerminal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
         menuSerialTerminal.setMnemonic('S');
@@ -3004,6 +3012,10 @@ public class Develop extends javax.swing.JFrame {
         menuSimControl.setSelected(btnSimControl.isSelected());
     }//GEN-LAST:event_btnSimControlActionPerformed
 
+    private void menuDynamicModuleManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDynamicModuleManagerActionPerformed
+        (new DynamicModuleManager(this, true)).setVisible(true);
+    }//GEN-LAST:event_menuDynamicModuleManagerActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3119,6 +3131,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuCopy;
     private javax.swing.JMenuItem menuCut;
     private javax.swing.JMenuItem menuDeleteASM;
+    private javax.swing.JMenuItem menuDynamicModuleManager;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuExitSim;
     private javax.swing.JMenuItem menuExportASM;
