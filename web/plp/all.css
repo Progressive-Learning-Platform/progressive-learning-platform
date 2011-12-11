@@ -10,7 +10,7 @@ body {
 }
 a {
   color: #04a;
-  /*text-decoration: none;*/
+  text-decoration: none;
 }
 a:visited {
   color: #04a;
@@ -116,12 +116,12 @@ h1#title {
 
 /* Content */
 #content {
-  clear: left;
+  clear: both;
   padding: 0;
   position: relative;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
-  /*border-top: solid 1px #aaa;*/
+  border-top: solid 1px #aaa;
   border-bottom: solid 1px #aaa;
 }
 .left-column {
@@ -132,8 +132,7 @@ h1#title {
 }
 .right-column {
   width: 49%;
-  float: right; 
-  clear: none;
+  float: right;
 }
 .end-columns {
   clear: both;

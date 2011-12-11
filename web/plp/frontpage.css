@@ -50,11 +50,7 @@ span.keyword {
   margin-left: 2em;
 }
 #banner {
-  background-color: white;
-  border: 1px solid gray;
   float: right;
-  text-align: center;
-  width: 160px;
 }
 
 #resources h3 {
