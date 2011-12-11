@@ -256,6 +256,9 @@ public class IORegistry {
      * is specified.
      */
     public int attachModuleToBus(int index, long addr, long size) {
+        // we're not loading dynamic modules from here (index -1)
+        if(index < 0)
+            return Constants.PLP_OK;
 
         PLPSimBusModule module = null;
         Object moduleFrame = null;

@@ -18,11 +18,13 @@
 
 package plptool.gui.frames;
 
-import plptool.Constants;
+import plptool.PLPDynamicModuleFramework;
+import plptool.PLPToolbox;
 import plptool.mods.IORegistry;
 import plptool.mods.Preset;
-import javax.swing.table.DefaultTableModel;
 import plptool.gui.ProjectDriver;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.DefaultListModel;
 
 /**
  * Front-end for IORegistry for PLPToolView
@@ -51,7 +53,24 @@ public class IORegistryFrame extends javax.swing.JFrame {
         for(int i = 0; i < Preset.presets.length; i++)
             cmbPresets.addItem(Preset.presets[i][0]);
 
+        reloadDynamicModuleLists();
+
         //plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_IOREGISTRY);
+    }
+
+    private void reloadDynamicModuleLists() {
+        cmbDModFrameClass.removeAllItems();
+        cmbDModFrameClass.addItem("No frame (null)");
+        for(int i = 0; i < PLPDynamicModuleFramework.getNumberOfClasses(); i++)
+            cmbDModFrameClass.addItem(i + ":" + PLPDynamicModuleFramework.getDynamicModuleClass(i).getName());
+
+        DefaultListModel list = new DefaultListModel();
+        list.clear();
+        for(int i = 0; i < PLPDynamicModuleFramework.getNumberOfClasses(); i++) {
+            if(PLPDynamicModuleFramework.getDynamicModuleClass(i).getSuperclass().getName().equals("plptool.PLPSimBusModule"))
+                list.addElement(i + ":" + PLPDynamicModuleFramework.getDynamicModuleClass(i).getName());
+        }
+        listDynamicModuleClasses.setModel(list);
     }
 
     /** This method is called from within the constructor to
@@ -83,10 +102,20 @@ public class IORegistryFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         cmbPresets = new javax.swing.JComboBox();
         btnLoadPreset = new javax.swing.JButton();
+        paneDynamicModules = new javax.swing.JPanel();
+        btnReloadDModList = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        listDynamicModuleClasses = new javax.swing.JList();
+        txtDModStartAddr = new javax.swing.JTextField();
+        txtDModEndAddr = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        cmbDModFrameClass = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        btnAttachDMod = new javax.swing.JButton();
+        chkDModWordAligned = new javax.swing.JCheckBox();
 
-        ;
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        ;
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(IORegistryFrame.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
@@ -144,7 +173,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneAddLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtModInfoScroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(txtModInfoScroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
                     .addComponent(btnAdd)
                     .addGroup(paneAddLayout.createSequentialGroup()
                         .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,9 +182,9 @@ public class IORegistryFrame extends javax.swing.JFrame {
                             .addComponent(lblRegfileSize))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(paneAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                            .addComponent(cmbModuleSelect, javax.swing.GroupLayout.Alignment.TRAILING, 0, 341, Short.MAX_VALUE)
-                            .addComponent(txtModuleAddress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE))))
+                            .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                            .addComponent(cmbModuleSelect, javax.swing.GroupLayout.Alignment.TRAILING, 0, 286, Short.MAX_VALUE)
+                            .addComponent(txtModuleAddress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneAddLayout.setVerticalGroup(
@@ -174,7 +203,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
                     .addComponent(txtModuleRegfileSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRegfileSize))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                .addComponent(txtModInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAdd)
                 .addContainerGap())
@@ -191,7 +220,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Registry Pos.", "Bus Position", "Start Address", "End Address", "Show Frame"
+                "Name", "Index", "Bus Position", "Start Address", "End Address", "Show Frame"
             }
         ) {
             Class[] types = new Class [] {
@@ -247,7 +276,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneListLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
                     .addGroup(paneListLayout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -258,7 +287,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
             paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneListLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(paneListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemove)
@@ -292,7 +321,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cmbPresets, 0, 233, Short.MAX_VALUE)
+                .addComponent(cmbPresets, 0, 152, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLoadPreset)
                 .addContainerGap())
@@ -305,10 +334,110 @@ public class IORegistryFrame extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(btnLoadPreset)
                     .addComponent(cmbPresets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(423, Short.MAX_VALUE))
+                .addContainerGap(400, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("paneIOConfig.TabConstraints.tabTitle"), paneIOConfig); // NOI18N
+
+        paneDynamicModules.setName("paneDynamicModules"); // NOI18N
+
+        btnReloadDModList.setText(resourceMap.getString("btnReloadDModList.text")); // NOI18N
+        btnReloadDModList.setName("btnReloadDModList"); // NOI18N
+        btnReloadDModList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReloadDModListActionPerformed(evt);
+            }
+        });
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        listDynamicModuleClasses.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        listDynamicModuleClasses.setName("listDynamicModuleClasses"); // NOI18N
+        jScrollPane2.setViewportView(listDynamicModuleClasses);
+
+        txtDModStartAddr.setText(resourceMap.getString("txtDModStartAddr.text")); // NOI18N
+        txtDModStartAddr.setName("txtDModStartAddr"); // NOI18N
+
+        txtDModEndAddr.setText(resourceMap.getString("txtDModEndAddr.text")); // NOI18N
+        txtDModEndAddr.setName("txtDModEndAddr"); // NOI18N
+
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
+
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
+
+        cmbDModFrameClass.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbDModFrameClass.setName("cmbDModFrameClass"); // NOI18N
+
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        btnAttachDMod.setText(resourceMap.getString("btnAttachDMod.text")); // NOI18N
+        btnAttachDMod.setName("btnAttachDMod"); // NOI18N
+        btnAttachDMod.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAttachDModActionPerformed(evt);
+            }
+        });
+
+        chkDModWordAligned.setText(resourceMap.getString("chkDModWordAligned.text")); // NOI18N
+        chkDModWordAligned.setName("chkDModWordAligned"); // NOI18N
+
+        javax.swing.GroupLayout paneDynamicModulesLayout = new javax.swing.GroupLayout(paneDynamicModules);
+        paneDynamicModules.setLayout(paneDynamicModulesLayout);
+        paneDynamicModulesLayout.setHorizontalGroup(
+            paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneDynamicModulesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chkDModWordAligned)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                    .addComponent(btnReloadDModList)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneDynamicModulesLayout.createSequentialGroup()
+                        .addGroup(paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                        .addGroup(paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cmbDModFrameClass, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtDModEndAddr)
+                            .addComponent(txtDModStartAddr, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)))
+                    .addComponent(btnAttachDMod))
+                .addContainerGap())
+        );
+        paneDynamicModulesLayout.setVerticalGroup(
+            paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneDynamicModulesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnReloadDModList)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDModStartAddr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDModEndAddr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneDynamicModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbDModFrameClass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addComponent(chkDModWordAligned)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAttachDMod)
+                .addContainerGap(77, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("paneDynamicModules.TabConstraints.tabTitle"), paneDynamicModules); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -433,6 +562,29 @@ public class IORegistryFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tblModsMouseClicked
 
+    private void btnReloadDModListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadDModListActionPerformed
+        reloadDynamicModuleLists();
+    }//GEN-LAST:event_btnReloadDModListActionPerformed
+
+    private void btnAttachDModActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAttachDModActionPerformed
+        long startAddr = PLPToolbox.parseNum(txtDModStartAddr.getText());
+        long endAddr = PLPToolbox.parseNum(txtDModEndAddr.getText());
+        String entry = (String) listDynamicModuleClasses.getSelectedValue();
+        if(entry == null) return;
+        String[] modListEntry = entry.split(":");
+        int modClassIndex = Integer.parseInt(modListEntry[0]);
+        int modFrameClassIndex = -1;
+        Object frame = null;
+        if(cmbDModFrameClass.getSelectedIndex() != 0) {
+            String[] modFrameEntry = ((String) cmbDModFrameClass.getSelectedItem()).split(":");
+            modFrameClassIndex = Integer.parseInt(modFrameEntry[0]);
+            frame = PLPDynamicModuleFramework.newGenericModuleInstance(modFrameClassIndex);
+        }
+
+        plp.ioreg.attachDynamicModule(modClassIndex, startAddr, endAddr, chkDModWordAligned.isSelected(), frame);
+        refreshModulesTable();
+    }//GEN-LAST:event_btnAttachDModActionPerformed
+
     public void refreshModulesTable() {
         DefaultTableModel mods = (DefaultTableModel) tblMods.getModel();
         Object[] modules;
@@ -443,7 +595,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
             mods.removeRow(0);
 
         for(int i = 0; i < modules.length; i++) {
-            javax.swing.JFrame frame = (javax.swing.JFrame) plp.ioreg.getModuleFrame(i);
+            javax.swing.JFrame frame = plp.ioreg.getModuleFrame(i) instanceof javax.swing.JFrame ? (javax.swing.JFrame) plp.ioreg.getModuleFrame(i) : null;
             Object row[] = new Object[]
             { modules[i].toString(),
               i,
@@ -461,21 +613,33 @@ public class IORegistryFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnAttachDMod;
     private javax.swing.JButton btnLoadPreset;
+    private javax.swing.JButton btnReloadDModList;
     private javax.swing.JButton btnRemove;
+    private javax.swing.JCheckBox chkDModWordAligned;
+    private javax.swing.JComboBox cmbDModFrameClass;
     private javax.swing.JComboBox cmbModuleSelect;
     private javax.swing.JComboBox cmbPresets;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblAddr;
     private javax.swing.JLabel lblModule;
     private javax.swing.JLabel lblRegfileSize;
+    private javax.swing.JList listDynamicModuleClasses;
     private javax.swing.JPanel paneAdd;
+    private javax.swing.JPanel paneDynamicModules;
     private javax.swing.JPanel paneIOConfig;
     private javax.swing.JPanel paneList;
     private javax.swing.JTable tblMods;
+    private javax.swing.JTextField txtDModEndAddr;
+    private javax.swing.JTextField txtDModStartAddr;
     private javax.swing.JTextArea txtModInfo;
     private javax.swing.JScrollPane txtModInfoScroll;
     private javax.swing.JTextField txtModuleAddress;
