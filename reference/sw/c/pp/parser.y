@@ -152,6 +152,9 @@ element
 	| ELSE { vlog("[pp parser] ELSE\n"); handle_else(); }
 	| ENDIF { vlog("[pp parser] ENDIF\n"); handle_endif(); }
 	| IDENTIFIER '(' ')' { $3 = realloc($3, strlen($3)+3); $3 = strcat($3, "()"); vlog("[pp parser] identifier: %s\n", $1); handle_text($1); free($1); }
+	| IDENTIFIER '(' IDENTIFIER { vlog("[pp parser] %s ( %s\n", $1, $3); handle_text($1); handle_text("("); handle_text($3); free($1); free($3); }
+	| IDENTIFIER '(' TEXT { vlog("[pp parser] %s ( %s\n", $1, $3); handle_text($1); handle_text("("); handle_text($3); free($1); free($3); }
+	| IDENTIFIER '(' WS { vlog("[pp parser] %s (\n", $1); handle_text($1); handle_text("("); program = emit(program, " "); free($1); }
 	| IDENTIFIER { vlog("[pp parser] identifier %s\n", $1); handle_text($1); free($1); }
 	| TEXT { vlog("[pp parser] text %s\n", $1); handle_text($1); free($1); }
 	| NEWLINE { end_define(); }

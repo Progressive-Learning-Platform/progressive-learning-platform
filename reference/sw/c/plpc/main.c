@@ -24,9 +24,13 @@
 /* for getopt long */
 #include <getopt.h>
 
+#define BUFFER_LEN 8192
+
 int LOG_LEVEL = 0;
 char *S_FILE_OUTPUT = NULL;
 char **files = NULL;
+char *entrypoint = NULL;
+char *metafile = NULL;
 int STOP_ERRORS = 1;
 int PSYMBOL = 0;
 int PDEFINE = 0;
@@ -34,6 +38,7 @@ int PPARSE = 0;
 int FRONT_ONLY = 0;
 int NOANNOTATE = 0;
 int PBUILTIN = 0;
+int file_index = 0;
 
 void print_usage(void) {
 	printf("plpc - plp c toolchain\n\n");
@@ -61,8 +66,6 @@ void print_usage(void) {
 void handle_opts(int argc, char *argv[]) {
 	char *dvalue = NULL;
 	char *ovalue = NULL;
-	char *evalue = NULL;
-	char *mvalue = NULL;
 	int c;
 
 	while (1) {
@@ -84,6 +87,9 @@ void handle_opts(int argc, char *argv[]) {
 			break;
 	
 		switch(c) {
+			case 'o':
+				ovalue = optarg;
+				break;
 			case 'a':
 				PDEFINE = 1;
 				break;
@@ -106,10 +112,10 @@ void handle_opts(int argc, char *argv[]) {
 				NOANNOTATE = 1;
 				break;
 			case 'h':
-				evalue = optarg;
+				entrypoint = optarg;
 				break;
 			case 'i':
-				mvalue = optarg;
+				metafile = optarg;
 				break;
 			case 'j':
 				PBUILTIN = 1;
@@ -149,13 +155,12 @@ void handle_opts(int argc, char *argv[]) {
 	
 	/* grab remaining values as inputs */
 	if (optind < argc) {
-		int index = 0;
 		files = malloc(sizeof(char*) * (argc-optind));
 		while (optind < argc) {
-			files[index] = argv[optind];
+			files[file_index] = argv[optind];
 			log("[plpc] input file           : %s\n", argv[optind]);
 			optind++;
-			index++;
+			file_index++;
 		}
 	} else {
 		err("[plpc] no input files specified\n");
@@ -164,13 +169,81 @@ void handle_opts(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+	char command[BUFFER_LEN];
+	int ret = 0;
+	int i;
 
 	/* process arguments */
 	handle_opts(argc, argv);	
 
+
+	/* PREPROCESSOR */
+
 	log("[plpc] preprocessor\n");
+	/* build preprocessor arguments */
+	sprintf(command, "plppp -o %s.pp -d %d %s %s ",
+		S_FILE_OUTPUT, 			/* output file name */
+		LOG_LEVEL, 			/* debug level */
+		STOP_ERRORS ? "" : "-e", 	/* stop on errors */
+		PDEFINE ? "-p" : "" 		/* print defines and exit */
+	);
+	/* now add the files */
+	for (i=0; i<file_index; i++)
+		sprintf(command, "%s %s", command, files[i]);
+
+	vlog("[plpc] preprocessor arguments: %s\n", command);
+
+	/* run it! */
+	ret = system(command);
+	if (ret != 0) {
+		err("[plpc] preprocessor returned error: %d\n", ret);
+	}
+
+	/* COMPILER */
+
 	log("[plpc] c compiler\n");
+	
+	/* build compiler options */
+	sprintf(command, "plpcc -o %s.asm -d %d	%s %s %s %s %s %s.pp",
+		S_FILE_OUTPUT,			/* output file name */
+		LOG_LEVEL,			/* debug level */
+		PSYMBOL ? "-s" : "",		/* print symbol table */
+		PPARSE ? "-p" : "", 		/* print parse tree */
+		STOP_ERRORS ? "" : "-e",	/* stop on errors */
+		FRONT_ONLY ? "-f" : "", 	/* run front end only */
+		NOANNOTATE ? "-a" : "", 	/* no c annotation */
+		S_FILE_OUTPUT			/* input file */
+	);
+	vlog("[plpc] compiler arguments: %s\n", command);
+
+	/* run it! */
+	ret = system(command);
+	if (ret != 0) {
+		err("[plpc] compiler returned error: %d\n", ret);
+	}
+
+	/* BINARY BLOB */
+
 	log("[plpc] binary blob\n");
+
+	/* build binary blob options */
+	sprintf(command, "plpbb -o %s -d %d %s %s %s %s %s %s.asm", 
+		S_FILE_OUTPUT,				/* output file name */
+		LOG_LEVEL,				/* debug level */
+		entrypoint == NULL ? "" : "-e", 	/* entrypoint */
+		entrypoint == NULL ? "" : entrypoint, 
+		metafile == NULL ? "" : "-m",		/* metafile */
+		metafile == NULL ? "" : metafile,	
+		PBUILTIN ? "-p" : "",			/* print builtins */
+		S_FILE_OUTPUT
+	);	
+	vlog("[plpc] binary blob arguments: %s\n", command);
+	
+	/* run it! */
+	ret = system(command);
+	if (ret != 0) {
+		err("[plpc] binary blob returned error: %d\n", ret);
+	}
 
 	log("[plpc] done\n");
 	return 0;
