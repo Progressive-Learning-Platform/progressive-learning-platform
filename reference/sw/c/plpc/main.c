@@ -39,6 +39,7 @@ int FRONT_ONLY = 0;
 int NOANNOTATE = 0;
 int PBUILTIN = 0;
 int file_index = 0;
+int CLEANUP = 1;
 
 void print_usage(void) {
 	printf("plpc - plp c toolchain\n\n");
@@ -47,6 +48,7 @@ void print_usage(void) {
 	printf("-o <filename>		output filename\n");
 	printf("-d [0,1,2]		debug level (0=off (default), 1=on, 2=verbose)\n");
 	printf("-e 			do not stop on errors, even if crazy things happen\n");
+	printf("--nocleanup		leave intermediate files\n");
 	printf("\n");
 	printf("preprocessor options:\n");
 	printf("--define		print defines\n");
@@ -78,11 +80,12 @@ void handle_opts(int argc, char *argv[]) {
 			{"entry", required_argument, 0, 'h'},
 			{"metafile", required_argument, 0, 'i'}, 
 			{"builtin", no_argument, 0, 'j'},
+			{"nocleanup", no_argument, 0, 'k'},
 			{0,0,0,0}
 		};
 
 		int option_index = 0;
-		c = getopt_long(argc, argv, "o:d:eabcfgh:i:j", long_options, &option_index);
+		c = getopt_long(argc, argv, "o:d:eabcfgh:i:jk", long_options, &option_index);
 		if (c == -1)
 			break;
 	
@@ -119,6 +122,9 @@ void handle_opts(int argc, char *argv[]) {
 				break;
 			case 'j':
 				PBUILTIN = 1;
+				break;
+			case 'k':
+				CLEANUP = 0;
 				break;
 			case '?':
 				/* getopt_long printed the error message for us */
@@ -243,6 +249,15 @@ int main(int argc, char *argv[]) {
 	ret = system(command);
 	if (ret != 0) {
 		err("[plpc] binary blob returned error: %d\n", ret);
+	}
+
+	/* unlink the files we created, maybe. */
+	if (CLEANUP) {	
+		log("[plpc] removing intermediate files\n");
+		sprintf(command, "%s.pp", S_FILE_OUTPUT);
+		remove(command);
+		sprintf(command, "%s.asm", S_FILE_OUTPUT);
+		remove(command);
 	}
 
 	log("[plpc] done\n");
