@@ -49,7 +49,7 @@ char *builtin_metafile =
 "\
 PLP-4.0\n\
 DIRTY=1\n\
-ARCH=plpmips\n\
+ARCH=0\n\
 \n";
 
 #endif

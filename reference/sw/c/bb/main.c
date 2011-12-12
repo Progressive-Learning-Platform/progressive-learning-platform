@@ -76,8 +76,19 @@ char *build_entrypoint(char *f) {
 
 char *build_metafile(char *f) {
 	char *ret;
+	char **filenames = files;
 	if (f == NULL) {
-		return builtin_metafile;
+		ret = strdup(builtin_metafile);
+		ret = realloc(ret, strlen(ret) + strlen("entrypoint.asm") + 2);
+		ret = strcat(ret, "entrypoint.asm");
+		ret = strcat(ret, "\n");
+		while (*filenames) {
+			ret = realloc(ret, strlen(ret) + strlen(*filenames) + 2);
+			ret = strcat(ret, *filenames);
+			ret = strcat(ret, "\n");
+			filenames++;
+		}
+		return ret;
 	} else { 
 		FILE *fd = fopen(f,"r");
                 int total = BUFFER;
