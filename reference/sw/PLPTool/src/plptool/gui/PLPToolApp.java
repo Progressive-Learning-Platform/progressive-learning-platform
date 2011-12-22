@@ -25,7 +25,7 @@ import org.jdesktop.application.SingleFrameApplication;
 import plptool.Msg;
 import plptool.Constants;
 import plptool.ArchRegistry;
-import plptool.PLPDynamicModuleFramework;
+import plptool.DynamicModuleFramework;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -144,7 +144,7 @@ public class PLPToolApp extends SingleFrameApplication {
             // Dynamic module load
             if(args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
                 File classFile = new File(args[i+1]);
-                if(!PLPDynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
+                if(!DynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
                     System.exit(-1);
                 activeArgIndex += 3;
             }

@@ -18,7 +18,7 @@
 
 package plptool.gui.frames;
 
-import plptool.PLPDynamicModuleFramework;
+import plptool.DynamicModuleFramework;
 import plptool.PLPToolbox;
 import plptool.mods.IORegistry;
 import plptool.mods.Preset;
@@ -61,14 +61,14 @@ public class IORegistryFrame extends javax.swing.JFrame {
     private void reloadDynamicModuleLists() {
         cmbDModFrameClass.removeAllItems();
         cmbDModFrameClass.addItem("No frame (null)");
-        for(int i = 0; i < PLPDynamicModuleFramework.getNumberOfClasses(); i++)
-            cmbDModFrameClass.addItem(i + ":" + PLPDynamicModuleFramework.getDynamicModuleClass(i).getName());
+        for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++)
+            cmbDModFrameClass.addItem(i + ":" + DynamicModuleFramework.getDynamicModuleClass(i).getName());
 
         DefaultListModel list = new DefaultListModel();
         list.clear();
-        for(int i = 0; i < PLPDynamicModuleFramework.getNumberOfClasses(); i++) {
-            if(PLPDynamicModuleFramework.getDynamicModuleClass(i).getSuperclass().getName().equals("plptool.PLPSimBusModule"))
-                list.addElement(i + ":" + PLPDynamicModuleFramework.getDynamicModuleClass(i).getName());
+        for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
+            if(DynamicModuleFramework.getDynamicModuleClass(i).getSuperclass().getName().equals("plptool.PLPSimBusModule"))
+                list.addElement(i + ":" + DynamicModuleFramework.getDynamicModuleClass(i).getName());
         }
         listDynamicModuleClasses.setModel(list);
     }
@@ -578,7 +578,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
         if(cmbDModFrameClass.getSelectedIndex() != 0) {
             String[] modFrameEntry = ((String) cmbDModFrameClass.getSelectedItem()).split(":");
             modFrameClassIndex = Integer.parseInt(modFrameEntry[0]);
-            frame = PLPDynamicModuleFramework.newGenericModuleInstance(modFrameClassIndex);
+            frame = DynamicModuleFramework.newGenericModuleInstance(modFrameClassIndex);
         }
 
         plp.ioreg.attachDynamicModule(modClassIndex, startAddr, endAddr, chkDModWordAligned.isSelected(), frame);

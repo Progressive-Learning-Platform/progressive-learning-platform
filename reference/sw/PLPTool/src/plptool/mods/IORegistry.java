@@ -22,7 +22,7 @@ import plptool.PLPSimBusModule;
 import plptool.Constants;
 import plptool.gui.ProjectDriver;
 import plptool.Msg;
-import plptool.PLPDynamicModuleFramework;
+import plptool.DynamicModuleFramework;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JFrame;
@@ -423,7 +423,7 @@ public class IORegistry {
      */
     public int attachDynamicModule(int index, long startAddr, long endAddr, boolean isWordAligned, Object frame) {
         moduleFrames.add(frame);
-        PLPSimBusModule module = PLPDynamicModuleFramework.newBusModuleInstance(index);
+        PLPSimBusModule module = DynamicModuleFramework.newBusModuleInstance(index);
 
         if(module == null)
             return Constants.PLP_DBUSMOD_INSTANTIATION_ERROR;
