@@ -254,13 +254,13 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
                     java.io.File file = fc.getSelectedFile();
                     String shortName = file.getName();
-                    plptool.PLPDynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
+                    plptool.DynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
                 }          
             }
             else if(command.equals("listdmodclasses")) {
                 Msg.M("Registered dynamic module classes:");
-                for(int i = 0; i < plptool.PLPDynamicModuleFramework.getNumberOfClasses(); i++) {
-                    Class c = plptool.PLPDynamicModuleFramework.getDynamicModuleClass(i);
+                for(int i = 0; i < plptool.DynamicModuleFramework.getNumberOfClasses(); i++) {
+                    Class c = plptool.DynamicModuleFramework.getDynamicModuleClass(i);
                     Class sc = c.getSuperclass();
                     Msg.m(i + ":\t" + c.getName());
                     Msg.M((sc != null) ? " extends " + sc.getName() : "");
@@ -269,9 +269,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
             else if(command.equals("listdmods")) {
                 out.setText("");
                 String prev = "";
-                for(int i = 0; i < plptool.PLPDynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
+                for(int i = 0; i < plptool.DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
                     prev = out.getText();
-                    out.setText(prev + i + ":\t" + plptool.PLPDynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
+                    out.setText(prev + i + ":\t" + plptool.DynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
                 }
             }
                 
@@ -296,22 +296,22 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plp.program(tokens[1]);
                 }
                 else if(tokens[0].equals("checkdmodclass") && tokens.length == 2) {
-                    out.setText("dmodclass index: " + plptool.PLPDynamicModuleFramework.isModuleClassRegistered(tokens[1]) + "\n");
+                    out.setText("dmodclass index: " + plptool.DynamicModuleFramework.isModuleClassRegistered(tokens[1]) + "\n");
                 }
                 else if(tokens[0].equals("newdmod") && tokens.length == 2) {
-                    out.setText("Instantiating new object for " + plptool.PLPDynamicModuleFramework.getDynamicModuleClass(PLPToolbox.parseNumInt(tokens[1])).getName() +"\n");
-                    plptool.PLPDynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                    out.setText("Instantiating new object for " + plptool.DynamicModuleFramework.getDynamicModuleClass(PLPToolbox.parseNumInt(tokens[1])).getName() +"\n");
+                    plptool.DynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
                 }
                 else if(tokens[0].equals("rmdmod") && tokens.length == 2) {
-                    plptool.PLPDynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                    plptool.DynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
                 }
                 else if(tokens[0].equals("h") && tokens.length == 2) {
                     String[] temp = tokens[1].split(" ", 2);
                     out.setText("hook: " + temp[0] + "-" + temp[1] + "\n");
-                    plptool.PLPDynamicModuleFramework.hook(PLPToolbox.parseNumInt(temp[0]), temp[1]);
+                    plptool.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(temp[0]), temp[1]);
                 }
                 else if(tokens[0].equals("hplp") && tokens.length == 2) {
-                    Object ret = plptool.PLPDynamicModuleFramework.hook(PLPToolbox.parseNumInt(tokens[1]), plp);
+                    Object ret = plptool.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(tokens[1]), plp);
                     if(ret != null)
                         out.setText("Module seems to have ProjectDriver hook.");
                     else

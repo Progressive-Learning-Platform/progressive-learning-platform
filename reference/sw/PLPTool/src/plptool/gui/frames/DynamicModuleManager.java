@@ -280,8 +280,8 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         while(tbl.getRowCount() > 0)
             tbl.removeRow(0);
         Class c;
-        for(int i = 0; i < PLPDynamicModuleFramework.getNumberOfClasses(); i++) {
-            c = PLPDynamicModuleFramework.getDynamicModuleClass(i);
+        for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
+            c = DynamicModuleFramework.getDynamicModuleClass(i);
             Object[] row = {i, c.getName(), c.getSuperclass().getName(), false, false};
             tbl.addRow(row);
         }
@@ -296,7 +296,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     }//GEN-LAST:event_btnBrowseClassActionPerformed
 
     private void btnRegisterClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterClassActionPerformed
-        PLPDynamicModuleFramework.loadModuleClass(txtClassFile.getText(), txtClassName.getText());
+        DynamicModuleFramework.loadModuleClass(txtClassFile.getText(), txtClassName.getText());
         updateClassList();
     }//GEN-LAST:event_btnRegisterClassActionPerformed
 

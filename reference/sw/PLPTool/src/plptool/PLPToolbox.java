@@ -126,7 +126,7 @@ public class PLPToolbox {
     }
 
     /**
-     * Format a long as 8 digit hexadecimal in String
+     * Format a long as 8 digit hexadecimal in String prefixed with '0x'
      *
      * @param num Number to format
      * @return 8 digit hex format of the number in String
