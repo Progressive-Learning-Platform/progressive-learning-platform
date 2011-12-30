@@ -73,16 +73,6 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jScrollPane1" min="-2" pref="368" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jSeparator2" alignment="0" pref="171" max="32767" attributes="0"/>
-                                  <Component id="btnClassProjectAccess" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="btnLoadInstance" alignment="1" pref="171" max="32767" attributes="1"/>
-                              </Group>
-                          </Group>
                           <Component id="jSeparator1" alignment="0" pref="549" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -100,14 +90,18 @@
                                   <Component id="btnBrowseClass" alignment="0" pref="120" max="32767" attributes="1"/>
                               </Group>
                           </Group>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="390" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="btnSaveClass" alignment="1" max="32767" attributes="1"/>
-                          <Component id="btnRemoveClass" alignment="1" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jScrollPane1" min="-2" pref="368" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="btnSaveClass" alignment="1" pref="171" max="32767" attributes="1"/>
+                                  <Component id="btnRemoveClass" alignment="1" pref="171" max="32767" attributes="1"/>
+                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jSeparator2" alignment="0" pref="171" max="32767" attributes="0"/>
+                                  <Component id="btnClassProjectAccess" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnLoadInstance" alignment="1" pref="171" max="32767" attributes="1"/>
+                              </Group>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -145,7 +139,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" pref="330" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="327" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -244,12 +238,14 @@
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="btnSaveClass.text"/>
                 <Property name="toolTipText" type="java.lang.String" resourceKey="btnSaveClass.toolTipText"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="btnSaveClass" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="btnRemoveClass">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="btnRemoveClass.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="btnRemoveClass" noResource="true"/>
               </Properties>
             </Component>
@@ -258,6 +254,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="btnLoadInstance.text"/>
                 <Property name="name" type="java.lang.String" value="btnLoadInstance" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLoadInstanceActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator2">
               <Properties>
@@ -272,6 +271,8 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
+                <Property name="font" type="java.awt.Font" resourceKey="jLabel2.font"/>
+                <Property name="foreground" type="java.awt.Color" resourceKey="jLabel2.foreground"/>
                 <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
                 <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
               </Properties>
@@ -301,6 +302,7 @@
         </Container>
         <Container class="javax.swing.JPanel" name="paneManageLoadedModules">
           <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="paneManageLoadedModules" noResource="true"/>
           </Properties>
           <Constraints>
@@ -319,7 +321,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="436" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="433" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>

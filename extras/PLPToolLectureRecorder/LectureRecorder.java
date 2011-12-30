@@ -4,7 +4,10 @@ import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
 
 import java.util.ArrayList;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 
 public class LectureRecorder extends JFrame implements PLPGenericModule {
     private boolean init = false;
@@ -16,8 +19,9 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
         if(param instanceof String) {
             if(param.equals("init")) {
 		setTitle("PLPTool Lecture Recorder Module");
-		setSize(400, 300);
+		setSize(400, 100);
                 setResizable(false);
+                initComponents();
             } else if(param.equals("show") && init) {
 		this.setVisible(true);
             } else if(param.equals("hello")) {
@@ -54,6 +58,21 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
 	}
 
 	return null;
+    }
+
+    private void initComponents() {
+        final JTextField in = new JTextField();
+        in.setSize(this.getWidth(), this.getHeight());
+        in.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent evt) {
+                System.out.println("" + evt.getKeyCode());
+                if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    hook(in.getText());
+                }
+            }
+        });
+        this.add(in);
     }
 
     @Override
