@@ -18,16 +18,12 @@
 
 package plptool;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
+import java.util.jar.*;
 
 /**
- * PLPDynamicModule is the dynamic module loading framework for PLPTool. The
+ * This class is the dynamic module loading framework for PLPTool. The
  * class loader and the class load routine are generic, they can be used
  * to load generic classes and attach them to the list to be used in plptool
  * later for any reason. Object instantiations of dynamic classes are
@@ -53,9 +49,15 @@ public class DynamicModuleFramework {
     private static ArrayList<PLPGenericModule> dynamicModuleInstances = new ArrayList<PLPGenericModule>();
 
     /**
-     *
+     * A list that denotes whether the loaded class will be saved to user
+     * directory or not
      */
-    private static ArrayList<File> dynamicModuleClassLocations = new ArrayList<File>();
+    private static ArrayList<Boolean> savedModuleClass = new ArrayList<Boolean>();
+
+    /**
+     * Path to the file where the module class is (.class or .jar file)
+     */
+    private static ArrayList<String> dynamicModuleClassPath = new ArrayList<String>();
 
     /**
      * Boolean to give warning about loading 3rd party modules once
@@ -95,7 +97,8 @@ public class DynamicModuleFramework {
                 return false;
             }
             dynamicModuleClasses.add(dynamicModuleClass);
-            dynamicModuleClassLocations.add(new File(path));
+            dynamicModuleClassPath.add(path);
+            savedModuleClass.add(false);
             index++;
         } catch(ClassNotFoundException e) {
             Msg.E("The class " + className + " is not found in " + path,
@@ -222,7 +225,7 @@ public class DynamicModuleFramework {
      *
      * @param index Index of the generic module instance
      * @param param Parameters to pass to the hook function
-     * @return Object referenced returned by the hook function
+     * @return Object reference returned by the hook function
      */
     public static Object hook(int index, Object param) {
         if(index < 0 || index >= dynamicModuleInstances.size()) {
@@ -244,7 +247,24 @@ public class DynamicModuleFramework {
             dynamicModuleInstances.get(i).hook(param);
     }
 
-    public static void saveClasses(int index) {
+    /**
+     * Mark a module class to be saved to the user cache
+     *
+     * @param index Index of the class to save
+     */
+    public static void setModuleClassSave(int index, boolean s) {
+        if(index < 0 || index >= dynamicModuleClasses.size()) {
+            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            return;
+        }
+
+        savedModuleClass.set(index, s);
+    }
+
+    /**
+     * Save module classes marked to be saved to user cache
+     */
+    public static void saveModuleClasses() {
 
     }
 
@@ -271,6 +291,47 @@ public class DynamicModuleFramework {
                   Constants.PLP_DBUSMOD_ILLEGAL_ACCESS, null);
             return null;
         }
+    }
+
+    /**
+     * Load saved module classes from ~/.plp/ModuleClassCache.jar. This method
+     * also looks for ~/.plp/ModuleClassCache.config for class name listing.
+     */
+    public static void loadSavedModuleClasses() {
+        File cache = new File(PLPToolbox.getConfDir() + "/ModuleClassCache.jar");
+        File cfgFile = new File(PLPToolbox.getConfDir() + "/ModuleClassCache.config");
+        try {
+            if(PLPToolbox.confDirExists() && !cache.exists())
+                    cache.createNewFile();
+
+            if(cfgFile.exists() && !cfgFile.isDirectory()) {
+                FileReader fReader = new FileReader(cfgFile);
+                BufferedReader in = new BufferedReader(fReader);
+                String line;
+                while((line = in.readLine()) != null) {
+                    if(loadModuleClass(cache.getAbsolutePath(), line))
+                        savedModuleClass.set(index-1, true);
+                }
+            }
+
+        } catch(IOException ie) {
+
+        }
+    }
+
+    /**
+     * Return whether a module class is marked as saved to user cache or not
+     *
+     * @param index Index of the module class in the list
+     * @return True if the class is saved, false otherwise
+     */
+    public static boolean isModuleClassSaved(int index) {
+        if(index < 0 || index >= dynamicModuleClasses.size()) {
+            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            return false;
+        }
+
+        return savedModuleClass.get(index);
     }
 }
 
@@ -342,8 +403,8 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
             // http://weblogs.java.net/blog/malenkov/archive/2008/07/how_to_load_cla.html
             // retrieved 2011-12-09 10:32AM CDT
             } else if(fName.endsWith(".jar")) {
-                ZipFile jar = new ZipFile(file);
-                ZipEntry jarEntry = jar.getEntry(name.replace(".", "/") + ".class");
+                JarFile jar = new JarFile(file);
+                JarEntry jarEntry = jar.getJarEntry(name.replace(".", "/") + ".class");
                 if(jarEntry == null) {
                     throw new ClassNotFoundException(name);
                 }

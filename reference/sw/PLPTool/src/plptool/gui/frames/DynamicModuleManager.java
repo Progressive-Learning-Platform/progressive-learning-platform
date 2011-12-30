@@ -19,6 +19,7 @@
 package plptool.gui.frames;
 
 import plptool.*;
+import plptool.gui.ProjectDriver;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -28,11 +29,13 @@ import javax.swing.table.DefaultTableModel;
  */
 public class DynamicModuleManager extends javax.swing.JDialog {
 
+    private ProjectDriver plp;
+
     /** Creates new form DynamicModuleManager */
-    public DynamicModuleManager(java.awt.Frame parent, boolean modal) {
+    public DynamicModuleManager(java.awt.Frame parent, boolean modal, ProjectDriver plp) {
         super(parent, modal);
         initComponents();
-
+        this.plp = plp;
         updateClassList();
     }
 
@@ -127,19 +130,28 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
         btnSaveClass.setText(resourceMap.getString("btnSaveClass.text")); // NOI18N
         btnSaveClass.setToolTipText(resourceMap.getString("btnSaveClass.toolTipText")); // NOI18N
+        btnSaveClass.setEnabled(false);
         btnSaveClass.setName("btnSaveClass"); // NOI18N
 
         btnRemoveClass.setText(resourceMap.getString("btnRemoveClass.text")); // NOI18N
+        btnRemoveClass.setEnabled(false);
         btnRemoveClass.setName("btnRemoveClass"); // NOI18N
 
         btnLoadInstance.setText(resourceMap.getString("btnLoadInstance.text")); // NOI18N
         btnLoadInstance.setName("btnLoadInstance"); // NOI18N
+        btnLoadInstance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadInstanceActionPerformed(evt);
+            }
+        });
 
         jSeparator2.setName("jSeparator2"); // NOI18N
 
         btnClassProjectAccess.setText(resourceMap.getString("btnClassProjectAccess.text")); // NOI18N
         btnClassProjectAccess.setName("btnClassProjectAccess"); // NOI18N
 
+        jLabel2.setFont(resourceMap.getFont("jLabel2.font")); // NOI18N
+        jLabel2.setForeground(resourceMap.getColor("jLabel2.foreground")); // NOI18N
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
 
@@ -164,14 +176,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .addComponent(btnClassProjectAccess)
-                            .addComponent(btnLoadInstance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
                     .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                         .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,13 +188,17 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btnRegisterClass, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnBrowseClass, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneDynamicModuleClassesLayout.createSequentialGroup()
-                .addContainerGap(390, Short.MAX_VALUE)
-                .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnSaveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnRemoveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnBrowseClass, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)))
+                    .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnSaveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(btnRemoveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(jLabel2)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(btnClassProjectAccess)
+                            .addComponent(btnLoadInstance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneDynamicModuleClassesLayout.setVerticalGroup(
@@ -222,12 +230,13 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addComponent(btnLoadInstance)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         tabMain.addTab(resourceMap.getString("paneDynamicModuleClasses.TabConstraints.tabTitle"), paneDynamicModuleClasses); // NOI18N
 
+        paneManageLoadedModules.setEnabled(false);
         paneManageLoadedModules.setName("paneManageLoadedModules"); // NOI18N
 
         javax.swing.GroupLayout paneManageLoadedModulesLayout = new javax.swing.GroupLayout(paneManageLoadedModules);
@@ -238,7 +247,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         );
         paneManageLoadedModulesLayout.setVerticalGroup(
             paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 436, Short.MAX_VALUE)
+            .addGap(0, 433, Short.MAX_VALUE)
         );
 
         tabMain.addTab(resourceMap.getString("paneManageLoadedModules.TabConstraints.tabTitle"), paneManageLoadedModules); // NOI18N
@@ -282,7 +291,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         Class c;
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
             c = DynamicModuleFramework.getDynamicModuleClass(i);
-            Object[] row = {i, c.getName(), c.getSuperclass().getName(), false, false};
+            Object[] row = {i, c.getName(), c.getSuperclass().getName(), false, DynamicModuleFramework.isModuleClassSaved(i)};
             tbl.addRow(row);
         }
     }
@@ -304,6 +313,17 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnLoadInstanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadInstanceActionPerformed
+        int index = tblModuleClasses.getSelectedRow();
+
+        if(index > -1) {
+            int indexObj = DynamicModuleFramework.newGenericModuleInstance(index);
+            DynamicModuleFramework.getGenericModuleInstance(indexObj).hook("init");
+            if(btnClassProjectAccess.isSelected())
+                DynamicModuleFramework.getGenericModuleInstance(indexObj).hook(plp);
+        }
+    }//GEN-LAST:event_btnLoadInstanceActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowseClass;

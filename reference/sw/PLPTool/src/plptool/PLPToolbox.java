@@ -135,7 +135,12 @@ public class PLPToolbox {
         return String.format("0x%08x", num);
     }
 
-    // Convert 32-bit word to printable ASCII
+    /**
+     * Convert 32-bit word into printable ASCII
+     *
+     * @param word Word to format in long
+     * @return String representation of the word
+     */
     public static String asciiWord(long word) {
         String tStr = "";
         long tVal;
@@ -149,6 +154,25 @@ public class PLPToolbox {
         }
 
         return tStr;
+    }
+
+    /**
+     * Get the configuration directory path
+     *
+     * @return Configuration directory path in String
+     */
+    public static String getConfDir() {
+        return System.getProperty("user.home") + "/.plp";
+    }
+
+    /**
+     * Check if the configuration directory exists.
+     *
+     * @return True if yes, false otherwise
+     */
+    public static boolean confDirExists() {
+        java.io.File cfgDir = new java.io.File(getConfDir());
+        return (cfgDir.exists() && cfgDir.isDirectory());
     }
 
     public static int getOS(boolean print) {
