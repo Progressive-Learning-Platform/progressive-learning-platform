@@ -20,6 +20,8 @@ package plptool;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.jar.*;
 
 /**
@@ -294,28 +296,32 @@ public class DynamicModuleFramework {
     }
 
     /**
-     * Load saved module classes from ~/.plp/ModuleClassCache.jar. This method
-     * also looks for ~/.plp/ModuleClassCache.config for class name listing.
+     * Load all classes from a jar file
+     *
+     * @param path Path to the jar file
      */
-    public static void loadSavedModuleClasses() {
-        File cache = new File(PLPToolbox.getConfDir() + "/ModuleClassCache.jar");
-        File cfgFile = new File(PLPToolbox.getConfDir() + "/ModuleClassCache.config");
+    public static boolean loadAllFromJar(String path) {
         try {
-            if(PLPToolbox.confDirExists() && !cache.exists())
-                    cache.createNewFile();
+            JarFile jar = new JarFile(path);
+            Enumeration<JarEntry> entries =  jar.entries();
+            JarEntry entry;
+            String className;
 
-            if(cfgFile.exists() && !cfgFile.isDirectory()) {
-                FileReader fReader = new FileReader(cfgFile);
-                BufferedReader in = new BufferedReader(fReader);
-                String line;
-                while((line = in.readLine()) != null) {
-                    if(loadModuleClass(cache.getAbsolutePath(), line))
-                        savedModuleClass.set(index-1, true);
+            while(entries.hasMoreElements()) {
+                entry = entries.nextElement();
+                if(entry.getName().endsWith(".class")) {
+                    className = entry.getName().replace("/", ".");
+                    className = className.substring(0, className.length() - 6);
+                    loadModuleClass(path, className);
                 }
             }
+            
+            return true;
 
-        } catch(IOException ie) {
-
+        } catch(IOException e) {
+            Msg.E("Failed to load classes from '" + path + "'",
+                  Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+            return false;
         }
     }
 

@@ -39,6 +39,7 @@ import plptool.Constants;
 import plptool.Config;
 import plptool.PLPSimBusModule;
 import plptool.DynamicModuleFramework;
+import plptool.PLPToolbox;
 import plptool.mods.*;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
@@ -939,6 +940,9 @@ public class Develop extends javax.swing.JFrame {
         int indexRec, indexRun, indexObj;
         indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
         indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
+
+        if(indexRec == -1 || indexRun == -1)
+            DynamicModuleFramework.loadAllFromJar(PLPToolbox.getConfDir() + "./LectureRecorder.jar");
 
         if(indexRec > -1 && indexRun > -1) {
             indexObj = DynamicModuleFramework.newGenericModuleInstance(indexRec);
