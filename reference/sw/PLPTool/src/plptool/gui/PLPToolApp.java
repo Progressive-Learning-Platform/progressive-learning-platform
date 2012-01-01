@@ -113,6 +113,9 @@ public class PLPToolApp extends SingleFrameApplication {
         int activeArgIndex = 0;
         java.io.File fileToOpen = null;
 
+        // Save launching path
+        Constants.launchPath = (new File(".")).getAbsolutePath();
+
 /******************* COMMAND LINE ARGUMENTS THAT CAN BE COMBINED **************/
 
         for(int i = 0; i < args.length; i++) {

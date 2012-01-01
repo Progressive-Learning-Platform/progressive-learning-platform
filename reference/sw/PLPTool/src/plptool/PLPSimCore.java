@@ -60,6 +60,14 @@ public abstract class PLPSimCore implements PLPGenericModule {
     public mod_breakpoint breakpoints;
 
     /**
+     * PLPSimCore defaults to returning the current version of PLPTool.
+     * User simcores can override this. May be useful for dynamic modules
+     *
+     * @return String of PLPTool version
+     */
+    public String getVersion() { return Constants.versionString; }
+
+    /**
      * Reset handler, to be implemented by the actual simulation core
      */
     abstract public int reset();

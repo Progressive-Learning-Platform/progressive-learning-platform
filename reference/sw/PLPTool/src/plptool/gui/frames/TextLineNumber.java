@@ -16,6 +16,7 @@ import javax.swing.text.*;
 import plptool.Msg;
 
 import plptool.gui.ProjectDriver;
+import plptool.gui.ProjectEvent;
 
 /**
  *  This class will display line numbers for a related text component. The text
@@ -580,10 +581,13 @@ public class TextLineNumber extends JPanel
                             plptool.Msg.M("New breakpoint set at: " + plp.asms.get(plp.open_asm).getAsmFilePath() + "(" + lineNumber + "): " +
                                      String.format("0x%02x", addr));
                             plp.sim.breakpoints.add(addr, plp.open_asm, lineNumber);
+                            Object[] eParams = {addr, plp.open_asm, lineNumber};
+                            plp.hookEvent(new ProjectEvent(ProjectEvent.BREAKPOINT_SET, -1, eParams));
 
                         } else {
                             plptool.Msg.M("Removing breakpoint.");
                             plp.sim.breakpoints.remove(addr);
+                            plp.hookEvent(new ProjectEvent(ProjectEvent.BREAKPOINT_REMOVED, -1, addr));
                         }
                         this.repaint();
                     }

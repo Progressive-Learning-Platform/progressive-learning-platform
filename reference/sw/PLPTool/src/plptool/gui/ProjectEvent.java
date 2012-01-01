@@ -27,14 +27,31 @@ package plptool.gui;
 public class ProjectEvent {
 
     public final static int         GENERIC                         = 0;
+
+    /* IDE CONTROL EVENTS */
     public final static int         EDITOR_CHANGE                   = 1;
     public final static int         SIMULATE                        = 2;
     public final static int         DESIMULATE                      = 3;
     public final static int         ASSEMBLE                        = 4;
+    public final static int         WINDOW_MOVE                     = 5;
+    public final static int         WINDOW_RESIZE                   = 6;
 
-    public final static int         SINGLE_STEP                     = 5;
-    public final static int         AGGREGATE_STEP                  = 6;
+    /* SIM EVENTS */
+    public final static int         SINGLE_STEP                     = 256;
+    public final static int         AGGREGATE_STEP                  = 257;
+    public final static int         RUN_START                       = 258;
+    public final static int         RUN_END                         = 259;
+    public final static int         SIM_WINDOW_VISIBILITY_TRUE      = 260;
+    public final static int         SIM_WINDOW_VISIBILITY_FALSE     = 261;
+    public final static int         BREAKPOINT_SET                  = 262;
+    public final static int         BREAKPOINT_REMOVED              = 263;
+    public final static int         BREAKPOINT_CLEARED              = 264;
 
+    /* PROJECT CONTROL EVENTS */
+    public final static int         NEW_MAIN_SOURCE                 = 1024;
+    public final static int         OPENASM_CHANGE                  = 1025;
+    public final static int         NEW_SOURCE                      = 1026;
+    public final static int         REMOVE_SOURCE                   = 1027;
 
     /**
      * Event identifier
@@ -57,10 +74,11 @@ public class ProjectEvent {
     private Object parameters;
 
     /**
-     * The constructor of this class will specify the event's id and timestamp
+     * This constructor specifies the ID, timestamp, and parameters of the
+     * event
      *
      * @param id Numeric identifier of the event
-     * @param timestamp Timestamp of when the event occurred
+     * @param timestamp User-defined timestamp of when the event occurred
      * @param parameters Other parameters of the event
      */
     public ProjectEvent(int id, long timestamp, Object parameters) {
@@ -71,10 +89,11 @@ public class ProjectEvent {
     }
 
     /**
-     * The constructor of this class will specify the event's id and timestamp
+     * This constructor specifies only ID and timestamp of the event. The
+     * parameters field is set to null.
      *
      * @param id Numeric identifier of the event
-     * @param timestamp Timestamp of when the event occurred
+     * @param timestamp User-defined timestamp of when the event occurred
      */
     public ProjectEvent(int id, long timestamp) {
         this.id = id;
@@ -108,5 +127,14 @@ public class ProjectEvent {
      */
     public long getSystemTimestamp() {
         return systemTimestamp;
+    }
+
+    /**
+     * Get the parameters object for the event
+     *
+     * @return Reference to the parameter object
+     */
+    public Object getParameters() {
+        return parameters;
     }
 }

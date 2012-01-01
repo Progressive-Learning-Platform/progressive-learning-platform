@@ -45,6 +45,14 @@ public abstract class PLPAsm implements PLPGenericModule {
     protected StringBuilder pass1Str;
     protected String        preprocessedAsm;
 
+    /**
+     * PLPAsm defaults to returning the current version of PLPTool.
+     * User assemblers can override this. May be useful for dynamic modules
+     *
+     * @return String of PLPTool version
+     */
+    public String getVersion() { return Constants.versionString; }
+
     public PLPAsm(String strAsm, String strFilePath) {
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
         sourceList = new ArrayList<PLPAsmSource>();

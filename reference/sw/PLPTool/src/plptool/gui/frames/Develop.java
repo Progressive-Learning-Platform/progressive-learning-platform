@@ -940,14 +940,23 @@ public class Develop extends javax.swing.JFrame {
         int indexRec, indexRun, indexObj;
         indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
         indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
+        String searchPath;
 
-        if(indexRec == -1 || indexRun == -1)
-            DynamicModuleFramework.loadAllFromJar(PLPToolbox.getConfDir() + "./LectureRecorder.jar");
+        if(indexRec == -1 || indexRun == -1) {
+            searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
+            Msg.I("Looking for " + searchPath, null);
+            DynamicModuleFramework.loadAllFromJar(searchPath);
+        }
+
+        if(indexRec == -1 || indexRun == -1) {
+            searchPath = Constants.launchPath + "/LectureRecorder.jar";
+            Msg.I("Looking for " + searchPath, null);
+            DynamicModuleFramework.loadAllFromJar(searchPath);
+        }
 
         if(indexRec > -1 && indexRun > -1) {
             indexObj = DynamicModuleFramework.newGenericModuleInstance(indexRec);
             plptool.PLPGenericModule rec = DynamicModuleFramework.getGenericModuleInstance(indexObj);
-            rec.hook("init");
             rec.hook(plp);
             rec.hook("show");
         } else {

@@ -15,17 +15,18 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
     private ProjectDriver plp = null;
     private ArrayList<ProjectEvent> events;
 
+    private JTextField in;
+
+    public String getVersion() { return "4.0-beta"; }
+
     public Object hook(Object param) {
         if(param instanceof String) {
             if(param.equals("init")) {
-		setTitle("PLPTool Lecture Recorder Module");
-		setSize(400, 100);
-                setResizable(false);
-                initComponents();
+
             } else if(param.equals("show") && init) {
 		this.setVisible(true);
-            } else if(param.equals("hello")) {
-		Msg.I("ready!", this);
+            } else if(param.equals("help")) {
+		return "This is BETA\nPlease read the manual!";
             } else if(param.equals("record")) {
                 Msg.I("Recording project events.", this);
                 record = true;
@@ -47,13 +48,17 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
             this.plp = (ProjectDriver) param;
             events = new ArrayList<ProjectEvent>();
             Msg.I(plp + " attached.", this);
+            setTitle("PLPTool Lecture Recorder Module");
+            setSize(400, 100);
+            setResizable(false);
+            initComponents();
             init = true;
             return param;
 	}
 
 	if(param instanceof ProjectEvent && init && record) {
             ProjectEvent e = (ProjectEvent) param;
-            Msg.I(e.getSystemTimestamp() + ":" + e.getIdentifier(), this);
+            Msg.D(e.getSystemTimestamp() + ":" + e.getIdentifier(), 2, this);
             events.add(e);
 	}
 
@@ -61,11 +66,11 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
     }
 
     private void initComponents() {
-        final JTextField in = new JTextField();
+        in = new JTextField();
         in.setSize(this.getWidth(), this.getHeight());
         in.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent evt) {
+            public void keyPressed(KeyEvent evt) {
                 if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
                     hook(in.getText());
                 }
