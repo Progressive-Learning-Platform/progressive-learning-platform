@@ -135,7 +135,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 activeArgIndex += 2;
             }
 
-            // Remove config file / reset config and quit
+            // Remove config file / reset config
             if(args.length >= activeArgIndex + 1 && args[i].equals("--remove-config")) {
                 ProjectDriver.removeConfig();
                 activeArgIndex++;
@@ -147,6 +147,13 @@ public class PLPToolApp extends SingleFrameApplication {
                 if(!DynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
                     System.exit(-1);
                 activeArgIndex += 3;
+            }
+
+            // Load all classes from a jar
+            if(args.length >= activeArgIndex + 2 && args[i].equals("--load-jar")) {
+                if(!DynamicModuleFramework.loadAllFromJar(args[i+1]))
+                    System.exit(-1);
+                activeArgIndex += 2;
             }
         }
 
@@ -171,6 +178,7 @@ public class PLPToolApp extends SingleFrameApplication {
         if(args.length == 1 && args[0].equals("--serialterminal")) {
             serialTerminal = true;
             launch(PLPToolApp.class, args);
+
         } else if(args.length > 0 && args[0].equals("-s")) {
             if(args.length == 2) {
                 ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
@@ -195,14 +203,18 @@ public class PLPToolApp extends SingleFrameApplication {
             } else {
                 System.out.println("Usage: PLPTool -s <plpfile> [script]");
             }
+
         } else  if(args.length > 0 && args[0].equals("-plp")) {
             ProjectFileManipulator.CLI(args);
+
         } else if(args.length == 1 && fileToOpen != null && fileToOpen.exists()) {
             open = true;
             plpFilePath = args[0];
             launch(PLPToolApp.class, args);
+
         } else if(args.length == 0) {
             launch(PLPToolApp.class, args);
+            
         } else {
             if(!args[0].equals("--help")) {
                 Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);

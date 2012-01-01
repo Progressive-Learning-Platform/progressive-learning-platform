@@ -146,7 +146,8 @@ public class Constants {
     public static final int PLP_DBUSMOD_CLASS_NOT_FOUND_ERROR    = 1042;
     public static final int PLP_DBUSMOD_ILLEGAL_ACCESS           = 1043;
     public static final int PLP_DBUSMOD_FILE_IO_ERROR            = 1044;
-    public static final int PLP_DBUSMOD_GENERIC                  = 1045;   
+    public static final int PLP_DBUSMOD_GENERIC                  = 1045;
+    public static final int PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR   = 1046;
 
     // Framework errors
     public static final int PLP_ISA_INVALID_ARCHITECTURE_ID      = 2048;

@@ -66,7 +66,6 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
         in.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent evt) {
-                System.out.println("" + evt.getKeyCode());
                 if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
                     hook(in.getText());
                 }
