@@ -32,6 +32,7 @@ import plptool.Msg;
  * @author wira
  */
 public class VGA extends PLPSimBusModule {
+
     private PLPSimBus bus;
     private VGAFrame frame;
 

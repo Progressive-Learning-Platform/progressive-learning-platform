@@ -37,6 +37,7 @@ import plptool.Config;
  * @author wira
  */
 public class SerialProgrammer extends plptool.PLPSerialProgrammer {
+
     public SerialProgrammer(plptool.gui.ProjectDriver plp) {
         super(plp);
     }

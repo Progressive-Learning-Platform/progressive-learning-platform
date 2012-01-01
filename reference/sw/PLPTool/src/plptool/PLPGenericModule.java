@@ -25,5 +25,18 @@ package plptool;
  * @author wira
  */
 public interface PLPGenericModule {
+    /**
+     * Generic hook function for the module.
+     *
+     * @param param Reference to hook parameters
+     * @return Reference to return values
+     */
     abstract Object hook(Object param);
+
+    /**
+     * Version identifier
+     *
+     * @return Version of the module in String
+     */
+    abstract String getVersion();
 }

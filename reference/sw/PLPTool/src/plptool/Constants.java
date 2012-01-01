@@ -49,6 +49,9 @@ public class Constants {
     public static final String issueEntryURI = "http://code.google.com/p/progressive-learning-platform/issues/entry";
     public static final String issueTrackerURI = "http://code.google.com/p/progressive-learning-platform/issues/list";
 
+    public static final String goodiesURI = "http://plp.okstate.edu/goodies";
+    public static String launchPath = ".";
+
     public static final int minimumJREMajorVersion               = 1;
     public static final int minimumJREMinorVersion               = 5;
 
