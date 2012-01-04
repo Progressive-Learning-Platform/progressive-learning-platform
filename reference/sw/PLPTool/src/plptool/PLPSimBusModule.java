@@ -82,6 +82,14 @@ public abstract class PLPSimBusModule extends Thread implements PLPGenericModule
     public boolean phantom;
 
     /**
+     * PLPSimBusModule defaults to returning the current version of PLPTool.
+     * User modules can override this. May be useful for dynamic modules
+     * 
+     * @return String of PLPTool version
+     */
+    public String getVersion() { return Constants.versionString; }
+
+    /**
      * The constructor for the superclass requires the address space and
      * whether the registers of the module are word-aligned
      *

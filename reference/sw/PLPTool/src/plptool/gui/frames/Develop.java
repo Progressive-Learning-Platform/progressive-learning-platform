@@ -39,6 +39,7 @@ import plptool.Constants;
 import plptool.Config;
 import plptool.PLPSimBusModule;
 import plptool.DynamicModuleFramework;
+import plptool.PLPToolbox;
 import plptool.mods.*;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
@@ -151,10 +152,18 @@ public class Develop extends javax.swing.JFrame {
         Msg.M(Constants.copyrightString);
     }
 
+    /**
+     * Set simulation status label
+     *
+     * @param txt Label text
+     */
     public void setLblSimStatText(String txt) {
         lblSimStat.setText(txt);
     }
 
+    /**
+     * Update the visibility of I/O frames
+     */
     public void updateIOFramesVisibility() {
         if(!plp.isSimulating())
             return;
@@ -194,6 +203,9 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Update and repaint GUI components lazily
+     */
     public void updateComponents() {
         try {
         if(plp.isSimulating()) {
@@ -242,6 +254,9 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Update status text
+     */
     public void updateStatText() {
         lblSimStat.setText(
                     (Config.simFunctional ? "Functional " : "") + "Simulation Mode - " +
@@ -250,6 +265,9 @@ public class Develop extends javax.swing.JFrame {
                 );
     }
 
+    /**
+     * Lazy repaint text ornaments
+     */
     private void repaintLater() {
         SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -260,11 +278,19 @@ public class Develop extends javax.swing.JFrame {
                 });
     }
 
+    /**
+     * Repaint text ornaments NOW (DANGEROUS)
+     */
     private void repaintNow() {
         tlh.repaint();
         tln.repaint();
     }
 
+    /**
+     * Lazy refresh of the project view
+     *
+     * @param commit Commit current text to source file
+     */
     public void safeRefresh(final boolean commit) {
         SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -274,6 +300,9 @@ public class Develop extends javax.swing.JFrame {
                 });
     }
 
+    /**
+     * Change text formatting
+     */
     public void changeFormatting() {
         java.awt.Font newFont = new java.awt.Font(Config.devFont, java.awt.Font.PLAIN, Config.devFontSize);
         txtEditor.setFont(newFont);
@@ -299,18 +328,38 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Get output text component
+     *
+     * @return Reference to the output pane
+     */
     public javax.swing.JTextPane getOutput() {
         return txtOutput;
     }
 
+    /**
+     * Get the main editor pane scroller
+     *
+     * @return Reference to the editor pane scroller
+     */
     public javax.swing.JScrollPane getScroller() {
         return scroller;
     }
 
+    /**
+     * Get the editor pane
+     *
+     * @return Reference to the main editor pane
+     */
     public javax.swing.JEditorPane getEditor() {
         return txtEditor;
     }
 
+    /**
+     * Set the text of the main editor
+     *
+     * @param str Text to set
+     */
     public void setEditorText(String str) {
         txtEditor.setContentType("text");
         trackChanges = false;
@@ -332,18 +381,36 @@ public class Develop extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Make the text editor be the component in focus
+     */
     public void setFocusToEditor() {
         txtEditor.requestFocusInWindow();
     }
 
+    /**
+     * Get the string in the text editor
+     *
+     * @return String of the editor text
+     */
     public String getEditorText() {
         return txtEditor.getText();
     }
 
+    /**
+     * Set the current open file label
+     *
+     * @param path Path to display
+     */
     public void setCurFile(String path) {
         txtCurFile.setText(path);
     }
 
+    /**
+     * Get the project tree component
+     *
+     * @return Reference to the project tree
+     */
     public javax.swing.JTree getProjectTree() {
         return treeProject;
     }
@@ -862,6 +929,42 @@ public class Develop extends javax.swing.JFrame {
         btnSimRun.setSelected(false);
     }
 
+    /**
+     * Load the lecture recorder. Attempt to load from:
+     * - Check if it's already loaded
+     * - Check user's home directory
+     * - Check current directory
+     * - Online from plp.okstate.edu/goodies
+     */
+    public void setupLectureRecorder() {
+        int indexRec, indexRun, indexObj;
+        indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
+        indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
+        String searchPath;
+
+        if(indexRec == -1 || indexRun == -1) {
+            searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
+            Msg.I("Looking for " + searchPath, null);
+            DynamicModuleFramework.loadAllFromJar(searchPath);
+        }
+
+        if(indexRec == -1 || indexRun == -1) {
+            searchPath = Constants.launchPath + "/LectureRecorder.jar";
+            Msg.I("Looking for " + searchPath, null);
+            DynamicModuleFramework.loadAllFromJar(searchPath);
+        }
+
+        if(indexRec > -1 && indexRun > -1) {
+            indexObj = DynamicModuleFramework.newGenericModuleInstance(indexRec);
+            plptool.PLPGenericModule rec = DynamicModuleFramework.getGenericModuleInstance(indexObj);
+            rec.hook(plp);
+            rec.hook("show");
+        } else {
+            Msg.E("Lecture Recorder is not loaded.",
+                  Constants.PLP_GENERIC_ERROR, this);
+        }
+    }
+
     public javax.swing.JCheckBoxMenuItem getToolCheckboxMenu(int index) {
         switch(index) {
             case Constants.PLP_TOOLFRAME_IOREGISTRY:
@@ -1051,14 +1154,14 @@ public class Develop extends javax.swing.JFrame {
     private void simStep() {
         boolean breakpoint = false;
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
-            if(!plp.isReplaying()) DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));
+            plp.hookEvent(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));
             plp.sim.step();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                 Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }
-        if(!plp.isReplaying()) DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1));
+        plp.hookEvent(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1));
         plp.updateComponents(true);
     }
 
@@ -1109,8 +1212,16 @@ public class Develop extends javax.swing.JFrame {
 
     }
 
-    public void addSimToolItem(javax.swing.JMenuItem item) {
-        menuSimTools.add(item);
+    public javax.swing.JMenuItem addSimToolItem(javax.swing.JMenuItem item) {
+        return menuSimTools.add(item);
+    }
+
+    public javax.swing.JMenuItem addToolsItem(javax.swing.JMenuItem item) {
+        return rootmenuTools.add(item);
+    }
+
+    public void removeToolsItem(javax.swing.JMenuItem item) {
+        rootmenuTools.remove(item);
     }
 
     public void addSimToolSeparator() {
@@ -1216,6 +1327,8 @@ public class Develop extends javax.swing.JFrame {
         menuSetMainProgram = new javax.swing.JMenuItem();
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
+        menuClassroom = new javax.swing.JMenu();
+        menuSetupLectureRecorder = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuDynamicModuleManager = new javax.swing.JMenuItem();
         menuSerialTerminal = new javax.swing.JMenuItem();
@@ -1344,11 +1457,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 626, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1362,7 +1475,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -2021,6 +2134,20 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuTools.add(menuOptions);
+
+        menuClassroom.setText(resourceMap.getString("menuClassroom.text")); // NOI18N
+        menuClassroom.setName("menuClassroom"); // NOI18N
+
+        menuSetupLectureRecorder.setText(resourceMap.getString("menuSetupLectureRecorder.text")); // NOI18N
+        menuSetupLectureRecorder.setName("menuSetupLectureRecorder"); // NOI18N
+        menuSetupLectureRecorder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSetupLectureRecorderActionPerformed(evt);
+            }
+        });
+        menuClassroom.add(menuSetupLectureRecorder);
+
+        rootmenuTools.add(menuClassroom);
         rootmenuTools.add(jSeparator7);
 
         menuDynamicModuleManager.setText(resourceMap.getString("menuDynamicModuleManager.text")); // NOI18N
@@ -3013,8 +3140,12 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimControlActionPerformed
 
     private void menuDynamicModuleManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDynamicModuleManagerActionPerformed
-        (new DynamicModuleManager(this, true)).setVisible(true);
+        (new DynamicModuleManager(this, true, plp)).setVisible(true);
     }//GEN-LAST:event_menuDynamicModuleManagerActionPerformed
+
+    private void menuSetupLectureRecorderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetupLectureRecorderActionPerformed
+        setupLectureRecorder();
+    }//GEN-LAST:event_menuSetupLectureRecorderActionPerformed
 
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
@@ -3126,6 +3257,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JLabel lblSimStat;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
+    private javax.swing.JMenu menuClassroom;
     private javax.swing.JMenuItem menuClearBreakpoints;
     private javax.swing.JMenuItem menuClearOutputPane;
     private javax.swing.JMenuItem menuCopy;
@@ -3162,6 +3294,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator5;
     private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
+    private javax.swing.JMenuItem menuSetupLectureRecorder;
     private javax.swing.JMenuItem menuSimAsmView;
     private javax.swing.JCheckBoxMenuItem menuSimControl;
     private javax.swing.JCheckBoxMenuItem menuSimIO;

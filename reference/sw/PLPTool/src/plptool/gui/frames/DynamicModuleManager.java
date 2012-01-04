@@ -19,6 +19,7 @@
 package plptool.gui.frames;
 
 import plptool.*;
+import plptool.gui.ProjectDriver;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -28,12 +29,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class DynamicModuleManager extends javax.swing.JDialog {
 
+    private ProjectDriver plp;
+
     /** Creates new form DynamicModuleManager */
-    public DynamicModuleManager(java.awt.Frame parent, boolean modal) {
+    public DynamicModuleManager(java.awt.Frame parent, boolean modal, ProjectDriver plp) {
         super(parent, modal);
         initComponents();
-
+        this.plp = plp;
         updateClassList();
+        updateObjectList();
+        setLocationRelativeTo(parent);
     }
 
     /** This method is called from within the constructor to
@@ -63,6 +68,14 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         txtClassFile = new javax.swing.JTextField();
         btnRegisterClass = new javax.swing.JButton();
         paneManageLoadedModules = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblModuleObjects = new javax.swing.JTable();
+        btnPassProject = new javax.swing.JButton();
+        btnInit = new javax.swing.JButton();
+        btnHelp = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        txtCustomHook = new javax.swing.JTextField();
+        btnCall = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -82,14 +95,14 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Index", "Name", "Superclass", "Init hook", "Saved"
+                "Index", "Name", "Superclass", "Saved"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -101,12 +114,12 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             }
         });
         tblModuleClasses.setName("tblModuleClasses"); // NOI18N
+        tblModuleClasses.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tblModuleClasses);
         tblModuleClasses.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title0")); // NOI18N
         tblModuleClasses.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title1")); // NOI18N
         tblModuleClasses.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title2")); // NOI18N
-        tblModuleClasses.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title3")); // NOI18N
-        tblModuleClasses.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title4")); // NOI18N
+        tblModuleClasses.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title4")); // NOI18N
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
@@ -127,19 +140,28 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
         btnSaveClass.setText(resourceMap.getString("btnSaveClass.text")); // NOI18N
         btnSaveClass.setToolTipText(resourceMap.getString("btnSaveClass.toolTipText")); // NOI18N
+        btnSaveClass.setEnabled(false);
         btnSaveClass.setName("btnSaveClass"); // NOI18N
 
         btnRemoveClass.setText(resourceMap.getString("btnRemoveClass.text")); // NOI18N
+        btnRemoveClass.setEnabled(false);
         btnRemoveClass.setName("btnRemoveClass"); // NOI18N
 
         btnLoadInstance.setText(resourceMap.getString("btnLoadInstance.text")); // NOI18N
         btnLoadInstance.setName("btnLoadInstance"); // NOI18N
+        btnLoadInstance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadInstanceActionPerformed(evt);
+            }
+        });
 
         jSeparator2.setName("jSeparator2"); // NOI18N
 
         btnClassProjectAccess.setText(resourceMap.getString("btnClassProjectAccess.text")); // NOI18N
         btnClassProjectAccess.setName("btnClassProjectAccess"); // NOI18N
 
+        jLabel2.setFont(resourceMap.getFont("jLabel2.font")); // NOI18N
+        jLabel2.setForeground(resourceMap.getColor("jLabel2.foreground")); // NOI18N
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
 
@@ -164,14 +186,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .addComponent(btnClassProjectAccess)
-                            .addComponent(btnLoadInstance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
                     .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                         .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,13 +198,17 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btnRegisterClass, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnBrowseClass, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneDynamicModuleClassesLayout.createSequentialGroup()
-                .addContainerGap(390, Short.MAX_VALUE)
-                .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnSaveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnRemoveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnBrowseClass, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)))
+                    .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnSaveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(btnRemoveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(jLabel2)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(btnClassProjectAccess)
+                            .addComponent(btnLoadInstance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneDynamicModuleClassesLayout.setVerticalGroup(
@@ -222,23 +240,131 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addComponent(btnLoadInstance)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         tabMain.addTab(resourceMap.getString("paneDynamicModuleClasses.TabConstraints.tabTitle"), paneDynamicModuleClasses); // NOI18N
 
+        paneManageLoadedModules.setEnabled(false);
         paneManageLoadedModules.setName("paneManageLoadedModules"); // NOI18N
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        tblModuleObjects.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Index", "Class", "Version"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblModuleObjects.setName("tblModuleObjects"); // NOI18N
+        tblModuleObjects.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tblModuleObjects);
+        tblModuleObjects.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblModuleObjects.columnModel.title0")); // NOI18N
+        tblModuleObjects.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblModuleObjects.columnModel.title1")); // NOI18N
+        tblModuleObjects.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblModuleObjects.columnModel.title2")); // NOI18N
+
+        btnPassProject.setText(resourceMap.getString("btnPassProject.text")); // NOI18N
+        btnPassProject.setName("btnPassProject"); // NOI18N
+        btnPassProject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPassProjectActionPerformed(evt);
+            }
+        });
+
+        btnInit.setText(resourceMap.getString("btnInit.text")); // NOI18N
+        btnInit.setMaximumSize(new java.awt.Dimension(111, 23));
+        btnInit.setMinimumSize(new java.awt.Dimension(111, 23));
+        btnInit.setName("btnInit"); // NOI18N
+        btnInit.setPreferredSize(new java.awt.Dimension(111, 23));
+        btnInit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInitActionPerformed(evt);
+            }
+        });
+
+        btnHelp.setText(resourceMap.getString("btnHelp.text")); // NOI18N
+        btnHelp.setName("btnHelp"); // NOI18N
+        btnHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHelpActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        txtCustomHook.setText(resourceMap.getString("txtCustomHook.text")); // NOI18N
+        txtCustomHook.setName("txtCustomHook"); // NOI18N
+        txtCustomHook.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCustomHookKeyPressed(evt);
+            }
+        });
+
+        btnCall.setText(resourceMap.getString("btnCall.text")); // NOI18N
+        btnCall.setName("btnCall"); // NOI18N
+        btnCall.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCallActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout paneManageLoadedModulesLayout = new javax.swing.GroupLayout(paneManageLoadedModules);
         paneManageLoadedModules.setLayout(paneManageLoadedModulesLayout);
         paneManageLoadedModulesLayout.setHorizontalGroup(
             paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 569, Short.MAX_VALUE)
+            .addGroup(paneManageLoadedModulesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(paneManageLoadedModulesLayout.createSequentialGroup()
+                        .addComponent(btnPassProject, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnInit, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addComponent(jLabel4)
+                    .addGroup(paneManageLoadedModulesLayout.createSequentialGroup()
+                        .addComponent(txtCustomHook, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCall, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         paneManageLoadedModulesLayout.setVerticalGroup(
             paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 436, Short.MAX_VALUE)
+            .addGroup(paneManageLoadedModulesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnPassProject)
+                    .addComponent(btnInit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnHelp))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCustomHook, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCall))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         tabMain.addTab(resourceMap.getString("paneManageLoadedModules.TabConstraints.tabTitle"), paneManageLoadedModules); // NOI18N
@@ -266,7 +392,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
+                .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnClose)
                 .addContainerGap())
@@ -282,7 +408,19 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         Class c;
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
             c = DynamicModuleFramework.getDynamicModuleClass(i);
-            Object[] row = {i, c.getName(), c.getSuperclass().getName(), false, false};
+            Object[] row = {i, c.getName(), c.getSuperclass().getName(), DynamicModuleFramework.isModuleClassSaved(i)};
+            tbl.addRow(row);
+        }
+    }
+    
+    private void updateObjectList() {
+        DefaultTableModel tbl = (DefaultTableModel) tblModuleObjects.getModel();
+        while(tbl.getRowCount() > 0)
+            tbl.removeRow(0);
+        PLPGenericModule o;
+        for(int i = 0; i < DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
+            o = DynamicModuleFramework.getGenericModuleInstance(i);
+            Object[] row = {i, o.getClass().getCanonicalName(), o.getVersion()};
             tbl.addRow(row);
         }
     }
@@ -296,7 +434,11 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     }//GEN-LAST:event_btnBrowseClassActionPerformed
 
     private void btnRegisterClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterClassActionPerformed
-        DynamicModuleFramework.loadModuleClass(txtClassFile.getText(), txtClassName.getText());
+        String className = txtClassName.getText();
+        if(className.equals("*"))
+            DynamicModuleFramework.loadAllFromJar(txtClassFile.getText());
+        else
+            DynamicModuleFramework.loadModuleClass(txtClassFile.getText(), txtClassName.getText());
         updateClassList();
     }//GEN-LAST:event_btnRegisterClassActionPerformed
 
@@ -305,26 +447,104 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    private void btnLoadInstanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadInstanceActionPerformed
+        int index = tblModuleClasses.getSelectedRow();
+
+        if(index > -1) {
+            int indexObj = DynamicModuleFramework.newGenericModuleInstance(index);
+            DynamicModuleFramework.getGenericModuleInstance(indexObj).hook("init");
+            if(btnClassProjectAccess.isSelected())
+                DynamicModuleFramework.getGenericModuleInstance(indexObj).hook(plp);
+            updateObjectList();
+        }
+    }//GEN-LAST:event_btnLoadInstanceActionPerformed
+
+    private void btnPassProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPassProjectActionPerformed
+        int index = tblModuleObjects.getSelectedRow();
+        Object ret = null;
+
+        if(index > -1) {
+            ret = DynamicModuleFramework.getGenericModuleInstance(index).hook(plp);
+        }
+
+        if(ret != null && ret instanceof String) {
+            javax.swing.JOptionPane.showMessageDialog(null, (String) ret, "Passed project to module", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnPassProjectActionPerformed
+
+    private void btnInitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInitActionPerformed
+        int index = tblModuleObjects.getSelectedRow();
+        Object ret = null;
+
+        if(index > -1) {
+            ret = DynamicModuleFramework.getGenericModuleInstance(index).hook("init");
+        }
+
+        if(ret != null && ret instanceof String) {
+            javax.swing.JOptionPane.showMessageDialog(null, (String) ret, "Hook 'init'", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnInitActionPerformed
+
+    private void btnHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHelpActionPerformed
+        int index = tblModuleObjects.getSelectedRow();
+        Object ret = null;
+
+        if(index > -1) {
+            ret = DynamicModuleFramework.getGenericModuleInstance(index).hook("help");
+        }
+
+        if(ret != null && ret instanceof String) {
+            javax.swing.JOptionPane.showMessageDialog(null, (String) ret, "Hook 'help'", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnHelpActionPerformed
+
+    private void btnCallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCallActionPerformed
+        int index = tblModuleObjects.getSelectedRow();
+        Object ret = null;
+
+        if(index > -1) {
+            ret = DynamicModuleFramework.getGenericModuleInstance(index).hook(txtCustomHook.getText());
+        }
+
+        if(ret != null && ret instanceof String) {
+            javax.swing.JOptionPane.showMessageDialog(null, (String) ret,
+                    "Hook '" + txtCustomHook.getText() + "'", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnCallActionPerformed
+
+    private void txtCustomHookKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCustomHookKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
+            btnCallActionPerformed(null);
+    }//GEN-LAST:event_txtCustomHookKeyPressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowseClass;
+    private javax.swing.JButton btnCall;
     private javax.swing.JCheckBox btnClassProjectAccess;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnHelp;
+    private javax.swing.JButton btnInit;
     private javax.swing.JButton btnLoadInstance;
+    private javax.swing.JButton btnPassProject;
     private javax.swing.JButton btnRegisterClass;
     private javax.swing.JButton btnRemoveClass;
     private javax.swing.JButton btnSaveClass;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPanel paneDynamicModuleClasses;
     private javax.swing.JPanel paneManageLoadedModules;
     private javax.swing.JTabbedPane tabMain;
     private javax.swing.JTable tblModuleClasses;
+    private javax.swing.JTable tblModuleObjects;
     private javax.swing.JTextField txtClassFile;
     private javax.swing.JTextField txtClassName;
+    private javax.swing.JTextField txtCustomHook;
     // End of variables declaration//GEN-END:variables
 
 }

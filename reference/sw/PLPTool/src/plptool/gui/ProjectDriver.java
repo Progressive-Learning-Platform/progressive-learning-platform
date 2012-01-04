@@ -1015,7 +1015,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int assemble() {
-        if(!replay) DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.ASSEMBLE, -1));
+        hookEvent(new ProjectEvent(ProjectEvent.ASSEMBLE, -1));
         if(!arch.hasAssembler())
             return Msg.E("This ISA does not implement an assembler",
                          Constants.PLP_ISA_NO_ASSEMBLER, this);
@@ -1072,7 +1072,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int simulate() {
-        if(!replay) DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.SIMULATE, -1));
+        hookEvent(new ProjectEvent(ProjectEvent.SIMULATE, -1));
         if(!arch.hasSimCore())
             return Msg.E("simulate(): This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
@@ -1153,7 +1153,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int desimulate() {
-        if(!replay) DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.DESIMULATE, -1));
+        hookEvent(new ProjectEvent(ProjectEvent.DESIMULATE, -1));
         if(!sim_mode)
             return Constants.PLP_OK;
 
@@ -1659,6 +1659,15 @@ public class ProjectDriver {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Pass a project event to the hook function of dynamic modules
+     *
+     * @param e ProjectEvent to be passed on
+     */
+    public void hookEvent(ProjectEvent e) {
+        if(!replay) DynamicModuleFramework.hook(e);
     }
 
     /**
