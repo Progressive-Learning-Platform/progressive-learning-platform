@@ -30,6 +30,14 @@ public abstract class PLPSerialProgrammer extends Thread implements PLPGenericMo
     public int          progress = 0;
     protected String    portName;
 
+    /**
+     * PLPSerialProgrammer defaults to returning the current version of PLPTool.
+     * User assemblers can override this. May be useful for dynamic modules
+     *
+     * @return String of PLPTool version
+     */
+    public String getVersion() { return Constants.versionString; }
+
     public PLPSerialProgrammer(plptool.gui.ProjectDriver plp) {
         this.plp = plp;
     }

@@ -1,0 +1,1 @@
+zip LectureRecorder.jar *.class
