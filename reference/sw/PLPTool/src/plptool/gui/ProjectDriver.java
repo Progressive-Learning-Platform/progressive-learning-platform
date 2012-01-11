@@ -623,6 +623,9 @@ public class ProjectDriver {
             tOut.closeArchiveEntry();
         }
 
+        // Hook for project save
+        DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_SAVE, -1, tOut));
+
         Msg.D("Closing tar archive...", 2, this);
         tOut.close();
         Msg.D("Project save completed", 2, this);
@@ -731,6 +734,9 @@ public class ProjectDriver {
             image = new byte[(int) entry.getSize()];
             tIn.read(image, 0, (int) entry.getSize());
             metaStr = new String(image);
+
+            // Hook for project open for each entry
+            DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_OPEN_ENTRY, -1, tIn));
 
             if(entry.getName().endsWith("asm")) {
                 Integer order = (Integer) asmFileOrder.get(entry.getName());
