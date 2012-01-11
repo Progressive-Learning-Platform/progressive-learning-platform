@@ -2,6 +2,10 @@ import plptool.PLPGenericModule;
 import plptool.Msg;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
+import plptool.Constants;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
 import java.util.ArrayList;
 import java.awt.event.KeyEvent;
@@ -56,10 +60,54 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
             return param;
 	}
 
-	if(param instanceof ProjectEvent && init && record) {
+	if(param instanceof ProjectEvent && init) {
             ProjectEvent e = (ProjectEvent) param;
+            int id = e.getIdentifier();
             Msg.D(e.getSystemTimestamp() + ":" + e.getIdentifier(), 2, this);
-            events.add(e);
+            if(record &&
+               id != ProjectEvent.PROJECT_OPEN_ENTRY &&
+               id != ProjectEvent.PROJECT_SAVE) {
+                
+                events.add(e);
+            } else {
+                try {
+                    switch(id) {
+                        case ProjectEvent.PROJECT_OPEN_ENTRY:
+                            Msg.I("Loading saved lecture record...", this);
+                            TarArchiveEntry tIn = (TarArchiveEntry) e.getParameters();
+                            if(tIn.getName().equals("plp.lecturerecord")) {
+
+                            }
+
+                            break;
+
+                        case ProjectEvent.PROJECT_SAVE:
+                            Msg.I("Saving lecture record...", this);
+                            TarArchiveOutputStream tOut = (TarArchiveOutputStream) e.getParameters();
+                            TarArchiveEntry entry = new TarArchiveEntry("plp.lecturerecord");
+                            String data = "";
+                            ProjectEvent ev;
+
+                            for(int i = 0; i < events.size(); i++) {
+                                ev = events.get(i);
+                                data += ev.getIdentifier() + "::";
+                                data += ev.getSystemTimestamp() + "::";
+                                data += ev.getTimestamp() + "::";
+
+                                data += "\n";
+                            }
+
+                            entry.setSize(data.length());
+                            tOut.putArchiveEntry(entry);
+                            tOut.write(data.getBytes());
+                            tOut.flush();
+                            tOut.closeArchiveEntry();
+                            break;
+                    }
+                } catch(Exception ex) {
+                    Msg.E("Whoops!", Constants.PLP_GENERIC_ERROR, this);
+                }
+            }
 	}
 
 	return null;

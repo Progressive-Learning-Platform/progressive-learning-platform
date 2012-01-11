@@ -35,6 +35,9 @@ public class ProjectEvent {
     public final static int         ASSEMBLE                        = 4;
     public final static int         WINDOW_MOVE                     = 5;
     public final static int         WINDOW_RESIZE                   = 6;
+    public final static int         PROJECT_SAVE                    = 7;
+    public final static int         PROJECT_OPEN                    = 8;
+    public final static int         PROJECT_OPEN_ENTRY              = 9;
 
     /* SIM EVENTS */
     public final static int         SINGLE_STEP                     = 256;
