@@ -118,7 +118,7 @@ public class ProjectFileManipulator {
             }
 
             int main_index = Integer.parseInt(args[3]);
-            if(main_index <= 0 || main_index >= plp.asms.size())
+            if(main_index <= 0 || main_index >= plp.getAsms().size())
                 return;
             plp.setMainAsm(main_index);
             plp.save();
@@ -130,7 +130,7 @@ public class ProjectFileManipulator {
             }
 
             int index = Integer.parseInt(args[3]);
-            if(index < 0 || index >= plp.asms.size())
+            if(index < 0 || index >= plp.getAsms().size())
                 return;
             String asmStr = plp.getAsm(index).getAsmString();
             if(args.length == 4)

@@ -166,7 +166,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
 
             }
             else if(command.equals("open_asm")) {
-                plptool.Msg.I("open_asm:" + plp.open_asm, null);
+                plptool.Msg.I("open_asm:" + plp.getOpenAsm(), null);
             }
             else if(command.equals("assemble")) {
                     plp.assemble();

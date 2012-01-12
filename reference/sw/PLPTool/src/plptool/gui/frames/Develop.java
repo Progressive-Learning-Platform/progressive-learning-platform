@@ -26,8 +26,6 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 import java.net.URI;
 
-
-
 import java.io.File;
 
 //For Syntax Highlighting
@@ -143,7 +141,7 @@ public class Develop extends javax.swing.JFrame {
 
         undoManager = new DevUndoManager();
         undoManager.setLimit(Config.devMaxUndoEntries);
-        
+
         initPopupMenus();
         
         this.setLocationRelativeTo(null);
@@ -231,8 +229,8 @@ public class Develop extends javax.swing.JFrame {
                         if(yPos > (viewPortY + scroller.getHeight()) || yPos < viewPortY)
                             scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
 
-                        if(plp.open_asm != fileNum) {
-                            plp.open_asm = fileNum;
+                        if(plp.getOpenAsm() != fileNum) {
+                            plp.setOpenAsm(fileNum);
                             //plp.refreshProjectView(false);
                             safeRefresh(false);
                         } else {
@@ -351,7 +349,7 @@ public class Develop extends javax.swing.JFrame {
      *
      * @return Reference to the main editor pane
      */
-    public javax.swing.JEditorPane getEditor() {
+    public javax.swing.JTextPane getEditor() {
         return txtEditor;
     }
 
@@ -606,7 +604,7 @@ public class Develop extends javax.swing.JFrame {
 
             if(nodeStr.endsWith("asm")) {
 
-                if(plp.asms.size() <= 1) {
+                if(plp.getAsms().size() <= 1) {
                     Msg.E("Can not delete last source file.",
                              Constants.PLP_GENERIC_ERROR, null);
 
@@ -852,7 +850,7 @@ public class Develop extends javax.swing.JFrame {
         tln.setHighlight(-1);
         tlh.setY(-1);
         repaintLater();
-        plp.open_asm = 0;
+        plp.setOpenAsm(0);
         plp.updateComponents(true);
         //plp.refreshProjectView(false);
         safeRefresh(false);
@@ -2596,8 +2594,8 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_rootmenuProjectActionPerformed
 
     private void menuSetMainProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
-        if(plp.open_asm != 0)
-            plp.setMainAsm(plp.open_asm);
+        if(plp.getOpenAsm() != 0)
+            plp.setMainAsm(plp.getOpenAsm());
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
 
     private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
@@ -2663,8 +2661,8 @@ public class Develop extends javax.swing.JFrame {
 
                     Msg.I("Opening " + nodeStr, null);
 
-                    plp.updateAsm(plp.open_asm, txtEditor.getText());
-                    plp.open_asm = Integer.parseInt(tokens[0]);
+                    plp.updateAsm(plp.getOpenAsm(), txtEditor.getText());
+                    plp.setOpenAsm(Integer.parseInt(tokens[0]));
                     //plp.refreshProjectView(false);
                     safeRefresh(false);
                     repaintNow();
@@ -2684,16 +2682,16 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_treeProjectMousePressed
 
     private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
-        if(plp.asms != null && plp.asms.size() > 0) {
+        if(plp.getAsms() != null && plp.getAsms().size() > 0) {
             int caretPos = txtEditor.getCaretPosition();
             Element root = txtEditor.getDocument().getDefaultRootElement();
             line = root.getElementIndex(caretPos)+1;
 
-            String fName = plp.asms.get(plp.open_asm).getAsmFilePath();
-            txtCurFile.setText(fName + ":" + line + (plp.open_asm == 0 ? " <main program>" : ""));
+            String fName = plp.getAsm(plp.getOpenAsm()).getAsmFilePath();
+            txtCurFile.setText(fName + ":" + line + (plp.getOpenAsm() == 0 ? " <main program>" : ""));
 
             if(plp.isSimulating()) {
-                long addr = plp.asm.getAddrFromFileMetadata(plp.open_asm, line);
+                long addr = plp.asm.getAddrFromFileMetadata(plp.getOpenAsm(), line);
                 if(addr != -1)
                     txtCurFile.setText(txtCurFile.getText() + " " + String.format("0x%02x", addr));
             }

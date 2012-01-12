@@ -76,7 +76,7 @@ public class ProjectDriver {
     public File                    plpfile;
     private boolean                modified;
     private boolean                dirty;
-    public int                     open_asm;
+    private int                    open_asm;
     public String                  curdir;
     private PLPArchitecture        arch;
     private boolean                sim_mode;
@@ -100,7 +100,7 @@ public class ProjectDriver {
     public Config                  cfg;        // Configuration
     public Msg                     msg;        // Messaging class
 
-    public ArrayList<PLPAsmSource> asms;       // Assembly files
+    private ArrayList<PLPAsmSource> asms;       // Assembly files
 
     private boolean                halt;       // critical error
     
@@ -1359,6 +1359,45 @@ public class ProjectDriver {
     }
 
     /**
+     * Set current open source index
+     *
+     * @param index Index of the source file to open and display in editor
+     */
+    public void setOpenAsm(int index) {
+        if(index >= 0 && index < asms.size()) {
+            open_asm = index;
+            hookEvent(new ProjectEvent(ProjectEvent.OPENASM_CHANGE, -1, open_asm));
+        }
+    }
+
+    /**
+     * Get the index of the currently open source file
+     *
+     * @return Index of the currently open source file
+     */
+    public int getOpenAsm() {
+        return open_asm;
+    }
+
+    /**
+     * Getter function for the source files array
+     * 
+     * @return ArrayList of the source files
+     */
+    public ArrayList<PLPAsmSource> getAsms() {
+        return asms;
+    }
+
+    /**
+     * Set new list of source files
+     *
+     * @param asms ArrayList of references to source files
+     */
+    public void setAsms(ArrayList<PLPAsmSource> asms) {
+        this.asms = asms;
+    }
+
+    /**
      * Getter function for the asm source file with the specified index
      *
      * @param index Index of source file to get
@@ -1685,14 +1724,47 @@ public class ProjectDriver {
     public void replay(ProjectEvent e) {
         replay = true;
         switch(e.getIdentifier()) {
+            
             case ProjectEvent.ASSEMBLE:
                 assemble();
                 break;
+                
             case ProjectEvent.SIMULATE:
                 g_dev.simBegin();
                 break;
+
             case ProjectEvent.DESIMULATE:
                 g_dev.simEnd();
+                break;
+
+            case ProjectEvent.EDITOR_INSERT:
+                try {
+                    g_dev.getEditor().getDocument().insertString(
+                            (Integer)((Object[])e.getParameters())[0],  //off
+                            (String)((Object[])e.getParameters())[1],   //str
+                            null);
+                } catch(javax.swing.text.BadLocationException ble) {
+                    ble.printStackTrace();
+                }
+                break;
+
+            case ProjectEvent.EDITOR_REMOVE:
+                try {
+                    g_dev.getEditor().getDocument().remove(
+                            (Integer)((Object[])e.getParameters())[0],  //off
+                            (Integer)((Object[])e.getParameters())[1]); //len
+                } catch(javax.swing.text.BadLocationException ble) {
+                    ble.printStackTrace();
+                }
+                break;
+
+            case ProjectEvent.EDITOR_CHANGE:
+
+                break;
+
+            case ProjectEvent.OPENASM_CHANGE:
+                open_asm = (Integer) e.getParameters();
+                refreshProjectView(true);
                 break;
             
             default:
