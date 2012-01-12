@@ -58,10 +58,14 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <H2><A NAME="SECTION000610000000000000000">
 Timer</A>
 </H2>
+The timer module is a single 32-bit counter that increments by one every clock cycle. It can be written to at any time. At overflow, the timer will continue counting. The timer module is useful for waiting a specific amount of time with high resolution (20ns on the reference design).
+
+<P>
+The timer module supports interrupts, and will trigger an interrupt when the timer overflows. The user can configure a specific timed interrupt by presetting the timer value to N cycles before the overflow condition. 
 <BR><HR>
 <ADDRESS>
 will
-2011-12-07
+2012-01-12
 </ADDRESS>
 </BODY>
 </HTML>
