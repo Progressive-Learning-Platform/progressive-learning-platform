@@ -303,7 +303,7 @@ public class TextLineNumber extends JPanel
                                 g.drawString(lineNumber, x, y);
                         }
 
-                        if(plp.isSimulating() && plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.open_asm, getLineNumber(rowStartOffset))) {
+                        if(plp.isSimulating() && plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.getOpenAsm(), getLineNumber(rowStartOffset))) {
                             stringWidth = fontMetrics.stringWidth( "B>" );
                             x = getOffsetX(availableWidth + 20, stringWidth) + insets.left;
                             //g.drawString("B>", x, y);
@@ -574,14 +574,14 @@ public class TextLineNumber extends JPanel
 
                 if(mouse_y >= y && mouse_y <= end_y) {
                     lineNumber = getLineNumber(rowStartOffset);
-                    addr = plp.asm.getAddrFromFileMetadata(plp.open_asm, lineNumber);
+                    addr = plp.asm.getAddrFromFileMetadata(plp.getOpenAsm(), lineNumber);
 
                     if(addr != -1) {
                         if(!plp.sim.breakpoints.isBreakpoint(addr)) {
-                            plptool.Msg.M("New breakpoint set at: " + plp.asms.get(plp.open_asm).getAsmFilePath() + "(" + lineNumber + "): " +
+                            plptool.Msg.M("New breakpoint set at: " + plp.getAsm(plp.getOpenAsm()).getAsmFilePath() + "(" + lineNumber + "): " +
                                      String.format("0x%02x", addr));
-                            plp.sim.breakpoints.add(addr, plp.open_asm, lineNumber);
-                            Object[] eParams = {addr, plp.open_asm, lineNumber};
+                            plp.sim.breakpoints.add(addr, plp.getOpenAsm(), lineNumber);
+                            Object[] eParams = {addr, plp.getOpenAsm(), lineNumber};
                             plp.hookEvent(new ProjectEvent(ProjectEvent.BREAKPOINT_SET, -1, eParams));
 
                         } else {

@@ -3,6 +3,7 @@ import plptool.Msg;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
 import plptool.Constants;
+import plptool.PLPAsmSource;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -12,6 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 
 public class LectureRecorder extends JFrame implements PLPGenericModule {
     private boolean init = false;
@@ -19,11 +23,17 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
     private ProjectDriver plp = null;
     private ArrayList<ProjectEvent> events;
 
+    private ArrayList<PLPAsmSource> snapshot_Asms;
+    private int snapshot_OpenAsm;
+    private DevDocListener editorDocListener;
+
     private JTextField in;
 
     public String getVersion() { return "4.0-beta"; }
 
     public Object hook(Object param) {
+        int ret;
+
         if(param instanceof String) {
             if(param.equals("init")) {
 
@@ -32,16 +42,34 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
             } else if(param.equals("help")) {
 		return "This is BETA\nPlease read the manual!";
             } else if(param.equals("record")) {
+                Msg.I("Taking snapshot of the project...", this);
+                snapshot_Asms = new ArrayList<PLPAsmSource>();
+                for(int i = 0; i < plp.getAsms().size(); i++) {
+                    PLPAsmSource s = plp.getAsm(i);
+                    snapshot_Asms.add(new PLPAsmSource(s.getAsmString(), s.getAsmFilePath(), i));
+                    snapshot_OpenAsm = plp.getOpenAsm();
+                }
                 Msg.I("Recording project events.", this);
+                editorDocListener = new DevDocListener(this);
+                plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
                 record = true;
             } else if(param.equals("stop")) {
                 if(record) {
-                    Msg.I("Stopped recording.", this);
+                    plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
                     record = false;
+                    Msg.I("Stopped recording.", this);
                 } else
                     Msg.I("Not recording!", this);
             } else if(param.equals("replay") && init) {
-		(new LectureRunner(events, plp)).start();
+                ret = JOptionPane.showConfirmDialog(plp.g_dev, "Replaying the lecture will revert the project state " +
+                        "to the state right before recording started. Would you like to continue?", "Lecture Replay",
+                        JOptionPane.YES_NO_OPTION);
+                if(ret == JOptionPane.YES_OPTION) {
+                    plp.setAsms(new ArrayList<PLPAsmSource>(snapshot_Asms));
+                    plp.setOpenAsm(snapshot_OpenAsm);
+                    plp.refreshProjectView(false);
+                    (new LectureRunner(events, plp)).start();
+                }
             } else if(param.equals("clear") && init) {
 		Msg.I("Replay events cleared", this);
 		events = new ArrayList<ProjectEvent>();
@@ -73,10 +101,11 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                 try {
                     switch(id) {
                         case ProjectEvent.PROJECT_OPEN_ENTRY:
-                            Msg.I("Loading saved lecture record...", this);
                             TarArchiveEntry tIn = (TarArchiveEntry) e.getParameters();
                             if(tIn.getName().equals("plp.lecturerecord")) {
+                                Msg.I("Loading saved lecture record...", this);
 
+                                return true;
                             }
 
                             break;
@@ -93,6 +122,17 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                                 data += ev.getIdentifier() + "::";
                                 data += ev.getSystemTimestamp() + "::";
                                 data += ev.getTimestamp() + "::";
+
+                                switch(ev.getIdentifier()) {
+                                    case ProjectEvent.EDITOR_INSERT:
+                                        data += (Integer)((Object[]) ev.getParameters())[0] + "::";
+                                        data += (String)((Object[]) ev.getParameters())[1];
+                                        break;
+                                    case ProjectEvent.EDITOR_REMOVE:
+                                        data += (Integer)((Object[]) ev.getParameters())[0] + "::";
+                                        data += (Integer)((Object[]) ev.getParameters())[1];
+                                        break;
+                                }
 
                                 data += "\n";
                             }
@@ -151,6 +191,11 @@ class LectureRunner extends Thread {
             ProjectEvent e;
             long curTime = startTime;
             long diff;
+            Msg.I("Replay will start in 2 seconds...", this);
+            Thread.sleep(1000);
+            Msg.I("Replay will start in 1 second...", this);
+            Thread.sleep(1000);
+            Msg.I("Replaying...", this);
             for(int i = 0; i < events.size(); i++) {
                 e = events.get(i);
                 diff = e.getSystemTimestamp() - curTime;
@@ -159,7 +204,41 @@ class LectureRunner extends Thread {
                 plp.replay(e);
                 curTime = e.getSystemTimestamp();
             }
+            Msg.I("Replay done.", this);
         } catch(Exception e) {
         }
+    }
+
+    @Override
+    public String toString() {
+        return "LectureRunner";
+    }
+}
+
+class DevDocListener implements DocumentListener {
+    private LectureRecorder l;
+
+    public DevDocListener(LectureRecorder l) {
+        this.l = l;
+    }
+
+    public void changedUpdate(DocumentEvent e) {
+        l.hook(new ProjectEvent(ProjectEvent.EDITOR_CHANGE, -1, e));
+    }
+
+    public void removeUpdate(DocumentEvent e) {
+        Object[] eParams = {new Integer(e.getOffset()), new Integer(e.getLength())};
+        l.hook(new ProjectEvent(ProjectEvent.EDITOR_REMOVE, -1, eParams));
+    }
+
+    public void insertUpdate(DocumentEvent e) {
+        String str = "";
+        try {
+            str = e.getDocument().getText(e.getOffset(), e.getLength());
+        } catch(Exception ble) {
+
+        }
+        Object[] eParams = {new Integer(e.getOffset()), str};
+        l.hook(new ProjectEvent(ProjectEvent.EDITOR_INSERT, -1, eParams));
     }
 }

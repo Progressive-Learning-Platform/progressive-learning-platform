@@ -50,7 +50,7 @@ public class Architecture extends PLPArchitecture {
      * @return the assembler instance
      */
     public PLPAsm createAssembler() {
-        return new plptool.mips.Asm(plp.asms);
+        return new plptool.mips.Asm(plp.getAsms());
     }
 
     /**
