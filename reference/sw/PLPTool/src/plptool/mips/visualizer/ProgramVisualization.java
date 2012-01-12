@@ -29,12 +29,17 @@ import org.jgrapht.ext.*;
 import org.jgrapht.alg.*;
  *
  */
-
+// jung
+import edu.uci.ics.jung.graph.*;
+import edu.uci.ics.jung.graph.util.*;
+import org.apache.commons.collections15.*;
 import javax.swing.*;
 
 /**
  * Using JUNG, this will create a flowchart like visualization of a PLP program.
  * @author will
+ *
+ */
  
 public class ProgramVisualization {
     private ProjectDriver plp;
@@ -107,7 +112,7 @@ public class ProgramVisualization {
                 Msg.m(label + "\n\t\t");
             } else {
                 Msg.m("\t\t");
-            }/
+            }*/
 
             //Msg.m(plp.asm.lookupLabel(addr_table[addindex]));
             //Msg.m("\n");
@@ -121,11 +126,11 @@ public class ProgramVisualization {
         public void initGraph(){
             //ProgramVisualization.programGraph graph = new programGraph();
             //graph.buildGraph();
-            DirectedGraph<String, DefaultEdge> programGraph = buildGraph();
+            Graph<String, String> programGraph = buildGraph();
             Msg.M(programGraph.toString());
         }
         //construct the graph
-        public ListenableDirectedGraph<String, DefaultEdge> buildGraph(){
+        public DirectedSparseMultigraph<String, String> buildGraph(){
 
             plptool.mips.Formatter progformat = new plptool.mips.Formatter();
             plp.assemble();
@@ -138,9 +143,7 @@ public class ProgramVisualization {
             long branch_imm;
             ArrayList<String> vertices = new ArrayList<String>();
 
-            ListenableDirectedGraph<String, DefaultEdge> progGraph = new ListenableDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
-            //jgAdapter = new JGraphModelAdapter<String, DefaultEdge>(progGraph);
-            //JGraph jgraph = new JGraph(jgAdapter);
+            DirectedSparseMultigraph<String, String> progGraph = new DirectedSparseMultigraph<String, String>();
 
             long[] addr_table = plp.asm.getAddrTable();
             long[] obj_table = plp.asm.getObjectCode();
@@ -165,7 +168,7 @@ public class ProgramVisualization {
                     vertices.add("j " + plp.asm.lookupLabel(addr_table[jump_index]));
                     Msg.M(vertices.get(vertices.size()-1));
                     progGraph.addVertex(vertices.get(vertices.size()-1));
-                    progGraph.addEdge(vertices.get(previousVertex), vertices.get(vertices.size()-1));
+                    progGraph.addEdge(vertices.get(previousVertex) + " to " + vertices.get(vertices.size()-1), vertices.get(previousVertex), vertices.get(vertices.size()-1), EdgeType.DIRECTED);
                 }
 
                 if(instr_array[0].equals("beq")){
@@ -182,4 +185,3 @@ public class ProgramVisualization {
         }
     }
 }
-*/
