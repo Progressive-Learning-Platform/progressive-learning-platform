@@ -128,14 +128,45 @@ public class Develop extends javax.swing.JFrame {
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 notifyplpModified();
             }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            public void removeUpdate(final javax.swing.event.DocumentEvent e) {
                 notifyplpModified();
+                /*
+                SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if(Config.devSyntaxHighlighting) {
+                        Config.nothighlighting = false;
+                        syntaxHighlight();
+                        Config.nothighlighting = true;
+                    }
+                }
+                });*/
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            public void insertUpdate(final javax.swing.event.DocumentEvent e) {
                 notifyplpModified();
+                /*
+                SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(Config.devSyntaxHighlighting) {
+                            Document doc = e.getDocument();
+                            String text;
+                            Config.nothighlighting = false;
+                            text = doc.getText(e.getOffset(), e.getLength());
+                            int caretPos = txtEditor.getCaretPosition();
+                            syntaxHighlight(text, e.getOffset(), styles);
+                            txtEditor.setCaretPosition(caretPos);
+                            Config.nothighlighting = true;
+                        }
+                    } catch(BadLocationException ble) {
+
+                    }
+                }
+                });*/
             }
         });
-
+        
 
         this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -314,7 +345,11 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.revalidate();
         if(!plp.isSimulating())
             plp.refreshProjectView(true);
-        txtEditor.setText("");
+        try {
+            txtEditor.getDocument().remove(0, txtEditor.getDocument().getLength());
+        } catch(BadLocationException ble) {
+            
+        }
         plp.refreshProjectView(false);
     }
 
@@ -362,7 +397,12 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.setContentType("text");
         trackChanges = false;
         if(!str.equals(txtEditor.getText())) {
-            txtEditor.setText(str);
+            try {
+                txtEditor.getDocument().remove(0, txtEditor.getDocument().getLength());
+                txtEditor.getDocument().insertString(0, str, null);
+            } catch(BadLocationException ble) {
+
+            }
             if(Config.devSyntaxHighlighting && str.length() <= Config.filetoolarge)
                 syntaxHighlight();
         }
@@ -377,6 +417,8 @@ public class Develop extends javax.swing.JFrame {
                 undoManager.safeAddEdit(evt.getEdit());
             }
         });
+
+        //txtEditor.getDocument().addDocumentListener(new DevEditorDocListener(plp, this));
     }
 
     /**
@@ -674,7 +716,7 @@ public class Develop extends javax.swing.JFrame {
         plp.g_about.setVisible(true);
     }
 
-    private void syntaxHighlight() {
+    public void syntaxHighlight() {
         Config.nothighlighting = false;
         int currpos = 0;
         String lines[] = txtEditor.getText().split("\\r?\\n");
@@ -710,7 +752,7 @@ public class Develop extends javax.swing.JFrame {
             for(int i=0;i<line;i++) {
                 currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
             }
-            syntaxHighlight(currline, currpos, setupHighlighting());
+            syntaxHighlight(currline, currpos, styles);
         } catch (java.lang.ArrayIndexOutOfBoundsException aioobe) {
         }
         Config.nothighlighting = true;
@@ -718,7 +760,7 @@ public class Develop extends javax.swing.JFrame {
 
     //Do not call this class without setting highlighting to true
     //Or without recording selected text
-    private void syntaxHighlight(String text, int position, SimpleAttributeSet[] styles) {
+    public void syntaxHighlight(String text, int position, SimpleAttributeSet[] styles) {
         StyledDocument doc = txtEditor.getStyledDocument();
         int currentposition = 0;
         int startposition = 0;
@@ -764,6 +806,8 @@ public class Develop extends javax.swing.JFrame {
                 texttype = LABEL;
             }
 
+            doc.setCharacterAttributes(startposition+position, currentposition-startposition, styles[texttype], false);
+            /*
             try {
                 doc.remove(startposition+position,currentposition-startposition);
             } catch (BadLocationException ble) {
@@ -775,7 +819,7 @@ public class Develop extends javax.swing.JFrame {
             } catch (BadLocationException ble) {
                 System.err.println("Insertion error   position:" + position);
             }
-            
+            */
             currentposition++;
         }
     }
@@ -2726,7 +2770,7 @@ public class Develop extends javax.swing.JFrame {
     private boolean deleteOccured;
 
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-        
+        //if(true) return;
         deleteOccured = false;
         boolean modified = false;
 
@@ -3481,5 +3525,51 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
 
     public boolean getPreviousEditType() {
         return false;
+    }
+}
+
+class DevEditorDocListener implements DocumentListener {
+    private Develop g_dev;
+    private ProjectDriver plp;
+
+    public DevEditorDocListener(ProjectDriver plp, Develop g_dev) {
+        this.g_dev = g_dev;
+        this.plp = plp;
+    }
+
+    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+    }
+    public void removeUpdate(final javax.swing.event.DocumentEvent e) {
+       if(!Config.nothighlighting || plp.isReplaying()) return;
+
+        g_dev.notifyplpModified();
+
+        SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+            if(Config.devSyntaxHighlighting) {
+                Config.nothighlighting = false;
+                g_dev.syntaxHighlight();
+                Config.nothighlighting = true;
+            }
+        }
+        });
+    }
+    public void insertUpdate(final javax.swing.event.DocumentEvent e) {
+        if(!Config.nothighlighting || plp.isReplaying()) return;
+
+        g_dev.notifyplpModified();
+
+        SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+            if(Config.devSyntaxHighlighting) {
+                Config.nothighlighting = false;
+                g_dev.syntaxHighlight();
+                Config.nothighlighting = true;
+            }
+
+        }
+        });
     }
 }

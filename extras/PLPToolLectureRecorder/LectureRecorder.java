@@ -62,10 +62,15 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                     Msg.I("Not recording!", this);
             } else if(param.equals("replay") && init) {
                 ret = JOptionPane.showConfirmDialog(plp.g_dev, "Replaying the lecture will revert the project state " +
-                        "to the state right before recording started. Would you like to continue?", "Lecture Replay",
+                        "to right before recording started. Would you like to continue?", "Lecture Replay",
                         JOptionPane.YES_NO_OPTION);
                 if(ret == JOptionPane.YES_OPTION) {
-                    plp.setAsms(new ArrayList<PLPAsmSource>(snapshot_Asms));
+                    ArrayList tempList = new ArrayList<PLPAsmSource>();
+                    for(int i = 0; i < snapshot_Asms.size(); i++) {
+                        PLPAsmSource s = snapshot_Asms.get(i);
+                        tempList.add(new PLPAsmSource(s.getAsmString(), s.getAsmFilePath(), i));
+                    }
+                    plp.setAsms(tempList);
                     plp.setOpenAsm(snapshot_OpenAsm);
                     plp.refreshProjectView(false);
                     (new LectureRunner(events, plp)).start();

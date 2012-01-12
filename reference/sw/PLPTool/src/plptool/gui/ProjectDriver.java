@@ -1763,8 +1763,9 @@ public class ProjectDriver {
                 break;
 
             case ProjectEvent.OPENASM_CHANGE:
+                updateAsm(open_asm, g_dev.getEditorText());
                 open_asm = (Integer) e.getParameters();
-                refreshProjectView(true);
+                refreshProjectView(false);
                 break;
             
             default:
