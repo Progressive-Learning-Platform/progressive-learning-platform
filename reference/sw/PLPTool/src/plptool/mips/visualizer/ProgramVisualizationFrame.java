@@ -10,26 +10,23 @@
  */
 
 package plptool.mips.visualizer;
-
-import org.jgraph.JGraph;
-import org.jgraph.graph.DefaultGraphCell;
-import org.jgraph.graph.GraphConstants;
-
-import org.jgrapht.ListenableGraph;
-import org.jgrapht.ext.JGraphModelAdapter;
-import org.jgrapht.graph.ListenableDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
+import edu.uci.ics.jung.graph.*;
+import edu.uci.ics.jung.algorithms.layout.*;
+import edu.uci.ics.jung.visualization.*;
 
 /**
+ * Create the JUNG Visualization graphically in a pop-up window.
  *
- * @author wira
+ * @author will
  */
 public class ProgramVisualizationFrame extends javax.swing.JFrame {
 
     private ProgramVisualization progVis;
     private ProgramVisualization.programGraph progGraph;
 
-    private JGraphModelAdapter m_jgAdapter;
+
+    private Layout layout;
+    private BasicVisualizationServer progVisServ;
 
     /** Creates new form ProgramVisualizationFrame */
     public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph) {
@@ -38,12 +35,11 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         this.progVis = progVis;
         this.progGraph= progGraph;
 
-        m_jgAdapter = new JGraphModelAdapter(progGraph.buildGraph());
-
-        JGraph jgraph = new JGraph(m_jgAdapter);
-
-        getContentPane().add(jgraph);
-        jgraph.setSize(this.getSize());
+        Layout<String, String> layout = new CircleLayout<String,String>(progGraph.buildGraph());
+        BasicVisualizationServer<String,String> progVisServ = new BasicVisualizationServer<String,String>(layout);
+      
+        getContentPane().add(progVisServ);
+        progVisServ.setSize(this.getSize());
     }
 
     /** This method is called from within the constructor to

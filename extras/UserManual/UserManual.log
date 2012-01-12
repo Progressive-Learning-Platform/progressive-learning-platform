@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2011.10.4)  7 DEC 2011 20:52
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  12 JAN 2012 00:31
 entering extended mode
  %&-line parsing enabled.
 **UserManual.tex
@@ -174,24 +174,24 @@ ing break-point to clear it, or use []\OT1/cmtt/m/n/10 Tools -> Clear Breakpoin
 ts
  []
 
-[5 <../../images/plptool/plptool30_simulation_mode.png>] [6] [7] [8]
-(./UserManual.aux) ) 
+[5 <../../images/plptool/plptool30_simulation_mode.png>] [6] [7] [8] [9]
+[10] (./UserManual.aux) ) 
 Here is how much of TeX's memory you used:
- 2573 strings out of 256216
- 36235 string characters out of 1917072
+ 2575 strings out of 256216
+ 36248 string characters out of 1917073
  95032 words of memory out of 1500000
  5805 multiletter control sequences out of 10000+200000
  8063 words of font info for 29 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
  25i,6n,36p,527b,362s stack positions out of 5000i,500n,6000p,200000b,15000s
-</usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pfb></usr/s
-hare/texmf/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type1/blue
-sky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/share
-/texmf/fonts/type1/bluesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/bluesky/c
-m/cmtt10.pfb>
-Output written on UserManual.pdf (8 pages, 218098 bytes).
+</usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pfb></
+usr/share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type1
+/bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/
+share/texmf/fonts/type1/bluesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/blue
+sky/cm/cmtt10.pfb>
+Output written on UserManual.pdf (10 pages, 223205 bytes).
 PDF statistics:
- 326 PDF objects out of 1000 (max. 8388607)
- 63 named destinations out of 1000 (max. 131072)
+ 334 PDF objects out of 1000 (max. 8388607)
+ 65 named destinations out of 1000 (max. 131072)
  387 words of extra memory for PDF output out of 10000 (max. 10000000)
 

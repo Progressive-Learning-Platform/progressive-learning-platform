@@ -282,14 +282,48 @@ It is possible to load a pointer to a label using the load immediate pseudo inst
 \section{Hardware Description}
 \subsection{Memory Map}
 \subsection{ROM}
+The ROM module is a non-volatile, read-only memory that stores the fload bootloader, which is used with PLPTool to load programs over the serial port. The PLP board starts at address 0x00000000 on power-up and board reset, causing the bootloader to run. 
 \subsection{RAM}
+The RAM module is a volatile, random access memory that stores all downloaded program code and data. Generally, the programmer will place their program in RAM, beginning at the beginning of RAM using the .org statement (.org 0x10000000). Additionally, the stack is generally initialized at the top of RAM \verb+($sp = 0x10fffffc)+.
 \subsection{UART}
+The UART module is a UART, running at 57600 baud, with 8 data bits, 1 stop bit, and no parity. The UART module is connected to the serial port on the Nexys 2 development kit.
+
+The UART module is designed to send or receive a single byte at a time, and can only store one byte in the receive buffer. This means that you must read received data (by polling) before the next byte is available.
+
+There are four registers that the UART module uses: 
+\begin{tabular}{ | l | l | }
+\hline
+0xf0000000 & command register \\
+0xf0000004 & status register \\
+0xf0000008 & receive buffer \\
+0xf000000c & send buffer \\
+\hline
+\end{tabular}
+The command register always reads 0. Writing the value 0x01 will initiate a send operation using the lowest byte in the send buffer. Writing a 0x02 will clear the ready flag in the status register.
+
+The status register uses only the bottom two bits, with the remaining bits always reading as 0. status0? is the clear to send bit, which is set after a successful transfer of the data in the send buffer, indicating that another transfer may be made. The cts bit is 0 during a transfer, and the data in the send buffer should not be modified. status1? is the ready bit, which is set when a new byte has been successfully received. The ready bit can be cleared by writing 0x02 to the command register.
+
+The receive buffer holds the last received byte. On a successful receive, the ready bit will be set, allowing the programmer to poll the status register for incoming data. When the ready bit is not set, the receive buffer is considered invalid.
+
+The send buffer holds the byte that will be sent or is ready to send. During a send operation (cts is 0), the data in the transmit buffer must not be modified. Only update the send buffer when cts is set.
+
+The UART supports interrupts, and will trigger an interrupt whenever data is available in the receive buffer. \textbf{The user must complete a receive and clear the status bit in the UART before clearing the interrupt status bit for the UART.}
 \subsection{Switches}
+The switches module is a read-only register that always holds the current value of the switch positions. There are 8 switches on the Nexys2 development board, which are mapped to the lowest byte of the switches module register. Writing to this location has no effect. 
 \subsection{LEDs}
+The LEDs module is a read-write register that stores the value of the on-board LEDs. There are 8 LEDs, mapped to the lowest byte of the LED register. Reading this value returns the current LED state, writing will update the LEDs. 
 \subsection{GPIO}
 \subsection{VGA}
 \subsection{PLPID}
+The PLPID module contains two registers that describe the board identity and frequency. Writing to either register has no effect.
+
+0xf0500000 - PLPID (0xdeadbeef for this version) 0xf0500004 - Board frequency (50MHz, 0x2faf080, for the reference design)
+
+The CPUID module is useful for dynamically calculating wait time in a busy-wait loop. For example, if you wanted to wait .5 seconds, you could read the board frequency, shift right by 1 bit, and call the \verb+libplp_wait+ function. 
 \subsection{Timer}
+The timer module is a single 32-bit counter that increments by one every clock cycle. It can be written to at any time. At overflow, the timer will continue counting. The timer module is useful for waiting a specific amount of time with high resolution (20ns on the reference design).
+
+The timer module supports interrupts, and will trigger an interrupt when the timer overflows. The user can configure a specific timed interrupt by presetting the timer value to N cycles before the overflow condition. 
 \subsection{Seven Segment}
 \subsection{Interrupt Controller}
 \subsection{Performance Counters}
