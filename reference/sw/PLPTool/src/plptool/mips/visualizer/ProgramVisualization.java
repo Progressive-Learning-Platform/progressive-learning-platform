@@ -22,17 +22,20 @@ import plptool.*;
 import plptool.mips.*;
 import java.io.*;
 import java.util.ArrayList;
+/* remove upon proper jung integration
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
 import org.jgrapht.ext.*;
 import org.jgrapht.alg.*;
+ *
+ */
 
 import javax.swing.*;
 
 /**
- * This does nothing substantial at the moment.
+ * Using JUNG, this will create a flowchart like visualization of a PLP program.
  * @author will
- */
+ 
 public class ProgramVisualization {
     private ProjectDriver plp;
 
@@ -104,7 +107,7 @@ public class ProgramVisualization {
                 Msg.m(label + "\n\t\t");
             } else {
                 Msg.m("\t\t");
-            }*/
+            }/
 
             //Msg.m(plp.asm.lookupLabel(addr_table[addindex]));
             //Msg.m("\n");
@@ -179,3 +182,4 @@ public class ProgramVisualization {
         }
     }
 }
+*/
