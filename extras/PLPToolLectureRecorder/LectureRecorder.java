@@ -4,6 +4,7 @@ import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
 import plptool.Constants;
 import plptool.PLPAsmSource;
+import plptool.PLPToolbox;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -14,8 +15,21 @@ import java.awt.event.KeyAdapter;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JButton;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
+
+import java.io.IOException;
+import java.io.File;
+import java.util.Locale;
+
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.AudioFileFormat;
 
 public class LectureRecorder extends JFrame implements PLPGenericModule {
     private boolean init = false;
@@ -26,8 +40,10 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
     private ArrayList<PLPAsmSource> snapshot_Asms;
     private int snapshot_OpenAsm;
     private DevDocListener editorDocListener;
+    private LectureAudioRecorder audioRecorderThread;
 
     private JTextField in;
+    private JButton ctrl;
 
     public String getVersion() { return "4.0-beta"; }
 
@@ -160,7 +176,8 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
 
     private void initComponents() {
         in = new JTextField();
-        in.setSize(this.getWidth(), this.getHeight());
+        in.setSize(this.getWidth(), this.getHeight()/2);
+        in.setLocation(0, 0);
         in.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent evt) {
@@ -169,6 +186,12 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                 }
             }
         });
+
+        ctrl = new JButton();
+        ctrl.setSize(this.getWidth()-15, this.getHeight()/2-5);
+        ctrl.setLocation(0, this.getHeight()/2+5);
+
+        //this.add(ctrl);
         this.add(in);
     }
 
@@ -245,5 +268,55 @@ class DevDocListener implements DocumentListener {
         }
         Object[] eParams = {new Integer(e.getOffset()), str};
         l.hook(new ProjectEvent(ProjectEvent.EDITOR_INSERT, -1, eParams));
+    }
+}
+
+class LectureAudioRecorder extends Thread {
+    private AudioFormat audioFormat;
+    private TargetDataLine targetDataLine;
+    private AudioInputStream audioInputStream;
+    private File output;
+
+    public LectureAudioRecorder() {
+        output = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+        if(output.exists()) output.delete();
+        audioFormat = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                44100.0F, 16, 2, 4, 44100.0F, false);
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
+        targetDataLine = null;
+
+        try
+        {
+                targetDataLine = (TargetDataLine) AudioSystem.getLine(info);
+                targetDataLine.open(audioFormat);
+        } catch (LineUnavailableException e) {
+                Msg.E("unable to get a recording line",
+                        Constants.PLP_GENERIC_ERROR, this);
+                e.printStackTrace();
+        }
+
+        AudioFileFormat.Type targetType = AudioFileFormat.Type.WAVE;
+        audioInputStream = new AudioInputStream(targetDataLine);
+    }
+
+    @Override
+    public void run() {
+        targetDataLine.start();
+        try {
+            AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, output);
+        } catch(IOException e) {
+            Msg.W("I/O Error during audio recording.", this);
+        }
+    }
+
+    public void stopRecording() {
+        targetDataLine.stop();
+        targetDataLine.close();
+    }
+
+    @Override
+    public String toString() {
+        return "LectureAudioRecorder";
     }
 }
