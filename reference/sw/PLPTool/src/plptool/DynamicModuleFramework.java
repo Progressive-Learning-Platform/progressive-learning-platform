@@ -208,6 +208,22 @@ public class DynamicModuleFramework {
     }
 
     /**
+     * Check whether an instance of the specified class is already loaded
+     *
+     * @param className Class name of the module to check
+     * @return True if the framework determines that an instance is already
+     * loaded, false otherwise
+     */
+    public static boolean isModuleInstanceLoaded(String className) {
+        for(int i = 0; i < getNumberOfGenericModuleInstances(); i++) {
+            if(getGenericModuleInstance(i).getClass().getCanonicalName().equals(className))
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Remove the reference to the specified generic module instance
      *
      * @param index Index of the object reference in the list

@@ -980,6 +980,12 @@ public class Develop extends javax.swing.JFrame {
      */
     public void setupLectureRecorder() {
         int indexRec, indexRun, indexObj;
+
+        if(DynamicModuleFramework.isModuleInstanceLoaded("LectureRecorder")) {
+            Msg.I("Lecture Recorder is already loaded.", null);
+            return;
+        }
+
         indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
         indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
         String searchPath;
