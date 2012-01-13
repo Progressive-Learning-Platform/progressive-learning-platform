@@ -30,6 +30,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.SourceDataLine;
 
 public class LectureRecorder extends JFrame implements PLPGenericModule {
     private boolean init = false;
@@ -41,6 +43,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
     private int snapshot_OpenAsm;
     private DevDocListener editorDocListener;
     private LectureAudioRecorder audioRecorderThread;
+    private LectureAudioPlayer audioPlayerThread;
 
     private JTextField in;
     private JButton ctrl;
@@ -66,11 +69,14 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                     snapshot_OpenAsm = plp.getOpenAsm();
                 }
                 Msg.I("Recording project events.", this);
+                audioRecorderThread = new LectureAudioRecorder();
+                if(audioRecorderThread.isReady()) audioRecorderThread.start();
                 editorDocListener = new DevDocListener(this);
                 plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
                 record = true;
             } else if(param.equals("stop")) {
                 if(record) {
+                    audioRecorderThread.stopRecording();
                     plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
                     record = false;
                     Msg.I("Stopped recording.", this);
@@ -89,7 +95,8 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                     plp.setAsms(tempList);
                     plp.setOpenAsm(snapshot_OpenAsm);
                     plp.refreshProjectView(false);
-                    (new LectureRunner(events, plp)).start();
+                    audioPlayerThread = new LectureAudioPlayer(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+                    (new LectureRunner(events, plp, audioPlayerThread)).start();
                 }
             } else if(param.equals("clear") && init) {
 		Msg.I("Replay events cleared", this);
@@ -205,10 +212,12 @@ class LectureRunner extends Thread {
     private ProjectDriver plp;
     private ArrayList<ProjectEvent> events;
     private long startTime;
+    private LectureAudioPlayer audioPlayerThread;
 
-    public LectureRunner(ArrayList<ProjectEvent> events, ProjectDriver plp) {
+    public LectureRunner(ArrayList<ProjectEvent> events, ProjectDriver plp, LectureAudioPlayer audioPlayerThread) {
         this.events = events;
         this.plp = plp;
+        this.audioPlayerThread = audioPlayerThread;
         if(events.size() >= 1)
             startTime = events.get(0).getSystemTimestamp();
     }
@@ -224,6 +233,7 @@ class LectureRunner extends Thread {
             Msg.I("Replay will start in 1 second...", this);
             Thread.sleep(1000);
             Msg.I("Replaying...", this);
+            audioPlayerThread.start();
             for(int i = 0; i < events.size(); i++) {
                 e = events.get(i);
                 diff = e.getSystemTimestamp() - curTime;
@@ -276,6 +286,7 @@ class LectureAudioRecorder extends Thread {
     private TargetDataLine targetDataLine;
     private AudioInputStream audioInputStream;
     private File output;
+    private boolean ready = false;
 
     public LectureAudioRecorder() {
         output = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
@@ -298,6 +309,7 @@ class LectureAudioRecorder extends Thread {
 
         AudioFileFormat.Type targetType = AudioFileFormat.Type.WAVE;
         audioInputStream = new AudioInputStream(targetDataLine);
+        ready = true;
     }
 
     @Override
@@ -310,6 +322,10 @@ class LectureAudioRecorder extends Thread {
         }
     }
 
+    public boolean isReady() {
+        return ready;
+    }
+
     public void stopRecording() {
         targetDataLine.stop();
         targetDataLine.close();
@@ -318,5 +334,75 @@ class LectureAudioRecorder extends Thread {
     @Override
     public String toString() {
         return "LectureAudioRecorder";
+    }
+}
+
+class LectureAudioPlayer extends Thread {
+    File audioFile;
+    private AudioInputStream in;
+    private final int EXTERNAL_BUFFER_SIZE = 524288; // 128Kb
+
+    public LectureAudioPlayer(String path) {
+        audioFile = new File(path);
+
+    }
+
+    public void seekTo(long ms) {
+
+    }
+
+    @Override
+    public void run() {
+        if(!audioFile.exists()) {
+            Msg.W("Audio '" + audioFile.getAbsolutePath() + "' not found!", this);
+            return;
+        }
+
+        try {
+            in = AudioSystem.getAudioInputStream(audioFile);
+        } catch(UnsupportedAudioFileException uafe) {
+            Msg.W("Audio format unsupported.", this);
+        } catch(IOException ioe) {
+            Msg.W("I/O error loading audio file.", this);
+        }
+
+        AudioFormat format = in.getFormat();
+        SourceDataLine line = null;
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+
+        try {
+            line = (SourceDataLine) AudioSystem.getLine(info);
+            line.open(format);
+        } catch (LineUnavailableException e) {
+            Msg.W("Unable to open playback audio line.", this);
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        line.start();
+
+        int nBytesRead = 0;
+        byte[] abData = new byte[EXTERNAL_BUFFER_SIZE];
+
+        try {
+            while (nBytesRead != -1) {
+                nBytesRead = in.read(abData, 0, abData.length);
+                if (nBytesRead >= 0)
+                    line.write(abData, 0, nBytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        } finally {
+            line.drain();
+            line.close();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "LectureAudioPlayer";
     }
 }
