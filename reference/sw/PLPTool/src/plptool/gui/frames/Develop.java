@@ -409,6 +409,7 @@ public class Develop extends javax.swing.JFrame {
         undoManager = new DevUndoManager();
         undoManager.setLimit(Config.devMaxUndoEntries);
 
+        DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.EDITOR_TEXT_SET, -1));
         txtEditor.getDocument().addUndoableEditListener(new UndoableEditListener() {
 
             @Override
@@ -871,7 +872,7 @@ public class Develop extends javax.swing.JFrame {
         return undoManager;
     }
 
-    private void assemble() {
+    public void assemble() {
         Msg.output = txtOutput;
 
         if(plp.plpfile != null)
@@ -885,7 +886,7 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
-    private void simReset() {
+    public void simReset() {
         if(plp.g_simrun != null)
             plp.stopSimulation();
         plp.sim.reset();
@@ -1156,7 +1157,7 @@ public class Develop extends javax.swing.JFrame {
         }
     }
     
-    private void simStep() {
+    public void simStep() {
         boolean breakpoint = false;
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
             plp.hookEvent(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));

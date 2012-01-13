@@ -736,7 +736,8 @@ public class ProjectDriver {
             metaStr = new String(image);
 
             // Hook for project open for each entry
-            DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_OPEN_ENTRY, -1, tIn));
+            Object[] eParams = {entry.getName(), image};
+            DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_OPEN_ENTRY, -1, eParams));
 
             if(entry.getName().endsWith("asm")) {
                 Integer order = (Integer) asmFileOrder.get(entry.getName());
@@ -1726,7 +1727,7 @@ public class ProjectDriver {
         switch(e.getIdentifier()) {
             
             case ProjectEvent.ASSEMBLE:
-                assemble();
+                g_dev.assemble();
                 break;
                 
             case ProjectEvent.SIMULATE:
@@ -1735,6 +1736,10 @@ public class ProjectDriver {
 
             case ProjectEvent.DESIMULATE:
                 g_dev.simEnd();
+                break;
+
+            case ProjectEvent.SINGLE_STEP:
+                g_dev.simStep();
                 break;
 
             case ProjectEvent.EDITOR_INSERT:
