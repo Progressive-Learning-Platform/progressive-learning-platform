@@ -25,7 +25,6 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 import java.net.URI;
-
 import java.io.File;
 
 //For Syntax Highlighting
@@ -969,48 +968,6 @@ public class Develop extends javax.swing.JFrame {
     public void stopRunState() {
         menuSimRun.setSelected(false);
         btnSimRun.setSelected(false);
-    }
-
-    /**
-     * Load the lecture recorder. Attempt to load from:
-     * - Check if it's already loaded
-     * - Check user's home directory
-     * - Check current directory
-     * - Online from plp.okstate.edu/goodies
-     */
-    public void setupLectureRecorder() {
-        int indexRec, indexRun, indexObj;
-
-        if(DynamicModuleFramework.isModuleInstanceLoaded("LectureRecorder")) {
-            Msg.I("Lecture Recorder is already loaded.", null);
-            return;
-        }
-
-        indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-        indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
-        String searchPath;
-
-        if(indexRec == -1 || indexRun == -1) {
-            searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
-            Msg.I("Looking for " + searchPath, null);
-            DynamicModuleFramework.loadAllFromJar(searchPath);
-        }
-
-        if(indexRec == -1 || indexRun == -1) {
-            searchPath = Constants.launchPath + "/LectureRecorder.jar";
-            Msg.I("Looking for " + searchPath, null);
-            DynamicModuleFramework.loadAllFromJar(searchPath);
-        }
-
-        if(indexRec > -1 && indexRun > -1) {
-            indexObj = DynamicModuleFramework.newGenericModuleInstance(indexRec);
-            plptool.PLPGenericModule rec = DynamicModuleFramework.getGenericModuleInstance(indexObj);
-            rec.hook(plp);
-            rec.hook("show");
-        } else {
-            Msg.E("Lecture Recorder is not loaded.",
-                  Constants.PLP_GENERIC_ERROR, this);
-        }
     }
 
     public javax.swing.JCheckBoxMenuItem getToolCheckboxMenu(int index) {
@@ -3192,7 +3149,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuDynamicModuleManagerActionPerformed
 
     private void menuSetupLectureRecorderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetupLectureRecorderActionPerformed
-        setupLectureRecorder();
+        PLPToolbox.setupLectureRecorder(this, plp);
     }//GEN-LAST:event_menuSetupLectureRecorderActionPerformed
 
     private void initPopupMenus() {

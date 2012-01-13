@@ -225,4 +225,70 @@ public class PLPToolbox {
         frame.getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
         frame.getRootPane().getActionMap().put("ESCAPE", escapeAction);
     }
+
+    /**
+     * Load the lecture recorder. Attempt to load from:
+     * - Check if it's already loaded
+     * - Check user's home directory
+     * - Check current directory
+     * - Online from plp.okstate.edu/goodies
+     */
+    public static void setupLectureRecorder(javax.swing.JFrame dev, plptool.gui.ProjectDriver plp) {
+        int indexRec, indexRun, indexObj, ret;
+
+        if(DynamicModuleFramework.isModuleInstanceLoaded("LectureRecorder")) {
+            Msg.I("Lecture Recorder is already loaded.", null);
+            return;
+        }
+
+        indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
+        indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
+        String searchPath;
+
+        if(indexRec == -1 || indexRun == -1) {
+            searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
+            Msg.I("Looking for " + searchPath, null);
+            DynamicModuleFramework.loadAllFromJar(searchPath);
+            indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
+            indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
+        }
+
+        if(indexRec == -1 || indexRun == -1) {
+            searchPath = Constants.launchPath + "/LectureRecorder.jar";
+            Msg.I("Looking for " + searchPath, null);
+            DynamicModuleFramework.loadAllFromJar(searchPath);
+            indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
+            indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
+        }
+
+        if(indexRec == -1 || indexRun == -1) {
+            ret = javax.swing.JOptionPane.showConfirmDialog(dev, "Attempt to download lecture recorder from PLP website?",
+                    "Download Lecture Recorder", javax.swing.JOptionPane.YES_NO_OPTION);
+            if(ret == javax.swing.JOptionPane.YES_OPTION) {
+                try {
+                    java.net.URL jar = new java.net.URL("http://plp.okstate.edu/goodies/LectureRecorder.jar");
+                    java.nio.channels.ReadableByteChannel rbc = java.nio.channels.Channels.newChannel(jar.openStream());
+                    java.io.FileOutputStream fos = new java.io.FileOutputStream(PLPToolbox.getConfDir() + "/LectureRecorder.jar");
+                    fos.getChannel().transferFrom(rbc, 0, 1 << 24);
+                } catch(Exception e) {
+                    Msg.E("Failed to fetch lecture recorder from the internet.",
+                            Constants.PLP_GENERIC_ERROR, null);
+                }
+                searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
+                DynamicModuleFramework.loadAllFromJar(searchPath);
+            }
+            indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
+            indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
+        }
+
+        if(indexRec > -1 && indexRun > -1) {
+            indexObj = DynamicModuleFramework.newGenericModuleInstance(indexRec);
+            plptool.PLPGenericModule rec = DynamicModuleFramework.getGenericModuleInstance(indexObj);
+            rec.hook(plp);
+            rec.hook("show");
+        } else {
+            Msg.E("Lecture Recorder is not loaded.",
+                  plptool.Constants.PLP_GENERIC_ERROR, null);
+        }
+    }
 }
