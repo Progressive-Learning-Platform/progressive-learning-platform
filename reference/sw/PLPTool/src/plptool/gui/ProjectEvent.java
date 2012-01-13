@@ -40,6 +40,7 @@ public class ProjectEvent {
     public final static int         PROJECT_OPEN_ENTRY              = 9;
     public final static int         EDITOR_INSERT                   = 10;
     public final static int         EDITOR_REMOVE                   = 11;
+    public final static int         EDITOR_TEXT_SET                 = 12;
 
     /* SIM EVENTS */
     public final static int         SINGLE_STEP                     = 256;
@@ -135,11 +136,29 @@ public class ProjectEvent {
     }
 
     /**
+     * Set a new system time stamp for this event
+     *
+     * @param newSystemTimeStamp New timestamp
+     */
+    public void setSystemTimestamp(long newSystemTimeStamp) {
+        this.systemTimestamp = newSystemTimeStamp;
+    }
+
+    /**
      * Get the parameters object for the event
      *
      * @return Reference to the parameter object
      */
     public Object getParameters() {
         return parameters;
+    }
+
+    /**
+     * Set new event parameters
+     *
+     * @param params Generic object reference of the parameters
+     */
+    public void setParameters(Object params) {
+        this.parameters = params;
     }
 }
