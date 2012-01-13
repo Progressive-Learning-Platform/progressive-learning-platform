@@ -70,6 +70,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                 }
                 Msg.I("Recording project events.", this);
                 audioRecorderThread = new LectureAudioRecorder();
+                events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // start marker
                 if(audioRecorderThread.isReady()) audioRecorderThread.start();
                 editorDocListener = new DevDocListener(this);
                 plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);

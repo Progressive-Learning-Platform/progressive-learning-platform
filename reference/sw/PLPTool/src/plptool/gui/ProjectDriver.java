@@ -1767,7 +1767,10 @@ public class ProjectDriver {
                 open_asm = (Integer) e.getParameters();
                 refreshProjectView(false);
                 break;
-            
+
+            case ProjectEvent.GENERIC:
+                break;
+
             default:
                 Msg.E("Unknown event ID: " + e.getIdentifier(),
                       Constants.PLP_GENERIC_ERROR, this);
