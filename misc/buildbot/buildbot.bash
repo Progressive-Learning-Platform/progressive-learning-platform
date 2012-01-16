@@ -35,6 +35,10 @@ ant clean
 ant package-for-store > build_plptool_log
 ant javadoc > build_javadoc_log
 
+#build the classroom module
+cd /backup/fritz/buildbot_tmp/extras/PLPToolLectureRecorder
+./package.sh
+
 #run the autotext
 cd /backup/fritz/buildbot_tmp/reference/sw
 yes | /usr/local/bin/djtgcfg prog -d Nexys2 -i 0 -f ../hw/build/build_500k_volatile/top.bit >> auto_test_log
