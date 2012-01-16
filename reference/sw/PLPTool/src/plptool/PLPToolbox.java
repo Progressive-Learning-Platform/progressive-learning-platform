@@ -234,7 +234,7 @@ public class PLPToolbox {
      * - Online from plp.okstate.edu/goodies
      */
     public static void setupLectureRecorder(javax.swing.JFrame dev, plptool.gui.ProjectDriver plp) {
-        int indexRec, indexRun, indexObj, ret;
+        int indexRec, indexObj, ret;
 
         if(DynamicModuleFramework.isModuleInstanceLoaded("LectureRecorder")) {
             Msg.I("Lecture Recorder is already loaded.", null);
@@ -242,26 +242,23 @@ public class PLPToolbox {
         }
 
         indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-        indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
         String searchPath;
 
-        if(indexRec == -1 || indexRun == -1) {
+        if(indexRec == -1) {
             searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
             Msg.I("Looking for " + searchPath, null);
             DynamicModuleFramework.loadAllFromJar(searchPath);
             indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-            indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
         }
 
-        if(indexRec == -1 || indexRun == -1) {
+        if(indexRec == -1) {
             searchPath = Constants.launchPath + "/LectureRecorder.jar";
             Msg.I("Looking for " + searchPath, null);
             DynamicModuleFramework.loadAllFromJar(searchPath);
             indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-            indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
         }
 
-        if(indexRec == -1 || indexRun == -1) {
+        if(indexRec == -1) {
             ret = javax.swing.JOptionPane.showConfirmDialog(dev, "Attempt to download lecture recorder from PLP website?",
                     "Download Lecture Recorder", javax.swing.JOptionPane.YES_NO_OPTION);
             if(ret == javax.swing.JOptionPane.YES_OPTION) {
@@ -278,10 +275,9 @@ public class PLPToolbox {
                 DynamicModuleFramework.loadAllFromJar(searchPath);
             }
             indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-            indexRun = DynamicModuleFramework.isModuleClassRegistered("LectureRunner");
         }
 
-        if(indexRec > -1 && indexRun > -1) {
+        if(indexRec > -1) {
             indexObj = DynamicModuleFramework.newGenericModuleInstance(indexRec);
             plptool.PLPGenericModule rec = DynamicModuleFramework.getGenericModuleInstance(indexObj);
             rec.hook(plp);
