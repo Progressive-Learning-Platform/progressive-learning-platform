@@ -655,6 +655,7 @@ public class ProjectDriver {
         dirty = true;
 
         Msg.I("Opening " + path, null);
+        hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1));
 
         arch = null;
 
