@@ -103,6 +103,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                 if(record) {
                     if(audio) audioRecorderThread.stopRecording();
                     plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
+                    events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // end marker
                     record = false;
                     Msg.I("Stopped recording.", this);
                 } else
@@ -183,7 +184,12 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
 
                             break;
 
+                        case ProjectEvent.PROJECT_OPEN:
+                            snapshot_Asms = new ArrayList<PLPAsmSource>();
+                            break;
+
                         case ProjectEvent.PROJECT_OPEN_ENTRY:
+                            int sLevel = 0;
                             String entryName = (String) ((Object[])e.getParameters())[0];
                             byte[] image = (byte[]) ((Object[])e.getParameters())[1];
                             if(entryName.equals("plp.lecturerecord")) {
@@ -205,12 +211,16 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                                     ev.setSystemTimestamp(evSystemTimestamp);
                                     switch(ev.getIdentifier()) {
                                         case ProjectEvent.EDITOR_INSERT:
-                                            Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4]};
+                                            Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4].replaceAll("\\n", "\n")};
                                             ev.setParameters(eParamsInsert);
                                             break;
                                         case ProjectEvent.EDITOR_REMOVE:
                                             Object[] eParamsRemove = {Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4])};
                                             ev.setParameters(eParamsRemove);
+                                            break;
+                                        case ProjectEvent.OPENASM_CHANGE:
+                                            Integer eParamsOpenasmChange = Integer.parseInt(tokens[3]);
+                                            ev.setParameters(eParamsOpenasmChange);
                                             break;
                                     }
                                     events.add(ev);
@@ -221,7 +231,10 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                                 snapshot_OpenAsm = Integer.parseInt(str);
                                 return true;
                             } else if(entryName.startsWith("plp.lecturerecord_snapshot.")) {
-
+                                String str = new String(image);
+                                String fName = entryName.substring(27, entryName.length());
+                                snapshot_Asms.add(new PLPAsmSource(str, fName, sLevel));
+                                sLevel++;
                             }
 
                             break;
@@ -233,6 +246,17 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                             TarArchiveEntry entry;
                             String data = "";
                             Msg.I("Saving lecture snapshot...", this);
+
+                            for(int i = 0; i < snapshot_Asms.size(); i++) {
+                                entry = new TarArchiveEntry("plp.lecturerecord_snapshot." +
+                                        snapshot_Asms.get(i).getAsmFilePath());
+                                data = snapshot_Asms.get(i).getAsmString();
+                                entry.setSize(data.length());
+                                tOut.putArchiveEntry(entry);
+                                tOut.write(data.getBytes());
+                                tOut.flush();
+                                tOut.closeArchiveEntry();
+                            }
 
                             entry = new TarArchiveEntry("plp.lecturerecord_openasm");
                             data = "" + snapshot_OpenAsm;
@@ -256,12 +280,16 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                                 switch(ev.getIdentifier()) {
                                     case ProjectEvent.EDITOR_INSERT:
                                         data += (Integer)((Object[]) ev.getParameters())[0] + "::";
-                                        data += (String)((Object[]) ev.getParameters())[1];
+                                        String tStr = (String)((Object[]) ev.getParameters())[1];
+                                        tStr.replaceAll("\\r?\\n", "\\n");
+                                        data += tStr;
                                         break;
                                     case ProjectEvent.EDITOR_REMOVE:
                                         data += (Integer)((Object[]) ev.getParameters())[0] + "::";
                                         data += (Integer)((Object[]) ev.getParameters())[1];
                                         break;
+                                    case ProjectEvent.OPENASM_CHANGE:
+                                        data += (Integer)((Object[]) ev.getParameters())[0];
                                 }
 
                                 data += "\n";
@@ -349,10 +377,15 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
         c.gridx = 2;
         c.gridy = 0;
         ctrlReplayAll.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               superimpose = false;
-               hook("replay");
-           }
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                if(ctrlReplayAll.getText().equals("Replay ALL")) {
+                    superimpose = false;
+                    hook("replay");
+                    ctrlReplayAll.setText("PAUSE");
+                } else {
+                    ctrlReplayAll.setText("Replay ALL");
+                }
+            }
         });
         row1.add(ctrlReplayAll, c);
 
@@ -379,6 +412,10 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
            }
         });
         row2.add(ctrlSuperimpose, c);
+    }
+
+    public void resetStates() {
+        ctrlReplayAll.setText("Replay ALL");
     }
 
     @Override
@@ -554,6 +591,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                 if(audioRecorderThread != null)
                     audioRecorderThread.stopRecording();
                 Msg.I("Replay done.", this);
+                resetStates();
             } catch(Exception e) {
             }
         }
