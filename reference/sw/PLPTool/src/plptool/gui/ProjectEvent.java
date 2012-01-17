@@ -41,6 +41,7 @@ public class ProjectEvent {
     public final static int         EDITOR_INSERT                   = 10;
     public final static int         EDITOR_REMOVE                   = 11;
     public final static int         EDITOR_TEXT_SET                 = 12;
+    public final static int         EXIT                            = 13;
 
     /* SIM EVENTS */
     public final static int         SINGLE_STEP                     = 256;

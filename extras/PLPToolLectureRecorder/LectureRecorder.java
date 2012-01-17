@@ -209,7 +209,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                                     ev.setSystemTimestamp(evSystemTimestamp);
                                     switch(ev.getIdentifier()) {
                                         case ProjectEvent.EDITOR_INSERT:
-                                            Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4].replaceAll("\\n", "\n")};
+                                            Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4].replaceAll("\\\\n", "\n")};
                                             ev.setParameters(eParamsInsert);
                                             break;
                                         case ProjectEvent.EDITOR_REMOVE:
@@ -233,6 +233,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                                 String fName = entryName.substring(27, entryName.length());
                                 snapshot_Asms.add(new PLPAsmSource(str, fName, sLevel));
                                 sLevel++;
+                                return true;
                             }
 
                             break;
@@ -279,7 +280,7 @@ public class LectureRecorder extends JFrame implements PLPGenericModule {
                                     case ProjectEvent.EDITOR_INSERT:
                                         data += (Integer)((Object[]) ev.getParameters())[0] + "::";
                                         String tStr = (String)((Object[]) ev.getParameters())[1];
-                                        tStr.replaceAll("\\r?\\n", "\\n");
+                                        tStr = tStr.replaceAll("\\n", "\\\\n");
                                         data += tStr;
                                         break;
                                     case ProjectEvent.EDITOR_REMOVE:
