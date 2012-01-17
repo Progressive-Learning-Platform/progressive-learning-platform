@@ -732,15 +732,20 @@ public class ProjectDriver {
         tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
 
         while((entry = tIn.getNextTarEntry()) != null) {
+            boolean handled = false;
             image = new byte[(int) entry.getSize()];
             tIn.read(image, 0, (int) entry.getSize());
             metaStr = new String(image);
 
             // Hook for project open for each entry
             Object[] eParams = {entry.getName(), image};
-            DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_OPEN_ENTRY, -1, eParams));
+            for(int i = 0; i < DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
+                Object ret = DynamicModuleFramework.hook(i, new ProjectEvent(ProjectEvent.PROJECT_OPEN_ENTRY, -1, eParams));
+                if(ret != null && ret instanceof Boolean)
+                    handled = (Boolean) ret;
+            }
 
-            if(entry.getName().endsWith("asm")) {
+            if(entry.getName().endsWith("asm") && !entry.getName().startsWith("plp.")) {
                 Integer order = (Integer) asmFileOrder.get(entry.getName());
                 if(order == null)
                     Msg.W("The file '" + entry.getName() + "' is not listed in " +
@@ -814,6 +819,8 @@ public class ProjectDriver {
                         }
                     }
                 }
+            } else if(handled) {
+
             } else {
                 Msg.W("open(" + path + "): unable to process entry: " +
                         entry.getName() + ". This file will be removed when"
@@ -1772,6 +1779,14 @@ public class ProjectDriver {
                 updateAsm(open_asm, g_dev.getEditorText());
                 open_asm = (Integer) e.getParameters();
                 refreshProjectView(false);
+                break;
+
+            case ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE:
+                g_dev.setSimWindowVisibility((Integer) e.getParameters(), true);
+                break;
+
+            case ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE:
+                g_dev.setSimWindowVisibility((Integer) e.getParameters(), false);
                 break;
 
             case ProjectEvent.GENERIC:

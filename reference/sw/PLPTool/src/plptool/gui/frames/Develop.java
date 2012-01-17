@@ -1079,11 +1079,65 @@ public class Develop extends javax.swing.JFrame {
         });
     }
 
+    public void setSimWindowVisibility(int id, boolean v) {
+        switch(id) {
+            case Constants.PLP_TOOLFRAME_SIMLEDS:
+                setLEDsFrame(v);
+                break;
+            case Constants.PLP_TOOLFRAME_SIMSWITCHES:
+                setSwitchesFrame(v);
+                break;
+            case Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS:
+                setSevenSegmentsFrame(v);
+                break;
+            case Constants.PLP_TOOLFRAME_SIMUART:
+                setUARTFrame(v);
+                break;
+            case Constants.PLP_TOOLFRAME_SIMVGA:
+                setVGAFrame(v);
+                break;
+            case Constants.PLP_TOOLFRAME_SIMPLPID:
+                setPLPIDFrame(v);
+                break;
+            case Constants.PLP_TOOLFRAME_SIMCPU:
+                menuSimView.setSelected(v);
+                btnCPU.setSelected(v);
+                plp.g_sim.setVisible(v);
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMCPU));
+                break;
+            case Constants.PLP_TOOLFRAME_WATCHER:
+                menuSimWatcher.setSelected(v);
+                btnWatcher.setSelected(v);
+                plp.g_watcher.setVisible(v);
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_WATCHER));
+                break;
+            case Constants.PLP_TOOLFRAME_SIMCTRL:
+                menuSimControl.setSelected(v);
+                btnSimControl.setSelected(v);
+                plp.g_simctrl.setVisible(v);
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMCTRL));
+                break;
+        }
+    }
+
     private void setLEDsFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.LEDArray) {
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMLEDS));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimLEDs.setSelected(v);
                 btnSimLEDs.setSelected(v);
@@ -1097,6 +1151,10 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.Switches) {
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMSWITCHES));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimSwitches.setSelected(v);
                 btnSimSwitches.setSelected(v);
@@ -1110,6 +1168,10 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.SevenSegments) {
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimSevenSegments.setSelected(v);
                 btnSimSevenSegments.setSelected(v);
@@ -1123,6 +1185,10 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.UART) {
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMUART));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimUART.setSelected(v);
                 btnSimUART.setSelected(v);
@@ -1136,6 +1202,10 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.VGA) {
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMVGA));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimVGA.setSelected(v);
                 btnSimVGA.setSelected(v);
@@ -1149,6 +1219,10 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.PLPID) {
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMPLPID));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimPLPID.setSelected(v);
                 btnSimPLPID.setSelected(v);
@@ -1167,7 +1241,7 @@ public class Develop extends javax.swing.JFrame {
                 breakpoint = true;
             }
         }
-        plp.hookEvent(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1));
+        plp.hookEvent(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1, Config.simCyclesPerStep));
         plp.updateComponents(true);
     }
 
