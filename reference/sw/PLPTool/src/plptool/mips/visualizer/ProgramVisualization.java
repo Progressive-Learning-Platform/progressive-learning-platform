@@ -22,13 +22,6 @@ import plptool.*;
 import plptool.mips.*;
 import java.io.*;
 import java.util.ArrayList;
-/* remove upon proper jung integration
-import org.jgrapht.*;
-import org.jgrapht.graph.*;
-import org.jgrapht.ext.*;
-import org.jgrapht.alg.*;
- *
- */
 // jung
 import edu.uci.ics.jung.graph.*;
 import edu.uci.ics.jung.graph.util.*;
@@ -76,8 +69,11 @@ public class ProgramVisualization {
         for(int addindex=0; addindex < addr_table.length; addindex++){
             instr_str=progformat.mipsInstrStr(obj_table[addindex]);
             instr_array=instr_str.split(" ");
-            //Msg.M(instr_str);
-            //Msg.M(instr_array[addindex]);
+            Msg.M(plp.asm.lookupLabel(addr_table[addindex]));
+            /*
+            Msg.M(instr_str);
+            Msg.M(instr_array[addindex]);
+            
             if(instr_array[0].equals("jal")){
                 jump_index=Integer.parseInt(instr_array[5]);
                 Msg.M("jal " + plp.asm.lookupLabel(addr_table[jump_index]));
@@ -98,6 +94,7 @@ public class ProgramVisualization {
                 Msg.M("beq " + plp.asm.lookupLabel(addr_table[branch_index]));
             }
 
+            */
             /*
             //Msg.M(myasm.lookupLabel(plp.asm.getAddrTable()[addindex]));
             System.out.print(addindex);
@@ -127,16 +124,21 @@ public class ProgramVisualization {
             //ProgramVisualization.programGraph graph = new programGraph();
             //graph.buildGraph();
             Graph<String, String> programGraph = buildGraph();
+            //Forest<String, String> programGraph = buildGraph();
             Msg.M(programGraph.toString());
         }
         //construct the graph
         public DirectedSparseMultigraph<String, String> buildGraph(){
+        //public DelegateForest<String, String> buildGraph(){
 
             plptool.mips.Formatter progformat = new plptool.mips.Formatter();
             plp.assemble();
-            String label;
+            //String label;
             String instr_str;
             String instr_array[];
+            String currentLabel;
+            String previousLabel;
+            String testLabel;
             int jump_index;
             int branch_index;
             int previousVertex;
@@ -144,6 +146,7 @@ public class ProgramVisualization {
             ArrayList<String> vertices = new ArrayList<String>();
 
             DirectedSparseMultigraph<String, String> progGraph = new DirectedSparseMultigraph<String, String>();
+            //DelegateForest<String, String> progGraph = new DelegateForest<String, String>();
 
             long[] addr_table = plp.asm.getAddrTable();
             long[] obj_table = plp.asm.getObjectCode();
@@ -152,23 +155,49 @@ public class ProgramVisualization {
             previousVertex=0;
             progGraph.addVertex(vertices.get(vertices.size()-1));
 
+            // add labels first
+            for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
+                currentLabel=plp.asm.lookupLabel(addr_table[addindex1]);
+                if(currentLabel!=null){
+                    Msg.M(currentLabel);
+                    vertices.add(currentLabel);
+                    progGraph.addVertex(currentLabel);
+                }
+            }
+            //progGraph.addEdge("FIGHT", "Begin", "start", EdgeType.DIRECTED);
+            // add edges
+            previousLabel=vertices.get(0);
+            currentLabel=vertices.get(1);
+            Msg.M("previous1: " + previousLabel);
+            Msg.M("current1: " + currentLabel);
             for(int addindex=0; addindex < addr_table.length; addindex++){
+                testLabel=plp.asm.lookupLabel(addr_table[addindex]);
+                if(testLabel!=null){
+                    currentLabel=testLabel;
+                }
                 instr_str=progformat.mipsInstrStr(obj_table[addindex]);
                 instr_array=instr_str.split(" ");
 
                 if(instr_array[0].equals("jal")){
                     jump_index=Integer.parseInt(instr_array[5]);
-                    vertices.add("jal " + plp.asm.lookupLabel(addr_table[jump_index]));
-                    Msg.M(vertices.get(vertices.size()-1));
-                    progGraph.addVertex(vertices.get(vertices.size()-1));
+                    //vertices.add("jal " + plp.asm.lookupLabel(addr_table[jump_index]));
+                    //Msg.M(vertices.get(vertices.size()-1));
+                    //progGraph.addVertex(vertices.get(vertices.size()-1));
+                    currentLabel=plp.asm.lookupLabel(addr_table[jump_index]);
+                    progGraph.addEdge("jal" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    progGraph.addEdge("jr" + addindex, currentLabel, previousLabel, EdgeType.DIRECTED);
                 }
 
                 if(instr_array[0].equals("j")){
                     jump_index=Integer.parseInt(instr_array[5]);
-                    vertices.add("j " + plp.asm.lookupLabel(addr_table[jump_index]));
-                    Msg.M(vertices.get(vertices.size()-1));
-                    progGraph.addVertex(vertices.get(vertices.size()-1));
-                    progGraph.addEdge(vertices.get(previousVertex) + " to " + vertices.get(vertices.size()-1), vertices.get(previousVertex), vertices.get(vertices.size()-1), EdgeType.DIRECTED);
+                    //vertices.add("j " + plp.asm.lookupLabel(addr_table[jump_index]));
+                    //Msg.M(vertices.get(vertices.size()-1));
+                    //progGraph.addVertex(vertices.get(vertices.size()-1));
+                    //progGraph.addEdge(vertices.get(previousVertex) + " to " + vertices.get(vertices.size()-1), vertices.get(previousVertex), vertices.get(vertices.size()-1), EdgeType.DIRECTED);
+                    currentLabel=plp.asm.lookupLabel(addr_table[jump_index]);
+                    Msg.M("previous: " + previousLabel);
+                    Msg.M("current: " + currentLabel);
+                    progGraph.addEdge("j" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
                 }
 
                 if(instr_array[0].equals("beq")){
@@ -176,10 +205,13 @@ public class ProgramVisualization {
                     branch_imm=Integer.parseInt(instr_array[5]);
                     branch_imm=(long)(short) branch_imm;
                     branch_index=(int)branch_imm+addindex+1;
-                    vertices.add("beq " + plp.asm.lookupLabel(addr_table[branch_index]));
-                    Msg.M(vertices.get(vertices.size()-1));
-                    progGraph.addVertex(vertices.get(vertices.size()-1));
+                    //vertices.add("beq " + plp.asm.lookupLabel(addr_table[branch_index]));
+                    currentLabel=plp.asm.lookupLabel(addr_table[branch_index]);
+                    //Msg.M(vertices.get(vertices.size()-1));
+                    //progGraph.addVertex(vertices.get(vertices.size()-1));
+                    progGraph.addEdge("beq" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
                 }
+                previousLabel=currentLabel;
             }
             return progGraph;
         }

@@ -13,6 +13,7 @@ package plptool.mips.visualizer;
 import edu.uci.ics.jung.graph.*;
 import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.visualization.*;
+import edu.uci.ics.jung.visualization.decorators.*;
 
 /**
  * Create the JUNG Visualization graphically in a pop-up window.
@@ -35,9 +36,15 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         this.progVis = progVis;
         this.progGraph= progGraph;
 
-        Layout<String, String> layout = new CircleLayout<String,String>(progGraph.buildGraph());
+        Layout<String, String> layout = new ISOMLayout<String,String>(progGraph.buildGraph());
+        // tree layout stuff
+        //DelegateForest sherwood = new DelegateForest(progGraph.buildGraph());
+        //Layout<String, String> layout = new TreeLayout<String,String>(progGraph.buildGraph());
+        this.setSize(1024, 768);
+        layout.setSize(this.getSize());
         BasicVisualizationServer<String,String> progVisServ = new BasicVisualizationServer<String,String>(layout);
-      
+        progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
+
         getContentPane().add(progVisServ);
         progVisServ.setSize(this.getSize());
     }
