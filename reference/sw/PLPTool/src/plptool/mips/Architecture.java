@@ -180,7 +180,8 @@ public class Architecture extends PLPArchitecture {
             plp.g_dev.addSimToolItem(menuMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuBusMonitor);
-            plp.g_dev.addSimToolItem(menuCpuVis);
+            //Disable for 4.0 release
+            //plp.g_dev.addSimToolItem(menuCpuVis);
         }
     }
 
