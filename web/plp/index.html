@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>PLP</title>
+<link rel="stylesheet" href="all.css" type="text/css" media="all" charset="utf-8">
+<link rel="shortcut icon" href="favicon.png" />
+<!--[if lt IE 8]>
+<link rel="stylesheet" href="ie.css" type="text/css">
+<![endif]-->
+<script type="text/javascript"> 
+ 
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-8356234-2']);
+  _gaq.push(['_trackPageview']);
+ 
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+ 
+</script> 
+
+</head>
+<body id="htmltag_body">
+<div id="container">
+  <div id="topnav">
+    <h1 id="title">PLP</h1>
+   <a id="logo-box" href="/"></a>
+  </div>
+  <div id="content">
+  <!-- Menu is HTML-escaped elsewhere -->
+
+
+  <p>
+  <!-- The Table of Contents is automatically inserted in this <div>.
+       Do not delete this <div>. -->
+  <div id="nav"></div>
+  </p>
+
+  <!-- Content is HTML-escaped elsewhere -->
+  <link rel="stylesheet" type="text/css" href="frontpage.css">
+
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+function loadFeed() {
+        var url = "https://groups.google.com/group/progressive-learning-platform/feed/rss_v2_0_msgs.xml";
+        var divId = "listFeed";
+        var feed = new google.feeds.Feed(url);
+        feed.setNumEntries(4)
+        feed.load(function (result) {
+                var container = document.getElementById(divId)
+                if (result.error) {
+                        container.innerHTML = "Error loading feed.";
+                        return;
+                }
+                container.innerHTML = "";
+                var entries = result.feed.entries;
+                for (var i=0; i<entries.length; i++) {
+                        var li = document.createElement("li");
+                        var a = document.createElement("a");
+                        a.setAttribute("href", entries[i].link);
+                        var span_title = document.createElement("span"); 
+                        span_title.appendChild(document.createTextNode(entries[i].title));
+                        span_title.className = "title";
+                        a.appendChild(span_title);
+                        li.appendChild(a);
+                        var span_date = document.createElement("span"); 
+                        span_date.appendChild(document.createTextNode(entries[i].publishedDate.substr(0, 11)));
+                        span_date.className = "date";
+                        a.appendChild(span_date);
+                        container.appendChild(li);
+                }
+        });
+}
+google.load("feeds", "1");
+google.setOnLoadCallback(loadFeed);
+</script>
+
+  <div id="frontpage">
+    <div class="left-column">
+      <p style="margin-top: 0; float: left;">
+	PLP is an FPGA based computer architecture learning platform. It is intended 
+	to expose students to the a wider scope of computer engineering design 
+	principles beyond the usual topics covered in an undergraduate course. This 
+	is accomplished with a problem-based curriculum that takes teams of students 
+	through a complete system on a chip (SoC) design. The included reference 
+	design includes a MIPS-like cpu with surrounding system components including 
+	a VGA controller with framebuffer, UART, gpio/switches/buttons/leds, interrupt
+	controller, memory controller, and more all connected through a simple front 
+	side bus. The system is designed to be used in conjunction with student 
+	designs. Additionally, software tools, including a robust IDE, board 
+	communication tools, and a cycle accurate simulator are included. 
+	All host software tools are written in Java to be OS agnostic.
+      </p>
+      <p style="margin-top: 0;">
+	All components, including software and hardware designs are released under the GNU General Public License 3.0. 
+      </p>
+      <h2>Check it out!</h2>
+      <p>
+      Try the simulator right here in your browser:
+	</p>
+      <div id="playground" class="small"></div>
+      <script src="playground.js"></script>
+	<div class="how">Browser simulation has reduced features and is limited to 100 cycles</div>
+    </div>
+    <div class="right-column">
+	<div id="resources">
+		<div id="banner">
+			<p><img src="images/banner1.png"></p>
+			<p><img src="images/banner2.png"></p>
+			<p><img src="images/banner3.png"></p>
+		</div>
+		<div id="content-rotating">
+			<p>
+			<h2>Project:</h2>
+			<a href="http://code.google.com/p/progressive-learning-platform/wiki/UserManual">Manual</a> - 
+			<a href="http://code.google.com/p/progressive-learning-platform/downloads/list">Download</a> -
+			<a href="http://groups.google.com/group/progressive-learning-platform">Mailing List</a> -
+			<a href="http://plp.okstate.edu/papers.html">Publications</a>      
+			</p>
+			<p>
+			<h2>People:</h2>
+			<a href="http://rome.ceat.okstate.edu/~fritz">David Fritz</a> - 
+			<a href="http://rome.ceat.okstate.edu/~wira">Wira Mulia</a> - 
+			<a href="http://rome.ceat.okstate.edu/~sohoni">Dr. Sohum Sohoni</a>
+			</p>
+			<p>
+			<h2>Development:</h2>
+			<a href="http://code.google.com/p/progressive-learning-platform/">Development Portal</a> - 
+			<a href="http://code.google.com/p/progressive-learning-platform/issues/list">Open Issues</a>
+			</p>
+			<p>
+			<h2>Courses:</h2>
+			<a href="http://plp.okstate.edu/ecen4243">ECEN 4243 (Spring 2012)</a><br>
+			<a href="http://plp.okstate.edu/ensc3213">ENSC 3213 (Spring 2012)</a><br>
+			<a href="http://plp.okstate.edu/ecen4243-s11">ECEN 4243 (Spring 2011)</a>
+			</p>
+		</div>
+		<h2>Mailing List <span class="more">| <a href="https://groups.google.com/forum/#!forum/progressive-learning-platform">More...</a></span></h2>
+		<div id="content-blog">
+			<ul id="listFeed">
+			</ul>
+		</div>
+	</div>
+    </div>  
+    <div class="end-columns"></div>
+    </div>
+
+  </div>
+  <div id="site-info">
+	<p>
+	<a href="http://rome.ceat.okstate.edu/"><img src="images/caesar-logo-small.png" /></a>
+	<a href="http://www.nsf.gov"><img src="images/nsf.png"></a>
+	<a href="http://www.gnu.org/licenses/gpl-3.0.html"><img src="images/gplv3.png"></a>
+	<a href="http://creativecommons.org/licenses/by/3.0/"><img src="images/cc.png"></a>
+	</p>
+
+	<p>Copyright 2011 the PLP Authors</p>
+    <p>Except as noted, this content is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
+  </div>
+</div>
+</body>
+</html>
