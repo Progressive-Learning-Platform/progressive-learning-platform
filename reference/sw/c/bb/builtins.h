@@ -37,7 +37,7 @@ _entrypoint:\n\
 li $sp, 0x10fffffc\n\
 \n\
 # call main\n\
-jal main\n\
+call main\n\
 nop\n\
 \n\
 # if we get here just halt\n\
