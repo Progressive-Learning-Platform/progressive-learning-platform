@@ -30,6 +30,8 @@ char *entrypoint_body =
 "\
 #\n\
 \n\
+.org 0x10000000\n\
+\n\
 _entrypoint:\n\
 # enable the stack\n\
 li $sp, 0x10fffffc\n\
@@ -40,7 +42,7 @@ nop\n\
 \n\
 # if we get here just halt\n\
 _halt:\n\
-j halt\n\
+j _halt\n\
 nop\n\
 \n\
 # end of entrypoint\n";
