@@ -58,10 +58,43 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <H2><A NAME="SECTION000611000000000000000">
 Seven Segment</A>
 </H2>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="100" HEIGHT="125" ALIGN="BOTTOM" BORDER="0"
+ SRC="./sseg.png"
+ ALT="Image sseg">
+
+</DIV>
+The seven segment module exposes the raw seven segment LEDs to the user, allowing for specialized output. libplp wrappers exist for various abstractions.
+
+<P>
+There are 4 seven segment displays (seven segments plus a dot), mapped to four bytes in the control word.
+
+<P>
+The byte order is: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">[31:24]</TD>
+<TD ALIGN="LEFT">[23:16]</TD>
+<TD ALIGN="LEFT">[15:8]</TD>
+<TD ALIGN="LEFT">[7:0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">leftmost</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">rightmost</TD>
+</TR>
+</TABLE>
+
+<P>
+The segments map to each of the four bytes as indicated by the above figure. Bit 0 maps to the top most segment, bit 7 maps to the dot. 
+
+<P>
 <BR><HR>
 <ADDRESS>
 will
-2012-01-12
+2012-01-25
 </ADDRESS>
 </BODY>
 </HTML>
