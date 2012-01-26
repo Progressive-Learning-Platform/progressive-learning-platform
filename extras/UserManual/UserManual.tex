@@ -270,17 +270,184 @@ PLPTool also supports escaping newline characters with \verb+\n+.
 It is possible to load a pointer to a label using the load immediate pseudo instruction (li). 
 \subsection{Ops}
 \subsubsection{R-type Arithmetic and Logical Instructions}
+These instructions receive inputs from two registers, do an arithmetic or logical operation, and write the result in the destination register. The general syntax is: 
+\begin{verbatim}
+op    $destination_register, $source_register_1, $source_register_2
+\end{verbatim}
+\begin{tabular}{| l | l | l | p{3cm} | l |}
+\hline
+Syntax	& C Expression & Sample Usage & Notes & Opcode/Function \\
+\hline
+addu \$rd, \$rs, \$rt &	rd = rs + rt; &	addu \$v0, \$a0, \$a1 &	Unsigned addition & 0x00 / 0x21 \\
+subu \$rd, \$rs, \$rt &	rd = rs - rt; &	subu \$v0, \$a0, \$a1 &	Unsigned subtraction & 0x00 / 0x23 \\
+and \$rd, \$rs, \$rt &	rd = rs \& rt; & and \$v0, \$a0, \$a1 &	Bitwise logical AND &0x00 / 0x24 \\
+or \$rd, \$rs, \$rt &	rd = rs | rt; &	or \$v0, \$a0, \$a1 &	Bitwise logical OR &0x00 / 0x25 \\
+nor \$rd, \$rs, \$rt &	rd = ~(rs | rt); & nor \$v0, \$a0, \$a1 & Bitwise logical NOR & 0x00 / 0x27 \\
+slt \$rd, \$rs, \$rt &	rd = (rs < rt) ? 1 : 0;	& slt \$v0, \$a0, \$a1 & Signed compare	& 0x00 / 0x2a \\
+sltu \$rd, \$rs, \$rt &	rd = (rs < rt) ? 1 : 0;	& sltu \$v0, \$a0, \$a1	& Unsigned compare & 0x00 / 0x2b \\
+mullo \$rd, \$rs, \$rt & rd = (rs * rt) \& 0xFFFFFFFF; & mullo \$v0, \$a0, \$a1	& Multiply (return low order bits) & 0x00 / 0x10 \\
+mulhi \$rd, \$rs, \$rt & rd = (rs * rt) >>> 32; & mulhi \$v0, \$a0, \$a1 & Multiply (return high order bits) & 0x00 / 0x11 \\
+\hline
+\end{tabular}
 \subsubsection{R-type Shift Instructions}
+PLP supports logical shift left and right instructions. The general syntax is:
+
+\begin{verbatim}
+op    $destination_register, $source_register, shift_amount
+\end{verbatim}
+
+Where shift\_amount is a 5-bit integer that can be represented in decimal or hex (with 0x prefix). \textbf{If this value is greater than 5 bits, the assembler will truncate the more significant bit positions beyond the 5th bit place. }
+
+\begin{tabular}{| l | l | l | p{5cm} | l |}
+\hline
+Syntax & C Expression & Sample Usage & Notes & Opcode/Function \\
+\hline
+sll \$rd, \$rt, shamt & rd = rt << shamt; & sll \$v0, \$a0, 0x12 & Shift \$a0 by 18 to the left and store the result in \$v0 & 0x00 / 0x00 \\
+srl \$rd, \$rt, shamt & rd = rt >> shamt; & srl \$v0, \$a0, 18 & Shift \$a0 by 18 to the right and store the result in \$v0 & 0x00 / 0x02 \\
+\hline
+\end{tabular}
 \subsubsection{R-type Jump Register Instructions}
+Jump register loads the content of the specified register \$rs into the program counter. 
+
+\begin{tabular}{| l | l | l | p{5cm} | l |}
+\hline
+Syntax & C Expression & Sample Usage & Notes & Opcode/Function \\
+\hline
+jr \$rs & PC = rs; & jr \$ra & Load the content of \$ra into PC register & 0x00 / 0x08 \\
+jalr \$rd, \$rs & rd = PC + 4; PC = rs; & jalr \$s5, \$t0 & Jump to location specified by the contents of rs, save return address in rd. & 0x00 / 0x09 \\
+\hline
+\end{tabular}
+
 \subsubsection{I-type Branch Instructions}
+The system supports two branch instructions: branch on equal and branch on not equal. Two registers are compared and appropriate action will be taken depending on the result. The general syntax is: 
+
+\begin{verbatim}
+op    $source_register_1, $source_register_2, branch_target
+\end{verbatim}
+
+branch\_target has to be a valid label in the program. The assembler takes the address of the label and will calculate the branch offset to be put into the immediate\_field. 
+
+\begin{tabular}{| l | l | l | p{5cm} | l |}
+\hline
+Syntax & C Expression & Sample Usage & Notes & Opcode \\
+\hline
+beq \$rt, \$rs, label & if(rt == rs) PC = PC + 4 + imm; & beq \$a0, \$a1, done & Branch to done if \$a0 and \$a1 are equal & 0x04 \\
+bne \$rt, \$rs, label & if(rt != rs) PC = PC + 4 + imm; & bne \$a0, \$a1, error & Branch to error if \$a0 and \$a1 are NOT equal & 0x05 \\
+\hline
+\end{tabular}
+
 \subsubsection{I-type Arithmetic and Logical Instructions}
+These instructions receive inputs from a source register $rs and the immediate field, and store it in the target register $rt. The general syntax is: 
+
+\begin{verbatim}
+op    $target_register, $source_register, immediate_field
+\end{verbatim}
+
+immediate\_field is a 16-bit integer that can be represented in either decimal or hex. \textbf{If this field is greater than 16 bits, the assembler will truncate the more significant bit positions beyond the 16th place.} The processor extends the sign bit of immediate\_field to make it a 32-bit number. 
+
+\begin{tabular}{| l | l | l | p{5cm} | l |}
+\hline
+Syntax & C Expression & Sample Usage & Notes & Opcode \\
+\hline
+addiu \$rt, \$rs, imm & rt = rs + SignExtend(imm); & addiu \$v0, \$a0, 0xBEEF & Unsigned addition, add \$a0 with 48879 & 0x09 \\
+andi \$rt, \$rs, imm & rt = rs \& ZeroExtend(imm); & andi \$v0, \$a0, 1337 & Bitwise Logical AND & 0x0c \\
+ori \$rt, \$rs, imm & rt = rs | ZeroExtend(imm); & ori \$v0, \$a0, 0x0539 & Bitwise Logical OR & 0x0d \\
+slti \$rt, \$rs, imm & rt = (rs < SignExtend(imm)) ? 1 : 0; & slti \$v0, \$a0, 0xDEAD & Signed compare & 0x0a \\
+sltiu \$rt, \$rs, imm & rt = (rs < SignExtend(imm)) ? 1 : 0; & sltiu \$v0, \$a0, 0xDEAD & Unsigned compare & 0x0b \\
+\hline
+\end{tabular}
+
 \subsubsection{I-type Load Upper Immediate Instruction}
+This instruction loads the immediate field to the upper 2 bytes of the specified target register. 
+
+\begin{tabular}{| l | l | l | p{5cm} | l |}
+\hline
+Syntax & C Expression & Sample Usage & Notes & Opcode \\
+\hline
+lui \$rt, imm & rt = imm << 16; & lui \$a0, 0xBEEF & Write 0xBEEF0000 to \$a0 register. Note that the lower 16 bits are filled with zeroes & 0x0f \\
+\hline
+\end{tabular}
+
 \subsubsection{I-type Load and Store Word Instructions}
+These instructions read or write data from or to memory. The general syntax is: 
+
+\begin{verbatim}
+op    $register, immediate_field($offset_register)
+\end{verbatim}
+
+immediate\_field is 16-bit wide and sign extended to 32-bit by the processor to resolve the memory address. If immediate\_field is larger than 16-bit, it will be truncated by the assembler. \$offset\_register acts as an index to the memory address, e.g. an index for an array. 
+
+\begin{tabular}{| l | l | l | p{5cm} | l |}
+\hline
+Syntax & C Expression & Sample Usage & Notes & Opcode \\
+\hline
+lw \$rt, imm(\$rs) & rt = SignExtend(imm)[rs]; & lw \$v0, 0x4000(\$a1) & Load contents of 0x4000 + \$a1 into \$v0 & 0x23 \\
+sw \$rt, imm(\$rs) & SignExtend(imm)[rs] = rt; & sw \$a0, 128(\$v0) & Store contents of register \$a0 to 128 + \$v0 & 0x2b \\
+\hline
+\end{tabular}
+
 \subsubsection{J-type Instructions}
+There are two j-type instructions: jump, and jump-and-link. Jump-and-link writes the return address to \$ra when it is called, while jump does not. The syntax is: 
+
+\begin{verbatim}
+op    jump_target
+\end{verbatim}
+
+jump\_target has to be a valid label. 
+
+\begin{tabular}{| l | l | l | p{5cm} | l |}
+\hline
+Syntax & C Expression & Sample Usage & Notes & Opcode \\
+\hline
+j label & PC = jump\_target; & j loop & Jump to loop label & 0x02 \\
+jal label & ra = PC + 4; PC = jump\_target; & jal read\_serial & Jump to read\_serial after saving return address to \$ra & 0x03 \\
+\hline
+\end{tabular}
+
 \subsection{Pseudo-ops}
 \subsection{Notes on Register Usage}
+Aside from \$zero, \$i0, \$i1, and \$ra, the architecture does not explicitly assign special functions to a register. This section lays down some conventions on how the other registers should be used to prevent data from being clobbered across function calls. All the supplied libraries adhere to this guideline. 
+
+\begin{tabular}{| l | l | p{8cm} |}
+\hline
+Register & Usage & Notes \\
+\hline
+\$zero	& Constant value 0 & This register can not be written to and always returns the value 0 \\
+\$at	& Assembler temporary &	Assembler reserved, do not use \\
+\$v0 - \$v1 &	Values for results &	Use for return values of functions \\
+\$a0 - \$a3 &	Arguments &	Use for arguments of functions \\
+\$t0 - \$t9 &	Temporaries &	Do not use these registers across function calls, as they will most likely be clobbered \\
+\$s0 - \$s7 &	Saved temporaries &	- \\
+\$i0 &	Interrupt vector &	The CPU jumps to the address pointed by this register when an interrupt occurs \\
+\$i1 &	Interrupt return address &	Written by the CPU when an interrupt occurs \\
+\$gp &	Global pointer &	- \\
+\$sp &	Stack pointer &	Use this register to implement a stack \\
+\$fp &	Frame pointer & - \\
+\$ra &	Return address & Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction \\
+\hline
+\end{tabular}
+
 \section{Hardware Description}
 \subsection{Memory Map}
+\begin{tabular}{| l | l | l |}
+\hline
+\textbf{beginning address} & \textbf{length (bytes)} & device \\
+\hline
+0x00000000 & 2048 & boot ROM \\
+0x10000000 & 16777216 & RAM \\
+0xf0000000 & 16 & UART \\
+0xf0100000 & 4 & switches \\
+0xf0200000 & 4 & LEDs \\
+0xf0300000 & 12 & GPIO \\
+0xf0400000 & 8 & VGA \\
+0xf0500000 & 8 & PLPID \\
+0xf0600000 & 4 & timer \\
+0xf0700000 & 8 & interrupt controller \\
+0xf0800000 & ? & performance counter hardware \\
+0xf0a00000 & 4 & seven segment \\
+\hline
+\end{tabular}
+
 \subsection{ROM}
 The ROM module is a non-volatile, read-only memory that stores the fload bootloader, which is used with PLPTool to load programs over the serial port. The PLP board starts at address 0x00000000 on power-up and board reset, causing the bootloader to run. 
 \subsection{RAM}
@@ -313,19 +480,252 @@ The switches module is a read-only register that always holds the current value 
 \subsection{LEDs}
 The LEDs module is a read-write register that stores the value of the on-board LEDs. There are 8 LEDs, mapped to the lowest byte of the LED register. Reading this value returns the current LED state, writing will update the LEDs. 
 \subsection{GPIO}
+The GPIO module connects two of the Nexys2 board's I/O connectors to the PLP system, enabling 16 GPIO ports.
+
+There are three registers that are used with the GPIO module: 
+
+\begin{tabular}{ | l | l |}
+\hline
+Address & Description \\
+\hline
+0xf0300000 & Tristate register \\
+0xf0300004 & GPIO Block A \\
+0xf0300008 & GPIO Block B \\
+\hline
+\end{tabular}
+
+Each GPIO block on the Nexys2 board has 12 pins: 8 I/O, 2 ground, and 2 Vdd.
+
+The tristate register controls the direction of data on each of the GPIO pins. At startup and on reset, all GPIO are set to be inputs (the tristate register is zeroed). This protects circuits that are driving any pins on the GPIO ports. The user can set GPIO to be outputs by enabling the tristate pins for those outputs. The tristate bits map to GPIO pins in the following table. 
+
+\begin{tabular}{ | l | l |}
+\hline
+Tristate register bit &	GPIO pin \\
+\hline
+0 & A0 \\
+1 & A1 \\
+2 & A2 \\
+3 & A3 \\
+4 & A4 \\
+5 & A5 \\
+6 & A6 \\
+7 & A7 \\
+8 & B0 \\
+9 & B1 \\
+10 & B2 \\
+11 & B3 \\
+12 & B4 \\
+13 & B5 \\
+14 & B6 \\
+15 & B7 \\
+\hline
+\end{tabular}
+
+The GPIO registers use the bottom 8 bits of the data word. The other bits are always read 0. 
+
+\begin{center}
+\includegraphics[scale=0.5]{../../images/GPIO.png}
+\end{center}
+
+The figure above shows the pin mappings to the below table. 
+
+\begin{tabular}{ | l | l |}
+\hline
+Pin & Mapping/Bit Position \\
+\hline
+1 & 0 \\
+2 & 1 \\
+3 & 2 \\
+4 &3 \\
+5 & GND \\
+6 & Vdd \\
+7 & 4 \\
+8 & 5 \\
+9 & 6 \\
+10 & 7 \\
+11 & GND \\
+12 & Vdd \\
+\hline
+\end{tabular}
+
 \subsection{VGA}
+The VGA module controls a 640x480 display with an 8-bit color depth.
+
+An 8-bit color depth provides 3 red bits, 3 green bits, and 2 blue bits per pixel. The blue channel only has two bits because of a bit-depth limitation as well as the human eye's poor sensitivity to blue intensity. 
+
+\begin{tabular}{ | l | l |}
+\hline
+bit & color \\
+\hline
+7 & red[2] \\
+6 & red[1] \\
+5 & red[0] \\ 
+4 & green[2] \\
+3 & green[1] \\
+2 & green[0] \\
+1 & blue[1] \\
+0 & blue[0] \\
+\hline
+\end{tabular}
+
+The VGA module has two registers: 
+
+\begin{tabular}{ | l | l |}
+\hline
+register & description \\
+\hline
+0xf0400000 & control \\
+0xf0400004 & frame buffer pointer \\
+\hline
+\end{tabular}
+
+The control register uses only the least significant bit, which enables or disables the VGA controller output. When the control register is 0, the VGA module is disabled. When the control register is 0x1, the VGA module is enabled.
+
+Enabling the VGA module has significant impact on memory performance. The VGA module uses RAM as VGA memory, and has a higher priority to the RAM bus than the CPU. During a draw cycle, the CPU will not be able to access the SRAM for 640 cycles. This effect will be reduced with the inclusion of caches in version 2.2.
+
+The frame buffer pointer is a pointer to the pixel data to draw in memory. For example, if your pixel data begins at 0x100f0000, you would set the frame buffer pointer to that location. The frame buffer must be 0x4b000 bytes long. The pixel data is arranged as starting from the upper left hand corner of the screen (0,0), and drawing to the right, one row at a time (like reading a book). That is, the zeroth pixel in the pixel data is the upper left hand corner. The upper right hand corner is the 639th pixel, and the left most pixel of the second row is the 640th pixel.
+
+A pixel can be indexed by its row and column address (with 0,0 being the upper left hand corner) with : address = base\_address + (640*row) + column 
+
 \subsection{PLPID}
 The PLPID module contains two registers that describe the board identity and frequency. Writing to either register has no effect.
 
 0xf0500000 - PLPID (0xdeadbeef for this version) 0xf0500004 - Board frequency (50MHz, 0x2faf080, for the reference design)
 
 The CPUID module is useful for dynamically calculating wait time in a busy-wait loop. For example, if you wanted to wait .5 seconds, you could read the board frequency, shift right by 1 bit, and call the \verb+libplp_wait+ function. 
+
 \subsection{Timer}
 The timer module is a single 32-bit counter that increments by one every clock cycle. It can be written to at any time. At overflow, the timer will continue counting. The timer module is useful for waiting a specific amount of time with high resolution (20ns on the reference design).
 
 The timer module supports interrupts, and will trigger an interrupt when the timer overflows. The user can configure a specific timed interrupt by presetting the timer value to N cycles before the overflow condition. 
+
 \subsection{Seven Segment}
+\begin{center}
+\includegraphics[scale=0.5]{../../images/sseg.png}
+\end{center}
+The seven segment module exposes the raw seven segment LEDs to the user, allowing for specialized output. libplp wrappers exist for various abstractions.
+
+There are 4 seven segment displays (seven segments plus a dot), mapped to four bytes in the control word.
+
+The byte order is: 
+
+\begin{tabular}{ | l | l | l | l |}
+\hline
+[31:24] & [23:16] & [15:8] & [7:0] \\
+\hline
+leftmost & & & rightmost \\
+\hline
+\end{tabular}
+
+The segments map to each of the four bytes as indicated by the above figure. Bit 0 maps to the top most segment, bit 7 maps to the dot. 
+
 \subsection{Interrupt Controller}
+
+\begin{tabular}{ | l | l | }
+\hline
+register & description \\
+0xf0700000 & mask \\
+0xf0700004 & status \\
+\hline
+\end{tabular}
+
+Status register: 
+
+\begin{tabular}{ | l | l | }
+\hline
+bit & interrupt reason \\
+31-3 & reserved (always 0) \\
+2 & UART interrupt \\
+1 & timer interrupt \\
+0 & always 1 \\
+\hline
+\end{tabular}
+
+Mask register: 
+
+\begin{tabular}{ | l | l | }
+\hline
+bit & description \\
+31-3 & reserved \\
+2 & UART interrupt \\
+1 & timer interrupt \\
+0 & global interrupt enable \\
+\hline
+\end{tabular}
+
+The interrupt controller marshals the interrupt behavior of the plp system.
+
+The user uses the two registers in the interrupt controller, mask and status, along with the interrupt registers, \$i0 and \$i1, to control all interrupt behavior.
+
+Before enabling interrupts, the user must supply a pointer to the interrupt vector in register \$i0. 
+
+\begin{verbatim}
+main:
+  li $i0, isr #put a pointer to our isr in $i0
+
+isr: .
+\end{verbatim}
+When an interrupt occurs, the interrupt controller sets the corresponding bit in the status register. Before returning from an interrupt the user must clear any status bits that are resolved or unwanted.
+
+The user enables interrupts by setting any desired interrupts in the mask register, as well as setting the global interrupt enable (GIE) bit. When an interrupt occurs, the GIE bit is automatically cleared and must be set on interrupt exit.
+
+\textbf{When returning from an interrupt, set the GIE bit in the delay slot of the returning jump instruction.} This is necessary to prevent any interrupts from occurring while still in the interrupt vector.
+
+When an interrupt occurs, the return address is stored in \$i1.
+
+A typical interrupt vector: 
+\begin{verbatim}
+isr:
+  li $t0, 0xf0700000
+  lw $t1, 4($t0)     #read the status register
+  
+  #check status bits and handle any pending interrupts
+  #clear any handled interrupts in $t1
+
+  sw $t1, 4($t0)     #clear any handled interrupts in the status register
+  lw $t1, 0($t0)     #get the mask register
+  ori $t1, $t1, 1    #set GIE
+
+  jr $i1
+  sw $t1, 0($t0)     #store the mask register in the delay slot to guarantee proper exit
+\end{verbatim}
+
 \subsection{Performance Counters}
+\begin{tabular}{ | l | l | }
+\hline
+register & description \\
+\hline 
+0xf0800000 & interrupts \\
+0xf0800004 & i-cache misses \\
+0xf0800008 & i-cache accesses \\
+0xf080000c & d-cache misses \\
+0xf0800010 & d-cache accesses \\
+0xf0800014 & UART bytes received \\
+0xf0800018 & UART bytes sent \\
+\hline
+\end{tabular}
+
+The performance counter module stores a number of registers that keep count of various events, as shown above. Performance counters are read-only and reset only during board reset. 
 \section{Bootloader (fload)}
+The PLP board comes with the fload bootloader programmed to the board ROM. fload starts at power-up and reset.
+
+fload currently supports three functions:
+\begin{itemize}
+\item loading data from the UART
+\item memory test
+\item memory test with VGA module enabled 
+\end{itemize}
+These three functions are initiated by setting the appropriate switch after power-up. When all switches are unset, fload will scroll the LEDs indefinitely. When one of the above functions is enabled, only LED 0 will be illuminated.
+ 
+\begin{tabular}{ | l | l | }
+\hline
+switch & function \\
+\hline
+0 & UART boot \\
+1 & memory test \\
+2 & memory test with VGA module enabled \\
+\hline
+\end{tabular}
+
+The board can be reset at any time by pressing button 0 on the Nexys2 board (or BTNL on the Nexys3). This causes all modules and the CPU to reset, setting the PC to 0. This will restart fload (which resides at address 0x00000000). 
 \end{document}

@@ -58,10 +58,41 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <H3><A NAME="SECTION00052200000000000000">
 R-type Shift Instructions</A>
 </H3>
+PLP supports logical shift left and right instructions. The general syntax is:
+
+<P>
+<PRE>
+op    $destination_register, $source_register, shift_amount
+</PRE>
+
+<P>
+Where shift_amount is a 5-bit integer that can be represented in decimal or hex (with 0x prefix). <B>If this value is greater than 5 bits, the assembler will truncate the more significant bit positions beyond the 5th bit place. </B>
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Opcode/Function</TD>
+</TR>
+<TR><TD ALIGN="LEFT">sll $rd, $rt, shamt</TD>
+<TD ALIGN="LEFT">rd = rt &#171; shamt;</TD>
+<TD ALIGN="LEFT">sll $v0, $a0, 0x12</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Shift $a0 by 18 to the left and store the result in $v0</TD>
+<TD ALIGN="LEFT">0x00 / 0x00</TD>
+</TR>
+<TR><TD ALIGN="LEFT">srl $rd, $rt, shamt</TD>
+<TD ALIGN="LEFT">rd = rt &#187; shamt;</TD>
+<TD ALIGN="LEFT">srl $v0, $a0, 18</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Shift $a0 by 18 to the right and store the result in $v0</TD>
+<TD ALIGN="LEFT">0x00 / 0x02</TD>
+</TR>
+</TABLE>
 <BR><HR>
 <ADDRESS>
 will
-2012-01-12
+2012-01-25
 </ADDRESS>
 </BODY>
 </HTML>
