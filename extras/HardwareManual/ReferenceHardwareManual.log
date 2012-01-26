@@ -1,8 +1,8 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.9.29)  18 JAN 2012 21:01
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.9.29)  25 JAN 2012 20:00
 entering extended mode
  %&-line parsing enabled.
-**HardwareManual.tex
-(./HardwareManual.tex
+**ReferenceHardwareManual.tex
+(./ReferenceHardwareManual.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
 yphenation, loaded.
@@ -166,8 +166,9 @@ Package: atbegshi 2008/07/31 v1.9 At begin shipout hook (HO)
 (/usr/share/texmf-texlive/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2009/10/09 v6.79a Hyperref driver for pdfTeX
 \Fld@listcount=\count94
-) (./HardwareManual.aux)
-\openout1 = `HardwareManual.aux'.
+)
+No file ReferenceHardwareManual.aux.
+\openout1 = `ReferenceHardwareManual.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
 LaTeX Font Info:    ... okay on input line 7.
@@ -183,7 +184,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
 LaTeX Font Info:    ... okay on input line 7.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 7.
 LaTeX Font Info:    ... okay on input line 7.
- (/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
+(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count95
 \scratchdimen=\dimen108
@@ -207,10 +208,8 @@ Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
 LaTeX Info: Redefining \ref on input line 7.
 LaTeX Info: Redefining \pageref on input line 7.
-
-(./HardwareManual.out) (./HardwareManual.out)
 \@outlinefile=\write3
-\openout3 = `HardwareManual.out'.
+\openout3 = `ReferenceHardwareManual.out'.
 
 \AtBeginShipoutBox=\box27
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -221,14 +220,9 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 14.
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./HardwareManual.toc
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 3.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 3.
-)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 \tf@toc=\write4
-\openout4 = `HardwareManual.toc'.
+\openout4 = `ReferenceHardwareManual.toc'.
 
  [2]
 Underfull \hbox (badness 10000) in paragraph at lines 20--22
@@ -252,7 +246,7 @@ File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 LaTeX Font Info:    Font shape `OML/cmr/bx/n' in size <10> not available
 (Font)              Font shape `OML/cmm/b/it' tried instead on input line 35.
  [3]
-<../../images/CPUDiagram.png, id=119, 802.197pt x 348.502pt>
+<../../images/CPUDiagram.png, id=25, 802.197pt x 348.502pt>
 File: ../../images/CPUDiagram.png Graphic file (type png)
 
 <use ../../images/CPUDiagram.png>
@@ -260,38 +254,42 @@ Overfull \hbox (11.5669pt too wide) in paragraph at lines 43--44
 [] 
  []
 
-<../../images/ForwardsandHazards.png, id=121, 512.91624pt x 501.875pt>
+<../../images/ForwardsandHazards.png, id=27, 512.91624pt x 501.875pt>
 File: ../../images/ForwardsandHazards.png Graphic file (type png)
 
 <use ../../images/ForwardsandHazards.png> [4 <../../images/CPUDiagram.png>]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 64.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 64.
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 68.
 
 [5 <../../images/ForwardsandHazards.png>] [6]
-<../../images/CACHE.png, id=137, 501.875pt x 518.93875pt>
+<../../images/CACHE.png, id=49, 501.875pt x 518.93875pt>
 File: ../../images/CACHE.png Graphic file (type png)
 
 <use ../../images/CACHE.png> [7] [8 <../../images/CACHE.png (PNG copy)>]
-[9] [10] (./HardwareManual.aux) ) 
+[9] [10] (./ReferenceHardwareManual.aux) ) 
 Here is how much of TeX's memory you used:
- 4249 strings out of 495061
- 62249 string characters out of 1182621
+ 4221 strings out of 495061
+ 61871 string characters out of 1182621
  134913 words of memory out of 3000000
- 7349 multiletter control sequences out of 15000+50000
+ 7329 multiletter control sequences out of 15000+50000
  8421 words of font info for 30 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 38i,6n,36p,932b,403s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/a
-msfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
-cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/shar
-e/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texl
-ive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/ty
-pe1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/a
-msfonts/cm/cmtt10.pfb>
-Output written on HardwareManual.pdf (10 pages, 257862 bytes).
+ 38i,6n,36p,941b,403s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/ams
+fonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cm
+mi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmib10.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmtt10.pfb>
+Output written on ReferenceHardwareManual.pdf (10 pages, 247321 bytes).
 PDF statistics:
- 190 PDF objects out of 1000 (max. 8388607)
+ 113 PDF objects out of 1000 (max. 8388607)
  31 named destinations out of 1000 (max. 500000)
- 168 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
