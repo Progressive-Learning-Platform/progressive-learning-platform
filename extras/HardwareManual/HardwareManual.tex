@@ -81,6 +81,16 @@ The savvy reader may note that there could be hazards originating from the WB st
 
 \subsection{Interrupts}
 
+Interrupts inject a JALR (Jump and Link Register) command into the Instruction Fetch stage.  The interrupt subroutine must check if the CPU is currently executing a branch delay slot so as not to break the flow of the program. The instruction executed is 
+
+\begin{verbatim}
+		jalr $i1, $i0 
+\end{verbatim} 
+
+The register \$i1 is the interrupt return address and \$i0 is the interrupt vector which points to the address of the interrupt service routine. 
+
+The interrupt controller can be programmed to take in other interrupt signals and output the global interrupt variable when they are activated.
+
 \section{Bus Arbiter}
 
 Since all modules are memory mapped the bus arbiter will send all module signals to the proper module based upon their memory map.
@@ -192,7 +202,7 @@ Below the SRAM is a simple cache. This is used because reads to the SRAM are alr
 The cache used right now is the simplest possible: Direct mapped, unified, write allocate, write through. We use direct mapped because it's the simplest to design, a unified cache because it eliminates coherency issues between caches, write allocate for performance, and write through for coherency with the SRAM. Write through also eliminates the need for eviction logic (we can always safely trash data being evicted). The only cache-able region will be the SRAM (0x10000000-0x10ffffff).
 
 \subsection{UART}
-Not much to say about it's development. It's currently fixed at 9600 baud, 8N1.
+The UART module is a UART, running at 57600 baud, with 8 data bits, 1 stop bit, and no parity. The UART module is connected to the serial port.
 
 \subsection{VGA}
 
@@ -214,9 +224,11 @@ The PLPID module will eventually house a lot of other system data for use by lib
 
 \subsection{Timer}
 
-A 32-bit counter which increments on the negative clock edge. The value is reset to zero whenever it is accessed. 
+A 32-bit counter which increments on the negative clock edge. The value can set by access at any time.
 
 \subsection{Programmable Interrupt Controller}
+
+The interrupt controller marshals the interrupt behavior of the plp system. The interrupt mask is set by the user.
 
 \subsection{Switches}
 Not much to say, the module has 8 switches.
@@ -225,7 +237,7 @@ Not much to say, the module has 8 switches.
 Not much to say, the module has 8 LEDs. We've run into issues with builds of the board having different and undocumented LED mappings.
 
 \subsection{GPIO}
-Provides access to the GPIO pins on the Nexys board.
+The GPIO module provides access to two of the Nexys2 board's I/O connectors to the PLP system, enabling 16 GPIO ports.
 
 \subsection{Seven Segment Display}
 The seven segment display is a common anode, 4-unit display. We cycle through each of the 4 display units at 60Hz. To provide the most generic interface, the module simply provides raw access to each of the 8 segments (7+dot) for each of the 4 displays in a single word. libplp wrapper functions exist for various abstractions.
