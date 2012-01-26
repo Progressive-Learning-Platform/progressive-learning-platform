@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Memory Hierarchy</TITLE>
+<META NAME="description" CONTENT="Memory Hierarchy">
+<META NAME="keywords" CONTENT="ReferenceHardwareManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="ReferenceHardwareManual.css">
+
+<LINK REL="next" HREF="node11.html">
+<LINK REL="previous" HREF="node9.html">
+<LINK REL="up" HREF="node8.html">
+<LINK REL="next" HREF="node11.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html175"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html171"
+  HREF="node8.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html165"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html173"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html176"
+  HREF="node11.html">Cache</A>
+<B> Up:</B> <A NAME="tex2html172"
+  HREF="node8.html">Modules</A>
+<B> Previous:</B> <A NAME="tex2html166"
+  HREF="node9.html">Boot ROM</A>
+ &nbsp; <B>  <A NAME="tex2html174"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00052000000000000000">
+Memory Hierarchy</A>
+</H2>
+
+<P>
+The Cellular RAM is used in asynchronous mode, using the standard SRAM interface. The Cellular RAM has a few additional ports that have to be used in special ways:
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TH ALIGN="LEFT"><B>Port</B></TH>
+<TH ALIGN="LEFT"><B>Description</B></TH>
+</TR>
+<TR><TD ALIGN="LEFT">MT-CLK</TD>
+<TD ALIGN="LEFT">Clock signal used during synchronous mode. We must tie it static LOW.</TD>
+</TR>
+<TR><TD ALIGN="LEFT">MT-ADV</TD>
+<TD ALIGN="LEFT">Address valid (active low). Held LOW since we latch the address in another place.</TD>
+</TR>
+<TR><TD ALIGN="LEFT">MT-CRE</TD>
+<TD ALIGN="LEFT">Control register enable. Tie LOW.</TD>
+</TR>
+<TR><TD ALIGN="LEFT">MT-CE</TD>
+<TD ALIGN="LEFT">Chip enable (active low). Tie LOW.</TD>
+</TR>
+<TR><TD ALIGN="LEFT">OE</TD>
+<TD ALIGN="LEFT">Output enable (active low). Tie LOW.</TD>
+</TR>
+<TR><TD ALIGN="LEFT">WE</TD>
+<TD ALIGN="LEFT">Write enable (active low). Tied low on write cycles.</TD>
+</TR>
+<TR><TD ALIGN="LEFT">MT-LB</TD>
+<TD ALIGN="LEFT">Lower byte enable (active low). Tie LOW.</TD>
+</TR>
+<TR><TD ALIGN="LEFT">MT-UB</TD>
+<TD ALIGN="LEFT">Upper byte enable (active low). Tie LOW.</TD>
+</TR>
+</TABLE>
+
+<P>
+Read operations occur by bringing CE, OE, LB, and UB low while leaving WE high. Writes occur by bringing CE, LB, UB, and WE low, and bringing OE high. Data to be written is latched on the rising edge of WE.
+
+<P>
+Because the system clock is only 25MHz data writes take 6 cycles (two 16-bit writes). Normally this should take only four cycles, but the data words have to be latched. I didn't want to add a faster clock domain or mess with dual-edge triggered logic to make a higher precision SRAM interface, so I left the SRAM writes at 6 cycles. Data reads still only take 4 cycles, which is just fast enough for VGA reads to work.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html175"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html171"
+  HREF="node8.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html165"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html173"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html176"
+  HREF="node11.html">Cache</A>
+<B> Up:</B> <A NAME="tex2html172"
+  HREF="node8.html">Modules</A>
+<B> Previous:</B> <A NAME="tex2html166"
+  HREF="node9.html">Boot ROM</A>
+ &nbsp; <B>  <A NAME="tex2html174"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-01-25
+</ADDRESS>
+</BODY>
+</HTML>
