@@ -3,17 +3,17 @@
 \contentsline {subsection}{\numberline {2.1}Notes}{4}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Forwarding and Hazards}{5}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Interrupts}{5}{subsection.2.3}
-\contentsline {section}{\numberline {3}Bus Arbiter}{5}{section.3}
+\contentsline {section}{\numberline {3}Bus Arbiter}{6}{section.3}
 \contentsline {section}{\numberline {4}Modules}{6}{section.4}
 \contentsline {subsection}{\numberline {4.1}Boot ROM}{7}{subsection.4.1}
 \contentsline {subsection}{\numberline {4.2}Memory Hierarchy}{7}{subsection.4.2}
 \contentsline {subsection}{\numberline {4.3}Cache}{8}{subsection.4.3}
-\contentsline {subsection}{\numberline {4.4}UART}{8}{subsection.4.4}
-\contentsline {subsection}{\numberline {4.5}VGA}{8}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.4}UART}{9}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}VGA}{9}{subsection.4.5}
 \contentsline {subsection}{\numberline {4.6}PLPID}{9}{subsection.4.6}
 \contentsline {subsection}{\numberline {4.7}Timer}{9}{subsection.4.7}
-\contentsline {subsection}{\numberline {4.8}Programmable Interrupt Controller}{9}{subsection.4.8}
-\contentsline {subsection}{\numberline {4.9}Switches}{9}{subsection.4.9}
-\contentsline {subsection}{\numberline {4.10}LEDs}{9}{subsection.4.10}
-\contentsline {subsection}{\numberline {4.11}GPIO}{9}{subsection.4.11}
-\contentsline {subsection}{\numberline {4.12}Seven Segment Display}{9}{subsection.4.12}
+\contentsline {subsection}{\numberline {4.8}Programmable Interrupt Controller}{10}{subsection.4.8}
+\contentsline {subsection}{\numberline {4.9}Switches}{10}{subsection.4.9}
+\contentsline {subsection}{\numberline {4.10}LEDs}{10}{subsection.4.10}
+\contentsline {subsection}{\numberline {4.11}GPIO}{10}{subsection.4.11}
+\contentsline {subsection}{\numberline {4.12}Seven Segment Display}{10}{subsection.4.12}

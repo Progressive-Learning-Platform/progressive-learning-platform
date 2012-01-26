@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.9.29)  18 JAN 2012 21:01
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.9.29)  25 JAN 2012 19:46
 entering extended mode
  %&-line parsing enabled.
 **HardwareManual.tex
@@ -267,29 +267,29 @@ File: ../../images/ForwardsandHazards.png Graphic file (type png)
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 68.
 
-[5 <../../images/ForwardsandHazards.png>] [6]
-<../../images/CACHE.png, id=137, 501.875pt x 518.93875pt>
+[5 <../../images/ForwardsandHazards.png>] [6] [7]
+<../../images/CACHE.png, id=142, 501.875pt x 518.93875pt>
 File: ../../images/CACHE.png Graphic file (type png)
 
-<use ../../images/CACHE.png> [7] [8 <../../images/CACHE.png (PNG copy)>]
-[9] [10] (./HardwareManual.aux) ) 
+<use ../../images/CACHE.png> [8 <../../images/CACHE.png (PNG copy)>] [9]
+[10] (./HardwareManual.aux) ) 
 Here is how much of TeX's memory you used:
  4249 strings out of 495061
  62249 string characters out of 1182621
- 134913 words of memory out of 3000000
+ 133913 words of memory out of 3000000
  7349 multiletter control sequences out of 15000+50000
  8421 words of font info for 30 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 38i,6n,36p,932b,403s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/a
-msfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
-cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/shar
-e/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texl
-ive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/ty
-pe1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/a
-msfonts/cm/cmtt10.pfb>
-Output written on HardwareManual.pdf (10 pages, 257862 bytes).
+ 38i,6n,36p,932b,291s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/public/amsfo
+nts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx
+12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
+r/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/te
+xmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/
+fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/
+public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
+nts/cm/cmtt10.pfb>
+Output written on HardwareManual.pdf (10 pages, 259255 bytes).
 PDF statistics:
  190 PDF objects out of 1000 (max. 8388607)
  31 named destinations out of 1000 (max. 500000)
