@@ -198,7 +198,8 @@ public class Architecture extends PLPArchitecture {
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
-            plp.g_dev.removeLastSimToolItem();
+            //4.0 release
+            //plp.g_dev.removeLastSimToolItem();
 
             if(busMonitor != null && busMonitorAttached) {
                 plp.addProjectAttribute("plpmips_timingdiagram", busMonitor.getTimingDiagram());
