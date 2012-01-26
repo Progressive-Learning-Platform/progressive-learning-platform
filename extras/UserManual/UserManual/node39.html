@@ -65,6 +65,8 @@ The UART module is designed to send or receive a single byte at a time, and can 
 
 <P>
 There are four registers that the UART module uses: 
+
+<P>
 <TABLE CELLPADDING=3 BORDER="1">
 <TR><TD ALIGN="LEFT">0xf0000000</TD>
 <TD ALIGN="LEFT">command register</TD>
@@ -79,6 +81,8 @@ There are four registers that the UART module uses:
 <TD ALIGN="LEFT">send buffer</TD>
 </TR>
 </TABLE>
+
+<P>
 The command register always reads 0. Writing the value 0x01 will initiate a send operation using the lowest byte in the send buffer. Writing a 0x02 will clear the ready flag in the status register.
 
 <P>

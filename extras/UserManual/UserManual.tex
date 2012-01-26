@@ -1,4 +1,5 @@
 \documentclass{article}
+\usepackage{parskip}
 \usepackage{hyperref}
 \usepackage[pdftex]{graphicx}
 \usepackage{fullpage}
@@ -80,17 +81,17 @@ The \verb+-plp <plpfile>+ command can also take additional arguments that can be
 \begin{tabular}{ | l | l | }
 \hline
 Command Line Option & Description \\ \hline
--c <asm 1> <asm 2> ... & Creates <plpfile> and imports <asm 1>, <asm 2>, ... to the project \\
--p <port> 	& Programs <plpfile> to serial port <port> \\
--a 	& Performs an assembly of the source files inside <plpfile> \\
--i <asm 1> <asm 2> ... 	& Imports <asm 1>, <asm 2>, ... into <plpfile> project file \\
+-c \textless asm 1\textgreater  \textless asm 2\textgreater  ... & Creates \textless plpfile\textgreater  and imports \textless asm 1\textgreater , \textless asm 2\textgreater , ... to the project \\
+-p \textless port\textgreater  	& Programs \textless plpfile\textgreater  to serial port \textless port\textgreater  \\
+-a 	& Performs an assembly of the source files inside \textless plpfile\textgreater  \\
+-i \textless asm 1\textgreater  \textless asm 2\textgreater  ... 	& Imports \textless asm 1\textgreater , \textless asm 2\textgreater , ... into \textless plpfile\textgreater  project file \\
 
--d <directory> 	& Imports all files in <directory> to the <plpfile> project file \\
--e <index> <file> 	& Exports the source file with the index <index> as <file> \\
--r <index> 	& Removes the source file with the index <index> \\
--s <index> 	& Set the source file with the index <index> as the main program\\
+-d \textless directory\textgreater  	& Imports all files in \textless directory\textgreater  to the \textless plpfile\textgreater  project file \\
+-e \textless index\textgreater  \textless file\textgreater  	& Exports the source file with the index \textless index\textgreater  as \textless file\textgreater  \\
+-r \textless index\textgreater  	& Removes the source file with the index \textless index\textgreater  \\
+-s \textless index\textgreater  	& Set the source file with the index \textless index\textgreater  as the main program\\
 
--m <index> <new index> 	& Set <new index> for the source file with the index <index> \\
+-m \textless index\textgreater  \textless new index\textgreater  	& Set \textless new index\textgreater  for the source file with the index \textless index\textgreater  \\
 \hline
 \end{tabular}
 
@@ -337,7 +338,7 @@ bne \$rt, \$rs, label & if(rt != rs) PC = PC + 4 + imm; & bne \$a0, \$a1, error 
 \end{tabular}
 
 \subsubsection{I-type Arithmetic and Logical Instructions}
-These instructions receive inputs from a source register $rs and the immediate field, and store it in the target register $rt. The general syntax is: 
+These instructions receive inputs from a source register \$rs and the immediate field, and store it in the target register \$rt. The general syntax is: 
 
 \begin{verbatim}
 op    $target_register, $source_register, immediate_field
@@ -458,6 +459,7 @@ The UART module is a UART, running at 57600 baud, with 8 data bits, 1 stop bit, 
 The UART module is designed to send or receive a single byte at a time, and can only store one byte in the receive buffer. This means that you must read received data (by polling) before the next byte is available.
 
 There are four registers that the UART module uses: 
+
 \begin{tabular}{ | l | l | }
 \hline
 0xf0000000 & command register \\
@@ -466,6 +468,7 @@ There are four registers that the UART module uses:
 0xf000000c & send buffer \\
 \hline
 \end{tabular}
+
 The command register always reads 0. Writing the value 0x01 will initiate a send operation using the lowest byte in the send buffer. Writing a 0x02 will clear the ready flag in the status register.
 
 The status register uses only the bottom two bits, with the remaining bits always reading as 0. status0? is the clear to send bit, which is set after a successful transfer of the data in the send buffer, indicating that another transfer may be made. The cts bit is 0 during a transfer, and the data in the send buffer should not be modified. status1? is the ready bit, which is set when a new byte has been successfully received. The ready bit can be cleared by writing 0x02 to the command register.

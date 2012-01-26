@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  25 JAN 2012 22:48
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  25 JAN 2012 23:10
 entering extended mode
  %&-line parsing enabled.
 **UserManual.tex
@@ -27,6 +27,9 @@ File: size10.clo 2005/09/16 v1.4f Standard LaTeX file (size option)
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
+)
+(/usr/share/texmf/tex/latex/ltxmisc/parskip.sty
+Package: parskip 2001/04/09 non-zero parskip adjustments
 )
 (/usr/share/texmf/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2007/02/07 v6.75r Hypertext links for LaTeX
@@ -108,21 +111,21 @@ Package: fullpage 1999/02/23 1.1 (PWD)
 ) (./UserManual.aux)
 \openout1 = `UserManual.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-Package hyperref Info: Link coloring OFF on input line 5.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+Package hyperref Info: Link coloring OFF on input line 6.
 
 (/usr/share/texmf/tex/latex/hyperref/nameref.sty
 Package: nameref 2006/12/27 v2.28 Cross-referencing by name of section
@@ -132,19 +135,19 @@ Package: refcount 2006/02/20 v3.0 Data extraction from references (HO)
 )
 \c@section@level=\count95
 )
-LaTeX Info: Redefining \ref on input line 5.
-LaTeX Info: Redefining \pageref on input line 5.
+LaTeX Info: Redefining \ref on input line 6.
+LaTeX Info: Redefining \pageref on input line 6.
  (./UserManual.out)
 (./UserManual.out)
 \@outlinefile=\write3
 \openout3 = `UserManual.out'.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 12.
+(Font)              <12> on input line 13.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 12.
+(Font)              <8> on input line 13.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 12.
+(Font)              <6> on input line 13.
  [1
 
 {/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}]
@@ -158,40 +161,42 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 \openout4 = `UserManual.toc'.
 
  [2] [3]
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 84.
+ (/usr/share/texmf/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 84.
+
 <../../images/plptool/plptool30_editor_view.png, id=262, 860.21375pt x 538.01pt
 >
 File: ../../images/plptool/plptool30_editor_view.png Graphic file (type png)
- <use ../../images/plptool/plptool30_editor_view.png>
-<../../images/plptool/plptool30_simulation_mode.png, id=263, 860.21375pt x 538.
+ <use ../../images/plptool/plptool30_editor_view.png> [4 <../../images/plptool/
+plptool30_editor_view.png>]
+<../../images/plptool/plptool30_simulation_mode.png, id=269, 860.21375pt x 538.
 01pt>
 File: ../../images/plptool/plptool30_simulation_mode.png Graphic file (type png
 )
- <use ../../images/plptool/plptool30_simulation_mode.png> [4 <../../images/plpt
-ool/plptool30_editor_view.png>]
-Overfull \hbox (44.04076pt too wide) in paragraph at lines 117--121
+ <use ../../images/plptool/plptool30_simulation_mode.png>
+Overfull \hbox (44.04076pt too wide) in paragraph at lines 118--122
 \OT1/cmr/m/n/10 ac-tu-ally an in-struc-tion present. Double-click on an ex-ist-
 ing break-point to clear it, or use []\OT1/cmtt/m/n/10 Tools -> Clear Breakpoin
 ts
  []
 
 [5 <../../images/plptool/plptool30_simulation_mode.png>] [6] [7]
-Underfull \hbox (badness 4779) in paragraph at lines 282--282
+Underfull \hbox (badness 4779) in paragraph at lines 283--283
 []\OT1/cmr/m/n/10 Unsigned sub-trac-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 283--283
+Underfull \hbox (badness 10000) in paragraph at lines 284--284
 []\OT1/cmr/m/n/10 Bitwise log-i-cal
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 285--285
+Underfull \hbox (badness 10000) in paragraph at lines 286--286
 []\OT1/cmr/m/n/10 Bitwise log-i-cal
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 288--288
-[]\OT1/cmr/m/n/10 Multiply (re-turn
  []
 
 
@@ -200,81 +205,79 @@ Underfull \hbox (badness 10000) in paragraph at lines 289--289
  []
 
 
-Overfull \hbox (57.13199pt too wide) in paragraph at lines 277--292
+Underfull \hbox (badness 10000) in paragraph at lines 290--290
+[]\OT1/cmr/m/n/10 Multiply (re-turn
+ []
+
+
+Overfull \hbox (57.13199pt too wide) in paragraph at lines 278--293
 [] 
  []
 
 
-Overfull \hbox (56.89836pt too wide) in paragraph at lines 301--309
-[][] 
- []
-
-
-Overfull \hbox (39.34271pt too wide) in paragraph at lines 312--320
+Overfull \hbox (41.89836pt too wide) in paragraph at lines 302--310
 [][] 
  []
 
 [8]
-Overfull \hbox (94.20392pt too wide) in paragraph at lines 330--338
+Overfull \hbox (24.34271pt too wide) in paragraph at lines 313--321
 [][] 
  []
 
 
-Overfull \hbox (24.39229pt too wide) in paragraph at lines 340--341
-\OT1/cmr/m/n/10 These in-struc-tions re-ceive in-puts from a source reg-is-ter 
-$\OML/cmm/m/it/10 rsandtheimmediatefield; andstoreitinthetargetregister$\OT1/cm
-r/m/n/10 rt.
- []
-
-
-Overfull \hbox (134.53749pt too wide) in paragraph at lines 348--359
+Overfull \hbox (79.20392pt too wide) in paragraph at lines 331--339
 [][] 
  []
 
 
-Overfull \hbox (58.20401pt too wide) in paragraph at lines 380--388
+Overfull \hbox (119.53749pt too wide) in paragraph at lines 349--360
 [][] 
  []
 
 [9]
-Overfull \hbox (23.16495pt too wide) in paragraph at lines 398--406
+Overfull \hbox (43.20401pt too wide) in paragraph at lines 381--389
 [][] 
  []
 
-[10] [11] <../../images/GPIO.png, id=303, 214.8025pt x 258.9675pt>
+
+Overfull \hbox (8.16495pt too wide) in paragraph at lines 399--407
+[][] 
+ []
+
+[10] [11] [12] <../../images/GPIO.png, id=307, 214.8025pt x 258.9675pt>
 File: ../../images/GPIO.png Graphic file (type png)
 
-<use ../../images/GPIO.png> [12] [13 <../../images/GPIO.png>]
-<../../images/sseg.png, id=314, 200.75pt x 249.93375pt>
+<use ../../images/GPIO.png> [13 <../../images/GPIO.png>] [14]
+<../../images/sseg.png, id=318, 200.75pt x 249.93375pt>
 File: ../../images/sseg.png Graphic file (type png)
 
-<use ../../images/sseg.png> [14 <../../images/sseg.png (PNG copy)>] [15]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 714.
+<use ../../images/sseg.png> [15 <../../images/sseg.png (PNG copy)>] [16]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 717.
 
 
 (/usr/share/texmf/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 714.
- [16] (./UserManual.aux) ) 
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 717.
+ [17] (./UserManual.aux) ) 
 Here is how much of TeX's memory you used:
- 2610 strings out of 256216
- 36809 string characters out of 1917073
- 95032 words of memory out of 1500000
- 5828 multiletter control sequences out of 10000+200000
+ 2636 strings out of 256216
+ 37273 string characters out of 1917073
+ 96048 words of memory out of 1500000
+ 5847 multiletter control sequences out of 10000+200000
  8063 words of font info for 29 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
- 25i,9n,36p,591b,362s stack positions out of 5000i,500n,6000p,200000b,15000s
+ 25i,9n,36p,591b,342s stack positions out of 5000i,500n,6000p,200000b,15000s
 </usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pfb><
 /usr/share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type
 1/bluesky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb></us
 r/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/share/texmf/fonts/type1/bl
 uesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/sh
 are/texmf/fonts/type1/bluesky/cm/cmtt10.pfb>
-Output written on UserManual.pdf (16 pages, 294437 bytes).
+Output written on UserManual.pdf (17 pages, 288982 bytes).
 PDF statistics:
- 371 PDF objects out of 1000 (max. 8388607)
- 71 named destinations out of 1000 (max. 131072)
+ 375 PDF objects out of 1000 (max. 8388607)
+ 72 named destinations out of 1000 (max. 131072)
  397 words of extra memory for PDF output out of 10000 (max. 10000000)
 
