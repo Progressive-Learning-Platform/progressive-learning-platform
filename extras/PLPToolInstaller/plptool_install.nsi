@@ -1,13 +1,11 @@
-; example2.nsi
-;
-; This script is based on example1.nsi, but it remember the directory, 
-; has uninstall support and (optionally) installs start menu shortcuts.
-;
-; It will install example2.nsi into a directory that the user selects,
-
+; PLPTool NSIS installer script
 ;--------------------------------
 
 !include x64.nsh
+
+!define PRODUCT_NAME "PLPTool 4"
+!define JRE_VERSION "1.6"
+!define JRE_URL "http://javadl.sun.com/webapps/download/AutoDL?BundleId=18714&/jre-6u5-windows-i586-p.exe"
 
 ; The name of the installer
 Name "PLPTool"
@@ -23,7 +21,8 @@ InstallDir $PROGRAMFILES\PLPTool4
 InstallDirRegKey HKLM "Software\PLPTool4" "Install_Dir"
 
 ; Request application privileges for Windows Vista
-RequestExecutionLevel admin
+;RequestExecutionLevel admin
+
 
 ;--------------------------------
 
@@ -43,6 +42,7 @@ Section "PLPTool Install (required)"
 
   SectionIn RO
   
+  Call DetectJRE
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   
@@ -107,3 +107,28 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
 SectionEnd
+
+Function GetJRE
+        MessageBox MB_OK "${PRODUCT_NAME} uses Java ${JRE_VERSION}, it will now \
+                         be downloaded and installed"
+ 
+        StrCpy $2 "$TEMP\Java Runtime Environment.exe"
+        nsisdl::download /TIMEOUT=30000 ${JRE_URL} $2
+        Pop $R0 ;Get the return value
+                StrCmp $R0 "success" +3
+                MessageBox MB_OK "Download failed: $R0"
+                Quit
+        ExecWait $2
+        Delete $2
+FunctionEnd
+ 
+ 
+Function DetectJRE
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" \
+             "CurrentVersion"
+  StrCmp $2 ${JRE_VERSION} done
+ 
+  Call GetJRE
+ 
+  done:
+FunctionEnd
