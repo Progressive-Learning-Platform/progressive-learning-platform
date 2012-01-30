@@ -75,6 +75,7 @@
     <target name="-pre-jar">
         <copy file="native-libs/rxtxSerial32.dll" todir="dist" />
         <copy file="native-libs/rxtxSerial64.dll" todir="dist" />
+        <copy file="runscripts/PLPToolWin.bat" todir="dist" />
         <copy file="runscripts/PLPToolWin32.bat" todir="dist" />
         <copy file="runscripts/PLPToolWin64.bat" todir="dist" />
     </target>
@@ -114,6 +115,7 @@
 
         <copy file="native-libs/rxtxSerial32.dll" todir="${store.dir}" />
         <copy file="native-libs/rxtxSerial64.dll" todir="${store.dir}" />
+        <copy file="runscripts/PLPToolWin.bat" tofile="${store.dir}/PLPToolWin.bat" />
         <copy file="runscripts/PLPToolStaticWin32.bat" tofile="${store.dir}/PLPToolWin32.bat" />
         <copy file="runscripts/PLPToolStaticWin64.bat" tofile="${store.dir}/PLPToolWin64.bat" />
 
