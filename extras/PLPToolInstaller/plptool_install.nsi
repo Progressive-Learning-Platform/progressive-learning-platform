@@ -47,15 +47,15 @@ Section "PLPTool Install (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "PLPToolStatic.jar"
-  File "PLPToolWin.bat"
+  File "..\..\reference\sw\PLPTool\store\PLPToolStatic.jar"
+  File "..\..\reference\sw\PLPTool\store\PLPToolWin.bat"
   ;File "rxtxSerial32.dll"
   ;File "rxtxSerial64.dll"
   
   ${If} ${RunningX64}
-	File /oname=rxtxSerial.dll rxtxSerial64.dll
+	File /oname=rxtxSerial.dll ..\..\reference\sw\PLPTool\store\rxtxSerial64.dll
   ${Else}
-	File /oname=rxtxSerial.dll rxtxSerial32.dll
+	File /oname=rxtxSerial.dll ..\..\reference\sw\PLPTool\store\rxtxSerial32.dll
   ${EndIf}
   
   ; Write the installation path into the registry
