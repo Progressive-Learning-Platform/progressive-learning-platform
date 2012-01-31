@@ -289,6 +289,7 @@ public class GPIOFrame extends javax.swing.JFrame {
         B2 = new javax.swing.JLabel();
         B1 = new javax.swing.JLabel();
         B0 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(GPIOFrame.class);
@@ -309,54 +310,61 @@ public class GPIOFrame extends javax.swing.JFrame {
         A7.setIcon(resourceMap.getIcon("A7.icon")); // NOI18N
         A7.setText(resourceMap.getString("A7.text")); // NOI18N
         A7.setName("A7"); // NOI18N
+        A7.setPreferredSize(new java.awt.Dimension(30, 60));
         A7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A7MousePressed(evt);
             }
         });
 
-        A6.setIcon(null);
+        A6.setIcon(resourceMap.getIcon("A6.icon")); // NOI18N
         A6.setName("A6"); // NOI18N
+        A6.setPreferredSize(new java.awt.Dimension(30, 60));
         A6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A6MousePressed(evt);
             }
         });
 
-        A5.setIcon(null);
+        A5.setIcon(resourceMap.getIcon("A5.icon")); // NOI18N
         A5.setName("A5"); // NOI18N
+        A5.setPreferredSize(new java.awt.Dimension(30, 60));
         A5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A5MousePressed(evt);
             }
         });
 
-        A4.setIcon(null);
+        A4.setIcon(resourceMap.getIcon("A4.icon")); // NOI18N
         A4.setName("A4"); // NOI18N
+        A4.setPreferredSize(new java.awt.Dimension(30, 60));
         A4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A4MousePressed(evt);
             }
         });
 
-        A3.setIcon(null);
+        A3.setIcon(resourceMap.getIcon("A3.icon")); // NOI18N
         A3.setName("A3"); // NOI18N
+        A3.setPreferredSize(new java.awt.Dimension(30, 60));
         A3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A3MousePressed(evt);
             }
         });
 
-        A2.setIcon(null);
+        A2.setIcon(resourceMap.getIcon("A2.icon")); // NOI18N
         A2.setName("A2"); // NOI18N
+        A2.setPreferredSize(new java.awt.Dimension(30, 60));
         A2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A2MousePressed(evt);
             }
         });
 
-        A1.setIcon(null);
+        A1.setIcon(resourceMap.getIcon("A1.icon")); // NOI18N
         A1.setName("A1"); // NOI18N
+        A1.setPreferredSize(new java.awt.Dimension(30, 60));
         A1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A1MousePressed(evt);
@@ -365,6 +373,7 @@ public class GPIOFrame extends javax.swing.JFrame {
 
         A0.setIcon(resourceMap.getIcon("A0.icon")); // NOI18N
         A0.setName("A0"); // NOI18N
+        A0.setPreferredSize(new java.awt.Dimension(30, 60));
         A0.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 A0MousePressed(evt);
@@ -374,69 +383,79 @@ public class GPIOFrame extends javax.swing.JFrame {
         lblPortB.setText(resourceMap.getString("lblPortB.text")); // NOI18N
         lblPortB.setName("lblPortB"); // NOI18N
 
-        B7.setIcon(null);
+        B7.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B7.setName("B7"); // NOI18N
+        B7.setPreferredSize(new java.awt.Dimension(30, 60));
         B7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B7MousePressed(evt);
             }
         });
 
-        B6.setIcon(null);
+        B6.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B6.setName("B6"); // NOI18N
+        B6.setPreferredSize(new java.awt.Dimension(30, 60));
         B6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B6MousePressed(evt);
             }
         });
 
-        B5.setIcon(null);
+        B5.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B5.setName("B5"); // NOI18N
+        B5.setPreferredSize(new java.awt.Dimension(30, 60));
         B5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B5MousePressed(evt);
             }
         });
 
-        B4.setIcon(null);
+        B4.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B4.setName("B4"); // NOI18N
+        B4.setPreferredSize(new java.awt.Dimension(30, 60));
         B4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B4MousePressed(evt);
             }
         });
 
-        B3.setIcon(null);
+        B3.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B3.setName("B3"); // NOI18N
+        B3.setPreferredSize(new java.awt.Dimension(30, 60));
         B3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B3MousePressed(evt);
             }
         });
 
-        B2.setIcon(null);
+        B2.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B2.setName("B2"); // NOI18N
+        B2.setPreferredSize(new java.awt.Dimension(30, 60));
         B2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B2MousePressed(evt);
             }
         });
 
-        B1.setIcon(null);
+        B1.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B1.setName("B1"); // NOI18N
+        B1.setPreferredSize(new java.awt.Dimension(30, 60));
         B1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B1MousePressed(evt);
             }
         });
 
-        B0.setIcon(null);
+        B0.setIcon(resourceMap.getIcon("B7.icon")); // NOI18N
         B0.setName("B0"); // NOI18N
+        B0.setPreferredSize(new java.awt.Dimension(30, 60));
         B0.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 B0MousePressed(evt);
             }
         });
+
+        jSeparator1.setName("jSeparator1"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -445,46 +464,47 @@ public class GPIOFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTristateReg)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTristateReg, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
+                        .addComponent(txtTristateReg, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblPortA)
-                        .addGap(18, 18, 18)
-                        .addComponent(A7)
+                        .addGap(20, 20, 20)
+                        .addComponent(A7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(A6)
+                        .addComponent(A6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(A5)
+                        .addComponent(A5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(A4)
+                        .addComponent(A4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(A3)
+                        .addComponent(A3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(A2)
+                        .addComponent(A2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(A1)
+                        .addComponent(A1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(A0))
+                        .addComponent(A0, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblPortB)
                         .addGap(18, 18, 18)
-                        .addComponent(B7)
+                        .addComponent(B7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(B6)
+                        .addComponent(B6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(B5)
+                        .addComponent(B5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(B4)
+                        .addComponent(B4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(B3)
+                        .addComponent(B3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(B2)
+                        .addComponent(B2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(B1)
+                        .addComponent(B1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(B0)))
+                        .addComponent(B0, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -496,28 +516,32 @@ public class GPIOFrame extends javax.swing.JFrame {
                     .addComponent(txtTristateReg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblPortA)
-                        .addComponent(A7))
-                    .addComponent(A6)
-                    .addComponent(A5)
-                    .addComponent(A4)
-                    .addComponent(A3)
-                    .addComponent(A2)
-                    .addComponent(A1)
-                    .addComponent(A0))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(A6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(A5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(A4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(A3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(A2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(A1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(A0, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblPortA)
+                            .addComponent(A7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblPortB)
-                    .addComponent(B7)
-                    .addComponent(B6)
-                    .addComponent(B5)
-                    .addComponent(B4)
-                    .addComponent(B3)
-                    .addComponent(B2)
-                    .addComponent(B1)
-                    .addComponent(B0))
-                .addContainerGap(73, Short.MAX_VALUE))
+                    .addComponent(B7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B0, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(55, 55, 55))
         );
 
         pack();
@@ -604,6 +628,7 @@ public class GPIOFrame extends javax.swing.JFrame {
     private javax.swing.JLabel B5;
     private javax.swing.JLabel B6;
     private javax.swing.JLabel B7;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblPortA;
     private javax.swing.JLabel lblPortB;
     private javax.swing.JLabel lblTristateReg;
