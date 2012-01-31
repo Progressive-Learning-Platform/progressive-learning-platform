@@ -226,6 +226,10 @@ public class Develop extends javax.swing.JFrame {
                 } else if(mod instanceof PLPID) {
                     btnSimPLPID.setSelected(frameVisible);
                     menuSimPLPID.setSelected(frameVisible);
+
+                } else if(mod instanceof GPIO) {
+                    btnSimGPIO.setSelected(frameVisible);
+                    menuSimGPIO.setSelected(frameVisible);
                 }
             }
         }
@@ -919,6 +923,7 @@ public class Develop extends javax.swing.JFrame {
             btnSimUART.setVisible(true);
             btnSimVGA.setVisible(true);
             btnSimPLPID.setVisible(true);
+            btnSimGPIO.setVisible(true);
             separatorSimControl.setVisible(true);
             lblSimStat.setText("Simulation Mode");
             updateIOFramesVisibility();
@@ -962,6 +967,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimUART.setVisible(false);
         btnSimVGA.setVisible(false);
         btnSimPLPID.setVisible(false);
+        btnSimGPIO.setVisible(false);
         separatorSimControl.setVisible(false);
         lblSimStat.setText("Editor Mode");
     }
@@ -1006,6 +1012,9 @@ public class Develop extends javax.swing.JFrame {
             case Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS:
                 return menuSimSevenSegments;
 
+            case Constants.PLP_TOOLFRAME_SIMGPIO:
+                return menuSimGPIO;
+
             default:
                 return null;
         }
@@ -1045,6 +1054,9 @@ public class Develop extends javax.swing.JFrame {
 
             case Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS:
                 return btnSimSevenSegments;
+
+            case Constants.PLP_TOOLFRAME_SIMGPIO:
+                return btnSimGPIO;
 
             default:
                 return null;
@@ -1099,6 +1111,10 @@ public class Develop extends javax.swing.JFrame {
             case Constants.PLP_TOOLFRAME_SIMPLPID:
                 setPLPIDFrame(v);
                 break;
+            case Constants.PLP_TOOLFRAME_SIMGPIO:
+                setGPIOFrame(v);
+                break;
+
             case Constants.PLP_TOOLFRAME_SIMCPU:
                 menuSimView.setSelected(v);
                 btnCPU.setSelected(v);
@@ -1226,6 +1242,23 @@ public class Develop extends javax.swing.JFrame {
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimPLPID.setSelected(v);
                 btnSimPLPID.setSelected(v);
+                plp.updateComponents(false);
+            }
+        }
+    }
+
+    private void setGPIOFrame(boolean v) {
+        for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
+            plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
+
+            if(module instanceof plptool.mods.GPIO) {
+                if(!plp.isReplaying())
+                    plp.hookEvent(new ProjectEvent(
+                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
+                            -1, Constants.PLP_TOOLFRAME_SIMGPIO));
+                ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
+                menuSimGPIO.setSelected(v);
+                btnSimGPIO.setSelected(v);
                 plp.updateComponents(false);
             }
         }
@@ -1368,6 +1401,7 @@ public class Develop extends javax.swing.JFrame {
         btnSimUART = new javax.swing.JToggleButton();
         btnSimVGA = new javax.swing.JToggleButton();
         btnSimPLPID = new javax.swing.JToggleButton();
+        btnSimGPIO = new javax.swing.JToggleButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         rootmenuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -1440,6 +1474,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimUART = new javax.swing.JCheckBoxMenuItem();
         menuSimVGA = new javax.swing.JCheckBoxMenuItem();
         menuSimPLPID = new javax.swing.JCheckBoxMenuItem();
+        menuSimGPIO = new javax.swing.JCheckBoxMenuItem();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         menuExitSim = new javax.swing.JMenuItem();
         rootmenuHelp = new javax.swing.JMenu();
@@ -1513,10 +1548,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1537,11 +1572,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 626, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 609, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1555,7 +1590,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1578,7 +1613,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -1866,6 +1901,21 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         toolbar.add(btnSimPLPID);
+
+        btnSimGPIO.setIcon(resourceMap.getIcon("btnSimGPIO.icon")); // NOI18N
+        btnSimGPIO.setText(resourceMap.getString("btnSimGPIO.text")); // NOI18N
+        btnSimGPIO.setToolTipText(resourceMap.getString("btnSimGPIO.toolTipText")); // NOI18N
+        btnSimGPIO.setFocusable(false);
+        btnSimGPIO.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimGPIO.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        btnSimGPIO.setName("btnSimGPIO"); // NOI18N
+        btnSimGPIO.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimGPIO.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimGPIOActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnSimGPIO);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -2527,6 +2577,17 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         menuIOReg.add(menuSimPLPID);
+
+        menuSimGPIO.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_7, java.awt.event.InputEvent.CTRL_MASK));
+        menuSimGPIO.setIcon(resourceMap.getIcon("menuSimGPIO.icon")); // NOI18N
+        menuSimGPIO.setLabel(resourceMap.getString("menuSimGPIO.label")); // NOI18N
+        menuSimGPIO.setName("menuSimGPIO"); // NOI18N
+        menuSimGPIO.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSimGPIOActionPerformed(evt);
+            }
+        });
+        menuIOReg.add(menuSimGPIO);
 
         rootmenuSim.add(menuIOReg);
 
@@ -3227,6 +3288,14 @@ public class Develop extends javax.swing.JFrame {
         PLPToolbox.setupLectureRecorder(this, plp);
     }//GEN-LAST:event_menuSetupLectureRecorderActionPerformed
 
+    private void btnSimGPIOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimGPIOActionPerformed
+        setGPIOFrame(btnSimGPIO.isSelected());
+    }//GEN-LAST:event_btnSimGPIOActionPerformed
+
+    private void menuSimGPIOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimGPIOActionPerformed
+        setGPIOFrame(menuSimGPIO.isSelected());
+    }//GEN-LAST:event_menuSimGPIOActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3305,6 +3374,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JButton btnProgram;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSimControl;
+    private javax.swing.JToggleButton btnSimGPIO;
     private javax.swing.JToggleButton btnSimLEDs;
     private javax.swing.JToggleButton btnSimPLPID;
     private javax.swing.JButton btnSimReset;
@@ -3377,6 +3447,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuSetupLectureRecorder;
     private javax.swing.JMenuItem menuSimAsmView;
     private javax.swing.JCheckBoxMenuItem menuSimControl;
+    private javax.swing.JCheckBoxMenuItem menuSimGPIO;
     private javax.swing.JCheckBoxMenuItem menuSimIO;
     private javax.swing.JCheckBoxMenuItem menuSimLEDs;
     private javax.swing.JCheckBoxMenuItem menuSimPLPID;
