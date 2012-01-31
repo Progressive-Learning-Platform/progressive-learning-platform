@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>UART</TITLE>
+<META NAME="description" CONTENT="UART">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="next" HREF="node40.html">
+<LINK REL="previous" HREF="node38.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node40.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html599"
+  HREF="node40.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html595"
+  HREF="node35.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html589"
+  HREF="node38.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html597"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html600"
+  HREF="node40.html">Switches</A>
+<B> Up:</B> <A NAME="tex2html596"
+  HREF="node35.html">Hardware Description</A>
+<B> Previous:</B> <A NAME="tex2html590"
+  HREF="node38.html">RAM</A>
+ &nbsp; <B>  <A NAME="tex2html598"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00064000000000000000">
+UART</A>
+</H2>
+The UART module is a UART, running at 57600 baud, with 8 data bits, 1 stop bit, and no parity. The UART module is connected to the serial port on the Nexys 2 development kit.
+
+<P>
+The UART module is designed to send or receive a single byte at a time, and can only store one byte in the receive buffer. This means that you must read received data (by polling) before the next byte is available.
+
+<P>
+There are four registers that the UART module uses: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">0xf0000000</TD>
+<TD ALIGN="LEFT">command register</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0000004</TD>
+<TD ALIGN="LEFT">status register</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0000008</TD>
+<TD ALIGN="LEFT">receive buffer</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf000000c</TD>
+<TD ALIGN="LEFT">send buffer</TD>
+</TR>
+</TABLE>
+
+<P>
+The command register always reads 0. Writing the value 0x01 will initiate a send operation using the lowest byte in the send buffer. Writing a 0x02 will clear the ready flag in the status register.
+
+<P>
+The status register uses only the bottom two bits, with the remaining bits always reading as 0. status0? is the clear to send bit, which is set after a successful transfer of the data in the send buffer, indicating that another transfer may be made. The cts bit is 0 during a transfer, and the data in the send buffer should not be modified. status1? is the ready bit, which is set when a new byte has been successfully received. The ready bit can be cleared by writing 0x02 to the command register.
+
+<P>
+The receive buffer holds the last received byte. On a successful receive, the ready bit will be set, allowing the programmer to poll the status register for incoming data. When the ready bit is not set, the receive buffer is considered invalid.
+
+<P>
+The send buffer holds the byte that will be sent or is ready to send. During a send operation (cts is 0), the data in the transmit buffer must not be modified. Only update the send buffer when cts is set.
+
+<P>
+The UART supports interrupts, and will trigger an interrupt whenever data is available in the receive buffer. <B>The user must complete a receive and clear the status bit in the UART before clearing the interrupt status bit for the UART.</B>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html599"
+  HREF="node40.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html595"
+  HREF="node35.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html589"
+  HREF="node38.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html597"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html600"
+  HREF="node40.html">Switches</A>
+<B> Up:</B> <A NAME="tex2html596"
+  HREF="node35.html">Hardware Description</A>
+<B> Previous:</B> <A NAME="tex2html590"
+  HREF="node38.html">RAM</A>
+ &nbsp; <B>  <A NAME="tex2html598"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-01-25
+</ADDRESS>
+</BODY>
+</HTML>

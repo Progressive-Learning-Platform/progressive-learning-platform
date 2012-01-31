@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Notes on Register Usage</TITLE>
+<META NAME="description" CONTENT="Notes on Register Usage">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="previous" HREF="node33.html">
+<LINK REL="up" HREF="node12.html">
+<LINK REL="next" HREF="node35.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html526"
+  HREF="node35.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html522"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html518"
+  HREF="node33.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html524"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html527"
+  HREF="node35.html">Hardware Description</A>
+<B> Up:</B> <A NAME="tex2html523"
+  HREF="node12.html">Instruction Set and Assembly</A>
+<B> Previous:</B> <A NAME="tex2html519"
+  HREF="node33.html">Pseudo-ops</A>
+ &nbsp; <B>  <A NAME="tex2html525"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00054000000000000000">
+Notes on Register Usage</A>
+</H2>
+Aside from $zero, $i0, $i1, and $ra, the architecture does not explicitly assign special functions to a register. This section lays down some conventions on how the other registers should be used to prevent data from being clobbered across function calls. All the supplied libraries adhere to this guideline. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Register</TD>
+<TD ALIGN="LEFT">Usage</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Notes</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$zero</TD>
+<TD ALIGN="LEFT">Constant value 0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>This register can not be written to and always returns the value 0</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$at</TD>
+<TD ALIGN="LEFT">Assembler temporary</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Assembler reserved, do not use</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$v0 - $v1</TD>
+<TD ALIGN="LEFT">Values for results</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use for return values of functions</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$a0 - $a3</TD>
+<TD ALIGN="LEFT">Arguments</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use for arguments of functions</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$t0 - $t9</TD>
+<TD ALIGN="LEFT">Temporaries</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Do not use these registers across function calls, as they will most likely be clobbered</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$s0 - $s7</TD>
+<TD ALIGN="LEFT">Saved temporaries</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$i0</TD>
+<TD ALIGN="LEFT">Interrupt vector</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>The CPU jumps to the address pointed by this register when an interrupt occurs</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$i1</TD>
+<TD ALIGN="LEFT">Interrupt return address</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Written by the CPU when an interrupt occurs</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$gp</TD>
+<TD ALIGN="LEFT">Global pointer</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$sp</TD>
+<TD ALIGN="LEFT">Stack pointer</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use this register to implement a stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$fp</TD>
+<TD ALIGN="LEFT">Frame pointer</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$ra</TD>
+<TD ALIGN="LEFT">Return address</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html526"
+  HREF="node35.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html522"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html518"
+  HREF="node33.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html524"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html527"
+  HREF="node35.html">Hardware Description</A>
+<B> Up:</B> <A NAME="tex2html523"
+  HREF="node12.html">Instruction Set and Assembly</A>
+<B> Previous:</B> <A NAME="tex2html519"
+  HREF="node33.html">Pseudo-ops</A>
+ &nbsp; <B>  <A NAME="tex2html525"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-01-25
+</ADDRESS>
+</BODY>
+</HTML>

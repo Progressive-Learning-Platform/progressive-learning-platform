@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>I-type Load and Store Word Instructions</TITLE>
+<META NAME="description" CONTENT="I-type Load and Store Word Instructions">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="next" HREF="node32.html">
+<LINK REL="previous" HREF="node30.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node32.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html494"
+  HREF="node32.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html490"
+  HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html484"
+  HREF="node30.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html492"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html495"
+  HREF="node32.html">J-type Instructions</A>
+<B> Up:</B> <A NAME="tex2html491"
+  HREF="node24.html">Ops</A>
+<B> Previous:</B> <A NAME="tex2html485"
+  HREF="node30.html">I-type Load Upper Immediate</A>
+ &nbsp; <B>  <A NAME="tex2html493"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00052700000000000000">
+I-type Load and Store Word Instructions</A>
+</H3>
+These instructions read or write data from or to memory. The general syntax is: 
+
+<P>
+<PRE>
+op    $register, immediate_field($offset_register)
+</PRE>
+
+<P>
+immediate_field is 16-bit wide and sign extended to 32-bit by the processor to resolve the memory address. If immediate_field is larger than 16-bit, it will be truncated by the assembler. $offset_register acts as an index to the memory address, e.g. an index for an array. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">lw $rt, imm($rs)</TD>
+<TD ALIGN="LEFT">rt = SignExtend(imm)[rs];</TD>
+<TD ALIGN="LEFT">lw $v0, 0x4000($a1)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Load contents of 0x4000 + $a1 into $v0</TD>
+<TD ALIGN="LEFT">0x23</TD>
+</TR>
+<TR><TD ALIGN="LEFT">sw $rt, imm($rs)</TD>
+<TD ALIGN="LEFT">SignExtend(imm)[rs] = rt;</TD>
+<TD ALIGN="LEFT">sw $a0, 128($v0)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Store contents of register $a0 to 128 + $v0</TD>
+<TD ALIGN="LEFT">0x2b</TD>
+</TR>
+</TABLE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+will
+2012-01-25
+</ADDRESS>
+</BODY>
+</HTML>

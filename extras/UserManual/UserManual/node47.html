@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Interrupt Controller</TITLE>
+<META NAME="description" CONTENT="Interrupt Controller">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="next" HREF="node48.html">
+<LINK REL="previous" HREF="node46.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node48.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html695"
+  HREF="node48.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html691"
+  HREF="node35.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html685"
+  HREF="node46.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html693"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html696"
+  HREF="node48.html">Performance Counters</A>
+<B> Up:</B> <A NAME="tex2html692"
+  HREF="node35.html">Hardware Description</A>
+<B> Previous:</B> <A NAME="tex2html686"
+  HREF="node46.html">Seven Segment</A>
+ &nbsp; <B>  <A NAME="tex2html694"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000612000000000000000">
+Interrupt Controller</A>
+</H2>
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">register</TD>
+<TD ALIGN="LEFT">description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0700000</TD>
+<TD ALIGN="LEFT">mask</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0700004</TD>
+<TD ALIGN="LEFT">status</TD>
+</TR>
+</TABLE>
+
+<P>
+Status register: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">bit</TD>
+<TD ALIGN="LEFT">interrupt reason</TD>
+</TR>
+<TR><TD ALIGN="LEFT">31-3</TD>
+<TD ALIGN="LEFT">reserved (always 0)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">UART interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">timer interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT">always 1</TD>
+</TR>
+</TABLE>
+
+<P>
+Mask register: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">bit</TD>
+<TD ALIGN="LEFT">description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">31-3</TD>
+<TD ALIGN="LEFT">reserved</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">UART interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">timer interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT">global interrupt enable</TD>
+</TR>
+</TABLE>
+
+<P>
+The interrupt controller marshals the interrupt behavior of the plp system.
+
+<P>
+The user uses the two registers in the interrupt controller, mask and status, along with the interrupt registers, $i0 and $i1, to control all interrupt behavior.
+
+<P>
+Before enabling interrupts, the user must supply a pointer to the interrupt vector in register $i0. 
+
+<P>
+<PRE>
+main:
+  li $i0, isr #put a pointer to our isr in $i0
+
+isr: .
+</PRE>
+When an interrupt occurs, the interrupt controller sets the corresponding bit in the status register. Before returning from an interrupt the user must clear any status bits that are resolved or unwanted.
+
+<P>
+The user enables interrupts by setting any desired interrupts in the mask register, as well as setting the global interrupt enable (GIE) bit. When an interrupt occurs, the GIE bit is automatically cleared and must be set on interrupt exit.
+
+<P>
+<B>When returning from an interrupt, set the GIE bit in the delay slot of the returning jump instruction.</B> This is necessary to prevent any interrupts from occurring while still in the interrupt vector.
+
+<P>
+When an interrupt occurs, the return address is stored in $i1.
+
+<P>
+A typical interrupt vector: 
+<PRE>
+isr:
+  li $t0, 0xf0700000
+  lw $t1, 4($t0)     #read the status register
+  
+  #check status bits and handle any pending interrupts
+  #clear any handled interrupts in $t1
+
+  sw $t1, 4($t0)     #clear any handled interrupts in the status register
+  lw $t1, 0($t0)     #get the mask register
+  ori $t1, $t1, 1    #set GIE
+
+  jr $i1
+  sw $t1, 0($t0)     #store the mask register in the delay slot to guarantee proper exit
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html695"
+  HREF="node48.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html691"
+  HREF="node35.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html685"
+  HREF="node46.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html693"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html696"
+  HREF="node48.html">Performance Counters</A>
+<B> Up:</B> <A NAME="tex2html692"
+  HREF="node35.html">Hardware Description</A>
+<B> Previous:</B> <A NAME="tex2html686"
+  HREF="node46.html">Seven Segment</A>
+ &nbsp; <B>  <A NAME="tex2html694"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-01-25
+</ADDRESS>
+</BODY>
+</HTML>
