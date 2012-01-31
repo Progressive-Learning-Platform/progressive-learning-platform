@@ -74,7 +74,7 @@ public class IORegistry {
      * Number of modules registered. This constant needs to be incremented
      * whenever new modules are added.
      */
-    private final int NUMBER_OF_MODULES = 12;
+    private final int NUMBER_OF_MODULES = 13;
     /**********************************************************************/
 
     private Object[][] mods = new Object[NUMBER_OF_MODULES][6];
@@ -239,6 +239,16 @@ public class IORegistry {
         mods[11][4] = true;
         mods[11][5] = false;
 
+        /* ********************************************************************/
+        // GPIO
+
+        mods[12][0] = "General-purpose I/O";
+        mods[12][1] = false;
+        mods[12][2] = 3;
+        mods[12][3] = "2x8 bit GPIO with tristate register";
+        mods[12][4] = true;
+        mods[12][5] = true;
+
         // ADDITIONAL MODULE INFO HERE 
     }
 
@@ -375,6 +385,17 @@ public class IORegistry {
                 module = new BusMonitor(plp.sim);
                 if(plp.g()) {
                     moduleFrame = new BusMonitorFrame((BusMonitor) module, null);
+                }
+
+                break;
+
+            /******************************************************************/
+            // GPIO is summoned
+            case 12:
+                module = new GPIO(addr);
+                if(plp.g()) {
+                    moduleFrame = new GPIOFrame((GPIO) module);
+                    attachModuleFrameListeners((JFrame) moduleFrame, plp, Constants.PLP_TOOLFRAME_SIMGPIO);
                 }
 
                 break;
