@@ -22,7 +22,10 @@ public class UARTFrame extends javax.swing.JFrame {
     public UARTFrame() {
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_sim_uart.png")));
         initComponents();
-
+        cmbFormat.removeAllItems();
+        cmbFormat.addItem("ASCII String");
+        cmbFormat.addItem("1-byte raw");
+        cmbFormat.addItem("Space-delimited raw");
         
     }
 
@@ -46,8 +49,9 @@ public class UARTFrame extends javax.swing.JFrame {
         txtUART = new javax.swing.JTextArea();
         btnClear = new javax.swing.JButton();
         lblRawByte = new javax.swing.JLabel();
-        txtRawByte = new javax.swing.JTextField();
+        txtInput = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
+        cmbFormat = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(UARTFrame.class);
@@ -86,11 +90,11 @@ public class UARTFrame extends javax.swing.JFrame {
         lblRawByte.setText(resourceMap.getString("lblRawByte.text")); // NOI18N
         lblRawByte.setName("lblRawByte"); // NOI18N
 
-        txtRawByte.setText(resourceMap.getString("txtRawByte.text")); // NOI18N
-        txtRawByte.setName("txtRawByte"); // NOI18N
-        txtRawByte.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtInput.setText(resourceMap.getString("txtInput.text")); // NOI18N
+        txtInput.setName("txtInput"); // NOI18N
+        txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtRawByteKeyPressed(evt);
+                txtInputKeyPressed(evt);
             }
         });
 
@@ -102,6 +106,9 @@ public class UARTFrame extends javax.swing.JFrame {
             }
         });
 
+        cmbFormat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbFormat.setName("cmbFormat"); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -109,14 +116,16 @@ public class UARTFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblRawByte)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtRawByte, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnSend)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 185, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear)))
                 .addContainerGap())
         );
@@ -129,8 +138,9 @@ public class UARTFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClear)
                     .addComponent(lblRawByte)
-                    .addComponent(txtRawByte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSend))
+                    .addComponent(btnSend)
+                    .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -146,22 +156,62 @@ public class UARTFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
-        u.receivedData((char) plptool.PLPToolbox.parseNumInt(txtRawByte.getText()));
+        int dataout;
+        byte[] chars;
+        
+        switch(cmbFormat.getSelectedIndex()) {
+            case 0:
+                chars =  txtInput.getText().getBytes();
+                for(int i = 0; i < chars.length; i++)
+                    u.receivedData((char) chars[i]);
+
+                break;
+
+            case 1:
+                dataout = plptool.PLPToolbox.parseNumInt(txtInput.getText());
+
+                if(dataout < 0 || dataout > 255) {
+                    return;
+                }
+
+                u.receivedData((char) dataout);
+                break;
+
+            case 2:
+                String tokens[] = txtInput.getText().split("\\s+");
+
+
+                for(int i = 0; i < tokens.length; i++) {
+                    dataout = plptool.PLPToolbox.parseNumInt(tokens[i]);
+
+                    if(dataout < 0 || dataout > 255) {
+                        return;
+                    }
+
+                     u.receivedData((char) dataout);
+                }
+
+                break;
+
+            default:
+        }
     }//GEN-LAST:event_btnSendActionPerformed
 
-    private void txtRawByteKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRawByteKeyPressed
+    private void txtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInputKeyPressed
         if(evt.getKeyCode() == evt.VK_ENTER) {
-            u.receivedData((char) plptool.PLPToolbox.parseNumInt(txtRawByte.getText()));
+            btnSendActionPerformed(null);
+            //u.receivedData((char) plptool.PLPToolbox.parseNumInt(txtInput.getText()));
         }
-    }//GEN-LAST:event_txtRawByteKeyPressed
+    }//GEN-LAST:event_txtInputKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnSend;
+    private javax.swing.JComboBox cmbFormat;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblRawByte;
-    private javax.swing.JTextField txtRawByte;
+    private javax.swing.JTextField txtInput;
     private javax.swing.JTextArea txtUART;
     // End of variables declaration//GEN-END:variables
 
