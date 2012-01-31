@@ -205,6 +205,7 @@ public class Constants {
     public static final int PLP_TOOLFRAME_SIMPLPID               = 10;
     public static final int PLP_TOOLFRAME_SIMSEVENSEGMENTS       = 11;
     public static final int PLP_TOOLFRAME_SIMVGA                 = 12;
+    public static final int PLP_TOOLFRAME_SIMGPIO                = 13;
 
     // ASMView Columns identifiers
     public static final int ASMVIEW_ADDR                         = 0;
