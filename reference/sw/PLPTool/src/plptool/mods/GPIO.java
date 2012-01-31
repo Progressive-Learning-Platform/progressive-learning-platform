@@ -28,8 +28,11 @@ import plptool.Constants;
  */
 public class GPIO extends PLPSimBusModule {
 
+    private long oldTristate;
+
     public GPIO(long addr) {
         super(addr, addr+8, true);
+        oldTristate = 0;
     }
 
     public int eval() {
@@ -41,15 +44,24 @@ public class GPIO extends PLPSimBusModule {
         if(!enabled)
             return Constants.PLP_OK;
 
-        
+        GPIOFrame frame = (GPIOFrame) x;
+
+        long curTristate = (Long) readReg(startAddr);
+        if(curTristate != oldTristate) {
+            frame.setTristateRegisterValues(curTristate);
+            oldTristate = curTristate;
+        }
+
+        if(frame.isVisible())
+            frame.updateOutputs();
 
         return Constants.PLP_OK;
     }
 
     @Override public void reset() {
-        super.writeReg(startAddr, new Long(0L), false);
-        super.writeReg(startAddr+4, new Long(0L), false);
-        super.writeReg(startAddr+8, new Long(0L), false);
+        writeReg(startAddr, new Long(0L), false);
+        writeReg(startAddr+4, new Long(0L), false);
+        writeReg(startAddr+8, new Long(0L), false);
     }
 
     @Override public int write(long addr, Object data, boolean isInstr) {
@@ -58,22 +70,22 @@ public class GPIO extends PLPSimBusModule {
         long prev, setMask, clearMask;
 
         // write to block A
-        if(addr == super.startAddr+4) {
-            mask = (Long) super.readReg(startAddr) & 0xffL;
-            prev = (Long) super.readReg(startAddr+4);
+        if(addr == startAddr+4) {
+            mask = (Long) readReg(startAddr) & 0xffL;
+            prev = (Long) readReg(startAddr+4);
 
             // write to block B
-        } else if (addr == super.startAddr + 8) {
-            mask = ((Long) super.readReg(startAddr) >> 8) & 0xffL;
-            prev = (Long) super.readReg(startAddr+8);
+        } else if (addr == startAddr + 8) {
+            mask = ((Long) readReg(startAddr) >> 8) & 0xffL;
+            prev = (Long) readReg(startAddr+8);
 
         } else
-            return super.writeReg(addr, data, false);
+            return writeReg(addr, data, false);
         
         setMask = d & mask;
         clearMask = d | ~mask;
         d = (prev | setMask) & clearMask;
-        return super.writeReg(addr, d, false);
+        return writeReg(addr, d, false);
     }
 
     public String introduce() {
