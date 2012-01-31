@@ -110,7 +110,7 @@
                   <Component id="B1" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="B0" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="46" max="32767" attributes="0"/>
+              <EmptySpace pref="73" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -141,62 +141,66 @@
         <Property name="text" type="java.lang.String" resourceKey="A7.text"/>
         <Property name="name" type="java.lang.String" value="A7" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A7MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="A6">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="A6" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A6MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="A5">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="A5" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A5MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="A4">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="A4" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A4MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="A3">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="A3" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A3MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="A2">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="A2" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A2MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="A1">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="A1" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A1MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="A0">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="A0.icon"/>
         <Property name="name" type="java.lang.String" value="A0" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="A0MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="lblPortB">
       <Properties>
@@ -206,67 +210,67 @@
     </Component>
     <Component class="javax.swing.JLabel" name="B7">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B7" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B7MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="B6">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B6" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B6MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="B5">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B5" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B5MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="B4">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B4" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B4MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="B3">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B3" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B3MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="B2">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B2" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B2MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="B1">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B1" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B1MousePressed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="B0">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="0" name="null"/>
-        </Property>
         <Property name="name" type="java.lang.String" value="B0" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="B0MousePressed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

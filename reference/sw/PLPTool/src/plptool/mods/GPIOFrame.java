@@ -33,32 +33,32 @@ public class GPIOFrame extends javax.swing.JFrame {
     private ImageIcon gpio_in_high;
     private ImageIcon gpio_out_low;
     private ImageIcon gpio_out_high;
-    private boolean[] statesA = {false, false, false, false, false, false, false, false};
-    private boolean[] statesB = {false, false, false, false, false, false, false, false};
-
 
     /** Creates new form GPIOFrame */
     public GPIOFrame(GPIO mod) {
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_sim_gpio.png")));
         initComponents();
         this.mod = mod;
+        this.setTitle("GPIO Module at " + PLPToolbox.format32Hex(mod.startAddr()));
 
         gpio_in_low = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/gpio_in_low.png")));
         gpio_in_high = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/gpio_input.png")));
         gpio_out_low = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/gpio_out_low.png")));
         gpio_out_high = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/gpio_output.png")));
+
+        updateOutputs();
     }
 
     public void setTristateRegisterValues(long val) {
         txtTristateReg.setText(PLPToolbox.format32Hex(val));
     }
 
-    public void updateOutputs() {
+    public final void updateOutputs() {
         boolean dir, data;
 
         // A0
-        dir = (((Long) mod.read(mod.startAddr()) >> 0) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 0) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 0) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 0) & 1L) == 1L;
         if(dir & data)
             A0.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -69,8 +69,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A0.setIcon(gpio_in_low);
 
         // A1
-        dir = (((Long) mod.read(mod.startAddr()) >> 1) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 1) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 1) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 1) & 1L) == 1L;
         if(dir & data)
             A1.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -81,8 +81,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A1.setIcon(gpio_in_low);
 
         // A2
-        dir = (((Long) mod.read(mod.startAddr()) >> 2) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 2) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 2) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 2) & 1L) == 1L;
         if(dir & data)
             A2.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -93,8 +93,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A2.setIcon(gpio_in_low);
 
         // A3
-        dir = (((Long) mod.read(mod.startAddr()) >> 3) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 3) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 3) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 3) & 1L) == 1L;
         if(dir & data)
             A3.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -105,8 +105,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A3.setIcon(gpio_in_low);
 
         // A4
-        dir = (((Long) mod.read(mod.startAddr()) >> 4) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 4) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 4) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 4) & 1L) == 1L;
         if(dir & data)
             A4.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -117,8 +117,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A4.setIcon(gpio_in_low);
 
         // A5
-        dir = (((Long) mod.read(mod.startAddr()) >> 5) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 5) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 5) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 5) & 1L) == 1L;
         if(dir & data)
             A5.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -129,8 +129,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A5.setIcon(gpio_in_low);
 
         // A6
-        dir = (((Long) mod.read(mod.startAddr()) >> 6) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 6) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 6) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 6) & 1L) == 1L;
         if(dir & data)
             A6.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -141,8 +141,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A6.setIcon(gpio_in_low);
 
         // A7
-        dir = (((Long) mod.read(mod.startAddr()) >> 7) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+4) >> 7) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 7) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+4) >> 7) & 1L) == 1L;
         if(dir & data)
             A7.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -153,8 +153,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             A7.setIcon(gpio_in_low);
 
         // B0
-        dir = (((Long) mod.read(mod.startAddr()) >> 8) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 0) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 8) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 0) & 1L) == 1L;
         if(dir & data)
             B0.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -165,8 +165,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             B0.setIcon(gpio_in_low);
 
         // B1
-        dir = (((Long) mod.read(mod.startAddr()) >> 9) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 1) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 9) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 1) & 1L) == 1L;
         if(dir & data)
             B1.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -177,8 +177,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             B1.setIcon(gpio_in_low);
 
         // B2
-        dir = (((Long) mod.read(mod.startAddr()) >> 10) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 2) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 10) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 2) & 1L) == 1L;
         if(dir & data)
             B2.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -189,8 +189,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             B2.setIcon(gpio_in_low);
 
         // B3
-        dir = (((Long) mod.read(mod.startAddr()) >> 11) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 3) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 11) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 3) & 1L) == 1L;
         if(dir & data)
             B3.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -201,8 +201,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             B3.setIcon(gpio_in_low);
 
         // B4
-        dir = (((Long) mod.read(mod.startAddr()) >> 12) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 4) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 12) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 4) & 1L) == 1L;
         if(dir & data)
             B4.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -213,8 +213,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             B4.setIcon(gpio_in_low);
 
         // B5
-        dir = (((Long) mod.read(mod.startAddr()) >> 13) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 5) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 13) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 5) & 1L) == 1L;
         if(dir & data)
             B5.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -225,8 +225,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             B5.setIcon(gpio_in_low);
 
         // B6
-        dir = (((Long) mod.read(mod.startAddr()) >> 14) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 6) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 14) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 6) & 1L) == 1L;
         if(dir & data)
             B6.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -237,8 +237,8 @@ public class GPIOFrame extends javax.swing.JFrame {
             B6.setIcon(gpio_in_low);
 
         // B7
-        dir = (((Long) mod.read(mod.startAddr()) >> 15) & 1L) == 1L ? true : false;
-        data = (((Long) mod.read(mod.startAddr()+8) >> 7) & 1L) == 1L ? true : false;
+        dir = (((Long) mod.read(mod.startAddr()) >> 15) & 1L) == 1L;
+        data = (((Long) mod.read(mod.startAddr()+8) >> 7) & 1L) == 1L;
         if(dir & data)
             B7.setIcon(gpio_out_high);
         else if(dir & !data)
@@ -247,6 +247,17 @@ public class GPIOFrame extends javax.swing.JFrame {
             B7.setIcon(gpio_in_high);
         else if(!dir & !data)
             B7.setIcon(gpio_in_low);
+    }
+
+    private void updateModuleRegisters(int position) {
+        boolean isInput = (((Long) mod.read(mod.startAddr()) >> position) & 1L) == 0L;
+        int blockOffset = position < 8 ? 4 : 8;
+        if(isInput) {
+            long data = (Long) mod.read(mod.startAddr()+blockOffset);
+            data ^= (1L << (blockOffset == 4 ? position : position - 8));
+            mod.writeReg(mod.startAddr()+blockOffset, data, false);
+            updateOutputs();
+        }
     }
 
     /** This method is called from within the constructor to
@@ -298,54 +309,134 @@ public class GPIOFrame extends javax.swing.JFrame {
         A7.setIcon(resourceMap.getIcon("A7.icon")); // NOI18N
         A7.setText(resourceMap.getString("A7.text")); // NOI18N
         A7.setName("A7"); // NOI18N
+        A7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A7MousePressed(evt);
+            }
+        });
 
         A6.setIcon(null);
         A6.setName("A6"); // NOI18N
+        A6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A6MousePressed(evt);
+            }
+        });
 
         A5.setIcon(null);
         A5.setName("A5"); // NOI18N
+        A5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A5MousePressed(evt);
+            }
+        });
 
         A4.setIcon(null);
         A4.setName("A4"); // NOI18N
+        A4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A4MousePressed(evt);
+            }
+        });
 
         A3.setIcon(null);
         A3.setName("A3"); // NOI18N
+        A3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A3MousePressed(evt);
+            }
+        });
 
         A2.setIcon(null);
         A2.setName("A2"); // NOI18N
+        A2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A2MousePressed(evt);
+            }
+        });
 
         A1.setIcon(null);
         A1.setName("A1"); // NOI18N
+        A1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A1MousePressed(evt);
+            }
+        });
 
-        A0.setIcon(null);
+        A0.setIcon(resourceMap.getIcon("A0.icon")); // NOI18N
         A0.setName("A0"); // NOI18N
+        A0.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                A0MousePressed(evt);
+            }
+        });
 
         lblPortB.setText(resourceMap.getString("lblPortB.text")); // NOI18N
         lblPortB.setName("lblPortB"); // NOI18N
 
         B7.setIcon(null);
         B7.setName("B7"); // NOI18N
+        B7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B7MousePressed(evt);
+            }
+        });
 
         B6.setIcon(null);
         B6.setName("B6"); // NOI18N
+        B6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B6MousePressed(evt);
+            }
+        });
 
         B5.setIcon(null);
         B5.setName("B5"); // NOI18N
+        B5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B5MousePressed(evt);
+            }
+        });
 
         B4.setIcon(null);
         B4.setName("B4"); // NOI18N
+        B4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B4MousePressed(evt);
+            }
+        });
 
         B3.setIcon(null);
         B3.setName("B3"); // NOI18N
+        B3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B3MousePressed(evt);
+            }
+        });
 
         B2.setIcon(null);
         B2.setName("B2"); // NOI18N
+        B2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B2MousePressed(evt);
+            }
+        });
 
         B1.setIcon(null);
         B1.setName("B1"); // NOI18N
+        B1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B1MousePressed(evt);
+            }
+        });
 
         B0.setIcon(null);
         B0.setName("B0"); // NOI18N
+        B0.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                B0MousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -426,11 +517,75 @@ public class GPIOFrame extends javax.swing.JFrame {
                     .addComponent(B2)
                     .addComponent(B1)
                     .addComponent(B0))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void A7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A7MousePressed
+        updateModuleRegisters(7);
+    }//GEN-LAST:event_A7MousePressed
+
+    private void A6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A6MousePressed
+        updateModuleRegisters(6);
+    }//GEN-LAST:event_A6MousePressed
+
+    private void A5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A5MousePressed
+        updateModuleRegisters(5);
+    }//GEN-LAST:event_A5MousePressed
+
+    private void A4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A4MousePressed
+        updateModuleRegisters(4);
+    }//GEN-LAST:event_A4MousePressed
+
+    private void A3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A3MousePressed
+        updateModuleRegisters(3);
+    }//GEN-LAST:event_A3MousePressed
+
+    private void A2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A2MousePressed
+        updateModuleRegisters(2);
+    }//GEN-LAST:event_A2MousePressed
+
+    private void A1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A1MousePressed
+        updateModuleRegisters(1);
+    }//GEN-LAST:event_A1MousePressed
+
+    private void A0MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_A0MousePressed
+        updateModuleRegisters(0);
+    }//GEN-LAST:event_A0MousePressed
+
+    private void B0MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B0MousePressed
+        updateModuleRegisters(8);
+    }//GEN-LAST:event_B0MousePressed
+
+    private void B1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B1MousePressed
+        updateModuleRegisters(9);
+    }//GEN-LAST:event_B1MousePressed
+
+    private void B2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B2MousePressed
+        updateModuleRegisters(10);
+    }//GEN-LAST:event_B2MousePressed
+
+    private void B3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B3MousePressed
+        updateModuleRegisters(11);
+    }//GEN-LAST:event_B3MousePressed
+
+    private void B4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B4MousePressed
+        updateModuleRegisters(12);
+    }//GEN-LAST:event_B4MousePressed
+
+    private void B5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B5MousePressed
+        updateModuleRegisters(13);
+    }//GEN-LAST:event_B5MousePressed
+
+    private void B6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B6MousePressed
+        updateModuleRegisters(14);
+    }//GEN-LAST:event_B6MousePressed
+
+    private void B7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_B7MousePressed
+        updateModuleRegisters(15);
+    }//GEN-LAST:event_B7MousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel A0;
