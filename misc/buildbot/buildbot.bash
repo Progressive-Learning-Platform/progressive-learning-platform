@@ -37,9 +37,13 @@ ant javadoc > build_javadoc_log
 
 #build the classroom module
 cd /backup/fritz/buildbot_tmp/extras/PLPToolLectureRecorder
-./package.sh
+./package.sh > build_lecturerecorder_log
 
-#run the autotext
+#build the Windows installer
+cd /backup/fritz/buildbot_tmp/extras/PLPToolInstaller
+./build_linuxhost.sh > build_plptoolinstall_log
+
+#run the autotest
 cd /backup/fritz/buildbot_tmp/reference/sw
 yes | /usr/local/bin/djtgcfg prog -d Nexys2 -i 0 -f ../hw/build/build_500k_volatile/top.bit >> auto_test_log
 sleep 10
@@ -59,6 +63,7 @@ cp reference/hw/build/build_1200k_volatile/top.mcs to_push/nexys2_1200k.mcs
 cp reference/hw/build/build_nexys3_volatile/top.bit to_push/nexys3.bit
 cp reference/sw/PLPTool/*_log to_push
 cp reference/sw/PLPTool/store/* to_push
+cp extras/PLPToolInstaller/plptoolsetup.exe to_push
 cp -R reference/sw/PLPTool/dist/javadoc to_push
 
 #our data is ready to send off to the webserver
