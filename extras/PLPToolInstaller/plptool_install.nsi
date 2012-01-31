@@ -42,7 +42,6 @@ Section "PLPTool Install (required)"
 
   SectionIn RO
   
-  Call DetectJRE
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   
@@ -68,6 +67,10 @@ Section "PLPTool Install (required)"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool4" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
   
+SectionEnd
+
+Section "Check and install Java Runtime"
+  Call DetectJRE
 SectionEnd
 
 ; Optional section (can be disabled by the user)
