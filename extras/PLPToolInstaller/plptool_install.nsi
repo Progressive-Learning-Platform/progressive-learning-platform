@@ -48,7 +48,9 @@ Section "PLPTool Install (required)"
   
   ; Put file there
   File "..\..\reference\sw\PLPTool\store\PLPToolStatic.jar"
-  
+
+  IfFileExists $INSTDIR\PLPToolWin.bat 0 +2
+    Delete $INSTDIR\PLPToolWin.bat    
   Push `cd /D $INSTDIR$\r$\njava -Djava.library.path=. -jar PLPToolStatic.jar %1 %2 %3 %4 %5 %6 %7 %8 %9$\r$\n`
   Push `$INSTDIR\PLPToolWin.bat`
   Call WriteToFile
