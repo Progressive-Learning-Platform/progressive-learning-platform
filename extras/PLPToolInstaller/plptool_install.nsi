@@ -89,8 +89,9 @@ Section "Start Menu Shortcuts"
   
 SectionEnd
 
-Section /o "Example Programs"
+Section /o "Example Programs and Software Library"
   File /r "..\..\reference\sw\examples"
+  File /r "..\..\reference\sw\libplp"
 SectionEnd
 
 ;--------------------------------
@@ -113,6 +114,7 @@ Section "Uninstall"
   Delete $INSTDIR\rxtxSerial64.dll
   Delete $INSTDIR\PLPToolWin.bat
   Delete $INSTDIR\uninstall.exe
+  Delete "$INSTDIR\libplp\*.*"
   Delete "$INSTDIR\examples\*.*"
 
   ; Remove shortcuts, if any
@@ -120,6 +122,7 @@ Section "Uninstall"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\PLPTool 4"
+  RMDir "$INSTDIR\libplp"
   RMDir "$INSTDIR\examples"
   RMDir "$INSTDIR"
 
