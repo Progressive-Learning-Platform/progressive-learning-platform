@@ -2,6 +2,7 @@
 ;--------------------------------
 
 !include x64.nsh
+!include FileAssociation.nsh
 
 !define PRODUCT_NAME "PLPTool 4"
 !define JRE_VERSION "1.6"
@@ -21,7 +22,7 @@ InstallDir $PROGRAMFILES\PLPTool4
 InstallDirRegKey HKLM "Software\PLPTool4" "Install_Dir"
 
 ; Request application privileges for Windows Vista
-;RequestExecutionLevel admin
+RequestExecutionLevel admin
 
 
 ;--------------------------------
@@ -47,9 +48,10 @@ Section "PLPTool Install (required)"
   
   ; Put file there
   File "..\..\reference\sw\PLPTool\store\PLPToolStatic.jar"
-  File "..\..\reference\sw\PLPTool\store\PLPToolWin.bat"
-  ;File "rxtxSerial32.dll"
-  ;File "rxtxSerial64.dll"
+  
+  Push `cd /D $INSTDIR$\r$\njava -Djava.library.path=. -jar PLPToolStatic.jar %1 %2 %3 %4 %5 %6 %7 %8 %9$\r$\n`
+  Push `$INSTDIR\PLPToolWin.bat`
+  Call WriteToFile
   
   ${If} ${RunningX64}
 	File /oname=rxtxSerial.dll ..\..\reference\sw\PLPTool\store\rxtxSerial64.dll
@@ -69,19 +71,26 @@ Section "PLPTool Install (required)"
   
 SectionEnd
 
-Section "Check and install Java Runtime"
+Section "Download Java Runtime (if not already installed)"
   Call DetectJRE
+SectionEnd
+
+Section "Associate PLP projects with PLPTool"
+  ${registerExtension} "$INSTDIR\PLPToolWin.bat" ".plp" "PLP project"
 SectionEnd
 
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
-
   CreateDirectory "$SMPROGRAMS\PLPTool 4"
   CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "" "$INSTDIR\PLPToolWin.bat" 0
   CreateShortCut "$SMPROGRAMS\PLPTool 4\PLP Serial Terminal.lnk" "$INSTDIR\PLPToolWin.bat" "--serialterminal" 0  
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\Install Directory.lnk" "$INSTDIR" "" 0    
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0   
+  
+SectionEnd
 
-    
+Section /o "Example Programs"
+  File /r "..\..\reference\sw\examples"
 SectionEnd
 
 ;--------------------------------
@@ -94,6 +103,9 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool4"
   DeleteRegKey HKLM SOFTWARE\PLPTool4
 
+  ; Remove file association
+  ${unregisterExtension} ".plp" "PLP project"
+  
   ; Remove files and uninstaller
   Delete $INSTDIR\PLPToolStatic.jar
   Delete $INSTDIR\rxtxSerial.dll
@@ -101,12 +113,14 @@ Section "Uninstall"
   Delete $INSTDIR\rxtxSerial64.dll
   Delete $INSTDIR\PLPToolWin.bat
   Delete $INSTDIR\uninstall.exe
+  Delete "$INSTDIR\examples\*.*"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\PLPTool 4\*.*"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\PLPTool 4"
+  RMDir "$INSTDIR\examples"
   RMDir "$INSTDIR"
 
 SectionEnd
@@ -135,3 +149,29 @@ Function DetectJRE
  
   done:
 FunctionEnd
+
+Function WriteToFile
+Exch $0 ;file to write to
+Exch
+Exch $1 ;text to write
+ 
+  FileOpen $0 $0 a #open file
+  FileSeek $0 0 END #go to end
+  FileWrite $0 $1 #write to file
+  FileClose $0
+ 
+Pop $1
+Pop $0
+FunctionEnd
+ 
+!macro WriteToFile NewLine File String
+  !if `${NewLine}` == true
+  Push `${String}$\r$\n`
+  !else
+  Push `${String}`
+  !endif
+  Push `${File}`
+  Call WriteToFile
+!macroend
+!define WriteToFile `!insertmacro WriteToFile false`
+!define WriteLineToFile `!insertmacro WriteToFile true`
