@@ -124,7 +124,12 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         }
 
         updateComponents();
-        coreMainPane.setSelectedIndex(2);
+
+        /*** 4.0 RELEASE ***/
+        //coreMainPane.setSelectedIndex(2);
+        coreMainPane.remove(0);
+        coreMainPane.setSelectedIndex(1);
+        /*******************/
     }
 
     /** This method is called from within the constructor to
