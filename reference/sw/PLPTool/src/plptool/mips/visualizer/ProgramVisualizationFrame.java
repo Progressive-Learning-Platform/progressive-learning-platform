@@ -10,10 +10,29 @@
  */
 
 package plptool.mips.visualizer;
+/*
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+ *
+ */
+import java.awt.Dimension;
+/*
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import edu.uci.ics.jung.graph.*;
+ *
+ */
 import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.visualization.*;
 import edu.uci.ics.jung.visualization.decorators.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.awt.geom.Point2D;
 
 /**
  * Create the JUNG Visualization graphically in a pop-up window.
@@ -27,7 +46,7 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
 
 
     private Layout layout;
-    private BasicVisualizationServer progVisServ;
+    private VisualizationViewer progVisServ;
 
     /** Creates new form ProgramVisualizationFrame */
     public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph) {
@@ -36,17 +55,28 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         this.progVis = progVis;
         this.progGraph= progGraph;
 
-        Layout<String, String> layout = new ISOMLayout<String,String>(progGraph.buildGraph());
+        //Layout<String, String> layout = new ISOMLayout<String,String>(progGraph.buildGraph());
         // tree layout stuff
         //DelegateForest sherwood = new DelegateForest(progGraph.buildGraph());
         //Layout<String, String> layout = new TreeLayout<String,String>(progGraph.buildGraph());
-        this.setSize(1024, 768);
-        layout.setSize(this.getSize());
-        BasicVisualizationServer<String,String> progVisServ = new BasicVisualizationServer<String,String>(layout);
+        //this.setSize(1024, 768);
+        
+        // Vertical Layout
+        Layout<String, String> layout = new StaticLayout<String,String>(progGraph.buildGraph());
+        // Grab graph's vertices
+        List<String> vertexList = new ArrayList<String>(layout.getGraph().getVertices());
+        // Traverse vertices, arrange them vertically
+        for(int i=0; i<vertexList.size(); i++){
+            layout.setLocation(vertexList.get(i), new Point2D.Double(50, i*50));
+        }
+        //layout.setSize(new Dimension(600,600));
+        VisualizationViewer<String,String> progVisServ = new VisualizationViewer<String,String>(layout);
         progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
-
-        getContentPane().add(progVisServ);
-        progVisServ.setSize(this.getSize());
+        final GraphZoomScrollPane progVisScrollPane = new GraphZoomScrollPane(progVisServ);
+        //progVisScrollPane.setPreferredSize(new Dimension(600,600));
+        getContentPane().add(progVisScrollPane);
+        //this.pack();
+        progVisScrollPane.setSize(this.getSize());
     }
 
     /** This method is called from within the constructor to
@@ -58,7 +88,8 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ProgramVisualizationFrame.class);
+        setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

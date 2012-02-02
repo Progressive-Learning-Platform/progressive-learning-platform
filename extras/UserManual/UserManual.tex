@@ -23,7 +23,7 @@ Always make sure to download the latest version of PLP. This manual
 reflects the latest version.
 
 PLP is available for download in the 
-\href{http://code.google.com/p/progressive-learning-platform/downloads/list}{downloads}
+\htmladdnormallink{downloads}{http://code.google.com/p/progressive-learning-platform/downloads/list}
 section. The archive contains the following directory structure:
 
 \begin{enumerate}
@@ -328,7 +328,7 @@ op    $source_register_1, $source_register_2, branch_target
 
 branch\_target has to be a valid label in the program. The assembler takes the address of the label and will calculate the branch offset to be put into the immediate\_field. 
 
-\begin{tabular}{| l | l | l | p{5cm} | l |}
+\begin{tabular}{| l | l | l | p{3cm} | l |}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode \\
 \hline
@@ -346,7 +346,7 @@ op    $target_register, $source_register, immediate_field
 
 immediate\_field is a 16-bit integer that can be represented in either decimal or hex. \textbf{If this field is greater than 16 bits, the assembler will truncate the more significant bit positions beyond the 16th place.} The processor extends the sign bit of immediate\_field to make it a 32-bit number. 
 
-\begin{tabular}{| l | l | l | p{5cm} | l |}
+\begin{tabular}{| l | l | l | p{3cm} | l |}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode \\
 \hline

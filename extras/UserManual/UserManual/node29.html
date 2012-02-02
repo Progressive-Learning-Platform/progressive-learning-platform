@@ -73,37 +73,37 @@ immediate_field is a 16-bit integer that can be represented in either decimal or
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">addiu $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = rs + SignExtend(imm);</TD>
 <TD ALIGN="LEFT">addiu $v0, $a0, 0xBEEF</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Unsigned addition, add $a0 with 48879</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned addition, add $a0 with 48879</TD>
 <TD ALIGN="LEFT">0x09</TD>
 </TR>
 <TR><TD ALIGN="LEFT">andi $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = rs &amp; ZeroExtend(imm);</TD>
 <TD ALIGN="LEFT">andi $v0, $a0, 1337</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Bitwise Logical AND</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise Logical AND</TD>
 <TD ALIGN="LEFT">0x0c</TD>
 </TR>
 <TR><TD ALIGN="LEFT">ori $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = rs | ZeroExtend(imm);</TD>
 <TD ALIGN="LEFT">ori $v0, $a0, 0x0539</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Bitwise Logical OR</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise Logical OR</TD>
 <TD ALIGN="LEFT">0x0d</TD>
 </TR>
 <TR><TD ALIGN="LEFT">slti $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
 <TD ALIGN="LEFT">slti $v0, $a0, 0xDEAD</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Signed compare</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Signed compare</TD>
 <TD ALIGN="LEFT">0x0a</TD>
 </TR>
 <TR><TD ALIGN="LEFT">sltiu $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
 <TD ALIGN="LEFT">sltiu $v0, $a0, 0xDEAD</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Unsigned compare</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned compare</TD>
 <TD ALIGN="LEFT">0x0b</TD>
 </TR>
 </TABLE>
@@ -139,7 +139,7 @@ immediate_field is a 16-bit integer that can be represented in either decimal or
 <!--End of Navigation Panel-->
 <ADDRESS>
 will
-2012-01-25
+2012-02-01
 </ADDRESS>
 </BODY>
 </HTML>
