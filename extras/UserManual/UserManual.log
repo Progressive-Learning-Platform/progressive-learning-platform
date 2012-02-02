@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  25 JAN 2012 23:10
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  1 FEB 2012 23:36
 entering extended mode
  %&-line parsing enabled.
 **UserManual.tex
@@ -225,12 +225,27 @@ Overfull \hbox (24.34271pt too wide) in paragraph at lines 313--321
  []
 
 
-Overfull \hbox (79.20392pt too wide) in paragraph at lines 331--339
+Underfull \hbox (badness 3199) in paragraph at lines 335--335
+\OT1/cmr/m/n/10 $a0 and $a1 are
+ []
+
+
+Underfull \hbox (badness 3199) in paragraph at lines 336--336
+\OT1/cmr/m/n/10 $a0 and $a1 are
+ []
+
+
+Overfull \hbox (22.2984pt too wide) in paragraph at lines 331--339
 [][] 
  []
 
 
-Overfull \hbox (119.53749pt too wide) in paragraph at lines 349--360
+Underfull \hbox (badness 10000) in paragraph at lines 354--354
+[]\OT1/cmr/m/n/10 Bitwise Log-i-cal
+ []
+
+
+Overfull \hbox (62.63197pt too wide) in paragraph at lines 349--360
 [][] 
  []
 
@@ -247,7 +262,7 @@ Overfull \hbox (8.16495pt too wide) in paragraph at lines 399--407
 [10] [11] [12] <../../images/GPIO.png, id=307, 214.8025pt x 258.9675pt>
 File: ../../images/GPIO.png Graphic file (type png)
 
-<use ../../images/GPIO.png> [13 <../../images/GPIO.png>] [14]
+<use ../../images/GPIO.png> [13] [14 <../../images/GPIO.png>]
 <../../images/sseg.png, id=318, 200.75pt x 249.93375pt>
 File: ../../images/sseg.png Graphic file (type png)
 
@@ -264,18 +279,18 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 Here is how much of TeX's memory you used:
  2636 strings out of 256216
  37273 string characters out of 1917073
- 96048 words of memory out of 1500000
+ 95048 words of memory out of 1500000
  5847 multiletter control sequences out of 10000+200000
  8063 words of font info for 29 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
- 25i,9n,36p,591b,342s stack positions out of 5000i,500n,6000p,200000b,15000s
+ 25i,9n,36p,591b,423s stack positions out of 5000i,500n,6000p,200000b,15000s
 </usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pfb><
 /usr/share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type
 1/bluesky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb></us
 r/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/share/texmf/fonts/type1/bl
 uesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/sh
 are/texmf/fonts/type1/bluesky/cm/cmtt10.pfb>
-Output written on UserManual.pdf (17 pages, 288982 bytes).
+Output written on UserManual.pdf (17 pages, 286324 bytes).
 PDF statistics:
  375 PDF objects out of 1000 (max. 8388607)
  72 named destinations out of 1000 (max. 131072)

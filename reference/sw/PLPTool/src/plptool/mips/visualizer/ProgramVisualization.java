@@ -153,7 +153,8 @@ public class ProgramVisualization {
 
             vertices.add("Begin");
             previousVertex=0;
-            progGraph.addVertex(vertices.get(vertices.size()-1));
+            //progGraph.addVertex(vertices.get(vertices.size()-1));
+            progGraph.addVertex(vertices.get(0));
 
             // add labels first
             for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
@@ -184,8 +185,8 @@ public class ProgramVisualization {
                     //Msg.M(vertices.get(vertices.size()-1));
                     //progGraph.addVertex(vertices.get(vertices.size()-1));
                     currentLabel=plp.asm.lookupLabel(addr_table[jump_index]);
-                    progGraph.addEdge("jal" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
-                    progGraph.addEdge("jr" + addindex, currentLabel, previousLabel, EdgeType.DIRECTED);
+                    //progGraph.addEdge("jal" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    //progGraph.addEdge("jr" + addindex, currentLabel, previousLabel, EdgeType.DIRECTED);
                 }
 
                 if(instr_array[0].equals("j")){
