@@ -88,16 +88,8 @@ public class SimRunner extends Thread {
             
         }
 
-        if(Msg.lastError != 0) {
-            //if(plp.g())
-            //    plp.g_simsh.setStatusString("ERROR", Color.red);
-        }
-        //else
-            //if(plp.g())
-            //    plp.g_simsh.setStatusString("Ready", Color.black);
-
         long time = System.currentTimeMillis() - startTime;
-        Msg.m("--- stop: " + (sim.getInstrCount() - startInstr) + " instructions issued ");
+        Msg.m("--- stop: " + (sim.getInstrCount() - startInstr) + " instructions fetched ");
         Msg.M("in " + time + " milliseconds of real time.");
         
         if(plp.g()) {

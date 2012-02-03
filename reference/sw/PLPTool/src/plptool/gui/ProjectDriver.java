@@ -81,6 +81,7 @@ public class ProjectDriver {
     private PLPArchitecture        arch;
     private boolean                sim_mode;
     private boolean                replay;
+    private boolean                asm_req;
 
     /*
      * These variables hold data and information loaded from
@@ -165,6 +166,7 @@ public class ProjectDriver {
         halt = false;
         sim_mode = false;
         replay = false;
+        asm_req = false;
 
         if(applet) asms = new ArrayList<PLPAsmSource>();
 
@@ -367,6 +369,7 @@ public class ProjectDriver {
      */
     public int create() {
         modified = true;
+        asm_req = true;
         plpfile = new File("Unsaved Project");
 
         asms = new ArrayList<PLPAsmSource>();
@@ -387,6 +390,7 @@ public class ProjectDriver {
             refreshProjectView(false);
             desimulate();
             g_dev.disableSimControls();
+            g_dev.enableBuildControls();
         }
 
         return Constants.PLP_OK;
@@ -401,6 +405,7 @@ public class ProjectDriver {
      */
     public int create(String asmPath) {
         modified = true;
+        asm_req = true;
         plpfile = new File("Unsaved Project");
 
         asms = new ArrayList<PLPAsmSource>();
@@ -423,6 +428,7 @@ public class ProjectDriver {
             refreshProjectView(false);
             desimulate();
             g_dev.disableSimControls();
+            g_dev.enableBuildControls();
         }
 
         return Constants.PLP_OK;
@@ -855,7 +861,11 @@ public class ProjectDriver {
             Msg.I(i + ": " + asms.get(i).getAsmFilePath(), null);
 
         if(g) refreshProjectView(false);
-        if(!dirty && assemble) assemble();
+        if(!dirty && assemble) {
+            assemble();
+            asm_req = false;
+        } else
+            asm_req = true;
 
         if(g) {
             g_opts.restoreSavedOpts();
@@ -1069,6 +1079,7 @@ public class ProjectDriver {
                 modified = true;
             Msg.I("Done.", null);
             if(g) g_dev.enableSimControls();
+            asm_req = false;
         }
         else
             asm = null;
@@ -1082,6 +1093,14 @@ public class ProjectDriver {
     }
 
     /**
+     * Notify the project driver that the project will need to be assembled
+     * prior to any simulation or programming operations
+     */
+    public void requireAssemble() {
+       asm_req = true;
+    }
+
+    /**
      * Drive a simulation of assembly objects attached to this project.
      *
      * @return PLP_OK on successful operation, error code otherwise
@@ -1091,6 +1110,11 @@ public class ProjectDriver {
         if(!arch.hasSimCore())
             return Msg.E("simulate(): This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
+
+        if(asm_req) {
+            int ret = assemble();
+            if(ret != Constants.PLP_OK) return Constants.PLP_ASM_ASSEMBLE_FAILED;
+        }
 
         Msg.I("Starting simulation...", null);
 
@@ -1276,6 +1300,11 @@ public class ProjectDriver {
         if(!serial_support)
             return Msg.E("No native serial libraries available.",
                          Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, this);
+
+        if(asm_req) {
+            int ret = assemble();
+            if(ret != Constants.PLP_OK) return Constants.PLP_ASM_ASSEMBLE_FAILED;
+        }
      
         Msg.I("Programming to " + port, this);
 
