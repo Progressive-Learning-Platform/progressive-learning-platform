@@ -114,7 +114,6 @@ public class Develop extends javax.swing.JFrame {
         menuFindAndReplace.setEnabled(false);
         rootmenuEdit.setEnabled(false);
         btnSave.setEnabled(false);
-        disableSimControls();
 
         treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -143,6 +142,8 @@ public class Develop extends javax.swing.JFrame {
         undoManager = new DevUndoManager();
         undoManager.setLimit(Config.devMaxUndoEntries);
 
+        simEnd();
+        disableBuildControls();
         initPopupMenus();
         
         this.setLocationRelativeTo(null);
@@ -461,6 +462,7 @@ public class Develop extends javax.swing.JFrame {
         menuFindAndReplace.setEnabled(true);
         menuPrint.setEnabled(true);
         btnSave.setEnabled(true);
+        enableSimControls();
     }
 
     public final void closeProject() {
@@ -473,7 +475,11 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public final void disableBuildControls() {
-        disableSimControls();
+        btnSimulate.setEnabled(false);
+        btnProgram.setEnabled(false);
+        menuSimulate.setEnabled(false);
+        menuProgram.setEnabled(false);
+        menuQuickProgram.setEnabled(false);
         menuSave.setEnabled(false);
         menuSaveAs.setEnabled(false);
         menuPrint.setEnabled(false);
@@ -483,11 +489,6 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public final void disableSimControls() {
-        menuSimulate.setEnabled(false);
-        menuProgram.setEnabled(false);
-        btnSimulate.setEnabled(false);
-        btnProgram.setEnabled(false);
-        menuQuickProgram.setEnabled(false);
         simEnd();
      }
 
@@ -887,6 +888,12 @@ public class Develop extends javax.swing.JFrame {
         plp.updateComponents(true);
         //plp.refreshProjectView(false);
         safeRefresh(false);
+    }
+
+    public void programBoard() {
+        int ret = 0;
+        if(ret == Constants.PLP_OK && plp.getArch().hasProgrammer())
+            plp.g_prg.setVisible(true);
     }
 
     public void simBegin() {
@@ -3076,8 +3083,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
         if(btnSimulate.isSelected()) {
-            if(plp.isAssembled())
-                simBegin();
+            simBegin();
         } else {
             simEnd();
             //plp.refreshProjectView(false);
@@ -3246,8 +3252,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
         if(menuSimulate.isSelected()) {
-            if(plp.isAssembled())
-                simBegin();
+            simBegin();
         } else {
             simEnd();
             //plp.refreshProjectView(false);
@@ -3690,6 +3695,7 @@ class DevEditorDocListener implements DocumentListener {
 
         g_dev.notifyplpModified();
         plp.setModified();
+        plp.requireAssemble();
         thread.scheduleHighlight();
     }
 
@@ -3698,6 +3704,7 @@ class DevEditorDocListener implements DocumentListener {
 
         g_dev.notifyplpModified();
         plp.setModified();
+        plp.requireAssemble();
         thread.scheduleHighlight();
     }
 }
