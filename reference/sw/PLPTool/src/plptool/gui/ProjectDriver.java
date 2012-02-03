@@ -1449,8 +1449,8 @@ public class ProjectDriver {
             return Msg.E("updateAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
-        if(!asms.get(index).getAsmString().equals(newStr))
-            modified = true;
+        //if(!asms.get(index).getAsmString().equals(newStr))
+        //    setModified();
 
         asms.get(index).setAsmString(newStr);
 
@@ -1471,7 +1471,7 @@ public class ProjectDriver {
         }
 
         asms.add(new PLPAsmSource("# New ASM File", name, asms.size()));
-        modified = true;
+        setModified();
 
         if(g) refreshProjectView(true);
 
@@ -1507,7 +1507,7 @@ public class ProjectDriver {
         asms.add(new PLPAsmSource(null, path, asms.size()));
         asms.get(asms.size() - 1).setAsmFilePath(asmFile.getName());
 
-        modified = true;
+        setModified();
 
         if(g) refreshProjectView(true);
 
@@ -1569,7 +1569,7 @@ public class ProjectDriver {
             return  Msg.E("removeAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
-        modified = true;
+        setModified();
 
         if(index < open_asm) {
             Msg.D("removeAsm: index < open_asm: " + index + "<" + open_asm, 4, this);
@@ -1621,7 +1621,7 @@ public class ProjectDriver {
         asms.add(0, asms.get(index));
         asms.remove(index + 1);
         
-        modified = true;
+        setModified();
         
         if(open_asm == index)
             open_asm = 0;
