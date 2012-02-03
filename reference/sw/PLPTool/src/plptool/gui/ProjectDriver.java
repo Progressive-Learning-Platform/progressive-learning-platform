@@ -708,8 +708,9 @@ public class ProjectDriver {
                     String temp = metaScanner.nextLine();
                     if(temp.equals("plpmips")) {
                         Msg.W("This project file is made by PLPTool version 3 or earlier. " +
-                              "Meta data for this project will be updated when the project " +
-                              "file is saved. Defaulting to plpmips ISA.", this);
+                              "Meta data for this project will be updated " +
+                              "with the default ISA (plpmips) when the project " +
+                              "file is saved.", this);
                         arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
                     } else {
                         arch = ArchRegistry.getArchitectureMetaClass(this, Integer.parseInt(temp));
