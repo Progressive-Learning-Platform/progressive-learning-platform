@@ -59,6 +59,8 @@ public class Config {
     public static int     prgReadTimeout                   = 500;
     public static boolean prgNexys3ProgramWorkaround       = true;
 
+    public static boolean devNewSyntaxHighlightStrategy    = true;
+    public static long    devHihglighterThreadRefreshMsecs = 1000;
     public static boolean devSyntaxHighlighting            = true;
     public static boolean devSyntaxHighlightOnAssemble     = false;
     public static boolean nothighlighting                  = true;

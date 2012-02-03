@@ -63,6 +63,7 @@ public class Develop extends javax.swing.JFrame {
     boolean trackChanges = false;
     private ProjectDriver plp;
     private DevUndoManager undoManager;
+    private HighlighterThread highlighterThread;
     private javax.swing.JPopupMenu popupProject;
 
     private TextLineNumber tln;
@@ -73,6 +74,7 @@ public class Develop extends javax.swing.JFrame {
 
     private double hPaneSavedProportion = -1;
     private double vPaneSavedProportion = -1;
+    private DevEditorDocListener currentEditorListener;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -123,49 +125,18 @@ public class Develop extends javax.swing.JFrame {
             }
         });
 
-        txtEditor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                notifyplpModified();
-            }
-            public void removeUpdate(final javax.swing.event.DocumentEvent e) {
-                notifyplpModified();
-                /*
-                SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if(Config.devSyntaxHighlighting) {
-                        Config.nothighlighting = false;
-                        syntaxHighlight();
-                        Config.nothighlighting = true;
-                    }
+        if(!Config.devNewSyntaxHighlightStrategy)
+            txtEditor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                    notifyplpModified();
                 }
-                });*/
-            }
-            public void insertUpdate(final javax.swing.event.DocumentEvent e) {
-                notifyplpModified();
-                /*
-                SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if(Config.devSyntaxHighlighting) {
-                            Document doc = e.getDocument();
-                            String text;
-                            Config.nothighlighting = false;
-                            text = doc.getText(e.getOffset(), e.getLength());
-                            int caretPos = txtEditor.getCaretPosition();
-                            syntaxHighlight(text, e.getOffset(), styles);
-                            txtEditor.setCaretPosition(caretPos);
-                            Config.nothighlighting = true;
-                        }
-                    } catch(BadLocationException ble) {
-
-                    }
+                public void removeUpdate(final javax.swing.event.DocumentEvent e) {
+                    notifyplpModified();
                 }
-                });*/
-            }
-        });
-        
+                public void insertUpdate(final javax.swing.event.DocumentEvent e) {
+                    notifyplpModified();
+                }
+            });
 
         this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -404,6 +375,8 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.setContentType("text");
         trackChanges = false;
         if(!str.equals(txtEditor.getText())) {
+            if(currentEditorListener != null)
+                currentEditorListener.disable();
             try {
                 txtEditor.getDocument().remove(0, txtEditor.getDocument().getLength());
                 txtEditor.getDocument().insertString(0, str, null);
@@ -426,7 +399,15 @@ public class Develop extends javax.swing.JFrame {
             }
         });
 
-        //txtEditor.getDocument().addDocumentListener(new DevEditorDocListener(plp, this));
+        if(highlighterThread != null) {
+            highlighterThread.stopThread();
+        }
+        if(Config.devNewSyntaxHighlightStrategy) {
+            highlighterThread = new HighlighterThread(this);
+            currentEditorListener = new DevEditorDocListener(plp, highlighterThread);
+            txtEditor.getDocument().addDocumentListener(currentEditorListener);
+            highlighterThread.start();
+        }
     }
 
     /**
@@ -2807,7 +2788,6 @@ public class Develop extends javax.swing.JFrame {
                     String[] tokens = nodeStr.split(": ");
 
                     Msg.I("Opening " + nodeStr, null);
-
                     plp.updateAsm(plp.getOpenAsm(), txtEditor.getText());
                     plp.setOpenAsm(Integer.parseInt(tokens[0]));
                     //plp.refreshProjectView(false);
@@ -2873,7 +2853,7 @@ public class Develop extends javax.swing.JFrame {
     private boolean deleteOccured;
 
     private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-        //if(true) return;
+        if(Config.devNewSyntaxHighlightStrategy) return;
         deleteOccured = false;
         boolean modified = false;
 
@@ -3563,7 +3543,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
     public boolean safeAddEdit(javax.swing.undo.UndoableEdit anEdit) {
             editTypeList.add(position, Config.nothighlighting);
             position++;
-            Msg.D("++++ " + Config.nothighlighting + " undo position: " + position, 5, null);
+            Msg.D("++++ " + Config.nothighlighting + " undo position: " + position, 6, null);
             return super.addEdit(anEdit);
     }
     
@@ -3588,7 +3568,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
 
         Config.devSyntaxHighlighting = oldSyntaxOption;
 
-        Msg.D("<--- undo position: " + position, 5, null);
+        Msg.D("<--- undo position: " + position, 6, null);
     }
 
     public void dumpList() {
@@ -3619,7 +3599,7 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
         
         Config.devSyntaxHighlighting = oldSyntaxOption;
 
-        Msg.D("---> undo position: " + position, 5, null);
+        Msg.D("---> undo position: " + position, 6, null);
     }
 
     public void reset() {
@@ -3641,48 +3621,83 @@ class DevUndoManager extends javax.swing.undo.UndoManager{
     }
 }
 
+class HighlighterThread extends Thread {
+    private Develop g_dev;
+    private boolean stop;
+    private boolean scheduleHighlight;
+
+    public HighlighterThread(Develop g_dev) {
+        this.g_dev = g_dev;
+        stop = false;
+        scheduleHighlight = false;
+    }
+
+    @Override
+    public void run() {
+        while(!stop) {
+            if(scheduleHighlight) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(Config.devSyntaxHighlighting) {
+                            Config.nothighlighting = false;
+                            g_dev.syntaxHighlight();
+                            Config.nothighlighting = true;
+                        }
+                    }
+                    });
+                scheduleHighlight = false;
+            }
+            try {
+                Thread.sleep(Config.devHihglighterThreadRefreshMsecs);
+            } catch(Exception e) {
+                
+            }
+        }
+    }
+
+    public void scheduleHighlight() {
+        scheduleHighlight = true;
+    }
+
+    public void stopThread() {
+        scheduleHighlight = false;
+        stop = true;
+    }
+}
+
 class DevEditorDocListener implements DocumentListener {
     private Develop g_dev;
     private ProjectDriver plp;
+    private HighlighterThread thread;
+    private boolean enable;
 
-    public DevEditorDocListener(ProjectDriver plp, Develop g_dev) {
-        this.g_dev = g_dev;
+    public DevEditorDocListener(ProjectDriver plp, HighlighterThread thread) {
+        this.g_dev = plp.g_dev;
         this.plp = plp;
+        this.thread = thread;
+        enable = true;
     }
 
-    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+    public void disable() {
+        enable = false;
     }
+
+    public void changedUpdate(javax.swing.event.DocumentEvent e) {}
+
     public void removeUpdate(final javax.swing.event.DocumentEvent e) {
-       if(!Config.nothighlighting || plp.isReplaying()) return;
+       if(!enable || !Config.nothighlighting || plp.isReplaying()) return;
 
         g_dev.notifyplpModified();
-
-        SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-            if(Config.devSyntaxHighlighting) {
-                Config.nothighlighting = false;
-                g_dev.syntaxHighlight();
-                Config.nothighlighting = true;
-            }
-        }
-        });
+        plp.setModified();
+        thread.scheduleHighlight();
     }
+
     public void insertUpdate(final javax.swing.event.DocumentEvent e) {
-        if(!Config.nothighlighting || plp.isReplaying()) return;
+        if(!enable || !Config.nothighlighting || plp.isReplaying()) return;
 
         g_dev.notifyplpModified();
-
-        SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-            if(Config.devSyntaxHighlighting) {
-                Config.nothighlighting = false;
-                g_dev.syntaxHighlight();
-                Config.nothighlighting = true;
-            }
-
-        }
-        });
+        plp.setModified();
+        thread.scheduleHighlight();
     }
 }
