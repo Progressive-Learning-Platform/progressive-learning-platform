@@ -45,8 +45,6 @@ public class GPIOFrame extends javax.swing.JFrame {
         gpio_in_high = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/gpio_input.png")));
         gpio_out_low = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/gpio_out_low.png")));
         gpio_out_high = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/gpio_output.png")));
-
-        updateOutputs();
     }
 
     public void setTristateRegisterValues(long val) {

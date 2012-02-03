@@ -94,12 +94,9 @@
                   <Component id="A2" min="-2" max="-2" attributes="0"/>
                   <Component id="A1" min="-2" max="-2" attributes="0"/>
                   <Component id="A0" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lblPortA" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="A7" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                      <Component id="lblPortA" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="A7" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
