@@ -97,8 +97,7 @@ Section "Example Programs and Software Library"
 SectionEnd
 
 Section /o "PLP CPU Hardware for Nexys2/3"
-  File "hardware\*.mcs"
-  File "hardware\*.bit"
+  File /r "hardware"
 SectionEnd
 
 ;--------------------------------
