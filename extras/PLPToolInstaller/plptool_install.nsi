@@ -91,9 +91,14 @@ Section "Start Menu Shortcuts"
   
 SectionEnd
 
-Section /o "Example Programs and Software Library"
+Section "Example Programs and Software Library"
   File /r "..\..\reference\sw\examples"
   File /r "..\..\reference\sw\libplp"
+SectionEnd
+
+Section /o "PLP CPU Hardware for Nexys2/3"
+  File "hardware\*.mcs"
+  File "hardware\*.bit"
 SectionEnd
 
 ;--------------------------------
@@ -118,6 +123,7 @@ Section "Uninstall"
   Delete $INSTDIR\uninstall.exe
   Delete "$INSTDIR\libplp\*.*"
   Delete "$INSTDIR\examples\*.*"
+  Delete "$INSTDIR\hardware\*.*"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\PLPTool 4\*.*"
@@ -126,6 +132,7 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\PLPTool 4"
   RMDir "$INSTDIR\libplp"
   RMDir "$INSTDIR\examples"
+  RMDir "$INSTDIR\hardware"
   RMDir "$INSTDIR"
 
 SectionEnd

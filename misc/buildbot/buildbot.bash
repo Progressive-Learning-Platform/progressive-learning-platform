@@ -39,10 +39,6 @@ ant javadoc > build_javadoc_log
 cd /backup/fritz/buildbot_tmp/extras/PLPToolLectureRecorder
 ./package.sh > build_lecturerecorder_log
 
-#build the Windows installer
-cd /backup/fritz/buildbot_tmp/extras/PLPToolInstaller
-./build_linuxhost.sh > build_plptoolinstall_log
-
 #run the autotest
 cd /backup/fritz/buildbot_tmp/reference/sw
 yes | /usr/local/bin/djtgcfg prog -d Nexys2 -i 0 -f ../hw/build/build_500k_volatile/top.bit >> auto_test_log
@@ -61,6 +57,14 @@ cp reference/hw/build/build_500k_volatile/top.mcs to_push/nexys2_500k.mcs
 cp reference/hw/build/build_1200k_volatile/top.bit to_push/nexys2_1200k.bit
 cp reference/hw/build/build_1200k_volatile/top.mcs to_push/nexys2_1200k.mcs
 cp reference/hw/build/build_nexys3_volatile/top.bit to_push/nexys3.bit
+
+#build the Windows installer
+cd /backup/fritz/buildbot_tmp/extras/PLPToolInstaller
+mkdir Hardware
+cp ../../to_push/*.bit ./Hardware
+cp ../../to_push/*.mcs ./Hardware
+./build_linuxhost.sh > build_plptoolinstall_log
+
 cp reference/sw/PLPTool/*_log to_push
 cp reference/sw/PLPTool/store/* to_push
 cp extras/PLPToolInstaller/plptoolsetup.exe to_push
