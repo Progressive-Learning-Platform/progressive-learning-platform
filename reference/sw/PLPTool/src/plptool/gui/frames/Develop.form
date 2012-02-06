@@ -967,7 +967,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="472" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="460" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -1042,11 +1042,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="827" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="829" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="609" max="32767" attributes="0"/>
+                              <EmptySpace pref="611" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1064,7 +1064,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="410" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="288" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

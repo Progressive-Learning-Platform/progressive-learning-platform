@@ -583,6 +583,8 @@ public class Develop extends javax.swing.JFrame {
             if(!plp.plpfile.getName().endsWith(".plp"))
                 plp.plpfile = new File(plp.plpfile.getAbsolutePath() + ".plp");
             plp.save();
+            if(plp.isSimulating())
+                simEnd();
             plp.open(plp.plpfile.getAbsolutePath(), true);
         }
 
