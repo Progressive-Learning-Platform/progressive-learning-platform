@@ -1365,13 +1365,15 @@ public class ProjectDriver {
     public void setModified() {
         Msg.D("Project has been modified.", 5, this);
         modified = true;
-        this.updateWindowTitle();
+        if(g)
+            this.updateWindowTitle();
     }
 
     public void setUnModified() {
         Msg.D("Project has been unmodified.", 5, this);
         modified = false;
-        this.updateWindowTitle();
+        if(g)
+            this.updateWindowTitle();
     }
 
     public boolean isSerialSupported() {
