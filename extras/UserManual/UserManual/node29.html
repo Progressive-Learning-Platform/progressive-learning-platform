@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>I-type Arithmetic and Logical Instructions</TITLE>
+<META NAME="description" CONTENT="I-type Arithmetic and Logical Instructions">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="next" HREF="node30.html">
+<LINK REL="previous" HREF="node28.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node30.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html470"
+  HREF="node30.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html466"
+  HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html460"
+  HREF="node28.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html468"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html471"
+  HREF="node30.html">I-type Load Upper Immediate</A>
+<B> Up:</B> <A NAME="tex2html467"
+  HREF="node24.html">Ops</A>
+<B> Previous:</B> <A NAME="tex2html461"
+  HREF="node28.html">I-type Branch Instructions</A>
+ &nbsp; <B>  <A NAME="tex2html469"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00052500000000000000">
+I-type Arithmetic and Logical Instructions</A>
+</H3>
+These instructions receive inputs from a source register $rs and the immediate field, and store it in the target register $rt. The general syntax is: 
+
+<P>
+<PRE>
+op    $target_register, $source_register, immediate_field
+</PRE>
+
+<P>
+immediate_field is a 16-bit integer that can be represented in either decimal or hex. <B>If this field is greater than 16 bits, the assembler will truncate the more significant bit positions beyond the 16th place.</B> The processor extends the sign bit of immediate_field to make it a 32-bit number. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">addiu $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = rs + SignExtend(imm);</TD>
+<TD ALIGN="LEFT">addiu $v0, $a0, 0xBEEF</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned addition, add $a0 with 48879</TD>
+<TD ALIGN="LEFT">0x09</TD>
+</TR>
+<TR><TD ALIGN="LEFT">andi $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = rs &amp; ZeroExtend(imm);</TD>
+<TD ALIGN="LEFT">andi $v0, $a0, 1337</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise Logical AND</TD>
+<TD ALIGN="LEFT">0x0c</TD>
+</TR>
+<TR><TD ALIGN="LEFT">ori $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = rs | ZeroExtend(imm);</TD>
+<TD ALIGN="LEFT">ori $v0, $a0, 0x0539</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise Logical OR</TD>
+<TD ALIGN="LEFT">0x0d</TD>
+</TR>
+<TR><TD ALIGN="LEFT">slti $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
+<TD ALIGN="LEFT">slti $v0, $a0, 0xDEAD</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Signed compare</TD>
+<TD ALIGN="LEFT">0x0a</TD>
+</TR>
+<TR><TD ALIGN="LEFT">sltiu $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
+<TD ALIGN="LEFT">sltiu $v0, $a0, 0xDEAD</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned compare</TD>
+<TD ALIGN="LEFT">0x0b</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html470"
+  HREF="node30.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html466"
+  HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html460"
+  HREF="node28.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html468"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html471"
+  HREF="node30.html">I-type Load Upper Immediate</A>
+<B> Up:</B> <A NAME="tex2html467"
+  HREF="node24.html">Ops</A>
+<B> Previous:</B> <A NAME="tex2html461"
+  HREF="node28.html">I-type Branch Instructions</A>
+ &nbsp; <B>  <A NAME="tex2html469"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-02-01
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Instructions</TITLE>
+<META NAME="description" CONTENT="Instructions">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="next" HREF="node15.html">
+<LINK REL="previous" HREF="node13.html">
+<LINK REL="up" HREF="node13.html">
+<LINK REL="next" HREF="node15.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html283"
+  HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html279"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html273"
+  HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html281"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html284"
+  HREF="node15.html">Pseudo-ops</A>
+<B> Up:</B> <A NAME="tex2html280"
+  HREF="node13.html">Syntax</A>
+<B> Previous:</B> <A NAME="tex2html274"
+  HREF="node13.html">Syntax</A>
+ &nbsp; <B>  <A NAME="tex2html282"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00051100000000000000">
+Instructions</A>
+</H3>
+Instructions are written in 
+<code>&lt;opcode&gt; &lt;destination&gt;,&lt;operands&gt;</code>
+format, which differ slightly for each type of instruction.
+
+<P>
+R-type instructions have an opcode and three arguments (either registers or shift amount). For example, to add register 
+<code>$s0</code> and <code>$s1</code>, 
+and store it in register <code>$t0</code>, the instruction would be:
+
+<P>
+<PRE>
+add $t0, $s0, $s1
+</PRE>
+
+<P>
+Shift instructions use the last argument for the shift amount:
+
+<P>
+<PRE>
+sll $t0, $s0, 5  #shift s0 left 5 bits and store into t0
+</PRE>
+
+<P>
+I-type instructions have two register arguments and an immediate field. For example, to perform a logical OR on 
+<code>$s0</code> with the value 0xfeed and store the result in 
+<code>$t0</code>, the instruction would be:
+
+<P>
+<PRE>
+ori $t0, $s0, 0xfeed
+</PRE>
+
+<P>
+You may also specify the immediate field in decimal by leaving off the leading '0x'.
+
+<P>
+Branch instructions require the immediate field to be a label name:
+
+<P>
+<PRE>
+beq $s0, $s1, loop #if s0 == s1, branch to label "loop"
+</PRE>
+
+<P>
+J-type instructions have only one argument, and must be a label:
+
+<P>
+<PRE>
+jal my_function #jump and link to label "my_function"
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+will
+2012-02-01
+</ADDRESS>
+</BODY>
+</HTML>
