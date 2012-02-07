@@ -18,6 +18,7 @@
 
 package plptool.mips;
 
+import java.awt.event.ActionEvent;
 import plptool.*;
 import plptool.gui.frames.Develop;
 import plptool.gui.ProjectDriver;
@@ -34,6 +35,9 @@ public class Architecture extends PLPArchitecture {
     private plptool.mods.BusMonitor busMonitor;
     private plptool.mods.BusMonitorFrame busMonitorFrame;
     private plptool.mips.visualizer.CPUVisualization cpuVis;
+    private plptool.mips.visualizer.ProgramVisualization progVis;
+    private plptool.mips.visualizer.ProgramVisualization.programGraph progGraph;
+    private plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame;
 
     public Architecture(int archID, ProjectDriver plp) {
         super(archID, "plpmips", plp);
@@ -121,6 +125,20 @@ public class Architecture extends PLPArchitecture {
                 }
             });
 
+            // Add program visualizer menu item
+            final javax.swing.JMenuItem menuProgramVisualizer = new javax.swing.JMenuItem();
+            menuProgramVisualizer.setText("Display Program Call Graph");
+            menuProgramVisualizer.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    if(progVis == null) {
+                        progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
+                        progGraph = progVis.new programGraph();
+                        progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph);
+                    }
+                    progVisFrame.setVisible(true);
+                }
+            });
+
             // Add bus monitor checkbox menu
             final javax.swing.JCheckBoxMenuItem menuBusMonitor = new javax.swing.JCheckBoxMenuItem();
             menuBusMonitor.setText("Display Bus Monitor Timing Diagram");
@@ -154,7 +172,6 @@ public class Architecture extends PLPArchitecture {
                     }
                 }
             });
-
             cpuVis = new plptool.mips.visualizer.CPUVisualization((SimCore) plp.sim, menuCpuVis);
 
             // Restore saved timing diagram from project attributes, if it exists
@@ -180,6 +197,7 @@ public class Architecture extends PLPArchitecture {
             plp.g_dev.addSimToolItem(menuMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuBusMonitor);
+            plp.g_dev.addSimToolItem(menuProgramVisualizer);
             //Disable for 4.0 release
             //plp.g_dev.addSimToolItem(menuCpuVis);
         }
@@ -198,6 +216,7 @@ public class Architecture extends PLPArchitecture {
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
+            plp.g_dev.removeLastSimToolItem();
             //4.0 release
             //plp.g_dev.removeLastSimToolItem();
 
@@ -209,6 +228,10 @@ public class Architecture extends PLPArchitecture {
                 busMonitor = null;
             }
 
+            if(progVis != null) {
+                progVisFrame.dispose();
+                progVis = null;
+            }
             cpuVis.dispose();
             cpuVis = null;
             g_sim.disposeMemoryVisualizers();
