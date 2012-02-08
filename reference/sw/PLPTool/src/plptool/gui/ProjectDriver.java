@@ -658,16 +658,17 @@ public class ProjectDriver {
      */
     public int open(String path, boolean assemble) {
         File plpFile = new File(path);
+        
+        if(!plpFile.exists())
+            return Msg.E("open(" + path + "): File not found.",
+                            Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
+
         dirty = true;
 
         Msg.I("Opening " + path, null);
         hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1));
 
         arch = null;
-
-        if(!plpFile.exists())
-            return Msg.E("open(" + path + "): File not found.",
-                            Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
         asms = new ArrayList<PLPAsmSource>();
         smods = null;
