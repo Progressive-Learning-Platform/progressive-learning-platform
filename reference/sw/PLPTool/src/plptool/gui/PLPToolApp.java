@@ -238,8 +238,8 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("  -plp <plpfile> [command]");
             System.out.println("       If no command is specified, print out the list of source files contained in <plpfile>.");
             System.out.println("       This will also create <plpfile> if it does not exist.");
+            System.out.println("       Use '-plp' by itself for command listing.");
             System.out.println();
-            ProjectFileManipulator.helpMessage();
         }
     }
 }
