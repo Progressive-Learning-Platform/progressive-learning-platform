@@ -663,6 +663,7 @@ public class ProjectDriver {
             return Msg.E("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
+        boolean metafileFound = false;
         dirty = true;
 
         Msg.I("Opening " + path, null);
@@ -691,6 +692,7 @@ public class ProjectDriver {
                 tIn.read(image, 0, (int) entry.getSize());
                 metaStr = new String(image);
 
+                metafileFound = true;
                 meta = metaStr;
                 Scanner metaScanner;
 
@@ -735,6 +737,10 @@ public class ProjectDriver {
                 }
             }
         }
+
+        if(!metafileFound)
+            return Msg.E("No PLP metadata found.",
+                    Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
 
         // reset the tar input stream
         tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
