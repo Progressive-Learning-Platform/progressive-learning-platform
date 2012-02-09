@@ -31,6 +31,8 @@ import edu.uci.ics.jung.graph.*;
 import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.visualization.*;
 import edu.uci.ics.jung.visualization.decorators.*;
+import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.Point2D;
@@ -53,7 +55,7 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph) {
         initComponents();
-
+        int vertexYPos;
         this.progVis = progVis;
         this.progGraph= progGraph;
 
@@ -62,18 +64,24 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         // Grab graph's vertices
         List<String> vertexList = new ArrayList<String>(layout.getGraph().getVertices());
         // Traverse vertices, arrange them vertically
+        vertexYPos = 25;
         for(int i=0; i<vertexList.size(); i++){
-            layout.setLocation(vertexList.get(i), new Point2D.Double(50, i*50));
+                layout.setLocation(vertexList.get(i), new Point2D.Double(50, vertexYPos));
+                vertexYPos+=30;
         }
         //layout.setSize(new Dimension(600,600));
+        // create the vis viewer
         VisualizationViewer<String,String> progVisServ = new VisualizationViewer<String,String>(layout);
+        // formatting
         progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
+        progVisServ.getRenderer().getVertexLabelRenderer().setPosition(Position.E);
+        // create the pane
         final GraphZoomScrollPane progVisScrollPane = new GraphZoomScrollPane(progVisServ);
-        //progVisServ.setPreferredSize(new Dimension(1024,768));
+        progVisServ.setPreferredSize(new Dimension(250,1000));
         //progVisScrollPane.setPreferredSize(new Dimension(600,600));
         //progVisServ.setSize(this.getSize());
-        progVisScrollPane.setSize(this.getSize());
-        this.setResizable(true);
+        //progVisScrollPane.setSize(this.getSize());
+        //this.setResizable(true);
         this.setLayout(new BorderLayout());
         getContentPane().add(progVisScrollPane, BorderLayout.CENTER);
         this.pack();
