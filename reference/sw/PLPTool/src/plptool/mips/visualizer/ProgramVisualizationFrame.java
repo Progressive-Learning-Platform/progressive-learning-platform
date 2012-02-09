@@ -12,8 +12,10 @@
 package plptool.mips.visualizer;
 
 import java.awt.BorderLayout;
-/*
+
 import java.awt.Color;
+import java.awt.Paint;
+/*
 import java.awt.Container;
  *
  */
@@ -52,26 +54,50 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     private ProgramVisualization.programGraph progGraph;
 
 
-    private Layout layout;
-    private VisualizationViewer progVisServ;
+    private Layout<String, String> layout;
+    private VisualizationViewer<String,String> progVisServ;
+    private vertexRecolor<String> vertexRecolor;
 
-    /** Creates new form ProgramVisualizationFrame */
-    
+    // changes the color of drawn vertices
+    protected final class vertexRecolor<String> implements Transformer<String,Paint>{
+            private String PaintMe;
+            private String unPaintMe;
+            public void setPaintMe(String vertex){
+                this.PaintMe = vertex;
+            }
+            public void unPaintMe(String vertex){
+                this.unPaintMe = vertex;
+            }
+            public Paint transform(String vertex) {
+                if(vertex.equals(PaintMe)){
+                    return Color.GREEN;
+                }
+                else if(vertex.equals(unPaintMe)){
+                    return Color.BLUE;
+                }
+                else{
+                    return Color.RED;
+                }
+            }
+        };
+
+    // changes the size of drawn vertices
     private Transformer<String,Shape> vertexResizer = new Transformer<String,Shape>(){
-        public Shape transform(String s){
+        public Shape transform(String vertex){
             Ellipse2D vertexShape = new Ellipse2D.Double(-5, -5, 15, 15);
             return vertexShape;
         }
     };
-    @SuppressWarnings("unchecked")
+    
+    /** Creates new form ProgramVisualizationFrame */
     public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph) {
         initComponents();
         int vertexYPos;
         this.progVis = progVis;
         this.progGraph= progGraph;
-
+        vertexRecolor = new vertexRecolor<String>();
         // Vertical Layout
-        Layout<String, String> layout = new StaticLayout<String,String>(progGraph.buildGraph());
+        layout = new StaticLayout<String,String>(progGraph.buildGraph());
         // Grab graph's vertices
         List<String> vertexList = new ArrayList<String>(layout.getGraph().getVertices());
         // Traverse vertices, arrange them vertically
@@ -82,12 +108,8 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         }
         //layout.setSize(new Dimension(600,600));
         // create the vis viewer
-        VisualizationViewer<String,String> progVisServ = new VisualizationViewer<String,String>(layout);
-        // formatting
-
-        progVisServ.getRenderContext().setVertexShapeTransformer(vertexResizer);
-        progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
-        progVisServ.getRenderer().getVertexLabelRenderer().setPosition(Position.E);
+        progVisServ = new VisualizationViewer<String,String>(layout);
+        this.format();
         // create the pane
         final GraphZoomScrollPane progVisScrollPane = new GraphZoomScrollPane(progVisServ);
         progVisServ.setPreferredSize(new Dimension(250,1000));
@@ -99,6 +121,26 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         getContentPane().add(progVisScrollPane, BorderLayout.CENTER);
         this.pack();
         
+    }
+    @SuppressWarnings("unchecked")
+    // formatting
+    private void format(){
+        //vertexRecolor.transform("BEGIN");
+        progVisServ.getRenderContext().setVertexShapeTransformer(vertexResizer);
+        progVisServ.getRenderContext().setVertexFillPaintTransformer(vertexRecolor);
+
+        //vertexRecolor.setPaintMe("Begin");
+        progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
+        progVisServ.getRenderer().getVertexLabelRenderer().setPosition(Position.E);
+    }
+
+    // paint current label green
+    public void repaint(String vertexName){
+        vertexRecolor.setPaintMe(vertexName);
+    }
+    // as you move to next label, repaint red
+    public void unpaint(String vertexName){
+        vertexRecolor.unPaintMe(vertexName);
     }
 
     /** This method is called from within the constructor to
