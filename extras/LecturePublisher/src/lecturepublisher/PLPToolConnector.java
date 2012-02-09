@@ -61,6 +61,7 @@ public class PLPToolConnector implements PLPGenericModule {
     private DevDocListener editorDocListener;
     private AudioRecorder audioRecorderThread;
     private AudioPlayer audioPlayerThread;
+    private Runner runnerThread;
 
     private JMenuItem menuDevShowFrame;
 
@@ -87,6 +88,7 @@ public class PLPToolConnector implements PLPGenericModule {
                 }
                 Msg.I("Taking snapshot of the project...", this);
                 snapshot_Asms = new ArrayList<PLPAsmSource>();
+                plp.refreshProjectView(true);
                 for(int i = 0; i < plp.getAsms().size(); i++) {
                     PLPAsmSource s = plp.getAsm(i);
                     snapshot_Asms.add(new PLPAsmSource(s.getAsmString(), s.getAsmFilePath(), i));
@@ -100,6 +102,8 @@ public class PLPToolConnector implements PLPGenericModule {
                     audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
                     if(audioRecorderThread.isReady()) audioRecorderThread.start();
                 }
+                if(editorDocListener != null)
+                    plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
                 editorDocListener = new DevDocListener(this);
                 plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
                 record = true;
@@ -111,8 +115,15 @@ public class PLPToolConnector implements PLPGenericModule {
                     events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // end marker
                     record = false;
                     Msg.I("Stopped recording.", this);
+                } else if(runnerThread != null) {
+                    runnerThread.stopReplay();
+                    audioPlayerThread.stopPlay();
+                    controls.updateComponents();
+                    controls.externalStop();
                 } else
                     Msg.I("Not recording!", this);
+
+            } else if(param.equals("pause") && init) {
 
             } else if(param.equals("replay") && init) {
                 if(events == null || events.isEmpty()) {
@@ -139,7 +150,8 @@ public class PLPToolConnector implements PLPGenericModule {
                         audioPlayerThread = null;
                         audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
                     }
-                    (new Runner(events, plp, audioPlayerThread, audioRecorderThread)).start();
+                    runnerThread = new Runner(events, plp, audioPlayerThread, audioRecorderThread);
+                    runnerThread.start();
                 }
             } else if(param.equals("clear") && init) {
 		Msg.I("Replay events cleared", this);
@@ -335,110 +347,10 @@ public class PLPToolConnector implements PLPGenericModule {
 
         return events.get(events.size()-1).getSystemTimestamp() - events.get(0).getSystemTimestamp();
     }
-/*
-    private void initComponents() {
-        Container pane = this.getContentPane();
-        JPanel row0 = new JPanel();
-        JPanel row1 = new JPanel();
-        JPanel row2 = new JPanel();
-        pane.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        pane.add(row0, c);
-        c.gridx = 0;
-        c.gridy = 1;
-        pane.add(row1, c);
-        c.gridx = 0;
-        c.gridy = 2;
-        pane.add(row2, c);
 
-        row0.setLayout(new GridBagLayout());
-        row1.setLayout(new GridBagLayout());
-
-        in = new JTextField();
-        c.weightx = 3;
-        c.gridx = 0;
-        c.gridy = 0;
-        row0.add(in, c);
-
-        in.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent evt) {
-                if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
-                    hook(in.getText());
-                }
-            }
-        });
-
-        ctrlRecordAll = new JButton();
-        ctrlRecordAll.setText("Record ALL");
-        c.gridx = 0;
-        c.gridy = 0;
-        ctrlRecordAll.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               audio = true;
-               hook("record");
-           }
-        });
-        row1.add(ctrlRecordAll, c);
-
-        ctrlStopAll = new JButton();
-        ctrlStopAll.setText("Stop ALL");
-        c.gridx = 1;
-        c.gridy = 0;
-        ctrlStopAll.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               hook("stop");
-           }
-        });
-        row1.add(ctrlStopAll, c);
-
-        ctrlReplayAll = new JButton();
-        ctrlReplayAll.setText("Replay ALL");
-        c.gridx = 2;
-        c.gridy = 0;
-        ctrlReplayAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if(ctrlReplayAll.getText().equals("Replay ALL")) {
-                    superimpose = false;
-                    hook("replay");
-                    ctrlReplayAll.setText("PAUSE");
-                } else {
-                    ctrlReplayAll.setText("Replay ALL");
-                }
-            }
-        });
-        row1.add(ctrlReplayAll, c);
-
-        ctrlRecordEventsWithoutAudio = new JButton();
-        ctrlRecordEventsWithoutAudio.setText("Rec NOAUDIO");
-        c.gridx = 0;
-        c.gridy = 0;
-        ctrlRecordEventsWithoutAudio.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               audio = false;
-               hook("record");
-           }
-        });
-        row2.add(ctrlRecordEventsWithoutAudio, c);
-
-        ctrlSuperimpose = new JButton();
-        ctrlSuperimpose.setText("Superimpose");
-        c.gridx = 1;
-        c.gridy = 0;
-        ctrlSuperimpose.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               superimpose = true;
-               hook("replay");
-           }
-        });
-        row2.add(ctrlSuperimpose, c);
-    }
-*/
     public void resetStates() {
-        
+        controls.setRecordState(false);
+        controls.setPlaybackState(false);
     }
 
     @Override
@@ -506,6 +418,9 @@ public class PLPToolConnector implements PLPGenericModule {
         File audioFile;
         private AudioInputStream in;
         private final int EXTERNAL_BUFFER_SIZE = 524288; // 128Kb
+        private boolean stop;
+
+        private SourceDataLine line;
 
         public AudioPlayer(String path) {
             audioFile = new File(path);
@@ -532,7 +447,7 @@ public class PLPToolConnector implements PLPGenericModule {
             }
 
             AudioFormat format = in.getFormat();
-            SourceDataLine line = null;
+            line = null;
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
 
             try {
@@ -546,13 +461,14 @@ public class PLPToolConnector implements PLPGenericModule {
                 return;
             }
 
+            stop = false;
             line.start();
 
             int nBytesRead = 0;
             byte[] abData = new byte[EXTERNAL_BUFFER_SIZE];
 
             try {
-                while (nBytesRead != -1) {
+                while (nBytesRead != -1 && !stop) {
                     nBytesRead = in.read(abData, 0, abData.length);
                     if (nBytesRead >= 0)
                         line.write(abData, 0, nBytesRead);
@@ -564,6 +480,10 @@ public class PLPToolConnector implements PLPGenericModule {
                 line.drain();
                 line.close();
             }
+        }
+
+        public void stopPlay() {
+            stop = true;
         }
 
         @Override
@@ -578,6 +498,7 @@ public class PLPToolConnector implements PLPGenericModule {
         private long startTime;
         private AudioPlayer audioPlayerThread;
         private AudioRecorder audioRecorderThread;
+        private boolean stop;
 
         public Runner(ArrayList<ProjectEvent> events, ProjectDriver plp,
                 AudioPlayer audioPlayerThread, AudioRecorder audioRecorderThread) {
@@ -585,6 +506,7 @@ public class PLPToolConnector implements PLPGenericModule {
             this.plp = plp;
             this.audioPlayerThread = audioPlayerThread;
             this.audioRecorderThread = audioRecorderThread;
+            this.stop = false;
             if(events.size() >= 1)
                 startTime = events.get(0).getSystemTimestamp();
         }
@@ -603,7 +525,7 @@ public class PLPToolConnector implements PLPGenericModule {
                 if(audioPlayerThread != null) audioPlayerThread.start();
                 if(audioRecorderThread != null && audioRecorderThread.isReady())
                     audioRecorderThread.start();
-                for(int i = 0; i < events.size(); i++) {
+                for(int i = 0; i < events.size() && !stop; i++) {
                     e = events.get(i);
                     diff = e.getSystemTimestamp() - curTime;
                     Msg.D(i + "\t: " + diff + "ms", 2, this);
@@ -614,11 +536,13 @@ public class PLPToolConnector implements PLPGenericModule {
                 if(audioRecorderThread != null)
                     audioRecorderThread.stopRecording();
                 Msg.I("Replay done.", this);
-                controls.setRecordState(false);
-                controls.setPlaybackState(false);
                 resetStates();
             } catch(Exception e) {
             }
+        }
+
+        public void stopReplay() {
+            stop = true;
         }
 
         @Override
