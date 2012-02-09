@@ -127,7 +127,7 @@ public class ProgramVisualization {
             //graph.buildGraph();
             Graph<String, String> programGraph = buildGraph();
             //Forest<String, String> programGraph = buildGraph();
-            Msg.M(programGraph.toString());
+            //Msg.M(programGraph.toString());
         }
         //construct the graph
         public DirectedSparseMultigraph<String, String> buildGraph(){
@@ -162,7 +162,7 @@ public class ProgramVisualization {
             for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
                 currentLabel=asm.lookupLabel(addr_table[addindex1]);
                 if(currentLabel!=null){
-                    Msg.M(currentLabel);
+                    //Msg.M(currentLabel);
                     vertices.add(currentLabel);
                     progGraph.addVertex(currentLabel);
                 }
@@ -171,8 +171,8 @@ public class ProgramVisualization {
             // add edges
             previousLabel=vertices.get(0);
             currentLabel=vertices.get(1);
-            Msg.M("previous1: " + previousLabel);
-            Msg.M("current1: " + currentLabel);
+            //Msg.M("previous1: " + previousLabel);
+            //Msg.M("current1: " + currentLabel);
             for(int addindex=0; addindex < addr_table.length; addindex++){
                 testLabel=asm.lookupLabel(addr_table[addindex]);
                 if(testLabel!=null){
@@ -198,8 +198,8 @@ public class ProgramVisualization {
                     //progGraph.addVertex(vertices.get(vertices.size()-1));
                     //progGraph.addEdge(vertices.get(previousVertex) + " to " + vertices.get(vertices.size()-1), vertices.get(previousVertex), vertices.get(vertices.size()-1), EdgeType.DIRECTED);
                     currentLabel=asm.lookupLabel(addr_table[jump_index]);
-                    Msg.M("previous: " + previousLabel);
-                    Msg.M("current: " + currentLabel);
+                    //Msg.M("previous: " + previousLabel);
+                    //Msg.M("current: " + currentLabel);
                     progGraph.addEdge("j" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
                 }
 

@@ -10,8 +10,9 @@
  */
 
 package plptool.mips.visualizer;
-/*
+
 import java.awt.BorderLayout;
+/*
 import java.awt.Color;
 import java.awt.Container;
  *
@@ -49,18 +50,13 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     private VisualizationViewer progVisServ;
 
     /** Creates new form ProgramVisualizationFrame */
+    @SuppressWarnings("unchecked")
     public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph) {
         initComponents();
 
         this.progVis = progVis;
         this.progGraph= progGraph;
 
-        //Layout<String, String> layout = new ISOMLayout<String,String>(progGraph.buildGraph());
-        // tree layout stuff
-        //DelegateForest sherwood = new DelegateForest(progGraph.buildGraph());
-        //Layout<String, String> layout = new TreeLayout<String,String>(progGraph.buildGraph());
-        //this.setSize(1024, 768);
-        
         // Vertical Layout
         Layout<String, String> layout = new StaticLayout<String,String>(progGraph.buildGraph());
         // Grab graph's vertices
@@ -73,10 +69,15 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         VisualizationViewer<String,String> progVisServ = new VisualizationViewer<String,String>(layout);
         progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
         final GraphZoomScrollPane progVisScrollPane = new GraphZoomScrollPane(progVisServ);
+        //progVisServ.setPreferredSize(new Dimension(1024,768));
         //progVisScrollPane.setPreferredSize(new Dimension(600,600));
-        getContentPane().add(progVisScrollPane);
-        //this.pack();
+        //progVisServ.setSize(this.getSize());
         progVisScrollPane.setSize(this.getSize());
+        this.setResizable(true);
+        this.setLayout(new BorderLayout());
+        getContentPane().add(progVisScrollPane, BorderLayout.CENTER);
+        this.pack();
+        
     }
 
     /** This method is called from within the constructor to
