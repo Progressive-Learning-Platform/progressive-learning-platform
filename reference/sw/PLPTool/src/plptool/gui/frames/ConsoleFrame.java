@@ -248,9 +248,6 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 }
             }
 
-            else if(command.equals("dumpundolist")) {
-                plp.g_dev.getUndoManager().dumpList();
-            }
             else if(command.equals("loaddmodclass")) {
                 final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
                 int retVal = fc.showOpenDialog(null);

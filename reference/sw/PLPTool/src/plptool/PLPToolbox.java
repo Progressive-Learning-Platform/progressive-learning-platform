@@ -227,6 +227,13 @@ public class PLPToolbox {
     }
 
     /**
+     * Setup Classroom extras
+     */
+    public static void setupClassroomExtras(plptool.gui.ProjectDriver plp) {
+        javax.swing.JOptionPane.showMessageDialog(plp.g_dev, "Not implemented yet!");
+    }
+
+    /**
      * Load the lecture recorder. Attempt to load from:
      * - Check if it's already loaded
      * - Check user's home directory
