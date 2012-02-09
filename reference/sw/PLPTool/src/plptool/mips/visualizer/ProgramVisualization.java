@@ -24,6 +24,7 @@ import java.io.*;
 import java.util.ArrayList;
 // jung
 import edu.uci.ics.jung.graph.*;
+//import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.*;
 import org.apache.commons.collections15.*;
 import javax.swing.*;
@@ -130,7 +131,7 @@ public class ProgramVisualization {
             //Msg.M(programGraph.toString());
         }
         //construct the graph
-        public DirectedSparseMultigraph<String, String> buildGraph(){
+        public DirectedOrderedSparseMultigraph<String, String> buildGraph(){
         //public DelegateForest<String, String> buildGraph(){
 
             plptool.mips.Formatter progformat = new plptool.mips.Formatter();
@@ -147,7 +148,7 @@ public class ProgramVisualization {
             long branch_imm;
             ArrayList<String> vertices = new ArrayList<String>();
 
-            DirectedSparseMultigraph<String, String> progGraph = new DirectedSparseMultigraph<String, String>();
+            DirectedOrderedSparseMultigraph<String, String> progGraph = new DirectedOrderedSparseMultigraph<String, String>();
             //DelegateForest<String, String> progGraph = new DelegateForest<String, String>();
 
             long[] addr_table = asm.getAddrTable();
@@ -156,17 +157,23 @@ public class ProgramVisualization {
             vertices.add("Begin");
             previousVertex=0;
             //progGraph.addVertex(vertices.get(vertices.size()-1));
+            //Msg.M(vertices.get(0));
             progGraph.addVertex(vertices.get(0));
 
             // add labels first
+            //previousLabel=vertices.get(0);
             for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
                 currentLabel=asm.lookupLabel(addr_table[addindex1]);
                 if(currentLabel!=null){
                     //Msg.M(currentLabel);
                     vertices.add(currentLabel);
                     progGraph.addVertex(currentLabel);
+                    //progGraph.addEdge("" + addindex1, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    //previousLabel=currentLabel;
                 }
             }
+            progGraph.addVertex("End");
+            //Msg.M(progGraph.toString());
             //progGraph.addEdge("FIGHT", "Begin", "start", EdgeType.DIRECTED);
             // add edges
             previousLabel=vertices.get(0);
