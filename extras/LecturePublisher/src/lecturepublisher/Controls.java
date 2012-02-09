@@ -28,6 +28,7 @@ public class Controls extends javax.swing.JFrame {
 
     private ProjectDriver plp;
     private PLPToolConnector connector;
+    private ProgressUpdater progressUpdater;
 
     /** Creates new form Controls */
     public Controls(ProjectDriver plp, PLPToolConnector connector) {
@@ -41,20 +42,33 @@ public class Controls extends javax.swing.JFrame {
         radioRecordWithoutAudio.setEnabled(!b);
         radioPlayAndOverlay.setEnabled(!b);
         tabbedPane.setEnabledAt(1, !b);
+        tabbedPane.setEnabledAt(2, !b);
         tglBtnRecord.setSelected(b);
     }
 
     public void setPlaybackState(boolean b) {
         tabbedPane.setEnabledAt(0, !b);
+        tabbedPane.setEnabledAt(2, !b);
         tglBtnPlayPause.setSelected(b);
     }
 
     public void updateComponents() {
         long t = connector.getLectureLength();
         if(t > 0) {
+            txtStatus.setText("Lecture length: " + t + "ms");
             sliderProgress.setMaximum((int) t);
             sliderProgress.setMinimum(0);
+            progressBar.setMaximum((int) t);
+            progressBar.setMinimum(0);
         }
+    }
+
+    public void externalStop() {
+        if(progressUpdater != null) {
+            progressUpdater.stopUpdate();
+        }
+        sliderProgress.setValue(0);
+        progressBar.setValue(0);
     }
 
     /** This method is called from within the constructor to
@@ -78,10 +92,17 @@ public class Controls extends javax.swing.JFrame {
         sliderProgress = new javax.swing.JSlider();
         tglBtnPlayPause = new javax.swing.JToggleButton();
         btnStop = new javax.swing.JButton();
+        panelEmbedVideo = new javax.swing.JPanel();
+        lblVideoInfo1 = new javax.swing.JLabel();
+        lblVideoInfo2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
         progressBar = new javax.swing.JProgressBar();
         txtStatus = new javax.swing.JTextField();
 
         setTitle("Lecture Controls");
+        setResizable(false);
 
         btnGroupRecord.add(radioRecordWithAudio);
         radioRecordWithAudio.setSelected(true);
@@ -98,7 +119,7 @@ public class Controls extends javax.swing.JFrame {
         btnGroupRecord.add(radioRecordWithoutAudio);
         radioRecordWithoutAudio.setText("Record without audio");
 
-        tglBtnRecord.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        tglBtnRecord.setFont(new java.awt.Font("Tahoma", 1, 12));
         tglBtnRecord.setText("RECORD LECTURE");
         tglBtnRecord.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -106,7 +127,7 @@ public class Controls extends javax.swing.JFrame {
             }
         });
 
-        lblLecturePublisher.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        lblLecturePublisher.setFont(new java.awt.Font("Tahoma", 3, 11));
         lblLecturePublisher.setText("Lecture Publisher");
 
         javax.swing.GroupLayout panelRecordLayout = new javax.swing.GroupLayout(panelRecord);
@@ -120,7 +141,7 @@ public class Controls extends javax.swing.JFrame {
                     .addComponent(radioRecordWithAudio)
                     .addComponent(radioRecordWithoutAudio)
                     .addComponent(lblLecturePublisher))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addComponent(tglBtnRecord)
                 .addContainerGap())
         );
@@ -129,14 +150,14 @@ public class Controls extends javax.swing.JFrame {
             .addGroup(panelRecordLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tglBtnRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                    .addComponent(tglBtnRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
                     .addGroup(panelRecordLayout.createSequentialGroup()
                         .addComponent(radioRecordWithAudio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioPlayAndOverlay)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioRecordWithoutAudio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                         .addComponent(lblLecturePublisher)))
                 .addContainerGap())
         );
@@ -170,7 +191,7 @@ public class Controls extends javax.swing.JFrame {
                         .addComponent(tglBtnPlayPause, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(sliderProgress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                    .addComponent(sliderProgress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelPlaybackLayout.setVerticalGroup(
@@ -182,10 +203,52 @@ public class Controls extends javax.swing.JFrame {
                 .addGroup(panelPlaybackLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tglBtnPlayPause, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnStop))
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Playback", panelPlayback);
+
+        lblVideoInfo1.setText("PLP Lecture Publisher supports embedding of Theora");
+
+        lblVideoInfo2.setText("videos into the project file.");
+
+        jButton1.setText("Browse for Video File");
+
+        jButton2.setText("Embed Video into Project");
+
+        javax.swing.GroupLayout panelEmbedVideoLayout = new javax.swing.GroupLayout(panelEmbedVideo);
+        panelEmbedVideo.setLayout(panelEmbedVideoLayout);
+        panelEmbedVideoLayout.setHorizontalGroup(
+            panelEmbedVideoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelEmbedVideoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelEmbedVideoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                    .addComponent(lblVideoInfo1)
+                    .addComponent(lblVideoInfo2)
+                    .addGroup(panelEmbedVideoLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)))
+                .addContainerGap())
+        );
+        panelEmbedVideoLayout.setVerticalGroup(
+            panelEmbedVideoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelEmbedVideoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblVideoInfo1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblVideoInfo2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelEmbedVideoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab("Embed Video", panelEmbedVideo);
 
         txtStatus.setEditable(false);
 
@@ -230,6 +293,9 @@ public class Controls extends javax.swing.JFrame {
                 connector.hook("record");
             } else if(radioPlayAndOverlay.isSelected()) {
                 connector.setRecordPlaybackParams(false, true);
+                updateComponents();
+                progressUpdater = new ProgressUpdater(sliderProgress, progressBar);
+                progressUpdater.start();
                 connector.hook("replay");
             }
             setRecordState(true);
@@ -245,13 +311,15 @@ public class Controls extends javax.swing.JFrame {
                 connector.setRecordPlaybackParams(true, false);
                 connector.hook("replay");
                 updateComponents();
-                (new ProgressUpdated(connector.getStartTime(), sliderProgress, progressBar)).start();
+                progressUpdater = new ProgressUpdater(sliderProgress, progressBar);
+                progressUpdater.start();
                 setPlaybackState(true);
             } else {
                 tglBtnPlayPause.setSelected(false);
             }
         } else {
             connector.hook("pause");
+            progressUpdater.stopUpdate();
             setPlaybackState(false);
         }
     }//GEN-LAST:event_tglBtnPlayPauseActionPerformed
@@ -264,7 +332,13 @@ public class Controls extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup btnGroupRecord;
     private javax.swing.JButton btnStop;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblLecturePublisher;
+    private javax.swing.JLabel lblVideoInfo1;
+    private javax.swing.JLabel lblVideoInfo2;
+    private javax.swing.JPanel panelEmbedVideo;
     private javax.swing.JPanel panelPlayback;
     private javax.swing.JPanel panelRecord;
     private javax.swing.JProgressBar progressBar;
@@ -278,15 +352,14 @@ public class Controls extends javax.swing.JFrame {
     private javax.swing.JTextField txtStatus;
     // End of variables declaration//GEN-END:variables
 
-    class ProgressUpdated extends Thread {
+    class ProgressUpdater extends Thread {
         private int startTime;
         private javax.swing.JSlider slider;
         private javax.swing.JProgressBar progress;
         private boolean stop;
 
-        public ProgressUpdated(long startTime, javax.swing.JSlider slider,
+        public ProgressUpdater(javax.swing.JSlider slider,
                 javax.swing.JProgressBar progress) {
-            this.startTime = (int) ( startTime % (long) Math.pow(2, 32) );
             this.slider = slider;
             this.progress = progress;
             stop = false;
@@ -294,13 +367,17 @@ public class Controls extends javax.swing.JFrame {
 
         @Override
         public void run() {
+            try {
+                Thread.sleep(2000);
+            } catch(Exception e) {}
+            startTime = (int) ( System.currentTimeMillis() % (long) Math.pow(2, 32) );
             int sys_t = (int) ( System.currentTimeMillis() % (long) Math.pow(2, 32) );
             while(!stop && (sys_t-startTime) < progress.getMaximum()) {
                 sys_t = (int) ( System.currentTimeMillis() % (long) Math.pow(2, 32) );
                 slider.setValue((int) (sys_t-startTime));
                 progress.setValue((int) (sys_t-startTime));
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(50);
                 } catch(Exception e) {}
             }
         }
