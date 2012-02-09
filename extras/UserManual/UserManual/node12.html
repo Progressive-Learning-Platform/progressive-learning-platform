@@ -7,8 +7,8 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
   Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
 <HTML>
 <HEAD>
-<TITLE>Instruction Set and Assembly Language</TITLE>
-<META NAME="description" CONTENT="Instruction Set and Assembly Language">
+<TITLE>4 Instruction Set and Assembly Language</TITLE>
+<META NAME="description" CONTENT="4 Instruction Set and Assembly Language">
 <META NAME="keywords" CONTENT="UserManual">
 <META NAME="resource-type" CONTENT="document">
 <META NAME="distribution" CONTENT="global">
@@ -26,37 +26,37 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 
 <BODY >
 <!--Navigation Panel-->
-<A NAME="tex2html227"
+<A NAME="tex2html231"
   HREF="node13.html">
 <IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
  SRC="file:/usr/share/latex2html/icons/next.png"></A> 
-<A NAME="tex2html223"
+<A NAME="tex2html227"
   HREF="UserManual.html">
 <IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
  SRC="file:/usr/share/latex2html/icons/up.png"></A> 
-<A NAME="tex2html217"
+<A NAME="tex2html221"
   HREF="node11.html">
 <IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
  SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
-<A NAME="tex2html225"
+<A NAME="tex2html229"
   HREF="node1.html">
 <IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
  SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
 <BR>
-<B> Next:</B> <A NAME="tex2html228"
-  HREF="node13.html">Syntax</A>
-<B> Up:</B> <A NAME="tex2html224"
+<B> Next:</B> <A NAME="tex2html232"
+  HREF="node13.html">4.1 Syntax</A>
+<B> Up:</B> <A NAME="tex2html228"
   HREF="UserManual.html">User Manual</A>
-<B> Previous:</B> <A NAME="tex2html218"
-  HREF="node11.html">Programmer</A>
- &nbsp; <B>  <A NAME="tex2html226"
+<B> Previous:</B> <A NAME="tex2html222"
+  HREF="node11.html">3.4 Programmer</A>
+ &nbsp; <B>  <A NAME="tex2html230"
   HREF="node1.html">Contents</A></B> 
 <BR>
 <BR>
 <!--End of Navigation Panel-->
 
 <H1><A NAME="SECTION00050000000000000000">
-Instruction Set and Assembly Language</A>
+4 Instruction Set and Assembly Language</A>
 </H1>
 This section describes all supported instructions and pseudo-instructions by the PLP system. It also gives examples on how to use each instruction in a program and notes on limitations. 
 <BR><HR>
@@ -64,64 +64,64 @@ This section describes all supported instructions and pseudo-instructions by the
 <A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
 
 <UL>
-<LI><A NAME="tex2html229"
-  HREF="node13.html">Syntax</A>
-<UL>
-<LI><A NAME="tex2html230"
-  HREF="node14.html">Instructions</A>
-<LI><A NAME="tex2html231"
-  HREF="node15.html">Pseudo-ops</A>
-<LI><A NAME="tex2html232"
-  HREF="node16.html">Memory Organization (.org)</A>
 <LI><A NAME="tex2html233"
-  HREF="node17.html">Labels</A>
+  HREF="node13.html">4.1 Syntax</A>
+<UL>
 <LI><A NAME="tex2html234"
-  HREF="node18.html">Comments</A>
+  HREF="node14.html">4.1.1 Instructions</A>
 <LI><A NAME="tex2html235"
-  HREF="node19.html">Data and String Allocation</A>
-<UL>
+  HREF="node15.html">4.1.2 Pseudo-ops</A>
 <LI><A NAME="tex2html236"
-  HREF="node20.html">Allocate and Initialize Word</A>
+  HREF="node16.html">4.1.3 Memory Organization (.org)</A>
 <LI><A NAME="tex2html237"
-  HREF="node21.html">Empty Space Allocation</A>
+  HREF="node17.html">4.1.4 Labels</A>
 <LI><A NAME="tex2html238"
-  HREF="node22.html">String Allocation</A>
-</UL>
+  HREF="node18.html">4.1.5 Comments</A>
 <LI><A NAME="tex2html239"
-  HREF="node23.html">Notes on the Assembler</A>
-</UL>
-<BR>
-<LI><A NAME="tex2html240"
-  HREF="node24.html">Ops</A>
+  HREF="node19.html">4.1.6 Data and String Allocation</A>
 <UL>
+<LI><A NAME="tex2html240"
+  HREF="node20.html">4.1.6.1 Allocate and Initialize Word</A>
 <LI><A NAME="tex2html241"
-  HREF="node25.html">R-type Arithmetic and Logical Instructions</A>
+  HREF="node21.html">4.1.6.2 Empty Space Allocation</A>
 <LI><A NAME="tex2html242"
-  HREF="node26.html">R-type Shift Instructions</A>
+  HREF="node22.html">4.1.6.3 String Allocation</A>
+</UL>
 <LI><A NAME="tex2html243"
-  HREF="node27.html">R-type Jump Register Instructions</A>
-<LI><A NAME="tex2html244"
-  HREF="node28.html">I-type Branch Instructions</A>
-<LI><A NAME="tex2html245"
-  HREF="node29.html">I-type Arithmetic and Logical Instructions</A>
-<LI><A NAME="tex2html246"
-  HREF="node30.html">I-type Load Upper Immediate Instruction</A>
-<LI><A NAME="tex2html247"
-  HREF="node31.html">I-type Load and Store Word Instructions</A>
-<LI><A NAME="tex2html248"
-  HREF="node32.html">J-type Instructions</A>
+  HREF="node23.html">4.1.7 Notes on the Assembler</A>
 </UL>
 <BR>
+<LI><A NAME="tex2html244"
+  HREF="node24.html">4.2 Ops</A>
+<UL>
+<LI><A NAME="tex2html245"
+  HREF="node25.html">4.2.1 R-type Arithmetic and Logical Instructions</A>
+<LI><A NAME="tex2html246"
+  HREF="node26.html">4.2.2 R-type Shift Instructions</A>
+<LI><A NAME="tex2html247"
+  HREF="node27.html">4.2.3 R-type Jump Register Instructions</A>
+<LI><A NAME="tex2html248"
+  HREF="node28.html">4.2.4 I-type Branch Instructions</A>
 <LI><A NAME="tex2html249"
-  HREF="node33.html">Pseudo-ops</A>
+  HREF="node29.html">4.2.5 I-type Arithmetic and Logical Instructions</A>
 <LI><A NAME="tex2html250"
-  HREF="node34.html">Notes on Register Usage</A>
+  HREF="node30.html">4.2.6 I-type Load Upper Immediate Instruction</A>
+<LI><A NAME="tex2html251"
+  HREF="node31.html">4.2.7 I-type Load and Store Word Instructions</A>
+<LI><A NAME="tex2html252"
+  HREF="node32.html">4.2.8 J-type Instructions</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html253"
+  HREF="node33.html">4.3 Pseudo-ops</A>
+<LI><A NAME="tex2html254"
+  HREF="node34.html">4.4 Notes on Register Usage</A>
 </UL>
 <!--End of Table of Child-Links-->
 <BR><HR>
 <ADDRESS>
 will
-2012-02-01
+2012-02-08
 </ADDRESS>
 </BODY>
 </HTML>

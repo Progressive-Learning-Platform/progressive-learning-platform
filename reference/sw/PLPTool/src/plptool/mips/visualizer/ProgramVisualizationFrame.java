@@ -18,6 +18,9 @@ import java.awt.Container;
  *
  */
 import java.awt.Dimension;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 /*
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -36,6 +39,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.Point2D;
+import org.apache.commons.collections15.Transformer;
 
 /**
  * Create the JUNG Visualization graphically in a pop-up window.
@@ -52,6 +56,13 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     private VisualizationViewer progVisServ;
 
     /** Creates new form ProgramVisualizationFrame */
+    
+    private Transformer<String,Shape> vertexResizer = new Transformer<String,Shape>(){
+        public Shape transform(String s){
+            Ellipse2D vertexShape = new Ellipse2D.Double(-5, -5, 15, 15);
+            return vertexShape;
+        }
+    };
     @SuppressWarnings("unchecked")
     public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph) {
         initComponents();
@@ -73,6 +84,8 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         // create the vis viewer
         VisualizationViewer<String,String> progVisServ = new VisualizationViewer<String,String>(layout);
         // formatting
+
+        progVisServ.getRenderContext().setVertexShapeTransformer(vertexResizer);
         progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
         progVisServ.getRenderer().getVertexLabelRenderer().setPosition(Position.E);
         // create the pane

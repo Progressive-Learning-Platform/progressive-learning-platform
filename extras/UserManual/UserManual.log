@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  1 FEB 2012 23:36
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  8 FEB 2012 21:27
 entering extended mode
  %&-line parsing enabled.
 **UserManual.tex
@@ -84,6 +84,20 @@ Package hyperref Info: Link coloring OFF on input line 3122.
 File: hpdftex.def 2007/02/07 v6.75r Hyperref driver for pdfTeX
 \Fld@listcount=\count93
 )
+(/usr/share/texmf/tex/latex/html/html.sty
+Package: html 1999/07/19 v1.38 hypertext commands for latex2html (nd, hws, rrm)
+
+\c@lpart=\count94
+\c@lchapter=\count95
+\c@chapter=\count96
+\c@lsection=\count97
+\c@lsubsection=\count98
+\c@lsubsubsection=\count99
+\c@lparagraph=\count100
+\c@lsubparagraph=\count101
+\c@lsubsubparagraph=\count102
+\ptrfile=\write3
+)
 (/usr/share/texmf/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -100,7 +114,7 @@ Package graphics Info: Driver file: pdftex.def on input line 90.
 
 (/usr/share/texmf/tex/latex/pdftex-def/pdftex.def
 File: pdftex.def 2007/01/08 v0.04d Graphics/color for pdfTeX
-\Gread@gobject=\count94
+\Gread@gobject=\count103
 ))
 \Gin@req@height=\dimen106
 \Gin@req@width=\dimen107
@@ -111,21 +125,21 @@ Package: fullpage 1999/02/23 1.1 (PWD)
 ) (./UserManual.aux)
 \openout1 = `UserManual.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-Package hyperref Info: Link coloring OFF on input line 6.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+Package hyperref Info: Link coloring OFF on input line 7.
 
 (/usr/share/texmf/tex/latex/hyperref/nameref.sty
 Package: nameref 2006/12/27 v2.28 Cross-referencing by name of section
@@ -133,21 +147,21 @@ Package: nameref 2006/12/27 v2.28 Cross-referencing by name of section
 (/usr/share/texmf/tex/latex/oberdiek/refcount.sty
 Package: refcount 2006/02/20 v3.0 Data extraction from references (HO)
 )
-\c@section@level=\count95
+\c@section@level=\count104
 )
-LaTeX Info: Redefining \ref on input line 6.
-LaTeX Info: Redefining \pageref on input line 6.
+LaTeX Info: Redefining \ref on input line 7.
+LaTeX Info: Redefining \pageref on input line 7.
  (./UserManual.out)
 (./UserManual.out)
-\@outlinefile=\write3
-\openout3 = `UserManual.out'.
+\@outlinefile=\write4
+\openout4 = `UserManual.out'.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 13.
+(Font)              <12> on input line 14.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 13.
+(Font)              <8> on input line 14.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 13.
+(Font)              <6> on input line 14.
  [1
 
 {/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}]
@@ -157,16 +171,16 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 4.
 )
-\tf@toc=\write4
-\openout4 = `UserManual.toc'.
+\tf@toc=\write5
+\openout5 = `UserManual.toc'.
 
  [2] [3]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 84.
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 85.
  (/usr/share/texmf/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 84.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 85.
 
 <../../images/plptool/plptool30_editor_view.png, id=262, 860.21375pt x 538.01pt
 >
@@ -178,30 +192,25 @@ plptool30_editor_view.png>]
 File: ../../images/plptool/plptool30_simulation_mode.png Graphic file (type png
 )
  <use ../../images/plptool/plptool30_simulation_mode.png>
-Overfull \hbox (44.04076pt too wide) in paragraph at lines 118--122
+Overfull \hbox (44.04076pt too wide) in paragraph at lines 119--123
 \OT1/cmr/m/n/10 ac-tu-ally an in-struc-tion present. Double-click on an ex-ist-
 ing break-point to clear it, or use []\OT1/cmtt/m/n/10 Tools -> Clear Breakpoin
 ts
  []
 
 [5 <../../images/plptool/plptool30_simulation_mode.png>] [6] [7]
-Underfull \hbox (badness 4779) in paragraph at lines 283--283
+Underfull \hbox (badness 4779) in paragraph at lines 284--284
 []\OT1/cmr/m/n/10 Unsigned sub-trac-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 284--284
+Underfull \hbox (badness 10000) in paragraph at lines 285--285
 []\OT1/cmr/m/n/10 Bitwise log-i-cal
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 286--286
+Underfull \hbox (badness 10000) in paragraph at lines 287--287
 []\OT1/cmr/m/n/10 Bitwise log-i-cal
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 289--289
-[]\OT1/cmr/m/n/10 Multiply (re-turn
  []
 
 
@@ -210,23 +219,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 290--290
  []
 
 
-Overfull \hbox (57.13199pt too wide) in paragraph at lines 278--293
+Underfull \hbox (badness 10000) in paragraph at lines 291--291
+[]\OT1/cmr/m/n/10 Multiply (re-turn
+ []
+
+
+Overfull \hbox (57.13199pt too wide) in paragraph at lines 279--294
 [] 
  []
 
 
-Overfull \hbox (41.89836pt too wide) in paragraph at lines 302--310
+Overfull \hbox (41.89836pt too wide) in paragraph at lines 303--311
 [][] 
  []
 
 [8]
-Overfull \hbox (24.34271pt too wide) in paragraph at lines 313--321
+Overfull \hbox (24.34271pt too wide) in paragraph at lines 314--322
 [][] 
- []
-
-
-Underfull \hbox (badness 3199) in paragraph at lines 335--335
-\OT1/cmr/m/n/10 $a0 and $a1 are
  []
 
 
@@ -235,27 +244,32 @@ Underfull \hbox (badness 3199) in paragraph at lines 336--336
  []
 
 
-Overfull \hbox (22.2984pt too wide) in paragraph at lines 331--339
+Underfull \hbox (badness 3199) in paragraph at lines 337--337
+\OT1/cmr/m/n/10 $a0 and $a1 are
+ []
+
+
+Overfull \hbox (22.2984pt too wide) in paragraph at lines 332--340
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 354--354
+Underfull \hbox (badness 10000) in paragraph at lines 355--355
 []\OT1/cmr/m/n/10 Bitwise Log-i-cal
  []
 
 
-Overfull \hbox (62.63197pt too wide) in paragraph at lines 349--360
+Overfull \hbox (62.63197pt too wide) in paragraph at lines 350--361
 [][] 
  []
 
 [9]
-Overfull \hbox (43.20401pt too wide) in paragraph at lines 381--389
+Overfull \hbox (43.20401pt too wide) in paragraph at lines 382--390
 [][] 
  []
 
 
-Overfull \hbox (8.16495pt too wide) in paragraph at lines 399--407
+Overfull \hbox (8.16495pt too wide) in paragraph at lines 400--408
 [][] 
  []
 
@@ -267,20 +281,20 @@ File: ../../images/GPIO.png Graphic file (type png)
 File: ../../images/sseg.png Graphic file (type png)
 
 <use ../../images/sseg.png> [15 <../../images/sseg.png (PNG copy)>] [16]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 717.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 718.
 
 
 (/usr/share/texmf/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 717.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 718.
  [17] (./UserManual.aux) ) 
 Here is how much of TeX's memory you used:
- 2636 strings out of 256216
- 37273 string characters out of 1917073
- 95048 words of memory out of 1500000
- 5847 multiletter control sequences out of 10000+200000
+ 2899 strings out of 256216
+ 40460 string characters out of 1917073
+ 99075 words of memory out of 1500000
+ 6107 multiletter control sequences out of 10000+200000
  8063 words of font info for 29 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
  25i,9n,36p,591b,423s stack positions out of 5000i,500n,6000p,200000b,15000s
@@ -290,7 +304,7 @@ Here is how much of TeX's memory you used:
 r/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/share/texmf/fonts/type1/bl
 uesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/sh
 are/texmf/fonts/type1/bluesky/cm/cmtt10.pfb>
-Output written on UserManual.pdf (17 pages, 286324 bytes).
+Output written on UserManual.pdf (17 pages, 286507 bytes).
 PDF statistics:
  375 PDF objects out of 1000 (max. 8388607)
  72 named destinations out of 1000 (max. 131072)
