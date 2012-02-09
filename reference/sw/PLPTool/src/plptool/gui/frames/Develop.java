@@ -124,19 +124,6 @@ public class Develop extends javax.swing.JFrame {
             }
         });
 
-        if(!Config.devNewSyntaxHighlightStrategy)
-            txtEditor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-                public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                    notifyplpModified();
-                }
-                public void removeUpdate(final javax.swing.event.DocumentEvent e) {
-                    notifyplpModified();
-                }
-                public void insertUpdate(final javax.swing.event.DocumentEvent e) {
-                    notifyplpModified();
-                }
-            });
-
         this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
 
         undoManager = new DevUndoManager();
@@ -149,9 +136,6 @@ public class Develop extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
 
-        /*** 4.0 RELEASE ***/
-        menuClassroom.setVisible(false);
-        /*******************/
 
         Msg.M(Constants.copyrightString);
     }
@@ -332,14 +316,6 @@ public class Develop extends javax.swing.JFrame {
         plp.refreshProjectView(false);
     }
 
-    public void notifyplpModified() {
-        if(trackChanges) {
-            if(Config.nothighlighting) {
-                //plp.setModified();
-            }
-        }
-    }
-
     /**
      * Get output text component
      *
@@ -445,10 +421,18 @@ public class Develop extends javax.swing.JFrame {
         return treeProject;
     }
 
+    /**
+     * Set the visibility of the toolbar
+     *
+     * @param b Toolbar visibility
+     */
     public void setToolbarVisible(boolean b) {
         toolbar.setVisible(b);
     }
 
+    /**
+     * Enable project build / editing controls
+     */
     public final void enableBuildControls() {
         rootmenuProject.setEnabled(true);
         menuImportASM.setEnabled(true);
@@ -465,6 +449,9 @@ public class Develop extends javax.swing.JFrame {
         enableSimControls();
     }
 
+    /**
+     * Close project (UNUSED)
+     */
     public final void closeProject() {
         plp.plpfile = null;
         plp.setUnModified();
@@ -474,6 +461,9 @@ public class Develop extends javax.swing.JFrame {
         safeRefresh(false);
     }
 
+    /**
+     * Disable build controls
+     */
     public final void disableBuildControls() {
         btnSimulate.setEnabled(false);
         btnProgram.setEnabled(false);
@@ -492,6 +482,9 @@ public class Develop extends javax.swing.JFrame {
         simEnd();
      }
 
+    /**
+     * Enable simulation controls
+     */
     public final  void enableSimControls() {
         menuSimulate.setEnabled(true);
         menuProgram.setEnabled(true);
@@ -500,11 +493,9 @@ public class Develop extends javax.swing.JFrame {
         menuQuickProgram.setEnabled(true);
     }
 
-    public int save() {
-        
-        return Constants.PLP_OK;
-    }
-
+    /**
+     * Exit PLPTool routine. Save g_dev configs and quit.
+     */
     public void exit() {
         switch(askSaveFirst("exit", "Exit")) {
             case 2:
@@ -519,6 +510,9 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Create new project routine.
+     */
     public void newPLPFile() {
         switch(askSaveFirst("create a new project", "Create a new project")) {
             case 2:
@@ -531,6 +525,9 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Open a project routine
+     */
     public void openPLPFile() {
         switch(askSaveFirst("open a project", "Open a project")) {
             case 2:
@@ -556,6 +553,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Save as routine
+     *
+     * @return
+     */
     public int savePLPFileAs() {
         Msg.output = txtOutput;
 
@@ -591,6 +593,16 @@ public class Develop extends javax.swing.JFrame {
         return retVal;
     }
 
+    /**
+     * Convenient method asking the user to save the project (if it's modified)
+     * first before committing to an action that may discard any modifications
+     * that have been made.
+     *
+     * @param action A concise description of the user action
+     * @param capAction Same with action, but with first letter capitalized
+     * @return 2 if user canceled / closed the dialog, -1 if saving was not
+     * necessary, 0 if user saved the file, 1 if the user did not save
+     */
     public int askSaveFirst(String action, String capAction) {
         int ret = javax.swing.JFileChooser.APPROVE_OPTION;
 
@@ -627,6 +639,11 @@ public class Develop extends javax.swing.JFrame {
         return -1;
     }
 
+    /**
+     * Delete source file from project routine
+     *
+     * @return Error code
+     */
     public int deleteASM() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
 
@@ -655,6 +672,11 @@ public class Develop extends javax.swing.JFrame {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Import source file routine
+     *
+     * @return Error code
+     */
     public int importASM() {
         Msg.output = txtOutput;
 
@@ -672,6 +694,11 @@ public class Develop extends javax.swing.JFrame {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Export source file routine
+     *
+     * @return Error code
+     */
     public int exportASM() {
         Msg.output = txtOutput;
         int indexToExport = -1;
@@ -704,10 +731,16 @@ public class Develop extends javax.swing.JFrame {
         return Constants.PLP_OK;
     }
 
+    /**
+     * Show about dialog
+     */
     public void about() {
         plp.g_about.setVisible(true);
     }
 
+    /**
+     * Syntax highlight the current open document
+     */
     public void syntaxHighlight() {
         Config.nothighlighting = false;
         int currpos = 0;
@@ -722,6 +755,9 @@ public class Develop extends javax.swing.JFrame {
         Config.nothighlighting = true;
     }
 
+    /**
+     * Redo routine
+     */
     private void redo() {
         Msg.D("redo()", 10, this);
 
@@ -730,12 +766,20 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Undo routine
+     */
     private void undo() {
         if(undoManager.canUndo()) {
             undoManager.safeUndo();
         }
     }
 
+    /**
+     * Syntax highlight a specific line in the open document
+     *
+     * @param line Line number to highlight
+     */
     public void syntaxHighlight(int line) {
         Config.nothighlighting = false;
         try {
@@ -752,6 +796,14 @@ public class Develop extends javax.swing.JFrame {
 
     //Do not call this class without setting highlighting to true
     //Or without recording selected text
+
+    /**
+     * Syntax highlighter main method
+     *
+     * @param text
+     * @param position
+     * @param styles
+     */
     public void syntaxHighlight(String text, int position, SimpleAttributeSet[] styles) {
         StyledDocument doc = txtEditor.getStyledDocument();
         int currentposition = 0;
@@ -860,10 +912,9 @@ public class Develop extends javax.swing.JFrame {
         Config.devSyntaxHighlighting = savedConfig;
     }
 
-    public DevUndoManager getUndoManager() {
-        return undoManager;
-    }
-
+    /**
+     * Assemble routine
+     */
     public void assemble() {
         Msg.output = txtOutput;
 
@@ -878,6 +929,9 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Simulation reset routine
+     */
     public void simReset() {
         if(plp.g_simrun != null)
             plp.stopSimulation();
@@ -892,12 +946,20 @@ public class Develop extends javax.swing.JFrame {
         safeRefresh(false);
     }
 
+    /**
+     * Program board routine
+     */
     public void programBoard() {
         int ret = 0;
         if(ret == Constants.PLP_OK && plp.getArch().hasProgrammer())
             plp.g_prg.setVisible(true);
     }
 
+    /**
+     * Begin simulation routine. External classes MUST call this method if
+     * g_dev is at all available to the user instead of directly using
+     * ProjectDriver's simulate method.
+     */
     public void simBegin() {
         if(plp.simulate() == Constants.PLP_OK) {
             menuSimulate.setSelected(true);
@@ -925,6 +987,11 @@ public class Develop extends javax.swing.JFrame {
             simEnd();
     }
 
+    /**
+     * End simulation routine. External classes MUST call this method if g_dev
+     * is at all available to the user instead of directly using the
+     * ProjectDriver's desimulate method.
+     */
     public void simEnd() {
 
         txtEditor.setEditable(true);
@@ -966,11 +1033,21 @@ public class Develop extends javax.swing.JFrame {
         lblSimStat.setText("Editor Mode");
     }
 
+    /**
+     * Stop GUI run state indications
+     */
     public void stopRunState() {
         menuSimRun.setSelected(false);
         btnSimRun.setSelected(false);
     }
 
+    /**
+     * Get a reference to a tool checkbox menu. Used for synchronizing between
+     * menu items and toggle buttons on the toolbar
+     *
+     * @param index Index of the check box menu
+     * @return The reference to the menu item
+     */
     public javax.swing.JCheckBoxMenuItem getToolCheckboxMenu(int index) {
         switch(index) {
             case Constants.PLP_TOOLFRAME_IOREGISTRY:
@@ -1014,6 +1091,13 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Get a reference to a toggle button. Used for synchronizing between
+     * menu items and toggle buttons on the toolbar
+     *
+     * @param index Index of the toggle button
+     * @return The reference to the toggle button
+     */
     public javax.swing.JToggleButton getToolToggleButton(int index) {
         switch(index) {
             case Constants.PLP_TOOLFRAME_IOREGISTRY:
@@ -1085,6 +1169,12 @@ public class Develop extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Set visibility of a simulation window
+     *
+     * @param id ID of the frame
+     * @param v Visibility
+     */
     public void setSimWindowVisibility(int id, boolean v) {
         switch(id) {
             case Constants.PLP_TOOLFRAME_SIMLEDS:
@@ -1436,7 +1526,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
         menuClassroom = new javax.swing.JMenu();
-        menuSetupLectureRecorder = new javax.swing.JMenuItem();
+        menuClassroomSetupExtras = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuDynamicModuleManager = new javax.swing.JMenuItem();
         menuSerialTerminal = new javax.swing.JMenuItem();
@@ -1542,10 +1632,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1566,11 +1656,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 609, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1584,7 +1674,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1607,7 +1697,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -2262,14 +2352,14 @@ public class Develop extends javax.swing.JFrame {
         menuClassroom.setText(resourceMap.getString("menuClassroom.text")); // NOI18N
         menuClassroom.setName("menuClassroom"); // NOI18N
 
-        menuSetupLectureRecorder.setText(resourceMap.getString("menuSetupLectureRecorder.text")); // NOI18N
-        menuSetupLectureRecorder.setName("menuSetupLectureRecorder"); // NOI18N
-        menuSetupLectureRecorder.addActionListener(new java.awt.event.ActionListener() {
+        menuClassroomSetupExtras.setText(resourceMap.getString("menuClassroomSetupExtras.text")); // NOI18N
+        menuClassroomSetupExtras.setName("menuClassroomSetupExtras"); // NOI18N
+        menuClassroomSetupExtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuSetupLectureRecorderActionPerformed(evt);
+                menuClassroomSetupExtrasActionPerformed(evt);
             }
         });
-        menuClassroom.add(menuSetupLectureRecorder);
+        menuClassroom.add(menuClassroomSetupExtras);
 
         rootmenuTools.add(menuClassroom);
         rootmenuTools.add(jSeparator7);
@@ -3275,9 +3365,9 @@ public class Develop extends javax.swing.JFrame {
         (new DynamicModuleManager(this, true, plp)).setVisible(true);
     }//GEN-LAST:event_menuDynamicModuleManagerActionPerformed
 
-    private void menuSetupLectureRecorderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetupLectureRecorderActionPerformed
-        PLPToolbox.setupLectureRecorder(this, plp);
-    }//GEN-LAST:event_menuSetupLectureRecorderActionPerformed
+    private void menuClassroomSetupExtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClassroomSetupExtrasActionPerformed
+        PLPToolbox.setupClassroomExtras(plp);
+    }//GEN-LAST:event_menuClassroomSetupExtrasActionPerformed
 
     private void btnSimGPIOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimGPIOActionPerformed
         setGPIOFrame(btnSimGPIO.isSelected());
@@ -3399,6 +3489,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
     private javax.swing.JMenu menuClassroom;
+    private javax.swing.JMenuItem menuClassroomSetupExtras;
     private javax.swing.JMenuItem menuClearBreakpoints;
     private javax.swing.JMenuItem menuClearOutputPane;
     private javax.swing.JMenuItem menuCopy;
@@ -3435,7 +3526,6 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator5;
     private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
-    private javax.swing.JMenuItem menuSetupLectureRecorder;
     private javax.swing.JMenuItem menuSimAsmView;
     private javax.swing.JCheckBoxMenuItem menuSimControl;
     private javax.swing.JCheckBoxMenuItem menuSimGPIO;
@@ -3695,7 +3785,6 @@ class DevEditorDocListener implements DocumentListener {
     public void removeUpdate(final javax.swing.event.DocumentEvent e) {
        if(!enable || !Config.nothighlighting || plp.isReplaying()) return;
 
-        g_dev.notifyplpModified();
         plp.setModified();
         plp.requireAssemble();
         thread.scheduleHighlight();
@@ -3704,7 +3793,6 @@ class DevEditorDocListener implements DocumentListener {
     public void insertUpdate(final javax.swing.event.DocumentEvent e) {
         if(!enable || !Config.nothighlighting || plp.isReplaying()) return;
 
-        g_dev.notifyplpModified();
         plp.setModified();
         plp.requireAssemble();
         thread.scheduleHighlight();
