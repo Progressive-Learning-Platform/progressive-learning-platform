@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{parskip}
 \usepackage{hyperref}
+\usepackage{html}
 \usepackage[pdftex]{graphicx}
 \usepackage{fullpage}
 \begin{document}
@@ -31,8 +32,8 @@ section. The archive contains the following directory structure:
 \item sw - Software tools, example programs, and software library
 	\begin{enumerate}
 	\item PLPTool - PLP Software tools, see next section
-	\item libplp - \href{http://code.google.com/p/progressive-learning-platform/wiki/libplp}{PLP software library}
-	\item examples - \href{http://code.google.com/p/progressive-learning-platform/wiki/SoftwareExamples}{Software examples}
+	\item libplp - \htmladdnormallink{PLP software library}{http://code.google.com/p/progressive-learning-platform/wiki/libplp}
+	\item examples - \htmladdnormallink{Software examples}{http://code.google.com/p/progressive-learning-platform/wiki/SoftwareExamples}
 	\end{enumerate} 
 \end{enumerate} 
 
@@ -41,10 +42,10 @@ PLPTool is a software suite for PLP that includes an assembler, a simulator,
 and a board programmer interface. 
 \subsection{Running PLPTool}
 PLPTool requires a 
-\href{http://www.oracle.com/technetwork/java/javase/downloads/index.html}{Java Runtime Environment}
+\htmladdnormallink{Java Runtime Environment}{http://www.oracle.com/technetwork/java/javase/downloads/index.html}
 that complies with at least Java 2 Platform SE 5 (1.5) specifications. PLPTool 
 is shipped with 
-\href{http://rxtx.qbang.org/wiki/index.php/Main_Page}{RXTX library}
+\htmladdnormallink{RXTX library}{http://rxtx.qbang.org/wiki/index.php/Main_Page}
 for serial communication in Windows. If you use Linux, you will have to 
 install the library provided by the distribution that you use. Serial 
 communication is used to download programs to the board.
