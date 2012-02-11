@@ -403,12 +403,15 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
     private void updateClassList() {
         DefaultTableModel tbl = (DefaultTableModel) tblModuleClasses.getModel();
+        Class sC;
         while(tbl.getRowCount() > 0)
             tbl.removeRow(0);
         Class c;
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
             c = DynamicModuleFramework.getDynamicModuleClass(i);
-            Object[] row = {i, c.getName(), c.getSuperclass().getName(), DynamicModuleFramework.isModuleClassSaved(i)};
+            sC = c.getSuperclass();
+            Object[] row = {i, c.getName(), sC != null ? c.getSuperclass().getName() : "N/A",
+                            DynamicModuleFramework.isModuleClassSaved(i)};
             tbl.addRow(row);
         }
     }

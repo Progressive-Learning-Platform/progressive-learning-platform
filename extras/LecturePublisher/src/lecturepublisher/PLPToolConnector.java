@@ -47,6 +47,9 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.SourceDataLine;
 
+import org.xiph.speex.spi.*;
+
+
 public class PLPToolConnector implements PLPGenericModule {
     private boolean init = false;
     private boolean record = false;
@@ -384,7 +387,8 @@ public class PLPToolConnector implements PLPGenericModule {
                     e.printStackTrace();
             }
 
-            AudioFileFormat.Type targetType = AudioFileFormat.Type.WAVE;
+            //AudioFileFormat.Type targetType = AudioFileFormat.Type.WAVE;
+            //AudioFileFormat.Type targetType = SpeexFileFormatType.SPEEX;
             audioInputStream = new AudioInputStream(targetDataLine);
             ready = true;
         }
@@ -393,9 +397,15 @@ public class PLPToolConnector implements PLPGenericModule {
         public void run() {
             targetDataLine.start();
             try {
+                //SpeexAudioFileWriter speexWriter = new SpeexAudioFileWriter();
+                //speexWriter.write(audioInputStream, SpeexFileFormatType.SPEEX,
+                //        new File(PLPToolbox.getConfDir() + "/testspeex.spx"));
+                //(new SpeexAudioFileWriter()).write(audioInputStream, SpeexFileFormatType.SPEEX, output);
                 AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, output);
             } catch(IOException e) {
                 Msg.W("I/O Error during audio recording.", this);
+            } catch(Exception e) {
+                Msg.W("General error during audio recording.", this);
             }
         }
 
@@ -440,6 +450,7 @@ public class PLPToolConnector implements PLPGenericModule {
 
             try {
                 in = AudioSystem.getAudioInputStream(audioFile);
+                //in = (new SpeexAudioFileReader()).getAudioInputStream(new File(PLPToolbox.getConfDir() + "/testspeex.spx"));
             } catch(UnsupportedAudioFileException uafe) {
                 Msg.W("Audio format unsupported.", this);
             } catch(IOException ioe) {
