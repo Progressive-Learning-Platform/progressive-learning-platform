@@ -1532,6 +1532,12 @@ public class ProjectDriver {
             return Msg.E("importAsm(" + path + "): file not found.",
                             Constants.PLP_BACKEND_ASM_IMPORT_ERROR, this);
 
+        if(!asmFile.getName().endsWith(".asm")) {
+            return Msg.E("importAsm(" + path + "): imported source files " +
+                         "must have a .asm extension.",
+                         Constants.PLP_BACKEND_ASM_IMPORT_ERROR, this);
+        }
+
         String existingPath;
         for(int i = 0; i < asms.size(); i++) {
             existingPath = asms.get(i).getAsmFilePath();
@@ -1575,6 +1581,9 @@ public class ProjectDriver {
             return Msg.E("exportAsm: " + path + " exists.",
                             Constants.PLP_FILE_SAVE_ERROR, this);
         }
+
+        if(g && getOpenAsm() == index)
+            updateAsm(index, g_dev.getEditorText());
 
         try {
 

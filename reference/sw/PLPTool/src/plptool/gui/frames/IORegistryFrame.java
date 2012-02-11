@@ -59,6 +59,8 @@ public class IORegistryFrame extends javax.swing.JFrame {
     }
 
     private void reloadDynamicModuleLists() {
+        Class superClass;
+        String cName;
         cmbDModFrameClass.removeAllItems();
         cmbDModFrameClass.addItem("No frame (null)");
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++)
@@ -67,7 +69,11 @@ public class IORegistryFrame extends javax.swing.JFrame {
         DefaultListModel list = new DefaultListModel();
         list.clear();
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
-            if(DynamicModuleFramework.getDynamicModuleClass(i).getSuperclass().getName().equals("plptool.PLPSimBusModule"))
+            cName = null;
+            superClass =  DynamicModuleFramework.getDynamicModuleClass(i).getSuperclass();
+            if(superClass != null)
+                cName = superClass.getName();
+            if(cName != null && cName.equals("plptool.PLPSimBusModule"))
                 list.addElement(i + ":" + DynamicModuleFramework.getDynamicModuleClass(i).getName());
         }
         listDynamicModuleClasses.setModel(list);

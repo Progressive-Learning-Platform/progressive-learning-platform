@@ -86,8 +86,8 @@ public class DynamicModuleFramework {
             Msg.W("Make sure you only use trusted third party modules!", null);
             warn = true;
         }
-        Msg.M("[" + index + "] Loading module class " + className + " from " + path +
-              " ...");
+        Msg.m("[" + index + "] Loading module class " + className + " from " + path +
+              " ... ");
         if(loader == null) {
             ClassLoader parent = DynamicModuleFramework.class.getClassLoader();
             loader = new PLPDynamicModuleClassLoader(parent);
@@ -113,7 +113,7 @@ public class DynamicModuleFramework {
                 e.printStackTrace();
             return false;
         }
-
+        Msg.M("OK");
         return true;
     }
 
@@ -396,7 +396,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
      * @throws ClassNotFoundException
      */
     @Override
-    public Class loadClass(String name) throws ClassNotFoundException {
+    public Class loadClass(String name) throws ClassNotFoundException, NoClassDefFoundError {
         if(findLoadedClass(name) != null) {
             Msg.E("Class " + name + " is already loaded.",
                   Constants.PLP_DBUSMOD_GENERIC, null);
@@ -420,7 +420,12 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                     length = in.read(array);
                 }
 
-                ret = defineClass(name, out.toByteArray(), 0, out.size());
+                try {
+                    ret = defineClass(name, out.toByteArray(), 0, out.size());
+                } catch(NoClassDefFoundError e) {
+                    Msg.E("defineClass: " + name + " FAILED.", Constants.PLP_GENERIC_ERROR, null);
+                    return null;
+                }
                 
             // http://weblogs.java.net/blog/malenkov/archive/2008/07/how_to_load_cla.html
             // retrieved 2011-12-09 10:32AM CDT
@@ -438,7 +443,12 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                     length = in.read(array);
                 }
 
-                ret = defineClass(name, out.toByteArray(), 0, out.size());
+                try {
+                    ret = defineClass(name, out.toByteArray(), 0, out.size());
+                } catch(NoClassDefFoundError e) {
+                    Msg.E("defineClass: " + name + " FAILED: " + e, Constants.PLP_GENERIC_ERROR, null);
+                    return null;
+                }
             }
             return ret;
             

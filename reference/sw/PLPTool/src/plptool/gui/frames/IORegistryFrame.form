@@ -67,7 +67,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="txtModInfoScroll" alignment="0" pref="427" max="32767" attributes="0"/>
+                          <Component id="txtModInfoScroll" alignment="0" pref="431" max="32767" attributes="0"/>
                           <Component id="btnAdd" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -77,9 +77,9 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtModuleRegfileSize" alignment="1" pref="286" max="32767" attributes="1"/>
-                                  <Component id="cmbModuleSelect" alignment="1" pref="286" max="32767" attributes="1"/>
-                                  <Component id="txtModuleAddress" alignment="1" pref="286" max="32767" attributes="1"/>
+                                  <Component id="txtModuleRegfileSize" alignment="1" pref="341" max="32767" attributes="1"/>
+                                  <Component id="cmbModuleSelect" alignment="1" pref="341" max="32767" attributes="1"/>
+                                  <Component id="txtModuleAddress" alignment="1" pref="341" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                       </Group>
@@ -106,7 +106,7 @@
                           <Component id="lblRegfileSize" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="txtModInfoScroll" pref="290" max="32767" attributes="0"/>
+                      <Component id="txtModInfoScroll" pref="316" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnAdd" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -213,7 +213,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="427" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="431" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -228,7 +228,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="376" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="401" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnRemove" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -346,7 +346,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="cmbPresets" pref="152" max="32767" attributes="0"/>
+                      <Component id="cmbPresets" pref="233" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnLoadPreset" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -362,7 +362,7 @@
                           <Component id="btnLoadPreset" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cmbPresets" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="400" max="32767" attributes="0"/>
+                      <EmptySpace pref="423" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -417,7 +417,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="chkDModWordAligned" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" alignment="0" pref="427" max="32767" attributes="0"/>
+                          <Component id="jScrollPane2" alignment="0" pref="431" max="32767" attributes="0"/>
                           <Component id="btnReloadDModList" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -425,7 +425,7 @@
                                   <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="39" max="32767" attributes="0"/>
+                              <EmptySpace pref="114" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="cmbDModFrameClass" alignment="1" max="32767" attributes="1"/>
                                   <Component id="txtDModEndAddr" alignment="0" max="32767" attributes="1"/>
@@ -464,7 +464,7 @@
                       <Component id="chkDModWordAligned" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnAttachDMod" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="77" max="32767" attributes="0"/>
+                      <EmptySpace pref="114" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
