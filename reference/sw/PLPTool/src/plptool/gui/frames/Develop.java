@@ -352,6 +352,15 @@ public class Develop extends javax.swing.JFrame {
         txtEditor.setContentType("text");
         trackChanges = false;
         if(!str.equals(txtEditor.getText())) {
+            if(highlighterThread != null) {
+            highlighterThread.stopThread();
+            }
+            
+            if(currentEditorListener != null) {
+                txtEditor.getDocument().removeDocumentListener(currentEditorListener);
+            }
+
+            /*
             if(currentEditorListener != null)
                 currentEditorListener.disable();
             try {
@@ -360,6 +369,9 @@ public class Develop extends javax.swing.JFrame {
             } catch(BadLocationException ble) {
 
             }
+             *
+             */
+            txtEditor.setText(str);
             if(Config.devSyntaxHighlighting && str.length() <= Config.filetoolarge)
                 syntaxHighlight();
         }
@@ -376,9 +388,7 @@ public class Develop extends javax.swing.JFrame {
             }
         });
 
-        if(highlighterThread != null) {
-            highlighterThread.stopThread();
-        }
+        
         if(Config.devNewSyntaxHighlightStrategy) {
             highlighterThread = new HighlighterThread(this);
             currentEditorListener = new DevEditorDocListener(plp, highlighterThread);
@@ -752,6 +762,8 @@ public class Develop extends javax.swing.JFrame {
             syntaxHighlight(currline, currpos, styles);
             currpos += lines[i].length() + 1;
         }
+        //syntaxHighlight(txtEditor.getText(), 0, styles);
+
         Config.nothighlighting = true;
     }
 
