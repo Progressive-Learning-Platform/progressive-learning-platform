@@ -156,6 +156,13 @@ public class PLPToolApp extends SingleFrameApplication {
                     System.exit(-1);
                 activeArgIndex += 2;
             }
+
+            // Load all classes from a jar
+            if(args.length >= activeArgIndex + 2 && args[i].equals("--load-jar-with-manifest")) {
+                if(!DynamicModuleFramework.loadJarWithManifest(args[i+1]))
+                    System.exit(-1);
+                activeArgIndex += 2;
+            }
         }
 
         Msg.M("\n" + Constants.copyrightString + "\n");
