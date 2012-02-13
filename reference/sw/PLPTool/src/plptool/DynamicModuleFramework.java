@@ -342,6 +342,56 @@ public class DynamicModuleFramework {
     }
 
     /**
+     * Load classes from a JAR file that contains the plp.manifest class
+     * listing file
+     *
+     * @param path Path to the JAR file
+     * @return True on successful load, false otherwise
+     */
+    public static boolean loadJarWithManifest(String path) {
+        try {
+            JarFile jar = new JarFile(path);
+            Enumeration<JarEntry> entries =  jar.entries();
+            JarEntry entry;
+            String className;
+            boolean manifestFound = false;
+
+            while(entries.hasMoreElements() && !manifestFound) {
+                entry = entries.nextElement();
+                if(entry.getName().equals("plp.manifest")) {
+                    manifestFound = true;
+
+                    byte[] array = new byte[1024];
+                    ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
+                    InputStream in = jar.getInputStream(entry);
+                    int length = in.read(array);
+                    while(length > 0) {
+                        out.write(array, 0, length);
+                        length = in.read(array);
+                    }
+                    String[] lines = (new String(out.toByteArray())).split("\\r?\\n");
+
+                    for(int i = 0; i < lines.length; i++)
+                        loadModuleClass(path, lines[i]);
+                }
+            }
+
+            if(!manifestFound) {
+                Msg.E("No plp.manifest file found in the JAR archive",
+                        Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                return false;
+            }
+
+            return true;
+
+        } catch(IOException e) {
+            Msg.E("Failed to load classes from '" + path + "'",
+                  Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+            return false;
+        }
+    }
+
+    /**
      * Return whether a module class is marked as saved to user cache or not
      *
      * @param index Index of the module class in the list
