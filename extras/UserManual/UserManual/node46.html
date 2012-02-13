@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>5.11 Seven Segment</TITLE>
+<META NAME="description" CONTENT="5.11 Seven Segment">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="next" HREF="node47.html">
+<LINK REL="previous" HREF="node45.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node47.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html687"
+  HREF="node47.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html683"
+  HREF="node35.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html677"
+  HREF="node45.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html685"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html688"
+  HREF="node47.html">5.12 Interrupt Controller</A>
+<B> Up:</B> <A NAME="tex2html684"
+  HREF="node35.html">5 Hardware Description</A>
+<B> Previous:</B> <A NAME="tex2html678"
+  HREF="node45.html">5.10 Timer</A>
+ &nbsp; <B>  <A NAME="tex2html686"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000611000000000000000">
+5.11 Seven Segment</A>
+</H2>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="100" HEIGHT="125" ALIGN="BOTTOM" BORDER="0"
+ SRC="./sseg.png"
+ ALT="Image sseg">
+
+</DIV>
+The seven segment module exposes the raw seven segment LEDs to the user, allowing for specialized output. libplp wrappers exist for various abstractions.
+
+<P>
+There are 4 seven segment displays (seven segments plus a dot), mapped to four bytes in the control word.
+
+<P>
+The byte order is: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">[31:24]</TD>
+<TD ALIGN="LEFT">[23:16]</TD>
+<TD ALIGN="LEFT">[15:8]</TD>
+<TD ALIGN="LEFT">[7:0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">leftmost</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">rightmost</TD>
+</TR>
+</TABLE>
+
+<P>
+The segments map to each of the four bytes as indicated by the above figure. Bit 0 maps to the top most segment, bit 7 maps to the dot. 
+
+<P>
+<BR><HR>
+<ADDRESS>
+will
+2012-02-08
+</ADDRESS>
+</BODY>
+</HTML>

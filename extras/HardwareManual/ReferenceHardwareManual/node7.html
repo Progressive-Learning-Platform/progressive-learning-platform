@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>3 Bus Arbiter</TITLE>
+<META NAME="description" CONTENT="3 Bus Arbiter">
+<META NAME="keywords" CONTENT="ReferenceHardwareManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="ReferenceHardwareManual.css">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node3.html">
+<LINK REL="up" HREF="ReferenceHardwareManual.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html126"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html122"
+  HREF="ReferenceHardwareManual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html116"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html124"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html127"
+  HREF="node8.html">4 Modules</A>
+<B> Up:</B> <A NAME="tex2html123"
+  HREF="ReferenceHardwareManual.html">Hardware Manual</A>
+<B> Previous:</B> <A NAME="tex2html117"
+  HREF="node6.html">2.3 Interrupts</A>
+ &nbsp; <B>  <A NAME="tex2html125"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00040000000000000000">
+3 Bus Arbiter</A>
+</H1>
+
+<P>
+Since all modules are memory mapped the bus arbiter will send all module signals to the proper module based upon their memory map.
+
+<P>
+The current method is a 32-bit 12-1 mux which is controlled by the comparing the requested addresses to the memory map. This passes the requested data and instruction from the called module back to the CPU.
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TH ALIGN="CENTER"><B>First Memory Address</B></TH>
+<TH ALIGN="CENTER"><B>Size</B> (in Words)</TH>
+<TH ALIGN="CENTER"><B>Module</B></TH>
+</TR>
+<TR><TD ALIGN="CENTER">0x00000000</TD>
+<TD ALIGN="CENTER">512</TD>
+<TD ALIGN="CENTER">Bootloader ROM</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0x10000000</TD>
+<TD ALIGN="CENTER">16777216</TD>
+<TD ALIGN="CENTER">SRAM</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0000000</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">UART</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0100000</TD>
+<TD ALIGN="CENTER">4</TD>
+<TD ALIGN="CENTER">Switches</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0200000</TD>
+<TD ALIGN="CENTER">4</TD>
+<TD ALIGN="CENTER">LEDs</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0300000</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">GPIO</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0400000</TD>
+<TD ALIGN="CENTER">8</TD>
+<TD ALIGN="CENTER">VGA</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0500000</TD>
+<TD ALIGN="CENTER">8</TD>
+<TD ALIGN="CENTER">PLPID</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0600000</TD>
+<TD ALIGN="CENTER">4</TD>
+<TD ALIGN="CENTER">Timer</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0700000</TD>
+<TD ALIGN="CENTER">8</TD>
+<TD ALIGN="CENTER">Interrupt Controller</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0800000</TD>
+<TD ALIGN="CENTER">?</TD>
+<TD ALIGN="CENTER">PMC Hardware</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0xf0a00000</TD>
+<TD ALIGN="CENTER">4</TD>
+<TD ALIGN="CENTER">sseg</TD>
+</TR>
+</TABLE>  
+
+<P>
+<BR><HR>
+<ADDRESS>
+will
+2012-02-08
+</ADDRESS>
+</BODY>
+</HTML>
