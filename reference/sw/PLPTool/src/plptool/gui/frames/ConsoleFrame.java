@@ -49,7 +49,6 @@ public class ConsoleFrame extends javax.swing.JFrame {
         outText += "plpfile: " + plp.plpfile + "\n";
         outText += "arch: " + plp.getArch() + "\n";
         out.setText(outText);
-        plptool.Msg.outputs.add(out);
     }
 
     /** This method is called from within the constructor to
