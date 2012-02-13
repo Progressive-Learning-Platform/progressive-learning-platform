@@ -285,73 +285,21 @@ public class Msg {
      * Debug marking.
      */
     public static void mark() {
+        try {
+
         if(output == null)
             System.out.println("[DEBUG] " + markCounter + " We're here!");
-        else
-            append("[DEBUG] " + markCounter + " We're here!" + "\n");
-        markCounter++;
-    }
-
-    /**
-     * Append to document with some style
-     *
-     * @param txt
-     * @param bold
-     * @param color
-     */
-    public static void append(String txt, int type) {
-        try {
-            HTMLEditorKit kit = (HTMLEditorKit) output.getEditorKit();
-            HTMLDocument doc = (HTMLDocument) output.getDocument();
-
-            switch(type) {
-                case NORMAL:
-                    kit.insertHTML(doc, doc.getLength(), txt, 0, 0, null);
-                    break;
-                case RED_BOLD:
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"0xff0000\">" + txt + "</font></b>", 0, 0, null);
-                    break;
-                case BOLD:
-                    kit.insertHTML(doc, doc.getLength(), "<b>" + txt + "</b>", 0, 0, null);
-                    break;
-                case FADE_BOLD:
-                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"0xcccccc\">" + txt + "</font></b>", 0, 0, null);
-                    break;
-                case FADE_NORMAL:
-                    kit.insertHTML(doc, doc.getLength(), "<font color=\"0x444444\">" + txt + "</font>", 0, 0, null);
-                    break;                    
-            }
+        else {
+            kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
+                        + ": <font color=darkgray>mark: " + markCounter + "</font><br />", 0, 0, null);
+                    output.setCaretPosition(doc.getLength());
+        }
 
         } catch(Exception e) {
             
         }
-    }
 
-    /**
-     * Append regular text to the document
-     *
-     * @param txt
-     */
-    public static void append(String txt) {
-        try {
-        StyledDocument doc = output.getStyledDocument();
-
-        SimpleAttributeSet attrib = new SimpleAttributeSet();
-        StyleConstants.setBold(attrib, false);
-        StyleConstants.setForeground(attrib, Color.BLACK);
-
-        doc.insertString(doc.getLength(), txt, attrib);
-
-        for(int i = 0; i < outputs.size(); i++) {
-            StyledDocument a_doc = outputs.get(i).getStyledDocument();
-            a_doc.insertString(a_doc.getLength(), txt, attrib);
-            outputs.get(i).setCaretPosition(doc.getLength() - 1);
-        }
-
-        output.setCaretPosition(doc.getLength() - 1);
-        } catch(Exception e) {
-
-        }
+        markCounter++;
     }
 
     /**
