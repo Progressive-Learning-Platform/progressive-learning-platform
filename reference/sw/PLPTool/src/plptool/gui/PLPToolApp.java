@@ -29,6 +29,7 @@ import plptool.DynamicModuleFramework;
 import java.io.FileInputStream;
 import java.io.File;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * The main class of the application.
@@ -38,7 +39,8 @@ public class PLPToolApp extends SingleFrameApplication {
     static String plpFilePath = null;
     static boolean open = false;
     static boolean serialTerminal = false;
-    private static String[] manifestLines = null;
+    static boolean autoloadjars = true;
+    private static ArrayList<String[]> manifests;
     ConsoleFrame con;
 
     /**
@@ -57,6 +59,7 @@ public class PLPToolApp extends SingleFrameApplication {
             term.setVisible(true);
             
         } else {
+            // Launch the ProjectDriver
             ProjectDriver.loadConfig();
             ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, ArchRegistry.ISA_PLPMIPS); // default to plpmips for now
             if(Constants.debugLevel > 0) {
@@ -65,8 +68,12 @@ public class PLPToolApp extends SingleFrameApplication {
             }
             plp.app = this;
 
-            if(manifestLines != null)
-                DynamicModuleFramework.applyManifestEntries(manifestLines, plp);
+            // Load dynamic modules
+            if(autoloadjars)
+            DynamicModuleFramework.autoloadModules(plp);
+
+            for(int i = 0; i < manifests.size(); i++)
+                DynamicModuleFramework.applyManifestEntries(manifests.get(i), plp);
 
             Msg.setOutput(plp.g_dev.getOutput());
             if(plpFilePath != null)
@@ -114,6 +121,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
         int activeArgIndex = 0;
         java.io.File fileToOpen = null;
+	manifests = new ArrayList<String[]>();
 
         // Save launching path
         Constants.launchPath = (new File(".")).getAbsolutePath();
@@ -146,9 +154,20 @@ public class PLPToolApp extends SingleFrameApplication {
                 activeArgIndex++;
             }
 
+            // Disable dynamic module autoload from ~/.plp/autoload
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--no-module-autoload")) {
+                autoloadjars = false;
+                activeArgIndex++;
+            }
+
+            // Delete ~/.plp/autoload
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--delete-autoload-dir")) {
+                DynamicModuleFramework.removeAutoloadModules();
+                activeArgIndex++;
+            }
+
             // Dynamic module load
             if(args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
-                File classFile = new File(args[i+1]);
                 if(!DynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
                     System.exit(-1);
                 activeArgIndex += 3;
@@ -163,8 +182,10 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Load classes from a jar with a manifest file
             if(args.length >= activeArgIndex + 2 && args[i].equals("--load-jar-with-manifest")) {
-                if((manifestLines = DynamicModuleFramework.loadJarWithManifest(args[i+1])) == null)
+		String[] manifest = DynamicModuleFramework.loadJarWithManifest(args[i+1]);
+                if(manifest == null)
                     System.exit(-1);
+		manifests.add(manifest);
                 activeArgIndex += 2;
             }
         }

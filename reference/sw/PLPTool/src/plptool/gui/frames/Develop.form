@@ -414,33 +414,33 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuOptionsActionPerformed"/>
               </Events>
             </MenuItem>
-            <Menu class="javax.swing.JMenu" name="menuClassroom">
+            <Menu class="javax.swing.JMenu" name="menuModules">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="menuClassroom.text"/>
-                <Property name="name" type="java.lang.String" value="menuClassroom" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="menuModules.text"/>
+                <Property name="name" type="java.lang.String" value="menuModules" noResource="true"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="menuClassroomSetupExtras">
+                <MenuItem class="javax.swing.JMenuItem" name="menuLoadModuleJar">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="menuClassroomSetupExtras.text"/>
-                    <Property name="name" type="java.lang.String" value="menuClassroomSetupExtras" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="menuLoadModuleJar.text"/>
+                    <Property name="name" type="java.lang.String" value="menuLoadModuleJar" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuClassroomSetupExtrasActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuLoadModuleJarActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="menuDynamicModuleManager">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="menuDynamicModuleManager.text"/>
+                    <Property name="name" type="java.lang.String" value="menuDynamicModuleManager" noResource="true"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDynamicModuleManagerActionPerformed"/>
                   </Events>
                 </MenuItem>
               </SubComponents>
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuDynamicModuleManager">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="menuDynamicModuleManager.text"/>
-                <Property name="name" type="java.lang.String" value="menuDynamicModuleManager" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDynamicModuleManagerActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSerialTerminal">
               <Properties>
@@ -976,7 +976,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="473" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="460" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -1051,11 +1051,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="830" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="829" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="625" max="32767" attributes="0"/>
+                              <EmptySpace pref="611" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1073,7 +1073,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="413" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="288" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

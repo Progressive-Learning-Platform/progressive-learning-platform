@@ -1580,10 +1580,10 @@ public class Develop extends javax.swing.JFrame {
         menuSetMainProgram = new javax.swing.JMenuItem();
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
-        menuClassroom = new javax.swing.JMenu();
-        menuClassroomSetupExtras = new javax.swing.JMenuItem();
-        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        menuModules = new javax.swing.JMenu();
+        menuLoadModuleJar = new javax.swing.JMenuItem();
         menuDynamicModuleManager = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuSerialTerminal = new javax.swing.JMenuItem();
         menuNumberConverter = new javax.swing.JMenuItem();
         rootmenuSim = new javax.swing.JMenu();
@@ -1688,10 +1688,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1712,11 +1712,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 611, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1730,7 +1730,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1753,7 +1753,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -2405,20 +2405,17 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuTools.add(menuOptions);
 
-        menuClassroom.setText(resourceMap.getString("menuClassroom.text")); // NOI18N
-        menuClassroom.setName("menuClassroom"); // NOI18N
+        menuModules.setText(resourceMap.getString("menuModules.text")); // NOI18N
+        menuModules.setName("menuModules"); // NOI18N
 
-        menuClassroomSetupExtras.setText(resourceMap.getString("menuClassroomSetupExtras.text")); // NOI18N
-        menuClassroomSetupExtras.setName("menuClassroomSetupExtras"); // NOI18N
-        menuClassroomSetupExtras.addActionListener(new java.awt.event.ActionListener() {
+        menuLoadModuleJar.setText(resourceMap.getString("menuLoadModuleJar.text")); // NOI18N
+        menuLoadModuleJar.setName("menuLoadModuleJar"); // NOI18N
+        menuLoadModuleJar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuClassroomSetupExtrasActionPerformed(evt);
+                menuLoadModuleJarActionPerformed(evt);
             }
         });
-        menuClassroom.add(menuClassroomSetupExtras);
-
-        rootmenuTools.add(menuClassroom);
-        rootmenuTools.add(jSeparator7);
+        menuModules.add(menuLoadModuleJar);
 
         menuDynamicModuleManager.setText(resourceMap.getString("menuDynamicModuleManager.text")); // NOI18N
         menuDynamicModuleManager.setName("menuDynamicModuleManager"); // NOI18N
@@ -2427,7 +2424,10 @@ public class Develop extends javax.swing.JFrame {
                 menuDynamicModuleManagerActionPerformed(evt);
             }
         });
-        rootmenuTools.add(menuDynamicModuleManager);
+        menuModules.add(menuDynamicModuleManager);
+
+        rootmenuTools.add(menuModules);
+        rootmenuTools.add(jSeparator7);
 
         menuSerialTerminal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
         menuSerialTerminal.setMnemonic('S');
@@ -3430,9 +3430,19 @@ public class Develop extends javax.swing.JFrame {
         (new DynamicModuleManager(this, true, plp)).setVisible(true);
     }//GEN-LAST:event_menuDynamicModuleManagerActionPerformed
 
-    private void menuClassroomSetupExtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClassroomSetupExtrasActionPerformed
-        PLPToolbox.setupClassroomExtras(plp);
-    }//GEN-LAST:event_menuClassroomSetupExtrasActionPerformed
+    private void menuLoadModuleJarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLoadModuleJarActionPerformed
+        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setAcceptAllFileFilterUsed(true);
+        fc.setCurrentDirectory(new File(plp.curdir));
+
+        int retVal = fc.showOpenDialog(null);
+
+        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+            String[] manifest = DynamicModuleFramework.loadJarWithManifest(fc.getSelectedFile().getAbsolutePath());
+            if(manifest != null)
+                DynamicModuleFramework.applyManifestEntries(manifest, plp);
+        }
+    }//GEN-LAST:event_menuLoadModuleJarActionPerformed
 
     private void btnSimGPIOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimGPIOActionPerformed
         setGPIOFrame(btnSimGPIO.isSelected());
@@ -3557,8 +3567,6 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JLabel lblSimStat;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuAssemble;
-    private javax.swing.JMenu menuClassroom;
-    private javax.swing.JMenuItem menuClassroomSetupExtras;
     private javax.swing.JMenuItem menuClearBreakpoints;
     private javax.swing.JMenuItem menuClearOutputPane;
     private javax.swing.JMenuItem menuCopy;
@@ -3573,7 +3581,9 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuImportASM;
     private javax.swing.JMenuItem menuIssues;
     private javax.swing.JMenuItem menuIssuesPage;
+    private javax.swing.JMenuItem menuLoadModuleJar;
     private javax.swing.JMenuItem menuManual;
+    private javax.swing.JMenu menuModules;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuNewASM;
     private javax.swing.JMenuItem menuNumberConverter;
