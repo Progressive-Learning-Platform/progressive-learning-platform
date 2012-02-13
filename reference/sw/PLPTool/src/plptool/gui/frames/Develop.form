@@ -1064,7 +1064,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="404" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="411" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1144,6 +1144,9 @@
                     <Property name="font" type="java.awt.Font" resourceKey="txtOutput.font"/>
                     <Property name="name" type="java.lang.String" value="txtOutput" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txtOutputMousePressed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

@@ -1477,6 +1477,21 @@ public class ProjectDriver {
     }
 
     /**
+     * Getter function for the asm source file index with the specified filename
+     *
+     * @param asmFileName identifier for the source asm
+     * @return int Index of the source file
+     */
+    public int getAsmIndex(String asmFileName) {
+        for(int i = 0; i < asms.size(); i++) {
+            if(asms.get(i).getAsmFilePath().equals(asmFileName))
+                return i;
+        }
+
+        return -1;
+    }
+
+    /**
      * Update PLPAsmSource specified by index with new string.
      *
      * @param index Index of the source file to update

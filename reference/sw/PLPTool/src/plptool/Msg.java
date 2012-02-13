@@ -22,6 +22,9 @@ import javax.swing.JTextPane;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.HTMLDocument;
+import java.awt.Font;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -35,7 +38,10 @@ public class Msg {
     /**
      * JTextPane Msg should print its output to.
      */
-    public static JTextPane output = null;
+    private static JTextPane output = null;
+
+    private static HTMLDocument doc = null;
+    private static HTMLEditorKit kit = null;
 
     /**
      * Aux outputs
@@ -72,6 +78,20 @@ public class Msg {
      */
     public static boolean suppressWarnings = false;
 
+    public static final int     NORMAL          =   0;
+    public static final int     RED_BOLD        =   1;
+    public static final int     BOLD            =   2;
+    public static final int     HYPERLINK       =   3;
+    public static final int     FADE_BOLD       =   4;
+    public static final int     FADE_NORMAL     =   5;
+
+    public static void setOutput(JTextPane newOutput) {
+        output = newOutput;
+        doc = (HTMLDocument) output.getDocument();
+        kit = (HTMLEditorKit) output.getEditorKit();
+        output.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    }
+
     /**
      * This function either prints out an error message to stdout or the
      * specified JTextArea in the output pointer.
@@ -82,20 +102,32 @@ public class Msg {
      * @return The error code for further handling.
      */
     public static int E(String errStr, int errorCode, Object objIdentifier) {
+            
+        try {
+        
         if(objIdentifier != null)
+
+
             if(output == null)
                 System.out.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr);
             else {
-                append("[ERROR]", true, Color.RED);
-                append((errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n");
+                kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
+                        (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n"
+                        , 0, 0, null);
+                output.setCaretPosition(doc.getLength());
             }
         else
             if(output == null)
                 System.out.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr);
             else {
-                append("[ERROR]", true, Color.RED);
-                append((errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n");
+                kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
+                        (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n"
+                        , 0, 0, null);
+                output.setCaretPosition(doc.getLength());
             }
+
+        } catch(Exception e) {
+        }
 
         lastError = errorCode;
         lastPartyResponsible = objIdentifier;
@@ -112,20 +144,27 @@ public class Msg {
     public static void W(String warningStr, Object objIdentifier) {
         if(suppressWarnings) return;
 
+        try {
+
         if(objIdentifier != null)
             if(output == null)
                 System.out.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr);
             else {
-                append("[WARNING] ", true, Color.RED);
-                append(objIdentifier.toString() + ": " + warningStr + "\n");
+                kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
+                        + objIdentifier.toString() + ": " + warningStr + "<br />", 0, 0, null);
+                output.setCaretPosition(doc.getLength());
             }
         else
             if(output == null)
                 System.out.println("[WARNING] " + warningStr);
             else {
-                append("[WARNING] ", true, Color.RED);
-                append(warningStr + "\n");
+                kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
+                        + ": " + warningStr + "<br />", 0, 0, null);
+                output.setCaretPosition(doc.getLength());
             }
+        } catch(Exception e) {
+            
+        }
     }
 
     /**
@@ -137,18 +176,28 @@ public class Msg {
     public static void I(String infoStr, Object objIdentifier) {
         if(silent) return;
 
+        try {
+
         if(objIdentifier != null)
             if(output == null)
                 System.out.println(objIdentifier.toString() + ": " + infoStr);
             else {
-                append(objIdentifier.toString() + ": " + infoStr + "\n");
+                kit.insertHTML(doc, doc.getLength(),
+                        objIdentifier.toString() + ": " + infoStr + "<br />", 0, 0, null);
+                output.setCaretPosition(doc.getLength());
             }
         else
             if(output == null)
                 System.out.println(infoStr);
             else {
-                append(infoStr + "\n");
+                kit.insertHTML(doc, doc.getLength(),
+                        infoStr + "<br />", 0, 0, null);
+                output.setCaretPosition(doc.getLength());
             }
+
+        } catch(Exception e) {
+            
+        }
     }
 
     /**
@@ -161,19 +210,27 @@ public class Msg {
      */
     public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
         if(requestedDebugLevel <= Constants.debugLevel) {
+            try {
+
             if(objIdentifier != null) {
                 System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
                 if(output != null) {
-                    append("[DEBUG] ", true, Color.GRAY);
-                    append(objIdentifier.toString() + ": " + debugStr + "\n", false, Color.DARK_GRAY);
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
+                        + objIdentifier.toString() + ": <font color=darkgray>" + debugStr + "</font><br />", 0, 0, null);
+                    output.setCaretPosition(doc.getLength());
                 }
             }
             else {
                 System.out.println("[DEBUG] " + debugStr);
                 if(output != null) {
-                    append("[DEBUG] ", true, Color.GRAY);
-                    append(debugStr + "\n", false, Color.DARK_GRAY);
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
+                        + ": <font color=darkgray>" + debugStr + "</font><br />", 0, 0, null);
+                    output.setCaretPosition(doc.getLength());
                 }
+            }
+
+            } catch (Exception e) {
+                
             }
         }
     }
@@ -186,10 +243,18 @@ public class Msg {
     public static void M(String msgStr) {
         if(silent) return;
 
+        try {
+
         if(output == null)
             System.out.println(msgStr);
         else {
-            append(msgStr + "\n");
+            kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
+                        msgStr + "</font><br />", 0, 0, null);
+            output.setCaretPosition(doc.getLength());
+        }
+
+        } catch(Exception e) {
+
         }
     }
 
@@ -201,10 +266,18 @@ public class Msg {
     public static void m(String msgStr) {
         if(silent) return;
 
+        try {
+
         if(output == null)
             System.out.print(msgStr);
         else {
-            append(msgStr);
+            kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
+                        msgStr + "</font>", 0, 0, null);
+            output.setCaretPosition(doc.getLength());
+        }
+
+        } catch(Exception e) {
+
         }
     }
 
@@ -226,23 +299,29 @@ public class Msg {
      * @param bold
      * @param color
      */
-    public static void append(String txt, boolean bold, Color color) {
+    public static void append(String txt, int type) {
         try {
-        StyledDocument doc = output.getStyledDocument();
+            HTMLEditorKit kit = (HTMLEditorKit) output.getEditorKit();
+            HTMLDocument doc = (HTMLDocument) output.getDocument();
 
-        SimpleAttributeSet attrib = new SimpleAttributeSet();
-        StyleConstants.setBold(attrib, bold);
-        StyleConstants.setForeground(attrib, color);
+            switch(type) {
+                case NORMAL:
+                    kit.insertHTML(doc, doc.getLength(), txt, 0, 0, null);
+                    break;
+                case RED_BOLD:
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"0xff0000\">" + txt + "</font></b>", 0, 0, null);
+                    break;
+                case BOLD:
+                    kit.insertHTML(doc, doc.getLength(), "<b>" + txt + "</b>", 0, 0, null);
+                    break;
+                case FADE_BOLD:
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=\"0xcccccc\">" + txt + "</font></b>", 0, 0, null);
+                    break;
+                case FADE_NORMAL:
+                    kit.insertHTML(doc, doc.getLength(), "<font color=\"0x444444\">" + txt + "</font>", 0, 0, null);
+                    break;                    
+            }
 
-        doc.insertString(doc.getLength(), txt, attrib);
-
-        for(int i = 0; i < outputs.size(); i++) {
-            StyledDocument a_doc = outputs.get(i).getStyledDocument();
-            a_doc.insertString(a_doc.getLength(), txt, attrib);
-            outputs.get(i).setCaretPosition(a_doc.getLength() - 1);
-        }
-
-        output.setCaretPosition(doc.getLength() - 1);
         } catch(Exception e) {
             
         }
@@ -285,3 +364,4 @@ public class Msg {
             e.printStackTrace();
     }
 }
+
