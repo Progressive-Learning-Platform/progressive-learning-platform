@@ -28,6 +28,7 @@ import gnu.io.SerialPort;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import javax.swing.text.html.HTML.Tag;
 
 import plptool.*;
 
@@ -206,6 +207,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);
                     memVis.setVisible(true);
                 }
+            }
+            else if(command.equals("kitten")) {
+                javax.swing.text.html.HTMLDocument hDoc = (javax.swing.text.html.HTMLDocument) plp.g_dev.getOutput().getDocument();
+                ((javax.swing.text.html.HTMLEditorKit)plp.g_dev.getOutput().getEditorKit()).insertHTML(hDoc, hDoc.getLength(),
+                        "<img src=\"http://upload.wikimedia.org/wikipedia/commons/e/ef/Curious_kitten.jpg\" /><br />", 0, 0, null);
             }
             else if(command.equals("visprog")){
                 // some lines commented until proper jung integration

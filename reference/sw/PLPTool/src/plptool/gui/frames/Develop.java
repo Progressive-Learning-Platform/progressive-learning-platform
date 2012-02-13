@@ -1588,6 +1588,7 @@ public class Develop extends javax.swing.JFrame {
         menuIssuesPage = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         menuAbout = new javax.swing.JMenuItem();
+        menuThirdPartyLicense = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Develop.class);
@@ -1693,7 +1694,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -2775,6 +2776,15 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuHelp.add(menuAbout);
 
+        menuThirdPartyLicense.setText(resourceMap.getString("menuThirdPartyLicense.text")); // NOI18N
+        menuThirdPartyLicense.setName("menuThirdPartyLicense"); // NOI18N
+        menuThirdPartyLicense.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuThirdPartyLicenseActionPerformed(evt);
+            }
+        });
+        rootmenuHelp.add(menuThirdPartyLicense);
+
         jMenuBar1.add(rootmenuHelp);
 
         setJMenuBar(jMenuBar1);
@@ -3396,6 +3406,10 @@ public class Develop extends javax.swing.JFrame {
         setGPIOFrame(menuSimGPIO.isSelected());
     }//GEN-LAST:event_menuSimGPIOActionPerformed
 
+    private void menuThirdPartyLicenseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuThirdPartyLicenseActionPerformed
+        Msg.M(Constants.thirdPartyCopyrightString.replace("\n", "<br />"));
+    }//GEN-LAST:event_menuThirdPartyLicenseActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3568,6 +3582,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem menuStep4;
     private javax.swing.JRadioButtonMenuItem menuStep5;
     private javax.swing.JMenu menuStepSize;
+    private javax.swing.JMenuItem menuThirdPartyLicense;
     private javax.swing.JCheckBoxMenuItem menuToolbar;
     private javax.swing.JMenuItem menuUndo;
     private javax.swing.JMenu rootmenuEdit;
