@@ -1464,7 +1464,7 @@ public class Asm extends plptool.PLPAsm {
      */
     private boolean checkNumberOfOperands(Object iObj[], int length, String file, int lineNum) {
         if(iObj.length != length) {
-            Msg.E("checkNumberOfOperands(" + file + ":" + lineNum + "): Invalid number of operands",
+            Msg.E("checkNumberOfOperands(" + formatHyperLink(file, lineNum )+ "): Invalid number of operands",
                             Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS, this);
             return false;
         }
