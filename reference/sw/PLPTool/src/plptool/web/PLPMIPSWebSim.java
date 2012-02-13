@@ -21,6 +21,7 @@ package plptool.web;
 import plptool.*;
 import plptool.mips.*;
 import plptool.gui.ProjectDriver;
+import javax.swing.text.html.*;
 
 /**
  * Java applet interface for the PLP MIPS simulation.
@@ -79,7 +80,9 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
 
         oldStr = txtEditor.getText();
         txtEditor.setText("");
-        Msg.output = txtEditor;
+        txtEditor.setEditorKit(new HTMLEditorKit());
+        txtEditor.setDocument(new HTMLDocument());
+        Msg.setOutput(txtEditor);
         Msg.M("PLPTool build: " + Version.stamp + "\n");
 
         plp.getAsm("WebApplet").setAsmString(oldStr);

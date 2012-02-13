@@ -29,6 +29,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTextField;
 import javax.swing.DefaultCellEditor;
+import javax.swing.text.html.*;
 import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
@@ -124,6 +125,9 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         }
 
         updateComponents();
+
+       simCLOutput.setDocument(new HTMLDocument());
+       simCLOutput.setEditorKit(new HTMLEditorKit());
 
         /*** 4.0 RELEASE ***/
         //coreMainPane.setSelectedIndex(2);
@@ -664,7 +668,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 }//GEN-LAST:event_simCLClearActionPerformed
 
     private void simCLExecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simCLExecActionPerformed
-        plptool.Msg.output = simCLOutput;
+        plptool.Msg.setOutput(simCLOutput);
         lastCLCommand = simCLConsole.getText();
         appendOutput("exec: " + simCLConsole.getText() + "\n");
         SimCLI.simCLCommand(simCLConsole.getText(), plp);
@@ -675,7 +679,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         appendOutput("\n");
         simCLConsole.setText("");
         updateComponents();
-        plptool.Msg.output = plp.g_dev.getOutput();
+        plptool.Msg.setOutput(plp.g_dev.getOutput());
 }//GEN-LAST:event_simCLExecActionPerformed
 
 
