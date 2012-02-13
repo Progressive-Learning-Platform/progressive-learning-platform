@@ -102,12 +102,12 @@ cp -R reference/sw/PLPTool/dist/javadoc to_push
 #our data is ready to send off to the webserver
 echo ===============================================================================
 tar -czvf nightly-$DATE.tar.gz to_push/
-mv nightly-$DATE.tar.gz $BBOPTPATH/
+mv nightly-$DATE.tar.gz $BBOTPATH/
 ssh fritz@rome.ceat.okstate.edu "rm -rf plp/nightly/*"
 scp -r to_push/* fritz@rome.ceat.okstate.edu:~/plp/nightly
 
 #nuke the buildbot tmp
-cd $BBOPTPATH
+cd $BBOTPATH
 rm -rf $BUILDROOT
 
 
