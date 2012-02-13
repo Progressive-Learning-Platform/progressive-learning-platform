@@ -86,8 +86,8 @@ public class DynamicModuleFramework {
             Msg.W("Make sure you only use trusted third party modules!", null);
             warn = true;
         }
-        Msg.m("[" + index + "] Loading module class " + className + " from " + path +
-              " ... ");
+        Msg.D("[" + index + "] Loading module class " + className + " from " + path +
+              " ... ", 2, null);
         if(loader == null) {
             ClassLoader parent = DynamicModuleFramework.class.getClassLoader();
             loader = new PLPDynamicModuleClassLoader(parent);
@@ -113,7 +113,6 @@ public class DynamicModuleFramework {
                 e.printStackTrace();
             return false;
         }
-        Msg.M("OK");
         return true;
     }
 
@@ -280,10 +279,35 @@ public class DynamicModuleFramework {
     }
 
     /**
-     * Save module classes marked to be saved to user cache
+     * Auto-load modules from ~/.plp/autoload/*.jar and apply the manifest file
      */
-    public static void saveModuleClasses() {
+    public static void autoloadModules(plptool.gui.ProjectDriver plp) {
+        Msg.D("Auto-loading modules...", 1, null);
+        File autoloadDir = new File(PLPToolbox.getConfDir() + "/autoload");
+        if(autoloadDir.exists() && autoloadDir.isDirectory()) {
+            File[] files = autoloadDir.listFiles();
+            for(int i = 0; i < files.length; i++) {
+                if(files[i].getName().endsWith(".jar")) {
+                    String[] manifest = loadJarWithManifest(files[i].getAbsolutePath());
+                    if(manifest != null && plp != null)
+                        applyManifestEntries(manifest, plp);
+                }
+            }
+        }
+    }
 
+    /**
+     * Delete ~/.plp/autoload directory
+     */
+    public static void removeAutoloadModules() {
+        Msg.D("Removing " + PLPToolbox.getConfDir() + "/plp/autoload...", 1, null);
+        File autoloadDir = new File(PLPToolbox.getConfDir() + "/autoload");
+        if(autoloadDir.exists() && autoloadDir.isDirectory()) {
+            File[] files = autoloadDir.listFiles();
+            for(int i = 0; i < files.length; i++)
+                files[i].delete();
+            autoloadDir.delete();
+        }
     }
 
     /**
@@ -350,6 +374,7 @@ public class DynamicModuleFramework {
      */
     public static String[] loadJarWithManifest(String path) {
         try {
+            Msg.I("Loading " + path + "...", null);
             JarFile jar = new JarFile(path);
             Enumeration<JarEntry> entries =  jar.entries();
             JarEntry entry;
@@ -409,7 +434,7 @@ public class DynamicModuleFramework {
                 if(ret > -1)
                     cIndex = newGenericModuleInstance(ret);
                 if(cIndex > -1) {
-                    Msg.M("Applying manifest: " + manifestLines[i]);
+                    Msg.M("Applying manifest entry: " + manifestLines[i]);
                     hook(cIndex, plp);
                 }
             }
