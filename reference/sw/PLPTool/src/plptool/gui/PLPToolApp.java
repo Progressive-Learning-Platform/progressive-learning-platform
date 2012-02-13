@@ -36,7 +36,6 @@ import java.util.Scanner;
  */
 public class PLPToolApp extends SingleFrameApplication {
     
-    SimShell simUI;
     static String plpFilePath = null;
     static boolean open = false;
     static boolean serialTerminal = false;
@@ -66,7 +65,7 @@ public class PLPToolApp extends SingleFrameApplication {
             }
             plp.app = this;
 
-            Msg.output = plp.g_dev.getOutput();
+            Msg.setOutput(plp.g_dev.getOutput());
             if(plpFilePath != null)
                 plp.open(plpFilePath, true);
         }

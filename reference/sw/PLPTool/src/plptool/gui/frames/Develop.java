@@ -18,12 +18,16 @@
 
 package plptool.gui.frames;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Point;
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.HTMLDocument;
 import java.net.URI;
 import java.io.File;
 
@@ -98,8 +102,10 @@ public class Develop extends javax.swing.JFrame {
         scroller.setRowHeaderView(tln);
 
         catchyPLP();
+        txtOutput.setEditorKit(new HTMLEditorKit());
+        txtOutput.setDocument(new HTMLDocument());
 
-        Msg.output = txtOutput;
+        Msg.setOutput(txtOutput);
         scroller.setEnabled(false);
         txtOutput.setEditable(false);
         rootmenuProject.setEnabled(false);
@@ -129,15 +135,16 @@ public class Develop extends javax.swing.JFrame {
         undoManager = new DevUndoManager();
         undoManager.setLimit(Config.devMaxUndoEntries);
 
+        txtOutput.addHyperlinkListener(new OutputHyperlinkListener(plp));
+
         simEnd();
         disableBuildControls();
         initPopupMenus();
-        
+
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
 
-
-        Msg.M(Constants.copyrightString);
+        Msg.M(Constants.copyrightString.replace("\n", "<br />"));
     }
 
     /**
@@ -543,7 +550,7 @@ public class Develop extends javax.swing.JFrame {
             case 2:
                 return;
             default:
-                Msg.output = txtOutput;
+                Msg.setOutput(txtOutput);
 
                 final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
                 fc.setFileFilter(new PlpFilter());
@@ -569,7 +576,7 @@ public class Develop extends javax.swing.JFrame {
      * @return
      */
     public int savePLPFileAs() {
-        Msg.output = txtOutput;
+        Msg.setOutput(txtOutput);
 
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setFileFilter(new PlpFilter());
@@ -688,7 +695,7 @@ public class Develop extends javax.swing.JFrame {
      * @return Error code
      */
     public int importASM() {
-        Msg.output = txtOutput;
+        Msg.setOutput(txtOutput);
 
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setFileFilter(new AsmFilter());
@@ -710,7 +717,7 @@ public class Develop extends javax.swing.JFrame {
      * @return Error code
      */
     public int exportASM() {
-        Msg.output = txtOutput;
+        Msg.setOutput(txtOutput);
         int indexToExport = -1;
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
 
@@ -928,7 +935,7 @@ public class Develop extends javax.swing.JFrame {
      * Assemble routine
      */
     public void assemble() {
-        Msg.output = txtOutput;
+        Msg.setOutput(txtOutput);
 
         if(plp.plpfile != null)
             plp.assemble();
@@ -2803,7 +2810,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
-        Msg.output = txtOutput;
+        Msg.setOutput(txtOutput);
 
         if(plp.plpfile != null)
             plp.assemble();
@@ -2846,7 +2853,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuExportASMActionPerformed
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        Msg.output = txtOutput;
+        Msg.setOutput(txtOutput);
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void menuProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
@@ -3632,6 +3639,37 @@ class PlpFilter extends javax.swing.filechooser.FileFilter {
 
     public String getDescription() {
         return "PLP project files";
+    }
+}
+
+class OutputHyperlinkListener implements HyperlinkListener {
+
+    private ProjectDriver plp;
+
+    public OutputHyperlinkListener(ProjectDriver plp) {
+        this.plp = plp;
+    }
+
+    public void hyperlinkUpdate(HyperlinkEvent hev) {
+        if (hev.getEventType() == EventType.ACTIVATED) {
+            String tokens[] = hev.getDescription().split("::");
+            int line = Integer.parseInt(tokens[1]);
+            int index = plp.getAsmIndex(tokens[0]);
+            plp.updateAsm(plp.getOpenAsm(), plp.g_dev.getEditorText());
+            plp.setOpenAsm(index);
+            plp.refreshProjectView(false);
+            String lines[] = plp.getAsm(index).getAsmString().split("\\r?\\n");
+            int lengthSum = 0;
+            int i;
+            for(i = 0; i < line-1; i++) {
+                lengthSum += lines[i].length()+1;
+            }
+
+            //plp.g_dev.getEditor().setCaretPosition(lengthSum);
+            plp.g_dev.getEditor().setSelectionStart(lengthSum);
+            plp.g_dev.getEditor().setSelectionEnd(lengthSum+lines[i].length());
+            plp.g_dev.getEditor().requestFocus();
+        }
     }
 }
 
