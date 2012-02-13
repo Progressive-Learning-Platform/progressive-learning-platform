@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd $1
 DATE=`date +%y%m%d`
 
 # assume we're in misc/buildbot and make a build repo in ../../../buildbot_tmp
