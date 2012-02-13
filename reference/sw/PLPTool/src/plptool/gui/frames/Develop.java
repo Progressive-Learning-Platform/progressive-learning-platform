@@ -1458,6 +1458,42 @@ public class Develop extends javax.swing.JFrame {
                         });
     }
 
+    public void gotoLocation(String file, int line) {
+        int index = plp.getAsmIndex(file);
+        if(index < 0) {
+            Msg.E("Invalid source file index. Has the file been removed?",
+                    Constants.PLP_DEV_INVALID_FILE_INDEX, this);
+            return;
+        }
+        plp.updateAsm(plp.getOpenAsm(), plp.g_dev.getEditorText());
+        plp.setOpenAsm(index);
+        plp.refreshProjectView(false);
+        String lines[] = plp.getAsm(index).getAsmString().split("\\r?\\n");
+
+        if(line-1 > lines.length) {
+            Msg.E("Unable to go to the specified location. Has the file been" +
+                    " modified?", Constants.PLP_DEV_INVALID_GOTO_LOCATION, this);
+            return;
+        }
+
+        int lengthSum = 0;
+        int i;
+        for(i = 0; i < line-1; i++) {
+            lengthSum += lines[i].length()+1;
+        }
+
+        if(lengthSum > txtEditor.getDocument().getLength() ||
+           lengthSum+lines[i].length() > txtEditor.getDocument().getLength()) {
+            Msg.E("Unable to go to the specified location. Has the file been" +
+                    " modified?", Constants.PLP_DEV_INVALID_GOTO_LOCATION, this);
+            return;
+        }
+
+        plp.g_dev.getEditor().setSelectionStart(lengthSum);
+        plp.g_dev.getEditor().setSelectionEnd(lengthSum+lines[i].length());
+        plp.g_dev.getEditor().requestFocus();
+    }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -3669,21 +3705,7 @@ class OutputHyperlinkListener implements HyperlinkListener {
         if (hev.getEventType() == EventType.ACTIVATED) {
             String tokens[] = hev.getDescription().split("::");
             int line = Integer.parseInt(tokens[1]);
-            int index = plp.getAsmIndex(tokens[0]);
-            plp.updateAsm(plp.getOpenAsm(), plp.g_dev.getEditorText());
-            plp.setOpenAsm(index);
-            plp.refreshProjectView(false);
-            String lines[] = plp.getAsm(index).getAsmString().split("\\r?\\n");
-            int lengthSum = 0;
-            int i;
-            for(i = 0; i < line-1; i++) {
-                lengthSum += lines[i].length()+1;
-            }
-
-            //plp.g_dev.getEditor().setCaretPosition(lengthSum);
-            plp.g_dev.getEditor().setSelectionStart(lengthSum);
-            plp.g_dev.getEditor().setSelectionEnd(lengthSum+lines[i].length());
-            plp.g_dev.getEditor().requestFocus();
+            plp.g_dev.gotoLocation(tokens[0], line);
         }
     }
 }
