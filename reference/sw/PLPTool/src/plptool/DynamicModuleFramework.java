@@ -346,14 +346,13 @@ public class DynamicModuleFramework {
      * listing file
      *
      * @param path Path to the JAR file
-     * @return True on successful load, false otherwise
+     * @return Manifest lines on successful load, null otherwise
      */
-    public static boolean loadJarWithManifest(String path) {
+    public static String[] loadJarWithManifest(String path) {
         try {
             JarFile jar = new JarFile(path);
             Enumeration<JarEntry> entries =  jar.entries();
             JarEntry entry;
-            String className;
             boolean manifestFound = false;
 
             while(entries.hasMoreElements() && !manifestFound) {
@@ -371,23 +370,49 @@ public class DynamicModuleFramework {
                     }
                     String[] lines = (new String(out.toByteArray())).split("\\r?\\n");
 
-                    for(int i = 0; i < lines.length; i++)
-                        loadModuleClass(path, lines[i]);
+                    for(int i = 0; i < lines.length; i++) {
+                        if(lines[i].startsWith("class::"))
+                            loadModuleClass(path, lines[i].replace("class::", ""));
+                    }
+
+                    return lines;
                 }
             }
 
             if(!manifestFound) {
                 Msg.E("No plp.manifest file found in the JAR archive",
                         Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
-                return false;
+                return null;
             }
-
-            return true;
 
         } catch(IOException e) {
             Msg.E("Failed to load classes from '" + path + "'",
                   Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
-            return false;
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Apply manifest entries to the project
+     *
+     * @param manifestLines Manifest lines returned by loadJarWithManifest
+     * @param plp Reference to the ProjectDriver to apply
+     */
+    public static void applyManifestEntries(String[] manifestLines, plptool.gui.ProjectDriver plp) {
+        for(int i = 0; i < manifestLines.length; i++) {
+            if(manifestLines[i].startsWith("loadwithproject::")) {
+                String className = manifestLines[i].replace("loadwithproject::", "");
+                int cIndex = -1;
+                int ret = isModuleClassRegistered(className);
+                if(ret > -1)
+                    cIndex = newGenericModuleInstance(ret);
+                if(cIndex > -1) {
+                    Msg.M("Applying manifest: " + manifestLines[i]);
+                    hook(cIndex, plp);
+                }
+            }
         }
     }
 
