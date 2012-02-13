@@ -161,6 +161,10 @@ public class Constants {
     public static final int PLP_ISA_NO_SIMCOREGUI                = 2053;
     public static final int PLP_ISA_NO_PROGRAMMER                = 2054;
 
+    // Develop errors
+    public static final int PLP_DEV_INVALID_FILE_INDEX           = 4096;
+    public static final int PLP_DEV_INVALID_GOTO_LOCATION        = 4097;
+
     // ProjectDriver modes
     public static final int PLP_DEFAULT                          = 0;
     public static final int PLP_GUI_START_IDE                    = 1;
