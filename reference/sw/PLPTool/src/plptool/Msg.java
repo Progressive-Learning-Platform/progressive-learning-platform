@@ -19,13 +19,9 @@
 package plptool;
 
 import javax.swing.JTextPane;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLDocument;
 import java.awt.Font;
-import java.awt.Color;
 import java.util.ArrayList;
 
 /**
@@ -40,13 +36,15 @@ public class Msg {
      */
     private static JTextPane output = null;
 
+    /**
+     * Reference to the HTML document of an output pane
+     */
     private static HTMLDocument doc = null;
-    private static HTMLEditorKit kit = null;
 
     /**
-     * Aux outputs
+     * Reference to the editor kit of an output pane
      */
-    public static ArrayList<JTextPane> outputs = new ArrayList<JTextPane>();
+    private static HTMLEditorKit kit = null;
 
     /**
      * Last object that was responsible for invoking an Error messsage.
@@ -77,13 +75,6 @@ public class Msg {
      * Suppress warnings.
      */
     public static boolean suppressWarnings = false;
-
-    public static final int     NORMAL          =   0;
-    public static final int     RED_BOLD        =   1;
-    public static final int     BOLD            =   2;
-    public static final int     HYPERLINK       =   3;
-    public static final int     FADE_BOLD       =   4;
-    public static final int     FADE_NORMAL     =   5;
 
     public static void setOutput(JTextPane newOutput) {
         output = newOutput;
