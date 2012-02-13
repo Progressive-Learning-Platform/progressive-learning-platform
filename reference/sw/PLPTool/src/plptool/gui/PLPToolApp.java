@@ -38,6 +38,7 @@ public class PLPToolApp extends SingleFrameApplication {
     static String plpFilePath = null;
     static boolean open = false;
     static boolean serialTerminal = false;
+    private static String[] manifestLines = null;
     ConsoleFrame con;
 
     /**
@@ -63,6 +64,9 @@ public class PLPToolApp extends SingleFrameApplication {
                 con.setVisible(true);
             }
             plp.app = this;
+
+            if(manifestLines != null)
+                DynamicModuleFramework.applyManifestEntries(manifestLines, plp);
 
             Msg.setOutput(plp.g_dev.getOutput());
             if(plpFilePath != null)
@@ -157,9 +161,9 @@ public class PLPToolApp extends SingleFrameApplication {
                 activeArgIndex += 2;
             }
 
-            // Load all classes from a jar
+            // Load classes from a jar with a manifest file
             if(args.length >= activeArgIndex + 2 && args[i].equals("--load-jar-with-manifest")) {
-                if(!DynamicModuleFramework.loadJarWithManifest(args[i+1]))
+                if((manifestLines = DynamicModuleFramework.loadJarWithManifest(args[i+1])) == null)
                     System.exit(-1);
                 activeArgIndex += 2;
             }
