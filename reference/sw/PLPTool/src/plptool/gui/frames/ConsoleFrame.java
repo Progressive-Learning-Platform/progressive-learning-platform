@@ -222,7 +222,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 //progVis.printProgram();
                
                 plptool.mips.visualizer.ProgramVisualization.programGraph progGraph = progVis.new programGraph();
-                plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph);
+                plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph, plp);
                 progGraph.initGraph();
                 progVisFrame.setVisible(true);
             }
