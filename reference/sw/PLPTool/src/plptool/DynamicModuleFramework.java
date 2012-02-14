@@ -363,7 +363,9 @@ public class DynamicModuleFramework {
                     loadModuleClass(path, className);
                 }
             }
-            
+
+            jar.close();
+
             return true;
 
         } catch(IOException e) {
@@ -407,7 +409,7 @@ public class DynamicModuleFramework {
                         if(lines[i].startsWith("class::"))
                             loadModuleClass(path, lines[i].replace("class::", ""));
                     }
-
+                    jar.close();
                     return lines;
                 }
             }
@@ -415,6 +417,7 @@ public class DynamicModuleFramework {
             if(!manifestFound) {
                 Msg.E("No plp.manifest file found in the JAR archive",
                         Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                jar.close();
                 return null;
             }
 
@@ -541,6 +544,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                 JarFile jar = new JarFile(file);
                 JarEntry jarEntry = jar.getJarEntry(name.replace(".", "/") + ".class");
                 if(jarEntry == null) {
+                    jar.close();
                     throw new ClassNotFoundException(name);
                 }
 
@@ -550,11 +554,13 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                     out.write(array, 0, length);
                     length = in.read(array);
                 }
-
+                in.close();
+                jar.close();
                 try {
                     ret = defineClass(name, out.toByteArray(), 0, out.size());
                 } catch(NoClassDefFoundError e) {
                     Msg.E("defineClass: " + name + " FAILED: " + e, Constants.PLP_GENERIC_ERROR, null);
+                    jar.close();
                     return null;
                 }
             }
