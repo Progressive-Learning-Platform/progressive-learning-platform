@@ -133,13 +133,14 @@ public class Architecture extends PLPArchitecture {
                     if(progVis == null) {
                         progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
                         progGraph = progVis.new programGraph();
-                        progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph);
+                        progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph, plp);
                         ((plptool.mips.SimCoreGUI) plp.g_sim).attachProgramVisualizationFrame(progVisFrame);
                     }
                     progVisFrame.setVisible(true);
                     // test for paint functions
-                    progVisFrame.repaint("Begin");
-                    progVisFrame.unpaint("End");
+                    //progVisFrame.repaint("Begin");
+                    //progVisFrame.unpaint("End");
+                    //progVisFrame.unpaint("Begin");
                 }
             });
 

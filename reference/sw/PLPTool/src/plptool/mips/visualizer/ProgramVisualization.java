@@ -154,25 +154,25 @@ public class ProgramVisualization {
             long[] addr_table = asm.getAddrTable();
             long[] obj_table = asm.getObjectCode();
 
-            vertices.add("Begin");
+            //vertices.add("Begin");
             previousVertex=0;
             //progGraph.addVertex(vertices.get(vertices.size()-1));
             //Msg.M(vertices.get(0));
-            progGraph.addVertex(vertices.get(0));
+            //progGraph.addVertex(vertices.get(0));
 
             // add labels first
             //previousLabel=vertices.get(0);
             for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
                 currentLabel=asm.lookupLabel(addr_table[addindex1]);
                 if(currentLabel!=null){
-                    //Msg.M(currentLabel);
+                    Msg.M("Current Address " + addr_table[addindex1] + ": " + currentLabel);
                     vertices.add(currentLabel);
                     progGraph.addVertex(currentLabel);
                     //progGraph.addEdge("" + addindex1, previousLabel, currentLabel, EdgeType.DIRECTED);
                     //previousLabel=currentLabel;
                 }
             }
-            progGraph.addVertex("End");
+            //progGraph.addVertex("End");
             //Msg.M(progGraph.toString());
             //progGraph.addEdge("FIGHT", "Begin", "start", EdgeType.DIRECTED);
             // add edges

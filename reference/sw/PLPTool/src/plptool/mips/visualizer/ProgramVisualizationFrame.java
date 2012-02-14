@@ -10,7 +10,9 @@
  */
 
 package plptool.mips.visualizer;
-
+import plptool.gui.ProjectDriver;
+import plptool.*;
+import plptool.mips.*;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -52,7 +54,7 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
 
     private ProgramVisualization progVis;
     private ProgramVisualization.programGraph progGraph;
-
+    private ProjectDriver plp;
 
     private Layout<String, String> layout;
     private VisualizationViewer<String,String> progVisServ;
@@ -90,11 +92,12 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     };
     
     /** Creates new form ProgramVisualizationFrame */
-    public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph) {
+    public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph, ProjectDriver plp) {
         initComponents();
         int vertexYPos;
         this.progVis = progVis;
-        this.progGraph= progGraph;
+        this.progGraph = progGraph;
+        this.plp = plp;
         vertexRecolor = new vertexRecolor<String>();
         // Vertical Layout
         layout = new StaticLayout<String,String>(progGraph.buildGraph());
@@ -135,17 +138,27 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     }
 
     // paint current label green
-    public void repaint(String vertexName){
+    public void vert_repaint(String vertexName){
         vertexRecolor.setPaintMe(vertexName);
     }
     // as you move to next label, repaint red
-    public void unpaint(String vertexName){
+    public void vert_unpaint(String vertexName){
         vertexRecolor.unPaintMe(vertexName);
     }
 
     // called by SimCoreGUI when there's a GUI update in simulation
     public void updateComponents() {
-        
+        long currentAddress = plp.sim.visibleAddr;
+        Msg.M("Current Address: " + currentAddress);
+        //currentAddress -= 4;
+        //Msg.M("Current Address - 4: " + currentAddress);
+        String currentLabel = plp.asm.lookupLabel(currentAddress);
+        Msg.M("currentLabel: " + currentLabel);
+        if(currentLabel != null){
+            this.vert_repaint(currentLabel);
+        }
+        //this.vert_unpaint("Begin");
+        this.repaint();
     }
 
     /** This method is called from within the constructor to
