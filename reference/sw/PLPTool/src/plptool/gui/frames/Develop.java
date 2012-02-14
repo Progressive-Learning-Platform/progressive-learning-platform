@@ -3454,8 +3454,14 @@ public class Develop extends javax.swing.JFrame {
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
             String[] manifest = DynamicModuleFramework.loadJarWithManifest(fc.getSelectedFile().getAbsolutePath());
-            if(manifest != null)
+            if(manifest != null) {
                 DynamicModuleFramework.applyManifestEntries(manifest, plp);
+                retVal = JOptionPane.showConfirmDialog(this,
+                        "Would you like to save this module so it will autoload the next time PLPTool starts?",
+                        "Save Module", JOptionPane.YES_NO_OPTION);
+                if(retVal == JOptionPane.YES_OPTION)
+                    PLPToolbox.downloadJARForAutoload("file:///" + fc.getSelectedFile().getAbsolutePath(), null, false);
+            }
         }
     }//GEN-LAST:event_menuLoadModuleJarActionPerformed
 
