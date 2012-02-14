@@ -163,6 +163,11 @@ public class PLPToolConnector implements PLPGenericModule {
 
         } else if(param instanceof ProjectDriver) {
             this.plp = (ProjectDriver) param;
+            if(!plp.g()) {
+                Msg.E("Lecture Publisher requires PLPTool GUI", Constants.PLP_GENERIC_ERROR, this);
+                return null;
+            }
+
             events = new ArrayList<ProjectEvent>();
             Msg.I("<em>Lecture Publisher</em> is ready &mdash; Use <b>Tools" +
                     "</b>&rarr;<b>Show Lecture Publisher Window</b> to start!",

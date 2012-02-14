@@ -420,6 +420,15 @@
                 <Property name="name" type="java.lang.String" value="menuModules" noResource="true"/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="menuModuleManager">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" resourceKey="menuModuleManager.text"/>
+                    <Property name="name" type="java.lang.String" value="menuModuleManager" noResource="true"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuModuleManagerActionPerformed"/>
+                  </Events>
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="menuLoadModuleJar">
                   <Properties>
                     <Property name="text" type="java.lang.String" resourceKey="menuLoadModuleJar.text"/>
@@ -985,7 +994,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="splitterV" alignment="0" pref="473" max="32767" attributes="0"/>
+              <Component id="splitterV" alignment="0" pref="472" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -1060,11 +1069,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="scroller" alignment="0" pref="830" max="32767" attributes="0"/>
+                          <Component id="scroller" alignment="0" pref="827" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtCurFile" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="625" max="32767" attributes="0"/>
+                              <EmptySpace pref="609" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="lblPosition" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Component id="lblSimStat" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1082,7 +1091,7 @@
                                   <Component id="lblSimStat" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="scroller" pref="381" max="32767" attributes="0"/>
+                              <Component id="scroller" pref="403" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

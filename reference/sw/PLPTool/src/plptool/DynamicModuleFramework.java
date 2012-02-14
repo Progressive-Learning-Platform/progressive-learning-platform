@@ -21,8 +21,8 @@ package plptool;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.jar.*;
+import javax.swing.JOptionPane;
 
 /**
  * This class is the dynamic module loading framework for PLPTool. The
@@ -286,6 +286,27 @@ public class DynamicModuleFramework {
         File autoloadDir = new File(PLPToolbox.getConfDir() + "/autoload");
         if(autoloadDir.exists() && autoloadDir.isDirectory()) {
             File[] files = autoloadDir.listFiles();
+
+            if(files.length > 0) {
+                String message = "PLPTool module autoloading is enabled." +
+                            " If you click yes, all saved modules will be loaded." +
+                            " Continue with module autoload?";
+                if(plp.g()) {
+                    int ret = JOptionPane.showConfirmDialog(plp.g_dev,
+                            message, "Autoload Modules", JOptionPane.YES_NO_OPTION);
+                    if(ret == JOptionPane.CLOSED_OPTION ||
+                       ret == JOptionPane.NO_OPTION)
+                        return;
+                } else {
+                    System.out.print(message + " (Y/N) ");
+                    try {
+                        char response = (char) System.in.read();
+                        if(response != 'Y')
+                            return;
+                    } catch(Exception e) { }
+                }
+            }
+
             for(int i = 0; i < files.length; i++) {
                 if(files[i].getName().endsWith(".jar")) {
                     String[] manifest = loadJarWithManifest(files[i].getAbsolutePath());

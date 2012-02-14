@@ -222,6 +222,9 @@ public class PLPToolApp extends SingleFrameApplication {
         } else if(args.length > 0 && args[0].equals("-s")) {
             if(args.length == 2) {
                 ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
+                // Load dynamic modules
+                if(autoloadjars && plptool.Config.autoloadModules)
+                    DynamicModuleFramework.autoloadModules(plp);
                 if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
                 if(plp.asm.isAssembled())
                     plp.simulate();
@@ -231,6 +234,9 @@ public class PLPToolApp extends SingleFrameApplication {
                     FileInputStream in = new FileInputStream(new File(args[2]));
                     Scanner sIn = new Scanner(in);
                     ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
+                    // Load dynamic modules
+                    if(autoloadjars && plptool.Config.autoloadModules)
+                        DynamicModuleFramework.autoloadModules(plp);
                     if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
                     if(plp.asm.isAssembled())
                         plp.simulate();

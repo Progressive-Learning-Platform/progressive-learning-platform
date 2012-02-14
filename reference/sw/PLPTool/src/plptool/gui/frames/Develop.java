@@ -1586,6 +1586,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuTools = new javax.swing.JMenu();
         menuOptions = new javax.swing.JMenuItem();
         menuModules = new javax.swing.JMenu();
+        menuModuleManager = new javax.swing.JMenuItem();
         menuLoadModuleJar = new javax.swing.JMenuItem();
         menuRemoveAutoloadDir = new javax.swing.JMenuItem();
         menuDynamicModuleManager = new javax.swing.JMenuItem();
@@ -1694,10 +1695,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1718,11 +1719,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 609, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1736,7 +1737,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1759,7 +1760,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -2413,6 +2414,15 @@ public class Develop extends javax.swing.JFrame {
 
         menuModules.setText(resourceMap.getString("menuModules.text")); // NOI18N
         menuModules.setName("menuModules"); // NOI18N
+
+        menuModuleManager.setText(resourceMap.getString("menuModuleManager.text")); // NOI18N
+        menuModuleManager.setName("menuModuleManager"); // NOI18N
+        menuModuleManager.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuModuleManagerActionPerformed(evt);
+            }
+        });
+        menuModules.add(menuModuleManager);
 
         menuLoadModuleJar.setText(resourceMap.getString("menuLoadModuleJar.text")); // NOI18N
         menuLoadModuleJar.setName("menuLoadModuleJar"); // NOI18N
@@ -3486,6 +3496,10 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuRemoveAutoloadDirActionPerformed
 
+    private void menuModuleManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuModuleManagerActionPerformed
+        (new ModuleManager(this, true, plp)).setVisible(true);
+    }//GEN-LAST:event_menuModuleManagerActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3613,6 +3627,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuIssuesPage;
     private javax.swing.JMenuItem menuLoadModuleJar;
     private javax.swing.JMenuItem menuManual;
+    private javax.swing.JMenuItem menuModuleManager;
     private javax.swing.JMenu menuModules;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuNewASM;

@@ -334,6 +334,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     PLPToolbox.downloadJARForAutoload(tokens[1], plp, true);
                 }
 
+                else if(tokens[0].equals("debuglevel") && tokens.length == 2) {
+                    out.setText("Setting debug level to " + tokens[1]);
+                    Constants.debugLevel = Integer.parseInt(tokens[1]);
+                }
+
                 else if(tokens[0].equals("simcl") && asmexplorer != null) {
                     String xcmd = "";
                     for(int i = 1; i < tokens.length; i++)

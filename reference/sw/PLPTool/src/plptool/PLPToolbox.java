@@ -176,6 +176,12 @@ public class PLPToolbox {
         return (cfgDir.exists() && cfgDir.isDirectory());
     }
 
+    /**
+     * Get host OS ID
+     *
+     * @param print Print host OS information to message out
+     * @return OS code (See Constants.PLP_OS_*)
+     */
     public static int getOS(boolean print) {
         String osIdentifier = System.getProperty("os.name");
         String osArch = System.getProperty("os.arch");
@@ -198,11 +204,22 @@ public class PLPToolbox {
         return Constants.PLP_OS_UNKNOWN;
     }
 
+    /**
+     * Check whether the host OS is GNU/Linux
+     *
+     * @return True for GNU/Linux, false otherwise
+     */
     public static boolean isHostLinux() {
         return (getOS(false) == Constants.PLP_OS_LINUX_32 ||
                 getOS(false) == Constants.PLP_OS_LINUX_64);
     }
 
+    /**
+     * Attach a keylistener that will hide the frame when the escape key is
+     * pressed by the user
+     *
+     * @param frame Reference to the frame to attach the listener to
+     */
     public static void attachHideOnEscapeListener(final javax.swing.JFrame frame) {
         javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
         javax.swing.Action escapeAction = new javax.swing.AbstractAction() {
@@ -215,6 +232,12 @@ public class PLPToolbox {
         frame.getRootPane().getActionMap().put("ESCAPE", escapeAction);
     }
 
+    /**
+     * Attach a keylistener that will hide the dialog when the escape key is
+     * pressed by the user
+     *
+     * @param frame Reference to the dialog to attach the listener to
+     */
     public static void attachHideOnEscapeListener(final javax.swing.JDialog frame) {
         javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
         javax.swing.Action escapeAction = new javax.swing.AbstractAction() {
@@ -242,7 +265,7 @@ public class PLPToolbox {
      * @param plp Reference to the ProjectDriver instance
      * @param load Should the method load the module after downloading
      */
-    public static void downloadJARForAutoload(String URL, plptool.gui.ProjectDriver plp, boolean load) {
+    public static boolean downloadJARForAutoload(String URL, plptool.gui.ProjectDriver plp, boolean load) {
        
         File autoloadDir = new File(getConfDir() + "/autoload");
         if(!autoloadDir.exists())
@@ -269,6 +292,7 @@ public class PLPToolbox {
                         Constants.PLP_GENERIC_ERROR, null);
                 if(Constants.debugLevel >= 2)
                     e.printStackTrace();
+                return false;
             }
             if(load) {
                 String searchPath = PLPToolbox.getConfDir() + "/autoload/" + fileName;
@@ -276,7 +300,9 @@ public class PLPToolbox {
                 if(manifest != null)
                     DynamicModuleFramework.applyManifestEntries(manifest, plp);
             }
+            return true;
         }
+        return false;
     }
 }
 
