@@ -201,9 +201,12 @@ public class Architecture extends PLPArchitecture {
             plp.g_dev.addSimToolItem(menuMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuForgetMemoryVisualizer);
             plp.g_dev.addSimToolItem(menuBusMonitor);
-            plp.g_dev.addSimToolItem(menuProgramVisualizer);
-            //Disable for 4.0 release
-            //plp.g_dev.addSimToolItem(menuCpuVis);
+            
+            //Disable for 4.1 release
+            if(Constants.debugLevel >= 2) {
+                plp.g_dev.addSimToolItem(menuProgramVisualizer);
+                plp.g_dev.addSimToolItem(menuCpuVis);
+            }
         }
     }
 
@@ -220,9 +223,12 @@ public class Architecture extends PLPArchitecture {
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
             plp.g_dev.removeLastSimToolItem();
-            plp.g_dev.removeLastSimToolItem();
-            //4.0 release
-            //plp.g_dev.removeLastSimToolItem();
+            
+            //Disable for 4.1 release
+            if(Constants.debugLevel >= 2) {
+                plp.g_dev.removeLastSimToolItem();
+                plp.g_dev.removeLastSimToolItem();
+            }
 
             if(busMonitor != null && busMonitorAttached) {
                 plp.addProjectAttribute("plpmips_timingdiagram", busMonitor.getTimingDiagram());
