@@ -60,6 +60,9 @@ public class ProjectEvent {
     public final static int         NEW_SOURCE                      = 1026;
     public final static int         REMOVE_SOURCE                   = 1027;
 
+    /* MISCELLANEOUS */
+    public static final int         THIRDPARTY_LICENSE              = 1028;
+
     /**
      * Event identifier
      */

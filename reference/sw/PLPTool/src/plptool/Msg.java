@@ -174,7 +174,7 @@ public class Msg {
                 System.out.println(objIdentifier.toString() + ": " + infoStr);
             else {
                 kit.insertHTML(doc, doc.getLength(),
-                        "<font face=\"sans-serif\">" + objIdentifier.toString() + ": " + infoStr + "</font><br />", 0, 0, null);
+                        "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + objIdentifier.toString() + ": " + infoStr + "</font><br />", 0, 0, null);
                 output.setCaretPosition(doc.getLength());
             }
         else
@@ -182,7 +182,7 @@ public class Msg {
                 System.out.println(infoStr);
             else {
                 kit.insertHTML(doc, doc.getLength(),
-                        "<font face=\"sans-serif\">" + infoStr + "</font><br />", 0, 0, null);
+                        "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + infoStr + "</font><br />", 0, 0, null);
                 output.setCaretPosition(doc.getLength());
             }
 
