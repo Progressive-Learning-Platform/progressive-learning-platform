@@ -143,6 +143,11 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         vertexRecolor.unPaintMe(vertexName);
     }
 
+    // called by SimCoreGUI when there's a GUI update in simulation
+    public void updateComponents() {
+        
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
