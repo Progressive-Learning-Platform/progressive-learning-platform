@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>3.1.1 Command Line Options</TITLE>
+<META NAME="description" CONTENT="3.1.1 Command Line Options">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="previous" HREF="node5.html">
+<LINK REL="up" HREF="node5.html">
+<LINK REL="next" HREF="node7.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html161"
+  HREF="node7.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html157"
+  HREF="node5.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html153"
+  HREF="node5.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html159"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html162"
+  HREF="node7.html">3.2 Graphical User Interface</A>
+<B> Up:</B> <A NAME="tex2html158"
+  HREF="node5.html">3.1 Running PLPTool</A>
+<B> Previous:</B> <A NAME="tex2html154"
+  HREF="node5.html">3.1 Running PLPTool</A>
+ &nbsp; <B>  <A NAME="tex2html160"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00041100000000000000">
+3.1.1 Command Line Options</A>
+</H3>
+Launching PLPTool with no command line arguments will launch the GUI. Launching PLPTool with a <code>.plp</code> file as the only argument will launch the GUI and 
+open that project.
+
+<P>
+<PRE>
+java -jar PLPTool.jar &lt;.plp file to open&gt;
+</PRE>
+
+<P>
+or in Windows, where XX is the CPU type (32- or 64-bit):
+
+<P>
+<PRE>
+PLPToolWinXX.bat &lt;.plp file to open&gt;
+</PRE>
+
+<P>
+Running PLPTool with the command line argument below will list the source files that are in the project. It will also display the index of said source files that is used to export, remove, or set a source file as top level source.
+
+<P>
+<PRE>
+java -jar PLPTool.jar -plp &lt;plpfile&gt;
+</PRE>
+
+<P>
+The <code>-plp &lt;plpfile&gt;</code> command can also take additional arguments that can be used to manipulate the project file without launching the GUI: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Command Line Option</TD>
+<TD ALIGN="LEFT">Description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-c &lt;asm 1&gt;&lt;asm 2&gt;...</TD>
+<TD ALIGN="LEFT">Creates &lt;plpfile&gt;and imports &lt;asm 1&gt;, &lt;asm 2&gt;, ... to the project</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-p &lt;port&gt;</TD>
+<TD ALIGN="LEFT">Programs &lt;plpfile&gt;to serial port &lt;port&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-a</TD>
+<TD ALIGN="LEFT">Performs an assembly of the source files inside &lt;plpfile&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-i &lt;asm 1&gt;&lt;asm 2&gt;...</TD>
+<TD ALIGN="LEFT">Imports &lt;asm 1&gt;, &lt;asm 2&gt;, ... into &lt;plpfile&gt;project file</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-d &lt;directory&gt;</TD>
+<TD ALIGN="LEFT">Imports all files in &lt;directory&gt;to the &lt;plpfile&gt;project file</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-e &lt;index&gt;&lt;file&gt;</TD>
+<TD ALIGN="LEFT">Exports the source file with the index &lt;index&gt;as &lt;file&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-r &lt;index&gt;</TD>
+<TD ALIGN="LEFT">Removes the source file with the index &lt;index&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-s &lt;index&gt;</TD>
+<TD ALIGN="LEFT">Set the source file with the index &lt;index&gt;as the main program</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-m &lt;index&gt;&lt;new index&gt;</TD>
+<TD ALIGN="LEFT">Set &lt;new index&gt;for the source file with the index &lt;index&gt;</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html161"
+  HREF="node7.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html157"
+  HREF="node5.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html153"
+  HREF="node5.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html159"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html162"
+  HREF="node7.html">3.2 Graphical User Interface</A>
+<B> Up:</B> <A NAME="tex2html158"
+  HREF="node5.html">3.1 Running PLPTool</A>
+<B> Previous:</B> <A NAME="tex2html154"
+  HREF="node5.html">3.1 Running PLPTool</A>
+ &nbsp; <B>  <A NAME="tex2html160"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-02-08
+</ADDRESS>
+</BODY>
+</HTML>
