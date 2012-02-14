@@ -45,6 +45,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
     private plptool.gui.ProjectDriver plp;
     private ArrayList<MemoryVisualization> memoryVisualizers;
     private CPUVisualization cpuVisualizer;
+    private ProgramVisualizationFrame progVisFrame;
     private long old_pc;
     private String lastCLCommand = "";
 
@@ -803,6 +804,9 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         if(cpuVisualizer != null && cpuVisualizer.isVisible())
             cpuVisualizer.update();
 
+        if(progVisFrame != null)
+            progVisFrame.updateComponents();
+
         updateProgramMemoryTablePC();
     }
 
@@ -853,6 +857,10 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     public void attachCPUVisualizer(CPUVisualization cpuVisualizer) {
         this.cpuVisualizer = cpuVisualizer;
+    }
+
+    public void attachProgramVisualizationFrame(ProgramVisualizationFrame progVisFrame) {
+        this.progVisFrame = progVisFrame;
     }
 
     /** release build features disabler **/

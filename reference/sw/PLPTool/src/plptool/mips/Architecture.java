@@ -134,6 +134,7 @@ public class Architecture extends PLPArchitecture {
                         progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
                         progGraph = progVis.new programGraph();
                         progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph);
+                        ((plptool.mips.SimCoreGUI) plp.g_sim).attachProgramVisualizationFrame(progVisFrame);
                     }
                     progVisFrame.setVisible(true);
                     // test for paint functions
