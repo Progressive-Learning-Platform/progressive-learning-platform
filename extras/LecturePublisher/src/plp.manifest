@@ -1,3 +1,8 @@
+title::Lecture Publisher
+author::PLP Project
+license::GPLv3
+description::A lecture publisher package that allows recording and playback of a PLPTool session
+version::0.0.1
 class::lecturepublisher.PLPToolConnector
 class::lecturepublisher.PLPToolConnector$AudioPlayer
 class::lecturepublisher.PLPToolConnector$AudioRecorder
