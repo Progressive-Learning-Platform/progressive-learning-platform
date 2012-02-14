@@ -282,6 +282,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("       Even more commands.");
                 System.out.println();
             } else {
+                ProjectFileManipulator.helpMessage();
                 System.out.println("More commands:\n");
                 System.out.println("  --buildinfo            Print build information and quit.");
                 System.out.println("  --license              Print third party licensing information and quit.");
