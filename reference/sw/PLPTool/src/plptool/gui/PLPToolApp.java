@@ -69,8 +69,8 @@ public class PLPToolApp extends SingleFrameApplication {
             plp.app = this;
 
             // Load dynamic modules
-            if(autoloadjars)
-            DynamicModuleFramework.autoloadModules(plp);
+            if(autoloadjars && plptool.Config.autoloadModules)
+                DynamicModuleFramework.autoloadModules(plp);
 
             for(int i = 0; i < manifests.size(); i++)
                 DynamicModuleFramework.applyManifestEntries(manifests.get(i), plp);
@@ -117,7 +117,20 @@ public class PLPToolApp extends SingleFrameApplication {
         if(args.length >= 1 && args[0].equals("--buildinfo")) {
             Msg.M(plptool.Version.stamp);
             return;
-        }     
+        }
+
+        // Download a JAR file for autoloading
+        if(args.length == 2 && args[0].equals("--save-module")) {
+            plptool.PLPToolbox.downloadJARForAutoload(args[1], null, false);
+            return;
+        }
+
+        // Delete ~/.plp/autoload
+        if(args.length == 1 && args[0].equals("--delete-autoload-dir")) {
+            DynamicModuleFramework.removeAutoloadModules();
+            return;
+        }
+
 
         int activeArgIndex = 0;
         java.io.File fileToOpen = null;
@@ -159,13 +172,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 autoloadjars = false;
                 activeArgIndex++;
             }
-
-            // Delete ~/.plp/autoload
-            if(args.length >= activeArgIndex + 1 && args[i].equals("--delete-autoload-dir")) {
-                DynamicModuleFramework.removeAutoloadModules();
-                activeArgIndex++;
-            }
-
+            
             // Dynamic module load
             if(args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
                 if(!DynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
@@ -249,7 +256,7 @@ public class PLPToolApp extends SingleFrameApplication {
             launch(PLPToolApp.class, args);
             
         } else {
-            if(!args[0].equals("--help")) {
+            if(!args[0].equals("--help") && !args[0].equals("--full-help") ) {
                 Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
                 System.out.println();
             }
@@ -270,6 +277,42 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("       This will also create <plpfile> if it does not exist.");
             System.out.println("       Use '-plp' by itself for command listing.");
             System.out.println();
+            if(!args[0].equals("--full-help")) {
+                System.out.println("  --full-help");
+                System.out.println("       Even more commands.");
+                System.out.println();
+            } else {
+                System.out.println("More commands:\n");
+                System.out.println("  --buildinfo            Print build information and quit.");
+                System.out.println("  --license              Print third party licensing information and quit.");
+                System.out.println("  --suppress-output      Engage silent mode.");
+                System.out.println("  --suppress-warning     Suppress all warning messages.");
+                System.out.println("   -d <level>            Set debug level (0 to infinity).");
+                System.out.println("  --remove-config        Remove saved configuration and reset all settings.");
+                System.out.println("  --serial-terminal      Launch serial terminal instead of the IDE.");
+                System.out.println();
+                System.out.println("Dynamic modules / extensions controls:\n");
+                System.out.println("  --load-class <Java class file>");
+                System.out.println("       Load Java class file with the ClassLoader.");
+                System.out.println();
+                System.out.println("  --load-jar <jar file>");
+                System.out.println("       Load all Java classes inside the specified jar file.");
+                System.out.println();
+                System.out.println("  --load-jar-with-manifest <jar file>");
+                System.out.println("       Locate plp.manifest inside the jar file and interpret the file accordingly.");
+                System.out.println();
+                System.out.println("  --save-module <URL>");
+                System.out.println("       Fetch a module's jar file from URL, save it to the autoload directory, and quit.");
+                System.out.println("       This module will be autoloaded the next time PLPTool starts. Module autoloading");
+                System.out.println("       can be disabled by the user (autoloading is enabled by default).");
+                System.out.println();
+                System.out.println("  --no-module-autoload");
+                System.out.println("       Do NOT autoload modules for this PLPTool session.");
+                System.out.println();
+                System.out.println("  --delete-autoload-dir");
+                System.out.println("       Delete the autoload cache directory and all of its contents and quit.");
+                System.out.println();
+            }
         }
     }
 }

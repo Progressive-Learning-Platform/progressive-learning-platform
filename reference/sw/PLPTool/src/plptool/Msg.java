@@ -150,7 +150,7 @@ public class Msg {
                 System.out.println("[WARNING] " + warningStr);
             else {
                 kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
-                        + ": " + warningStr + "<br />", 0, 0, null);
+                        + warningStr + "<br />", 0, 0, null);
                 output.setCaretPosition(doc.getLength());
             }
         } catch(Exception e) {
@@ -207,7 +207,7 @@ public class Msg {
                 System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
-                        + objIdentifier.toString() + ": <font color=darkgray>" + debugStr + "</font><br />", 0, 0, null);
+                        + objIdentifier.toString() + ": <font color=\"#444444\">" + debugStr + "</font><br />", 0, 0, null);
                     output.setCaretPosition(doc.getLength());
                 }
             }
@@ -215,7 +215,7 @@ public class Msg {
                 System.out.println("[DEBUG] " + debugStr);
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
-                        + ": <font color=darkgray>" + debugStr + "</font><br />", 0, 0, null);
+                        + "<font color=\"#444444\">" + debugStr + "</font><br />", 0, 0, null);
                     output.setCaretPosition(doc.getLength());
                 }
             }
@@ -240,7 +240,7 @@ public class Msg {
             System.out.println(msgStr);
         else {
             kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
-                        msgStr + "</font><br />", 0, 0, null);
+                        msgStr.replace(" ", "&nbsp;") + "</font><br />", 0, 0, null);
             output.setCaretPosition(doc.getLength());
         }
 
@@ -263,7 +263,7 @@ public class Msg {
             System.out.print(msgStr);
         else {
             kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
-                        msgStr + "</font>", 0, 0, null);
+                        msgStr.replace(" ", "&nbsp;") + "</font>", 0, 0, null);
             output.setCaretPosition(doc.getLength());
         }
 

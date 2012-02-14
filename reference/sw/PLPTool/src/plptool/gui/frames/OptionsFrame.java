@@ -107,6 +107,8 @@ public class OptionsFrame extends javax.swing.JFrame {
             //plp.refreshProjectView(false);
         }
 
+        Config.autoloadModules = autoloadModules.isSelected();
+
         if(plp.g_simctrl != null)
             plp.g_simctrl.updateSlider();
 
@@ -153,6 +155,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgMaxChunkSize.setText("" + Config.prgMaxChunkSize);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
         simFunctional.setSelected(Config.simFunctional);
+        autoloadModules.setSelected(Config.autoloadModules);
         update();
     }
 
@@ -190,6 +193,8 @@ public class OptionsFrame extends javax.swing.JFrame {
         lblReadTimeout = new javax.swing.JLabel();
         prgReadTimeout = new javax.swing.JTextField();
         lblPrgWarning = new javax.swing.JLabel();
+        paneExtensions = new javax.swing.JPanel();
+        autoloadModules = new javax.swing.JCheckBox();
         btnClose = new javax.swing.JButton();
         btnApply = new javax.swing.JButton();
 
@@ -472,6 +477,35 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
 
+        paneExtensions.setName("paneExtensions"); // NOI18N
+
+        autoloadModules.setText(resourceMap.getString("autoloadModules.text")); // NOI18N
+        autoloadModules.setName("autoloadModules"); // NOI18N
+        autoloadModules.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoloadModulesActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout paneExtensionsLayout = new javax.swing.GroupLayout(paneExtensions);
+        paneExtensions.setLayout(paneExtensionsLayout);
+        paneExtensionsLayout.setHorizontalGroup(
+            paneExtensionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneExtensionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(autoloadModules)
+                .addContainerGap(277, Short.MAX_VALUE))
+        );
+        paneExtensionsLayout.setVerticalGroup(
+            paneExtensionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneExtensionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(autoloadModules)
+                .addContainerGap(376, Short.MAX_VALUE))
+        );
+
+        tabsOptions.addTab(resourceMap.getString("paneExtensions.TabConstraints.tabTitle"), paneExtensions); // NOI18N
+
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
         btnClose.addActionListener(new java.awt.event.ActionListener() {
@@ -587,7 +621,12 @@ public class OptionsFrame extends javax.swing.JFrame {
         triggerChange();
     }//GEN-LAST:event_cmbFontNameActionPerformed
 
+    private void autoloadModulesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoloadModulesActionPerformed
+        triggerChange();
+    }//GEN-LAST:event_autoloadModulesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox autoloadModules;
     private javax.swing.JButton btnApply;
     private javax.swing.JButton btnClose;
     private javax.swing.JComboBox cmbFontName;
@@ -601,6 +640,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblPrgWarning;
     private javax.swing.JLabel lblReadTimeout;
     private javax.swing.JPanel paneEditor;
+    private javax.swing.JPanel paneExtensions;
     private javax.swing.JPanel paneProgrammer;
     private javax.swing.JPanel paneSim;
     private javax.swing.JTextField prgMaxChunkSize;

@@ -695,7 +695,7 @@ public class IORegistry {
      * @param preset preset object to load
      */
     public int loadPreset(Preset preset) {
-        Msg.D("loading preset, # of mods: " + preset.size(), 3, null);
+        Msg.D("loading preset, # of mods: " + preset.size(), 3, this);
 
         for(int i = 0; i < preset.size(); i++) {
             if(plp.g()) {
@@ -714,7 +714,7 @@ public class IORegistry {
      * Creates a preset off the currently attached modules
      */
     public Preset createPreset() {
-        Msg.D("Adding " + modules.size() + " modules to preset.", 3, null);
+        Msg.D("Adding " + modules.size() + " modules to preset.", 3, this);
 
         Preset preset = new Preset();
 

@@ -137,6 +137,11 @@ public class Develop extends javax.swing.JFrame {
 
         txtOutput.addHyperlinkListener(new OutputHyperlinkListener(plp));
 
+        // Hide development stuff here
+        if(Constants.debugLevel == 0) {
+            menuDynamicModuleManager.setVisible(false);
+        }
+
         simEnd();
         disableBuildControls();
         initPopupMenus();
@@ -1413,7 +1418,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void removeLastButton() {
-        Msg.D("Removing toolbar button.", 4, null);
+        Msg.D("Removing toolbar button.", 4, this);
 
         toolbar.remove(toolbar.getComponentCount() - 1);
 
@@ -1445,7 +1450,7 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public void removeLastSimToolItem() {
-        Msg.D("Removing simulation tools menu item.", 4, null);
+        Msg.D("Removing simulation tools menu item.", 4, this);
 
         menuSimTools.remove(menuSimTools.getMenuComponentCount() - 1);
 
@@ -1582,6 +1587,7 @@ public class Develop extends javax.swing.JFrame {
         menuOptions = new javax.swing.JMenuItem();
         menuModules = new javax.swing.JMenu();
         menuLoadModuleJar = new javax.swing.JMenuItem();
+        menuRemoveAutoloadDir = new javax.swing.JMenuItem();
         menuDynamicModuleManager = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuSerialTerminal = new javax.swing.JMenuItem();
@@ -1688,10 +1694,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1712,11 +1718,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 611, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1730,7 +1736,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1753,7 +1759,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -2416,6 +2422,15 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         menuModules.add(menuLoadModuleJar);
+
+        menuRemoveAutoloadDir.setText(resourceMap.getString("menuRemoveAutoloadDir.text")); // NOI18N
+        menuRemoveAutoloadDir.setName("menuRemoveAutoloadDir"); // NOI18N
+        menuRemoveAutoloadDir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuRemoveAutoloadDirActionPerformed(evt);
+            }
+        });
+        menuModules.add(menuRemoveAutoloadDir);
 
         menuDynamicModuleManager.setText(resourceMap.getString("menuDynamicModuleManager.text")); // NOI18N
         menuDynamicModuleManager.setName("menuDynamicModuleManager"); // NOI18N
@@ -3456,6 +3471,14 @@ public class Develop extends javax.swing.JFrame {
         Msg.M(Constants.thirdPartyCopyrightString.replace("\n", "<br />"));
     }//GEN-LAST:event_menuThirdPartyLicenseActionPerformed
 
+    private void menuRemoveAutoloadDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRemoveAutoloadDirActionPerformed
+        int ret = JOptionPane.showConfirmDialog(this, "WARNING! This will remove all saved modules. Are you sure?",
+                "Clear Module Auto-load Cache", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if(ret == JOptionPane.YES_OPTION) {
+            DynamicModuleFramework.removeAutoloadModules();
+        }
+    }//GEN-LAST:event_menuRemoveAutoloadDirActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3597,6 +3620,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuQuickProgram;
     private javax.swing.JMenuItem menuQuickRef;
     private javax.swing.JMenuItem menuRedo;
+    private javax.swing.JMenuItem menuRemoveAutoloadDir;
     private javax.swing.JMenuItem menuSave;
     private javax.swing.JMenuItem menuSaveAs;
     private javax.swing.JPopupMenu.Separator menuSeparator1;

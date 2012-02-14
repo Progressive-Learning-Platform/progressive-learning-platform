@@ -300,13 +300,21 @@ public class DynamicModuleFramework {
      * Delete ~/.plp/autoload directory
      */
     public static void removeAutoloadModules() {
-        Msg.D("Removing " + PLPToolbox.getConfDir() + "/plp/autoload...", 1, null);
+        Msg.I("Removing " + PLPToolbox.getConfDir() + "/autoload...", null);
         File autoloadDir = new File(PLPToolbox.getConfDir() + "/autoload");
         if(autoloadDir.exists() && autoloadDir.isDirectory()) {
             File[] files = autoloadDir.listFiles();
             for(int i = 0; i < files.length; i++)
                 files[i].delete();
             autoloadDir.delete();
+
+            if(autoloadDir.exists())
+                Msg.E("Failed to remove autoload directory. " +
+                      "Are the modules loaded? Try '--delete-autoload-dir' " +
+                      "option from the command line or disable auto-loading " +
+                      "of modules from Tools->Options->Miscellaneous before " +
+                      "reattempting.",
+                      Constants.PLP_GENERIC_ERROR, null);
         }
     }
 
