@@ -3475,6 +3475,7 @@ public class Develop extends javax.swing.JFrame {
 
     private void menuThirdPartyLicenseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuThirdPartyLicenseActionPerformed
         Msg.M(Constants.thirdPartyCopyrightString.replace("\n", "<br />"));
+        plp.hookEvent(new ProjectEvent(ProjectEvent.THIRDPARTY_LICENSE, -1));
     }//GEN-LAST:event_menuThirdPartyLicenseActionPerformed
 
     private void menuRemoveAutoloadDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRemoveAutoloadDirActionPerformed

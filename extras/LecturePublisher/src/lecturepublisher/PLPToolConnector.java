@@ -99,7 +99,7 @@ public class PLPToolConnector implements PLPGenericModule {
                 }
 
                 events.clear();
-                Msg.I("Recording project events.", this);
+                Msg.I("<font color=red><b>Recording project events.</b></font>", this);
                 events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // start marker
                 if(audio) {
                     audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
@@ -117,7 +117,7 @@ public class PLPToolConnector implements PLPGenericModule {
                     plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
                     events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // end marker
                     record = false;
-                    Msg.I("Stopped recording.", this);
+                    Msg.I("<b>Stopped recording.</b>", this);
                 } else if(runnerThread != null) {
                     runnerThread.stopReplay();
                     audioPlayerThread.stopPlay();
@@ -160,12 +160,13 @@ public class PLPToolConnector implements PLPGenericModule {
 		Msg.I("Replay events cleared", this);
 		events = new ArrayList<ProjectEvent>();
             }
-        }
 
-	if(param instanceof ProjectDriver) {
+        } else if(param instanceof ProjectDriver) {
             this.plp = (ProjectDriver) param;
             events = new ArrayList<ProjectEvent>();
-            Msg.I(plp + " attached.", this);
+            Msg.I("<em>Lecture Publisher</em> is ready &mdash; Use <b>Tools" +
+                    "</b>&rarr;<b>Show Lecture Publisher Window</b> to start!",
+                    null);
             init = true;
 
             File temp = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
@@ -174,7 +175,7 @@ public class PLPToolConnector implements PLPGenericModule {
             controls = new Controls((ProjectDriver) param, this);
 
             menuDevShowFrame = new JMenuItem();
-            menuDevShowFrame.setText("Show Lecture Recorder");
+            menuDevShowFrame.setText("Show Lecture Publisher Window");
             menuDevShowFrame.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     hook("show");
@@ -183,9 +184,8 @@ public class PLPToolConnector implements PLPGenericModule {
             plp.g_dev.addToolsItem(menuDevShowFrame);
 
             return param;
-	}
 
-	if(param instanceof ProjectEvent && init) {
+	} else if(param instanceof ProjectEvent && init) {
             ProjectEvent e = (ProjectEvent) param;
             int id = e.getIdentifier();
             Msg.D(e.getSystemTimestamp() + ":" + e.getIdentifier(), 2, this);
@@ -197,6 +197,11 @@ public class PLPToolConnector implements PLPGenericModule {
             } else {
                 try {
                     switch(id) {
+                        case ProjectEvent.THIRDPARTY_LICENSE:
+                            Msg.M(getJSpeexLicense().replace(" ", "&nbsp;").replace("\n", "<br />"));
+
+                            break;
+
                         case ProjectEvent.EDITOR_TEXT_SET:
                             plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
 
@@ -354,6 +359,73 @@ public class PLPToolConnector implements PLPGenericModule {
     public void resetStates() {
         controls.setRecordState(false);
         controls.setPlaybackState(false);
+    }
+
+    public String getJSpeexLicense() {
+        String ret = "" +
+"\nLecture Publisher uses JSpeex 0.9.7 which has the following copyright notice:\n" +
+"/******************************************************************************\n" +
+" *                                                                            *\n" +
+" * Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.                   *\n" +
+" *                                                                            *\n" +
+" * COPYRIGHT:                                                                 *\n" +
+" *      This software is the property of Wimba S.A.                           *\n" +
+" *      This software is redistributed under the Xiph.org variant of          *\n" +
+" *      the BSD license.                                                      *\n" +
+" *      Redistribution and use in source and binary forms, with or without    *\n" +
+" *      modification, are permitted provided that the following conditions    *\n" +
+" *      are met:                                                              *\n" +
+" *      - Redistributions of source code must retain the above copyright      *\n" +
+" *      notice, this list of conditions and the following disclaimer.         *\n" +
+" *      - Redistributions in binary form must reproduce the above copyright   *\n" +
+" *      notice, this list of conditions and the following disclaimer in the   *\n" +
+" *      documentation and/or other materials provided with the distribution.  *\n" +
+" *      - Neither the name of Wimba, the Xiph.org Foundation nor the names of *\n" +
+" *      its contributors may be used to endorse or promote products derived   *\n" +
+" *      from this software without specific prior written permission.         *\n" +
+" *                                                                            *\n" +
+" * WARRANTIES:                                                                *\n" +
+" *      This software is made available by the authors in the hope            *\n" +
+" *      that it will be useful, but without any warranty.                     *\n" +
+" *      Wimba S.A. is not liable for any consequence related to the           *\n" +
+" *      use of the provided software.                                         *\n" +
+" *                                                                            *\n" +
+" * Date: 22nd April 2003                                                      *\n" +
+" *                                                                            *\n" +
+" ******************************************************************************/\n" +
+"\n" +
+"/* Copyright (C) 2002 Jean-Marc Valin\n" +
+"\n" +
+"   Redistribution and use in source and binary forms, with or without\n" +
+"   modification, are permitted provided that the following conditions\n" +
+"   are met:\n" +
+"   \n" +
+"   - Redistributions of source code must retain the above copyright\n" +
+"   notice, this list of conditions and the following disclaimer.\n" +
+"   \n" +
+"   - Redistributions in binary form must reproduce the above copyright\n" +
+"   notice, this list of conditions and the following disclaimer in the\n" +
+"   documentation and/or other materials provided with the distribution.\n" +
+"   \n" +
+"   - Neither the name of the Xiph.org Foundation nor the names of its\n" +
+"   contributors may be used to endorse or promote products derived from\n" +
+"   this software without specific prior written permission.\n" +
+"   \n" +
+"   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n" +
+"   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n" +
+"   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n" +
+"   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR\n" +
+"   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n" +
+"   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n" +
+"   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\n" +
+"   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\n" +
+"   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n" +
+"   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n" +
+"   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n" +
+"*/\n" +
+                "";
+        
+        return ret;
     }
 
     @Override
@@ -558,7 +630,7 @@ public class PLPToolConnector implements PLPGenericModule {
 
         @Override
         public String toString() {
-            return "LectureRunner";
+            return "LecturePublisher";
         }
     }
 
