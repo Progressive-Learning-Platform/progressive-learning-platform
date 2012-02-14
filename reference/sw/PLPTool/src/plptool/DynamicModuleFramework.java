@@ -388,6 +388,7 @@ public class DynamicModuleFramework {
             JarFile jar = new JarFile(path);
             Enumeration<JarEntry> entries =  jar.entries();
             JarEntry entry;
+            String temp;
             boolean manifestFound = false;
 
             while(entries.hasMoreElements() && !manifestFound) {
@@ -450,6 +451,66 @@ public class DynamicModuleFramework {
                 }
             }
         }
+    }
+
+    /**
+     * Get a manifest entry from a module's JAR file
+     *
+     * @param path Path to the JAR file
+     * @param key Manifest entry key
+     * @return Manifest entry
+     */
+    public static String getManifestEntry(String path, String key) {
+        String ret = null;
+
+        try {
+            Msg.D("Finding manifest entry with key '" + key + "' from '" + path
+                  + "' ...", 3, null);
+            JarFile jar = new JarFile(path);
+            Enumeration<JarEntry> entries =  jar.entries();
+            JarEntry entry;
+            boolean manifestFound = false;
+
+            while(entries.hasMoreElements() && !manifestFound) {
+                entry = entries.nextElement();
+                if(entry.getName().equals("plp.manifest")) {
+                    manifestFound = true;
+
+                    byte[] array = new byte[1024];
+                    ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
+                    InputStream in = jar.getInputStream(entry);
+                    int length = in.read(array);
+                    while(length > 0) {
+                        out.write(array, 0, length);
+                        length = in.read(array);
+                    }
+                    String[] lines = (new String(out.toByteArray())).split("\\r?\\n");
+
+                    for(int i = 0; i < lines.length; i++) {
+                        if(lines[i].startsWith(key + "::")) {
+                            String tokens[] = lines[i].split("::", 2);
+                            jar.close();
+                            if(tokens.length > 1)
+                                return tokens[1];
+                        }
+                    }
+                }
+            }
+
+            if(!manifestFound) {
+                Msg.E("No plp.manifest file found in the JAR archive",
+                        Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                jar.close();
+                return null;
+            }
+
+        } catch(IOException e) {
+            Msg.E("Failed to load '" + path + "'",
+                  Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+            return null;
+        }
+
+        return ret;
     }
 
     /**
