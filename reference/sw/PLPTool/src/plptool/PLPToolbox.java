@@ -19,6 +19,7 @@
 package plptool;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 /**
  *
@@ -234,64 +235,48 @@ public class PLPToolbox {
     }
 
     /**
-     * Load the lecture recorder. Attempt to load from:
-     * - Check if it's already loaded
-     * - Check user's home directory
-     * - Check current directory
-     * - Online from plp.okstate.edu/goodies
+     * Attempt to download a JAR file from an URL. Also provides an option of
+     * loading and applying the module's manifest immediately after.
+     *
+     * @param URL Location of the JAR file
+     * @param plp Reference to the ProjectDriver instance
+     * @param load Should the method load the module after downloading
      */
-    public static void setupLectureRecorder(javax.swing.JFrame dev, plptool.gui.ProjectDriver plp) {
-        int indexRec, indexObj, ret;
-
-        if(DynamicModuleFramework.isModuleInstanceLoaded("LectureRecorder")) {
-            Msg.I("Lecture Recorder is already loaded.", null);
-            return;
-        }
-
-        indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-        String searchPath;
-
-        if(indexRec == -1) {
-            searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
-            Msg.I("Looking for " + searchPath, null);
-            DynamicModuleFramework.loadAllFromJar(searchPath);
-            indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-        }
-
-        if(indexRec == -1) {
-            searchPath = Constants.launchPath + "/LectureRecorder.jar";
-            Msg.I("Looking for " + searchPath, null);
-            DynamicModuleFramework.loadAllFromJar(searchPath);
-            indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-        }
-
-        if(indexRec == -1) {
-            ret = javax.swing.JOptionPane.showConfirmDialog(dev, "Attempt to download lecture recorder from PLP website?",
-                    "Download Lecture Recorder", javax.swing.JOptionPane.YES_NO_OPTION);
-            if(ret == javax.swing.JOptionPane.YES_OPTION) {
-                try {
-                    java.net.URL jar = new java.net.URL("http://plp.okstate.edu/goodies/LectureRecorder.jar");
-                    java.nio.channels.ReadableByteChannel rbc = java.nio.channels.Channels.newChannel(jar.openStream());
-                    java.io.FileOutputStream fos = new java.io.FileOutputStream(PLPToolbox.getConfDir() + "/LectureRecorder.jar");
-                    fos.getChannel().transferFrom(rbc, 0, 1 << 24);
-                } catch(Exception e) {
-                    Msg.E("Failed to fetch lecture recorder from the internet.",
-                            Constants.PLP_GENERIC_ERROR, null);
-                }
-                searchPath = PLPToolbox.getConfDir() + "/LectureRecorder.jar";
-                DynamicModuleFramework.loadAllFromJar(searchPath);
+    public static void downloadJARForAutoload(String URL, plptool.gui.ProjectDriver plp, boolean load) {
+       
+        File autoloadDir = new File(getConfDir() + "/autoload");
+        if(!autoloadDir.exists())
+            autoloadDir.mkdir();
+        int ret = 0;
+        if(plp != null && plp.g())
+            ret = javax.swing.JOptionPane.showConfirmDialog(plp.g_dev,
+                          "Attempt to download " + URL + " and cache it in user's directory?",
+                          "Download JAR Module", javax.swing.JOptionPane.YES_NO_OPTION);
+        if(plp == null || !plp.g() || ret == javax.swing.JOptionPane.YES_OPTION) {
+            String fileName = "";
+            try {
+                Msg.I("Downloading " + URL + "...", null);
+                java.net.URL jar = new java.net.URL(URL);
+                java.nio.channels.ReadableByteChannel rbc = java.nio.channels.Channels.newChannel(jar.openStream());
+                String[] tokens = jar.getFile().split("/");
+                fileName = tokens[tokens.length-1];
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(
+                        PLPToolbox.getConfDir() + "/autoload/" + fileName);
+                fos.getChannel().transferFrom(rbc, 0, 1 << 24);
+                fos.close();
+            } catch(Exception e) {
+                Msg.E("Failed to fetch " + URL + ".",
+                        Constants.PLP_GENERIC_ERROR, null);
+                if(Constants.debugLevel >= 2)
+                    e.printStackTrace();
             }
-            indexRec = DynamicModuleFramework.isModuleClassRegistered("LectureRecorder");
-        }
-
-        if(indexRec > -1) {
-            indexObj = DynamicModuleFramework.newGenericModuleInstance(indexRec);
-            plptool.PLPGenericModule rec = DynamicModuleFramework.getGenericModuleInstance(indexObj);
-            rec.hook(plp);
-            rec.hook("show");
-        } else {
-            Msg.E("Lecture Recorder is not loaded.",
-                  plptool.Constants.PLP_GENERIC_ERROR, null);
+            if(load) {
+                String searchPath = PLPToolbox.getConfDir() + "/autoload/" + fileName;
+                String[] manifest = DynamicModuleFramework.loadJarWithManifest(searchPath);
+                if(manifest != null)
+                    DynamicModuleFramework.applyManifestEntries(manifest, plp);
+            }
         }
     }
 }
+

@@ -31,6 +31,7 @@ public class Config {
     public static String  cfgArch                          = "plpmips";
 
     public static boolean hostIsLinux                      = false;
+    public static boolean autoloadModules                  = true;
 
     public static boolean simForwardingUnit                = true;
     public static boolean simDynamicMemoryAllocation       = false;
@@ -68,8 +69,6 @@ public class Config {
 
     public static int     maxUndoLength                    = 20;
 
-    
-
     public static String  devFont                          = "Monospaced";
     public static int     devFontSize                      = 12;
     public static Color   devBackground                    = Color.WHITE;
@@ -98,6 +97,7 @@ public class Config {
         cfgArch                          = "plpmips";
 
         hostIsLinux                      = false;
+        autoloadModules                  = true;
 
         simForwardingUnit                = true;
         simDynamicMemoryAllocation       = false;
@@ -126,6 +126,8 @@ public class Config {
         prgReadTimeout                   = 500;
         prgNexys3ProgramWorkaround       = true;
 
+        devNewSyntaxHighlightStrategy    = true;
+        devHihglighterThreadRefreshMsecs = 1000;
         devSyntaxHighlighting            = true;
         devSyntaxHighlightOnAssemble     = false;
         nothighlighting                  = true;

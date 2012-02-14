@@ -298,6 +298,8 @@ public class ProjectDriver {
                         Config.devWindowWidth = Integer.parseInt(tokens[1]);
                     } else if(tokens[0].equals("devWindowHeight")) {
                         Config.devWindowHeight = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("autoloadModules")) {
+                        Config.autoloadModules = Boolean.parseBoolean(tokens[1]);
                     }
 
                 }
@@ -341,6 +343,7 @@ public class ProjectDriver {
                 out.write("devWindowPositionY::" + Config.devWindowPositionY + "\n");
                 out.write("devWindowWidth::" + Config.devWindowWidth + "\n");
                 out.write("devWindowHeight::" + Config.devWindowHeight + "\n");
+                out.write("autoloadModules::" + Config.autoloadModules + "\n");
                 out.close();
 
             } catch(Exception e) {
@@ -1143,8 +1146,8 @@ public class ProjectDriver {
         ioreg = new IORegistry(this);
         arch.simulatorInitialization();
 
-        Msg.D("smods is " + (smods == null ? "null" : "not null")
-	      + " and g is " + g, 3, null);
+        Msg.D("I/O Modules: smods is " + (smods == null ? "null" : "not null")
+	      + " and g is " + g, 3, this);
 
         if(smods == null || !g)
             ioreg.loadPredefinedPreset(g ? 0 : 1);

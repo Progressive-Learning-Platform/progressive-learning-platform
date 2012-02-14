@@ -144,6 +144,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 plptool.Config.devForeground = java.awt.Color.BLACK;
                 plp.g_dev.changeFormatting();
             }
+            else if(command.equals("hide")) {
+                this.setVisible(false);
+            }
             else if(command.equals("hloff")) {
                 plptool.Config.devSyntaxHighlighting = false;
             }
@@ -325,6 +328,10 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 
                 else if(tokens[0].equals("opencloseport")) {
                    opencloseport(tokens[1]);
+                }
+
+                else if(tokens[0].equals("loadjarurlload") && tokens.length == 2) {
+                    PLPToolbox.downloadJARForAutoload(tokens[1], plp, true);
                 }
 
                 else if(tokens[0].equals("simcl") && asmexplorer != null) {
