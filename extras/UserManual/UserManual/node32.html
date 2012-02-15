@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>4.2.8 J-type Instructions</TITLE>
+<META NAME="description" CONTENT="4.2.8 J-type Instructions">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+<LINK REL="previous" HREF="node31.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node33.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html508"
+  HREF="node33.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html504"
+  HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html500"
+  HREF="node31.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html506"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html509"
+  HREF="node33.html">4.3 Pseudo-ops</A>
+<B> Up:</B> <A NAME="tex2html505"
+  HREF="node24.html">4.2 Ops</A>
+<B> Previous:</B> <A NAME="tex2html501"
+  HREF="node31.html">4.2.7 I-type Load and</A>
+ &nbsp; <B>  <A NAME="tex2html507"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00052800000000000000">
+4.2.8 J-type Instructions</A>
+</H3>
+There are two j-type instructions: jump, and jump-and-link. Jump-and-link writes the return address to $ra when it is called, while jump does not. The syntax is: 
+
+<P>
+<PRE>
+op    jump_target
+</PRE>
+
+<P>
+jump_target has to be a valid label. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">j label</TD>
+<TD ALIGN="LEFT">PC = jump_target;</TD>
+<TD ALIGN="LEFT">j loop</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to loop label</TD>
+<TD ALIGN="LEFT">0x02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">jal label</TD>
+<TD ALIGN="LEFT">ra = PC + 4; PC = jump_target;</TD>
+<TD ALIGN="LEFT">jal read_serial</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to read_serial after saving return address to $ra</TD>
+<TD ALIGN="LEFT">0x03</TD>
+</TR>
+</TABLE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+will
+2012-02-08
+</ADDRESS>
+</BODY>
+</HTML>
