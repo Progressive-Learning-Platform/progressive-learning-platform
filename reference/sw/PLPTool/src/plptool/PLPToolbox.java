@@ -251,6 +251,27 @@ public class PLPToolbox {
     }
 
     /**
+     * Attach a keylistener that will bring up the debug console
+     *
+     * @param frame Reference to the frame to attach the listener to
+     */
+    public static void attachDebugConsoleMagicComboListener(final javax.swing.JFrame frame, final plptool.gui.ProjectDriver plp) {
+        javax.swing.KeyStroke consoleKeyStroke = javax.swing.KeyStroke.getKeyStroke(
+                java.awt.event.KeyEvent.VK_BACK_SLASH,
+                java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK);
+        javax.swing.Action consoleAction = new javax.swing.AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if(plptool.gui.PLPToolApp.con == null)
+                    plptool.gui.PLPToolApp.con = new plptool.gui.frames.ConsoleFrame(plp);
+                plptool.gui.PLPToolApp.con.setVisible(true);
+            }
+        };
+
+        frame.getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(consoleKeyStroke, "CONSOLE");
+        frame.getRootPane().getActionMap().put("CONSOLE", consoleAction);
+    }
+
+    /**
      * Setup Classroom extras
      */
     public static void setupClassroomExtras(plptool.gui.ProjectDriver plp) {
