@@ -145,7 +145,7 @@ public class Develop extends javax.swing.JFrame {
         simEnd();
         disableBuildControls();
         initPopupMenus();
-
+        PLPToolbox.attachDebugConsoleMagicComboListener(this, plp);
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
 

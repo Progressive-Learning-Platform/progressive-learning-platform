@@ -41,7 +41,7 @@ public class PLPToolApp extends SingleFrameApplication {
     static boolean serialTerminal = false;
     static boolean autoloadjars = true;
     private static ArrayList<String[]> manifests;
-    ConsoleFrame con;
+    public static ConsoleFrame con;
 
     /**
      * At startup create and show the main frame of the application.
