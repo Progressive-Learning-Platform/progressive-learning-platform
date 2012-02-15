@@ -297,14 +297,15 @@ public class SimCLI {
 
     public static void cmd_preg() {
         long data;
-        Msg.P("\nRegisters listing");
-        Msg.P("=================");
+        Msg.p("\nRegisters listing");
+        Msg.p("=================");
         for(int j = 0; j < 32; j++) {
             data = (Long) core.regfile.read(j);
-            Msg.P(j + "\t" +
+            Msg.p(j + "\t" +
                                String.format("%08x", data) + "\t" +
                                PLPToolbox.asciiWord(data));
         }
+        Msg.P();
     }
 
     public static void cmd_preg_arg() {

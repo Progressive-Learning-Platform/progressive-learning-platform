@@ -70,17 +70,18 @@ public class MemModule extends PLPSimBusModule {
      */
     public void printAll(long highlight) {
         long addr;
-        Msg.P("->\taddress\t\tcontents\tASCII");
-        Msg.P("--\t-------\t\t--------\t-----");
+        Msg.p("->\taddress\t\tcontents\tASCII");
+        Msg.p("--\t-------\t\t--------\t-----");
         Object[][] valueSet = super.getValueSet();
         for(int i = 0; i < valueSet.length; i++) {
             addr = (Long) valueSet[i][0];
             if(addr == highlight)
-                System.out.print(">>>");
-            Msg.P(String.format("\t%08x\t%08x\t",
+                Msg.pn(">>>");
+            Msg.p(String.format("\t%08x\t%08x\t",
                                    addr, super.values.get(addr)) +
                                    PLPToolbox.asciiWord((Long) super.values.get(addr)));
         }
+        Msg.P();
     }
 
     /**
