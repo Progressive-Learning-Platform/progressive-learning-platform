@@ -149,7 +149,8 @@ public class Develop extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
 
-        Msg.M(Constants.copyrightString.replace("\n", "<br />"));
+        Msg.P(Constants.copyrightString);
+        Msg.M("");
     }
 
     /**
