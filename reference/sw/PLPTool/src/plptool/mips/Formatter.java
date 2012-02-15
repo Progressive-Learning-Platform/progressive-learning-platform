@@ -24,12 +24,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ArrayList;
 
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import plptool.PLPAsmSource;
-import plptool.Config;
 import plptool.Msg;
 import plptool.Constants;
 
@@ -43,35 +38,37 @@ public class Formatter {
     // Print to stdout, prettily.
     public static int prettyPrint(plptool.PLPAsm asm) {
         String label;
+        String out = "";
         long addrTable[] = asm.getAddrTable();
         long objectCode[] = asm.getObjectCode();
         long tVal;
 
-        Msg.M("Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII");
-        Msg.M("-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----");
+        out += "Label\t\tAddress\t\tInstruction\top     rs    rt    rd    shamt funct\tASCII\n";
+        out += "-----\t\t-------\t\t-----------\t------ ----- ----- ----- ----- -----\t-----\n";
 
         for(int i = 0; i < addrTable.length; i++) {
             if((label = asm.lookupLabel(addrTable[i])) != null) {
-                Msg.m(label + "\n\t\t");
+                out += label + "\n\t\t";
             } else {
-                Msg.m("\t\t");
+                out += "\t\t";
             }
 
-            Msg.m("0x" + String.format("%07x", addrTable[i]) + "\t");
-            Msg.m(String.format("%08x", (int) objectCode[i]) + "\t");
-            Msg.m(mipsBinFormat(intBinPadder((int) objectCode[i], 32)) + "\t");
+            out += "0x" + String.format("%07x", addrTable[i]) + "\t";
+            out += String.format("%08x", (int) objectCode[i]) + "\t";
+            out += mipsBinFormat(intBinPadder((int) objectCode[i], 32)) + "\t";
 
             for(int j = 3; j >= 0; j--) {
                 tVal = objectCode[i] >> (8 * j);
                 tVal &= 0xFF;
                 if(tVal >= 0x21 && tVal <= 0x7E)
-                    Msg.m((char) tVal + " ");
+                    out += (char) tVal + " ";
                 else
-                    Msg.m(". ");
+                    out += ". ";
             }
 
-            Msg.M("");
+            out += "\n";
         }
+        Msg.P(out);
 
         return Constants.PLP_OK;
     }

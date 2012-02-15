@@ -47,6 +47,11 @@ public class Msg {
     private static HTMLEditorKit kit = null;
 
     /**
+     * Preformatted String buffer
+     */
+    private static String p = "";
+
+    /**
      * Last object that was responsible for invoking an Error messsage.
      */
     public static Object lastPartyResponsible;
@@ -269,6 +274,70 @@ public class Msg {
 
         } catch(Exception e) {
 
+        }
+    }
+
+    /**
+     * Print pre-formatted string (HTML's <pre> tag)
+     *
+     * @param printStr Preformatted string
+     */
+    public static void P(String printStr) {
+        if(silent) return;
+
+        try {
+
+        if(output == null)
+            System.out.println(printStr);
+        else {
+            kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
+                        printStr + "</font></pre>", 0, 0, null);
+            output.setCaretPosition(doc.getLength());
+        }
+
+        } catch(Exception e) {
+
+        }
+    }
+
+    /**
+     * Append string to the preformatted string buffer
+     *
+     * @param appendStr String to append
+     */
+    public static void p(String appendStr) {
+        p += appendStr + "\n";
+    }
+
+    /**
+     * Append string to the preformatted string buffer with no newline added
+     * in the end
+     *
+     * @param appendStr String to append
+     */
+    public static void pn(String appendStr) {
+        p += appendStr;
+    }
+
+    /**
+     * Print out buffered preformatted string
+     */
+    public static void P() {
+        if(silent) return;
+
+        try {
+
+        if(output == null)
+            System.out.println(p);
+        else {
+            kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
+                        p + "</font></pre>", 0, 0, null);
+            output.setCaretPosition(doc.getLength());
+        }
+        p = "";
+
+        } catch(Exception e) {
+            p = "";
         }
     }
 
