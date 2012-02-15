@@ -290,14 +290,15 @@ public class DynamicModuleFramework {
             if(files.length > 0) {
                 String message = "PLPTool module autoloading is enabled." +
                             " If you click yes, all saved modules will be loaded." +
-                            " Continue with module autoload?";
-                if(plp.g()) {
+                            " Continue with module autoload?\n" +
+                            "You can disable this prompt from Tools->Options->Miscellaneous.";
+                if(plp.g() && Config.cfgAskBeforeAutoloadingModules) {
                     int ret = JOptionPane.showConfirmDialog(plp.g_dev,
                             message, "Autoload Modules", JOptionPane.YES_NO_OPTION);
                     if(ret == JOptionPane.CLOSED_OPTION ||
                        ret == JOptionPane.NO_OPTION)
                         return;
-                } else {
+                } else if(Config.cfgAskBeforeAutoloadingModules) {
                     System.out.print(message + " (Y/N) ");
                     try {
                         char response = (char) System.in.read();
@@ -332,9 +333,7 @@ public class DynamicModuleFramework {
             if(autoloadDir.exists())
                 Msg.E("Failed to remove autoload directory. " +
                       "Are the modules loaded? Try '--delete-autoload-dir' " +
-                      "option from the command line or disable auto-loading " +
-                      "of modules from Tools->Options->Miscellaneous before " +
-                      "reattempting.",
+                      "option from the command line.",
                       Constants.PLP_GENERIC_ERROR, null);
         }
     }
@@ -407,33 +406,28 @@ public class DynamicModuleFramework {
         try {
             Msg.I("Loading " + path + "...", null);
             JarFile jar = new JarFile(path);
-            Enumeration<JarEntry> entries =  jar.entries();
-            JarEntry entry;
-            String temp;
+            JarEntry entry = jar.getJarEntry("plp.manifest");
             boolean manifestFound = false;
 
-            while(entries.hasMoreElements() && !manifestFound) {
-                entry = entries.nextElement();
-                if(entry.getName().equals("plp.manifest")) {
-                    manifestFound = true;
+            if(entry != null) {
+                manifestFound = true;
 
-                    byte[] array = new byte[1024];
-                    ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
-                    InputStream in = jar.getInputStream(entry);
-                    int length = in.read(array);
-                    while(length > 0) {
-                        out.write(array, 0, length);
-                        length = in.read(array);
-                    }
-                    String[] lines = (new String(out.toByteArray())).split("\\r?\\n");
-
-                    for(int i = 0; i < lines.length; i++) {
-                        if(lines[i].startsWith("class::"))
-                            loadModuleClass(path, lines[i].replace("class::", ""));
-                    }
-                    jar.close();
-                    return lines;
+                byte[] array = new byte[1024];
+                ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
+                InputStream in = jar.getInputStream(entry);
+                int length = in.read(array);
+                while(length > 0) {
+                    out.write(array, 0, length);
+                    length = in.read(array);
                 }
+                String[] lines = (new String(out.toByteArray())).split("\\r?\\n");
+
+                for(int i = 0; i < lines.length; i++) {
+                    if(lines[i].startsWith("class::"))
+                        loadModuleClass(path, lines[i].replace("class::", ""));
+                }
+                jar.close();
+                return lines;
             }
 
             if(!manifestFound) {
@@ -475,6 +469,25 @@ public class DynamicModuleFramework {
     }
 
     /**
+     * Check if the specified jar file contains the plp.manifest file
+     *
+     * @param path Path to the JAR file
+     * @return True if the file exists, false otherwise
+     */
+    public static boolean checkForManifest(String path) {
+        JarFile jar;
+        try {
+            jar = new JarFile(path);       
+            boolean ret = !(jar.getJarEntry("plp.manifest") == null);
+            jar.close();
+            return ret;
+            
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Get a manifest entry from a module's JAR file
      *
      * @param path Path to the JAR file
@@ -488,32 +501,28 @@ public class DynamicModuleFramework {
             Msg.D("Finding manifest entry with key '" + key + "' from '" + path
                   + "' ...", 3, null);
             JarFile jar = new JarFile(path);
-            Enumeration<JarEntry> entries =  jar.entries();
             JarEntry entry;
             boolean manifestFound = false;
+            entry = jar.getJarEntry("plp.manifest");
+            if(entry == null)
+                manifestFound = false;
+            else {
+                byte[] array = new byte[1024];
+                ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
+                InputStream in = jar.getInputStream(entry);
+                int length = in.read(array);
+                while(length > 0) {
+                    out.write(array, 0, length);
+                    length = in.read(array);
+                }
+                String[] lines = (new String(out.toByteArray())).split("\\r?\\n");
 
-            while(entries.hasMoreElements() && !manifestFound) {
-                entry = entries.nextElement();
-                if(entry.getName().equals("plp.manifest")) {
-                    manifestFound = true;
-
-                    byte[] array = new byte[1024];
-                    ByteArrayOutputStream out = new ByteArrayOutputStream(array.length);
-                    InputStream in = jar.getInputStream(entry);
-                    int length = in.read(array);
-                    while(length > 0) {
-                        out.write(array, 0, length);
-                        length = in.read(array);
-                    }
-                    String[] lines = (new String(out.toByteArray())).split("\\r?\\n");
-
-                    for(int i = 0; i < lines.length; i++) {
-                        if(lines[i].startsWith(key + "::")) {
-                            String tokens[] = lines[i].split("::", 2);
-                            jar.close();
-                            if(tokens.length > 1)
-                                return tokens[1];
-                        }
+                for(int i = 0; i < lines.length; i++) {
+                    if(lines[i].startsWith(key + "::")) {
+                        String tokens[] = lines[i].split("::", 2);
+                        jar.close();
+                        if(tokens.length > 1)
+                            return tokens[1];
                     }
                 }
             }

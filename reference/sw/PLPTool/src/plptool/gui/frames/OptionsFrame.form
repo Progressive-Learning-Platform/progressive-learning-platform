@@ -453,8 +453,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="autoloadModules" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="277" max="32767" attributes="0"/>
+                      <Component id="askBeforeAutoloadingModules" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="213" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -462,20 +462,20 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="autoloadModules" min="-2" max="-2" attributes="0"/>
+                      <Component id="askBeforeAutoloadingModules" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="376" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JCheckBox" name="autoloadModules">
+            <Component class="javax.swing.JCheckBox" name="askBeforeAutoloadingModules">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="autoloadModules.text"/>
-                <Property name="name" type="java.lang.String" value="autoloadModules" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="askBeforeAutoloadingModules.text"/>
+                <Property name="name" type="java.lang.String" value="askBeforeAutoloadingModules" noResource="true"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoloadModulesActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="askBeforeAutoloadingModulesActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

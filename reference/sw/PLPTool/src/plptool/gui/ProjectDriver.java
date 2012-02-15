@@ -298,8 +298,8 @@ public class ProjectDriver {
                         Config.devWindowWidth = Integer.parseInt(tokens[1]);
                     } else if(tokens[0].equals("devWindowHeight")) {
                         Config.devWindowHeight = Integer.parseInt(tokens[1]);
-                    } else if(tokens[0].equals("autoloadModules")) {
-                        Config.autoloadModules = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("cfgAskBeforeAutoloadingModules")) {
+                        Config.cfgAskBeforeAutoloadingModules = Boolean.parseBoolean(tokens[1]);
                     }
 
                 }
@@ -343,7 +343,7 @@ public class ProjectDriver {
                 out.write("devWindowPositionY::" + Config.devWindowPositionY + "\n");
                 out.write("devWindowWidth::" + Config.devWindowWidth + "\n");
                 out.write("devWindowHeight::" + Config.devWindowHeight + "\n");
-                out.write("autoloadModules::" + Config.autoloadModules + "\n");
+                out.write("cfgAskBeforeAutoloadingModules::" + Config.cfgAskBeforeAutoloadingModules + "\n");
                 out.close();
 
             } catch(Exception e) {

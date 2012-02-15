@@ -287,6 +287,12 @@ public class PLPToolbox {
                         PLPToolbox.getConfDir() + "/autoload/" + fileName);
                 fos.getChannel().transferFrom(rbc, 0, 1 << 24);
                 fos.close();
+                if(!DynamicModuleFramework.checkForManifest(PLPToolbox.getConfDir() + "/autoload/" + fileName)) {
+                    Msg.E("Downloaded JAR file does not contain plp.manifest",
+                          Constants.PLP_GENERIC_ERROR, null);
+                    (new File(PLPToolbox.getConfDir() + "/autoload/" + fileName)).delete();
+                    return false;
+                }
             } catch(Exception e) {
                 Msg.E("Failed to fetch " + URL + ".",
                         Constants.PLP_GENERIC_ERROR, null);

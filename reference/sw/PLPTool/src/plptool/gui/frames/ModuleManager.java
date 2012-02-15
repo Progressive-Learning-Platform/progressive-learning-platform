@@ -41,6 +41,7 @@ public class ModuleManager extends javax.swing.JDialog {
         this.plp = plp;
         initComponents();
         updateTable();
+        setLocationRelativeTo(parent);
     }
 
     private void updateTable() {
@@ -81,6 +82,7 @@ public class ModuleManager extends javax.swing.JDialog {
         txtURL = new javax.swing.JTextField();
         btnDownload = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
+        btnLoad = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ModuleManager.class);
@@ -160,6 +162,14 @@ public class ModuleManager extends javax.swing.JDialog {
             }
         });
 
+        btnLoad.setText(resourceMap.getString("btnLoad.text")); // NOI18N
+        btnLoad.setName("btnLoad"); // NOI18N
+        btnLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -174,11 +184,14 @@ public class ModuleManager extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblDownload)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtURL, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE))
+                                .addComponent(txtURL, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnBrowse)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                                .addComponent(btnLoad, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(4, 4, 4)))
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnDownload, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -200,8 +213,9 @@ public class ModuleManager extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBrowse)
-                    .addComponent(btnDelete)
-                    .addComponent(btnClose))
+                    .addComponent(btnClose)
+                    .addComponent(btnLoad)
+                    .addComponent(btnDelete))
                 .addContainerGap())
         );
 
@@ -262,12 +276,23 @@ public class ModuleManager extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnDownloadActionPerformed
 
+    private void btnLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadActionPerformed
+        int index = tblMods.getSelectedRow();
+        if(index > -1) {
+            String path = PLPToolbox.getConfDir() + "/autoload/" + tblMods.getValueAt(index, 0);
+            String[] manifest = DynamicModuleFramework.loadJarWithManifest(path);
+            if(manifest != null)
+                DynamicModuleFramework.applyManifestEntries(manifest, plp);
+        }
+    }//GEN-LAST:event_btnLoadActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowse;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDownload;
+    private javax.swing.JButton btnLoad;
     private javax.swing.JLabel lblDownload;
     private javax.swing.JLabel lblInfo;
     private javax.swing.JScrollPane scrollerTable;

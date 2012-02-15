@@ -69,7 +69,7 @@ public class PLPToolApp extends SingleFrameApplication {
             plp.app = this;
 
             // Load dynamic modules
-            if(autoloadjars && plptool.Config.autoloadModules)
+            if(autoloadjars)
                 DynamicModuleFramework.autoloadModules(plp);
 
             for(int i = 0; i < manifests.size(); i++)
@@ -223,7 +223,7 @@ public class PLPToolApp extends SingleFrameApplication {
             if(args.length == 2) {
                 ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
                 // Load dynamic modules
-                if(autoloadjars && plptool.Config.autoloadModules)
+                if(autoloadjars)
                     DynamicModuleFramework.autoloadModules(plp);
                 if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
                 if(plp.asm.isAssembled())
@@ -235,7 +235,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     Scanner sIn = new Scanner(in);
                     ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
                     // Load dynamic modules
-                    if(autoloadjars && plptool.Config.autoloadModules)
+                    if(autoloadjars)
                         DynamicModuleFramework.autoloadModules(plp);
                     if(!(plp.open(args[1], true) == Constants.PLP_OK)) return;
                     if(plp.asm.isAssembled())

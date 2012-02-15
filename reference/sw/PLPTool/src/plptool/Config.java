@@ -31,7 +31,7 @@ public class Config {
     public static String  cfgArch                          = "plpmips";
 
     public static boolean hostIsLinux                      = false;
-    public static boolean autoloadModules                  = true;
+    public static boolean cfgAskBeforeAutoloadingModules   = true;
 
     public static boolean simForwardingUnit                = true;
     public static boolean simDynamicMemoryAllocation       = false;
@@ -97,7 +97,7 @@ public class Config {
         cfgArch                          = "plpmips";
 
         hostIsLinux                      = false;
-        autoloadModules                  = true;
+        cfgAskBeforeAutoloadingModules   = true;
 
         simForwardingUnit                = true;
         simDynamicMemoryAllocation       = false;
