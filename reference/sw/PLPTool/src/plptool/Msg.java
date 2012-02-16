@@ -328,7 +328,7 @@ public class Msg {
         try {
 
         if(output == null)
-            System.out.println(p);
+            System.out.print(p);
         else {
             kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
                         p + "</font></pre>", 0, 0, null);
