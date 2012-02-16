@@ -255,7 +255,7 @@ public class PLPToolbox {
      *
      * @param frame Reference to the frame to attach the listener to
      */
-    public static void attachDebugConsoleMagicComboListener(final javax.swing.JFrame frame, final plptool.gui.ProjectDriver plp) {
+    public static void attachDebugConsoleMagicComboListener(final javax.swing.JFrame frame, final plptool.gui.ProjectDriver plp, final boolean show) {
         javax.swing.KeyStroke consoleKeyStroke = javax.swing.KeyStroke.getKeyStroke(
                 java.awt.event.KeyEvent.VK_BACK_SLASH,
                 java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK);
@@ -263,7 +263,10 @@ public class PLPToolbox {
             public void actionPerformed(ActionEvent e) {
                 if(plptool.gui.PLPToolApp.con == null)
                     plptool.gui.PLPToolApp.con = new plptool.gui.frames.ConsoleFrame(plp);
-                plptool.gui.PLPToolApp.con.setVisible(true);
+                if(show)
+                    plptool.gui.PLPToolApp.con.setVisible(true);
+                else
+                    plptool.gui.PLPToolApp.con.setVisible(false);
             }
         };
 
