@@ -296,7 +296,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("  --suppress-warning     Suppress all warning messages.");
                 System.out.println("   -d <level>            Set debug level (0 to infinity).");
                 System.out.println("  --remove-config        Remove saved configuration and reset all settings.");
-                System.out.println("  --serial-terminal      Launch serial terminal instead of the IDE.");
+                System.out.println("  --serialterminal       Launch serial terminal instead of the IDE.");
                 System.out.println();
                 System.out.println("Dynamic modules / extensions controls:\n");
                 System.out.println("  --load-class <Java class file>");

@@ -768,8 +768,10 @@ public class ProjectDriver {
                     Msg.W("The file '" + entry.getName() + "' is not listed in " +
                           "the meta file. This file will be removed when the project " +
                           "is saved.", this);
-                else
+                else {
                     asms.set(order, new PLPAsmSource(metaStr, entry.getName(), order));
+                    hookEvent(new ProjectEvent(ProjectEvent.OPEN_ASM_ENTRY, -1, order));
+                }
 
             } else if(entry.getName().equals("plp.metafile")) {
                 // we've done reading the metafile

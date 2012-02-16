@@ -529,6 +529,7 @@ public class Develop extends javax.swing.JFrame {
                 Config.devWindowWidth = getWidth();
                 Config.devWindowHeight = getHeight();
                 ProjectDriver.saveConfig();
+                plp.hookEvent(new ProjectEvent(ProjectEvent.EXIT, -1));
                 System.exit(0);
         }
     }

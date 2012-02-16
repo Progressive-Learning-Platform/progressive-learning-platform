@@ -193,7 +193,7 @@ public class PLPToolConnector implements PLPGenericModule {
 	} else if(param instanceof ProjectEvent && init) {
             ProjectEvent e = (ProjectEvent) param;
             int id = e.getIdentifier();
-            Msg.D(e.getSystemTimestamp() + ":" + e.getIdentifier(), 2, this);
+            Msg.D(e.getSystemTimestamp() + ":" + e.getIdentifier(), 3, this);
             if(record &&
                id != ProjectEvent.PROJECT_OPEN_ENTRY &&
                id != ProjectEvent.PROJECT_SAVE &&
@@ -369,7 +369,7 @@ public class PLPToolConnector implements PLPGenericModule {
     public String getJSpeexLicense() {
         String ret = "" +
 "\nLecture Publisher uses JSpeex 0.9.7 which has the following copyright notice:\n" +
-"/******************************************************************************\n" +
+" ******************************************************************************\n" +
 " *                                                                            *\n" +
 " * Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.                   *\n" +
 " *                                                                            *\n" +
@@ -397,9 +397,9 @@ public class PLPToolConnector implements PLPGenericModule {
 " *                                                                            *\n" +
 " * Date: 22nd April 2003                                                      *\n" +
 " *                                                                            *\n" +
-" ******************************************************************************/\n" +
+" ****************************************************************************** \n" +
 "\n" +
-"/* Copyright (C) 2002 Jean-Marc Valin\n" +
+"   Copyright (C) 2002 Jean-Marc Valin\n" +
 "\n" +
 "   Redistribution and use in source and binary forms, with or without\n" +
 "   modification, are permitted provided that the following conditions\n" +
@@ -427,7 +427,7 @@ public class PLPToolConnector implements PLPGenericModule {
 "   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n" +
 "   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n" +
 "   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n" +
-"*/\n" +
+"\n" +
                 "";
         
         return ret;
@@ -616,7 +616,7 @@ public class PLPToolConnector implements PLPGenericModule {
                 for(int i = 0; i < events.size() && !stop; i++) {
                     e = events.get(i);
                     diff = e.getSystemTimestamp() - curTime;
-                    Msg.D(i + "\t: " + diff + "ms", 2, this);
+                    Msg.D(i + "\t: " + diff + "ms", 3, this);
                     Thread.sleep(diff);
                     plp.replay(e);
                     curTime = e.getSystemTimestamp();

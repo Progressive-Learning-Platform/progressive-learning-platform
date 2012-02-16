@@ -43,6 +43,9 @@ public class ProjectEvent {
     public final static int         EDITOR_TEXT_SET                 = 12;
     public final static int         EXIT                            = 13;
 
+    /* OPEN ROUTINES */
+    public final static int         OPEN_ASM_ENTRY                  = 128;
+
     /* SIM EVENTS */
     public final static int         SINGLE_STEP                     = 256;
     public final static int         AGGREGATE_STEP                  = 257;
