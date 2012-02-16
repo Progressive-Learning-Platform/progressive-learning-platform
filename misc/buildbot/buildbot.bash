@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $1
+cd $1/misc/buildbot
 shift
 DATE=`date +%y%m%d`
 

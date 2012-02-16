@@ -10,9 +10,9 @@ j startup
 nop
 
 fritz_propaganda:
-	.asciiz "There is a moment's pause."
+	.asciiz "Hurry up Will..."
 version_string:
-	.asciiz "plp-4.0"
+	.asciiz "plp-4.1"
 memory_test:
 	.asciiz "starting memory test..."
 memory_done:
@@ -69,7 +69,7 @@ flash_leds_loop2:
 
 #more seven segment
 sseg_version:
-	li $a0, 0x19c0ffff
+	li $a0, 0x19f9ffff
 	jal libplp_sseg_write_raw
 	nop
 	j flash_leds_loop2
