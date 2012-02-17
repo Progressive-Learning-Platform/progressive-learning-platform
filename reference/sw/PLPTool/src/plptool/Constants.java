@@ -23,7 +23,7 @@ package plptool;
  * @author wira
  */
 public class Constants {
-    public static final String versionString = "4.1";
+    public static final String versionString = "4.2";
     public static final String copyrightString =
             "PLP Software Tool version " + versionString + "\n" +
             "Copyright 2010-2012 PLP Contributors.\n" +

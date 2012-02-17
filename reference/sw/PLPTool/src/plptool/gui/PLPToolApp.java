@@ -275,12 +275,12 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println();
             System.out.println("Non-GUI options:\n");
             System.out.println("  -s   <plpfile> [script]");
-            System.out.println("       Launch the command line simulator to simulate <plpfile>. Providing a [script] will ");
-            System.out.println("       launch the simulator in non-interactive mode.");
+            System.out.println("       Launch the command line simulator to simulate <plpfile>. Providing a");
+            System.out.println("       [script] will launch the simulator in non-interactive mode.");
             System.out.println();
             System.out.println("  -plp <plpfile> [command]");
-            System.out.println("       If no command is specified, print out the list of source files contained in <plpfile>.");
-            System.out.println("       This will also create <plpfile> if it does not exist.");
+            System.out.println("       If no command is specified, print out the list of source files contained");
+            System.out.println("       in <plpfile>. This will also create <plpfile> if it does not exist.");
             System.out.println("       Use '-plp' by itself for command listing.");
             System.out.println();
             if(!args[0].equals("--full-help")) {
@@ -299,25 +299,29 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("  --serialterminal       Launch serial terminal instead of the IDE.");
                 System.out.println();
                 System.out.println("Dynamic modules / extensions controls:\n");
-                System.out.println("  --load-class <Java class file>");
-                System.out.println("       Load Java class file with the ClassLoader.");
-                System.out.println();
-                System.out.println("  --load-jar <jar file>");
-                System.out.println("       Load all Java classes inside the specified jar file.");
-                System.out.println();
                 System.out.println("  --load-jar-with-manifest <jar file>");
-                System.out.println("       Locate plp.manifest inside the jar file and interpret the file accordingly.");
+                System.out.println("       Locate plp.manifest inside the jar file and interpret the file");
+                System.out.println("       accordingly.");
                 System.out.println();
                 System.out.println("  --save-module <URL>");
-                System.out.println("       Fetch a module's jar file from URL, save it to the autoload directory, and quit.");
-                System.out.println("       This module will be autoloaded the next time PLPTool starts. Module autoloading");
-                System.out.println("       can be disabled by the user (autoloading is enabled by default).");
+                System.out.println("       Fetch a module's jar file from URL, save it to the autoload directory,");
+                System.out.println("       and quit. This module will be autoloaded the next time PLPTool starts.");
+                System.out.println("       Module autoloading can be disabled by the user (autoloading is enabled");
+                System.out.println("       by default).");
                 System.out.println();
                 System.out.println("  --no-module-autoload");
                 System.out.println("       Do NOT autoload modules for this PLPTool session.");
                 System.out.println();
                 System.out.println("  --delete-autoload-dir");
                 System.out.println("       Delete the autoload cache directory and all of its contents and quit.");
+                System.out.println();
+                System.out.println("  --load-class <Java class file>");
+                System.out.println("       Load Java class file with the ClassLoader. THIS IS INTENDED ONLY FOR");
+                System.out.println("       DEBUGGING MODULES.");
+                System.out.println();
+                System.out.println("  --load-jar <jar file>");
+                System.out.println("       Load all Java classes inside the specified jar file. THIS IS INTENDED");
+                System.out.println("       ONLY FOR DEBUGGING MODULES.");
                 System.out.println();
             }
         }
