@@ -30,13 +30,12 @@ import java.io.*;
  */
 public class ProjectFileManipulator {
     public static void CLI(String[] args) {
-        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
-	
         if(args == null || args.length < 2) {
             helpMessage();
             return;
         }
 
+        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
         File plpHandler = new File(args[1]);
 	
 	if(plpHandler.exists() && !(args.length > 2 && args[2].equals("-c"))) {
@@ -233,35 +232,19 @@ public class ProjectFileManipulator {
     }
 
     public static void helpMessage() {
-        System.out.println("PLP project file manipulator commands, to be run with -plp <plpfile> [command]");
-        System.out.println();
-        System.out.println("  -c <asm 1> <asm 2> ...");
-        System.out.println("       Create a new PLP project <plpfile> and import <asm-x> into the project.");
-        System.out.println();
-        System.out.println("  -p <port>");
-        System.out.println("       Program PLP target board with <plpfile> using serial port <port>.");
-        System.out.println();
-        System.out.println("  -a");
-        System.out.println("       Assemble <plpfile>.");
-        System.out.println();
-        System.out.println("  -i <asm 1> <asm 2> ...");
-        System.out.println("       Import <asm-x> into <plpfile>.");
-        System.out.println();
-        System.out.println("  -d <directory>");
-        System.out.println("       Import all files within <directory> into <plpfile>.");
-        System.out.println();
-        System.out.println("  -e <index> <file>");
-        System.out.println("       Export source file with <index> as <file>.");
-        System.out.println();
-        System.out.println("  -r <index>");
-        System.out.println("       Remove source file with <index> from <plpfile>.");
-        System.out.println();
-        System.out.println("  -s <index>");
-        System.out.println("       Set source file with <index> as the main program.");
-        System.out.println();
-        System.out.println("  -m <index> <new index>");
-        System.out.println("       Move the source file with <index> to a new position <new index> in the");
-        System.out.println("       project.");
+        System.out.println("Project file manipulator commands, to be run with -plp <plpfile> [command]:");
+        System.out.println("  -c <asm 1> <asm 2> ...  Create a new PLP project <plpfile> and import <asm-x>");
+        System.out.println("                            into the project.");
+        System.out.println("  -p <port>               Program PLP target board with <plpfile>  using serial");
+        System.out.println("                            port <port>.");
+        System.out.println("  -a                      Assemble <plpfile>.");
+        System.out.println("  -i <asm 1> <asm 2> ...  Import <asm-x> into <plpfile>.");
+        System.out.println("  -d <directory>          Import all files within <directory> into <plpfile>.");
+        System.out.println("  -e <index> <file>       Export source file with <index> as <file>.");
+        System.out.println("  -r <index>              Remove source file with <index> from <plpfile>.");
+        System.out.println("  -s <index>              Set source file with <index> as the main program.");
+        System.out.println("  -m <index> <new index>  Move the source file with <index> to a new position");
+        System.out.println("                            <new index> in the project.");
         System.out.println();
     }
 }
