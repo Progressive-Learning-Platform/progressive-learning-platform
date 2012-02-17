@@ -260,7 +260,8 @@ public class ProjectFileManipulator {
         System.out.println("       Set source file with <index> as the main program.");
         System.out.println();
         System.out.println("  -m <index> <new index>");
-        System.out.println("       Move the source file with <index> to a new position <new index> in the project.");
+        System.out.println("       Move the source file with <index> to a new position <new index> in the");
+        System.out.println("       project.");
         System.out.println();
     }
 }
