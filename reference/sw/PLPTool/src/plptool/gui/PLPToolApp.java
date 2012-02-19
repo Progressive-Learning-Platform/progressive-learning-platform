@@ -277,8 +277,8 @@ public class PLPToolApp extends SingleFrameApplication {
             System.out.println("                            simulator in non-interactive mode.");
             System.out.println("  -plp <plpfile> [command]");
             System.out.println("                          If no command is specified, print out the list of");
-            System.out.println("                            source files contained in <plpfile>. This will");
-            System.out.println("                            also create <plpfile> if it does not exist.");
+            System.out.println("                            source files contained in <plpfile>. This will also");
+            System.out.println("                            create <plpfile> if it does not exist.");
             System.out.println("                            Use '-plp' by itself for command listing.");
             if(!args[0].equals("--full-help")) {
                 System.out.println("  --full-help             Even more commands.");
@@ -302,12 +302,12 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("                            launch if the module is successfully loaded.");
                 System.out.println("  --save-module <URL>     Fetch a module's jar file from URL, save it to the");
                 System.out.println("                            the autoload directory, and quit. This module will");
-                System.out.println("                            be autoloaded the next time PLPTool starts.");
-                System.out.println("                            Module autoloading can be disabled by the user");
+                System.out.println("                            be autoloaded the next time PLPTool starts. Module");
+                System.out.println("                            autoloading can be disabled by the user");
                 System.out.println("                            (autoloading is enabled by default).");
                 System.out.println("  --no-module-autoload    Do NOT autoload modules for this PLPTool session.");
                 System.out.println("  --delete-autoload-dir   Delete the autoload cache directory and all of its");
-                System.out.println("                            its contents and quit.");
+                System.out.println("                            contents and quit.");
                 System.out.println();
                 System.out.println("MODULE DEBUGGING COMMANDS:");
                 System.out.println("  --load-class <Java class file>");
