@@ -1195,7 +1195,8 @@ public class ProjectDriver {
         else if (applet) {
             // do nothing
         }
-        
+
+        hookEvent(new ProjectEvent(ProjectEvent.SIM_POST_INIT, -1));
         return Constants.PLP_OK;
     }
 
@@ -1249,6 +1250,7 @@ public class ProjectDriver {
         sim_mode = false;
         updateWindowTitle();
 
+        hookEvent(new ProjectEvent(ProjectEvent.SIM_POST_UNINIT, -1));
         return Constants.PLP_OK;
     }
 
