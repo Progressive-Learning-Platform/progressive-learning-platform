@@ -46,10 +46,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
     public ConsoleFrame(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
-        String outText = "os_code: " + plptool.PLPToolbox.getOS(false) + "\n";
-        outText += "plpfile: " + plp.plpfile + "\n";
-        outText += "arch: " + plp.getArch() + "\n";
-        out.setText(outText);
+        systemInfo();
         PLPToolbox.attachDebugConsoleMagicComboListener(this, plp, false);
     }
 
@@ -107,16 +104,30 @@ public class ConsoleFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void systemInfo() {
+        String outText = "os_code: " + plptool.PLPToolbox.getOS(false) + "\n";
+        outText += "plpfile: " + plp.plpfile + " ";
+        outText += "arch: " + plp.getArch() + "\n";
+        outText += "jvm: " + System.getProperty("java.home");
+        outText += " " + System.getProperty("java.vendor");
+        outText += " " + System.getProperty("java.vendor.url");
+        outText += " " + System.getProperty("java.version") + "\n";
+        outText += "classpath: " + System.getProperty("java.class.path") + "\n";
+        outText += "userhome: " + System.getProperty("user.home") + "\n";
+        outText += "plptoolconfdir: " + PLPToolbox.getConfDir() + "\n";
+        out.setText(outText);
+    }
+
     private void cmdKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cmdKeyPressed
         try {
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            out.setText("OK");
             String command = cmd.getText();
             String tokens[] = command.split(" ", 2);
             
             if(command.equals("q")) {
                 System.exit(0);
-            }
-            else if(simmode) {
+            } else if(simmode) {
                 if(command.equals("simmode")) {
                     simmode = false;
                     cmd.setBackground(Color.white);
@@ -127,97 +138,78 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     if(plp.g_sim != null) plp.g_sim.updateComponents();
                     if(plp.sim != null) plp.updateComponents(true);
                 }
-            }
-
-            else if(command.equals("reset")) {
+            } else if(command.equals("reset")) {
                 plp.g_dev.dispose();
                 plp.desimulate();
                 plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, ArchRegistry.ISA_PLPMIPS);
                 plp.g_dev.setVisible(true);
-            }
-            else if(command.equals("dark")) {
+            } else if(command.equals("dark")) {
                 plptool.Config.devBackground = java.awt.Color.BLACK;
                 plptool.Config.devForeground = java.awt.Color.lightGray;
                 plp.g_dev.changeFormatting();
-            }
-            else if(command.equals("defcolor")) {
+            } else if(command.equals("defcolor")) {
                 plptool.Config.devBackground = java.awt.Color.WHITE;
                 plptool.Config.devForeground = java.awt.Color.BLACK;
                 plp.g_dev.changeFormatting();
-            }
-            else if(command.equals("hide")) {
+            } else if(command.equals("sysinfo")) {
+                systemInfo();
+            } else if(command.equals("hide")) {
                 this.setVisible(false);
-            }
-            else if(command.equals("hloff")) {
+            } else if(command.equals("hloff")) {
                 plptool.Config.devSyntaxHighlighting = false;
-            }
-            else if(command.equals("hlon")) {
+            } else if(command.equals("hlon")) {
                 plptool.Config.devSyntaxHighlighting = true;
-            }
-            else if(command.equals("simcore")) {
+            } else if(command.equals("simcore")) {
                 out.setText(plp.sim.toString());
-            }
-            else if(command.equals("hidetoolbar")) {
+            } else if(command.equals("hidetoolbar")) {
                 plp.g_dev.setToolbarVisible(false);
-            }
-            else if(command.equals("showtoolbar")) {
+            } else if(command.equals("showtoolbar")) {
                 plp.g_dev.setToolbarVisible(true);
-            }
-            else if(command.equals("hideoutput")) {
+            }  else if(command.equals("hideoutput")) {
                 
-            }
-            else if(command.equals("showoutput")) {
+            } else if(command.equals("showoutput")) {
 
-            }
-            else if(command.equals("open_asm")) {
+            } else if(command.equals("open_asm")) {
                 plptool.Msg.I("open_asm:" + plp.getOpenAsm(), null);
-            }
-            else if(command.equals("assemble")) {
-                    plp.assemble();
-                }
-            else if(command.equals("simulate")) {
-                    plp.simulate();
-            }
-            else if(command.equals("updategui")) {
+            } else if(command.equals("assemble")) {
+                plp.g_dev.assemble();
+            } else if(command.equals("simulate")) {
+                plp.g_dev.simBegin();
+            } else if(command.equals("desimulate")) {
+                plp.g_dev.simEnd();
+            } else if(command.equals("updategui")) {
                 if(plp.g_sim != null) {
                     plp.updateComponents(true);
                     plp.g_ioreg.refreshModulesTable();
                 }
-            }
-            else if(command.equals("triggercriterror")) {
+            } else if(command.equals("triggercriterror")) {
                 plp.triggerCriticalError();
-            }
-            else if(command.equals("closeproject")) {
+            } else if(command.equals("closeproject")) {
                 if(plp.g_dev != null) {
                     plp.g_dev.closeProject();
                 }
-            }
-            else if(command.equals("printeditorcontents")) {
+            } else if(command.equals("printeditorcontents")) {
                 if(plp.g_dev != null) {
                     plp.g_dev.getEditor().print();
                 }
-            }
-            else if(command.equals("vismem")) {
+            } else if(command.equals("vismem")) {
                 if(plp.isSimulating()) {
                     plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
                     ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);
                     memVis.setVisible(true);
                 }
-            }
-            else if(command.equals("vismem with cat")) {
+            } else if(command.equals("vismem with cat")) {
                 if(plp.isSimulating()) {
                     plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
                     memVis.setBG("http://upload.wikimedia.org/wikipedia/commons/e/ef/Curious_kitten.jpg");
                     ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);
                     memVis.setVisible(true);
                 }
-            }
-            else if(command.equals("kitten")) {
+            } else if(command.equals("kitten")) {
                 javax.swing.text.html.HTMLDocument hDoc = (javax.swing.text.html.HTMLDocument) plp.g_dev.getOutput().getDocument();
                 ((javax.swing.text.html.HTMLEditorKit)plp.g_dev.getOutput().getEditorKit()).insertHTML(hDoc, hDoc.getLength(),
                         "<img src=\"http://upload.wikimedia.org/wikipedia/commons/e/ef/Curious_kitten.jpg\" /><br />", 0, 0, null);
-            }
-            else if(command.equals("visprog")){
+            } else if(command.equals("visprog")){
                 // some lines commented until proper jung integration
                 plptool.mips.visualizer.ProgramVisualization progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
                 //progVis.printProgram();
@@ -226,15 +218,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph, plp);
                 progGraph.initGraph();
                 progVisFrame.setVisible(true);
-            }
-
-            else if(command.equals("ignoresavedmods")) {
+            } else if(command.equals("ignoresavedmods")) {
                 plptool.Config.simIgnoreSavedSimState = true;
-            }
-            else if(command.equals("loadsavedmods")) {
+            } else if(command.equals("loadsavedmods")) {
                 plptool.Config.simIgnoreSavedSimState = false;
-            }
-            else if(command.equals("asmexplorer")) {
+            } else if(command.equals("asmexplorer")) {
                 plp.g_dev.setVisible(false);
                 plp.desimulate();
 
@@ -247,17 +235,13 @@ public class ConsoleFrame extends javax.swing.JFrame {
 
                 asmexplorer.setVisible(true);
                 asmexplorer.updateTable();
-            }
-
-            else if(command.equals("simmode") && plp.sim != null) {
+            } else if(command.equals("simmode") && plp.sim != null) {
                 if(!simmode) {
                     simmode = true;
                     cmd.setBackground(Color.black);
                     cmd.setForeground(Color.green);
                 }
-            }
-
-            else if(command.equals("loaddmodclass")) {
+            } else if(command.equals("loaddmodclass")) {
                 final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
                 int retVal = fc.showOpenDialog(null);
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
@@ -265,8 +249,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     String shortName = file.getName();
                     plptool.DynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
                 }          
-            }
-            else if(command.equals("listdmodclasses")) {
+            } else if(command.equals("listdmodclasses")) {
                 Msg.M("Registered dynamic module classes:");
                 for(int i = 0; i < plptool.DynamicModuleFramework.getNumberOfClasses(); i++) {
                     Class c = plptool.DynamicModuleFramework.getDynamicModuleClass(i);
@@ -274,87 +257,63 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     Msg.m(i + ":\t" + c.getName());
                     Msg.M((sc != null) ? " extends " + sc.getName() : "");
                 }
-            }
-            else if(command.equals("listdmods")) {
+            } else if(command.equals("listdmods")) {
                 out.setText("");
                 String prev = "";
                 for(int i = 0; i < plptool.DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
                     prev = out.getText();
                     out.setText(prev + i + ":\t" + plptool.DynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
                 }
-            }
-                
-
-            else if(tokens.length > 1) {
+            } else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
                     plptool.Config.devFont = tokens[1];
                     plp.g_dev.changeFormatting();
-                }
-                else if(tokens[0].equals("fontsize")) {
+                } else if(tokens[0].equals("fontsize") && tokens.length == 2) {
                     plptool.Config.devFontSize = Integer.parseInt(tokens[1]);
                     plp.g_dev.changeFormatting();
-                }
-                else if(tokens[0].equals("hl")) {
+                } else if(tokens[0].equals("hl") && tokens.length == 2) {
                     plptool.Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
                     out.setText("cfgSyntaxHighlighting " + plptool.Config.devSyntaxHighlighting);
-                }
-                else if(tokens[0].equals("open")) {
+                } else if(tokens[0].equals("open") && tokens.length == 2) {
                     plp.open(tokens[1], true);
-                }
-                else if(tokens[0].equals("program")) {
+                } else if(tokens[0].equals("program") && tokens.length == 2) {
                     plp.program(tokens[1]);
-                }
-                else if(tokens[0].equals("checkdmodclass") && tokens.length == 2) {
+                } else if(tokens[0].equals("checkdmodclass") && tokens.length == 2) {
                     out.setText("dmodclass index: " + plptool.DynamicModuleFramework.isModuleClassRegistered(tokens[1]) + "\n");
-                }
-                else if(tokens[0].equals("newdmod") && tokens.length == 2) {
+                } else if(tokens[0].equals("newdmod") && tokens.length == 2) {
                     out.setText("Instantiating new object for " + plptool.DynamicModuleFramework.getDynamicModuleClass(PLPToolbox.parseNumInt(tokens[1])).getName() +"\n");
                     plptool.DynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
-                }
-                else if(tokens[0].equals("rmdmod") && tokens.length == 2) {
+                } else if(tokens[0].equals("rmdmod") && tokens.length == 2) {
                     plptool.DynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
-                }
-                else if(tokens[0].equals("h") && tokens.length == 2) {
+                } else if(tokens[0].equals("h") && tokens.length == 2) {
                     String[] temp = tokens[1].split(" ", 2);
                     out.setText("hook: " + temp[0] + "-" + temp[1] + "\n");
                     plptool.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(temp[0]), temp[1]);
-                }
-                else if(tokens[0].equals("hplp") && tokens.length == 2) {
+                } else if(tokens[0].equals("hplp") && tokens.length == 2) {
                     Object ret = plptool.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(tokens[1]), plp);
                     if(ret != null)
                         out.setText("Module seems to have ProjectDriver hook.");
                     else
                         out.setText("null was returned");
-                }
-                
-                else if(tokens[0].equals("opencloseport")) {
+                } else if(tokens[0].equals("opencloseport") && tokens.length == 2) {
                    opencloseport(tokens[1]);
-                }
-
-                else if(tokens[0].equals("loadjarurlload") && tokens.length == 2) {
+                } else if(tokens[0].equals("loadjarurlload") && tokens.length == 2) {
                     PLPToolbox.downloadJARForAutoload(tokens[1], plp, true);
-                }
-
-                else if(tokens[0].equals("debuglevel") && tokens.length == 2) {
+                } else if(tokens[0].equals("debuglevel") && tokens.length == 2) {
                     out.setText("Setting debug level to " + tokens[1]);
                     Constants.debugLevel = Integer.parseInt(tokens[1]);
-                }
-
-                else if(tokens[0].equals("simcl") && asmexplorer != null) {
+                } else if(tokens[0].equals("simcl") && asmexplorer != null) {
                     String xcmd = "";
                     for(int i = 1; i < tokens.length; i++)
                         xcmd += tokens[i] + ((i != tokens.length - 1) ? " " : "");
                     plptool.mips.SimCLI.simCLCommand(xcmd, plp);
                     asmexplorer.updateTable();
-                }
-                 else {
+                } else {
                     out.setText(":(");
                     cmd.setText("");
                     return;
-                 }
-
-            }
-            else {
+                }
+            } else {
                 out.setText(":(");
                 cmd.setText("");
                 return;
@@ -427,4 +386,6 @@ public class ConsoleFrame extends javax.swing.JFrame {
 
 
 }
+
+
 
