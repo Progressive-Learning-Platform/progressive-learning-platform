@@ -129,7 +129,7 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 	assign c_j = id_c_j;
 	assign c_b = id_c_b & (alu_r == 0);
 	assign jaddr = id_c_jjr ? x : jjal_jaddr;
-	assign baddr = {{14{id_se[15]}},id_se,2'b0} + pc_4;
+	assign baddr = {id_se[29:0],2'b0} + pc_4;
 
 	assign int_pc = id_pc;
 
