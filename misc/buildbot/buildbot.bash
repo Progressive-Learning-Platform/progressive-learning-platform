@@ -52,9 +52,10 @@ echo   - Building javadoc...
 ant javadoc > build_javadoc_log
 
 #build the classroom module
-echo   - BUilding lecture recorder...
-cd $BUILDROOT/extras/PLPToolLectureRecorder
-./package.sh > build_lecturerecorder_log
+echo   - BUilding lecture publisher...
+cd $BUILDROOT/extras/LecturePublisher
+ant clean
+ant package-for-store > build_lecturepublisher_log
 
 #run the autotest
 echo ===============================================================================
@@ -100,6 +101,7 @@ echo ===========================================================================
 cd $BUILDROOT
 cp reference/sw/PLPTool/*_log to_push
 cp reference/sw/PLPTool/store/* to_push/plptool
+cp extras/LecturePublisher/store/* to_push/plptool
 cp extras/PLPToolInstaller/plptoolsetup.exe to_push/plptool
 cp -R reference/sw/PLPTool/dist/javadoc to_push
 
