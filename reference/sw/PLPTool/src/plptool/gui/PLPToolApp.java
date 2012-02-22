@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2012 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.Msg;
 import plptool.Constants;
+import plptool.Version;
 import plptool.ArchRegistry;
 import plptool.DynamicModuleFramework;
 
@@ -105,6 +106,12 @@ public class PLPToolApp extends SingleFrameApplication {
     public static void main(String[] args) {
 
 /******************** RUN AND QUIT COMMANDS ***********************************/
+
+        // Print third party licensing information and quit
+        if(args.length >= 1 && args[0].equals("--gpl")) {
+            Msg.M("\n" + Version.GPL + "\n");
+            return;
+        }
 
         // Print third party licensing information and quit
         if(args.length >= 1 && args[0].equals("--license")) {
@@ -288,6 +295,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 ProjectFileManipulator.helpMessage();
                 System.out.println("More commands:");
                 System.out.println("  --buildinfo             Print build information and quit.");
+                System.out.println("  --gpl                   Print GPL license text and quit.");
                 System.out.println("  --license               Print third party licensing information and quit.");
                 System.out.println("  --suppress-output       Engage silent mode.");
                 System.out.println("  --suppress-warning      Suppress all warning messages.");
