@@ -447,7 +447,7 @@ public class IORegistry {
         PLPSimBusModule module = DynamicModuleFramework.newBusModuleInstance(index);
 
         if(module == null)
-            return Constants.PLP_DBUSMOD_INSTANTIATION_ERROR;
+            return Constants.PLP_DMOD_INSTANTIATION_ERROR;
 
         module.setNewParameters(startAddr, endAddr, isWordAligned);
         module.hook(frame);

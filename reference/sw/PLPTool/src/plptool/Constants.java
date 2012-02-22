@@ -144,13 +144,20 @@ public class Constants {
     public static final int PLP_BACKEND_LOAD_CONFIG_FAILED       = 1038;
     public static final int PLP_BACKEND_GUI_ON_HEADLESS_ENV      = 1039;
 
-    public static final int PLP_DBUSMOD_INSTANTIATION_ERROR      = 1040;
-    public static final int PLP_DBUSMOD_PATH_ERROR               = 1041;
-    public static final int PLP_DBUSMOD_CLASS_NOT_FOUND_ERROR    = 1042;
-    public static final int PLP_DBUSMOD_ILLEGAL_ACCESS           = 1043;
-    public static final int PLP_DBUSMOD_FILE_IO_ERROR            = 1044;
-    public static final int PLP_DBUSMOD_GENERIC                  = 1045;
-    public static final int PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR   = 1046;
+    public static final int PLP_DMOD_INSTANTIATION_ERROR         = 1040;
+    public static final int PLP_DMOD_PATH_ERROR                  = 1041;
+    public static final int PLP_DMOD_CLASS_NOT_FOUND_ERROR       = 1042;
+    public static final int PLP_DMOD_ILLEGAL_ACCESS              = 1043;
+    public static final int PLP_DMOD_FILE_IO_ERROR               = 1044;
+    public static final int PLP_DMOD_GENERAL_ERROR               = 1045;
+    public static final int PLP_DMOD_FAILED_TO_LOAD_ALL_JAR      = 1046;
+    public static final int PLP_DMOD_NO_MANIFEST_FOUND           = 1047;
+    public static final int PLP_DMOD_INVALID_MANIFEST_ENTRY      = 1048;
+    public static final int PLP_DMOD_HOOK_EXCEPTION              = 1049;
+    public static final int PLP_DMOD_UNABLE_TO_DOWNLOAD_JAR      = 1050;
+    public static final int PLP_DMOD_INVALID_CLASS_INDEX         = 1051;
+    public static final int PLP_DMOD_INVALID_MODULE_INDEX        = 1052;
+    public static final int PLP_DMOD_MODULE_IS_ALREADY_LOADED    = 1053;
 
     // Framework errors
     public static final int PLP_ISA_INVALID_ARCHITECTURE_ID      = 2048;
