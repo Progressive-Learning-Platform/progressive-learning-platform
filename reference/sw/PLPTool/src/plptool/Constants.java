@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2012 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ public class Constants {
     public static final String copyrightString =
             "PLP Software Tool version " + versionString + "\n" +
             "Copyright 2010-2012 PLP Contributors.\n" +
-            "This software is licensed under GPLv3.\n" +
-            "Run with '--license' option for licensing information of third party software."
+            "This software is licensed under GPLv3. (Run with --gpl for license text)\n" +
+            "Run with '--license' for licensing information of third party software."
             ;
 
     public static final String thirdPartyCopyrightString =
