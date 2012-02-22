@@ -72,14 +72,16 @@ echo - Pushing...
 echo ===============================================================================
 cd $BUILDROOT 
 mkdir to_push
+mkdir to_push/hw
+mkdir to_push/plptool
 cp reference/sw/auto_test_log to_push
 cp reference/hw/*_log to_push
 cp reference/hw/bootrom/*_log to_push
-cp reference/hw/build/build_500k_volatile/top.bit to_push/nexys2_500k.bit
-cp reference/hw/build/build_500k_volatile/top.mcs to_push/nexys2_500k.mcs
-cp reference/hw/build/build_1200k_volatile/top.bit to_push/nexys2_1200k.bit
-cp reference/hw/build/build_1200k_volatile/top.mcs to_push/nexys2_1200k.mcs
-cp reference/hw/build/build_nexys3_volatile/top.bit to_push/nexys3.bit
+cp reference/hw/build/build_500k_volatile/top.bit to_push/hw/nexys2_500k.bit
+cp reference/hw/build/build_500k_volatile/top.mcs to_push/hw/nexys2_500k.mcs
+cp reference/hw/build/build_1200k_volatile/top.bit to_push/hw/nexys2_1200k.bit
+cp reference/hw/build/build_1200k_volatile/top.mcs to_push/hw/nexys2_1200k.mcs
+cp reference/hw/build/build_nexys3_volatile/top.bit to_push/hw/nexys3.bit
 
 #build the Windows installer
 echo ===============================================================================
@@ -87,8 +89,8 @@ echo   - Building PLP Tool Windows installer...
 echo ===============================================================================
 cd $BUILDROOT/extras/PLPToolInstaller
 mkdir hardware
-cp ../../to_push/*.bit ./hardware
-cp ../../to_push/*.mcs ./hardware
+cp ../../to_push/hw/*.bit ./hardware
+cp ../../to_push/hw/*.mcs ./hardware
 ./build_linuxhost.sh > build_plptoolinstall_log
 cp build_plptoolinstall_log $BUILDROOT/to_push
 
@@ -97,8 +99,8 @@ echo   - Pushing sw...
 echo ===============================================================================
 cd $BUILDROOT
 cp reference/sw/PLPTool/*_log to_push
-cp reference/sw/PLPTool/store/* to_push
-cp extras/PLPToolInstaller/plptoolsetup.exe to_push
+cp reference/sw/PLPTool/store/* to_push/plptool
+cp extras/PLPToolInstaller/plptoolsetup.exe to_push/plptool
 cp -R reference/sw/PLPTool/dist/javadoc to_push
 
 #our data is ready to send off to the webserver
