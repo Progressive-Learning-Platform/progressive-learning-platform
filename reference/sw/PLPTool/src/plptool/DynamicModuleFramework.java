@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2012 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -104,11 +104,11 @@ public class DynamicModuleFramework {
             index++;
         } catch(ClassNotFoundException e) {
             Msg.E("The class " + className + " is not found in " + path,
-                  Constants.PLP_DBUSMOD_CLASS_NOT_FOUND_ERROR, null);
+                  Constants.PLP_DMOD_CLASS_NOT_FOUND_ERROR, null);
             return false;
         } catch(Exception e) {
             Msg.E("Unable to load module. Set debug level to 1 or higher for" +
-                  " stack trace.", Constants.PLP_DBUSMOD_GENERIC, null);
+                  " stack trace.", Constants.PLP_DMOD_GENERAL_ERROR, null);
             if(Constants.debugLevel >= 1)
                 e.printStackTrace();
             return false;
@@ -124,7 +124,7 @@ public class DynamicModuleFramework {
      */
     public static Class getDynamicModuleClass(int index) {
         if(index < 0 || index >= dynamicModuleClasses.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            Msg.E("Invalid index.", Constants.PLP_DMOD_INVALID_CLASS_INDEX, null);
             return null;
         }
         
@@ -173,11 +173,11 @@ public class DynamicModuleFramework {
         } catch (InstantiationException e) {
             Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
                   "Generic modules have to extend plptool.PLPGenericModule class.",
-                  Constants.PLP_DBUSMOD_INSTANTIATION_ERROR, null);
+                  Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
             return Constants.PLP_GENERIC_ERROR;
         } catch(IllegalAccessException e) {
             Msg.E("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
-                  Constants.PLP_DBUSMOD_ILLEGAL_ACCESS, null);
+                  Constants.PLP_DMOD_ILLEGAL_ACCESS, null);
             return Constants.PLP_GENERIC_ERROR;
         }
     }
@@ -199,7 +199,8 @@ public class DynamicModuleFramework {
      */
     public static PLPGenericModule getGenericModuleInstance(int index) {
         if(index < 0 || index >= dynamicModuleInstances.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            Msg.E("Invalid index.",
+                  Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
             return null;
         }
 
@@ -230,7 +231,8 @@ public class DynamicModuleFramework {
      */
     public static PLPGenericModule removeGenericModuleInstance(int index) {
         if(index < 0 || index >= dynamicModuleInstances.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            Msg.E("Invalid index.",
+                  Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
             return null;
         }
 
@@ -245,12 +247,27 @@ public class DynamicModuleFramework {
      * @return Object reference returned by the hook function
      */
     public static Object hook(int index, Object param) {
+        Object ret = null;
+
         if(index < 0 || index >= dynamicModuleInstances.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            Msg.E("Invalid index.",
+                  Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
             return null;
         }
 
-        return dynamicModuleInstances.get(index).hook(param);
+        try {
+            ret = dynamicModuleInstances.get(index).hook(param);
+        } catch(Exception e) {
+            PLPGenericModule mod = dynamicModuleInstances.get(index);
+            Msg.E("Hook exception [" + index + "]\n" +
+                      " class: " + mod.getClass().getCanonicalName() + "\n" +
+                      " param: " + param.toString(),
+                      Constants.PLP_DMOD_HOOK_EXCEPTION, mod);
+            if(Constants.debugLevel >= 2)
+                e.printStackTrace();
+        }
+
+        return ret;
     }
 
     /**
@@ -260,8 +277,19 @@ public class DynamicModuleFramework {
      * @param param Parameter to pass to all modules
      */
     public static void hook(Object param) {
-        for(int i = 0; i < dynamicModuleInstances.size(); i++)
-            dynamicModuleInstances.get(i).hook(param);
+        for(int i = 0; i < dynamicModuleInstances.size(); i++) {
+            try {
+                dynamicModuleInstances.get(i).hook(param);
+            } catch(Exception e) {
+                PLPGenericModule mod = dynamicModuleInstances.get(i);
+                Msg.E("Hook exception [" + i + "]\n" +
+                      " class: " + mod.getClass().getCanonicalName() + "\n" +
+                      " param: " + param.toString(),
+                      Constants.PLP_DMOD_HOOK_EXCEPTION, mod);
+                if(Constants.debugLevel >= 2)
+                    e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -271,7 +299,7 @@ public class DynamicModuleFramework {
      */
     public static void setModuleClassSave(int index, boolean s) {
         if(index < 0 || index >= dynamicModuleClasses.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            Msg.E("Invalid index.", Constants.PLP_DMOD_INVALID_CLASS_INDEX, null);
             return;
         }
 
@@ -301,7 +329,7 @@ public class DynamicModuleFramework {
                 } else if(Config.cfgAskBeforeAutoloadingModules) {
                     System.out.print(message + " (Y/N) ");
                     try {
-                        char response = (char) System.in.read();
+                        char response = PLPToolbox.readLine().charAt(0);
                         if(response != 'Y')
                             return;
                     } catch(Exception e) { }
@@ -354,11 +382,11 @@ public class DynamicModuleFramework {
         } catch (InstantiationException e) {
             Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
                   "Dynamic bus modules have to extend plptool.PLPSimBusModule class.",
-                  Constants.PLP_DBUSMOD_INSTANTIATION_ERROR, null);
+                  Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
             return null;
         } catch(IllegalAccessException e) {
             Msg.E("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
-                  Constants.PLP_DBUSMOD_ILLEGAL_ACCESS, null);
+                  Constants.PLP_DMOD_ILLEGAL_ACCESS, null);
             return null;
         }
     }
@@ -390,7 +418,7 @@ public class DynamicModuleFramework {
 
         } catch(IOException e) {
             Msg.E("Failed to load classes from '" + path + "'",
-                  Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                  Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
             return false;
         }
     }
@@ -432,14 +460,14 @@ public class DynamicModuleFramework {
 
             if(!manifestFound) {
                 Msg.E("No plp.manifest file found in the JAR archive",
-                        Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                        Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
                 jar.close();
                 return null;
             }
 
         } catch(IOException e) {
             Msg.E("Failed to load classes from '" + path + "'",
-                  Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                  Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
             return null;
         }
 
@@ -529,14 +557,14 @@ public class DynamicModuleFramework {
 
             if(!manifestFound) {
                 Msg.E("No plp.manifest file found in the JAR archive",
-                        Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                        Constants.PLP_DMOD_NO_MANIFEST_FOUND, null);
                 jar.close();
                 return null;
             }
 
         } catch(IOException e) {
             Msg.E("Failed to load '" + path + "'",
-                  Constants.PLP_DBUSMOD_FAILED_TO_LOAD_ALL_JAR, null);
+                  Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
             return null;
         }
 
@@ -551,7 +579,8 @@ public class DynamicModuleFramework {
      */
     public static boolean isModuleClassSaved(int index) {
         if(index < 0 || index >= dynamicModuleClasses.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DBUSMOD_GENERIC, null);
+            Msg.E("Invalid index.",
+                  Constants.PLP_DMOD_INVALID_CLASS_INDEX, null);
             return false;
         }
 
@@ -601,7 +630,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
     public Class loadClass(String name) throws ClassNotFoundException, NoClassDefFoundError {
         if(findLoadedClass(name) != null) {
             Msg.E("Class " + name + " is already loaded.",
-                  Constants.PLP_DBUSMOD_GENERIC, null);
+                  Constants.PLP_DMOD_MODULE_IS_ALREADY_LOADED, null);
             return null;
         }
 
@@ -659,7 +688,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
             
         } catch(Exception e) {
             Msg.E("Unable to load dynamic module " + name + " from the file " + path,
-                  Constants.PLP_DBUSMOD_PATH_ERROR, null);
+                  Constants.PLP_DMOD_PATH_ERROR, null);
             return null;
         }
     }

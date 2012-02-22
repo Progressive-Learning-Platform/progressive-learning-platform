@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2012 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -289,7 +289,8 @@ public class PLPToolbox {
      * @param plp Reference to the ProjectDriver instance
      * @param load Should the method load the module after downloading
      */
-    public static boolean downloadJARForAutoload(String URL, plptool.gui.ProjectDriver plp, boolean load) {
+    public static boolean downloadJARForAutoload(
+            String URL, plptool.gui.ProjectDriver plp, boolean load) {
        
         File autoloadDir = new File(getConfDir() + "/autoload");
         if(!autoloadDir.exists())
@@ -297,9 +298,12 @@ public class PLPToolbox {
         int ret = 0;
         if(plp != null && plp.g())
             ret = javax.swing.JOptionPane.showConfirmDialog(plp.g_dev,
-                          "Attempt to download " + URL + " and cache it in user's directory?",
-                          "Download JAR Module", javax.swing.JOptionPane.YES_NO_OPTION);
-        if(plp == null || !plp.g() || ret == javax.swing.JOptionPane.YES_OPTION) {
+                          "Attempt to download " + URL +
+                          " and cache it in user's directory?",
+                          "Download JAR Module",
+                          javax.swing.JOptionPane.YES_NO_OPTION);
+        if(plp == null || !plp.g() ||
+                ret == javax.swing.JOptionPane.YES_OPTION) {
             String fileName = "";
             try {
                 Msg.I("Downloading " + URL + "...", null);
@@ -311,9 +315,10 @@ public class PLPToolbox {
                         PLPToolbox.getConfDir() + "/autoload/" + fileName);
                 fos.getChannel().transferFrom(rbc, 0, 1 << 24);
                 fos.close();
-                if(!DynamicModuleFramework.checkForManifest(PLPToolbox.getConfDir() + "/autoload/" + fileName)) {
+                if(!DynamicModuleFramework.checkForManifest(
+                        PLPToolbox.getConfDir() + "/autoload/" + fileName)) {
                     Msg.E("Downloaded JAR file does not contain plp.manifest",
-                          Constants.PLP_GENERIC_ERROR, null);
+                          Constants.PLP_DMOD_NO_MANIFEST_FOUND, null);
                     (new File(PLPToolbox.getConfDir() + "/autoload/" + fileName)).delete();
                     return false;
                 }
@@ -333,6 +338,20 @@ public class PLPToolbox {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Read a line of string from standard input
+     *
+     * @return A line of string if successful, null otherwise
+     */
+    public static String readLine() {
+        try {
+            java.io.BufferedReader stdin = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+            return stdin.readLine();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
 
