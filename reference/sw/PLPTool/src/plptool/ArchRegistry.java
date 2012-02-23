@@ -33,6 +33,8 @@ public class ArchRegistry {
 
     private static HashMap<Integer, Class> archClasses =
             new HashMap<Integer, Class>();
+    private static HashMap<Integer, String> archIdentifiers =
+            new HashMap<Integer, String>();
 
     public static final int        ISA_PLPMIPS         =           0;
 
@@ -45,17 +47,30 @@ public class ArchRegistry {
      * @param index
      */
     public static PLPArchitecture getArchitecture(ProjectDriver plp,
-            int index) {
+            int ID) {
         PLPArchitecture arch = null;
+        Class archClass = null;
 
         // default ISA is PLP CPU (arch ID 0)
-        if(index == 0)
-            return (new plptool.mips.Architecture(index, plp));
+        if(ID == 0)
+            return (new plptool.mips.Architecture(ID, plp));
 
+        // Try to load dynamic ISA module
         try {
-            arch = (PLPArchitecture) archClasses.get(index).newInstance();
+            archClass = getRegisteredArchitectureClass(ID);
+            if(archClass == null) {
+                Msg.E("Invalid ISA ID: " + ID,
+                        Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, null);
+                return null;
+            }
+
+            arch = (PLPArchitecture) getRegisteredArchitectureClass(ID).newInstance();
+            arch.setProjectDriver(plp);
             return arch;
         } catch(Exception e) {
+            Msg.E("Instantiation error for " +
+                  getRegisteredArchitectureClass(ID).getCanonicalName(),
+                  Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
             return arch;
         }
     }
@@ -68,7 +83,10 @@ public class ArchRegistry {
      * @return PLP_OK if the class is successfully registered, error code
      * otherwise
      */
-    public static int registerArchitecture(Class arch, int ID) {
+    public static int registerArchitecture(Class arch, int ID, String strID) {
+        Msg.D("Registering ISA class " + arch.getCanonicalName() +
+                " with ID=" + ID + " strID=" + strID, 2, null);
+
         if(!arch.getSuperclass().getCanonicalName().equals("plptool.PLPArchitecture"))
             return Msg.E("Specified class does not extend the PLP " +
                     "architecture superclass.",
@@ -77,8 +95,18 @@ public class ArchRegistry {
         if(ID == 0 || archClasses.containsKey(ID))
             return Msg.E("ISA with ID '" + ID + "' is already defined.",
                     Constants.PLP_ISA_ALREADY_DEFINED, null);
-
+        
         archClasses.put(ID, arch);
+        archIdentifiers.put(ID, strID);
+
+        if(Constants.debugLevel >= 5) {
+            java.util.Set IDs = archClasses.keySet();
+            Object stuff[] = IDs.toArray();
+            Msg.D("Current list of registered ISA IDs:", 5, null);
+            for(int i = 0; i < stuff.length; i++) {
+                Msg.D("- " + (Integer) stuff[i], 5, null);
+            }
+        }
 
         return Constants.PLP_OK;
     }
@@ -90,6 +118,9 @@ public class ArchRegistry {
      * @return Reference to the ISA class, or null if it is not registered
      */
     public static Class getRegisteredArchitectureClass(int ID) {
-        return archClasses.get(ID);
+        if(ID == 0)
+            return plptool.mips.Architecture.class;
+        else
+            return archClasses.get(ID);
     }
 }

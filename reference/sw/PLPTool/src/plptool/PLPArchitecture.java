@@ -30,7 +30,7 @@ import plptool.gui.ProjectDriver;
  * @author wira
  */
 public abstract class PLPArchitecture {
-    private String identifier;
+    protected String identifier;
     protected ProjectDriver plp;
 
     protected int     archID;
