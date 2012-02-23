@@ -482,6 +482,7 @@ public class DynamicModuleFramework {
      */
     public static void applyManifestEntries(String[] manifestLines, plptool.gui.ProjectDriver plp) {
         for(int i = 0; i < manifestLines.length; i++) {
+            // Load connector object and pass a reference to the ProjectDriver
             if(manifestLines[i].startsWith("loadwithproject::")) {
                 String className = manifestLines[i].replace("loadwithproject::", "");
                 int cIndex = -1;
@@ -491,6 +492,18 @@ public class DynamicModuleFramework {
                 if(cIndex > -1) {
                     Msg.M("Applying manifest entry: " + manifestLines[i]);
                     hook(cIndex, plp);
+                }
+
+            // Register an ISA metaclass
+            } else if(manifestLines[i].startsWith("registerisa::")) {
+                String tokens[] = manifestLines[i].split("::");
+                if(tokens.length != 3)
+                    return;
+                int ret = isModuleClassRegistered(tokens[1]);
+                if(ret > -1) {
+                    Msg.M("Applying manifest entry: " + manifestLines[i]);
+                    ArchRegistry.registerArchitecture(getDynamicModuleClass(ret),
+                            Integer.parseInt(tokens[2]));
                 }
             }
         }

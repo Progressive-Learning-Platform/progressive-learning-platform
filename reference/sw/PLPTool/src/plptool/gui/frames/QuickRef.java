@@ -54,7 +54,10 @@ public class QuickRef extends javax.swing.JFrame {
 
         this.setLocationRelativeTo(null);
 
-        str = plp.getArch().getQuickReferenceString();
+        if(plp.getArch() != null)
+            str = plp.getArch().getQuickReferenceString();
+        else
+            str = "No project is open!";
 
         txtHTML.setText(str);
         txtHTML.setCaretPosition(0);

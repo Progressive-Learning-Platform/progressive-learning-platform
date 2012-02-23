@@ -285,6 +285,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plptool.DynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
                 } else if(tokens[0].equals("rmdmod") && tokens.length == 2) {
                     plptool.DynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                } else if(tokens[0].equals("setnewarch") && tokens.length == 2) {
+                    int archid = Integer.parseInt(tokens[1]);
+                    plp.setArch(archid);
                 } else if(tokens[0].equals("h") && tokens.length == 2) {
                     String[] temp = tokens[1].split(" ", 2);
                     out.setText("hook: " + temp[0] + "-" + temp[1] + "\n");

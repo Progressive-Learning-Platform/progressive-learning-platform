@@ -167,6 +167,8 @@ public class Constants {
     public static final int PLP_ISA_NO_SIMCORE                   = 2052;
     public static final int PLP_ISA_NO_SIMCOREGUI                = 2053;
     public static final int PLP_ISA_NO_PROGRAMMER                = 2054;
+    public static final int PLP_ISA_ALREADY_DEFINED              = 2055;
+    public static final int PLP_ISA_INVALID_METACLASS            = 2056;
 
     // Develop errors
     public static final int PLP_DEV_INVALID_FILE_INDEX           = 4096;
@@ -188,6 +190,7 @@ public class Constants {
     public static final int PLP_FILE_SAVE_ERROR                  = 4;
     public static final int PLP_FILE_USE_SAVE_AS                 = 5;
     public static final int PLP_PRINT_ERROR                      = 6;
+    public static final int PLP_FATAL_ERROR                      = 7;
 
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;
