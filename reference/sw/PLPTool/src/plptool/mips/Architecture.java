@@ -20,7 +20,6 @@ package plptool.mips;
 
 import java.awt.event.ActionEvent;
 import plptool.*;
-import plptool.gui.frames.Develop;
 import plptool.gui.ProjectDriver;
 
 /**

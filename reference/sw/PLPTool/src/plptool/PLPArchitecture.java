@@ -55,6 +55,17 @@ public abstract class PLPArchitecture {
     }
 
     /**
+     * Set new architecture ID and identifier
+     *
+     * @param archID Integer ISA ID
+     * @param identifier String ISA ID
+     */
+    public void setParameters(int archID, String identifier) {
+        this.archID = archID;
+        this.identifier = identifier;
+    }
+
+    /**
      * Get ISA ID
      *
      * @return ISA ID specified by the registry

@@ -159,8 +159,8 @@ public class ProjectDriver {
     public ProjectDriver(int modes, int archID) {
         this.g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
         this.applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
-        this.arch = ArchRegistry.getArchitectureMetaClass(this, archID);
-
+        
+        arch = null;
         modified = false;
         plpfile = null;
         halt = false;
@@ -179,7 +179,6 @@ public class ProjectDriver {
             this.g_ioreg = new IORegistryFrame(this);
             this.g_about = new AboutBoxDialog(this.g_dev);
             this.g_opts = new OptionsFrame(this);
-            this.g_qref = new QuickRef(this);
             this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
             this.g_find = new FindAndReplace(this);
@@ -202,7 +201,6 @@ public class ProjectDriver {
                 this.g_dev.setLocationRelativeTo(null);
             }
 
-            this.g_qref.setLocationRelativeTo(null);
             this.g_find.setLocationRelativeTo(null);
 
             this.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
@@ -245,12 +243,14 @@ public class ProjectDriver {
      * @return
      */
     public int setArch(int archID) {
-        this.arch = ArchRegistry.getArchitectureMetaClass(this, archID);
+        this.arch = ArchRegistry.getArchitecture(this, archID);
 
-        if(arch == null)
-            return Msg.E("Invalid ISA ID: " + archID,
+        if(arch == null) {
+            arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+            return Msg.E("Invalid ISA ID: " + archID + ". Defaulting to " +
+                         "plpmips (id 0).",
                          Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, this);
-        else
+        } else
             return Constants.PLP_OK;
     }
 
@@ -375,6 +375,15 @@ public class ProjectDriver {
         asm_req = true;
         plpfile = new File("Unsaved Project");
 
+        try {
+            this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+        } catch(Exception e) {
+            Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
+                  "create routine (archID: " + ArchRegistry.ISA_PLPMIPS + ")",
+                  Constants.PLP_FATAL_ERROR, null);
+            System.exit(-1);
+        }
+
         asms = new ArrayList<PLPAsmSource>();
         asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
         open_asm = 0;
@@ -410,6 +419,15 @@ public class ProjectDriver {
         modified = true;
         asm_req = true;
         plpfile = new File("Unsaved Project");
+
+        try {
+            this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+        } catch(Exception e) {
+            Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
+                  "create routine (archID: " + ArchRegistry.ISA_PLPMIPS + ")",
+                  Constants.PLP_FATAL_ERROR, null);
+            System.exit(-1);
+        }
 
         asms = new ArrayList<PLPAsmSource>();
         if(importAsm(asmPath) != Constants.PLP_OK) {
@@ -644,9 +662,11 @@ public class ProjectDriver {
         Msg.I(plpfile.getAbsolutePath() + " written", null);
 
         } catch(Exception e) {
-            if(Constants.debugLevel >= 10) e.printStackTrace();
-            return Msg.E("save(): Unable to write to " + plpfile.getAbsolutePath() + "\n" +
-                     e, Constants.PLP_FILE_SAVE_ERROR, this);
+            if(Constants.debugLevel >= 2) e.printStackTrace();
+            return Msg.E("save: Unable to write to " +
+                    plpfile.getAbsolutePath() + "\n" +
+                    "Do you have access to the specified location?",
+                    Constants.PLP_FILE_SAVE_ERROR, this);
         }
 
 
@@ -717,15 +737,16 @@ public class ProjectDriver {
                               "Meta data for this project will be updated " +
                               "with the default ISA (plpmips) when the project " +
                               "file is saved.", this);
-                        arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
+                        arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                     } else {
-                        arch = ArchRegistry.getArchitectureMetaClass(this, Integer.parseInt(temp));
+                        arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
                         if(arch == null) {
                             Msg.W("Invalid ISA ID is specified in the project file: '" + temp +
                                   "'. Assuming plpmips", this);
-                            arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
+                            arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                         }
                     }
+                    arch.hook(this);
                 }
 
                 // get asm files order
@@ -856,14 +877,14 @@ public class ProjectDriver {
 
         }
         catch(Exception e) {
-            e.printStackTrace();
+            if(Constants.debugLevel >= 2) e.printStackTrace();
             return Msg.E("open(" + path + "): Invalid PLP archive.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
         if(arch == null) {
             Msg.W("No ISA information specified in the archive, assuming plpmips", this);
-            arch = ArchRegistry.getArchitectureMetaClass(this, ArchRegistry.ISA_PLPMIPS);
+            arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
         }
 
         plpfile = new File(path);

@@ -20,6 +20,8 @@ package plptool;
 
 import plptool.gui.ProjectDriver;
 
+import java.util.HashMap;
+
 /**
  * This class associates an ISA implementation to its member classes.
  * Developers porting an ISA to PLP Tool framework will have to register their
@@ -28,6 +30,9 @@ import plptool.gui.ProjectDriver;
  * @author wira
  */
 public class ArchRegistry {
+
+    private static HashMap<Integer, Class> archClasses =
+            new HashMap<Integer, Class>();
 
     public static final int        ISA_PLPMIPS         =           0;
 
@@ -39,20 +44,52 @@ public class ArchRegistry {
      *
      * @param index
      */
-    public static PLPArchitecture getArchitectureMetaClass(ProjectDriver plp, int index) {
-        
-        switch(index) {
-            
-            /*****************************************************************/
-            /* PLP MIPS Architecture Meta Class Instantiation                */
-            /*****************************************************************/
-            case 0:
-                return new plptool.mips.Architecture(ISA_PLPMIPS, plp);
-                
-            // ... Add your meta class instantiation here ... ///
+    public static PLPArchitecture getArchitecture(ProjectDriver plp,
+            int index) {
+        PLPArchitecture arch = null;
 
-            default:
-                return null;
+        // default ISA is PLP CPU (arch ID 0)
+        if(index == 0)
+            return (new plptool.mips.Architecture(index, plp));
+
+        try {
+            arch = (PLPArchitecture) archClasses.get(index).newInstance();
+            return arch;
+        } catch(Exception e) {
+            return arch;
         }
+    }
+
+    /**
+     * Register a class as an ISA metaclass
+     *
+     * @param arch Architecture class that extends plptool.PLPArchitecture
+     * @param ID Integer ID for the ISA
+     * @return PLP_OK if the class is successfully registered, error code
+     * otherwise
+     */
+    public static int registerArchitecture(Class arch, int ID) {
+        if(!arch.getSuperclass().getCanonicalName().equals("plptool.PLPArchitecture"))
+            return Msg.E("Specified class does not extend the PLP " +
+                    "architecture superclass.",
+                    Constants.PLP_ISA_INVALID_METACLASS, null);
+
+        if(ID == 0 || archClasses.containsKey(ID))
+            return Msg.E("ISA with ID '" + ID + "' is already defined.",
+                    Constants.PLP_ISA_ALREADY_DEFINED, null);
+
+        archClasses.put(ID, arch);
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Get a reference to an ISA class specified by its ID
+     *
+     * @param ID ID of the ISA meta class
+     * @return Reference to the ISA class, or null if it is not registered
+     */
+    public static Class getRegisteredArchitectureClass(int ID) {
+        return archClasses.get(ID);
     }
 }
