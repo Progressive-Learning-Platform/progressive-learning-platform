@@ -1,0 +1,7 @@
+title::PLP 6811 ISA
+author::PLP Project
+license::GPLv3
+description::6811 ISA support for PLPTool
+version::0.0.1
+class::plptool.hc11.Architecture
+registerisa::plptool.hc11.Architecture::hc11::6811

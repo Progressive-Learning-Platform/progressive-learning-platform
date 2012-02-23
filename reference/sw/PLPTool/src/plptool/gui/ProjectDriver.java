@@ -1076,7 +1076,7 @@ public class ProjectDriver {
     public int assemble() {
         hookEvent(new ProjectEvent(ProjectEvent.ASSEMBLE, -1));
         if(!arch.hasAssembler())
-            return Msg.E("This ISA does not implement an assembler",
+            return Msg.E("This ISA does not implement an assembler.",
                          Constants.PLP_ISA_NO_ASSEMBLER, this);
 
         Msg.I("Assembling...", null);
@@ -1330,7 +1330,7 @@ public class ProjectDriver {
      */
     public int program(String port) {
         if(!arch.hasProgrammer())
-                return Msg.E("This ISA does implement a board programmer.",
+                return Msg.E("This ISA does not implement a board programmer.",
                              Constants.PLP_ISA_NO_PROGRAMMER, this);
 
         if(!serial_support)

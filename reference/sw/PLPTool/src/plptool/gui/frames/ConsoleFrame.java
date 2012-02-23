@@ -325,6 +325,8 @@ public class ConsoleFrame extends javax.swing.JFrame {
         }
         } catch(Exception e) {
             cmd.setText("");
+            if(Constants.debugLevel >= 2)
+                e.printStackTrace();
             out.setText(e.toString());
         }
     }//GEN-LAST:event_cmdKeyPressed

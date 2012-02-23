@@ -497,13 +497,13 @@ public class DynamicModuleFramework {
             // Register an ISA metaclass
             } else if(manifestLines[i].startsWith("registerisa::")) {
                 String tokens[] = manifestLines[i].split("::");
-                if(tokens.length != 3)
+                if(tokens.length != 4)
                     return;
                 int ret = isModuleClassRegistered(tokens[1]);
                 if(ret > -1) {
                     Msg.M("Applying manifest entry: " + manifestLines[i]);
                     ArchRegistry.registerArchitecture(getDynamicModuleClass(ret),
-                            Integer.parseInt(tokens[2]));
+                            Integer.parseInt(tokens[3]), tokens[2]);
                 }
             }
         }
