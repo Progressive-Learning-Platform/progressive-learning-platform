@@ -20,6 +20,8 @@ package lecturepublisher;
 
 import plptool.gui.ProjectDriver;
 
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author wira
@@ -29,11 +31,13 @@ public class Controls extends javax.swing.JFrame {
     private ProjectDriver plp;
     private PLPToolConnector connector;
     private ProgressUpdater progressUpdater;
+    private CortadoFrame cortadoFrame;
 
     /** Creates new form Controls */
     public Controls(ProjectDriver plp, PLPToolConnector connector) {
         this.plp = plp;
         this.connector = connector;
+        cortadoFrame = new CortadoFrame();
         initComponents();
     }
 
@@ -71,6 +75,25 @@ public class Controls extends javax.swing.JFrame {
         progressBar.setValue(0);
     }
 
+    private void browseForVideo() {
+        JFileChooser fc = new JFileChooser();
+        int ret = fc.showOpenDialog(this);
+        if(ret == JFileChooser.APPROVE_OPTION) {
+            txtVideoFile.setText(fc.getSelectedFile().getAbsolutePath());
+        }
+    }
+
+    private void embedVideo() {
+        java.io.File vf = new java.io.File(txtVideoFile.getText());
+        if(vf.exists())
+            connector.setVideoURL(txtVideoFile.getText());
+    }
+
+    public void playVideo(String url) {
+        cortadoFrame.setVisible(true);
+        cortadoFrame.play("file:///" + url);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -95,9 +118,9 @@ public class Controls extends javax.swing.JFrame {
         panelEmbedVideo = new javax.swing.JPanel();
         lblVideoInfo1 = new javax.swing.JLabel();
         lblVideoInfo2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        btnBrowseVideo = new javax.swing.JButton();
+        txtVideoFile = new javax.swing.JTextField();
+        btnEmbedVideo = new javax.swing.JButton();
         progressBar = new javax.swing.JProgressBar();
         txtStatus = new javax.swing.JTextField();
 
@@ -141,7 +164,7 @@ public class Controls extends javax.swing.JFrame {
                     .addComponent(radioRecordWithAudio)
                     .addComponent(radioRecordWithoutAudio)
                     .addComponent(lblLecturePublisher))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
                 .addComponent(tglBtnRecord)
                 .addContainerGap())
         );
@@ -150,14 +173,14 @@ public class Controls extends javax.swing.JFrame {
             .addGroup(panelRecordLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tglBtnRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                    .addComponent(tglBtnRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                     .addGroup(panelRecordLayout.createSequentialGroup()
                         .addComponent(radioRecordWithAudio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioPlayAndOverlay)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioRecordWithoutAudio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                         .addComponent(lblLecturePublisher)))
                 .addContainerGap())
         );
@@ -191,7 +214,7 @@ public class Controls extends javax.swing.JFrame {
                         .addComponent(tglBtnPlayPause, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(sliderProgress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE))
+                    .addComponent(sliderProgress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelPlaybackLayout.setVerticalGroup(
@@ -203,7 +226,7 @@ public class Controls extends javax.swing.JFrame {
                 .addGroup(panelPlaybackLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tglBtnPlayPause, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnStop))
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Playback", panelPlayback);
@@ -212,9 +235,19 @@ public class Controls extends javax.swing.JFrame {
 
         lblVideoInfo2.setText("videos into the project file.");
 
-        jButton1.setText("Browse for Video File");
+        btnBrowseVideo.setText("Browse for Video File");
+        btnBrowseVideo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBrowseVideoActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Embed Video into Project");
+        btnEmbedVideo.setText("Embed Video into Project");
+        btnEmbedVideo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmbedVideoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelEmbedVideoLayout = new javax.swing.GroupLayout(panelEmbedVideo);
         panelEmbedVideo.setLayout(panelEmbedVideoLayout);
@@ -223,13 +256,13 @@ public class Controls extends javax.swing.JFrame {
             .addGroup(panelEmbedVideoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelEmbedVideoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                    .addComponent(txtVideoFile, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
                     .addComponent(lblVideoInfo1)
                     .addComponent(lblVideoInfo2)
                     .addGroup(panelEmbedVideoLayout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnBrowseVideo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(btnEmbedVideo)))
                 .addContainerGap())
         );
         panelEmbedVideoLayout.setVerticalGroup(
@@ -240,12 +273,12 @@ public class Controls extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblVideoInfo2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtVideoFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelEmbedVideoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(19, Short.MAX_VALUE))
+                    .addComponent(btnBrowseVideo)
+                    .addComponent(btnEmbedVideo))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Embed Video", panelEmbedVideo);
@@ -329,12 +362,19 @@ public class Controls extends javax.swing.JFrame {
         setPlaybackState(false);
     }//GEN-LAST:event_btnStopActionPerformed
 
+    private void btnBrowseVideoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseVideoActionPerformed
+        browseForVideo();
+    }//GEN-LAST:event_btnBrowseVideoActionPerformed
+
+    private void btnEmbedVideoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmbedVideoActionPerformed
+        embedVideo();
+    }//GEN-LAST:event_btnEmbedVideoActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBrowseVideo;
+    private javax.swing.JButton btnEmbedVideo;
     private javax.swing.ButtonGroup btnGroupRecord;
     private javax.swing.JButton btnStop;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblLecturePublisher;
     private javax.swing.JLabel lblVideoInfo1;
     private javax.swing.JLabel lblVideoInfo2;
@@ -350,6 +390,7 @@ public class Controls extends javax.swing.JFrame {
     private javax.swing.JToggleButton tglBtnPlayPause;
     private javax.swing.JToggleButton tglBtnRecord;
     private javax.swing.JTextField txtStatus;
+    private javax.swing.JTextField txtVideoFile;
     // End of variables declaration//GEN-END:variables
 
     class ProgressUpdater extends Thread {

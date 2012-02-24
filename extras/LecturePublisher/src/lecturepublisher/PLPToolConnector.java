@@ -60,6 +60,7 @@ public class PLPToolConnector implements PLPGenericModule {
 
     private ArrayList<PLPAsmSource> snapshot_Asms;
     private int snapshot_OpenAsm;
+    private String videoURL;
     private Controls controls;
     private DevDocListener editorDocListener;
     private AudioRecorder audioRecorderThread;
@@ -73,273 +74,299 @@ public class PLPToolConnector implements PLPGenericModule {
     public String getVersion() { return "4.0-beta"; }
 
     public Object hook(Object param) {
-        int ret;
-
         if(param instanceof String) {
-            if(param.equals("init")) {
+            if(param.equals("show") && init)        controls.setVisible(true);
+            else if(param.equals("help"))           return hookHelp();
+            else if(param.equals("record"))         return hookRecord();
+            else if(param.equals("stop"))           return hookStop();
+            else if(param.equals("pause") && init)  return hookPause();
+            else if(param.equals("replay") && init) return hookReplay();
+            else if(param.equals("clear") && init)  return hookClear();
 
-            } else if(param.equals("show") && init) {
-		controls.setVisible(true);
-
-            } else if(param.equals("help")) {
-		return "This is BETA\nPlease read the manual!";
-
-            } else if(param.equals("record")) {
-                if(plp.plpfile == null) {
-                    Msg.I("No project is open.", this);
-                    return null;
-                }
-                Msg.I("Taking snapshot of the project...", this);
-                snapshot_Asms = new ArrayList<PLPAsmSource>();
-                plp.refreshProjectView(true);
-                for(int i = 0; i < plp.getAsms().size(); i++) {
-                    PLPAsmSource s = plp.getAsm(i);
-                    snapshot_Asms.add(new PLPAsmSource(s.getAsmString(), s.getAsmFilePath(), i));
-                    snapshot_OpenAsm = plp.getOpenAsm();
-                }
-
-                events.clear();
-                Msg.I("<font color=red><b>Recording project events.</b></font>", this);
-                events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // start marker
-                if(audio) {
-                    audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
-                    if(audioRecorderThread.isReady()) audioRecorderThread.start();
-                }
-                if(editorDocListener != null)
-                    plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
-                editorDocListener = new DevDocListener(this);
-                plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
-                record = true;
-
-            } else if(param.equals("stop")) {
-                if(record) {
-                    if(audio) audioRecorderThread.stopRecording();
-                    plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
-                    events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // end marker
-                    record = false;
-                    Msg.I("<b>Stopped recording.</b>", this);
-                } else if(runnerThread != null) {
-                    runnerThread.stopReplay();
-                    audioPlayerThread.stopPlay();
-                    controls.updateComponents();
-                    controls.externalStop();
-                } else
-                    Msg.I("Not recording!", this);
-
-            } else if(param.equals("pause") && init) {
-
-            } else if(param.equals("replay") && init) {
-                if(events == null || events.isEmpty()) {
-                    Msg.I("No lecture to replay.", this);
-                    return null;
-                }
-
-                ret = JOptionPane.showConfirmDialog(plp.g_dev, "Replaying the lecture will revert the project state " +
-                        "to right before recording started. Would you like to continue?", "Lecture Replay",
-                        JOptionPane.YES_NO_OPTION);
-                if(ret == JOptionPane.YES_OPTION) {
-                    ArrayList tempList = new ArrayList<PLPAsmSource>();
-                    for(int i = 0; i < snapshot_Asms.size(); i++) {
-                        PLPAsmSource s = snapshot_Asms.get(i);
-                        tempList.add(new PLPAsmSource(s.getAsmString(), s.getAsmFilePath(), i));
-                    }
-                    plp.setAsms(tempList);
-                    plp.setOpenAsm(snapshot_OpenAsm);
-                    plp.refreshProjectView(false);
-                    if(!superimpose) {
-                        audioRecorderThread = null;
-                        audioPlayerThread = new AudioPlayer(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
-                    } else {
-                        audioPlayerThread = null;
-                        audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
-                    }
-                    runnerThread = new Runner(events, plp, audioPlayerThread, audioRecorderThread);
-                    runnerThread.start();
-                }
-            } else if(param.equals("clear") && init) {
-		Msg.I("Replay events cleared", this);
-		events = new ArrayList<ProjectEvent>();
-            }
-
-        } else if(param instanceof ProjectDriver) {
-            this.plp = (ProjectDriver) param;
-            if(!plp.g()) {
-                Msg.E("Lecture Publisher requires PLPTool GUI", Constants.PLP_GENERIC_ERROR, this);
-                return null;
-            }
-
-            events = new ArrayList<ProjectEvent>();
-            Msg.I("<em>Lecture Publisher</em> is ready &mdash; Use <b>Tools" +
-                    "</b>&rarr;<b>Show Lecture Publisher Window</b> to start!",
-                    null);
-            init = true;
-
-            File temp = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
-            if(temp.exists()) temp.delete();
-
-            controls = new Controls((ProjectDriver) param, this);
-
-            menuDevShowFrame = new JMenuItem();
-            menuDevShowFrame.setText("Show Lecture Publisher Window");
-            menuDevShowFrame.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    hook("show");
-                }
-            });
-            plp.g_dev.addToolsItem(menuDevShowFrame);
-
-            return param;
-
-	} else if(param instanceof ProjectEvent && init) {
-            ProjectEvent e = (ProjectEvent) param;
-            int id = e.getIdentifier();
-            Msg.D(e.getSystemTimestamp() + ":" + e.getIdentifier(), 3, this);
-            if(record &&
-               id != ProjectEvent.PROJECT_OPEN_ENTRY &&
-               id != ProjectEvent.PROJECT_SAVE &&
-               id != ProjectEvent.EDITOR_TEXT_SET ) {
-                events.add(e);
-            } else {
-                try {
-                    switch(id) {
-                        case ProjectEvent.THIRDPARTY_LICENSE:
-                            Msg.M(getJSpeexLicense().replace(" ", "&nbsp;").replace("\n", "<br />"));
-
-                            break;
-
-                        case ProjectEvent.EDITOR_TEXT_SET:
-                            plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
-
-                            break;
-
-                        case ProjectEvent.PROJECT_OPEN:
-                            snapshot_Asms = new ArrayList<PLPAsmSource>();
-                            break;
-
-                        case ProjectEvent.PROJECT_OPEN_ENTRY:
-                            int sLevel = 0;
-                            String entryName = (String) ((Object[])e.getParameters())[0];
-                            byte[] image = (byte[]) ((Object[])e.getParameters())[1];
-                            if(entryName.equals("plp.lecturerecord")) {
-                                Msg.I("Loading saved lecture record...", this);
-                                String str = new String(image);
-                                ProjectEvent ev;
-                                String[] lines = str.split("\\r?\\n");
-                                String[] tokens;
-                                int evId;
-                                long evSystemTimestamp;
-                                long evTimestamp;
-                                for(int i = 0; i < lines.length; i++) {
-                                    tokens = lines[i].split("::");
-                                    evId = Integer.parseInt(tokens[0]);
-                                    evSystemTimestamp = Long.parseLong(tokens[1]);
-                                    evTimestamp = Long.parseLong(tokens[2]);
-                                    ev = new ProjectEvent(
-                                            evId, evTimestamp, null);
-                                    ev.setSystemTimestamp(evSystemTimestamp);
-                                    switch(ev.getIdentifier()) {
-                                        case ProjectEvent.EDITOR_INSERT:
-                                            Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4].replaceAll("\\\\n", "\n")};
-                                            ev.setParameters(eParamsInsert);
-                                            break;
-                                        case ProjectEvent.EDITOR_REMOVE:
-                                            Object[] eParamsRemove = {Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4])};
-                                            ev.setParameters(eParamsRemove);
-                                            break;
-                                        case ProjectEvent.OPENASM_CHANGE:
-                                            Integer eParamsOpenasmChange = Integer.parseInt(tokens[3]);
-                                            ev.setParameters(eParamsOpenasmChange);
-                                            break;
-                                    }
-                                    events.add(ev);
-                                }
-                                return true;
-                            } else if(entryName.equals("plp.lecturerecord_openasm")) {
-                                String str = new String(image);
-                                snapshot_OpenAsm = Integer.parseInt(str);
-                                return true;
-                            } else if(entryName.startsWith("plp.lecturerecord_snapshot.")) {
-                                String str = new String(image);
-                                String fName = entryName.substring(27, entryName.length());
-                                snapshot_Asms.add(new PLPAsmSource(str, fName, sLevel));
-                                sLevel++;
-                                return true;
-                            }
-
-                            break;
-
-                        case ProjectEvent.PROJECT_SAVE:
-                            if(events == null || events.isEmpty())
-                                return null;
-                            TarArchiveOutputStream tOut = (TarArchiveOutputStream) e.getParameters();
-                            TarArchiveEntry entry;
-                            String data = "";
-                            Msg.I("Saving lecture snapshot...", this);
-
-                            for(int i = 0; i < snapshot_Asms.size(); i++) {
-                                entry = new TarArchiveEntry("plp.lecturerecord_snapshot." +
-                                        snapshot_Asms.get(i).getAsmFilePath());
-                                data = snapshot_Asms.get(i).getAsmString();
-                                entry.setSize(data.length());
-                                tOut.putArchiveEntry(entry);
-                                tOut.write(data.getBytes());
-                                tOut.flush();
-                                tOut.closeArchiveEntry();
-                            }
-
-                            entry = new TarArchiveEntry("plp.lecturerecord_openasm");
-                            data = "" + snapshot_OpenAsm;
-                            entry.setSize(data.length());
-                            tOut.putArchiveEntry(entry);
-                            tOut.write(data.getBytes());
-                            tOut.flush();
-                            tOut.closeArchiveEntry();
-
-                            Msg.I("Saving lecture record...", this);
-                            entry = new TarArchiveEntry("plp.lecturerecord");
-
-                            ProjectEvent ev;
-                            data = "";
-                            for(int i = 0; i < events.size(); i++) {
-                                ev = events.get(i);
-                                data += ev.getIdentifier() + "::";
-                                data += ev.getSystemTimestamp() + "::";
-                                data += ev.getTimestamp() + "::";
-
-                                switch(ev.getIdentifier()) {
-                                    case ProjectEvent.EDITOR_INSERT:
-                                        data += (Integer)((Object[]) ev.getParameters())[0] + "::";
-                                        String tStr = (String)((Object[]) ev.getParameters())[1];
-                                        tStr = tStr.replaceAll("\\n", "\\\\n");
-                                        data += tStr;
-                                        break;
-                                    case ProjectEvent.EDITOR_REMOVE:
-                                        data += (Integer)((Object[]) ev.getParameters())[0] + "::";
-                                        data += (Integer)((Object[]) ev.getParameters())[1];
-                                        break;
-                                    case ProjectEvent.OPENASM_CHANGE:
-                                        data += (Integer)((Object[]) ev.getParameters())[0];
-                                }
-
-                                data += "\n";
-                            }
-
-                            entry.setSize(data.length());
-                            tOut.putArchiveEntry(entry);
-                            tOut.write(data.getBytes());
-                            tOut.flush();
-                            tOut.closeArchiveEntry();
-                            break;
-                    }
-                } catch(Exception ex) {
-                    Msg.E("Whoops!", Constants.PLP_GENERIC_ERROR, this);
-                    if(Constants.debugLevel >= 2)
-                        ex.printStackTrace();
-                }
-            }
-	}
+        } else if(param instanceof ProjectDriver)       return hookInit(param);
+        else if(param instanceof ProjectEvent && init)  return hookEvent(param);
 
 	return null;
+    }
+
+    public Object hookInit(Object param) {
+        this.plp = (ProjectDriver) param;
+        if(!plp.g()) {
+            Msg.E("Lecture Publisher requires PLPTool GUI", Constants.PLP_GENERIC_ERROR, this);
+            return null;
+        }
+
+        events = new ArrayList<ProjectEvent>();
+        Msg.I("<em>Lecture Publisher</em> is ready &mdash; Use <b>Tools" +
+                "</b>&rarr;<b>Show Lecture Publisher Window</b> to start!",
+                null);
+        init = true;
+
+        File temp = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+        if(temp.exists()) temp.delete();
+
+        controls = new Controls((ProjectDriver) param, this);
+
+        menuDevShowFrame = new JMenuItem();
+        menuDevShowFrame.setText("Show Lecture Publisher Window");
+        menuDevShowFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hook("show");
+            }
+        });
+        plp.g_dev.addToolsItem(menuDevShowFrame);
+
+        return param;
+    }
+
+    public Object hookEvent(Object param) {
+        ProjectEvent e = (ProjectEvent) param;
+        int id = e.getIdentifier();
+        Msg.D(e.getSystemTimestamp() + ":" + e.getIdentifier(), 3, this);
+        if(record &&
+           id != ProjectEvent.PROJECT_OPEN_ENTRY &&
+           id != ProjectEvent.PROJECT_SAVE &&
+           id != ProjectEvent.EDITOR_TEXT_SET ) {
+            events.add(e);
+        } else {
+            try {
+                switch(id) {
+                    case ProjectEvent.THIRDPARTY_LICENSE:
+                        Msg.M(getJSpeexLicense().replace(" ", "&nbsp;").replace("\n", "<br />"));
+
+                        break;
+
+                    case ProjectEvent.EDITOR_TEXT_SET:
+                        plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
+
+                        break;
+
+                    case ProjectEvent.PROJECT_OPEN:
+                        snapshot_Asms = new ArrayList<PLPAsmSource>();
+                        break;
+
+                    case ProjectEvent.PROJECT_OPEN_ENTRY:
+                        int sLevel = 0;
+                        String entryName = (String) ((Object[])e.getParameters())[0];
+                        byte[] image = (byte[]) ((Object[])e.getParameters())[1];
+                        if(entryName.equals("plp.lecturerecord")) {
+                            Msg.I("Loading saved lecture record...", this);
+                            String str = new String(image);
+                            ProjectEvent ev;
+                            String[] lines = str.split("\\r?\\n");
+                            String[] tokens;
+                            int evId;
+                            long evSystemTimestamp;
+                            long evTimestamp;
+                            for(int i = 0; i < lines.length; i++) {
+                                tokens = lines[i].split("::");
+                                evId = Integer.parseInt(tokens[0]);
+                                evSystemTimestamp = Long.parseLong(tokens[1]);
+                                evTimestamp = Long.parseLong(tokens[2]);
+                                ev = new ProjectEvent(
+                                        evId, evTimestamp, null);
+                                ev.setSystemTimestamp(evSystemTimestamp);
+                                switch(ev.getIdentifier()) {
+                                    case ProjectEvent.EDITOR_INSERT:
+                                        Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4].replaceAll("\\\\n", "\n")};
+                                        ev.setParameters(eParamsInsert);
+                                        break;
+                                    case ProjectEvent.EDITOR_REMOVE:
+                                        Object[] eParamsRemove = {Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4])};
+                                        ev.setParameters(eParamsRemove);
+                                        break;
+                                    case ProjectEvent.OPENASM_CHANGE:
+                                        Integer eParamsOpenasmChange = Integer.parseInt(tokens[3]);
+                                        ev.setParameters(eParamsOpenasmChange);
+                                        break;
+                                }
+                                events.add(ev);
+                            }
+                            return true;
+                        } else if(entryName.equals("plp.lecturerecord_openasm")) {
+                            String str = new String(image);
+                            snapshot_OpenAsm = Integer.parseInt(str);
+                            return true;
+                        } else if(entryName.startsWith("plp.lecturerecord_snapshot.")) {
+                            String str = new String(image);
+                            String fName = entryName.substring(27, entryName.length());
+                            snapshot_Asms.add(new PLPAsmSource(str, fName, sLevel));
+                            sLevel++;
+                            return true;
+                        }
+
+                        break;
+
+                    case ProjectEvent.PROJECT_SAVE:
+                        if(events == null || events.isEmpty())
+                            return null;
+                        TarArchiveOutputStream tOut = (TarArchiveOutputStream) e.getParameters();
+                        TarArchiveEntry entry;
+                        String data = "";
+                        Msg.I("Saving lecture snapshot...", this);
+
+                        for(int i = 0; i < snapshot_Asms.size(); i++) {
+                            entry = new TarArchiveEntry("plp.lecturerecord_snapshot." +
+                                    snapshot_Asms.get(i).getAsmFilePath());
+                            data = snapshot_Asms.get(i).getAsmString();
+                            entry.setSize(data.length());
+                            tOut.putArchiveEntry(entry);
+                            tOut.write(data.getBytes());
+                            tOut.flush();
+                            tOut.closeArchiveEntry();
+                        }
+
+                        entry = new TarArchiveEntry("plp.lecturerecord_openasm");
+                        data = "" + snapshot_OpenAsm;
+                        entry.setSize(data.length());
+                        tOut.putArchiveEntry(entry);
+                        tOut.write(data.getBytes());
+                        tOut.flush();
+                        tOut.closeArchiveEntry();
+
+                        Msg.I("Saving lecture record...", this);
+                        entry = new TarArchiveEntry("plp.lecturerecord");
+
+                        ProjectEvent ev;
+                        data = "";
+                        for(int i = 0; i < events.size(); i++) {
+                            ev = events.get(i);
+                            data += ev.getIdentifier() + "::";
+                            data += ev.getSystemTimestamp() + "::";
+                            data += ev.getTimestamp() + "::";
+
+                            switch(ev.getIdentifier()) {
+                                case ProjectEvent.EDITOR_INSERT:
+                                    data += (Integer)((Object[]) ev.getParameters())[0] + "::";
+                                    String tStr = (String)((Object[]) ev.getParameters())[1];
+                                    tStr = tStr.replaceAll("\\n", "\\\\n");
+                                    data += tStr;
+                                    break;
+                                case ProjectEvent.EDITOR_REMOVE:
+                                    data += (Integer)((Object[]) ev.getParameters())[0] + "::";
+                                    data += (Integer)((Object[]) ev.getParameters())[1];
+                                    break;
+                                case ProjectEvent.OPENASM_CHANGE:
+                                    data += (Integer)((Object[]) ev.getParameters())[0];
+                            }
+
+                            data += "\n";
+                        }
+
+                        entry.setSize(data.length());
+                        tOut.putArchiveEntry(entry);
+                        tOut.write(data.getBytes());
+                        tOut.flush();
+                        tOut.closeArchiveEntry();
+                        break;
+                }
+            } catch(Exception ex) {
+                Msg.E("Whoops!", Constants.PLP_GENERIC_ERROR, this);
+                if(Constants.debugLevel >= 2)
+                    ex.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+    public Object hookRecord() {
+        if(plp.plpfile == null) {
+            Msg.I("No project is open.", this);
+            return null;
+        }
+        Msg.I("Taking snapshot of the project...", this);
+        snapshot_Asms = new ArrayList<PLPAsmSource>();
+        plp.refreshProjectView(true);
+        for(int i = 0; i < plp.getAsms().size(); i++) {
+            PLPAsmSource s = plp.getAsm(i);
+            snapshot_Asms.add(new PLPAsmSource(s.getAsmString(), s.getAsmFilePath(), i));
+            snapshot_OpenAsm = plp.getOpenAsm();
+        }
+
+        events.clear();
+        Msg.I("<font color=red><b>Recording project events.</b></font>", this);
+        events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // start marker
+        if(audio) {
+            audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+            if(audioRecorderThread.isReady()) audioRecorderThread.start();
+        }
+        if(editorDocListener != null)
+            plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
+        editorDocListener = new DevDocListener(this);
+        plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
+        record = true;
+        return true;
+    }
+
+    public Object hookReplay() {
+        int ret;
+        if(events == null || events.isEmpty()) {
+            Msg.I("No lecture to replay.", this);
+            return null;
+        }
+
+        ret = JOptionPane.showConfirmDialog(plp.g_dev, "Replaying the lecture will revert the project state " +
+                "to right before recording started. Would you like to continue?", "Lecture Replay",
+                JOptionPane.YES_NO_OPTION);
+        if(ret == JOptionPane.YES_OPTION) {
+            ArrayList tempList = new ArrayList<PLPAsmSource>();
+            for(int i = 0; i < snapshot_Asms.size(); i++) {
+                PLPAsmSource s = snapshot_Asms.get(i);
+                tempList.add(new PLPAsmSource(s.getAsmString(), s.getAsmFilePath(), i));
+            }
+            plp.setAsms(tempList);
+            plp.setOpenAsm(snapshot_OpenAsm);
+            plp.refreshProjectView(false);
+            if(!superimpose) {
+                audioRecorderThread = null;
+                audioPlayerThread = new AudioPlayer(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+            } else {
+                audioPlayerThread = null;
+                audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+            }
+            if(videoURL != null)
+                controls.playVideo(videoURL);
+            runnerThread = new Runner(events, plp, audioPlayerThread, audioRecorderThread);
+            runnerThread.start();
+        }
+        return true;
+    }
+
+    public Object hookStop() {
+        if(record) {
+            if(audio) audioRecorderThread.stopRecording();
+            plp.g_dev.getEditor().getDocument().removeDocumentListener(editorDocListener);
+            events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // end marker
+            record = false;
+            Msg.I("<b>Stopped recording.</b>", this);
+        } else if(runnerThread != null) {
+            runnerThread.stopReplay();
+            audioPlayerThread.stopPlay();
+            controls.updateComponents();
+            controls.externalStop();
+        } else
+            Msg.I("Not recording!", this);
+
+        return true;
+    }
+
+    public Object hookClear() {
+        Msg.I("Replay events cleared", this);
+        events = new ArrayList<ProjectEvent>();
+        return true;
+    }
+
+    public Object hookPause() {
+        return true;
+    }
+
+    public Object hookHelp() {
+        return "This is BETA\nPlease read the manual!";
+    }
+
+    public void setVideoURL(String url) {
+        videoURL = url;
     }
 
     public void setRecordPlaybackParams(boolean audio, boolean superimpose) {
