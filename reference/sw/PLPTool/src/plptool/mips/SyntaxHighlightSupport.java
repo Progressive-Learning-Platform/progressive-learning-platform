@@ -128,9 +128,9 @@ public class SyntaxHighlightSupport implements PLPSyntaxHighlightSupport {
         styles = new SimpleAttributeSet[11];
         for(int i=0;i<11;i++) {
             styles[i] = new SimpleAttributeSet(def);
-            StyleConstants.setForeground(styles[i],Config.syntaxColors[i]);
-            StyleConstants.setBold(styles[i], Config.syntaxBold[i]);
-            StyleConstants.setItalic(styles[i], Config.syntaxItalic[i]);
+            StyleConstants.setForeground(styles[i],syntaxColors[i]);
+            StyleConstants.setBold(styles[i], syntaxBold[i]);
+            StyleConstants.setItalic(styles[i], syntaxItalic[i]);
         }
     }
 }
