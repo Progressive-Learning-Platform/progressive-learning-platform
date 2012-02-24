@@ -37,6 +37,7 @@ public class Architecture extends PLPArchitecture {
     private plptool.mips.visualizer.ProgramVisualization progVis;
     private plptool.mips.visualizer.ProgramVisualization.programGraph progGraph;
     private plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame;
+    private SyntaxHighlightSupport syntaxHighlightSupport;
 
     public Architecture(int archID, ProjectDriver plp) {
         super(archID, "plpmips", plp);
@@ -44,6 +45,8 @@ public class Architecture extends PLPArchitecture {
         hasSimCore = true;
         hasSimCoreGUI = true;
         hasProgrammer = true;
+        hasSyntaxHighlightSupport = true;
+        syntaxHighlightSupport = new SyntaxHighlightSupport();
     }
 
     /**
@@ -74,6 +77,11 @@ public class Architecture extends PLPArchitecture {
 
     public PLPSerialProgrammer createProgrammer() {
         return new SerialProgrammer(plp);
+    }
+
+    @Override
+    public PLPSyntaxHighlightSupport getSyntaxHighlightSupport() {
+        return syntaxHighlightSupport;
     }
 
     /**

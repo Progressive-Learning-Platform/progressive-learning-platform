@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2012 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -664,7 +664,7 @@ public class ProjectDriver {
         } catch(Exception e) {
             if(Constants.debugLevel >= 2) e.printStackTrace();
             return Msg.E("save: Unable to write to " +
-                    plpfile.getAbsolutePath() + "\n" +
+                    plpfile.getAbsolutePath() + ". " +
                     "Do you have access to the specified location?",
                     Constants.PLP_FILE_SAVE_ERROR, this);
         }
@@ -706,7 +706,6 @@ public class ProjectDriver {
         TarArchiveEntry entry;
         byte[] image;
         String metaStr;
-        int asmIndex = 0;
 
         // Find meta file first
         while((entry = tIn.getNextTarEntry()) != null) {

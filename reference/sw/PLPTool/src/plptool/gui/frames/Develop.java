@@ -52,18 +52,6 @@ import plptool.gui.NumberConverter;
  * @author wira
  */
 public class Develop extends javax.swing.JFrame {
-    final static int RTYPE = 0;
-    final static int ITYPE = 1;
-    final static int BRANCH = 2;
-    final static int JUMP = 3;
-    final static int MEMTYPE = 4;
-    final static int NOP = 5;
-    final static int REG = 6;
-    final static int IMM = 7;
-    final static int LABEL = 8;
-    final static int COMMENT = 9;
-    final static int SYS = 10;
-
     boolean trackChanges = false;
     private ProjectDriver plp;
     private DevUndoManager undoManager;
@@ -83,8 +71,6 @@ public class Develop extends javax.swing.JFrame {
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
 
-    public SimpleAttributeSet[] styles = setupHighlighting();
-    
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
         this.plp = plp;
@@ -314,7 +300,7 @@ public class Develop extends javax.swing.JFrame {
         tln.setUpdateFont(true);
         txtEditor.setBackground(Config.devBackground);
         txtEditor.setForeground(Config.devForeground);
-        styles = setupHighlighting();
+        setupHighlighting();
         this.syntaxHighlight();        
         txtEditor.repaint();
         repaintLater();
@@ -364,26 +350,16 @@ public class Develop extends javax.swing.JFrame {
     public void setEditorText(String str) {
         txtEditor.setContentType("text");
         trackChanges = false;
+
         if(!str.equals(txtEditor.getText())) {
             if(highlighterThread != null) {
-            highlighterThread.stopThread();
+                highlighterThread.stopThread();
             }
             
             if(currentEditorListener != null) {
                 txtEditor.getDocument().removeDocumentListener(currentEditorListener);
             }
 
-            /*
-            if(currentEditorListener != null)
-                currentEditorListener.disable();
-            try {
-                txtEditor.getDocument().remove(0, txtEditor.getDocument().getLength());
-                txtEditor.getDocument().insertString(0, str, null);
-            } catch(BadLocationException ble) {
-
-            }
-             *
-             */
             txtEditor.setText(str);
             if(Config.devSyntaxHighlighting && str.length() <= Config.filetoolarge)
                 syntaxHighlight();
@@ -400,9 +376,9 @@ public class Develop extends javax.swing.JFrame {
                 undoManager.safeAddEdit(evt.getEdit());
             }
         });
-
         
-        if(Config.devNewSyntaxHighlightStrategy) {
+        if(plp.getArch().hasSyntaxHighlightSupport()
+                && Config.devNewSyntaxHighlightStrategy) {
             highlighterThread = new HighlighterThread(this);
             currentEditorListener = new DevEditorDocListener(plp, highlighterThread);
             txtEditor.getDocument().addDocumentListener(currentEditorListener);
@@ -545,7 +521,10 @@ public class Develop extends javax.swing.JFrame {
                 if(plp.isSimulating())
                     simEnd();
                 plp.create();
-                //undoManager = new DoManager(txtEditor.getText());
+                if(plp.getArch().hasSyntaxHighlightSupport())
+                    plp.getArch().getSyntaxHighlightSupport().newStyle();
+                else
+                    changeFormatting();
         }
     }
 
@@ -571,9 +550,11 @@ public class Develop extends javax.swing.JFrame {
                         simEnd();
                     plp.curdir = fc.getSelectedFile().getParent();
                     plp.open(fc.getSelectedFile().getAbsolutePath(), true);
+                    if(plp.getArch().hasSyntaxHighlightSupport())
+                        plp.getArch().getSyntaxHighlightSupport().newStyle();
+                    else
+                        changeFormatting();
                 }
-
-                //undoManager = new DoManager(txtEditor.getText());
         }
     }
 
@@ -608,10 +589,11 @@ public class Develop extends javax.swing.JFrame {
             plp.curdir = fc.getSelectedFile().getParent();
             if(!plp.plpfile.getName().endsWith(".plp"))
                 plp.plpfile = new File(plp.plpfile.getAbsolutePath() + ".plp");
-            plp.save();
-            if(plp.isSimulating())
-                simEnd();
-            plp.open(plp.plpfile.getAbsolutePath(), true);
+            if(plp.save() == Constants.PLP_OK) {
+                if(plp.isSimulating())
+                    simEnd();
+                plp.open(plp.plpfile.getAbsolutePath(), true);
+            }
         }
 
         return retVal;
@@ -773,7 +755,7 @@ public class Develop extends javax.swing.JFrame {
 
         for(int i=0;i<doclength;i++) {
             String currline = lines[i];
-            syntaxHighlight(currline, currpos, styles);
+            syntaxHighlight(currline, currpos);
             currpos += lines[i].length() + 1;
         }
         //syntaxHighlight(txtEditor.getText(), 0, styles);
@@ -814,7 +796,7 @@ public class Develop extends javax.swing.JFrame {
             for(int i=0;i<line;i++) {
                 currpos += txtEditor.getText().split("\\r?\\n")[i].length() + 1;
             }
-            syntaxHighlight(currline, currpos, styles);
+            syntaxHighlight(currline, currpos);
         } catch (java.lang.ArrayIndexOutOfBoundsException aioobe) {
         }
         Config.nothighlighting = true;
@@ -828,98 +810,16 @@ public class Develop extends javax.swing.JFrame {
      *
      * @param text
      * @param position
-     * @param styles
      */
-    public void syntaxHighlight(String text, int position, SimpleAttributeSet[] styles) {
-        StyledDocument doc = txtEditor.getStyledDocument();
-        int currentposition = 0;
-        int startposition = 0;
-        int texttype = -1;
-        String currtext = "";
-        while (currentposition < text.length()) {
-            StringBuilder currtextbuffer = new StringBuilder();
-            while (currentposition < text.length() && (text.charAt(currentposition) == '\t' || text.charAt(currentposition) == ' ' || text.charAt(currentposition) == ',')) {
-                    currentposition++;
-            }
-            startposition = currentposition;
-            while (currentposition < text.length() && (text.charAt(currentposition) != '\t' && text.charAt(currentposition) != ' ')) {
-                    currtextbuffer.append(text.charAt(currentposition));
-                    currentposition++;
-            }
-            currtext = currtextbuffer.toString();
-
-            if(texttype == COMMENT || currtext.contains("#")) {
-                    texttype = COMMENT;
-            } else if (texttype == SYS || currtext.contains(".")) {
-                    texttype = SYS;
-            } else if(currtext.contains(":")) {
-                    texttype = LABEL;
-            } else if(currtext.contains("$")) {
-                    texttype = REG;
-            } else if(isimmediate(currtext)) {
-                    texttype = IMM;
-            } else if(currtext.equals("nop")) {
-                    texttype = NOP;
-            } else if (texttype == -1) {
-                if(currtext.contains("w")) {
-                        texttype = MEMTYPE;
-                } else if(currtext.contains("j")) {
-                        texttype = JUMP;
-                } else if(currtext.contains("b")) {
-                        texttype = BRANCH;
-                } else if(currtext.contains("i")) {
-                        texttype = ITYPE;
-                } else {
-                        texttype = RTYPE;
-                }
-            } else {
-                texttype = LABEL;
-            }
-
-            doc.setCharacterAttributes(startposition+position, currentposition-startposition, styles[texttype], false);
-            /*
-            try {
-                doc.remove(startposition+position,currentposition-startposition);
-            } catch (BadLocationException ble) {
-                System.err.println("Deletion error   position:" + position + "," + currtext.length());
-            }
-
-            try {
-                doc.insertString(startposition+position,currtext,styles[texttype]);
-            } catch (BadLocationException ble) {
-                System.err.println("Insertion error   position:" + position);
-            }
-            */
-            currentposition++;
-        }
+    public void syntaxHighlight(String text, int position) {
+        if(plp.getArch().hasSyntaxHighlightSupport())
+            plp.getArch().getSyntaxHighlightSupport().syntaxHighlightTextAction(plp, text, position);
     }
 
-    private boolean isimmediate(String num) {
-        Pattern pattern0 = Pattern.compile("-?[0-9]*");
-        Matcher matcher0 = pattern0.matcher(num);
-        Pattern pattern1 = Pattern.compile("0x[0-9a-fA-F]*");
-        Matcher matcher1 = pattern1.matcher(num);
-        Pattern pattern2 = Pattern.compile("0b[0-1]*");
-        Matcher matcher2 = pattern2.matcher(num);
-        Pattern pattern3 = Pattern.compile("'\\S'");
-        Matcher matcher3 = pattern3.matcher(num);
-        return (matcher0.matches() || matcher1.matches() ||
-                matcher2.matches() || matcher3.matches());
-    }
-
-    //Called whenever syntax styles change
-    private SimpleAttributeSet[] setupHighlighting() {
-        Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-        StyleConstants.setFontFamily(def,Config.devFont);
-        StyleConstants.setFontSize(def,Config.devFontSize);
-        SimpleAttributeSet[] styleSetup = new SimpleAttributeSet[11];
-        for(int i=0;i<11;i++) {
-            styleSetup[i] = new SimpleAttributeSet(def);
-            StyleConstants.setForeground(styleSetup[i],Config.syntaxColors[i]);
-            StyleConstants.setBold(styleSetup[i], Config.syntaxBold[i]);
-            StyleConstants.setItalic(styleSetup[i], Config.syntaxItalic[i]);
-        }
-        return styleSetup;
+    // Called whenever syntax styles change
+    private void setupHighlighting() {
+        if(plp.getArch().hasSyntaxHighlightSupport())
+            plp.getArch().getSyntaxHighlightSupport().newStyle();
     }
 
     public void catchyPLP() {
