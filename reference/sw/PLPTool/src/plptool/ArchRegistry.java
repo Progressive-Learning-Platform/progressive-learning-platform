@@ -123,4 +123,17 @@ public class ArchRegistry {
         else
             return archClasses.get(ID);
     }
+
+    /**
+     * Get the string Identifier of the ISA implementation
+     *
+     * @param ID ID of the ISA meta class
+     * @return the string identifier of the ISA
+     */
+    public static String getStringID(int ID) {
+        if(ID == 0)
+            return "plpmips";
+        else
+            return archIdentifiers.get(ID);
+    }
 }
