@@ -49,8 +49,9 @@ import javax.sound.sampled.SourceDataLine;
 
 import org.xiph.speex.spi.*;
 
-
 public class PLPToolConnector implements PLPGenericModule {
+    private final int VIDEO_BUFFER_SIZE = 600000000;
+
     private boolean init = false;
     private boolean record = false;
     private boolean audio = true;
@@ -193,6 +194,10 @@ public class PLPToolConnector implements PLPGenericModule {
                             snapshot_Asms.add(new PLPAsmSource(str, fName, sLevel));
                             sLevel++;
                             return true;
+                        } else if(entryName.equals("plp.lecturevideo")) {
+                            FileOutputStream fo = new FileOutputStream(PLPToolbox.getConfDir() + "/tempLectureVideo");
+                            fo.write(image);
+                            videoURL = PLPToolbox.getConfDir() + "/tempLectureVideo";
                         }
 
                         break;
@@ -203,7 +208,7 @@ public class PLPToolConnector implements PLPGenericModule {
                         TarArchiveOutputStream tOut = (TarArchiveOutputStream) e.getParameters();
                         TarArchiveEntry entry;
                         String data = "";
-                        Msg.I("Saving lecture snapshot...", this);
+                        Msg.D("Saving lecture snapshot...", 2, this);
 
                         for(int i = 0; i < snapshot_Asms.size(); i++) {
                             entry = new TarArchiveEntry("plp.lecturerecord_snapshot." +
@@ -224,7 +229,7 @@ public class PLPToolConnector implements PLPGenericModule {
                         tOut.flush();
                         tOut.closeArchiveEntry();
 
-                        Msg.I("Saving lecture record...", this);
+                        Msg.D("Saving lecture record...", 2, this);
                         entry = new TarArchiveEntry("plp.lecturerecord");
 
                         ProjectEvent ev;
@@ -258,6 +263,21 @@ public class PLPToolConnector implements PLPGenericModule {
                         tOut.write(data.getBytes());
                         tOut.flush();
                         tOut.closeArchiveEntry();
+
+                        if(videoURL != null) {
+                            Msg.D("Embedding video...", 2, this);
+                            entry = new TarArchiveEntry("plp.lecturevideo");
+                            FileInputStream fi = new FileInputStream(videoURL);
+                            byte[] inData = new byte[VIDEO_BUFFER_SIZE];
+                            int size = fi.read(inData);
+
+                            entry.setSize(size);
+                            tOut.putArchiveEntry(entry);
+                            tOut.write(inData);
+                            tOut.flush();
+                            tOut.closeArchiveEntry();
+                        }
+
                         break;
                 }
             } catch(Exception ex) {
@@ -520,6 +540,7 @@ public class PLPToolConnector implements PLPGenericModule {
         public void stopRecording() {
             targetDataLine.stop();
             targetDataLine.close();
+            //JSpeexEnc enc = new JSpeexEnc();
         }
 
         @Override

@@ -30,13 +30,14 @@ public class CortadoFrame extends javax.swing.JFrame {
     /** Creates new form CortadoFrame */
     public CortadoFrame() {
         initComponents();
+        setSize(320, 240);
     }
 
     public void play(String url) {
         if(applet != null)
             remove(applet);
         applet = new Cortado();
-        applet.setSize(WIDTH, HEIGHT);
+        applet.setSize(this.getWidth(), this.getHeight());
         applet.setParam ("url", url);
         applet.setParam ("local", "false");
         //applet.setParam ("seekable", "true");
@@ -66,8 +67,6 @@ public class CortadoFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
