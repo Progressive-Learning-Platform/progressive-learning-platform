@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2012 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ public abstract class PLPArchitecture {
     protected boolean hasSimCore = false;
     protected boolean hasSimCoreGUI = false;
     protected boolean hasProgrammer = false;
+    protected boolean hasSyntaxHighlightSupport = false;
 
     public PLPArchitecture(int archID, String identifier, ProjectDriver plp) {
         this.identifier = identifier;
@@ -112,6 +113,15 @@ public abstract class PLPArchitecture {
         return hasProgrammer;
     }
 
+    /**
+     * Does this ISA have syntax highlight support
+     *
+     * @return boolean specifying whether the ISA supports syntax highlighting
+     */
+    public boolean hasSyntaxHighlightSupport() {
+        return hasSyntaxHighlightSupport;
+    }
+
 /*********************** FRAMEWORK INITIALIZATIONS ***************************/
 
     /**
@@ -143,6 +153,13 @@ public abstract class PLPArchitecture {
     abstract public PLPSerialProgrammer createProgrammer();
 
 /*********************** OVERRIDABLE METHODS *********************************/
+
+    /**
+     * Get an implementation of the ISA syntax highlighting support
+     * 
+     * @return Reference to the syntax highlight support object
+     */
+    public PLPSyntaxHighlightSupport getSyntaxHighlightSupport() {return null;}
 
     /**
      * Additional simulation initialization code. Called by the ProjectDriver
