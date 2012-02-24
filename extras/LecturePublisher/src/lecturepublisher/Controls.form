@@ -77,7 +77,7 @@
                           <Component id="radioRecordWithoutAudio" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lblLecturePublisher" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="29" max="32767" attributes="0"/>
+                      <EmptySpace pref="103" max="32767" attributes="0"/>
                       <Component id="tglBtnRecord" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -88,14 +88,14 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="tglBtnRecord" alignment="0" pref="119" max="32767" attributes="0"/>
+                          <Component id="tglBtnRecord" alignment="0" pref="140" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="radioRecordWithAudio" min="-2" max="-2" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="radioPlayAndOverlay" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="radioRecordWithoutAudio" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="27" max="32767" attributes="0"/>
+                              <EmptySpace pref="57" max="32767" attributes="0"/>
                               <Component id="lblLecturePublisher" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -174,7 +174,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnStop" min="-2" pref="120" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="sliderProgress" alignment="1" pref="402" max="32767" attributes="0"/>
+                          <Component id="sliderProgress" alignment="1" pref="413" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -190,7 +190,7 @@
                           <Component id="tglBtnPlayPause" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnStop" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="50" max="32767" attributes="0"/>
+                      <EmptySpace pref="98" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -237,13 +237,13 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jTextField1" alignment="0" pref="402" max="32767" attributes="0"/>
+                          <Component id="txtVideoFile" alignment="0" pref="413" max="32767" attributes="0"/>
                           <Component id="lblVideoInfo1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lblVideoInfo2" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnBrowseVideo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnEmbedVideo" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -258,13 +258,13 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="lblVideoInfo2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jTextField1" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtVideoFile" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnBrowseVideo" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnEmbedVideo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="19" max="32767" attributes="0"/>
+                      <EmptySpace pref="62" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -280,17 +280,23 @@
                 <Property name="text" type="java.lang.String" value="videos into the project file."/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton1">
+            <Component class="javax.swing.JButton" name="btnBrowseVideo">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Browse for Video File"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBrowseVideoActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextField1">
+            <Component class="javax.swing.JTextField" name="txtVideoFile">
             </Component>
-            <Component class="javax.swing.JButton" name="jButton2">
+            <Component class="javax.swing.JButton" name="btnEmbedVideo">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Embed Video into Project"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEmbedVideoActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
