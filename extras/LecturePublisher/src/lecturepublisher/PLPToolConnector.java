@@ -127,7 +127,8 @@ public class PLPToolConnector implements PLPGenericModule {
         if(record &&
            id != ProjectEvent.PROJECT_OPEN_ENTRY &&
            id != ProjectEvent.PROJECT_SAVE &&
-           id != ProjectEvent.EDITOR_TEXT_SET ) {
+           id != ProjectEvent.EDITOR_TEXT_SET &&
+           id != ProjectEvent.EXIT) {
             events.add(e);
         } else {
             try {
@@ -198,6 +199,7 @@ public class PLPToolConnector implements PLPGenericModule {
                             FileOutputStream fo = new FileOutputStream(PLPToolbox.getConfDir() + "/tempLectureVideo");
                             fo.write(image);
                             videoURL = PLPToolbox.getConfDir() + "/tempLectureVideo";
+                            return true;
                         }
 
                         break;
@@ -270,15 +272,25 @@ public class PLPToolConnector implements PLPGenericModule {
                             FileInputStream fi = new FileInputStream(videoURL);
                             byte[] inData = new byte[VIDEO_BUFFER_SIZE];
                             int size = fi.read(inData);
+                            if(size == VIDEO_BUFFER_SIZE) {
+                                Msg.W("Embedded video may be too large. " +
+                                      "The video might have been truncated.",
+                                      this);
+                            }
 
                             entry.setSize(size);
                             tOut.putArchiveEntry(entry);
-                            tOut.write(inData);
+                            tOut.write(inData, 0, size);
                             tOut.flush();
                             tOut.closeArchiveEntry();
                         }
 
                         break;
+
+                    case ProjectEvent.EXIT:
+                        File tempVideo = new File(PLPToolbox.getConfDir() + "/tempLectureVideo");
+                        if(tempVideo.exists())
+                            tempVideo.delete();
                 }
             } catch(Exception ex) {
                 Msg.E("Whoops!", Constants.PLP_GENERIC_ERROR, this);
@@ -345,9 +357,8 @@ public class PLPToolConnector implements PLPGenericModule {
                 audioPlayerThread = null;
                 audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
             }
-            if(videoURL != null)
-                controls.playVideo(videoURL);
-            runnerThread = new Runner(events, plp, audioPlayerThread, audioRecorderThread);
+            
+            runnerThread = new Runner(events, plp, audioPlayerThread, audioRecorderThread, videoURL, controls);
             runnerThread.start();
         }
         return true;
@@ -634,14 +645,19 @@ public class PLPToolConnector implements PLPGenericModule {
         private long startTime;
         private AudioPlayer audioPlayerThread;
         private AudioRecorder audioRecorderThread;
+        private String videoURL;
+        private Controls controls;
         private boolean stop;
 
         public Runner(ArrayList<ProjectEvent> events, ProjectDriver plp,
-                AudioPlayer audioPlayerThread, AudioRecorder audioRecorderThread) {
+                AudioPlayer audioPlayerThread, AudioRecorder audioRecorderThread,
+                String videoURL, Controls controls) {
             this.events = events;
             this.plp = plp;
             this.audioPlayerThread = audioPlayerThread;
             this.audioRecorderThread = audioRecorderThread;
+            this.videoURL = videoURL;
+            this.controls = controls;
             this.stop = false;
             if(events.size() >= 1)
                 startTime = events.get(0).getSystemTimestamp();
@@ -658,6 +674,8 @@ public class PLPToolConnector implements PLPGenericModule {
                 Msg.I("Replay will start in 1 second...", this);
                 Thread.sleep(1000);
                 Msg.I("Replaying...", this);
+                if(videoURL != null)
+                    controls.playVideo(videoURL);
                 if(audioPlayerThread != null) audioPlayerThread.start();
                 if(audioRecorderThread != null && audioRecorderThread.isReady())
                     audioRecorderThread.start();
