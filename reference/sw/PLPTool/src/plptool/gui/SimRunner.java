@@ -64,7 +64,7 @@ public class SimRunner extends Thread {
                         }
                     }
                 }
-                if(plp.g())
+                if(plp.g() && plp.getArch().hasSimCoreGUI())
                     plp.g_sim.updateComponents();
             } else {
                 //if(plp.g()) plp.g_simsh.getTxtSteps().setText("1");

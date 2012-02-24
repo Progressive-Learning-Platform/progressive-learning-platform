@@ -204,9 +204,8 @@ public class Develop extends javax.swing.JFrame {
             SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        plptool.mips.SimCore sim = (plptool.mips.SimCore) plp.sim;
-                        int pc_index = plp.asm.lookupAddrIndex(sim.id_stage.i_instrAddr);
-                        if(pc_index == -1 || sim.isStalled()) {
+                        int pc_index = plp.asm.lookupAddrIndex(plp.sim.visibleAddr);
+                        if(pc_index == -1) {
                             tln.setHighlight(-1);
                             return;
                         }
@@ -377,8 +376,7 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         
-        if(plp.getArch().hasSyntaxHighlightSupport()
-                && Config.devNewSyntaxHighlightStrategy) {
+        if(Config.devNewSyntaxHighlightStrategy) {
             highlighterThread = new HighlighterThread(this);
             currentEditorListener = new DevEditorDocListener(plp, highlighterThread);
             txtEditor.getDocument().addDocumentListener(currentEditorListener);
@@ -584,7 +582,8 @@ public class Develop extends javax.swing.JFrame {
                 if(ret == JOptionPane.NO_OPTION)
                     return -1;
             }
-
+            String oldFile = plp.plpfile != null ?
+                plp.plpfile.getAbsolutePath() : null;
             plp.plpfile = fOut;
             plp.curdir = fc.getSelectedFile().getParent();
             if(!plp.plpfile.getName().endsWith(".plp"))
@@ -593,6 +592,8 @@ public class Develop extends javax.swing.JFrame {
                 if(plp.isSimulating())
                     simEnd();
                 plp.open(plp.plpfile.getAbsolutePath(), true);
+            } else {
+                plp.plpfile = oldFile == null ? null : new File(oldFile);
             }
         }
 
@@ -898,7 +899,10 @@ public class Develop extends javax.swing.JFrame {
             btnSimReset.setVisible(true);
             btnSimStep.setVisible(true);
             btnWatcher.setVisible(true);
-            btnCPU.setVisible(true);
+            if(plp.getArch().hasSimCoreGUI()) {
+                btnCPU.setVisible(true);
+                menuSimView.setVisible(true);
+            }
             btnSimLEDs.setVisible(true);
             btnSimSwitches.setVisible(true);
             btnSimSevenSegments.setVisible(true);
@@ -928,6 +932,7 @@ public class Develop extends javax.swing.JFrame {
         menuSimWatcher.setSelected(false);
         menuSimControl.setSelected(false);
         menuSimIO.setSelected(false);
+        menuSimView.setVisible(true);
         tln.setHighlight(-1);
         tlh.setY(-1);
         repaintLater();
@@ -3130,6 +3135,9 @@ public class Develop extends javax.swing.JFrame {
     private void menuSimViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimViewActionPerformed
         btnCPU.setSelected(menuSimView.isSelected());
 
+        if(!plp.getArch().hasSimCoreGUI())
+            return;
+
         if(menuSimView.isSelected()) {
             plp.g_sim.setVisible(true);
         } else {
@@ -3283,6 +3291,9 @@ public class Develop extends javax.swing.JFrame {
 
     private void btnCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCPUActionPerformed
         menuSimView.setSelected(btnCPU.isSelected());
+
+        if(!plp.getArch().hasSimCoreGUI())
+            return;
 
         if(btnCPU.isSelected()) {
             plp.g_sim.setVisible(true);

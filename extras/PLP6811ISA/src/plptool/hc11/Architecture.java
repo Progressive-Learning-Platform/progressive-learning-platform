@@ -6,7 +6,6 @@
 package plptool.hc11;
 
 import plptool.*;
-import plptool.gui.ProjectDriver;
 
 /**
  *
@@ -17,10 +16,12 @@ public class Architecture extends PLPArchitecture {
     public Architecture() {
         super(6811, "hc11", null);
         Msg.M("PLP 6811 ISA Implementation is called.");
+        hasAssembler = true;
+        hasSimCore = true;
     }
 
     public PLPAsm createAssembler() {
-        return null;
+        return new Asm(plp.getAsms());
     }
 
     public PLPSerialProgrammer createProgrammer() {
@@ -28,7 +29,7 @@ public class Architecture extends PLPArchitecture {
     }
 
     public PLPSimCore createSimCore() {
-        return null;
+        return new SimCore();
     }
 
     public PLPSimCoreGUI createSimCoreGUI() {

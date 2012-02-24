@@ -1483,6 +1483,20 @@ public class Asm extends plptool.PLPAsm {
     }
 
     /**
+     * Make sure we don't try to simulate with an empty program
+     *
+     * @return PLP_OK if the program is not empty, error code otherwise and stop
+     * simulation routine
+     */
+    @Override
+    public int preSimulationCheck() {
+        if(getObjectCode().length == 0)
+            return Msg.E("simulate: Empty program.",
+                            Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
+        return Constants.PLP_OK;
+    }
+
+    /**
      * Casting PLPAsm as String will return PLPAsm(assembly file)
      *
      * @return Returns informative string
