@@ -202,6 +202,8 @@ public abstract class PLPAsm implements PLPGenericModule {
      * @return The index of the source file where the instruction came from
      */
     public int getFileIndex(long addr) {
+        if(addrTable == null) return -1;
+
         for(int i = 0; i < addrTable.length; i++) {
             if(addrTable[i] == addr)
                 return objCodeFileMapper[i];
@@ -219,6 +221,8 @@ public abstract class PLPAsm implements PLPGenericModule {
      * @return The index of the source file where the instruction came from
      */
     public int getLineNum(long addr) {
+        if(addrTable == null) return -1;
+
         for(int i = 0; i < addrTable.length; i++) {
             if(addrTable[i] == addr)
                 return objCodeLineNumMapper[i];
@@ -236,10 +240,9 @@ public abstract class PLPAsm implements PLPGenericModule {
      * fails
      */
     public long getAddrFromFileMetadata(int fileIndex, int lineNum) {
-        if(!isAssembled())
-            return -1;
+        if(!isAssembled())    return -1;
+        if(addrTable == null) return -1;
 
-        boolean found = false;
         int i = 0;
         while(i < objCodeFileMapper.length) {
             if(objCodeFileMapper[i] == fileIndex && objCodeLineNumMapper[i] == lineNum)
@@ -284,6 +287,8 @@ public abstract class PLPAsm implements PLPGenericModule {
      * @param address memory address to look up
      */
     public String lookupLabel(long address) {
+        if(symTable == null) return null;
+
         String key;
 
         if(symTable.containsValue(address)) {
@@ -306,6 +311,8 @@ public abstract class PLPAsm implements PLPGenericModule {
      * it's not in the symtable
      */
     public long resolveAddress (String label) {
+        if(symTable == null) return Constants.PLP_ERROR_RETURN;
+
         if(symTable.containsKey(label)) {
             return symTable.get(label);
         }
@@ -320,6 +327,8 @@ public abstract class PLPAsm implements PLPGenericModule {
      * @return Index where that address resides in the address table
      */
     public int lookupAddrIndex(long addr) {
+        if(addrTable == null) return -1;
+
         for(int i = 0; i < addrTable.length; i++) {
             if(addrTable[i] == addr)
                 return i;
@@ -365,6 +374,14 @@ public abstract class PLPAsm implements PLPGenericModule {
     public void setAssembled(boolean b) {
         assembled = b;
     }
+
+    /**
+     * Other ISA-specific checks that the develop may wish to do. Any
+     * return value other than PLP_OK will prevent the start of the simulation
+     *
+     * @return ProjectDriver expects PLP_OK to continue with the simulation
+     */
+    public int preSimulationCheck() { return Constants.PLP_OK; }
 
     /**
      * Overridable developer-specified generic hook.

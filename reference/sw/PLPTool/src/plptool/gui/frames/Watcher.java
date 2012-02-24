@@ -258,7 +258,7 @@ public class Watcher extends javax.swing.JFrame {
 
                 break;
             case 1:
-                if(plp.getArch().equals("plpmips")) {
+                if(plp.getArch().getID() == plptool.ArchRegistry.ISA_PLPMIPS) {
                     plptool.mips.SimCore mipsSim = (plptool.mips.SimCore) plp.sim;
 
                     Byte reg = ((plptool.mips.Asm) plp.asm).getRegisterNumberFromName(txtAddr.getText());

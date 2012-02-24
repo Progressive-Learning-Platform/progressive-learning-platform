@@ -663,10 +663,11 @@ public class ProjectDriver {
 
         } catch(Exception e) {
             if(Constants.debugLevel >= 2) e.printStackTrace();
-            return Msg.E("save: Unable to write to " +
+            Msg.E("save: Unable to write to " +
                     plpfile.getAbsolutePath() + ". " +
                     "Do you have access to the specified location?",
                     Constants.PLP_FILE_SAVE_ERROR, this);
+            return Constants.PLP_FILE_SAVE_ERROR;
         }
 
 
@@ -1141,7 +1142,7 @@ public class ProjectDriver {
     public int simulate() {
         hookEvent(new ProjectEvent(ProjectEvent.SIMULATE, -1));
         if(!arch.hasSimCore())
-            return Msg.E("simulate(): This ISA does not implement a simulation" +
+            return Msg.E("simulate: This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
 
         if(asm_req) {
@@ -1154,12 +1155,12 @@ public class ProjectDriver {
         if(g) this.updateAsm(open_asm, g_dev.getEditor().getText());
 
         if(asm == null || !asm.isAssembled())
-            return Msg.E("simulate(): The project is not assembled.",
+            return Msg.E("simulate: The project is not assembled.",
                             Constants.PLP_BACKEND_NO_ASSEMBLED_OBJECT, this);
 
-        if(asm.getObjectCode().length == 0)
-            return Msg.E("simulate(): Empty program.",
-                            Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
+        int checkRet = asm.preSimulationCheck();
+        if(checkRet != Constants.PLP_OK)
+            return checkRet;
 
         if(g && sim_mode)
             desimulate();

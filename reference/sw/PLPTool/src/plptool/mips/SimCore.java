@@ -152,6 +152,7 @@ public class SimCore extends PLPSimCore {
      * @see plptool.PLPAsm
      */
     public SimCore(Asm asm, long startAddr) {
+        super();
         this.startAddr = startAddr;
 
         regfile = new MemModule(0, 32, false);
@@ -165,8 +166,6 @@ public class SimCore extends PLPSimCore {
 
         // core mods
         forwarding = new mod_forwarding();
-        breakpoints = new mod_breakpoint();
-        bus = new PLPSimBus();
 
         // Instantiate stages
         wb_stage = new wb(regfile);

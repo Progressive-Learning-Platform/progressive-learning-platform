@@ -60,6 +60,18 @@ public abstract class PLPSimCore implements PLPGenericModule {
     public mod_breakpoint breakpoints;
 
     /**
+     * PLPSimCore default constructor initializes required data structures
+     */
+    public PLPSimCore() {
+        bus = new PLPSimBus();
+        breakpoints = new mod_breakpoint();
+        visibleAddr = -1;
+        instructionCount = 0;
+        sim_flags = 0L;
+        IRQ = 0L;
+    }
+
+    /**
      * PLPSimCore defaults to returning the current version of PLPTool.
      * User simcores can override this. May be useful for dynamic modules
      *
