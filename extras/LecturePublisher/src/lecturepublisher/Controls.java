@@ -89,9 +89,13 @@ public class Controls extends javax.swing.JFrame {
             connector.setVideoURL(txtVideoFile.getText());
     }
 
-    public void playVideo(String url) {
+    public void initVideo(String url) {
         cortadoFrame.setVisible(true);
-        cortadoFrame.play("file:///" + url);
+        cortadoFrame.init("file:///" + url);
+    }
+
+    public void playVideo() {
+        cortadoFrame.play();
     }
 
     /** This method is called from within the constructor to

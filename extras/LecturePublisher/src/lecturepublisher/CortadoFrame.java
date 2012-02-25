@@ -33,7 +33,7 @@ public class CortadoFrame extends javax.swing.JFrame {
         setSize(320, 240);
     }
 
-    public void play(String url) {
+    public void init(String url) {
         if(applet != null)
             remove(applet);
         applet = new Cortado();
@@ -56,6 +56,9 @@ public class CortadoFrame extends javax.swing.JFrame {
 
         add(applet);
         applet.init();
+    }
+
+    public void play() {
         applet.start();
     }
 

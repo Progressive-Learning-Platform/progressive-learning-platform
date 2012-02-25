@@ -133,6 +133,9 @@ public class PLPToolConnector implements PLPGenericModule {
         } else {
             try {
                 switch(id) {
+
+                    // TODO: clear videoURL if user creates a new project!
+
                     case ProjectEvent.THIRDPARTY_LICENSE:
                         Msg.M(getJSpeexLicense().replace(" ", "&nbsp;").replace("\n", "<br />"));
 
@@ -145,12 +148,14 @@ public class PLPToolConnector implements PLPGenericModule {
 
                     case ProjectEvent.PROJECT_OPEN:
                         snapshot_Asms = new ArrayList<PLPAsmSource>();
+                        videoURL = null;
                         break;
 
                     case ProjectEvent.PROJECT_OPEN_ENTRY:
                         int sLevel = 0;
                         String entryName = (String) ((Object[])e.getParameters())[0];
                         byte[] image = (byte[]) ((Object[])e.getParameters())[1];
+                        File plpFile = (File) ((Object[])e.getParameters())[2];
                         if(entryName.equals("plp.lecturerecord")) {
                             Msg.I("Loading saved lecture record...", this);
                             String str = new String(image);
@@ -196,9 +201,13 @@ public class PLPToolConnector implements PLPGenericModule {
                             sLevel++;
                             return true;
                         } else if(entryName.equals("plp.lecturevideo")) {
-                            FileOutputStream fo = new FileOutputStream(PLPToolbox.getConfDir() + "/tempLectureVideo");
+                            videoURL = PLPToolbox.getConfDir() +
+                                    "/plp.lecturevideo." + plpFile.getName();
+                            FileOutputStream fo = new FileOutputStream(videoURL);
                             fo.write(image);
-                            videoURL = PLPToolbox.getConfDir() + "/tempLectureVideo";
+                            
+                            Msg.I("<b>This project file has an embedded video file</b>. " +
+                                  "This video will play when you replay the lecture.", this);
                             return true;
                         }
 
@@ -288,7 +297,8 @@ public class PLPToolConnector implements PLPGenericModule {
                         break;
 
                     case ProjectEvent.EXIT:
-                        File tempVideo = new File(PLPToolbox.getConfDir() + "/tempLectureVideo");
+                        File tempVideo = new File(PLPToolbox.getConfDir() +
+                                    "/plp.lecturevideo." + plp.plpfile.getName());
                         if(tempVideo.exists())
                             tempVideo.delete();
                 }
@@ -350,7 +360,8 @@ public class PLPToolConnector implements PLPGenericModule {
             plp.setAsms(tempList);
             plp.setOpenAsm(snapshot_OpenAsm);
             plp.refreshProjectView(false);
-            if(!superimpose) {
+            File audioFile = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+            if(!superimpose && audioFile.exists()) {
                 audioRecorderThread = null;
                 audioPlayerThread = new AudioPlayer(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
             } else {
@@ -373,7 +384,8 @@ public class PLPToolConnector implements PLPGenericModule {
             Msg.I("<b>Stopped recording.</b>", this);
         } else if(runnerThread != null) {
             runnerThread.stopReplay();
-            audioPlayerThread.stopPlay();
+            if(audioPlayerThread != null)
+                audioPlayerThread.stopPlay();
             controls.updateComponents();
             controls.externalStop();
         } else
@@ -398,6 +410,10 @@ public class PLPToolConnector implements PLPGenericModule {
 
     public void setVideoURL(String url) {
         videoURL = url;
+    }
+
+    public boolean hasEmbeddedVideo() {
+        return videoURL != null;
     }
 
     public void setRecordPlaybackParams(boolean audio, boolean superimpose) {
@@ -669,13 +685,15 @@ public class PLPToolConnector implements PLPGenericModule {
                 ProjectEvent e;
                 long curTime = startTime;
                 long diff;
+                if(videoURL != null)
+                    controls.initVideo(videoURL);
                 Msg.I("Replay will start in 2 seconds...", this);
                 Thread.sleep(1000);
                 Msg.I("Replay will start in 1 second...", this);
                 Thread.sleep(1000);
                 Msg.I("Replaying...", this);
                 if(videoURL != null)
-                    controls.playVideo(videoURL);
+                    controls.playVideo();
                 if(audioPlayerThread != null) audioPlayerThread.start();
                 if(audioRecorderThread != null && audioRecorderThread.isReady())
                     audioRecorderThread.start();
