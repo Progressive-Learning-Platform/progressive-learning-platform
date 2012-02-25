@@ -163,7 +163,11 @@ public class PLPToolbox {
      * @return Configuration directory path in String
      */
     public static String getConfDir() {
-        return System.getProperty("user.home") + "/.plp";
+        File confDir = new File(System.getProperty("user.home") + "/.plp");
+        if(!confDir.exists())
+            confDir.mkdir();
+
+        return confDir.getAbsolutePath();
     }
 
     /**

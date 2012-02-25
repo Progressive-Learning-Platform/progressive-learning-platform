@@ -263,9 +263,24 @@ public class ProjectDriver {
     }
 
     /**
-     * Attempt to load configuration from ~/.plp/config
+     * Attempt to load configuration from ~/.plp/config. Also checks whether
+     * we have access to a user configuration directory (~/.plp)
      */
     public static void loadConfig() {
+        File confDir = new File(PLPToolbox.getConfDir());
+        if(!confDir.exists() && !confDir.mkdir()) {
+            Msg.W("Unable to create configuration directory. User settings " +
+                  "will not be saved and module functionality will fail!",
+                  null);
+        }
+
+        if(confDir.exists() &&
+                (!confDir.isDirectory() || !confDir.canWrite())) {
+            Msg.W("Configuration directory is either a file or is not " +
+                  "writable. User settings will not be saved and module " +
+                  "functionality will fail!", null);
+        }
+
         File config = new File(System.getProperty("user.home") + "/.plp/config");
 
         if(config.exists() && !config.isDirectory()) {
@@ -691,7 +706,7 @@ public class ProjectDriver {
         dirty = true;
 
         Msg.I("Opening " + path, null);
-        hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1));
+        hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1, plpFile));
 
         arch = null;
 
@@ -776,7 +791,7 @@ public class ProjectDriver {
             metaStr = new String(image);
 
             // Hook for project open for each entry
-            Object[] eParams = {entry.getName(), image};
+            Object[] eParams = {entry.getName(), image, plpFile};
             for(int i = 0; i < DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
                 Object ret = DynamicModuleFramework.hook(i, new ProjectEvent(ProjectEvent.PROJECT_OPEN_ENTRY, -1, eParams));
                 if(ret != null && ret instanceof Boolean)
