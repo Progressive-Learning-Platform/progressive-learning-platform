@@ -50,7 +50,7 @@ import javax.sound.sampled.SourceDataLine;
 import org.xiph.speex.spi.*;
 
 public class PLPToolConnector implements PLPGenericModule {
-    private final int VIDEO_BUFFER_SIZE = 600000000;
+    private final int VIDEO_BUFFER_SIZE = 512000;
 
     private boolean init = false;
     private boolean record = false;
@@ -128,6 +128,7 @@ public class PLPToolConnector implements PLPGenericModule {
            id != ProjectEvent.PROJECT_OPEN_ENTRY &&
            id != ProjectEvent.PROJECT_SAVE &&
            id != ProjectEvent.EDITOR_TEXT_SET &&
+           id != ProjectEvent.NEW_PROJECT &&
            id != ProjectEvent.EXIT) {
             events.add(e);
         } else {
@@ -147,6 +148,8 @@ public class PLPToolConnector implements PLPGenericModule {
                         break;
 
                     case ProjectEvent.PROJECT_OPEN:
+                    case ProjectEvent.NEW_PROJECT:
+                        events = new ArrayList<ProjectEvent>();
                         snapshot_Asms = new ArrayList<PLPAsmSource>();
                         videoURL = null;
                         break;
@@ -277,19 +280,17 @@ public class PLPToolConnector implements PLPGenericModule {
 
                         if(videoURL != null) {
                             Msg.D("Embedding video...", 2, this);
+                            long size = (new File(videoURL)).length();
                             entry = new TarArchiveEntry("plp.lecturevideo");
-                            FileInputStream fi = new FileInputStream(videoURL);
-                            byte[] inData = new byte[VIDEO_BUFFER_SIZE];
-                            int size = fi.read(inData);
-                            if(size == VIDEO_BUFFER_SIZE) {
-                                Msg.W("Embedded video may be too large. " +
-                                      "The video might have been truncated.",
-                                      this);
-                            }
-
                             entry.setSize(size);
                             tOut.putArchiveEntry(entry);
-                            tOut.write(inData, 0, size);
+                            FileInputStream fi = new FileInputStream(videoURL);
+                            byte[] inData = new byte[VIDEO_BUFFER_SIZE];
+                            int readSize;
+                            while((readSize = fi.read(inData)) != -1) {
+                                tOut.write(inData, 0, readSize);
+                            }
+
                             tOut.flush();
                             tOut.closeArchiveEntry();
                         }
@@ -685,8 +686,11 @@ public class PLPToolConnector implements PLPGenericModule {
                 ProjectEvent e;
                 long curTime = startTime;
                 long diff;
-                if(videoURL != null)
+                if(videoURL != null) {
                     controls.initVideo(videoURL);
+                    controls.startVideo();
+                    controls.pauseVideo();
+                }
                 Msg.I("Replay will start in 2 seconds...", this);
                 Thread.sleep(1000);
                 Msg.I("Replay will start in 1 second...", this);

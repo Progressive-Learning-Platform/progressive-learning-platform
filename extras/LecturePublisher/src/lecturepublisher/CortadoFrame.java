@@ -58,8 +58,16 @@ public class CortadoFrame extends javax.swing.JFrame {
         applet.init();
     }
 
-    public void play() {
+    public void start() {
         applet.start();
+    }
+
+    public void pause() {
+        applet.pause();
+    }
+
+    public void play() {
+        applet.play();
     }
 
     /** This method is called from within the constructor to
