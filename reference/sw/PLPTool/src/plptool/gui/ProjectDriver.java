@@ -410,7 +410,7 @@ public class ProjectDriver {
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
         dirty = true;
-
+        hookEvent(new ProjectEvent(ProjectEvent.NEW_PROJECT, -1));
         Msg.I("New project initialized.", null);
 
         if(g) {

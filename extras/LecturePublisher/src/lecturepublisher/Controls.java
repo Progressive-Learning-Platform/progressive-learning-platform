@@ -98,6 +98,14 @@ public class Controls extends javax.swing.JFrame {
         cortadoFrame.play();
     }
 
+    public void startVideo() {
+        cortadoFrame.start();
+    }
+
+    public void pauseVideo() {
+        cortadoFrame.pause();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
