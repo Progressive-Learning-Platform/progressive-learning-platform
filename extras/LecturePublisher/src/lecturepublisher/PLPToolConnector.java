@@ -152,6 +152,7 @@ public class PLPToolConnector implements PLPGenericModule {
                         events = new ArrayList<ProjectEvent>();
                         snapshot_Asms = new ArrayList<PLPAsmSource>();
                         videoURL = null;
+                        controls.discardVideo();
                         break;
 
                     case ProjectEvent.PROJECT_OPEN_ENTRY:
@@ -439,6 +440,7 @@ public class PLPToolConnector implements PLPGenericModule {
     public void resetStates() {
         controls.setRecordState(false);
         controls.setPlaybackState(false);
+        controls.setVisible(true);
     }
 
     public String getJSpeexLicense() {
@@ -691,6 +693,7 @@ public class PLPToolConnector implements PLPGenericModule {
                     controls.startVideo();
                     controls.pauseVideo();
                 }
+                controls.setVisible(false);
                 Msg.I("Replay will start in 2 seconds...", this);
                 Thread.sleep(1000);
                 Msg.I("Replay will start in 1 second...", this);
