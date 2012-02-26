@@ -19,8 +19,10 @@
 package lecturepublisher;
 
 import plptool.gui.ProjectDriver;
-
+import plptool.Msg;
+import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -84,9 +86,25 @@ public class Controls extends javax.swing.JFrame {
     }
 
     private void embedVideo() {
-        java.io.File vf = new java.io.File(txtVideoFile.getText());
+        if(connector.hasEmbeddedVideo()) {
+            int ret = JOptionPane.showConfirmDialog(plp.g_dev,
+                    "This project already has an embedded video. This " +
+                    "will replace the old video. Are you sure?",
+                    "Replace embedded video",
+                    JOptionPane.YES_NO_OPTION);
+            if(ret == JOptionPane.NO_OPTION) {
+                Msg.I("Embedded video is NOT replaced.", this);
+                return;
+            }
+        }
+
+        File vf = new File(txtVideoFile.getText());
         if(vf.exists())
             connector.setVideoURL(txtVideoFile.getText());
+        else
+            JOptionPane.showMessageDialog(plp.g_dev, "Unable to embed " +
+                    vf.getAbsolutePath(), "Video embedding failed",
+                    JOptionPane.ERROR_MESSAGE);
     }
 
     public void initVideo(String url) {
@@ -104,6 +122,15 @@ public class Controls extends javax.swing.JFrame {
 
     public void pauseVideo() {
         cortadoFrame.pause();
+    }
+
+    public void discardVideo() {
+        cortadoFrame.setVisible(false);
+        cortadoFrame.stop();
+    }
+
+    public String toString() {
+        return "Lecture Publisher Control";
     }
 
     /** This method is called from within the constructor to

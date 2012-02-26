@@ -59,15 +59,23 @@ public class CortadoFrame extends javax.swing.JFrame {
     }
 
     public void start() {
-        applet.start();
+        if(applet != null)
+            applet.start();
     }
 
     public void pause() {
-        applet.pause();
+        if(applet != null)
+            applet.pause();
     }
 
     public void play() {
-        applet.play();
+        if(applet != null)
+            applet.play();
+    }
+
+    public void stop() {
+        if(applet != null)
+            applet.stop();
     }
 
     /** This method is called from within the constructor to
