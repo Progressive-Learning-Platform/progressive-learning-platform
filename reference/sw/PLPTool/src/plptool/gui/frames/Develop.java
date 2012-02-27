@@ -1160,6 +1160,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Set visibility of LED I/O module frames
+     *
+     * @param v True for visibile frame, false otherwise
+     */
     private void setLEDsFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
@@ -1177,6 +1182,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Set visibility of switches I/O module frames
+     *
+     * @param v True for visibile frame, false otherwise
+     */
     private void setSwitchesFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
@@ -1194,6 +1204,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Set visibility of seven segments I/O module frames
+     *
+     * @param v True for visibile frame, false otherwise
+     */
     private void setSevenSegmentsFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
@@ -1211,6 +1226,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Set visibility of UART I/O module frames
+     *
+     * @param v True for visibile frame, false otherwise
+     */
     private void setUARTFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
@@ -1228,6 +1248,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Set visibility of VGA I/O module frames
+     *
+     * @param v True for visibile frame, false otherwise
+     */
     private void setVGAFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
@@ -1245,6 +1270,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Set visibility of PLPID I/O module frames
+     *
+     * @param v True for visibile frame, false otherwise
+     */
     private void setPLPIDFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
@@ -1262,6 +1292,11 @@ public class Develop extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Set visibility of GPIO I/O module frames
+     *
+     * @param v True for visibile frame, false otherwise
+     */
     private void setGPIOFrame(boolean v) {
         for(int i = 0; i < plp.ioreg.getNumOfModsAttached(); i++) {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
@@ -1338,6 +1373,12 @@ public class Develop extends javax.swing.JFrame {
                         });
 
 
+    }
+
+    public void addPaintSurfaceOverlay(JComponent overlay) {
+        this.add(overlay);
+        overlay.setSize(this.getSize());
+        //this.setComponentZOrder(overlay, 0);
     }
 
     public javax.swing.JMenuItem addSimToolItem(javax.swing.JMenuItem item) {
@@ -3840,18 +3881,22 @@ class DevEditorDocListener implements DocumentListener {
     public void changedUpdate(javax.swing.event.DocumentEvent e) {}
 
     public void removeUpdate(final javax.swing.event.DocumentEvent e) {
-       if(!enable || !Config.nothighlighting || plp.isReplaying()) return;
+       if(!enable || !Config.nothighlighting) return;
 
-        plp.setModified();
-        plp.requireAssemble();
+        if(!plp.isReplaying()) {
+            plp.setModified();
+            plp.requireAssemble();
+        }
         thread.scheduleHighlight();
     }
 
     public void insertUpdate(final javax.swing.event.DocumentEvent e) {
-        if(!enable || !Config.nothighlighting || plp.isReplaying()) return;
+        if(!enable || !Config.nothighlighting) return;
 
-        plp.setModified();
-        plp.requireAssemble();
+        if(!plp.isReplaying()) {
+            plp.setModified();
+            plp.requireAssemble();
+        }
         thread.scheduleHighlight();
     }
 }
