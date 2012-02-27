@@ -59,6 +59,8 @@ public class ProjectEvent {
     public final static int         BREAKPOINT_CLEARED              = 264;
     public final static int         SIM_POST_INIT                   = 265;
     public final static int         SIM_POST_UNINIT                 = 266;
+    public final static int         SIM_SPEED_CHANGED               = 267;
+    public final static int         SIM_STEPSIZE_CHANGED            = 268;
 
     /* PROJECT CONTROL EVENTS */
     public final static int         NEW_MAIN_SOURCE                 = 1024;
