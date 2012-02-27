@@ -1296,6 +1296,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int runSimulation() {
+        hookEvent(new ProjectEvent(ProjectEvent.RUN_START, -1));
         g_simrun = new plptool.gui.SimRunner(this);
         g_simrun.start();
 
@@ -1313,6 +1314,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int stopSimulation() {
+        hookEvent(new ProjectEvent(ProjectEvent.RUN_END, -1));
         if(g_simrun != null) {
             try {
                 g_simrun.stepCount = 0;
@@ -1877,6 +1879,24 @@ public class ProjectDriver {
                 }
                 break;
 
+            case ProjectEvent.RUN_START:
+                runSimulation();
+                break;
+
+            case ProjectEvent.RUN_END:
+                stopSimulation();
+                break;
+
+            case ProjectEvent.SIM_SPEED_CHANGED:
+                int newDelay = (Integer) e.getParameters();
+                Config.simRunnerDelay = newDelay;
+                break;
+
+            case ProjectEvent.SIM_STEPSIZE_CHANGED:
+                int newStepsize = (Integer) e.getParameters();
+                Config.simCyclesPerStep = newStepsize;
+                break;
+
             case ProjectEvent.EDITOR_CHANGE:
 
                 break;
@@ -1899,8 +1919,7 @@ public class ProjectDriver {
                 break;
 
             default:
-                Msg.E("Unknown event ID: " + e.getIdentifier(),
-                      Constants.PLP_GENERIC_ERROR, this);
+                Msg.D("Unknown event ID: " + e.getIdentifier(), 3, this);
         }
         replay = false;
     }
