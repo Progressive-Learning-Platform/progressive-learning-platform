@@ -813,13 +813,13 @@ public class Develop extends javax.swing.JFrame {
      * @param position
      */
     public void syntaxHighlight(String text, int position) {
-        if(plp.getArch().hasSyntaxHighlightSupport())
+        if(plp.getArch() != null && plp.getArch().hasSyntaxHighlightSupport())
             plp.getArch().getSyntaxHighlightSupport().syntaxHighlightTextAction(plp, text, position);
     }
 
     // Called whenever syntax styles change
     private void setupHighlighting() {
-        if(plp.getArch().hasSyntaxHighlightSupport())
+        if(plp.getArch() != null && plp.getArch().hasSyntaxHighlightSupport())
             plp.getArch().getSyntaxHighlightSupport().newStyle();
     }
 
