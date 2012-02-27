@@ -8,6 +8,7 @@ class::lecturepublisher.PLPToolConnector$AudioPlayer
 class::lecturepublisher.PLPToolConnector$AudioRecorder
 class::lecturepublisher.PLPToolConnector$DevDocListener
 class::lecturepublisher.PLPToolConnector$Runner
+class::lecturepublisher.PLPToolConnector$PaintOverlay
 class::lecturepublisher.PLPToolConnector$1
 class::lecturepublisher.Controls
 class::lecturepublisher.Controls$1

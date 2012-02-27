@@ -18,6 +18,7 @@
 
 package lecturepublisher;
 
+import java.awt.Color;
 import plptool.PLPGenericModule;
 import plptool.Msg;
 import plptool.gui.ProjectDriver;
@@ -30,6 +31,8 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
 import java.util.ArrayList;
+import java.awt.Graphics;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentListener;
@@ -70,6 +73,7 @@ public class PLPToolConnector implements PLPGenericModule {
     private DevDocListener editorDocListener;
     private AudioRecorder audioRecorderThread;
     private Runner runnerThread;
+    private PaintOverlay paintOverlay;
 
     private JMenuItem menuDevShowFrame;
 
@@ -137,6 +141,9 @@ public class PLPToolConnector implements PLPGenericModule {
                 hook("show");
             }
         });
+        paintOverlay = new PaintOverlay(plp);
+        //paintOverlay.attachToIDE();
+        paintOverlay.repaint();
         plp.g_dev.addToolsItem(menuDevShowFrame);
 
         return param;
@@ -268,8 +275,8 @@ public class PLPToolConnector implements PLPGenericModule {
                 return true;
             }
         } catch(IOException ioe) {
-            Msg.E("I/O exception trying to process the file '" + entryName +
-                  "'. Use debug level of at least 2 for stack trace.",
+            Msg.E("I/O exception while trying to process the file '" +
+                  entryName + "'. Use debug level of at least 2 for stack trace.",
                   Constants.PLP_DMOD_FILE_IO_ERROR, this);
             if(Constants.debugLevel >= 2)
                 ioe.printStackTrace();
@@ -952,6 +959,24 @@ public class PLPToolConnector implements PLPGenericModule {
             }
             Object[] eParams = {new Integer(e.getOffset()), str};
             l.hook(new ProjectEvent(ProjectEvent.EDITOR_INSERT, -1, eParams));
+        }
+    }
+
+    class PaintOverlay extends JComponent {
+        private ProjectDriver plp;
+
+        public PaintOverlay(ProjectDriver plp) {
+            this.plp = plp;
+        }
+
+        public void attachToIDE() {
+            plp.g_dev.addPaintSurfaceOverlay(this);
+        }
+
+        @Override
+        public void paint(Graphics g) {
+            g.setColor(Color.RED);
+            g.drawLine(0, 0, this.getWidth(), this.getHeight());
         }
     }
 }

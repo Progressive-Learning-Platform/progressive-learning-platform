@@ -1160,7 +1160,7 @@ public class ProjectDriver {
             return Msg.E("simulate: This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
 
-        if(asm_req) {
+        if(asm_req && !isReplaying()) {
             int ret = assemble();
             if(ret != Constants.PLP_OK) return Constants.PLP_ASM_ASSEMBLE_FAILED;
         }
