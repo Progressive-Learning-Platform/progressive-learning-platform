@@ -93,6 +93,7 @@
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
             <zipgroupfileset dir="dist" includes="*.jar"/>
             <zipgroupfileset dir="lib" includes="*.jar" />
+            <zipgroupfileset dir="lib" includes="*.class" />
             <fileset dir="src" includes="*.manifest" />
 
             <manifest>

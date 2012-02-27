@@ -200,7 +200,6 @@ class::org.xiph.libvorbis.vorbis_residue_template
 class::org.xiph.libvorbis.vorbis_window
 class::org.xiph.libvorbis.vorbisenc
 class::org.xiph.libvorbis.vp_adjblock
-class::org.xiph.libvorbis.books.coupled.resbook_44
 class::org.xiph.libvorbis.books.coupled.resbook_44.res_books_stereo
 class::org.xiph.libvorbis.books.coupled.resbook_44.resbook_44s_0
 class::org.xiph.libvorbis.books.coupled.resbook_44.resbook_44s_1
