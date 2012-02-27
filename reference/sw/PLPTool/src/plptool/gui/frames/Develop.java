@@ -3397,7 +3397,8 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSimGPIOActionPerformed
 
     private void menuThirdPartyLicenseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuThirdPartyLicenseActionPerformed
-        Msg.M(Constants.thirdPartyCopyrightString.replace("\n", "<br />"));
+        JOptionPane.showMessageDialog(this, Constants.thirdPartyCopyrightString,
+                "Thank you", JOptionPane.INFORMATION_MESSAGE);
         plp.hookEvent(new ProjectEvent(ProjectEvent.THIRDPARTY_LICENSE, -1));
     }//GEN-LAST:event_menuThirdPartyLicenseActionPerformed
 

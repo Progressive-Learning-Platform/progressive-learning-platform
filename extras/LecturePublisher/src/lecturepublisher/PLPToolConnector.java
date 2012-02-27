@@ -30,8 +30,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
 import java.util.ArrayList;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterOutputStream;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentListener;
@@ -159,7 +157,7 @@ public class PLPToolConnector implements PLPGenericModule {
             try {
                 switch(id) {
                     case ProjectEvent.THIRDPARTY_LICENSE:
-                        break;
+                        return showThirdPartyLicense();
 
                     case ProjectEvent.EDITOR_TEXT_SET:
                         plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
@@ -678,9 +676,26 @@ public class PLPToolConnector implements PLPGenericModule {
         return TEMPORARY_AUDIO_FILE;
     }
 
-    public String getVorbisJavaLicense() {
-        String ret = "";
-        return ret;
+    public Object showThirdPartyLicense() {
+        JOptionPane.showMessageDialog(plp.g_dev,
+                ThirdPartyLicenseText.LICENSE_cortado,
+                "Lecture Publisher uses Cortado!", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(plp.g_dev,
+                ThirdPartyLicenseText.LICENSE_jheora,
+                "Lecture Publisher also uses Jheora!", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(plp.g_dev,
+                ThirdPartyLicenseText.LICENSE_jkate,
+                "...JKate!", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(plp.g_dev,
+                ThirdPartyLicenseText.LICENSE_jtiger,
+                "...JTiger!", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(plp.g_dev,
+                ThirdPartyLicenseText.LICENSE_vorbis_java,
+                "...and finally vorbis-java!", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(plp.g_dev,
+                "Go open-source.",
+                "Message", JOptionPane.INFORMATION_MESSAGE);
+        return null;
     }
 
     @Override
