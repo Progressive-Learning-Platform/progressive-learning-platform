@@ -24,6 +24,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import  com.fluendo.player.Cortado;
+
 /**
  *
  * @author wira
@@ -34,6 +36,7 @@ public class Controls extends javax.swing.JFrame {
     private PLPToolConnector connector;
     private ProgressUpdater progressUpdater;
     private CortadoFrame cortadoFrame;
+    private Cortado audioPlayer;
 
     /** Creates new form Controls */
     public Controls(ProjectDriver plp, PLPToolConnector connector) {
@@ -41,6 +44,35 @@ public class Controls extends javax.swing.JFrame {
         this.connector = connector;
         cortadoFrame = new CortadoFrame();
         initComponents();
+
+        audioPlayer = new Cortado();
+        panelAudioPlayer.add(audioPlayer);
+        audioPlayer.setSize(panelAudioPlayer.getSize());
+        
+    }
+
+    public void initAudio() {
+        audioPlayer.setSize(this.getWidth(), this.getHeight());
+        audioPlayer.setParam ("url", "file:///" + connector.getTemporaryAudioFile() + ".ogg");
+        audioPlayer.setParam ("local", "false");
+        //audioPlayer.setParam ("seekable", "true");
+        //audioPlayer.setParam ("duration", "00352");
+        audioPlayer.setParam ("framerate", "60");
+        audioPlayer.setParam ("keepaspect", "true");
+        audioPlayer.setParam ("video", "true");
+        audioPlayer.setParam ("audio", "true");
+        audioPlayer.setParam ("kateIndex", "0");
+        //audioPlayer.setParam ("kateLanguage", "en");
+        //audioPlayer.setParam ("kateCategory", "SUB");
+        //audioPlayer.setParam ("audio", "false");
+        audioPlayer.setParam ("bufferSize", "200");
+        //audioPlayer.setParam ("userId", "wim");
+        //audioPlayer.setParam ("password", "taymans");
+        audioPlayer.init();
+    }
+
+    public Cortado getAudioPlayer() {
+        return audioPlayer;
     }
 
     public void setRecordState(boolean b) {
@@ -154,6 +186,7 @@ public class Controls extends javax.swing.JFrame {
         sliderProgress = new javax.swing.JSlider();
         tglBtnPlayPause = new javax.swing.JToggleButton();
         btnStop = new javax.swing.JButton();
+        panelAudioPlayer = new javax.swing.JPanel();
         panelEmbedVideo = new javax.swing.JPanel();
         lblVideoInfo1 = new javax.swing.JLabel();
         lblVideoInfo2 = new javax.swing.JLabel();
@@ -212,19 +245,21 @@ public class Controls extends javax.swing.JFrame {
             .addGroup(panelRecordLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tglBtnRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                    .addComponent(tglBtnRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                     .addGroup(panelRecordLayout.createSequentialGroup()
                         .addComponent(radioRecordWithAudio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioPlayAndOverlay)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioRecordWithoutAudio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                         .addComponent(lblLecturePublisher)))
                 .addContainerGap())
         );
 
         tabbedPane.addTab("Record", panelRecord);
+
+        sliderProgress.setValue(0);
 
         tglBtnPlayPause.setText("Play");
         tglBtnPlayPause.setMaximumSize(new java.awt.Dimension(120, 23));
@@ -242,18 +277,30 @@ public class Controls extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout panelAudioPlayerLayout = new javax.swing.GroupLayout(panelAudioPlayer);
+        panelAudioPlayer.setLayout(panelAudioPlayerLayout);
+        panelAudioPlayerLayout.setHorizontalGroup(
+            panelAudioPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 413, Short.MAX_VALUE)
+        );
+        panelAudioPlayerLayout.setVerticalGroup(
+            panelAudioPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 37, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout panelPlaybackLayout = new javax.swing.GroupLayout(panelPlayback);
         panelPlayback.setLayout(panelPlaybackLayout);
         panelPlaybackLayout.setHorizontalGroup(
             panelPlaybackLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelPlaybackLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPlaybackLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelPlaybackLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelPlaybackLayout.createSequentialGroup()
+                .addGroup(panelPlaybackLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panelAudioPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelPlaybackLayout.createSequentialGroup()
                         .addComponent(tglBtnPlayPause, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(sliderProgress, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                    .addComponent(sliderProgress, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelPlaybackLayout.setVerticalGroup(
@@ -265,7 +312,9 @@ public class Controls extends javax.swing.JFrame {
                 .addGroup(panelPlaybackLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tglBtnPlayPause, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnStop))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelAudioPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         tabbedPane.addTab("Playback", panelPlayback);
@@ -317,7 +366,7 @@ public class Controls extends javax.swing.JFrame {
                 .addGroup(panelEmbedVideoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBrowseVideo)
                     .addComponent(btnEmbedVideo))
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Embed Video", panelEmbedVideo);
@@ -340,7 +389,7 @@ public class Controls extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -417,6 +466,7 @@ public class Controls extends javax.swing.JFrame {
     private javax.swing.JLabel lblLecturePublisher;
     private javax.swing.JLabel lblVideoInfo1;
     private javax.swing.JLabel lblVideoInfo2;
+    private javax.swing.JPanel panelAudioPlayer;
     private javax.swing.JPanel panelEmbedVideo;
     private javax.swing.JPanel panelPlayback;
     private javax.swing.JPanel panelRecord;

@@ -30,6 +30,8 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 
 import java.util.ArrayList;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterOutputStream;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentListener;
@@ -47,15 +49,19 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.SourceDataLine;
 
-import org.xiph.speex.spi.*;
+import org.xiph.libvorbis.*;
+import org.xiph.libogg.*;
 
 public class PLPToolConnector implements PLPGenericModule {
-    private final int VIDEO_BUFFER_SIZE = 512000;
+    private final int SAVE_BUFFER_SIZE = 512000;
+    private final String TEMPORARY_AUDIO_FILE =
+            PLPToolbox.getConfDir() + "/lecture_temp_audio.wav";
 
     private boolean init = false;
     private boolean record = false;
     private boolean audio = true;
     private boolean superimpose = false;
+    private boolean hasAudioRecord = false;
     private ProjectDriver plp = null;
     private ArrayList<ProjectEvent> events;
 
@@ -65,12 +71,33 @@ public class PLPToolConnector implements PLPGenericModule {
     private Controls controls;
     private DevDocListener editorDocListener;
     private AudioRecorder audioRecorderThread;
-    private AudioPlayer audioPlayerThread;
     private Runner runnerThread;
 
     private JMenuItem menuDevShowFrame;
 
     private int recordDelaySeconds = 2;
+
+/***************** VORBIS ENCODER MEMBERS *************************************/
+    static vorbisenc 			encoder;
+
+    static ogg_stream_state 	os;	// take physical pages, weld into a logical stream of packets
+
+    static ogg_page				og;	// one Ogg bitstream page.  Vorbis packets are inside
+    static ogg_packet			op;	// one raw packet of data for decode
+
+    static vorbis_info			vi;	// struct that stores all the static vorbis bitstream settings
+
+    static vorbis_comment		vc;	// struct that stores all the user comments
+
+    static vorbis_dsp_state		vd;	// central working state for the packet->PCM decoder
+    static vorbis_block			vb;	// local working space for packet->PCM decode
+
+    static int READ = 1024;
+    static byte[] readbuffer = new byte[READ*4+44];
+
+    static int page_count = 0;
+    static int block_count = 0;
+/******************************************************************************/
 
     public String getVersion() { return "4.0-beta"; }
 
@@ -102,10 +129,7 @@ public class PLPToolConnector implements PLPGenericModule {
                 "</b>&rarr;<b>Show Lecture Publisher Window</b> to start!",
                 null);
         init = true;
-
-        File temp = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
-        if(temp.exists()) temp.delete();
-
+        deleteTemporaryAudioFile();
         controls = new Controls((ProjectDriver) param, this);
 
         menuDevShowFrame = new JMenuItem();
@@ -134,183 +158,383 @@ public class PLPToolConnector implements PLPGenericModule {
         } else {
             try {
                 switch(id) {
-
-                    // TODO: clear videoURL if user creates a new project!
-
                     case ProjectEvent.THIRDPARTY_LICENSE:
-                        Msg.M(getJSpeexLicense().replace(" ", "&nbsp;").replace("\n", "<br />"));
-
                         break;
 
                     case ProjectEvent.EDITOR_TEXT_SET:
                         plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
-
                         break;
 
                     case ProjectEvent.PROJECT_OPEN:
                     case ProjectEvent.NEW_PROJECT:
-                        events = new ArrayList<ProjectEvent>();
-                        snapshot_Asms = new ArrayList<PLPAsmSource>();
-                        videoURL = null;
-                        controls.discardVideo();
-                        break;
+                        return handleNewProject(e);
 
                     case ProjectEvent.PROJECT_OPEN_ENTRY:
-                        int sLevel = 0;
-                        String entryName = (String) ((Object[])e.getParameters())[0];
-                        byte[] image = (byte[]) ((Object[])e.getParameters())[1];
-                        File plpFile = (File) ((Object[])e.getParameters())[2];
-                        if(entryName.equals("plp.lecturerecord")) {
-                            Msg.I("Loading saved lecture record...", this);
-                            String str = new String(image);
-                            ProjectEvent ev;
-                            String[] lines = str.split("\\r?\\n");
-                            String[] tokens;
-                            int evId;
-                            long evSystemTimestamp;
-                            long evTimestamp;
-                            for(int i = 0; i < lines.length; i++) {
-                                tokens = lines[i].split("::");
-                                evId = Integer.parseInt(tokens[0]);
-                                evSystemTimestamp = Long.parseLong(tokens[1]);
-                                evTimestamp = Long.parseLong(tokens[2]);
-                                ev = new ProjectEvent(
-                                        evId, evTimestamp, null);
-                                ev.setSystemTimestamp(evSystemTimestamp);
-                                switch(ev.getIdentifier()) {
-                                    case ProjectEvent.EDITOR_INSERT:
-                                        Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4].replaceAll("\\\\n", "\n")};
-                                        ev.setParameters(eParamsInsert);
-                                        break;
-                                    case ProjectEvent.EDITOR_REMOVE:
-                                        Object[] eParamsRemove = {Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4])};
-                                        ev.setParameters(eParamsRemove);
-                                        break;
-                                    case ProjectEvent.OPENASM_CHANGE:
-                                        Integer eParamsOpenasmChange = Integer.parseInt(tokens[3]);
-                                        ev.setParameters(eParamsOpenasmChange);
-                                        break;
-                                }
-                                events.add(ev);
-                            }
-                            return true;
-                        } else if(entryName.equals("plp.lecturerecord_openasm")) {
-                            String str = new String(image);
-                            snapshot_OpenAsm = Integer.parseInt(str);
-                            return true;
-                        } else if(entryName.startsWith("plp.lecturerecord_snapshot.")) {
-                            String str = new String(image);
-                            String fName = entryName.substring(27, entryName.length());
-                            snapshot_Asms.add(new PLPAsmSource(str, fName, sLevel));
-                            sLevel++;
-                            return true;
-                        } else if(entryName.equals("plp.lecturevideo")) {
-                            videoURL = PLPToolbox.getConfDir() +
-                                    "/plp.lecturevideo." + plpFile.getName();
-                            FileOutputStream fo = new FileOutputStream(videoURL);
-                            fo.write(image);
-                            
-                            Msg.I("<b>This project file has an embedded video file</b>. " +
-                                  "This video will play when you replay the lecture.", this);
-                            return true;
-                        }
-
-                        break;
+                        return handleOpenEntry(e);
 
                     case ProjectEvent.PROJECT_SAVE:
-                        if(events == null || events.isEmpty())
-                            return null;
-                        TarArchiveOutputStream tOut = (TarArchiveOutputStream) e.getParameters();
-                        TarArchiveEntry entry;
-                        String data = "";
-                        Msg.D("Saving lecture snapshot...", 2, this);
-
-                        for(int i = 0; i < snapshot_Asms.size(); i++) {
-                            entry = new TarArchiveEntry("plp.lecturerecord_snapshot." +
-                                    snapshot_Asms.get(i).getAsmFilePath());
-                            data = snapshot_Asms.get(i).getAsmString();
-                            entry.setSize(data.length());
-                            tOut.putArchiveEntry(entry);
-                            tOut.write(data.getBytes());
-                            tOut.flush();
-                            tOut.closeArchiveEntry();
-                        }
-
-                        entry = new TarArchiveEntry("plp.lecturerecord_openasm");
-                        data = "" + snapshot_OpenAsm;
-                        entry.setSize(data.length());
-                        tOut.putArchiveEntry(entry);
-                        tOut.write(data.getBytes());
-                        tOut.flush();
-                        tOut.closeArchiveEntry();
-
-                        Msg.D("Saving lecture record...", 2, this);
-                        entry = new TarArchiveEntry("plp.lecturerecord");
-
-                        ProjectEvent ev;
-                        data = "";
-                        for(int i = 0; i < events.size(); i++) {
-                            ev = events.get(i);
-                            data += ev.getIdentifier() + "::";
-                            data += ev.getSystemTimestamp() + "::";
-                            data += ev.getTimestamp() + "::";
-
-                            switch(ev.getIdentifier()) {
-                                case ProjectEvent.EDITOR_INSERT:
-                                    data += (Integer)((Object[]) ev.getParameters())[0] + "::";
-                                    String tStr = (String)((Object[]) ev.getParameters())[1];
-                                    tStr = tStr.replaceAll("\\n", "\\\\n");
-                                    data += tStr;
-                                    break;
-                                case ProjectEvent.EDITOR_REMOVE:
-                                    data += (Integer)((Object[]) ev.getParameters())[0] + "::";
-                                    data += (Integer)((Object[]) ev.getParameters())[1];
-                                    break;
-                                case ProjectEvent.OPENASM_CHANGE:
-                                    data += (Integer)((Object[]) ev.getParameters())[0];
-                            }
-
-                            data += "\n";
-                        }
-
-                        entry.setSize(data.length());
-                        tOut.putArchiveEntry(entry);
-                        tOut.write(data.getBytes());
-                        tOut.flush();
-                        tOut.closeArchiveEntry();
-
-                        if(videoURL != null) {
-                            Msg.D("Embedding video...", 2, this);
-                            long size = (new File(videoURL)).length();
-                            entry = new TarArchiveEntry("plp.lecturevideo");
-                            entry.setSize(size);
-                            tOut.putArchiveEntry(entry);
-                            FileInputStream fi = new FileInputStream(videoURL);
-                            byte[] inData = new byte[VIDEO_BUFFER_SIZE];
-                            int readSize;
-                            while((readSize = fi.read(inData)) != -1) {
-                                tOut.write(inData, 0, readSize);
-                            }
-
-                            tOut.flush();
-                            tOut.closeArchiveEntry();
-                        }
-
-                        break;
+                        return handleProjectSave(e);
 
                     case ProjectEvent.EXIT:
-                        File tempVideo = new File(PLPToolbox.getConfDir() +
-                                    "/plp.lecturevideo." + plp.plpfile.getName());
-                        if(tempVideo.exists())
-                            tempVideo.delete();
+                        handleExit(e);
                 }
             } catch(Exception ex) {
-                Msg.E("Whoops!", Constants.PLP_GENERIC_ERROR, this);
+                Msg.E("Whoops! Set debug level to >= 2 for stack trace",
+                        Constants.PLP_GENERIC_ERROR, this);
                 if(Constants.debugLevel >= 2)
                     ex.printStackTrace();
             }
         }
 
+        return null;
+    }
+
+    public Object handleNewProject(ProjectEvent e) {
+        events = new ArrayList<ProjectEvent>();
+        snapshot_Asms = new ArrayList<PLPAsmSource>();
+        videoURL = null;
+        controls.discardVideo();
+        deleteTemporaryAudioFile();
+        hasAudioRecord = false;        
+        return null;
+    }
+
+    public Object handleOpenEntry(ProjectEvent e) {
+        String entryName = "";
+        try {
+            int sLevel = 0;
+            entryName = (String) ((Object[])e.getParameters())[0];
+            byte[] image = (byte[]) ((Object[])e.getParameters())[1];
+            File plpFile = (File) ((Object[])e.getParameters())[2];
+            if(entryName.equals("plp.lecturerecord")) {
+                Msg.I("Loading saved lecture record...", this);
+                String str = new String(image);
+                ProjectEvent ev;
+                String[] lines = str.split("\\r?\\n");
+                String[] tokens;
+                int evId;
+                long evSystemTimestamp;
+                long evTimestamp;
+                for(int i = 0; i < lines.length; i++) {
+                    tokens = lines[i].split("::");
+                    evId = Integer.parseInt(tokens[0]);
+                    evSystemTimestamp = Long.parseLong(tokens[1]);
+                    evTimestamp = Long.parseLong(tokens[2]);
+                    ev = new ProjectEvent(
+                            evId, evTimestamp, null);
+                    ev.setSystemTimestamp(evSystemTimestamp);
+                    switch(ev.getIdentifier()) {
+                        case ProjectEvent.EDITOR_INSERT:
+                            Object[] eParamsInsert = {Integer.parseInt(tokens[3]), tokens[4].replaceAll("\\\\n", "\n")};
+                            ev.setParameters(eParamsInsert);
+                            break;
+                        case ProjectEvent.EDITOR_REMOVE:
+                            Object[] eParamsRemove = {Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4])};
+                            ev.setParameters(eParamsRemove);
+                            break;
+                        case ProjectEvent.OPENASM_CHANGE:
+                            Integer eParamsOpenasmChange = Integer.parseInt(tokens[3]);
+                            ev.setParameters(eParamsOpenasmChange);
+                            break;
+                    }
+                    events.add(ev);
+                }
+                return true;
+            } else if(entryName.equals("plp.lecturerecord_openasm")) {
+                String str = new String(image);
+                snapshot_OpenAsm = Integer.parseInt(str);
+                return true;
+            } else if(entryName.startsWith("plp.lecturerecord_snapshot.")) {
+                String str = new String(image);
+                String fName = entryName.substring(27, entryName.length());
+                snapshot_Asms.add(new PLPAsmSource(str, fName, sLevel));
+                sLevel++;
+                return true;
+            } else if(entryName.equals("plp.lecturevideo")) {
+                videoURL = PLPToolbox.getConfDir() +
+                        "/plp.lecturevideo." + plpFile.getName();
+                FileOutputStream fo = new FileOutputStream(videoURL);
+                fo.write(image);
+
+                Msg.I("<b>This project file has an embedded video file</b>. " +
+                      "This video will play when you replay the lecture.", this);
+                return true;
+            } else if(entryName.equals("plp.lectureaudio")) {
+                FileOutputStream fo = new FileOutputStream(TEMPORARY_AUDIO_FILE + ".ogg");
+                fo.write(image);
+                fo.close();
+                hasAudioRecord = true;
+
+                Msg.I("<b>This project file has an embedded audio file</b>. " +
+                      "This audio will play when you replay the lecture.", this);
+                return true;
+            }
+        } catch(IOException ioe) {
+            Msg.E("I/O exception trying to process the file '" + entryName +
+                  "'. Use debug level of at least 2 for stack trace.",
+                  Constants.PLP_DMOD_FILE_IO_ERROR, this);
+            if(Constants.debugLevel >= 2)
+                ioe.printStackTrace();
+
+            return null;
+        }
+        return null;
+    }
+
+    public Object handleProjectSave(ProjectEvent e) {
+        if(events == null || events.isEmpty())
+            return null;
+        try {
+            TarArchiveOutputStream tOut = (TarArchiveOutputStream) e.getParameters();
+            TarArchiveEntry entry;
+            String data = "";
+            Msg.D("Saving lecture snapshot...", 2, this);
+
+            for(int i = 0; i < snapshot_Asms.size(); i++) {
+                entry = new TarArchiveEntry("plp.lecturerecord_snapshot." +
+                        snapshot_Asms.get(i).getAsmFilePath());
+                data = snapshot_Asms.get(i).getAsmString();
+                entry.setSize(data.length());
+                tOut.putArchiveEntry(entry);
+                tOut.write(data.getBytes());
+                tOut.flush();
+                tOut.closeArchiveEntry();
+            }
+
+            entry = new TarArchiveEntry("plp.lecturerecord_openasm");
+            data = "" + snapshot_OpenAsm;
+            entry.setSize(data.length());
+            tOut.putArchiveEntry(entry);
+            tOut.write(data.getBytes());
+            tOut.flush();
+            tOut.closeArchiveEntry();
+
+            Msg.D("Saving lecture record...", 2, this);
+            entry = new TarArchiveEntry("plp.lecturerecord");
+
+            ProjectEvent ev;
+            data = "";
+            for(int i = 0; i < events.size(); i++) {
+                ev = events.get(i);
+                data += ev.getIdentifier() + "::";
+                data += ev.getSystemTimestamp() + "::";
+                data += ev.getTimestamp() + "::";
+
+                switch(ev.getIdentifier()) {
+                    case ProjectEvent.EDITOR_INSERT:
+                        data += (Integer)((Object[]) ev.getParameters())[0] + "::";
+                        String tStr = (String)((Object[]) ev.getParameters())[1];
+                        tStr = tStr.replaceAll("\\n", "\\\\n");
+                        data += tStr;
+                        break;
+                    case ProjectEvent.EDITOR_REMOVE:
+                        data += (Integer)((Object[]) ev.getParameters())[0] + "::";
+                        data += (Integer)((Object[]) ev.getParameters())[1];
+                        break;
+                    case ProjectEvent.OPENASM_CHANGE:
+                        data += (Integer)((Object[]) ev.getParameters())[0];
+                }
+
+                data += "\n";
+            }
+
+            entry.setSize(data.length());
+            tOut.putArchiveEntry(entry);
+            tOut.write(data.getBytes());
+            tOut.flush();
+            tOut.closeArchiveEntry();
+
+            if(videoURL != null) {
+                Msg.D("Embedding video...", 2, this);
+                long size = (new File(videoURL)).length();
+                entry = new TarArchiveEntry("plp.lecturevideo");
+                entry.setSize(size);
+                tOut.putArchiveEntry(entry);
+                FileInputStream fi = new FileInputStream(videoURL);
+                byte[] inData = new byte[SAVE_BUFFER_SIZE];
+                int readSize;
+                while((readSize = fi.read(inData)) != -1) {
+                    tOut.write(inData, 0, readSize);
+                }
+
+                tOut.flush();
+                tOut.closeArchiveEntry();
+                fi.close();
+            }
+
+            if(hasAudioRecord) {
+                Msg.D("Embedding audio...", 2, this);
+
+                int readSize;
+                byte[] inData = new byte[SAVE_BUFFER_SIZE];
+                FileInputStream fi = new FileInputStream(TEMPORARY_AUDIO_FILE + ".ogg");
+                entry = new TarArchiveEntry("plp.lectureaudio");
+                long size = (new File(TEMPORARY_AUDIO_FILE + ".ogg")).length();
+                Msg.D("Compressed audio size: " + size + " bytes.", 2, this);
+                entry.setSize(size);
+                tOut.putArchiveEntry(entry);
+                while((readSize = fi.read(inData)) != -1) {
+                    tOut.write(inData, 0, readSize);
+                }
+                tOut.flush();
+                tOut.closeArchiveEntry();
+                fi.close();
+            }
+            return true;
+        } catch(IOException ioe) {
+            Msg.E("I/O exception during project save. Use debug level of at " +
+                  "least 2 for stack trace.", Constants.PLP_DMOD_FILE_IO_ERROR,
+                  this);
+            if(Constants.debugLevel >= 2)
+                ioe.printStackTrace();
+
+            return null;
+        }
+    }
+    
+    public boolean encodeAudio() {
+        Msg.I("Encoding audio, standby.", this);
+        boolean eos = false;
+
+        vi = new vorbis_info();
+
+        encoder = new vorbisenc();
+
+        if ( !encoder.vorbis_encode_init_vbr( vi, 2, 44100, .3f ) ) {
+            Msg.E("Failed to Initialize vorbisenc", Constants.PLP_GENERIC_ERROR, this);
+            return false;
+        }
+
+        vc = new vorbis_comment();
+        vc.vorbis_comment_add_tag("ENCODER", "Java Vorbis Encoder");
+
+        vd = new vorbis_dsp_state();
+
+        if ( !vd.vorbis_analysis_init( vi ) ) {
+            Msg.E("Failed to Initialize vorbis_dsp_state", Constants.PLP_GENERIC_ERROR, this);
+            return false;
+        }
+
+        vb = new vorbis_block( vd );
+
+        java.util.Random generator = new java.util.Random();  // need to randomize seed
+        os = new ogg_stream_state( generator.nextInt(256) );
+
+        System.out.print("Writing header.");
+        ogg_packet header = new ogg_packet();
+        ogg_packet header_comm = new ogg_packet();
+        ogg_packet header_code = new ogg_packet();
+
+        vd.vorbis_analysis_headerout( vc, header, header_comm, header_code );
+
+        os.ogg_stream_packetin( header); // automatically placed in its own page
+        os.ogg_stream_packetin( header_comm );
+        os.ogg_stream_packetin( header_code );
+
+        og = new ogg_page();
+        op = new ogg_packet();
+
+        try {
+
+            FileOutputStream fos = new FileOutputStream(TEMPORARY_AUDIO_FILE + ".ogg");
+            while( !eos ) {
+                if ( !os.ogg_stream_flush( og ) )
+                        break;
+
+                fos.write( og.header, 0, og.header_len );
+                fos.write( og.body, 0, og.body_len );
+                System.out.print( "." );
+            }
+            System.out.print("Done.\n");
+            FileInputStream fin = new FileInputStream(TEMPORARY_AUDIO_FILE);
+
+            System.out.print("Encoding.");
+            while ( !eos ) {
+
+                int i;
+                int bytes = fin.read( readbuffer, 0, READ*4 ); // stereo hardwired here
+
+                int break_count = 0;
+
+                if ( bytes==0 ) {
+
+                    // end of file.  this can be done implicitly in the mainline,
+                    // but it's easier to see here in non-clever fashion.
+                    // Tell the library we're at end of stream so that it can handle
+                    // the last frame and mark end of stream in the output properly
+
+                    vd.vorbis_analysis_wrote( 0 );
+
+                } else {
+
+                    // data to encode
+
+                    // expose the buffer to submit data
+                    float[][] buffer = vd.vorbis_analysis_buffer( READ );
+
+                    // uninterleave samples
+                    for ( i=0; i < bytes/4; i++ ) {
+                            buffer[0][vd.pcm_current + i] = ( (readbuffer[i*4+1]<<8) | (0x00ff&(int)readbuffer[i*4]) ) / 32768.f;
+                            buffer[1][vd.pcm_current + i] = ( (readbuffer[i*4+3]<<8) | (0x00ff&(int)readbuffer[i*4+2]) ) / 32768.f;
+                    }
+
+                    // tell the library how much we actually submitted
+                    vd.vorbis_analysis_wrote( i );
+                }
+
+                // vorbis does some data preanalysis, then divvies up blocks for more involved
+                // (potentially parallel) processing.  Get a single block for encoding now
+
+                while ( vb.vorbis_analysis_blockout( vd ) ) {
+
+                    // analysis, assume we want to use bitrate management
+
+                    vb.vorbis_analysis( null );
+                    vb.vorbis_bitrate_addblock();
+
+                    while ( vd.vorbis_bitrate_flushpacket( op ) ) {
+
+                        // weld the packet into the bitstream
+                        os.ogg_stream_packetin( op );
+
+                        // write out pages (if any)
+                        while ( !eos ) {
+
+                            if ( !os.ogg_stream_pageout( og ) ) {
+                                    break_count++;
+                                    break;
+                            }
+
+                            fos.write( og.header, 0, og.header_len );
+                            fos.write( og.body, 0, og.body_len );
+
+                            // this could be set above, but for illustrative purposes, I do
+                            // it here (to show that vorbis does know where the stream ends)
+                            if ( og.ogg_page_eos() > 0 )
+                                    eos = true;
+                        }
+                    }
+                }
+                System.out.print( "." );
+            }
+
+            fin.close();
+            fos.close();
+            System.out.print( "Done.\n" );
+
+        } catch (Exception e) { System.out.println( "\n" + e ); e.printStackTrace(System.out); }
+
+        Msg.I("Audio encoding done.", this);
+        return true;
+    }
+
+    public Object handleExit(ProjectEvent e) {
+        Msg.D("Cleanup", 2, this);
+        File tempVideo = new File(PLPToolbox.getConfDir() +
+                    "/plp.lecturevideo." + plp.plpfile.getName());
+        if(tempVideo.exists())
+            tempVideo.delete();
+        deleteTemporaryAudioFile();
         return null;
     }
 
@@ -332,7 +556,7 @@ public class PLPToolConnector implements PLPGenericModule {
         Msg.I("<font color=red><b>Recording project events.</b></font>", this);
         events.add(new ProjectEvent(ProjectEvent.GENERIC, -1)); // start marker
         if(audio) {
-            audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+            audioRecorderThread = new AudioRecorder(TEMPORARY_AUDIO_FILE);
             if(audioRecorderThread.isReady()) audioRecorderThread.start();
         }
         if(editorDocListener != null)
@@ -362,16 +586,15 @@ public class PLPToolConnector implements PLPGenericModule {
             plp.setAsms(tempList);
             plp.setOpenAsm(snapshot_OpenAsm);
             plp.refreshProjectView(false);
-            File audioFile = new File(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
-            if(!superimpose && audioFile.exists()) {
+            if(!superimpose) {
                 audioRecorderThread = null;
-                audioPlayerThread = new AudioPlayer(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
-            } else {
-                audioPlayerThread = null;
-                audioRecorderThread = new AudioRecorder(PLPToolbox.getConfDir() + "/lecture_temp_audio.wav");
+            } else { // superimposing, do not play audio
+                hasAudioRecord = false;
+                audioRecorderThread = new AudioRecorder(TEMPORARY_AUDIO_FILE);
             }
             
-            runnerThread = new Runner(events, plp, audioPlayerThread, audioRecorderThread, videoURL, controls);
+            runnerThread = new Runner(events, plp,
+                    audioRecorderThread, videoURL, controls);
             runnerThread.start();
         }
         return true;
@@ -386,8 +609,8 @@ public class PLPToolConnector implements PLPGenericModule {
             Msg.I("<b>Stopped recording.</b>", this);
         } else if(runnerThread != null) {
             runnerThread.stopReplay();
-            if(audioPlayerThread != null)
-                audioPlayerThread.stopPlay();
+            if(hasAudioRecord)
+                controls.getAudioPlayer().doStop();
             controls.updateComponents();
             controls.externalStop();
         } else
@@ -412,6 +635,13 @@ public class PLPToolConnector implements PLPGenericModule {
 
     public void setVideoURL(String url) {
         videoURL = url;
+    }
+
+    public void deleteTemporaryAudioFile() {
+        File temp = new File(TEMPORARY_AUDIO_FILE);
+        if(temp.exists()) temp.delete();
+        temp = new File(TEMPORARY_AUDIO_FILE + ".ogg");
+        if(temp.exists()) temp.delete();
     }
 
     public boolean hasEmbeddedVideo() {
@@ -441,72 +671,15 @@ public class PLPToolConnector implements PLPGenericModule {
         controls.setRecordState(false);
         controls.setPlaybackState(false);
         controls.setVisible(true);
+        controls.getAudioPlayer().doStop();
     }
 
-    public String getJSpeexLicense() {
-        String ret = "" +
-"\nLecture Publisher uses JSpeex 0.9.7 which has the following copyright notice:\n" +
-" ******************************************************************************\n" +
-" *                                                                            *\n" +
-" * Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.                   *\n" +
-" *                                                                            *\n" +
-" * COPYRIGHT:                                                                 *\n" +
-" *      This software is the property of Wimba S.A.                           *\n" +
-" *      This software is redistributed under the Xiph.org variant of          *\n" +
-" *      the BSD license.                                                      *\n" +
-" *      Redistribution and use in source and binary forms, with or without    *\n" +
-" *      modification, are permitted provided that the following conditions    *\n" +
-" *      are met:                                                              *\n" +
-" *      - Redistributions of source code must retain the above copyright      *\n" +
-" *      notice, this list of conditions and the following disclaimer.         *\n" +
-" *      - Redistributions in binary form must reproduce the above copyright   *\n" +
-" *      notice, this list of conditions and the following disclaimer in the   *\n" +
-" *      documentation and/or other materials provided with the distribution.  *\n" +
-" *      - Neither the name of Wimba, the Xiph.org Foundation nor the names of *\n" +
-" *      its contributors may be used to endorse or promote products derived   *\n" +
-" *      from this software without specific prior written permission.         *\n" +
-" *                                                                            *\n" +
-" * WARRANTIES:                                                                *\n" +
-" *      This software is made available by the authors in the hope            *\n" +
-" *      that it will be useful, but without any warranty.                     *\n" +
-" *      Wimba S.A. is not liable for any consequence related to the           *\n" +
-" *      use of the provided software.                                         *\n" +
-" *                                                                            *\n" +
-" * Date: 22nd April 2003                                                      *\n" +
-" *                                                                            *\n" +
-" ****************************************************************************** \n" +
-"\n" +
-"   Copyright (C) 2002 Jean-Marc Valin\n" +
-"\n" +
-"   Redistribution and use in source and binary forms, with or without\n" +
-"   modification, are permitted provided that the following conditions\n" +
-"   are met:\n" +
-"   \n" +
-"   - Redistributions of source code must retain the above copyright\n" +
-"   notice, this list of conditions and the following disclaimer.\n" +
-"   \n" +
-"   - Redistributions in binary form must reproduce the above copyright\n" +
-"   notice, this list of conditions and the following disclaimer in the\n" +
-"   documentation and/or other materials provided with the distribution.\n" +
-"   \n" +
-"   - Neither the name of the Xiph.org Foundation nor the names of its\n" +
-"   contributors may be used to endorse or promote products derived from\n" +
-"   this software without specific prior written permission.\n" +
-"   \n" +
-"   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n" +
-"   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n" +
-"   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n" +
-"   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR\n" +
-"   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n" +
-"   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n" +
-"   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\n" +
-"   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\n" +
-"   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n" +
-"   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n" +
-"   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n" +
-"\n" +
-                "";
-        
+    public String getTemporaryAudioFile() {
+        return TEMPORARY_AUDIO_FILE;
+    }
+
+    public String getVorbisJavaLicense() {
+        String ret = "";
         return ret;
     }
 
@@ -519,6 +692,7 @@ public class PLPToolConnector implements PLPGenericModule {
         private AudioFormat audioFormat;
         private TargetDataLine targetDataLine;
         private AudioInputStream audioInputStream;
+        //private OggSpeexWriter speexWriter;
         private File output;
         private boolean ready = false;
 
@@ -531,18 +705,14 @@ public class PLPToolConnector implements PLPGenericModule {
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
             targetDataLine = null;
 
-            try
-            {
-                    targetDataLine = (TargetDataLine) AudioSystem.getLine(info);
-                    targetDataLine.open(audioFormat);
-            } catch (LineUnavailableException e) {
-                    Msg.E("unable to get a recording line",
-                            Constants.PLP_GENERIC_ERROR, this);
-                    e.printStackTrace();
+            try {
+                targetDataLine = (TargetDataLine) AudioSystem.getLine(info);
+                targetDataLine.open(audioFormat);
+            } catch(LineUnavailableException e) {
+                Msg.E("Unable to get a recording line",
+                        Constants.PLP_GENERIC_ERROR, this);
+                e.printStackTrace();
             }
-
-            //AudioFileFormat.Type targetType = AudioFileFormat.Type.WAVE;
-            //AudioFileFormat.Type targetType = SpeexFileFormatType.SPEEX;
             audioInputStream = new AudioInputStream(targetDataLine);
             ready = true;
         }
@@ -551,16 +721,20 @@ public class PLPToolConnector implements PLPGenericModule {
         public void run() {
             targetDataLine.start();
             try {
-                //SpeexAudioFileWriter speexWriter = new SpeexAudioFileWriter();
-                //speexWriter.write(audioInputStream, SpeexFileFormatType.SPEEX,
-                //        new File(PLPToolbox.getConfDir() + "/testspeex.spx"));
-                //(new SpeexAudioFileWriter()).write(audioInputStream, SpeexFileFormatType.SPEEX, output);
                 AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, output);
+                //speexWriter.close();
             } catch(IOException e) {
                 Msg.W("I/O Error during audio recording.", this);
             } catch(Exception e) {
                 Msg.W("General error during audio recording.", this);
+                if(Constants.debugLevel >= 2)
+                    e.printStackTrace();
             }
+            if(!encodeAudio()) {
+                Msg.E("Failed to encode lecture audio with vorbis encoder",
+                      Constants.PLP_GENERIC_ERROR, this);
+            }
+            hasAudioRecord = true;
         }
 
         public boolean isReady() {
@@ -570,7 +744,6 @@ public class PLPToolConnector implements PLPGenericModule {
         public void stopRecording() {
             targetDataLine.stop();
             targetDataLine.close();
-            //JSpeexEnc enc = new JSpeexEnc();
         }
 
         @Override
@@ -589,7 +762,6 @@ public class PLPToolConnector implements PLPGenericModule {
 
         public AudioPlayer(String path) {
             audioFile = new File(path);
-
         }
 
         public void seekTo(long ms) {
@@ -605,7 +777,6 @@ public class PLPToolConnector implements PLPGenericModule {
 
             try {
                 in = AudioSystem.getAudioInputStream(audioFile);
-                //in = (new SpeexAudioFileReader()).getAudioInputStream(new File(PLPToolbox.getConfDir() + "/testspeex.spx"));
             } catch(UnsupportedAudioFileException uafe) {
                 Msg.W("Audio format unsupported.", this);
             } catch(IOException ioe) {
@@ -645,6 +816,12 @@ public class PLPToolConnector implements PLPGenericModule {
             } finally {
                 line.drain();
                 line.close();
+                try {
+                    in.close();
+                } catch(IOException e) {
+                    Msg.W("Unable to close temporary wave file.",
+                          this);
+                }
             }
         }
 
@@ -662,18 +839,16 @@ public class PLPToolConnector implements PLPGenericModule {
         private ProjectDriver plp;
         private ArrayList<ProjectEvent> events;
         private long startTime;
-        private AudioPlayer audioPlayerThread;
         private AudioRecorder audioRecorderThread;
         private String videoURL;
         private Controls controls;
         private boolean stop;
 
         public Runner(ArrayList<ProjectEvent> events, ProjectDriver plp,
-                AudioPlayer audioPlayerThread, AudioRecorder audioRecorderThread,
+                AudioRecorder audioRecorderThread,
                 String videoURL, Controls controls) {
             this.events = events;
             this.plp = plp;
-            this.audioPlayerThread = audioPlayerThread;
             this.audioRecorderThread = audioRecorderThread;
             this.videoURL = videoURL;
             this.controls = controls;
@@ -693,15 +868,22 @@ public class PLPToolConnector implements PLPGenericModule {
                     controls.startVideo();
                     controls.pauseVideo();
                 }
+                if(hasAudioRecord) {
+                    controls.initAudio();
+                    controls.getAudioPlayer().start();
+                    controls.getAudioPlayer().doPause();
+                }
                 controls.setVisible(false);
-                Msg.I("Replay will start in 2 seconds...", this);
-                Thread.sleep(1000);
-                Msg.I("Replay will start in 1 second...", this);
-                Thread.sleep(1000);
+                for(int i = recordDelaySeconds; i > 0; i--) {
+                    Msg.I("Replay will start in " + i + " second" +
+                          (i != 1 ? "s" : "") + "...", this);
+                    Thread.sleep(1000);
+                }
                 Msg.I("Replaying...", this);
                 if(videoURL != null)
                     controls.playVideo();
-                if(audioPlayerThread != null) audioPlayerThread.start();
+                if(hasAudioRecord)
+                    controls.getAudioPlayer().doPlay();
                 if(audioRecorderThread != null && audioRecorderThread.isReady())
                     audioRecorderThread.start();
                 for(int i = 0; i < events.size() && !stop; i++) {
