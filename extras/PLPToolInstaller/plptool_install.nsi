@@ -61,6 +61,13 @@ Section "PLPTool Install (required)"
 	File /oname=rxtxSerial.dll ..\..\reference\sw\PLPTool\store\rxtxSerial32.dll
   ${EndIf}
   
+  CreateDirectory "$INSTDIR\resources"
+  SetOutPath $INSTDIR\resources
+  File "..\..\misc\art\plptool\appicon.ico"
+  File "..\..\misc\art\plptool\terminal.ico"
+  File "..\..\misc\art\plptool\folder.ico"
+  SetOutPath $INSTDIR
+  
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\PLPTool4 "Install_Dir" "$INSTDIR"
   
@@ -84,9 +91,9 @@ SectionEnd
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\PLPTool 4"
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "" "$INSTDIR\PLPToolWin.bat" 0
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLP Serial Terminal.lnk" "$INSTDIR\PLPToolWin.bat" "--serialterminal" 0  
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\Install Directory.lnk" "$INSTDIR" "" 0    
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "" "$INSTDIR\resources\appicon.ico" 0
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLP Serial Terminal.lnk" "$INSTDIR\PLPToolWin.bat" "--serialterminal" "$INSTDIR\resources\terminal.ico" 0  
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\Install Directory.lnk" "$INSTDIR" "" "$INSTDIR\resources\folder.ico" 0    
   CreateShortCut "$SMPROGRAMS\PLPTool 4\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0   
   
 SectionEnd
@@ -123,6 +130,7 @@ Section "Uninstall"
   Delete "$INSTDIR\libplp\*.*"
   Delete "$INSTDIR\examples\*.*"
   Delete "$INSTDIR\hardware\*.*"
+  Delete "$INSTDIR\resources\*.*"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\PLPTool 4\*.*"
@@ -132,6 +140,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\libplp"
   RMDir "$INSTDIR\examples"
   RMDir "$INSTDIR\hardware"
+  RMDir "$INSTDIR\resources"
   RMDir "$INSTDIR"
 
 SectionEnd
