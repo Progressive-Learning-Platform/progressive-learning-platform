@@ -93,7 +93,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\PLPTool 4"
   CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "" "$INSTDIR\resources\appicon.ico" 0
   CreateShortCut "$SMPROGRAMS\PLPTool 4\PLP Serial Terminal.lnk" "$INSTDIR\PLPToolWin.bat" "--serialterminal" "$INSTDIR\resources\terminal.ico" 0  
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\Install Directory.lnk" "$INSTDIR" "" "$INSTDIR\resources\folder.ico" 0    
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\Browse Installation Directory.lnk" "$INSTDIR" "" "$INSTDIR\resources\folder.ico" 0    
   CreateShortCut "$SMPROGRAMS\PLPTool 4\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0   
   
 SectionEnd
