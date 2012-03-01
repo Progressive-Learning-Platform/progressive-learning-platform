@@ -529,65 +529,65 @@ These instructions receive inputs from two registers, do an arithmetic or logica
 <PRE>
 op    $destination_register, $source_register_1, $source_register_2
 </PRE>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode/Function</TD>
 </TR>
 <TR><TD ALIGN="LEFT">addu $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd = rs + rt;</TD>
 <TD ALIGN="LEFT">addu $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned addition</TD>
+<TD ALIGN="LEFT">Unsigned addition</TD>
 <TD ALIGN="LEFT">0x00 / 0x21</TD>
 </TR>
 <TR><TD ALIGN="LEFT">subu $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd = rs - rt;</TD>
 <TD ALIGN="LEFT">subu $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned subtraction</TD>
+<TD ALIGN="LEFT">Unsigned subtraction</TD>
 <TD ALIGN="LEFT">0x00 / 0x23</TD>
 </TR>
 <TR><TD ALIGN="LEFT">and $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd = rs &amp; rt;</TD>
 <TD ALIGN="LEFT">and $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise logical AND</TD>
+<TD ALIGN="LEFT">Bitwise logical AND</TD>
 <TD ALIGN="LEFT">0x00 / 0x24</TD>
 </TR>
 <TR><TD ALIGN="LEFT">or $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd = rs | rt;</TD>
 <TD ALIGN="LEFT">or $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise logical OR</TD>
+<TD ALIGN="LEFT">Bitwise logical OR</TD>
 <TD ALIGN="LEFT">0x00 / 0x25</TD>
 </TR>
 <TR><TD ALIGN="LEFT">nor $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd =&nbsp;(rs | rt);</TD>
 <TD ALIGN="LEFT">nor $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise logical NOR</TD>
+<TD ALIGN="LEFT">Bitwise logical NOR</TD>
 <TD ALIGN="LEFT">0x00 / 0x27</TD>
 </TR>
 <TR><TD ALIGN="LEFT">slt $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd = (rs &lt; rt) ? 1 : 0;</TD>
 <TD ALIGN="LEFT">slt $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Signed compare</TD>
+<TD ALIGN="LEFT">Signed compare</TD>
 <TD ALIGN="LEFT">0x00 / 0x2a</TD>
 </TR>
 <TR><TD ALIGN="LEFT">sltu $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd = (rs &lt; rt) ? 1 : 0;</TD>
 <TD ALIGN="LEFT">sltu $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned compare</TD>
+<TD ALIGN="LEFT">Unsigned compare</TD>
 <TD ALIGN="LEFT">0x00 / 0x2b</TD>
 </TR>
 <TR><TD ALIGN="LEFT">mullo $rd, $rs, $rt</TD>
 <TD ALIGN="LEFT">rd = (rs * rt) &amp; 0xFFFFFFFF;</TD>
 <TD ALIGN="LEFT">mullo $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Multiply (return low order bits)</TD>
+<TD ALIGN="LEFT">Multiply (return low order bits)</TD>
 <TD ALIGN="LEFT">0x00 / 0x10</TD>
 </TR>
 <TR><TD ALIGN="LEFT">mulhi $rd, $rs, $rt</TD>
-<TD ALIGN="LEFT">rd = (rs * rt) &#187;&gt; 32;</TD>
+<TD ALIGN="LEFT">rd = (rs * rt) <code>&gt;&gt;&gt;</code> 32;</TD>
 <TD ALIGN="LEFT">mulhi $v0, $a0, $a1</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Multiply (return high order bits)</TD>
+<TD ALIGN="LEFT">Multiply (return high order bits)</TD>
 <TD ALIGN="LEFT">0x00 / 0x11</TD>
 </TR>
 </TABLE>
@@ -605,23 +605,23 @@ op    $destination_register, $source_register, shift_amount
 Where shift_amount is a 5-bit integer that can be represented in decimal or hex (with 0x prefix). <B>If this value is greater than 5 bits, the assembler will truncate the more significant bit positions beyond the 5th bit place. </B>
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode/Function</TD>
 </TR>
 <TR><TD ALIGN="LEFT">sll $rd, $rt, shamt</TD>
-<TD ALIGN="LEFT">rd = rt &#171; shamt;</TD>
+<TD ALIGN="LEFT">rd = rt <code>&lt;&lt;</code> shamt;</TD>
 <TD ALIGN="LEFT">sll $v0, $a0, 0x12</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Shift $a0 by 18 to the left and store the result in $v0</TD>
+<TD ALIGN="LEFT">Shift $a0 by 18 to the left and store the result in $v0</TD>
 <TD ALIGN="LEFT">0x00 / 0x00</TD>
 </TR>
 <TR><TD ALIGN="LEFT">srl $rd, $rt, shamt</TD>
-<TD ALIGN="LEFT">rd = rt &#187; shamt;</TD>
+<TD ALIGN="LEFT">rd = rt <code>&gt;&gt;</code> shamt;</TD>
 <TD ALIGN="LEFT">srl $v0, $a0, 18</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Shift $a0 by 18 to the right and store the result in $v0</TD>
+<TD ALIGN="LEFT">Shift $a0 by 18 to the right and store the result in $v0</TD>
 <TD ALIGN="LEFT">0x00 / 0x02</TD>
 </TR>
 </TABLE>
@@ -631,23 +631,23 @@ Where shift_amount is a 5-bit integer that can be represented in decimal or hex 
 Jump register loads the content of the specified register $rs into the program counter. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode/Function</TD>
 </TR>
 <TR><TD ALIGN="LEFT">jr $rs</TD>
 <TD ALIGN="LEFT">PC = rs;</TD>
 <TD ALIGN="LEFT">jr $ra</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Load the content of $ra into PC register</TD>
+<TD ALIGN="LEFT">Load the content of $ra into PC register</TD>
 <TD ALIGN="LEFT">0x00 / 0x08</TD>
 </TR>
 <TR><TD ALIGN="LEFT">jalr $rd, $rs</TD>
 <TD ALIGN="LEFT">rd = PC + 4; PC = rs;</TD>
 <TD ALIGN="LEFT">jalr $s5, $t0</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to location specified by the contents of rs, save return address in rd.</TD>
+<TD ALIGN="LEFT">Jump to location specified by the contents of rs, save return address in rd.</TD>
 <TD ALIGN="LEFT">0x00 / 0x09</TD>
 </TR>
 </TABLE>
@@ -668,23 +668,23 @@ op    $source_register_1, $source_register_2, branch_target
 branch_target has to be a valid label in the program. The assembler takes the address of the label and will calculate the branch offset to be put into the immediate_field. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">beq $rt, $rs, label</TD>
 <TD ALIGN="LEFT">if(rt == rs) PC = PC + 4 + imm;</TD>
 <TD ALIGN="LEFT">beq $a0, $a1, done</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Branch to done if $a0 and $a1 are equal</TD>
+<TD ALIGN="LEFT">Branch to done if $a0 and $a1 are equal</TD>
 <TD ALIGN="LEFT">0x04</TD>
 </TR>
 <TR><TD ALIGN="LEFT">bne $rt, $rs, label</TD>
 <TD ALIGN="LEFT">if(rt != rs) PC = PC + 4 + imm;</TD>
 <TD ALIGN="LEFT">bne $a0, $a1, error</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Branch to error if $a0 and $a1 are NOT equal</TD>
+<TD ALIGN="LEFT">Branch to error if $a0 and $a1 are NOT equal</TD>
 <TD ALIGN="LEFT">0x05</TD>
 </TR>
 </TABLE>
@@ -705,41 +705,41 @@ op    $target_register, $source_register, immediate_field
 immediate_field is a 16-bit integer that can be represented in either decimal or hex. <B>If this field is greater than 16 bits, the assembler will truncate the more significant bit positions beyond the 16th place.</B> The processor extends the sign bit of immediate_field to make it a 32-bit number. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">addiu $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = rs + SignExtend(imm);</TD>
 <TD ALIGN="LEFT">addiu $v0, $a0, 0xBEEF</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned addition, add $a0 with 48879</TD>
+<TD ALIGN="LEFT">Unsigned addition, add $a0 with 48879</TD>
 <TD ALIGN="LEFT">0x09</TD>
 </TR>
 <TR><TD ALIGN="LEFT">andi $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = rs &amp; ZeroExtend(imm);</TD>
 <TD ALIGN="LEFT">andi $v0, $a0, 1337</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise Logical AND</TD>
+<TD ALIGN="LEFT">Bitwise Logical AND</TD>
 <TD ALIGN="LEFT">0x0c</TD>
 </TR>
 <TR><TD ALIGN="LEFT">ori $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = rs | ZeroExtend(imm);</TD>
 <TD ALIGN="LEFT">ori $v0, $a0, 0x0539</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Bitwise Logical OR</TD>
+<TD ALIGN="LEFT">Bitwise Logical OR</TD>
 <TD ALIGN="LEFT">0x0d</TD>
 </TR>
 <TR><TD ALIGN="LEFT">slti $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
 <TD ALIGN="LEFT">slti $v0, $a0, 0xDEAD</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Signed compare</TD>
+<TD ALIGN="LEFT">Signed compare</TD>
 <TD ALIGN="LEFT">0x0a</TD>
 </TR>
 <TR><TD ALIGN="LEFT">sltiu $rt, $rs, imm</TD>
 <TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
 <TD ALIGN="LEFT">sltiu $v0, $a0, 0xDEAD</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=85>Unsigned compare</TD>
+<TD ALIGN="LEFT">Unsigned compare</TD>
 <TD ALIGN="LEFT">0x0b</TD>
 </TR>
 </TABLE>
@@ -752,17 +752,17 @@ immediate_field is a 16-bit integer that can be represented in either decimal or
 This instruction loads the immediate field to the upper 2 bytes of the specified target register. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">lui $rt, imm</TD>
 <TD ALIGN="LEFT">rt = imm &#171; 16;</TD>
 <TD ALIGN="LEFT">lui $a0, 0xBEEF</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Write 0xBEEF0000 to $a0 register. Note that the lower 16 bits are filled with zeroes</TD>
+<TD ALIGN="LEFT">Write 0xBEEF0000 to $a0 register. Note that the lower 16 bits are filled with zeroes</TD>
 <TD ALIGN="LEFT">0x0f</TD>
 </TR>
 </TABLE>
@@ -783,23 +783,23 @@ op    $register, immediate_field($offset_register)
 immediate_field is 16-bit wide and sign extended to 32-bit by the processor to resolve the memory address. If immediate_field is larger than 16-bit, it will be truncated by the assembler. $offset_register acts as an index to the memory address, e.g. an index for an array. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">lw $rt, imm($rs)</TD>
 <TD ALIGN="LEFT">rt = SignExtend(imm)[rs];</TD>
 <TD ALIGN="LEFT">lw $v0, 0x4000($a1)</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Load contents of 0x4000 + $a1 into $v0</TD>
+<TD ALIGN="LEFT">Load contents of 0x4000 + $a1 into $v0</TD>
 <TD ALIGN="LEFT">0x23</TD>
 </TR>
 <TR><TD ALIGN="LEFT">sw $rt, imm($rs)</TD>
 <TD ALIGN="LEFT">SignExtend(imm)[rs] = rt;</TD>
 <TD ALIGN="LEFT">sw $a0, 128($v0)</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Store contents of register $a0 to 128 + $v0</TD>
+<TD ALIGN="LEFT">Store contents of register $a0 to 128 + $v0</TD>
 <TD ALIGN="LEFT">0x2b</TD>
 </TR>
 </TABLE>
@@ -820,23 +820,23 @@ op    jump_target
 jump_target has to be a valid label. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">j label</TD>
 <TD ALIGN="LEFT">PC = jump_target;</TD>
 <TD ALIGN="LEFT">j loop</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to loop label</TD>
+<TD ALIGN="LEFT">Jump to loop label</TD>
 <TD ALIGN="LEFT">0x02</TD>
 </TR>
 <TR><TD ALIGN="LEFT">jal label</TD>
 <TD ALIGN="LEFT">ra = PC + 4; PC = jump_target;</TD>
 <TD ALIGN="LEFT">jal read_serial</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to read_serial after saving return address to $ra</TD>
+<TD ALIGN="LEFT">Jump to read_serial after saving return address to $ra</TD>
 <TD ALIGN="LEFT">0x03</TD>
 </TR>
 </TABLE>
@@ -849,38 +849,38 @@ jump_target has to be a valid label.
 The assembler supports a few pseudo-ops to make programming easier. These pseudo-ops are resolved during stage 1 of assembly.
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Pseudo-op</TD>
 <TD ALIGN="LEFT">Equivalent instruction(s)</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 </TR>
 <TR><TD ALIGN="LEFT">nop</TD>
 <TD ALIGN="LEFT">sll $0, $0, 0</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>No-operation. Can be used for branch delay slots</TD>
+<TD ALIGN="LEFT">No-operation. Can be used for branch delay slots</TD>
 </TR>
 <TR><TD ALIGN="LEFT">b label</TD>
 <TD ALIGN="LEFT">beq $0, $0, label</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Branch always to label</TD>
+<TD ALIGN="LEFT">Branch always to label</TD>
 </TR>
 <TR><TD ALIGN="LEFT">move $rd, $rs</TD>
 <TD ALIGN="LEFT">add $rd, $0, $rs</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Copy $rs to $rd</TD>
+<TD ALIGN="LEFT">Copy $rs to $rd</TD>
 </TR>
 <TR><TD ALIGN="LEFT">push $rt</TD>
 <TD ALIGN="LEFT">sw $rt, 0($sp); addiu $sp, $sp, -4</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Push $rt into the stack</TD>
+<TD ALIGN="LEFT">Push $rt into the stack</TD>
 </TR>
 <TR><TD ALIGN="LEFT">pop $rt</TD>
 <TD ALIGN="LEFT">addiu $sp, $sp, 4; lw $rt, 0($sp)</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Pop $rt from the stack</TD>
+<TD ALIGN="LEFT">Pop $rt from the stack</TD>
 </TR>
 <TR><TD ALIGN="LEFT">li $rd, imm</TD>
 <TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Load a 32-bit number to $rd</TD>
+<TD ALIGN="LEFT">Load a 32-bit number to $rd</TD>
 </TR>
 <TR><TD ALIGN="LEFT">li $rd, label</TD>
 <TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Load the address of a label to a register to be used as a pointer.</TD>
+<TD ALIGN="LEFT">Load the address of a label to a register to be used as a pointer.</TD>
 </TR>
 </TABLE>
 
@@ -892,58 +892,58 @@ The assembler supports a few pseudo-ops to make programming easier. These pseudo
 Aside from $zero, $i0, $i1, and $ra, the architecture does not explicitly assign special functions to a register. This section lays down some conventions on how the other registers should be used to prevent data from being clobbered across function calls. All the supplied libraries adhere to this guideline. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Register</TD>
 <TD ALIGN="LEFT">Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$zero</TD>
 <TD ALIGN="LEFT">Constant value 0</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>This register can not be written to and always returns the value 0</TD>
+<TD ALIGN="LEFT">This register can not be written to and always returns the value 0</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$at</TD>
 <TD ALIGN="LEFT">Assembler temporary</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Assembler reserved, do not use</TD>
+<TD ALIGN="LEFT">Assembler reserved, do not use</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$v0 - $v1</TD>
 <TD ALIGN="LEFT">Values for results</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use for return values of functions</TD>
+<TD ALIGN="LEFT">Use for return values of functions</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$a0 - $a3</TD>
 <TD ALIGN="LEFT">Arguments</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use for arguments of functions</TD>
+<TD ALIGN="LEFT">Use for arguments of functions</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$t0 - $t9</TD>
 <TD ALIGN="LEFT">Temporaries</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Do not use these registers across function calls, as they will most likely be clobbered</TD>
+<TD ALIGN="LEFT">Do not use these registers across function calls, as they will most likely be clobbered</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$s0 - $s7</TD>
 <TD ALIGN="LEFT">Saved temporaries</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+<TD ALIGN="LEFT">-</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$i0</TD>
 <TD ALIGN="LEFT">Interrupt vector</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>The CPU jumps to the address pointed by this register when an interrupt occurs</TD>
+<TD ALIGN="LEFT">The CPU jumps to the address pointed by this register when an interrupt occurs</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$i1</TD>
 <TD ALIGN="LEFT">Interrupt return address</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Written by the CPU when an interrupt occurs</TD>
+<TD ALIGN="LEFT">Written by the CPU when an interrupt occurs</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$gp</TD>
 <TD ALIGN="LEFT">Global pointer</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+<TD ALIGN="LEFT">-</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$sp</TD>
 <TD ALIGN="LEFT">Stack pointer</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use this register to implement a stack</TD>
+<TD ALIGN="LEFT">Use this register to implement a stack</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$fp</TD>
 <TD ALIGN="LEFT">Frame pointer</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+<TD ALIGN="LEFT">-</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$ra</TD>
 <TD ALIGN="LEFT">Return address</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction</TD>
+<TD ALIGN="LEFT">Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction</TD>
 </TR>
 </TABLE>
 

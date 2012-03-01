@@ -4,6 +4,7 @@
 \usepackage{html}
 \usepackage[pdftex]{graphicx}
 \usepackage{fullpage}
+\usepackage{tabularx}
 \begin{document}
 \title{User Manual}
 \author{PLP Dev Team\\
@@ -276,7 +277,7 @@ These instructions receive inputs from two registers, do an arithmetic or logica
 \begin{verbatim}
 op    $destination_register, $source_register_1, $source_register_2
 \end{verbatim}
-\begin{tabular}{| l | l | l | p{3cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax	& C Expression & Sample Usage & Notes & Opcode/Function \\
 \hline
@@ -288,9 +289,9 @@ nor \$rd, \$rs, \$rt &	rd = ~(rs | rt); & nor \$v0, \$a0, \$a1 & Bitwise logical
 slt \$rd, \$rs, \$rt &	rd = (rs < rt) ? 1 : 0;	& slt \$v0, \$a0, \$a1 & Signed compare	& 0x00 / 0x2a \\
 sltu \$rd, \$rs, \$rt &	rd = (rs < rt) ? 1 : 0;	& sltu \$v0, \$a0, \$a1	& Unsigned compare & 0x00 / 0x2b \\
 mullo \$rd, \$rs, \$rt & rd = (rs * rt) \& 0xFFFFFFFF; & mullo \$v0, \$a0, \$a1	& Multiply (return low order bits) & 0x00 / 0x10 \\
-mulhi \$rd, \$rs, \$rt & rd = (rs * rt) >>> 32; & mulhi \$v0, \$a0, \$a1 & Multiply (return high order bits) & 0x00 / 0x11 \\
+mulhi \$rd, \$rs, \$rt & rd = (rs * rt) \verb+>>>+ 32; & mulhi \$v0, \$a0, \$a1 & Multiply (return high order bits) & 0x00 / 0x11 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \subsubsection{R-type Shift Instructions}
 PLP supports logical shift left and right instructions. The general syntax is:
 
@@ -300,25 +301,25 @@ op    $destination_register, $source_register, shift_amount
 
 Where shift\_amount is a 5-bit integer that can be represented in decimal or hex (with 0x prefix). \textbf{If this value is greater than 5 bits, the assembler will truncate the more significant bit positions beyond the 5th bit place. }
 
-\begin{tabular}{| l | l | l | p{5cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode/Function \\
 \hline
-sll \$rd, \$rt, shamt & rd = rt << shamt; & sll \$v0, \$a0, 0x12 & Shift \$a0 by 18 to the left and store the result in \$v0 & 0x00 / 0x00 \\
-srl \$rd, \$rt, shamt & rd = rt >> shamt; & srl \$v0, \$a0, 18 & Shift \$a0 by 18 to the right and store the result in \$v0 & 0x00 / 0x02 \\
+sll \$rd, \$rt, shamt & rd = rt \verb+<<+ shamt; & sll \$v0, \$a0, 0x12 & Shift \$a0 by 18 to the left and store the result in \$v0 & 0x00 / 0x00 \\
+srl \$rd, \$rt, shamt & rd = rt \verb+>>+ shamt; & srl \$v0, \$a0, 18 & Shift \$a0 by 18 to the right and store the result in \$v0 & 0x00 / 0x02 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \subsubsection{R-type Jump Register Instructions}
 Jump register loads the content of the specified register \$rs into the program counter. 
 
-\begin{tabular}{| l | l | l | p{5cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode/Function \\
 \hline
 jr \$rs & PC = rs; & jr \$ra & Load the content of \$ra into PC register & 0x00 / 0x08 \\
 jalr \$rd, \$rs & rd = PC + 4; PC = rs; & jalr \$s5, \$t0 & Jump to location specified by the contents of rs, save return address in rd. & 0x00 / 0x09 \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \subsubsection{I-type Branch Instructions}
 The system supports two branch instructions: branch on equal and branch on not equal. Two registers are compared and appropriate action will be taken depending on the result. The general syntax is: 
@@ -329,14 +330,14 @@ op    $source_register_1, $source_register_2, branch_target
 
 branch\_target has to be a valid label in the program. The assembler takes the address of the label and will calculate the branch offset to be put into the immediate\_field. 
 
-\begin{tabular}{| l | l | l | p{3cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode \\
 \hline
 beq \$rt, \$rs, label & if(rt == rs) PC = PC + 4 + imm; & beq \$a0, \$a1, done & Branch to done if \$a0 and \$a1 are equal & 0x04 \\
 bne \$rt, \$rs, label & if(rt != rs) PC = PC + 4 + imm; & bne \$a0, \$a1, error & Branch to error if \$a0 and \$a1 are NOT equal & 0x05 \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \subsubsection{I-type Arithmetic and Logical Instructions}
 These instructions receive inputs from a source register \$rs and the immediate field, and store it in the target register \$rt. The general syntax is: 
@@ -347,7 +348,7 @@ op    $target_register, $source_register, immediate_field
 
 immediate\_field is a 16-bit integer that can be represented in either decimal or hex. \textbf{If this field is greater than 16 bits, the assembler will truncate the more significant bit positions beyond the 16th place.} The processor extends the sign bit of immediate\_field to make it a 32-bit number. 
 
-\begin{tabular}{| l | l | l | p{3cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode \\
 \hline
@@ -357,18 +358,18 @@ ori \$rt, \$rs, imm & rt = rs | ZeroExtend(imm); & ori \$v0, \$a0, 0x0539 & Bitw
 slti \$rt, \$rs, imm & rt = (rs < SignExtend(imm)) ? 1 : 0; & slti \$v0, \$a0, 0xDEAD & Signed compare & 0x0a \\
 sltiu \$rt, \$rs, imm & rt = (rs < SignExtend(imm)) ? 1 : 0; & sltiu \$v0, \$a0, 0xDEAD & Unsigned compare & 0x0b \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \subsubsection{I-type Load Upper Immediate Instruction}
 This instruction loads the immediate field to the upper 2 bytes of the specified target register. 
 
-\begin{tabular}{| l | l | l | p{5cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode \\
 \hline
 lui \$rt, imm & rt = imm << 16; & lui \$a0, 0xBEEF & Write 0xBEEF0000 to \$a0 register. Note that the lower 16 bits are filled with zeroes & 0x0f \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \subsubsection{I-type Load and Store Word Instructions}
 These instructions read or write data from or to memory. The general syntax is: 
@@ -379,14 +380,14 @@ op    $register, immediate_field($offset_register)
 
 immediate\_field is 16-bit wide and sign extended to 32-bit by the processor to resolve the memory address. If immediate\_field is larger than 16-bit, it will be truncated by the assembler. \$offset\_register acts as an index to the memory address, e.g. an index for an array. 
 
-\begin{tabular}{| l | l | l | p{5cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode \\
 \hline
 lw \$rt, imm(\$rs) & rt = SignExtend(imm)[rs]; & lw \$v0, 0x4000(\$a1) & Load contents of 0x4000 + \$a1 into \$v0 & 0x23 \\
 sw \$rt, imm(\$rs) & SignExtend(imm)[rs] = rt; & sw \$a0, 128(\$v0) & Store contents of register \$a0 to 128 + \$v0 & 0x2b \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \subsubsection{J-type Instructions}
 There are two j-type instructions: jump, and jump-and-link. Jump-and-link writes the return address to \$ra when it is called, while jump does not. The syntax is: 
@@ -397,19 +398,19 @@ op    jump_target
 
 jump\_target has to be a valid label. 
 
-\begin{tabular}{| l | l | l | p{5cm} | l |}
+\begin{tabularx}{\linewidth}{|X|X|X|X|X|}
 \hline
 Syntax & C Expression & Sample Usage & Notes & Opcode \\
 \hline
 j label & PC = jump\_target; & j loop & Jump to loop label & 0x02 \\
 jal label & ra = PC + 4; PC = jump\_target; & jal read\_serial & Jump to read\_serial after saving return address to \$ra & 0x03 \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \subsection{Pseudo-ops}
 The assembler supports a few pseudo-ops to make programming easier. These pseudo-ops are resolved during stage 1 of assembly.
 
-\begin{tabular}{| l | l | p{6cm} |}
+\begin{tabularx}{\linewidth}{|X|X|X|}
 \hline
 Pseudo-op  &  Equivalent instruction(s)  &  Notes \\
 \hline
@@ -421,12 +422,12 @@ pop \$rt & addiu \$sp, \$sp, 4; lw \$rt, 0(\$sp) & Pop \$rt from the stack \\
 li \$rd, imm & lui \$rd, (imm \& 0xff00) \verb+>>+ 16; ori \$rd, imm \& 0x00ff & Load a 32-bit number to \$rd \\
 li \$rd, label & lui \$rd, (imm \& 0xff00) \verb+>>+ 16; ori \$rd, imm \& 0x00ff & Load the address of a label to a register to be used as a pointer. \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \subsection{Notes on Register Usage}
 Aside from \$zero, \$i0, \$i1, and \$ra, the architecture does not explicitly assign special functions to a register. This section lays down some conventions on how the other registers should be used to prevent data from being clobbered across function calls. All the supplied libraries adhere to this guideline. 
 
-\begin{tabular}{| l | l | p{8cm} |}
+\begin{tabularx}{\linewidth}{|X|X|X|}
 \hline
 Register & Usage & Notes \\
 \hline
@@ -443,7 +444,7 @@ Register & Usage & Notes \\
 \$fp &	Frame pointer & - \\
 \$ra &	Return address & Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction \\
 \hline
-\end{tabular}
+\end{tabularx}
 
 \section{Hardware Description}
 \subsection{Memory Map}

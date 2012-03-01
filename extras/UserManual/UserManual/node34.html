@@ -60,58 +60,58 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 Aside from $zero, $i0, $i1, and $ra, the architecture does not explicitly assign special functions to a register. This section lays down some conventions on how the other registers should be used to prevent data from being clobbered across function calls. All the supplied libraries adhere to this guideline. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Register</TD>
 <TD ALIGN="LEFT">Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$zero</TD>
 <TD ALIGN="LEFT">Constant value 0</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>This register can not be written to and always returns the value 0</TD>
+<TD ALIGN="LEFT">This register can not be written to and always returns the value 0</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$at</TD>
 <TD ALIGN="LEFT">Assembler temporary</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Assembler reserved, do not use</TD>
+<TD ALIGN="LEFT">Assembler reserved, do not use</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$v0 - $v1</TD>
 <TD ALIGN="LEFT">Values for results</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use for return values of functions</TD>
+<TD ALIGN="LEFT">Use for return values of functions</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$a0 - $a3</TD>
 <TD ALIGN="LEFT">Arguments</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use for arguments of functions</TD>
+<TD ALIGN="LEFT">Use for arguments of functions</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$t0 - $t9</TD>
 <TD ALIGN="LEFT">Temporaries</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Do not use these registers across function calls, as they will most likely be clobbered</TD>
+<TD ALIGN="LEFT">Do not use these registers across function calls, as they will most likely be clobbered</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$s0 - $s7</TD>
 <TD ALIGN="LEFT">Saved temporaries</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+<TD ALIGN="LEFT">-</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$i0</TD>
 <TD ALIGN="LEFT">Interrupt vector</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>The CPU jumps to the address pointed by this register when an interrupt occurs</TD>
+<TD ALIGN="LEFT">The CPU jumps to the address pointed by this register when an interrupt occurs</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$i1</TD>
 <TD ALIGN="LEFT">Interrupt return address</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Written by the CPU when an interrupt occurs</TD>
+<TD ALIGN="LEFT">Written by the CPU when an interrupt occurs</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$gp</TD>
 <TD ALIGN="LEFT">Global pointer</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+<TD ALIGN="LEFT">-</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$sp</TD>
 <TD ALIGN="LEFT">Stack pointer</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Use this register to implement a stack</TD>
+<TD ALIGN="LEFT">Use this register to implement a stack</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$fp</TD>
 <TD ALIGN="LEFT">Frame pointer</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>-</TD>
+<TD ALIGN="LEFT">-</TD>
 </TR>
 <TR><TD ALIGN="LEFT">$ra</TD>
 <TD ALIGN="LEFT">Return address</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=227>Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction</TD>
+<TD ALIGN="LEFT">Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction</TD>
 </TR>
 </TABLE>
 
