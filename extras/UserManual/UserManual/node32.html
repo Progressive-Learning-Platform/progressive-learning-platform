@@ -68,23 +68,23 @@ op    jump_target
 jump_target has to be a valid label. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">j label</TD>
 <TD ALIGN="LEFT">PC = jump_target;</TD>
 <TD ALIGN="LEFT">j loop</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to loop label</TD>
+<TD ALIGN="LEFT">Jump to loop label</TD>
 <TD ALIGN="LEFT">0x02</TD>
 </TR>
 <TR><TD ALIGN="LEFT">jal label</TD>
 <TD ALIGN="LEFT">ra = PC + 4; PC = jump_target;</TD>
 <TD ALIGN="LEFT">jal read_serial</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to read_serial after saving return address to $ra</TD>
+<TD ALIGN="LEFT">Jump to read_serial after saving return address to $ra</TD>
 <TD ALIGN="LEFT">0x03</TD>
 </TR>
 </TABLE>

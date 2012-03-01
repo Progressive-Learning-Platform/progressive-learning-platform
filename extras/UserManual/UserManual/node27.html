@@ -61,23 +61,23 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 Jump register loads the content of the specified register $rs into the program counter. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode/Function</TD>
 </TR>
 <TR><TD ALIGN="LEFT">jr $rs</TD>
 <TD ALIGN="LEFT">PC = rs;</TD>
 <TD ALIGN="LEFT">jr $ra</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Load the content of $ra into PC register</TD>
+<TD ALIGN="LEFT">Load the content of $ra into PC register</TD>
 <TD ALIGN="LEFT">0x00 / 0x08</TD>
 </TR>
 <TR><TD ALIGN="LEFT">jalr $rd, $rs</TD>
 <TD ALIGN="LEFT">rd = PC + 4; PC = rs;</TD>
 <TD ALIGN="LEFT">jalr $s5, $t0</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Jump to location specified by the contents of rs, save return address in rd.</TD>
+<TD ALIGN="LEFT">Jump to location specified by the contents of rs, save return address in rd.</TD>
 <TD ALIGN="LEFT">0x00 / 0x09</TD>
 </TR>
 </TABLE>

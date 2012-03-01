@@ -29,7 +29,9 @@ Implicit mode ON; LaTeX internals redefined
 (/usr/share/texmf/tex/latex/graphics/trig.sty)
 (/usr/share/texmf/tex/latex/config/graphics.cfg)
 (/usr/share/texmf/tex/latex/pdftex-def/pdftex.def)))
-(/usr/share/texmf/tex/latex/preprint/fullpage.sty) (./UserManual.aux)
+(/usr/share/texmf/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf/tex/latex/tools/tabularx.sty
+(/usr/share/texmf/tex/latex/tools/array.sty)) (./UserManual.aux)
 (/usr/share/texmf/tex/latex/hyperref/nameref.sty
 (/usr/share/texmf/tex/latex/oberdiek/refcount.sty)) (./UserManual.out)
 (./UserManual.out) [1{/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}]
@@ -39,59 +41,104 @@ Implicit mode ON; LaTeX internals redefined
 /plptool30_editor_view.png>]
 <../../images/plptool/plptool30_simulation_mode.png, id=269, 860.21375pt x 538.
 01pt> <use ../../images/plptool/plptool30_simulation_mode.png>
-Overfull \hbox (44.04076pt too wide) in paragraph at lines 119--123
+Overfull \hbox (44.04076pt too wide) in paragraph at lines 120--124
 \OT1/cmr/m/n/10 ac-tu-ally an in-struc-tion present. Double-click on an ex-ist-
 ing break-point to clear it, or use []\OT1/cmtt/m/n/10 Tools -> Clear Breakpoin
 ts
 [5 <../../images/plptool/plptool30_simulation_mode.png>] [6] [7]
-Underfull \hbox (badness 4779) in paragraph at lines 284--284
-[]\OT1/cmr/m/n/10 Unsigned sub-trac-
+Underfull \hbox (badness 10000) in paragraph at lines 294--294
+[]|\OT1/cmr/m/n/10 Bitwise log-i-cal
 
-Underfull \hbox (badness 10000) in paragraph at lines 285--285
-[]\OT1/cmr/m/n/10 Bitwise log-i-cal
+Underfull \hbox (badness 10000) in paragraph at lines 294--294
+[]|\OT1/cmr/m/n/10 Bitwise log-i-cal
 
-Underfull \hbox (badness 10000) in paragraph at lines 287--287
-[]\OT1/cmr/m/n/10 Bitwise log-i-cal
+Underfull \hbox (badness 6141) in paragraph at lines 294--294
+[]|\OT1/cmr/m/n/10 mullo $v0, $a0,
 
-Underfull \hbox (badness 10000) in paragraph at lines 290--290
-[]\OT1/cmr/m/n/10 Multiply (re-turn
+Underfull \hbox (badness 10000) in paragraph at lines 294--294
+[]|\OT1/cmr/m/n/10 Multiply (re-turn
 
-Underfull \hbox (badness 10000) in paragraph at lines 291--291
-[]\OT1/cmr/m/n/10 Multiply (re-turn
+LaTeX Warning: \verb may be unreliable inside tabularx on input line 294.
 
-Overfull \hbox (57.13199pt too wide) in paragraph at lines 279--294
-[] 
 
-Overfull \hbox (41.89836pt too wide) in paragraph at lines 303--311
-[][] 
+Underfull \hbox (badness 5475) in paragraph at lines 294--294
+[]|\OT1/cmr/m/n/10 mulhi $v0, $a0,
+
+Underfull \hbox (badness 10000) in paragraph at lines 294--294
+[]|\OT1/cmr/m/n/10 Multiply (re-turn
 [8]
-Overfull \hbox (24.34271pt too wide) in paragraph at lines 314--322
-[][] 
+Underfull \hbox (badness 6428) in paragraph at lines 322--322
+\OT1/cmr/m/n/10 spec-i-fied by the
 
-Underfull \hbox (badness 3199) in paragraph at lines 336--336
+Underfull \hbox (badness 1377) in paragraph at lines 340--340
 \OT1/cmr/m/n/10 $a0 and $a1 are
 
-Underfull \hbox (badness 3199) in paragraph at lines 337--337
+Underfull \hbox (badness 1377) in paragraph at lines 340--340
 \OT1/cmr/m/n/10 $a0 and $a1 are
-
-Overfull \hbox (22.2984pt too wide) in paragraph at lines 332--340
-[][] 
-
-Underfull \hbox (badness 10000) in paragraph at lines 355--355
-[]\OT1/cmr/m/n/10 Bitwise Log-i-cal
-
-Overfull \hbox (62.63197pt too wide) in paragraph at lines 350--361
-[][] 
 [9]
-Overfull \hbox (43.20401pt too wide) in paragraph at lines 382--390
-[][] 
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 addiu $rt, $rs,
 
-Overfull \hbox (8.16495pt too wide) in paragraph at lines 400--408
-[][] 
+Underfull \hbox (badness 5802) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 addiu $v0, $a0,
 
-Overfull \hbox (27.93428pt too wide) in paragraph at lines 412--425
-[][] 
-[10] [11] [12] [13] <../../images/GPIO.png, id=312, 214.8025pt x 258.9675pt>
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 Unsigned ad-di-
+
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 andi $v0, $a0,
+
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 Bitwise Log-i-cal
+
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 ori $v0, $a0,
+
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 Bitwise Log-i-cal
+
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 slti $v0, $a0,
+
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
+[]|\OT1/cmr/m/n/10 sltiu $v0, $a0,
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--372
+[]|\OT1/cmr/m/n/10 Write
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--372
+\OT1/cmr/m/n/10 0xBEEF0000
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--372
+\OT1/cmr/m/n/10 to $a0 reg-is-ter.
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--372
+\OT1/cmr/m/n/10 Note that the
+
+Underfull \hbox (badness 10000) in paragraph at lines 390--390
+[]|\OT1/cmr/m/n/10 rt = SignEx-
+
+Underfull \hbox (badness 10000) in paragraph at lines 390--390
+[]|\OT1/cmr/m/n/10 lw $v0,
+
+Underfull \hbox (badness 1817) in paragraph at lines 390--390
+[]|\OT1/cmr/m/n/10 Load con-tents of
+
+Overfull \hbox (9.58478pt too wide) in paragraph at lines 390--390
+[]|\OT1/cmr/m/n/10 SignExtend(imm)[rs]
+
+Underfull \hbox (badness 1264) in paragraph at lines 390--390
+[]|\OT1/cmr/m/n/10 Store con-tents of
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 408--408
+[]|\OT1/cmr/m/n/10 Jump to
+
+Underfull \hbox (badness 10000) in paragraph at lines 408--408
+\OT1/cmr/m/n/10 read[]serial af-
+
+Underfull \hbox (badness 1377) in paragraph at lines 408--408
+\OT1/cmr/m/n/10 ter sav-ing re-turn
+[11] [12] [13] <../../images/GPIO.png, id=312, 214.8025pt x 258.9675pt>
 <use ../../images/GPIO.png> [14 <../../images/GPIO.png>] [15]
 <../../images/sseg.png, id=322, 200.75pt x 249.93375pt>
 <use ../../images/sseg.png> [16 <../../images/sseg.png (PNG copy)>] [17]
@@ -102,7 +149,7 @@ usr/share/texmf/fonts/type1/bluesky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1
 /bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/
 share/texmf/fonts/type1/bluesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/blue
 sky/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmtt10.pfb>
-Output written on UserManual.pdf (18 pages, 289172 bytes).
+Output written on UserManual.pdf (18 pages, 287093 bytes).
 Transcript written on UserManual.log.
 This is LaTeX2HTML Version 2008 (1.71)
 by Nikos Drakos, Computer Based Learning Unit, University of Leeds.
@@ -124,7 +171,7 @@ Cannot create directory UserManual/: File exists, reusing it.
 Reusing directory UserManual/:
 
 Note: Working directory is /home/will/Development/progressive-learning-platform/extras/UserManual/UserManual
-Note: Images will be generated in /tmp/l2h15068
+Note: Images will be generated in /tmp/l2h15643
 
 
 
@@ -145,7 +192,7 @@ Translating ...
 0/50:top of UserManual: for UserManual.html
 
  *** translating preamble ***
-.......
+........
  *** preamble done ***
 ;.....;..
 
@@ -329,7 +376,7 @@ OPENING /home/will/Development/progressive-learning-platform/extras/UserManual/U
 Cannot create directory UserManualSingle/: File exists, reusing it.
 
 Note: Working directory is /home/will/Development/progressive-learning-platform/extras/UserManual/UserManualSingle
-Note: Images will be generated in /tmp/l2h15082
+Note: Images will be generated in /tmp/l2h15658
 
 
 
@@ -350,7 +397,7 @@ Translating ...
 0/50:top of UserManual: for UserManual.html
 
  *** translating preamble ***
-.......
+........
  *** preamble done ***
 ;.....;..
 
@@ -506,7 +553,6 @@ Translating ...
 
 Doing section links ....,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 Doing table of contents .....
- *** Adding document-specific styles *** 
 
 *********** WARNINGS ***********  
 No implementation found for style `parskip'

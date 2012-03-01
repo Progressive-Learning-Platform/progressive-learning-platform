@@ -69,23 +69,23 @@ op    $register, immediate_field($offset_register)
 immediate_field is 16-bit wide and sign extended to 32-bit by the processor to resolve the memory address. If immediate_field is larger than 16-bit, it will be truncated by the assembler. $offset_register acts as an index to the memory address, e.g. an index for an array. 
 
 <P>
-<TABLE CELLPADDING=3 BORDER="1">
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
 <TR><TD ALIGN="LEFT">Syntax</TD>
 <TD ALIGN="LEFT">C Expression</TD>
 <TD ALIGN="LEFT">Sample Usage</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Notes</TD>
+<TD ALIGN="LEFT">Notes</TD>
 <TD ALIGN="LEFT">Opcode</TD>
 </TR>
 <TR><TD ALIGN="LEFT">lw $rt, imm($rs)</TD>
 <TD ALIGN="LEFT">rt = SignExtend(imm)[rs];</TD>
 <TD ALIGN="LEFT">lw $v0, 0x4000($a1)</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Load contents of 0x4000 + $a1 into $v0</TD>
+<TD ALIGN="LEFT">Load contents of 0x4000 + $a1 into $v0</TD>
 <TD ALIGN="LEFT">0x23</TD>
 </TR>
 <TR><TD ALIGN="LEFT">sw $rt, imm($rs)</TD>
 <TD ALIGN="LEFT">SignExtend(imm)[rs] = rt;</TD>
 <TD ALIGN="LEFT">sw $a0, 128($v0)</TD>
-<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Store contents of register $a0 to 128 + $v0</TD>
+<TD ALIGN="LEFT">Store contents of register $a0 to 128 + $v0</TD>
 <TD ALIGN="LEFT">0x2b</TD>
 </TR>
 </TABLE>
