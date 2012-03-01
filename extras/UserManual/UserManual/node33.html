@@ -58,10 +58,76 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <H2><A NAME="SECTION00053000000000000000">
 4.3 Pseudo-ops</A>
 </H2>
-<BR><HR>
+The assembler supports a few pseudo-ops to make programming easier. These pseudo-ops are resolved during stage 1 of assembly.
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Pseudo-op</TD>
+<TD ALIGN="LEFT">Equivalent instruction(s)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Notes</TD>
+</TR>
+<TR><TD ALIGN="LEFT">nop</TD>
+<TD ALIGN="LEFT">sll $0, $0, 0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>No-operation. Can be used for branch delay slots</TD>
+</TR>
+<TR><TD ALIGN="LEFT">b label</TD>
+<TD ALIGN="LEFT">beq $0, $0, label</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Branch always to label</TD>
+</TR>
+<TR><TD ALIGN="LEFT">move $rd, $rs</TD>
+<TD ALIGN="LEFT">add $rd, $0, $rs</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Copy $rs to $rd</TD>
+</TR>
+<TR><TD ALIGN="LEFT">push $rt</TD>
+<TD ALIGN="LEFT">sw $rt, 0($sp); addiu $sp, $sp, -4</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Push $rt into the stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">pop $rt</TD>
+<TD ALIGN="LEFT">addiu $sp, $sp, 4; lw $rt, 0($sp)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Pop $rt from the stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">li $rd, imm</TD>
+<TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Load a 32-bit number to $rd</TD>
+</TR>
+<TR><TD ALIGN="LEFT">li $rd, label</TD>
+<TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Load the address of a label to a register to be used as a pointer.</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html520"
+  HREF="node34.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html516"
+  HREF="node12.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html510"
+  HREF="node32.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html518"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html521"
+  HREF="node34.html">4.4 Notes on Register</A>
+<B> Up:</B> <A NAME="tex2html517"
+  HREF="node12.html">4 Instruction Set and</A>
+<B> Previous:</B> <A NAME="tex2html511"
+  HREF="node32.html">4.2.8 J-type Instructions</A>
+ &nbsp; <B>  <A NAME="tex2html519"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
 <ADDRESS>
 will
-2012-02-08
+2012-02-29
 </ADDRESS>
 </BODY>
 </HTML>

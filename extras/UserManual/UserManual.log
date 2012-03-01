@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.1)  8 FEB 2012 21:27
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.1.24)  29 FEB 2012 22:57
 entering extended mode
  %&-line parsing enabled.
 **UserManual.tex
@@ -273,40 +273,45 @@ Overfull \hbox (8.16495pt too wide) in paragraph at lines 400--408
 [][] 
  []
 
-[10] [11] [12] <../../images/GPIO.png, id=307, 214.8025pt x 258.9675pt>
+
+Overfull \hbox (27.93428pt too wide) in paragraph at lines 412--425
+[][] 
+ []
+
+[10] [11] [12] [13] <../../images/GPIO.png, id=312, 214.8025pt x 258.9675pt>
 File: ../../images/GPIO.png Graphic file (type png)
 
-<use ../../images/GPIO.png> [13] [14 <../../images/GPIO.png>]
-<../../images/sseg.png, id=318, 200.75pt x 249.93375pt>
+<use ../../images/GPIO.png> [14 <../../images/GPIO.png>] [15]
+<../../images/sseg.png, id=322, 200.75pt x 249.93375pt>
 File: ../../images/sseg.png Graphic file (type png)
 
-<use ../../images/sseg.png> [15 <../../images/sseg.png (PNG copy)>] [16]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 718.
+<use ../../images/sseg.png> [16 <../../images/sseg.png (PNG copy)>] [17]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 734.
 
 
 (/usr/share/texmf/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 718.
- [17] (./UserManual.aux) ) 
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 734.
+ [18] (./UserManual.aux) ) 
 Here is how much of TeX's memory you used:
- 2899 strings out of 256216
- 40460 string characters out of 1917073
- 99075 words of memory out of 1500000
+ 2900 strings out of 256216
+ 40467 string characters out of 1917072
+ 100075 words of memory out of 1500000
  6107 multiletter control sequences out of 10000+200000
  8063 words of font info for 29 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
- 25i,9n,36p,591b,423s stack positions out of 5000i,500n,6000p,200000b,15000s
+ 25i,9n,36p,591b,342s stack positions out of 5000i,500n,6000p,200000b,15000s
 </usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pfb><
 /usr/share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type
 1/bluesky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb></us
 r/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/share/texmf/fonts/type1/bl
 uesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/sh
 are/texmf/fonts/type1/bluesky/cm/cmtt10.pfb>
-Output written on UserManual.pdf (17 pages, 286507 bytes).
+Output written on UserManual.pdf (18 pages, 289172 bytes).
 PDF statistics:
- 375 PDF objects out of 1000 (max. 8388607)
- 72 named destinations out of 1000 (max. 131072)
+ 381 PDF objects out of 1000 (max. 8388607)
+ 73 named destinations out of 1000 (max. 131072)
  397 words of extra memory for PDF output out of 10000 (max. 10000000)
 
