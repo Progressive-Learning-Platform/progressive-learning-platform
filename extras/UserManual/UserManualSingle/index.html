@@ -846,6 +846,45 @@ jump_target has to be a valid label.
 <H2><A NAME="SECTION00053000000000000000">
 4.3 Pseudo-ops</A>
 </H2>
+The assembler supports a few pseudo-ops to make programming easier. These pseudo-ops are resolved during stage 1 of assembly.
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Pseudo-op</TD>
+<TD ALIGN="LEFT">Equivalent instruction(s)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Notes</TD>
+</TR>
+<TR><TD ALIGN="LEFT">nop</TD>
+<TD ALIGN="LEFT">sll $0, $0, 0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>No-operation. Can be used for branch delay slots</TD>
+</TR>
+<TR><TD ALIGN="LEFT">b label</TD>
+<TD ALIGN="LEFT">beq $0, $0, label</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Branch always to label</TD>
+</TR>
+<TR><TD ALIGN="LEFT">move $rd, $rs</TD>
+<TD ALIGN="LEFT">add $rd, $0, $rs</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Copy $rs to $rd</TD>
+</TR>
+<TR><TD ALIGN="LEFT">push $rt</TD>
+<TD ALIGN="LEFT">sw $rt, 0($sp); addiu $sp, $sp, -4</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Push $rt into the stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">pop $rt</TD>
+<TD ALIGN="LEFT">addiu $sp, $sp, 4; lw $rt, 0($sp)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Pop $rt from the stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">li $rd, imm</TD>
+<TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Load a 32-bit number to $rd</TD>
+</TR>
+<TR><TD ALIGN="LEFT">li $rd, label</TD>
+<TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=170>Load the address of a label to a register to be used as a pointer.</TD>
+</TR>
+</TABLE>
+
+<P>
 
 <H2><A NAME="SECTION00054000000000000000">
 4.4 Notes on Register Usage</A>
@@ -1506,7 +1545,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>UserManual.tex -show_section_numbers -split 0 -dir UserManualSingle</TT>
 <P>
-The translation was initiated by will on 2012-02-08<HR>
+The translation was initiated by will on 2012-02-29<HR>
 <!--Navigation Panel-->
 <IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
  SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
@@ -1518,7 +1557,7 @@ The translation was initiated by will on 2012-02-08<HR>
 <!--End of Navigation Panel-->
 <ADDRESS>
 will
-2012-02-08
+2012-02-29
 </ADDRESS>
 </BODY>
 </HTML>

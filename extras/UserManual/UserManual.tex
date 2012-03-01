@@ -407,6 +407,22 @@ jal label & ra = PC + 4; PC = jump\_target; & jal read\_serial & Jump to read\_s
 \end{tabular}
 
 \subsection{Pseudo-ops}
+The assembler supports a few pseudo-ops to make programming easier. These pseudo-ops are resolved during stage 1 of assembly.
+
+\begin{tabular}{| l | l | p{6cm} |}
+\hline
+Pseudo-op  &  Equivalent instruction(s)  &  Notes \\
+\hline
+nop & sll \$0, \$0, 0 & No-operation. Can be used for branch delay slots \\
+b label & beq \$0, \$0, label & Branch always to label \\
+move \$rd, \$rs & add \$rd, \$0, \$rs & Copy \$rs to \$rd \\
+push \$rt & sw \$rt, 0(\$sp); addiu \$sp, \$sp, -4 & Push \$rt into the stack \\
+pop \$rt & addiu \$sp, \$sp, 4; lw \$rt, 0(\$sp) & Pop \$rt from the stack \\
+li \$rd, imm & lui \$rd, (imm \& 0xff00) \verb+>>+ 16; ori \$rd, imm \& 0x00ff & Load a 32-bit number to \$rd \\
+li \$rd, label & lui \$rd, (imm \& 0xff00) \verb+>>+ 16; ori \$rd, imm \& 0x00ff & Load the address of a label to a register to be used as a pointer. \\
+\hline
+\end{tabular}
+
 \subsection{Notes on Register Usage}
 Aside from \$zero, \$i0, \$i1, and \$ra, the architecture does not explicitly assign special functions to a register. This section lays down some conventions on how the other registers should be used to prevent data from being clobbered across function calls. All the supplied libraries adhere to this guideline. 
 
