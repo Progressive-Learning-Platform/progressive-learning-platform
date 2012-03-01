@@ -13,6 +13,8 @@ package plptool.mips.visualizer;
 import plptool.gui.ProjectDriver;
 import plptool.*;
 import plptool.mips.*;
+import java.util.Arrays;
+
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -59,6 +61,9 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     private Layout<String, String> layout;
     private VisualizationViewer<String,String> progVisServ;
     private vertexRecolor<String> vertexRecolor;
+
+    private String currentLabel;
+    private String jrTargetLabel;
 
     // changes the color of drawn vertices
     protected final class vertexRecolor<String> implements Transformer<String,Paint>{
@@ -145,6 +150,15 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     public void vert_unpaint(String vertexName){
         vertexRecolor.unPaintMe(vertexName);
     }
+    private String getFunction(long currentAddress){
+        plptool.mips.Formatter progFormat = new plptool.mips.Formatter();
+        long objTable[] = plp.asm.getObjectCode();
+        long addrTable[] = plp.asm.getAddrTable();
+        int index = Arrays.binarySearch(addrTable, currentAddress);
+        String instrStr = progFormat.mipsInstrStr(objTable[index]);
+        String instrArray[]=instrStr.split(" ");
+        return instrArray[0];
+    }
 
     // called by SimCoreGUI when there's a GUI update in simulation
     public void updateComponents() {
@@ -152,15 +166,47 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         Msg.M("Current Address: " + currentAddress);
         //currentAddress -= 4;
         //Msg.M("Current Address - 4: " + currentAddress);
-        String currentLabel = plp.asm.lookupLabel(currentAddress);
+        String testLabel = plp.asm.lookupLabel(currentAddress);
         Msg.M("currentLabel: " + currentLabel);
-        if(currentLabel != null){
+        if(testLabel != null){
+            currentLabel = testLabel;
             this.vert_repaint(currentLabel);
+        }
+        String function = getFunction(currentAddress);
+        Msg.M(function);
+        if(function.equals("jal")){
+            Msg.M("JUMP AND LINK YALL");
+            jrTargetLabel = currentLabel;
+            Msg.M("jr Target: " + jrTargetLabel);
+        }
+        if(function.equals("jr")){
+            currentLabel = jrTargetLabel;
+            this.vert_repaint(jrTargetLabel);
         }
         //this.vert_unpaint("Begin");
         this.repaint();
     }
-
+    /*
+    public class progVisUpdateThread extends Thread {
+        private ProgramVisualizationFrame progVisFrame;
+        public progVisUpdateThread(ProgramVisualizationFrame progVisFrame){
+            this.progVisFrame = progVisFrame;
+        }
+        public void run(){
+            long currentAddress = plp.sim.visibleAddr;
+            Msg.M("Current Address: " + currentAddress);
+            //currentAddress -= 4;
+            //Msg.M("Current Address - 4: " + currentAddress);
+            String currentLabel = plp.asm.lookupLabel(currentAddress);
+            Msg.M("currentLabel: " + currentLabel);
+            if(currentLabel != null){
+                progVisFrame.vert_repaint(currentLabel);
+            }
+            //this.vert_unpaint("Begin");
+            progVisFrame.repaint();
+        }
+    }
+    */
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

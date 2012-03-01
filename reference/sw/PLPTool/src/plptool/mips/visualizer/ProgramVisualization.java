@@ -68,7 +68,6 @@ public class ProgramVisualization {
 
         //Msg.M(progformat.mipsInstrStr(obj_table[0]));
 
-
         for(int addindex=0; addindex < addr_table.length; addindex++){
             instr_str=progformat.mipsInstrStr(obj_table[addindex]);
             instr_array=instr_str.split(" ");
@@ -121,7 +120,11 @@ public class ProgramVisualization {
     public final class programGraph{
         // instance field
         //private JGraphModelAdapter<String, DefaultEdge> jgAdapter;
-        
+        private long[] addr_table;
+        private long[] obj_table;
+        private ArrayList<String> vertices;
+        private String currentLabel;
+        private String previousLabel;
         //methods
         public void initGraph(){
             //ProgramVisualization.programGraph graph = new programGraph();
@@ -130,38 +133,14 @@ public class ProgramVisualization {
             //Forest<String, String> programGraph = buildGraph();
             //Msg.M(programGraph.toString());
         }
-        //construct the graph
-        public DirectedOrderedSparseMultigraph<String, String> buildGraph(){
-        //public DelegateForest<String, String> buildGraph(){
-
-            plptool.mips.Formatter progformat = new plptool.mips.Formatter();
-            //plp.assemble();
-            //String label;
-            String instr_str;
-            String instr_array[];
-            String currentLabel;
-            String previousLabel;
-            String testLabel;
-            int jump_index;
-            int branch_index;
-            int previousVertex;
-            long branch_imm;
-            ArrayList<String> vertices = new ArrayList<String>();
-
-            DirectedOrderedSparseMultigraph<String, String> progGraph = new DirectedOrderedSparseMultigraph<String, String>();
-            //DelegateForest<String, String> progGraph = new DelegateForest<String, String>();
-
-            long[] addr_table = asm.getAddrTable();
-            long[] obj_table = asm.getObjectCode();
-
-            //vertices.add("Begin");
-            previousVertex=0;
-            //progGraph.addVertex(vertices.get(vertices.size()-1));
-            //Msg.M(vertices.get(0));
-            //progGraph.addVertex(vertices.get(0));
-
-            // add labels first
-            //previousLabel=vertices.get(0);
+        // populates address & object code tables for the program
+        // used to build the graph object
+        private void buildTables(){
+            addr_table = asm.getAddrTable();
+            obj_table = asm.getObjectCode();            
+        }
+        // add every program label as a vertex to the graph
+        private void addLabels(DirectedOrderedSparseMultigraph<String,String> progGraph){
             for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
                 currentLabel=asm.lookupLabel(addr_table[addindex1]);
                 if(currentLabel!=null){
@@ -172,10 +151,22 @@ public class ProgramVisualization {
                     //previousLabel=currentLabel;
                 }
             }
-            //progGraph.addVertex("End");
-            //Msg.M(progGraph.toString());
-            //progGraph.addEdge("FIGHT", "Begin", "start", EdgeType.DIRECTED);
+        }
+        // add all the jumps/branches/traversals between labels
+        // to the graph object as edges
+        private void addEdges(DirectedOrderedSparseMultigraph<String,String> progGraph){
+            String instr_str;
+            String instr_array[];
+            String testLabel;
+            String jumpTargetLabel;
+            String jalTargetLabel;
+            int jump_index;
+            int branch_index;
+            int previousVertex;
+            long branch_imm;
+            plptool.mips.Formatter progformat = new plptool.mips.Formatter();
             // add edges
+            previousVertex=0;
             previousLabel=vertices.get(0);
             currentLabel=vertices.get(1);
             //Msg.M("previous1: " + previousLabel);
@@ -193,9 +184,9 @@ public class ProgramVisualization {
                     //vertices.add("jal " + asm.lookupLabel(addr_table[jump_index]));
                     //Msg.M(vertices.get(vertices.size()-1));
                     //progGraph.addVertex(vertices.get(vertices.size()-1));
-                    currentLabel=asm.lookupLabel(addr_table[jump_index]);
-                    //progGraph.addEdge("jal" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
-                    //progGraph.addEdge("jr" + addindex, currentLabel, previousLabel, EdgeType.DIRECTED);
+                    jalTargetLabel=asm.lookupLabel(addr_table[jump_index]);
+                    progGraph.addEdge("jal" + addindex, currentLabel, jalTargetLabel, EdgeType.DIRECTED);
+                    //progGraph.addEdge("jr" + addindex, jalTargetLabel, currentLabel, EdgeType.DIRECTED);
                 }
 
                 if(instr_array[0].equals("j")){
@@ -204,10 +195,10 @@ public class ProgramVisualization {
                     //Msg.M(vertices.get(vertices.size()-1));
                     //progGraph.addVertex(vertices.get(vertices.size()-1));
                     //progGraph.addEdge(vertices.get(previousVertex) + " to " + vertices.get(vertices.size()-1), vertices.get(previousVertex), vertices.get(vertices.size()-1), EdgeType.DIRECTED);
-                    currentLabel=asm.lookupLabel(addr_table[jump_index]);
+                    jumpTargetLabel=asm.lookupLabel(addr_table[jump_index]);
                     //Msg.M("previous: " + previousLabel);
                     //Msg.M("current: " + currentLabel);
-                    progGraph.addEdge("j" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    progGraph.addEdge("j" + addindex, currentLabel, jumpTargetLabel, EdgeType.DIRECTED);
                 }
 
                 if(instr_array[0].equals("beq")){
@@ -223,6 +214,16 @@ public class ProgramVisualization {
                 }
                 previousLabel=currentLabel;
             }
+        }
+        //construct the graph
+        public DirectedOrderedSparseMultigraph<String, String> buildGraph(){
+            vertices = new ArrayList<String>();
+            DirectedOrderedSparseMultigraph<String, String> progGraph = new DirectedOrderedSparseMultigraph<String, String>();
+
+            buildTables();
+            addLabels(progGraph);
+            addEdges(progGraph);
+            //Msg.M(progGraph.toString());
             return progGraph;
         }
     }
