@@ -26,6 +26,7 @@ import plptool.gui.ProjectEvent;
 import plptool.Constants;
 import plptool.PLPAsmSource;
 import plptool.PLPToolbox;
+import plptool.gui.PLPToolApp;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -65,6 +66,9 @@ public class PLPToolConnector implements PLPGenericModule {
     private boolean hasAudioRecord = false;
     private ProjectDriver plp = null;
     private ArrayList<ProjectEvent> events;
+
+    // Runtime options
+    private boolean novideo = false;
 
     private ArrayList<PLPAsmSource> snapshot_Asms;
     private int snapshot_OpenAsm;
@@ -145,6 +149,14 @@ public class PLPToolConnector implements PLPGenericModule {
         //paintOverlay.attachToIDE();
         paintOverlay.repaint();
         plp.g_dev.addToolsItem(menuDevShowFrame);
+        String opt = PLPToolApp.getAttributes().get("lecturepublisher_novideo");
+        if(opt != null && opt.equals("true")) {
+            novideo = true;
+        }
+        opt = PLPToolApp.getAttributes().get("lecturepublisher_showoninit");
+        if(opt != null && opt.equals("true")) {
+            hook("show");
+        }
 
         return param;
     }
@@ -717,6 +729,7 @@ public class PLPToolConnector implements PLPGenericModule {
         //private OggSpeexWriter speexWriter;
         private File output;
         private boolean ready = false;
+        private boolean done = false;
 
         public AudioRecorder(String path) {
             output = new File(path);
@@ -734,6 +747,10 @@ public class PLPToolConnector implements PLPGenericModule {
                 Msg.E("Unable to get a recording line",
                         Constants.PLP_GENERIC_ERROR, this);
                 e.printStackTrace();
+            } catch(Exception e) {
+                Msg.W("General error during initialization.", this);
+                if(Constants.debugLevel >= 2)
+                    e.printStackTrace();
             }
             audioInputStream = new AudioInputStream(targetDataLine);
             ready = true;
@@ -756,11 +773,16 @@ public class PLPToolConnector implements PLPGenericModule {
                 Msg.E("Failed to encode lecture audio with vorbis encoder",
                       Constants.PLP_GENERIC_ERROR, this);
             }
+            done = true;
             hasAudioRecord = true;
         }
 
         public boolean isReady() {
             return ready;
+        }
+
+        public boolean isDone() {
+            return done;
         }
 
         public void stopRecording() {
@@ -885,7 +907,7 @@ public class PLPToolConnector implements PLPGenericModule {
                 ProjectEvent e;
                 long curTime = startTime;
                 long diff;
-                if(videoURL != null) {
+                if(videoURL != null && !novideo) {
                     controls.initVideo(videoURL);
                     controls.startVideo();
                     controls.pauseVideo();
@@ -902,7 +924,7 @@ public class PLPToolConnector implements PLPGenericModule {
                     Thread.sleep(1000);
                 }
                 Msg.I("Replaying...", this);
-                if(videoURL != null)
+                if(videoURL != null && !novideo)
                     controls.playVideo();
                 if(hasAudioRecord)
                     controls.getAudioPlayer().doPlay();

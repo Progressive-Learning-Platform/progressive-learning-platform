@@ -19,9 +19,8 @@
 package plptool.mods;
 
 import plptool.Constants;
-import plptool.Msg;
+import plptool.Text;
 import plptool.PLPSimBusModule;
-import plptool.PLPToolbox;
 
 /**
  * Dummy memory module. Will return 0 if read is called.
@@ -38,7 +37,7 @@ public class DummyMemory extends PLPSimBusModule {
     public int gui_eval(Object x) { return Constants.PLP_OK; }
 
     public String introduce() {
-        return "Dummy Memory Module " + Constants.versionString;
+        return "Dummy Memory Module " + Text.versionString;
     }
 
     @Override public Long read(long addr) {

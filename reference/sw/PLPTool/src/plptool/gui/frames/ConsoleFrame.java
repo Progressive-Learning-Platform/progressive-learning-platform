@@ -141,7 +141,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("reset")) {
                 plp.g_dev.dispose();
                 plp.desimulate();
-                plp = new ProjectDriver(Constants.PLP_GUI_START_IDE, ArchRegistry.ISA_PLPMIPS);
+                plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
                 plp.g_dev.setVisible(true);
             } else if(command.equals("dark")) {
                 plptool.Config.devBackground = java.awt.Color.BLACK;
@@ -192,7 +192,25 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 if(plp.g_dev != null) {
                     plp.g_dev.getEditor().print();
                 }
-            } else if(command.equals("vismem")) {
+            } else if(command.equals("dumpattributes")) {
+                java.util.HashMap<String, Object> attributes = plp.getProjectAttributeSet();
+                Object[] entrySet = attributes.entrySet().toArray();
+                for(int i = 0; i < entrySet.length; i++) {
+                    java.util.Map.Entry<String, Object> entry =
+                            (java.util.Map.Entry<String, Object>) entrySet[i];
+                    Msg.p(entry.getKey() + "::" + entry.getValue());
+                }
+                Msg.P();
+            } else if(command.equals("dumpappattributes")) {
+                java.util.HashMap<String, String> attributes = plptool.gui.PLPToolApp.getAttributes();
+                Object[] entrySet = attributes.entrySet().toArray();
+                for(int i = 0; i < entrySet.length; i++) {
+                    java.util.Map.Entry<String, String> entry =
+                            (java.util.Map.Entry<String, String>) entrySet[i];
+                    Msg.p(entry.getKey() + "::" + entry.getValue());
+                }
+                Msg.P();
+            }else if(command.equals("vismem")) {
                 if(plp.isSimulating()) {
                     plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
                     ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);

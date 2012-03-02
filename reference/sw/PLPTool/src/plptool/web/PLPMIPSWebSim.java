@@ -54,7 +54,8 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                     Config.simRunnerDelay = 100;
 
                     // Instantiate a new projectdriver and attach a source object
-                    plp = new ProjectDriver(Constants.PLP_GUI_APPLET, ArchRegistry.ISA_PLPMIPS);
+                    plp = new ProjectDriver(Constants.PLP_GUI_APPLET);
+                    plp.setArch(ArchRegistry.ISA_PLPMIPS);
                     plp.newAsm("WebApplet");
                 }
             });

@@ -77,7 +77,7 @@ public abstract class PLPSimCore implements PLPGenericModule {
      *
      * @return String of PLPTool version
      */
-    public String getVersion() { return Constants.versionString; }
+    public String getVersion() { return Text.versionString; }
 
     /**
      * Reset handler, to be implemented by the actual simulation core

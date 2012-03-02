@@ -37,7 +37,7 @@ public class QuickRef extends javax.swing.JFrame {
         initComponents();
 
         this.plp = plp;
-        this.setTitle("PLP " + plptool.Constants.versionString + " Quick Reference");
+        this.setTitle("PLP " + plptool.Text.versionString + " Quick Reference");
 
         plptool.PLPToolbox.attachHideOnEscapeListener(this);
 

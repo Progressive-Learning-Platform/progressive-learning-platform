@@ -51,7 +51,7 @@ public class SimCLI {
 
         tokens = input.split(" ");
         if(input.equals("version")) {
-            Msg.P(plptool.Constants.versionString);
+            Msg.P(plptool.Text.versionString);
         }
         else if(input.equals("i")) {
         }

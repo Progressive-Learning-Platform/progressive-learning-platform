@@ -87,7 +87,7 @@ public abstract class PLPSimBusModule extends Thread implements PLPGenericModule
      * 
      * @return String of PLPTool version
      */
-    public String getVersion() { return Constants.versionString; }
+    public String getVersion() { return Text.versionString; }
 
     /**
      * The constructor for the superclass requires the address space and
