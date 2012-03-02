@@ -15,8 +15,8 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         plptool.PLPToolbox.attachHideOnEscapeListener(this);
         initComponents();
         getRootPane().setDefaultButton(closeButton);
-        lblVersion.setText(plptool.Constants.versionString);
-        this.setTitle("About: PLP Tool " + plptool.Constants.versionString + " (" + plptool.Version.stamp + ")");
+        lblVersion.setText(plptool.Text.versionString);
+        this.setTitle("About: PLP Tool " + plptool.Text.versionString + " (" + plptool.Version.stamp + ")");
         this.setLocationRelativeTo(null);
     }
 

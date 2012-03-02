@@ -22,6 +22,7 @@ import plptool.Constants;
 import plptool.Msg;
 import plptool.PLPSimBusModule;
 import plptool.PLPToolbox;
+import plptool.Text;
 
 /**
  * PLP memory module. This module implements a wrapper read function that
@@ -60,7 +61,7 @@ public class MemModule extends PLPSimBusModule {
     public int gui_eval(Object x) { return Constants.PLP_OK; }
 
     public String introduce() {
-        return "Memory Module " + Constants.versionString;
+        return "Memory Module " + Text.versionString;
     }
 
     /**

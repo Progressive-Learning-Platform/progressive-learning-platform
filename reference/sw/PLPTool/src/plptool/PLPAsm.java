@@ -51,7 +51,7 @@ public abstract class PLPAsm implements PLPGenericModule {
      *
      * @return String of PLPTool version
      */
-    public String getVersion() { return Constants.versionString; }
+    public String getVersion() { return Text.versionString; }
 
     public PLPAsm(String strAsm, String strFilePath) {
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);

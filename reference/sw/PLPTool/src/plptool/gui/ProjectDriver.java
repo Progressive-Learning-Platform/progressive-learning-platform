@@ -31,8 +31,6 @@ import plptool.gui.frames.*;
 import plptool.mods.Preset;
 import plptool.mods.IORegistry;
 
-import org.jdesktop.application.SingleFrameApplication;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -60,7 +58,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ProjectDriver {
 
-    public SingleFrameApplication  app;        // App
+    public PLPToolApp              app;        // App
 
     /*
      * These variables hold some project file information for this driver.
@@ -156,7 +154,7 @@ public class ProjectDriver {
      * @param g Specifies whether we are driving a GUI or not
      * @param archID The ISA to use for this project
      */
-    public ProjectDriver(int modes, int archID) {
+    public ProjectDriver(int modes) {
         this.g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
         this.applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
         
@@ -169,6 +167,7 @@ public class ProjectDriver {
         asm_req = false;
 
         if(applet) asms = new ArrayList<PLPAsmSource>();
+        pAttrSet = new HashMap<String, Object>();
 
         this.ioreg = new IORegistry(this);
         if(!applet) this.curdir = (new java.io.File(".")).getAbsolutePath();
@@ -203,7 +202,7 @@ public class ProjectDriver {
 
             this.g_find.setLocationRelativeTo(null);
 
-            this.g_dev.setTitle("PLP Software Tool " + Constants.versionString);
+            this.g_dev.setTitle("PLP Software Tool " + Text.versionString);
             this.g_dev.setVisible(true);
         }
 
@@ -385,16 +384,21 @@ public class ProjectDriver {
      *
      * @return PLP_OK
      */
-    public int create() {
+    public int create(int archID) {
         modified = true;
         asm_req = true;
         plpfile = new File("Unsaved Project");
 
         try {
-            this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+            this.arch = ArchRegistry.getArchitecture(this, archID);
+            if(arch == null) {
+                Msg.W("Invalid architecture ID is specified, reverting to " +
+                      "default (plpmips).", this);
+                this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+            }
         } catch(Exception e) {
             Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
-                  "create routine (archID: " + ArchRegistry.ISA_PLPMIPS + ")",
+                  "create routine (archID: " + archID + ")",
                   Constants.PLP_FATAL_ERROR, null);
             System.exit(-1);
         }
@@ -430,16 +434,21 @@ public class ProjectDriver {
      * @param asmPath Path to ASM file to import
      * @return PLP_OK
      */
-    public int create(String asmPath) {
+    public int create(String asmPath, int archID) {
         modified = true;
         asm_req = true;
         plpfile = new File("Unsaved Project");
 
         try {
-            this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+            this.arch = ArchRegistry.getArchitecture(this, archID);
+            if(arch == null) {
+                Msg.W("Invalid architecture ID is specified, reverting to " +
+                      "default (plpmips).", this);
+                this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+            }
         } catch(Exception e) {
             Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
-                  "create routine (archID: " + ArchRegistry.ISA_PLPMIPS + ")",
+                  "create routine (archID: " + archID + ")",
                   Constants.PLP_FATAL_ERROR, null);
             System.exit(-1);
         }
@@ -502,18 +511,19 @@ public class ProjectDriver {
 
         meta = "PLP-4.0\n";
 
-        if(asm != null && asm.isAssembled() && arch.equals("plpmips")) {
+        if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
-            Msg.D("Creating verilog hex code...", 2, this);
-            verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
+            if(arch.getID() == ArchRegistry.ISA_PLPMIPS) {
+                Msg.D("Creating verilog hex code...", 2, this);
+                verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
+            }
             if(objCode.length > 0)
                 meta += "START=" + asm.getAddrTable()[0] + "\n";
             else
                 meta += "START=0\n";
             meta += "DIRTY=0\n";
             dirty = false;
-        }
-        else {
+        } else {
             meta += "DIRTY=1\n";
             dirty = true;
         }
@@ -757,7 +767,7 @@ public class ProjectDriver {
                         arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
                         if(arch == null) {
                             Msg.W("Invalid ISA ID is specified in the project file: '" + temp +
-                                  "'. Assuming plpmips", this);
+                                  "'. Assuming plpmips.", this);
                             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                         }
                     }
@@ -1005,7 +1015,7 @@ public class ProjectDriver {
 
         String windowTitle = plpfile.getName() + ((modified) ? "*" : "") +
                              (sim_mode ? " - Simulation Mode " : "") +
-                             " - PLP Software Tool " + Constants.versionString;
+                             " - PLP Software Tool " + Text.versionString;
         g_dev.setTitle(windowTitle);
 
         return Constants.PLP_OK;

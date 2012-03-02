@@ -36,7 +36,7 @@ public abstract class PLPSerialProgrammer extends Thread implements PLPGenericMo
      *
      * @return String of PLPTool version
      */
-    public String getVersion() { return Constants.versionString; }
+    public String getVersion() { return Text.versionString; }
 
     public PLPSerialProgrammer(plptool.gui.ProjectDriver plp) {
         this.plp = plp;

@@ -31,17 +31,15 @@ import javax.swing.text.html.HTMLDocument;
 import java.net.URI;
 import java.io.File;
 
-//For Syntax Highlighting
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 import plptool.Msg;
 import plptool.Constants;
 import plptool.Config;
 import plptool.PLPSimBusModule;
 import plptool.DynamicModuleFramework;
 import plptool.PLPToolbox;
+import plptool.Text;
 import plptool.mods.*;
+import plptool.gui.PLPToolApp;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
 import plptool.gui.SerialTerminal;
@@ -135,7 +133,7 @@ public class Develop extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
 
-        Msg.P(Constants.copyrightString);
+        Msg.P(Text.copyrightString);
         Msg.M("");
     }
 
@@ -518,7 +516,7 @@ public class Develop extends javax.swing.JFrame {
             default:
                 if(plp.isSimulating())
                     simEnd();
-                plp.create();
+                plp.create(PLPToolApp.getStartingISA()); // Default ISA for now
                 if(plp.getArch().hasSyntaxHighlightSupport())
                     plp.getArch().getSyntaxHighlightSupport().newStyle();
                 else
@@ -3066,7 +3064,7 @@ public class Develop extends javax.swing.JFrame {
         Desktop desktop = Desktop.getDesktop();
         if(desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
-                URI uri = new URI(Constants.manualURI);
+                URI uri = new URI(Text.manualURI);
                 desktop.browse(uri);
             } catch(Exception e) {}
         }
@@ -3076,7 +3074,7 @@ public class Develop extends javax.swing.JFrame {
         Desktop desktop = Desktop.getDesktop();
         if(desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
-                URI uri = new URI(Constants.issueEntryURI);
+                URI uri = new URI(Text.issueEntryURI);
                 desktop.browse(uri);
             } catch(Exception e) {}
         }
@@ -3086,7 +3084,7 @@ public class Develop extends javax.swing.JFrame {
         Desktop desktop = Desktop.getDesktop();
         if(desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
-                URI uri = new URI(Constants.issueTrackerURI);
+                URI uri = new URI(Text.issueTrackerURI);
                 desktop.browse(uri);
             } catch(Exception e) {}
         }
@@ -3438,7 +3436,7 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSimGPIOActionPerformed
 
     private void menuThirdPartyLicenseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuThirdPartyLicenseActionPerformed
-        JOptionPane.showMessageDialog(this, Constants.thirdPartyCopyrightString,
+        JOptionPane.showMessageDialog(this, Text.thirdPartyCopyrightString,
                 "Thank you", JOptionPane.INFORMATION_MESSAGE);
         plp.hookEvent(new ProjectEvent(ProjectEvent.THIRDPARTY_LICENSE, -1));
     }//GEN-LAST:event_menuThirdPartyLicenseActionPerformed

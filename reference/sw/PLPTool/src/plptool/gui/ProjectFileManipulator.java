@@ -20,8 +20,6 @@ package plptool.gui;
 
 import plptool.Constants;
 import plptool.Msg;
-import plptool.ArchRegistry;
-
 import java.io.*;
 
 /**
@@ -29,20 +27,21 @@ import java.io.*;
  * @author wira
  */
 public class ProjectFileManipulator {
-    public static void CLI(String[] args) {
+    public static void CLI(String[] args, int archID) {
         if(args == null || args.length < 2) {
             helpMessage();
             return;
         }
 
-        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
+        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
+        PLPToolApp.loadDynamicModules(plp);
         File plpHandler = new File(args[1]);
 	
 	if(plpHandler.exists() && !(args.length > 2 && args[2].equals("-c"))) {
             plp.open(args[1], false);
 
         } else if (args.length == 2) {
-            plp.create();
+            plp.create(archID);
             plp.plpfile = new File(args[1]);
             if(plp.save() != Constants.PLP_OK)
                 return;
@@ -64,11 +63,11 @@ public class ProjectFileManipulator {
             for(int i = 3; i < args.length; i++)
                 if(!plpHandler.exists()) {
                     if(args[i].endsWith(".plp")) {
-                        ProjectDriver tempPlp = new ProjectDriver(Constants.PLP_DEFAULT, ArchRegistry.ISA_PLPMIPS);
+                        ProjectDriver tempPlp = new ProjectDriver(Constants.PLP_DEFAULT);
                         tempPlp.open(args[i], false);
                         
                     } else if(i == 3)
-                        plp.create(args[i]);
+                        plp.create(args[i], archID);
                     else
                         plp.importAsm(args[i]);
 
@@ -88,7 +87,7 @@ public class ProjectFileManipulator {
                 Msg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
                 return;
             }
-            plp.create(args[3]);
+            plp.create(args[3], archID);
 
             for(int i = 4; i < args.length; i++)
                 plp.importAsm(args[i]);
