@@ -136,7 +136,8 @@ public class ProjectFileManipulator {
             else  {
                 String[] splitStr = asmStr.split("\\r?\\n");
                 int lineNum = Integer.parseInt(args[4]);
-                Msg.M(lineNum + "\t: " + splitStr[lineNum - 1]);
+                if(lineNum-1 < splitStr.length && lineNum > 0)
+                    Msg.M(lineNum + "\t: " + splitStr[lineNum - 1]);
             }
 
         } else if(args[2].equals("-meta")) {
