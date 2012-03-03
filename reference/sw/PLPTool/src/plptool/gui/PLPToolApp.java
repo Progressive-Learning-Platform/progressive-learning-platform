@@ -267,7 +267,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             } else if(args[i].equals("--help")) {
                 printTerseHelpMessage();
-                System.out.println("  --full-help             Even more commands.");
+                System.out.println("  --full-help             Even more commands.\n");
                 return;
 
             } else if(args[i].equals("--full-help")) {
