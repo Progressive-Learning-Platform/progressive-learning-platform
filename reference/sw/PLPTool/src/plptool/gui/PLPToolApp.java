@@ -278,7 +278,8 @@ public class PLPToolApp extends SingleFrameApplication {
             
         } else {
             if(!args[0].equals("--help") && !args[0].equals("--full-help") ) {
-                Msg.E("Invalid argument(s).", Constants.PLP_TOOLAPP_ERROR, null);
+                Msg.E("Invalid argument: '" + args[0] + "'"
+                        , Constants.PLP_TOOLAPP_ERROR, null);
                 System.out.println();
             }
             printTerseHelpMessage();
@@ -319,7 +320,7 @@ public class PLPToolApp extends SingleFrameApplication {
      * Print full help message to console
      */
     private static void printFullHelpMessage() {
-        System.out.println("More commands:");
+        System.out.println("Other options:");
         System.out.println("  --buildinfo             Print build information and quit.");
         System.out.println("  --gpl                   Print GPL license text and quit.");
         System.out.println("  --license               Print third party licensing information and quit.");
@@ -335,7 +336,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --load-jar-with-manifest <jar file>");
         System.out.println("                          Load a PLPTool module JAR file, locate the manifest,");
         System.out.println("                            and interpret the file accordingly. PLPTool will");
-        System.out.println("                            launch if the module is successfully loaded.");
+        System.out.println("                            ONLY launch if the module is successfully loaded.");
         System.out.println("  --save-module <URL>     Fetch a module's jar file from URL, save it to the");
         System.out.println("                            the autoload directory, and quit. This module will");
         System.out.println("                            be autoloaded the next time PLPTool starts. Module");
