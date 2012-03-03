@@ -39,6 +39,7 @@ import java.util.HashMap;
 public class PLPToolApp extends SingleFrameApplication {
     
     private static String plpFilePath = null;
+    private static boolean newProject = false;
     private static boolean serialTerminal = false;
     private static boolean autoloadjars = true;
     private static ArrayList<String[]> manifests;
@@ -74,10 +75,13 @@ public class PLPToolApp extends SingleFrameApplication {
 
             Msg.setOutput(plp.g_dev.getOutput());
             if(plpFilePath != null)
-                plp.open(plpFilePath, true);
+                if(newProject) {
+                    plp.create(startingArchID);
+                    plp.plpfile = new File(plpFilePath);
+                    plp.refreshProjectView(false);
+                } else
+                    plp.open(plpFilePath, true);
         }
-
-        // show(mainWindow);
     }
 
     /**
@@ -100,39 +104,8 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
-
-/******************** RUN AND QUIT COMMANDS ***********************************/
-
-        // Print third party licensing information and quit
-        if(args.length >= 1 && args[0].equals("--gpl")) {
-            Msg.M("\n" + Text.GPL + "\n");
-            return;
-        }
-
-        // Print third party licensing information and quit
-        if(args.length >= 1 && args[0].equals("--license")) {
-            Msg.M("\n" + Text.copyrightString + "\n");
-            Msg.M(Text.thirdPartyCopyrightString + "\n");
-            return;
-        }
-
-        // Print buildinfo and quit
-        if(args.length >= 1 && args[0].equals("--buildinfo")) {
-            Msg.M(plptool.Version.stamp);
-            return;
-        }
-
-        // Download a JAR file for autoloading
-        if(args.length == 2 && args[0].equals("--save-module")) {
-            plptool.PLPToolbox.downloadJARForAutoload(args[1], null, false);
-            return;
-        }
-
-        // Delete ~/.plp/autoload
-        if(args.length == 1 && args[0].equals("--delete-autoload-dir")) {
-            DynamicModuleFramework.removeAutoloadModules();
-            return;
-        }
+  
+/******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 
         int activeArgIndex = 0;
         java.io.File fileToOpen = null;
@@ -140,11 +113,36 @@ public class PLPToolApp extends SingleFrameApplication {
         // Save launching path
         Constants.launchPath = (new File(".")).getAbsolutePath();
 
-/******************* COMMAND LINE ARGUMENTS THAT CAN BE COMBINED **************/
-
         for(int i = 0; i < args.length; i++) {
             Msg.D("args parsing: " + args[i], 4, null);
 
+            // Print third party licensing information and quit
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
+                Msg.M("\n" + Text.GPL + "\n");
+                return;
+            }
+
+            // Print third party licensing information and quit
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--license")) {
+                Msg.M("\n" + Text.copyrightString + "\n");
+                Msg.M(Text.thirdPartyCopyrightString + "\n");
+                return;
+            }
+
+            // Print buildinfo and quit
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--buildinfo")) {
+                Msg.M(plptool.Version.stamp);
+                return;
+            }
+
+            // Download a JAR file for autoloading
+            if(args.length >= activeArgIndex + 2 && args[i].equals("--save-module")) {
+                plptool.PLPToolbox.downloadJARForAutoload(args[i+1], null, false);
+                return;
+            }
+
+/******************************************************************************/
+            
             // Silent mode
             if(args.length >= activeArgIndex + 1 && args[i].equals("--suppress-output")) {
                 Msg.silent = true;
@@ -162,6 +160,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 Constants.debugLevel = Integer.parseInt(args[i + 1]);
                 Msg.M("Debug level set to " + Constants.debugLevel);
                 activeArgIndex += 2;
+                i++;
             }
 
             // Remove config file / reset config
@@ -175,12 +174,19 @@ public class PLPToolApp extends SingleFrameApplication {
                 autoloadjars = false;
                 activeArgIndex++;
             }
+
+            // Delete ~/.plp/autoload
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--delete-autoload-dir")) {
+                DynamicModuleFramework.removeAutoloadModules();
+                activeArgIndex++;
+            }
             
             // Dynamic module load
             if(args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
                 if(!DynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
                     System.exit(-1);
                 activeArgIndex += 3;
+                i+=2;
             }
 
             // Load all classes from a jar
@@ -188,6 +194,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 if(!DynamicModuleFramework.loadAllFromJar(args[i+1]))
                     System.exit(-1);
                 activeArgIndex += 2;
+                i++;
             }
 
             // Load classes from a jar with a manifest file
@@ -199,6 +206,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     manifests = new ArrayList<String[]>();
 		manifests.add(manifest);
                 activeArgIndex += 2;
+                i++;
             }
 
             // Load classes from a jar with a manifest file
@@ -206,6 +214,7 @@ public class PLPToolApp extends SingleFrameApplication {
 		Integer archID = Integer.parseInt(args[i+1]);
                 startingArchID = archID;
                 activeArgIndex += 2;
+                i++;
             }
 
             // Pass an attribute pair to the ProjectDriver
@@ -217,9 +226,13 @@ public class PLPToolApp extends SingleFrameApplication {
                     attributes.put(pair[0], pair[1]);
                 activeArgIndex++;
             }
-        }
 
-        Msg.M("\n" + Text.copyrightString + "\n");
+            // Launch serial terminal instead of the IDE
+            if(args.length >= activeArgIndex + 1 && args[i].equals("--serialterminal")) {
+                serialTerminal = true;
+                activeArgIndex++;
+            }
+        }
 
         if(args.length > activeArgIndex) {
             String[] newargs = new String[args.length - activeArgIndex];
@@ -228,20 +241,19 @@ public class PLPToolApp extends SingleFrameApplication {
         } else
             args = new String[0];
 
+        Msg.M("\n" + Text.copyrightString + "\n");
+
         if(Constants.debugLevel >= 1)
             plptool.PLPToolbox.getOS(true);
 
 /****************** EXCLUSIVE ARGUMENTS ***************************************/
 
-        if(args.length == 1) {
-            fileToOpen = new java.io.File(args[0]);
+        Msg.D("args length: " + args.length, 4, null);
+        for(int i = 0; i < args.length; i++) {
+            Msg.D("args[" + i + "]: " + args[i], 4, null);
         }
 
-        if(args.length == 1 && args[0].equals("--serialterminal")) {
-            serialTerminal = true;
-            launch(PLPToolApp.class, args);
-
-        } else if(args.length > 0 && args[0].equals("-s")) {
+        if(args.length > 0 && args[0].equals("-s")) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
             loadDynamicModules(plp);
             if(args.length == 2) {
@@ -265,17 +277,15 @@ public class PLPToolApp extends SingleFrameApplication {
             } else {
                 System.out.println("Usage: PLPTool -s <plpfile> [script]");
             }
-
-        } else  if(args.length > 0 && args[0].equals("-plp")) {
+        } else if(args.length > 0 && args[0].equals("-plp")) {
             ProjectFileManipulator.CLI(args, startingArchID);
-
-        } else if(args.length == 1 && fileToOpen != null && fileToOpen.exists()) {
+        } else if(args.length == 1 && !args[0].startsWith("-")) {
+            fileToOpen = new java.io.File(args[0]);
+            newProject = !fileToOpen.exists();
             plpFilePath = args[0];
             launch(PLPToolApp.class, args);
-
         } else if(args.length == 0) {
             launch(PLPToolApp.class, args);
-            
         } else {
             if(!args[0].equals("--help") && !args[0].equals("--full-help") ) {
                 Msg.E("Invalid argument: '" + args[0] + "'"
@@ -344,13 +354,13 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("                            (autoloading is enabled by default).");
         System.out.println("  --no-module-autoload    Do NOT autoload modules for this PLPTool session.");
         System.out.println("  --delete-autoload-dir   Delete the autoload cache directory and all of its");
-        System.out.println("                            contents and quit.");
+        System.out.println("                            contents.");
         System.out.println();
         System.out.println("MODULE DEBUGGING COMMANDS:");
         System.out.println("  --load-class <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
-        System.out.println("  --P<key>::<value>       Pass a key-value property pair to the application.");
+        System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application.");
         System.out.println();
     }
 
