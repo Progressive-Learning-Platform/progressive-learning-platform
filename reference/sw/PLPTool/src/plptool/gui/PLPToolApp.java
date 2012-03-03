@@ -293,7 +293,7 @@ public class PLPToolApp extends SingleFrameApplication {
                         , Constants.PLP_TOOLAPP_ERROR, null);
                 System.out.println();
                 printTerseHelpMessage();
-                System.out.println("  --full-help             Even more commands.");
+                System.out.println("  --full-help             Even more commands.\n");
                 return;
 
             } else {
