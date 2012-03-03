@@ -26,7 +26,7 @@ package plptool;
 public class Text {
     public static final String versionString = "4.2";
     public static final String copyrightString =
-            "PLP Software Tool version " + versionString + "\n" +
+            "PLP Software Tool (PLPTool) version " + versionString + "\n" +
             "Copyright 2010-2012 PLP Contributors.\n" +
             "This software is licensed under GPLv3 (run with '--gpl' for license text).\n" +
             "Run with '--license' for licensing information of third party software."

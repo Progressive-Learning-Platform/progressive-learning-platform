@@ -312,8 +312,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("Usage:");
         System.out.println("  java -jar PLPTool.jar [options] [plpfile]");
         System.out.println("                          Launch PLP Tool GUI. PLPTool will open [plpfile]");
-        System.out.println("                            if it is provided. Run with '--full-help' for");
-        System.out.println("                            options.");
+        System.out.println("                            if it is provided.");
         System.out.println();
         System.out.println("Non-GUI options:");
         System.out.println("  -plp <plpfile> [command]");
@@ -408,7 +407,8 @@ public class PLPToolApp extends SingleFrameApplication {
         if(simulateCLI) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
             loadDynamicModules(plp);
-            if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK)) return;
+            if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK))
+                System.exit(Constants.PLP_GENERIC_ERROR);
             if(plp.asm.isAssembled())
                 plp.simulate();
             plp.getArch().launchSimulatorCLI();
@@ -420,7 +420,8 @@ public class PLPToolApp extends SingleFrameApplication {
             try {
                 FileInputStream in = new FileInputStream(new File(scriptFileToRun));
                 Scanner sIn = new Scanner(in);
-                if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK)) return;
+                if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK))
+                    System.exit(Constants.PLP_GENERIC_ERROR);
                 if(plp.asm.isAssembled())
                     plp.simulate();
                 Msg.silent = false;
@@ -428,6 +429,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     plp.getArch().simCLICommand(sIn.nextLine());
             } catch(Exception e) {
                 System.out.println("Unable to open/run the script '" + scriptFileToRun + "'");
+                System.exit(Constants.PLP_GENERIC_ERROR);
             }
             System.exit(Constants.PLP_OK);
         }
