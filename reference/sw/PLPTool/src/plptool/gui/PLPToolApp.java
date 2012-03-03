@@ -41,10 +41,14 @@ public class PLPToolApp extends SingleFrameApplication {
     private static String plpFilePath = null;
     private static boolean newProject = false;
     private static boolean serialTerminal = false;
+    private static boolean simulateCLI = false;
+    private static boolean simulateScripted = false;
     private static boolean autoloadjars = true;
     private static ArrayList<String[]> manifests;
     private static HashMap<String, String> attributes;
     private static int startingArchID = ArchRegistry.ISA_PLPMIPS;
+    private static String plpFileToSimulate;
+    private static String scriptFileToRun;
     public static ConsoleFrame con;
 
     /**
@@ -141,7 +145,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 return;
 
             // Download a JAR file for autoloading
-            } else if (args.length >= activeArgIndex + 2 && args[i].equals("--save-module")) {
+            } else if (args.length >= activeArgIndex + 2 && args[i].equals("-S")) {
                 plptool.PLPToolbox.downloadJARForAutoload(args[i+1], null, false);
                 return;
 
@@ -170,12 +174,12 @@ public class PLPToolApp extends SingleFrameApplication {
                 activeArgIndex++;
 
              // Disable dynamic module autoload from ~/.plp/autoload
-            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--no-module-autoload")) {
+            } else if (args.length >= activeArgIndex + 1 && args[i].equals("-N")) {
                 autoloadjars = false;
                 activeArgIndex++;
 
             // Delete ~/.plp/autoload
-            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--delete-autoload-dir")) {
+            } else if (args.length >= activeArgIndex + 1 && args[i].equals("-D")) {
                 DynamicModuleFramework.removeAutoloadModules();
                 activeArgIndex++;
             
@@ -194,7 +198,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 i++;
 
             // Load classes from a jar with a manifest file
-            } else if (args.length >= activeArgIndex + 2 && args[i].equals("--load-jar-with-manifest")) {
+            } else if (args.length >= activeArgIndex + 2 && args[i].equals("-L")) {
 		String[] manifest = DynamicModuleFramework.loadJarWithManifest(args[i+1]);
                 if(manifest == null)
                     System.exit(-1);
@@ -239,35 +243,22 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Interactive command-line simulator
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-s")) {
-                ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
-                loadDynamicModules(plp);
-                if(!(plp.open(args[i+1], true) == Constants.PLP_OK)) return;
-                if(plp.asm.isAssembled())
-                    plp.simulate();
-                plp.getArch().launchSimulatorCLI();
-                return;
+                simulateCLI = true;
+                plpFileToSimulate = args[i+1];
+                activeArgIndex+=2;
+                i++;                
 
             // Non-interactive simulation
             } else if(args.length >= activeArgIndex + 3 && args[i].equals("-r")) {
-                ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
-                loadDynamicModules(plp);
-                try {
-                    FileInputStream in = new FileInputStream(new File(args[i+2]));
-                    Scanner sIn = new Scanner(in);
-                    if(!(plp.open(args[i+1], true) == Constants.PLP_OK)) return;
-                    if(plp.asm.isAssembled())
-                        plp.simulate();
-                    Msg.silent = false;
-                    while(sIn.hasNext())
-                        plp.getArch().simCLICommand(sIn.nextLine());
-                } catch(Exception e) {
-                    System.out.println("Unable to open/run the script '" + args[i+2] + "'");
-                }
-                return;
+                simulateScripted = true;
+                plpFileToSimulate = args[i+1];
+                scriptFileToRun = args[i+2];
+                activeArgIndex+=3;
+                i+=2;                
 
             } else if(args[i].equals("--help")) {
                 printTerseHelpMessage();
-                System.out.println("  --full-help             Even more commands.\n");
+                System.out.println("\nRun with '--full-help' option for complete listing of options.");
                 return;
 
             } else if(args[i].equals("--full-help")) {
@@ -293,7 +284,7 @@ public class PLPToolApp extends SingleFrameApplication {
                         , Constants.PLP_TOOLAPP_ERROR, null);
                 System.out.println();
                 printTerseHelpMessage();
-                System.out.println("  --full-help             Even more commands.\n");
+                System.out.println("\nRun with '--full-help' option for complete listing of options.");
                 return;
 
             } else {
@@ -306,6 +297,9 @@ public class PLPToolApp extends SingleFrameApplication {
 
         if(Constants.debugLevel >= 1)
             plptool.PLPToolbox.getOS(true);
+
+        // Command line simulator handlers
+        simulateCLI();
 
         // here we go!
         launch(PLPToolApp.class, args);
@@ -349,17 +343,16 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("   -d <level>             Set debug level (0 to infinity).");
         System.out.println();
         System.out.println("Dynamic modules / extensions controls:");
-        System.out.println("  --load-jar-with-manifest <jar file>");
-        System.out.println("                          Load a PLPTool module JAR file, locate the manifest,");
+        System.out.println("   -L <jar file>          Load a PLPTool module JAR file, locate the manifest,");
         System.out.println("                            and interpret the file accordingly. PLPTool will");
         System.out.println("                            ONLY launch if the module is successfully loaded.");
-        System.out.println("  --save-module <URL>     Fetch a module's jar file from URL, save it to the");
+        System.out.println("   -S <URL>               Fetch a module's jar file from URL, save it to the");
         System.out.println("                            the autoload directory, and quit. This module will");
         System.out.println("                            be autoloaded the next time PLPTool starts. Module");
         System.out.println("                            autoloading can be disabled by the user");
         System.out.println("                            (autoloading is enabled by default).");
-        System.out.println("  --no-module-autoload    Do NOT autoload modules for this PLPTool session.");
-        System.out.println("  --delete-autoload-dir   Delete the autoload cache directory and all of its");
+        System.out.println("   -N                     Do NOT autoload modules for this PLPTool session.");
+        System.out.println("   -D                     Delete the autoload cache directory and all of its");
         System.out.println("                            contents.");
         System.out.println();
         System.out.println("MODULE DEBUGGING COMMANDS:");
@@ -398,12 +391,46 @@ public class PLPToolApp extends SingleFrameApplication {
      * @param plp Reference to the ProjectDriver
      */
     public static void loadDynamicModules(ProjectDriver plp) {
-        // Load dynamic modules
+        // AUtoload saved modules
         if(autoloadjars)
             DynamicModuleFramework.autoloadModules(plp);
 
+        // Apply manifests from modules loaded with the
+        // '--load-jar-with-manifest' option
         for(int i = 0; manifests != null && i < manifests.size(); i++)
             DynamicModuleFramework.applyManifestEntries(manifests.get(i), plp);
+    }
+
+    /**
+     * Handle CLI simulator options
+     */
+    private static void simulateCLI() {
+        if(simulateCLI) {
+            ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
+            loadDynamicModules(plp);
+            if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK)) return;
+            if(plp.asm.isAssembled())
+                plp.simulate();
+            plp.getArch().launchSimulatorCLI();
+            System.exit(Constants.PLP_OK);
+
+        } else if(simulateScripted) {
+            ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
+            loadDynamicModules(plp);
+            try {
+                FileInputStream in = new FileInputStream(new File(scriptFileToRun));
+                Scanner sIn = new Scanner(in);
+                if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK)) return;
+                if(plp.asm.isAssembled())
+                    plp.simulate();
+                Msg.silent = false;
+                while(sIn.hasNext())
+                    plp.getArch().simCLICommand(sIn.nextLine());
+            } catch(Exception e) {
+                System.out.println("Unable to open/run the script '" + scriptFileToRun + "'");
+            }
+            System.exit(Constants.PLP_OK);
+        }
     }
 }
 
