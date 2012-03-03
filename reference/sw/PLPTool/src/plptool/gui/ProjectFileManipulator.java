@@ -209,6 +209,8 @@ public class ProjectFileManipulator {
                 Msg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
                 Msg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
                 plp.save();
+            } else if(plp.asm != null && plp.asm.isAssembled()) {
+                plp.save();
             } else
                 Msg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
 
