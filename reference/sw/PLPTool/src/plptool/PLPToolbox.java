@@ -19,7 +19,7 @@
 package plptool;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.io.*;
 
 /**
  *
@@ -356,6 +356,35 @@ public class PLPToolbox {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Copy a file from source to destination
+     *
+     * @param src Path to source file
+     * @param dest Path to destination file
+     * @return Constants.PLP_OK on successful copy, error code otherwise
+     */
+    public static int copyFile(String src, String dest) {
+        File s = new File(src);
+        File d = new File(dest);
+
+        try {
+            FileInputStream in = new FileInputStream(s);
+            FileOutputStream out = new FileOutputStream(d);
+
+            byte[] buffer = new byte[1024];
+
+            int readBytes;
+            while((readBytes = in.read(buffer)) != -1) {
+                out.write(buffer, 0, readBytes);
+            }
+            
+        } catch(Exception e) {
+            return Constants.PLP_GENERIC_ERROR;
+        }
+
+        return Constants.PLP_OK;
     }
 }
 

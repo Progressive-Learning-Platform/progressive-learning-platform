@@ -127,28 +127,7 @@ public class PLPToolApp extends SingleFrameApplication {
             Msg.D("args[" + i + "] parsing: " + args[i], 4, null);
 
             if(i==0 && args[0].equals("--suppress-copyright-notice")) {
-
-            // Print third party licensing information and quit
-            } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
-                Msg.M("\n" + Text.GPL + "\n");
-                return;
-
-            // Print third party licensing information and quit
-            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--license")) {
-                Msg.M("\n" + Text.copyrightString + "\n");
-                Msg.M(Text.thirdPartyCopyrightString + "\n");
-                return;
-
-            // Print buildinfo and quit
-            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--buildinfo")) {
-                Msg.M(plptool.Version.stamp);
-                return;
-
-            // Download a JAR file for autoloading
-            } else if (args.length >= activeArgIndex + 2 && args[i].equals("-S")) {
-                plptool.PLPToolbox.downloadJARForAutoload(args[i+1], null, false);
-                return;
-
+            
 /******************************************************************************/
             
             // Silent mode
@@ -232,6 +211,32 @@ public class PLPToolApp extends SingleFrameApplication {
 /****************** EXCLUSIVE ARGUMENTS ***************************************/
 /* These options will exit after it's executed (whichever comes first)        */
 /******************************************************************************/
+
+            // PLPTool will immediately quit when it encounters this option
+            // can be used for debugging arguments
+            } else if(args.length >= activeArgIndex + 1 && args[i].equals("-q")) {
+                return;
+
+            // Print GPL license text and quit
+            } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
+                Msg.M("\n" + Text.GPL + "\n");
+                return;
+
+            // Print third party licensing information and quit
+            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--license")) {
+                Msg.M("\n" + Text.copyrightString + "\n");
+                Msg.M(Text.thirdPartyCopyrightString + "\n");
+                return;
+
+            // Print buildinfo and quit
+            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--buildinfo")) {
+                Msg.M(plptool.Version.stamp);
+                return;
+
+            // Download a JAR file for autoloading
+            } else if (args.length >= activeArgIndex + 2 && args[i].equals("-S")) {
+                plptool.PLPToolbox.downloadJARForAutoload(args[i+1], null, false);
+                return;
 
             // If we encounter '-plp', pass the rest of the arguments to the
             // project file manipulator
