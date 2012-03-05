@@ -716,7 +716,6 @@ public class ProjectDriver {
         dirty = true;
 
         Msg.I("Opening " + path, null);
-        hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1, plpFile));
 
         arch = null;
 
@@ -939,6 +938,7 @@ public class ProjectDriver {
             updateWindowTitle();
         }
 
+        hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1, plpFile));
         return Constants.PLP_OK;
     }
 

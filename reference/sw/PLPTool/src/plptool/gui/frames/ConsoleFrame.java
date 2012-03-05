@@ -195,6 +195,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("dumpattributes")) {
                 java.util.HashMap<String, Object> attributes = plp.getProjectAttributeSet();
                 Object[] entrySet = attributes.entrySet().toArray();
+                Msg.P("Project attributes:");
                 for(int i = 0; i < entrySet.length; i++) {
                     java.util.Map.Entry<String, Object> entry =
                             (java.util.Map.Entry<String, Object>) entrySet[i];
@@ -204,6 +205,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("dumpappattributes")) {
                 java.util.HashMap<String, String> attributes = plptool.gui.PLPToolApp.getAttributes();
                 Object[] entrySet = attributes.entrySet().toArray();
+                Msg.P("Application attributes:");
                 for(int i = 0; i < entrySet.length; i++) {
                     java.util.Map.Entry<String, String> entry =
                             (java.util.Map.Entry<String, String>) entrySet[i];
