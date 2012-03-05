@@ -29,6 +29,8 @@ import plptool.gui.PLPToolApp;
 import java.io.File;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
+import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -55,18 +57,63 @@ public class PLPToolConnector implements PLPGenericModule {
                 try {
                     autoSaveRateMilliseconds = Integer.parseInt(interval);
                     Msg.I("Autosave interval is set to " + interval + "ms", this);
-                } catch(Exception e) {
-
-                }
+                } catch(Exception e) {}
             }
+
+            // Check if we have autosaved projects from a PLPTool session that
+            // did not exit cleanly
+            try {
+                File confDir = new File(PLPToolbox.getConfDir());
+                File[] list = confDir.listFiles();
+                int ret;
+                String temp;
+                boolean keepTrying = true;
+                for(int i = 0; i < list.length; i++) {
+                    if(list[i].getName().startsWith("plp.autosave.")) {
+                        temp = list[i].getName().substring(13);
+                        ret = JOptionPane.showConfirmDialog(plp.g_dev,
+                                "'" + temp + "' was not saved properly in the " +
+                                "last PLPTool session.\nWould you like to save " +
+                                "a copy of the autosaved version? This " + 
+                                "file will be lost otherwise.",
+                                "Rescue Project File!", JOptionPane.YES_NO_OPTION);
+                        if(ret == JOptionPane.YES_OPTION) {
+                            while(keepTrying) {
+                                JFileChooser fc = new JFileChooser();
+                                ret = fc.showSaveDialog(plp.g_dev);
+                                if(ret == JFileChooser.APPROVE_OPTION) {
+                                    if(PLPToolbox.copyFile(list[i].getAbsolutePath(),
+                                            fc.getSelectedFile().getAbsolutePath()) == Constants.PLP_OK) {
+                                        keepTrying = false;
+                                        Msg.I("'" + temp + "' is saved to " +
+                                                fc.getSelectedFile().getAbsolutePath(), this);
+                                    } else {
+                                        Msg.E("Failed to save to " +
+                                                fc.getSelectedFile().getAbsolutePath() +
+                                                ". Try a different file, or cancel rescue.",
+                                                Constants.PLP_GENERIC_ERROR, this);
+                                    }
+                                } else {
+                                    keepTrying = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(Exception ex) {}
+            
         } else if(param instanceof ProjectEvent) {
             ProjectEvent e = (ProjectEvent) param;
             switch(e.getIdentifier()) {
-                case ProjectEvent.NEW_PROJECT:
                 case ProjectEvent.PROJECT_OPEN:
+                case ProjectEvent.NEW_PROJECT:                
                     Msg.D("Starting autosave thread...", 2, this);
-                    temporaryProject.plpfile =
-                        new File(PLPToolbox.getConfDir() + "/plp.autosave." + plp.plpfile.getName());
+                    if(e.getIdentifier() == ProjectEvent.PROJECT_OPEN)
+                        temporaryProject.plpfile =
+                            new File(PLPToolbox.getConfDir() + "/plp.autosave." + ((File) e.getParameters()).getName());
+                    else
+                        temporaryProject.plpfile =
+                            new File(PLPToolbox.getConfDir() + "/plp.autosave.unsaved");
                     temporaryProject.setArch(plp.getArch().getID());
                     if(thread != null)
                         thread.stopThread();                    
@@ -77,12 +124,15 @@ public class PLPToolConnector implements PLPGenericModule {
                     plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
                     break;
                 case ProjectEvent.EXIT:
-                    File confDir = new File(PLPToolbox.getConfDir());
-                    File[] list = confDir.listFiles();
-                    for(int i = 0; i < list.length; i++) {
-                        if(list[i].getName().startsWith("plp.autosave."))
-                            list[i].delete();
-                    }
+                    Msg.I("Cleaning up.", this);
+                    try {
+                        File confDir = new File(PLPToolbox.getConfDir());
+                        File[] list = confDir.listFiles();
+                        for(int i = 0; i < list.length; i++) {
+                            if(list[i].getName().startsWith("plp.autosave."))
+                                list[i].delete();
+                        }
+                    } catch(Exception ex) {}
                     break;
             }
         }
@@ -139,15 +189,18 @@ public class PLPToolConnector implements PLPGenericModule {
         }
 
         public void changedUpdate(DocumentEvent e) {
-            thread.setNeedSave();
+            if(thread != null)
+                thread.setNeedSave();
         }
 
         public void removeUpdate(DocumentEvent e) {
-            thread.setNeedSave();
+            if(thread != null)
+                thread.setNeedSave();
         }
 
         public void insertUpdate(DocumentEvent e) {
-            thread.setNeedSave();
+            if(thread != null)
+                thread.setNeedSave();
         }
     }
 }
