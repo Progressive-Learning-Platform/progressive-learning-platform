@@ -302,7 +302,7 @@ public class Architecture extends PLPArchitecture {
                 attrSet[j] = temp;
             }
             plp.addProjectAttribute("plpmips_memory_visualizer", attrSet);
-        } else if(configStr[0].equals("plpmips_timingdiagram")) {
+        } else if(configStr[0].equals("plpmips_timingdiagram") && configStr.length == 2) {
             plptimingdiagram.TimingDiagram tD = new plptimingdiagram.TimingDiagram();
             String[] tokens = configStr[1].split(":");
             for(int j = 0; j < tokens.length; j++) {

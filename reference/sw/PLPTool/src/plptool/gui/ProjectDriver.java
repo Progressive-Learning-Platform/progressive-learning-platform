@@ -557,12 +557,12 @@ public class ProjectDriver {
             PLPAsmSource asmFile = sourceList.get(i);
             Msg.D("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
             entry = new TarArchiveEntry(asmFile.getAsmFilePath());
-            entry.setSize(asmFile.getAsmString().length());
-            tOut.putArchiveEntry(entry);
-
+            
             // We are not expecting an .asm file with size greater than 4GiB
             // ... I hope...
             byte[] fileStr = asmFile.getAsmString().getBytes();
+            entry.setSize(fileStr.length);
+            tOut.putArchiveEntry(entry);
             tOut.write(fileStr);
             tOut.flush();
             tOut.closeArchiveEntry();
@@ -623,7 +623,7 @@ public class ProjectDriver {
         str += arch.saveArchSpecificSimStates();
         str += "END\n";
 
-        entry.setSize(str.length());
+        entry.setSize(str.getBytes().length);
         tOut.putArchiveEntry(entry);
         tOut.write(str.getBytes());
         tOut.flush();
