@@ -232,6 +232,8 @@ public class ProjectDriver {
                   "same directory and you run the batch file associated with " +
                   "your version of Windows (32- or 64-bit)", null);
             serial_support = false;
+        } catch(NoClassDefFoundError e) {
+            Msg.W("Unsatisfied RXTX link.", null);
         }
     }
 
