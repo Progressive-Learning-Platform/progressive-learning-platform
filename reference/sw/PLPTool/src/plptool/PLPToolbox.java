@@ -379,6 +379,8 @@ public class PLPToolbox {
             while((readBytes = in.read(buffer)) != -1) {
                 out.write(buffer, 0, readBytes);
             }
+            out.close();
+            in.close();
             
         } catch(Exception e) {
             return Constants.PLP_GENERIC_ERROR;
