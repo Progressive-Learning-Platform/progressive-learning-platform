@@ -160,58 +160,106 @@ public class ProgramVisualization {
             String testLabel;
             String jumpTargetLabel;
             String jalTargetLabel;
+            String previousInstr=null;
+            String twoInstrAgo=null;
+            String twoInstrArray[];
             int jump_index;
             int branch_index;
-            int previousVertex;
+            boolean jump=false;
+            boolean jumpedAway=false;
             long branch_imm;
             plptool.mips.Formatter progformat = new plptool.mips.Formatter();
             // add edges
-            previousVertex=0;
-            previousLabel=vertices.get(0);
-            currentLabel=vertices.get(1);
-            //Msg.M("previous1: " + previousLabel);
-            //Msg.M("current1: " + currentLabel);
+            previousLabel=null;
+            currentLabel=null;
             for(int addindex=0; addindex < addr_table.length; addindex++){
                 testLabel=asm.lookupLabel(addr_table[addindex]);
-                if(testLabel!=null){
-                    currentLabel=testLabel;
-                }
                 instr_str=progformat.mipsInstrStr(obj_table[addindex]);
                 instr_array=instr_str.split(" ");
 
+                if(testLabel!=null){
+                    currentLabel=testLabel;
+                }
+                else{
+                    twoInstrAgo=previousInstr;
+                }
+
+                // determining a traversal from one label to another
+                // without jumping
+
+                // did the program jump away? (and account for branch delay slot)
+                if(twoInstrAgo!=null){
+                    twoInstrArray=twoInstrAgo.split(" ");
+                    if(twoInstrArray[0].equals("j") || twoInstrArray[0].equals("beq") || twoInstrArray[0].equals("jr")){
+                        jumpedAway=true;
+                    }
+                    else{
+                        jumpedAway=false;
+                    }
+                    //Msg.M("two instr ago: " + twoInstrAgo);
+                    //Msg.M("jumpedaway is " + jumpedAway);
+                }
+                // if not, then add non jump traversal
+                if((currentLabel!=previousLabel) && !(jump) && (testLabel!=null) && (previousLabel!=null) && !(jumpedAway)){
+                    //Msg.M(instr_str);
+                    Msg.M("non jump traversal from " + previousLabel + " to " + currentLabel);
+                    progGraph.addEdge("njt" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                }
+
+                jump=false;
                 if(instr_array[0].equals("jal")){
+                    //Msg.M("jal, jump true");
+                    jump=true;
                     jump_index=Integer.parseInt(instr_array[5]);
-                    //vertices.add("jal " + asm.lookupLabel(addr_table[jump_index]));
-                    //Msg.M(vertices.get(vertices.size()-1));
-                    //progGraph.addVertex(vertices.get(vertices.size()-1));
                     jalTargetLabel=asm.lookupLabel(addr_table[jump_index]);
-                    progGraph.addEdge("jal" + addindex, currentLabel, jalTargetLabel, EdgeType.DIRECTED);
+                    if(currentLabel!=null && jalTargetLabel!=null){
+                        progGraph.addEdge("jal" + addindex, currentLabel, jalTargetLabel, EdgeType.DIRECTED);
+                    }
                     //progGraph.addEdge("jr" + addindex, jalTargetLabel, currentLabel, EdgeType.DIRECTED);
                 }
 
                 if(instr_array[0].equals("j")){
+                    //Msg.M("j, jump true");
+                    jump=true;
                     jump_index=Integer.parseInt(instr_array[5]);
-                    //vertices.add("j " + asm.lookupLabel(addr_table[jump_index]));
-                    //Msg.M(vertices.get(vertices.size()-1));
-                    //progGraph.addVertex(vertices.get(vertices.size()-1));
-                    //progGraph.addEdge(vertices.get(previousVertex) + " to " + vertices.get(vertices.size()-1), vertices.get(previousVertex), vertices.get(vertices.size()-1), EdgeType.DIRECTED);
                     jumpTargetLabel=asm.lookupLabel(addr_table[jump_index]);
-                    //Msg.M("previous: " + previousLabel);
-                    //Msg.M("current: " + currentLabel);
-                    progGraph.addEdge("j" + addindex, currentLabel, jumpTargetLabel, EdgeType.DIRECTED);
+                    if(currentLabel!=null && jumpTargetLabel!=null){
+                        progGraph.addEdge("j" + addindex, currentLabel, jumpTargetLabel, EdgeType.DIRECTED);
+                    }
                 }
 
                 if(instr_array[0].equals("beq")){
+                    //Msg.M("beq, jump true");
+                    jump=true;
                     // calculate branch target
                     branch_imm=Integer.parseInt(instr_array[5]);
                     branch_imm=(long)(short) branch_imm;
                     branch_index=(int)branch_imm+addindex+1;
-                    //vertices.add("beq " + asm.lookupLabel(addr_table[branch_index]));
                     currentLabel=asm.lookupLabel(addr_table[branch_index]);
-                    //Msg.M(vertices.get(vertices.size()-1));
-                    //progGraph.addVertex(vertices.get(vertices.size()-1));
-                    progGraph.addEdge("beq" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    if(currentLabel!=null && previousLabel!=null){
+                        progGraph.addEdge("beq" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    }
                 }
+
+                if(instr_array[0].equals("bne")){
+                    //Msg.M("beq, jump true");
+                    jump=true;
+                    // calculate branch target
+                    branch_imm=Integer.parseInt(instr_array[5]);
+                    branch_imm=(long)(short) branch_imm;
+                    branch_index=(int)branch_imm+addindex+1;
+                    currentLabel=asm.lookupLabel(addr_table[branch_index]);
+                    if(currentLabel!=null && previousLabel!=null){
+                        progGraph.addEdge("bne" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    }
+                }
+
+                if(instr_array[0].equals("jr")){
+                    //Msg.M("jr, jump true");
+                    jump=true;
+                }
+
+                previousInstr=instr_str;
                 previousLabel=currentLabel;
             }
         }
