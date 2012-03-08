@@ -140,6 +140,7 @@ public class Architecture extends PLPArchitecture {
                     if(progVis == null) {
                         progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
                         progGraph = progVis.new programGraph();
+                        progVis.printProgram();
                         progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph, plp);
                         ((plptool.mips.SimCoreGUI) plp.g_sim).attachProgramVisualizationFrame(progVisFrame);
                     }
