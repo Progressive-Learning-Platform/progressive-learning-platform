@@ -20,14 +20,14 @@ package plptool.mips.visualizer;
 import plptool.gui.ProjectDriver;
 import plptool.*;
 import plptool.mips.*;
-import java.io.*;
+//import java.io.*;
 import java.util.ArrayList;
 // jung
 import edu.uci.ics.jung.graph.*;
 //import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.*;
-import org.apache.commons.collections15.*;
-import javax.swing.*;
+//import org.apache.commons.collections15.*;
+//import javax.swing.*;
 
 /**
  * Using JUNG, this will create a flowchart like visualization of a PLP program.
@@ -67,13 +67,14 @@ public class ProgramVisualization {
         long[] obj_table = asm.getObjectCode();
 
         //Msg.M(progformat.mipsInstrStr(obj_table[0]));
-
+        //Msg.M(asm.toString());
         for(int addindex=0; addindex < addr_table.length; addindex++){
             instr_str=progformat.mipsInstrStr(obj_table[addindex]);
             instr_array=instr_str.split(" ");
             Msg.M(asm.lookupLabel(addr_table[addindex]));
-            /*
+            
             Msg.M(instr_str);
+            /*
             Msg.M(instr_array[addindex]);
             
             if(instr_array[0].equals("jal")){
@@ -125,6 +126,7 @@ public class ProgramVisualization {
         private ArrayList<String> vertices;
         private String currentLabel;
         private String previousLabel;
+        plptool.mips.Formatter progformat = new plptool.mips.Formatter();
         //methods
         public void initGraph(){
             //ProgramVisualization.programGraph graph = new programGraph();
@@ -144,11 +146,30 @@ public class ProgramVisualization {
             for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
                 currentLabel=asm.lookupLabel(addr_table[addindex1]);
                 if(currentLabel!=null){
-                    Msg.M("Current Address " + addr_table[addindex1] + ": " + currentLabel);
+                    //Msg.M("Current Address " + addr_table[addindex1] + ": " + currentLabel);
                     vertices.add(currentLabel);
+                    Msg.M("adding " + currentLabel);
                     progGraph.addVertex(currentLabel);
-                    //progGraph.addEdge("" + addindex1, previousLabel, currentLabel, EdgeType.DIRECTED);
-                    //previousLabel=currentLabel;
+                }
+
+            }
+        }
+        // for data & string labels
+        // sort of works
+        private void removeNonLabels(DirectedOrderedSparseMultigraph<String,String> progGraph){
+            String instrStr;
+            String instrArray[];
+            for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
+                currentLabel=asm.lookupLabel(addr_table[addindex1]);
+                if(obj_table.length > (addindex1+1)){
+                    //Msg.M("obj index: " + addindex1+1);
+                    instrStr=progformat.mipsInstrStr(obj_table[addindex1+1]);
+                    //Msg.M(instrStr);
+                    instrArray=instrStr.split(" ");
+                    if(instrArray[0].equals("null") && (currentLabel!=null)){
+                        Msg.M(currentLabel + "! Give, cur! Fall to thy betters!");
+                        progGraph.removeVertex(currentLabel);
+                    }
                 }
             }
         }
@@ -168,7 +189,7 @@ public class ProgramVisualization {
             boolean jump=false;
             boolean jumpedAway=false;
             long branch_imm;
-            plptool.mips.Formatter progformat = new plptool.mips.Formatter();
+            
             // add edges
             previousLabel=null;
             currentLabel=null;
@@ -176,7 +197,7 @@ public class ProgramVisualization {
                 testLabel=asm.lookupLabel(addr_table[addindex]);
                 instr_str=progformat.mipsInstrStr(obj_table[addindex]);
                 instr_array=instr_str.split(" ");
-
+                //Msg.M(instr_str);
                 if(testLabel!=null){
                     currentLabel=testLabel;
                 }
@@ -202,7 +223,7 @@ public class ProgramVisualization {
                 // if not, then add non jump traversal
                 if((currentLabel!=previousLabel) && !(jump) && (testLabel!=null) && (previousLabel!=null) && !(jumpedAway)){
                     //Msg.M(instr_str);
-                    Msg.M("non jump traversal from " + previousLabel + " to " + currentLabel);
+                    //Msg.M("non jump traversal from " + previousLabel + " to " + currentLabel);
                     progGraph.addEdge("njt" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
                 }
 
@@ -271,6 +292,7 @@ public class ProgramVisualization {
             buildTables();
             addLabels(progGraph);
             addEdges(progGraph);
+            removeNonLabels(progGraph);
             //Msg.M(progGraph.toString());
             return progGraph;
         }
