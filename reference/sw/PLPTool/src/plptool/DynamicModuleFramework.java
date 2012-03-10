@@ -340,7 +340,7 @@ public class DynamicModuleFramework {
                 if(files[i].getName().endsWith(".jar")) {
                     String[] manifest = loadJarWithManifest(files[i].getAbsolutePath());
                     if(manifest != null && plp != null)
-                        applyManifestEntries(manifest, plp);
+                        applyManifestEntries(files[i].getAbsolutePath(), manifest, plp);
                 }
             }
         }
@@ -477,36 +477,14 @@ public class DynamicModuleFramework {
     /**
      * Apply manifest entries to the project
      *
+     * @param jar Path to jar file that contains the manifest
      * @param manifestLines Manifest lines returned by loadJarWithManifest
-     * @param plp Reference to the ProjectDriver to apply
+     * @param plp Reference to the ProjectDriver to apply the manifest to
      */
-    public static void applyManifestEntries(String[] manifestLines, plptool.gui.ProjectDriver plp) {
-        for(int i = 0; i < manifestLines.length; i++) {
-            // Load connector object and pass a reference to the ProjectDriver
-            if(manifestLines[i].startsWith("loadwithproject::")) {
-                String className = manifestLines[i].replace("loadwithproject::", "");
-                int cIndex = -1;
-                int ret = isModuleClassRegistered(className);
-                if(ret > -1)
-                    cIndex = newGenericModuleInstance(ret);
-                if(cIndex > -1) {
-                    Msg.M("Applying manifest entry: " + manifestLines[i]);
-                    hook(cIndex, plp);
-                }
-
-            // Register an ISA metaclass
-            } else if(manifestLines[i].startsWith("registerisa::")) {
-                String tokens[] = manifestLines[i].split("::");
-                if(tokens.length != 4)
-                    return;
-                int ret = isModuleClassRegistered(tokens[1]);
-                if(ret > -1) {
-                    Msg.M("Applying manifest entry: " + manifestLines[i]);
-                    ArchRegistry.registerArchitecture(getDynamicModuleClass(ret),
-                            Integer.parseInt(tokens[3]), tokens[2]);
-                }
-            }
-        }
+    public static void applyManifestEntries(String jar, String[] manifestLines,
+            plptool.gui.ProjectDriver plp) {
+        for(int i = 0; i < manifestLines.length; i++)
+            ManifestHandlers.handleEntry(jar, plp, manifestLines[i]);
     }
 
     /**
@@ -598,6 +576,75 @@ public class DynamicModuleFramework {
         }
 
         return savedModuleClass.get(index);
+    }
+}
+
+/**
+ * This class contains the handlers for manifest entries that the module
+ * framework supports
+ *
+ * @author wira
+ */
+class ManifestHandlers {
+    private static String entry;
+    private static String jar;
+    private static plptool.gui.ProjectDriver plp;
+
+    public static void handleEntry(String j, plptool.gui.ProjectDriver p, String e) {
+        entry = e;
+        plp = p;
+        jar = j;
+
+        // Load connector object and pass a reference to the ProjectDriver
+        if(e.startsWith("loadwithproject::"))
+            m_loadwithproject();
+
+        // Register an ISA metaclass
+        else if(e.startsWith("registerisa::"))
+            m_registerisa();
+
+        // Extract a file from a JAR file to temporary directory
+        else if(e.startsWith("extracttotemp::"))
+            m_extracttotemp();
+    }
+    
+    public static void m_loadwithproject() {
+        String className = entry.replace("loadwithproject::", "");
+        int cIndex = -1;
+        int ret = DynamicModuleFramework.isModuleClassRegistered(className);
+        if(ret > -1)
+            cIndex = DynamicModuleFramework.newGenericModuleInstance(ret);
+        if(cIndex > -1) {
+            Msg.M("Applying manifest entry: " + entry);
+            DynamicModuleFramework.hook(cIndex, plp);
+        }
+    }
+
+    public static void m_registerisa() {
+        String tokens[] = entry.split("::");
+        if(tokens.length != 4)
+            return;
+        int ret = DynamicModuleFramework.isModuleClassRegistered(tokens[1]);
+        if(ret > -1) {
+            Msg.M("Applying manifest entry: " + entry);
+            ArchRegistry.registerArchitecture(
+                    DynamicModuleFramework.getDynamicModuleClass(ret),
+                    Integer.parseInt(tokens[3]), tokens[2]);
+        }
+    }
+
+    public static void m_extracttotemp() {
+        String tokens[] = entry.split("::");
+        if(tokens.length != 3)
+            return;
+        Msg.M("Applying manifest entry: " + entry);
+        PLPToolbox.checkCreateTempDirectory();
+        PLPToolbox.copyFromJar(jar, tokens[1],
+                PLPToolbox.getTmpDir() + "/" + tokens[2]);
+    }
+
+    public static void m_extract() {
+
     }
 }
 

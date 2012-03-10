@@ -20,6 +20,7 @@ package plptool;
 
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.util.jar.*;
 
 /**
  *
@@ -168,6 +169,15 @@ public class PLPToolbox {
             confDir.mkdir();
 
         return confDir.getAbsolutePath();
+    }
+
+    /**
+     * Get the temporary directory path
+     *
+     * @return Temporary directory path in String
+     */
+    public static String getTmpDir() {
+        return getConfDir() + "/tmp";
     }
 
     /**
@@ -337,7 +347,9 @@ public class PLPToolbox {
                 String searchPath = PLPToolbox.getConfDir() + "/autoload/" + fileName;
                 String[] manifest = DynamicModuleFramework.loadJarWithManifest(searchPath);
                 if(manifest != null)
-                    DynamicModuleFramework.applyManifestEntries(manifest, plp);
+                    DynamicModuleFramework.applyManifestEntries(
+                            PLPToolbox.getConfDir() + "/autoload/" + fileName,
+                            manifest, plp);
             }
             return true;
         }
@@ -363,7 +375,7 @@ public class PLPToolbox {
      *
      * @param src Path to source file
      * @param dest Path to destination file
-     * @return Constants.PLP_OK on successful copy, error code otherwise
+     * @return PLP_OK on successful copy, error code otherwise
      */
     public static int copyFile(String src, String dest) {
         File s = new File(src);
@@ -373,20 +385,77 @@ public class PLPToolbox {
             FileInputStream in = new FileInputStream(s);
             FileOutputStream out = new FileOutputStream(d);
 
-            byte[] buffer = new byte[1024];
+            byte[] buf = new byte[Constants.DEFAULT_IO_BUFFER_SIZE];
 
             int readBytes;
-            while((readBytes = in.read(buffer)) != -1) {
-                out.write(buffer, 0, readBytes);
+            while((readBytes = in.read(buf)) != -1) {
+                out.write(buf, 0, readBytes);
             }
             out.close();
             in.close();
             
-        } catch(Exception e) {
-            return Constants.PLP_GENERIC_ERROR;
+        } catch(IOException e) {
+            return Msg.E("File copy error: '" + src + "' to '" + dest +
+                    "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
+                    , Constants.PLP_GENERAL_IO_ERROR, null);
         }
 
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Extract a file from a jar file
+     *
+     * @param jar Path to JAR file to extract the file from
+     * @param entry Name of the file to extract
+     * @param dest Destination path to write the file to
+     * @return PLP_OK on successful copy, error code otherwise
+     */
+    public static int copyFromJar(String jar, String entry, String dest) {
+        try {
+            JarFile jarFile = new JarFile(jar);
+            JarEntry jarEntry = jarFile.getJarEntry(entry);
+            if(jarEntry == null)
+                return Msg.E("copyFromJar: " +
+                        "Can not find entry: '" + entry +
+                        "' in '" + jar + "'.",
+                    Constants.PLP_GENERAL_IO_ERROR, null);
+            File destFile = new File(dest);
+            if(destFile.exists())
+                return Msg.E("copyFromJar: " + "'" + dest + "' exists.",
+                        Constants.PLP_GENERAL_IO_ERROR, null);
+            InputStreamReader in = new InputStreamReader(jarFile.getInputStream(jarEntry));
+            FileWriter out = new FileWriter(dest);
+            char[] buf = new char[Constants.DEFAULT_IO_BUFFER_SIZE];
+            int readLen;
+            while((readLen = in.read(buf)) > 0)
+                out.write(buf, 0, readLen);
+            out.close();
+            in.close();
+            jarFile.close();
+
+        } catch(IOException e) {
+            return Msg.E("copyFromJar: " +
+                    "Jar extract error: '" + entry + "' to '" + dest +
+                    "' from '" + jar + "'." +
+                    (Constants.debugLevel >= 2 ? "Exception: " + e : "")
+                    , Constants.PLP_GENERAL_IO_ERROR, null);
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Check if ~/.plp/tmp exists and create it if it doesn't.
+     */
+    public static void checkCreateTempDirectory() {
+        File temp = new File(getConfDir() + "/tmp");
+        if(!temp.exists()) {
+            temp.mkdir();
+        } else if(temp.exists() && !temp.isDirectory()) {
+            Msg.E("Temporary directory creation failed.",
+                    Constants.PLP_GENERAL_IO_ERROR, null);
+        }
     }
 }
 

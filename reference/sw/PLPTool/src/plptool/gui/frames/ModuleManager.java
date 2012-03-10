@@ -236,9 +236,10 @@ public class ModuleManager extends javax.swing.JDialog {
                         "Would you like to load this module?",
                         "Load Module", JOptionPane.YES_NO_OPTION);
                 if(retVal == JOptionPane.YES_OPTION) {
-                    String[] manifest = DynamicModuleFramework.loadJarWithManifest(fc.getSelectedFile().getAbsolutePath());
+                    String jar = fc.getSelectedFile().getAbsolutePath();
+                    String[] manifest = DynamicModuleFramework.loadJarWithManifest(jar);
                     if(manifest != null) {
-                        DynamicModuleFramework.applyManifestEntries(manifest, plp);
+                        DynamicModuleFramework.applyManifestEntries(jar, manifest, plp);
                     }
                 }
             }
@@ -270,7 +271,7 @@ public class ModuleManager extends javax.swing.JDialog {
                 String path = PLPToolbox.getConfDir() + "/autoload/" + tokens[tokens.length-1];
                 String[] manifest = DynamicModuleFramework.loadJarWithManifest(path);
                 if(manifest != null) {
-                    DynamicModuleFramework.applyManifestEntries(manifest, plp);
+                    DynamicModuleFramework.applyManifestEntries(path, manifest, plp);
                 }
             }
         }
@@ -282,7 +283,7 @@ public class ModuleManager extends javax.swing.JDialog {
             String path = PLPToolbox.getConfDir() + "/autoload/" + tblMods.getValueAt(index, 0);
             String[] manifest = DynamicModuleFramework.loadJarWithManifest(path);
             if(manifest != null)
-                DynamicModuleFramework.applyManifestEntries(manifest, plp);
+                DynamicModuleFramework.applyManifestEntries(path, manifest, plp);
         }
     }//GEN-LAST:event_btnLoadActionPerformed
 
