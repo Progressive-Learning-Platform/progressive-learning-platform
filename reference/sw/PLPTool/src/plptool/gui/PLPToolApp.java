@@ -45,6 +45,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static boolean simulateScripted = false;
     private static boolean autoloadjars = true;
     private static ArrayList<String[]> manifests;
+    private static ArrayList<String> jars;
     private static HashMap<String, String> attributes;
     private static int startingArchID = ArchRegistry.ISA_PLPMIPS;
     private static String plpFileToSimulate;
@@ -181,9 +182,12 @@ public class PLPToolApp extends SingleFrameApplication {
 		String[] manifest = DynamicModuleFramework.loadJarWithManifest(args[i+1]);
                 if(manifest == null)
                     System.exit(-1);
-                if(manifests == null)
+                if(manifests == null) {
+                    jars = new ArrayList<String>();
                     manifests = new ArrayList<String[]>();
+                }
 		manifests.add(manifest);
+                jars.add(args[i+1]);
                 activeArgIndex += 2;
                 i++;
 
@@ -402,7 +406,8 @@ public class PLPToolApp extends SingleFrameApplication {
         // Apply manifests from modules loaded with the
         // '--load-jar-with-manifest' option
         for(int i = 0; manifests != null && i < manifests.size(); i++)
-            DynamicModuleFramework.applyManifestEntries(manifests.get(i), plp);
+            DynamicModuleFramework.applyManifestEntries(
+                    jars.get(i), manifests.get(i), plp);
     }
 
     /**

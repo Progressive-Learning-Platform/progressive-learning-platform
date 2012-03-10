@@ -3415,9 +3415,10 @@ public class Develop extends javax.swing.JFrame {
         int retVal = fc.showOpenDialog(null);
 
         if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-            String[] manifest = DynamicModuleFramework.loadJarWithManifest(fc.getSelectedFile().getAbsolutePath());
+            String jar = fc.getSelectedFile().getAbsolutePath();
+            String[] manifest = DynamicModuleFramework.loadJarWithManifest(jar);
             if(manifest != null) {
-                DynamicModuleFramework.applyManifestEntries(manifest, plp);
+                DynamicModuleFramework.applyManifestEntries(jar, manifest, plp);
                 retVal = JOptionPane.showConfirmDialog(this,
                         "Would you like to save this module so it will autoload the next time PLPTool starts?",
                         "Save Module", JOptionPane.YES_NO_OPTION);

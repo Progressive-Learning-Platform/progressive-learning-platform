@@ -27,12 +27,11 @@ public class Constants {
 
     public static final int minimumJREMajorVersion               = 1;
     public static final int minimumJREMinorVersion               = 5;
+    public static final int DEFAULT_IO_BUFFER_SIZE               = 1024;
 
     public static int debugLevel = 0;
     public static final int PLP_ASM_MAX_NUMBER_OF_ASMS           = 256;
-
     public static final int PLP_BAUDRATE                         = 57600;
-
     public static final int PLP_MAX_STEPS                        = 1000000;
 
     // Assembler 1st Pass Errors
@@ -154,7 +153,7 @@ public class Constants {
     public static final int PLP_GUI_APPLET                       = 4;
     public static final int PLP_NON_INTERACTIVE                  = 8;
 
-    // General
+    // General codes
     public static final int PLP_NUMBER_ERROR                     = -1;
     public static final int PLP_OK                               = 0;
     public static final int PLP_GENERIC_ERROR                    = 1;
@@ -164,6 +163,8 @@ public class Constants {
     public static final int PLP_FILE_USE_SAVE_AS                 = 5;
     public static final int PLP_PRINT_ERROR                      = 6;
     public static final int PLP_FATAL_ERROR                      = 7;
+    public static final int PLP_IO_PERMISSION_ERROR              = 8;
+    public static final int PLP_GENERAL_IO_ERROR                 = 9;
 
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;
