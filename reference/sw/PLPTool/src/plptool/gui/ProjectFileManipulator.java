@@ -21,20 +21,23 @@ package plptool.gui;
 import plptool.Constants;
 import plptool.Msg;
 import java.io.*;
+import plptool.PLPToolbox;
 
 /**
  *
  * @author wira
  */
 public class ProjectFileManipulator {
-    public static void CLI(String[] args, int archID) {
+    public static void CLI(String[] args, int archID, boolean autoloadModules) {
         if(args == null || args.length < 2) {
             helpMessage();
             return;
         }
 
         ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
-        PLPToolApp.loadDynamicModules(plp);
+        // Autoload saved modules
+        if(autoloadModules)
+            PLPToolApp.loadDynamicModules(PLPToolbox.getConfDir() + "/autoload", plp);
         File plpHandler = new File(args[1]);
 	
 	if(plpHandler.exists() && !(args.length > 2 && args[2].equals("-c"))) {

@@ -91,7 +91,8 @@ SectionEnd
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\PLPTool 4"
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "" "$INSTDIR\resources\appicon.ico" 0
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "-D .\resources" "$INSTDIR\resources\appicon.ico" 0
+  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool (Safe Mode).lnk" "$INSTDIR\PLPToolWin.bat" "-N" "$INSTDIR\resources\appicon.ico" 0
   CreateShortCut "$SMPROGRAMS\PLPTool 4\PLP Serial Terminal.lnk" "$INSTDIR\PLPToolWin.bat" "--serialterminal" "$INSTDIR\resources\terminal.ico" 0  
   CreateShortCut "$SMPROGRAMS\PLPTool 4\Browse Installation Directory.lnk" "$INSTDIR" "" "$INSTDIR\resources\folder.ico" 0    
   CreateShortCut "$SMPROGRAMS\PLPTool 4\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0   
@@ -101,6 +102,13 @@ SectionEnd
 Section "Example Programs and Software Library"
   File /r "..\..\reference\sw\examples"
   File /r "..\..\reference\sw\libplp"
+SectionEnd
+
+Section /o "PLPTool Extensions (AutoSaver and Lecture Publisher)"
+  SetOutPath $INSTDIR\resources
+  File "..\..\extras\AutoSaver\store\AutoSaver.jar"
+  File "..\..\extras\LecturePublisher\store\LecturePublisher.jar"
+  SetOutPath $INSTDIR
 SectionEnd
 
 Section /o "PLP CPU Hardware for Nexys2/3"

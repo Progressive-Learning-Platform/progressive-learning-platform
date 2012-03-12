@@ -37,7 +37,7 @@ sh scripts/build_nexys3_linux.sh > build_nexys3_log
 
 #update the PLPTool nightly version
 echo ===============================================================================
-echo - Building PLPTool...
+echo - Building PLPTool and its modules...
 echo ===============================================================================
 echo   - Updating Version string...
 cd $BUILDROOT/reference/sw/PLPTool/src/plptool
@@ -52,10 +52,16 @@ echo   - Building javadoc...
 ant javadoc > build_javadoc_log
 
 #build the classroom module
-echo   - BUilding lecture publisher...
+echo   - Building lecture publisher...
 cd $BUILDROOT/extras/LecturePublisher
 ant clean
-ant package-for-store > build_lecturepublisher_log
+ant package-for-store > build_plptool_modules_log
+
+#build the autosaver module
+echo   - Building autosaver...
+cd $BUILDROOT/extras/AutoSaver
+ant clean
+ant package-for-store >> build_plptool_modules_log
 
 #run the autotest
 echo ===============================================================================
@@ -102,6 +108,7 @@ cd $BUILDROOT
 cp reference/sw/PLPTool/*_log to_push
 cp reference/sw/PLPTool/store/* to_push/plptool
 cp extras/LecturePublisher/store/* to_push/plptool
+cp extras/AutoSaver/store/* to_push/plptool
 cp extras/PLPToolInstaller/plptoolsetup.exe to_push/plptool
 cp -R reference/sw/PLPTool/dist/javadoc to_push
 
