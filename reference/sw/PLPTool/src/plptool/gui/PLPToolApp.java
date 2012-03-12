@@ -26,6 +26,7 @@ import plptool.Constants;
 import plptool.ArchRegistry;
 import plptool.Text;
 import plptool.DynamicModuleFramework;
+import plptool.PLPToolbox;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -46,6 +47,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static boolean autoloadjars = true;
     private static ArrayList<String[]> manifests;
     private static ArrayList<String> jars;
+    private static ArrayList<String> moduleLoadDirs;
     private static HashMap<String, String> attributes;
     private static int startingArchID = ArchRegistry.ISA_PLPMIPS;
     private static String plpFileToSimulate;
@@ -76,7 +78,20 @@ public class PLPToolApp extends SingleFrameApplication {
                 con.setVisible(true);
             }
             plp.app = this;
-            loadDynamicModules(plp);
+            
+            // Load modules inside the directories specified by the '-D' option
+            if(moduleLoadDirs != null && moduleLoadDirs.size() > 0) {
+                String dirPath;
+                for(int i = 0;i < moduleLoadDirs.size(); i++) {
+                    dirPath = moduleLoadDirs.get(i);
+                    Msg.D("Loading modules from " + dirPath + "...", 2, null);
+                    DynamicModuleFramework.autoloadModules(dirPath, plp);
+                }
+            }
+
+            // Autoload saved modules
+            if(autoloadjars)
+                loadDynamicModules(PLPToolbox.getConfDir() + "/autoload", plp);
 
             Msg.setOutput(plp.g_dev.getOutput());
             if(plpFilePath != null)
@@ -159,7 +174,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 activeArgIndex++;
 
             // Delete ~/.plp/autoload
-            } else if (args.length >= activeArgIndex + 1 && args[i].equals("-D")) {
+            } else if (args.length >= activeArgIndex + 1 && args[i].equals("-R")) {
                 DynamicModuleFramework.removeAutoloadModules();
                 activeArgIndex++;
             
@@ -188,6 +203,14 @@ public class PLPToolApp extends SingleFrameApplication {
                 }
 		manifests.add(manifest);
                 jars.add(args[i+1]);
+                activeArgIndex += 2;
+                i++;
+
+            // Load all classes from a jar within a the specified directory
+            } else if (args.length >= activeArgIndex + 2 && args[i].equals("-D")) {
+                if(moduleLoadDirs == null)
+                    moduleLoadDirs = new ArrayList<String>();
+                moduleLoadDirs.add(args[i+1]);
                 activeArgIndex += 2;
                 i++;
 
@@ -247,7 +270,7 @@ public class PLPToolApp extends SingleFrameApplication {
             } else if(args[i].equals("-plp")) {
                 String[] newargs = new String[args.length - activeArgIndex];
                 System.arraycopy(args, activeArgIndex, newargs, 0, newargs.length);
-                ProjectFileManipulator.CLI(newargs, startingArchID);
+                ProjectFileManipulator.CLI(newargs, startingArchID, autoloadjars);
                 return;
 
             // Interactive command-line simulator
@@ -342,8 +365,8 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --buildinfo             Print build information and quit.");
         System.out.println("  --gpl                   Print GPL license text and quit.");
         System.out.println("  --license               Print third party licensing information and quit.");
-        System.out.println("  --isa-id <arch id>      Force PLPTool to use the ISA with <arch id> for");
-        System.out.println("                            newly created projects.");
+        System.out.println("  --isa-id <arch id>      Force PLPTool to use the ISA with <arch id> for newly");
+        System.out.println("                            created projects.");
         System.out.println("  --remove-config         Remove saved configuration and reset all settings.");
         System.out.println("  --serialterminal        Launch serial terminal instead of the IDE.");
         System.out.println("  --suppress-output       Engage silent mode.");
@@ -354,13 +377,15 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("   -L <jar file>          Load a PLPTool module JAR file, locate the manifest,");
         System.out.println("                            and interpret the file accordingly. PLPTool will");
         System.out.println("                            ONLY launch if the module is successfully loaded.");
+        System.out.println("   -D <path>              Attempt to load all modules in the directory ");
+        System.out.println("                            specified by <path>.");
+        System.out.println("   -N                     Do NOT autoload modules for this PLPTool session.");
         System.out.println("   -S <URL>               Fetch a module's jar file from URL, save it to the");
         System.out.println("                            the autoload directory, and quit. This module will");
         System.out.println("                            be autoloaded the next time PLPTool starts. Module");
         System.out.println("                            autoloading can be disabled by the user");
         System.out.println("                            (autoloading is enabled by default).");
-        System.out.println("   -N                     Do NOT autoload modules for this PLPTool session.");
-        System.out.println("   -D                     Delete the autoload cache directory and all of its");
+        System.out.println("   -R                     Delete the autoload cache directory and all of its ");
         System.out.println("                            contents.");
         System.out.println();
         System.out.println("MODULE DEBUGGING COMMANDS:");
@@ -398,13 +423,11 @@ public class PLPToolApp extends SingleFrameApplication {
      *
      * @param plp Reference to the ProjectDriver
      */
-    public static void loadDynamicModules(ProjectDriver plp) {
-        // AUtoload saved modules
-        if(autoloadjars)
-            DynamicModuleFramework.autoloadModules(plp);
+    public static void loadDynamicModules(String autoloadPath, ProjectDriver plp) {
+        DynamicModuleFramework.autoloadModules(autoloadPath, plp);
 
         // Apply manifests from modules loaded with the
-        // '--load-jar-with-manifest' option
+        // '-L' option
         for(int i = 0; manifests != null && i < manifests.size(); i++)
             DynamicModuleFramework.applyManifestEntries(
                     jars.get(i), manifests.get(i), plp);
@@ -416,7 +439,9 @@ public class PLPToolApp extends SingleFrameApplication {
     private static void simulateCLI() {
         if(simulateCLI) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
-            loadDynamicModules(plp);
+            // Autoload saved modules
+            if(autoloadjars)
+                loadDynamicModules(PLPToolbox.getConfDir() + "/autoload", plp);
             if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK))
                 System.exit(Constants.PLP_GENERIC_ERROR);
             if(plp.asm.isAssembled())
@@ -426,7 +451,9 @@ public class PLPToolApp extends SingleFrameApplication {
 
         } else if(simulateScripted) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
-            loadDynamicModules(plp);
+            // Autoload saved modules
+            if(autoloadjars)
+                loadDynamicModules(PLPToolbox.getConfDir() + "/autoload", plp);
             try {
                 FileInputStream in = new FileInputStream(new File(scriptFileToRun));
                 Scanner sIn = new Scanner(in);

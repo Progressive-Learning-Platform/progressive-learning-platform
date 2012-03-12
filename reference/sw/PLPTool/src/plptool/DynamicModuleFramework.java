@@ -307,11 +307,11 @@ public class DynamicModuleFramework {
     }
 
     /**
-     * Auto-load modules from ~/.plp/autoload/*.jar and apply the manifest file
+     * Auto-load modules from a directory and apply the manifest file
      */
-    public static void autoloadModules(plptool.gui.ProjectDriver plp) {
+    public static void autoloadModules(String autoloadPath, plptool.gui.ProjectDriver plp) {
         Msg.D("Auto-loading modules...", 1, null);
-        File autoloadDir = new File(PLPToolbox.getConfDir() + "/autoload");
+        File autoloadDir = new File(autoloadPath);
         if(autoloadDir.exists() && autoloadDir.isDirectory()) {
             File[] files = autoloadDir.listFiles();
 
