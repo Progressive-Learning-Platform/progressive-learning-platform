@@ -55,13 +55,13 @@ ant javadoc > build_javadoc_log
 echo   - Building lecture publisher...
 cd $BUILDROOT/extras/LecturePublisher
 ant clean
-ant package-for-store > build_plptool_modules_log
+ant package-for-store > ../build_plptool_modules_log
 
 #build the autosaver module
 echo   - Building autosaver...
 cd $BUILDROOT/extras/AutoSaver
 ant clean
-ant package-for-store >> build_plptool_modules_log
+ant package-for-store >> ../build_plptool_modules_log
 
 #run the autotest
 echo ===============================================================================
@@ -105,6 +105,7 @@ echo ===========================================================================
 echo   - Pushing sw...
 echo ===============================================================================
 cd $BUILDROOT
+cp extras/*_log to_push
 cp reference/sw/PLPTool/*_log to_push
 cp reference/sw/PLPTool/store/* to_push/plptool
 cp extras/LecturePublisher/store/* to_push/plptool
