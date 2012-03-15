@@ -14,7 +14,7 @@ import plptool.gui.ProjectDriver;
 import plptool.*;
 import plptool.mips.*;
 import java.util.Arrays;
-
+import java.lang.String;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -42,6 +42,8 @@ import edu.uci.ics.jung.visualization.*;
 import edu.uci.ics.jung.visualization.decorators.*;
 import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
+import edu.uci.ics.jung.visualization.renderers.VertexLabelAsShapeRenderer;
+import edu.uci.ics.jung.visualization.renderers.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.Point2D;
@@ -95,7 +97,7 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
             return vertexShape;
         }
     };
-    
+
     /** Creates new form ProgramVisualizationFrame */
     public ProgramVisualizationFrame(ProgramVisualization progVis, ProgramVisualization.programGraph progGraph, ProjectDriver plp) {
         initComponents();
@@ -106,21 +108,43 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         vertexRecolor = new vertexRecolor<String>();
         // Vertical Layout
         layout = new StaticLayout<String,String>(progGraph.buildGraph());
+
+        //layout.setSize(d);
         // Grab graph's vertices
         List<String> vertexList = new ArrayList<String>(layout.getGraph().getVertices());
+        int maxStrLen=0;
+        String vertName;
+        int vertLength;
+        for(int ind=0; ind<vertexList.size(); ind++){
+                vertName=vertexList.get(ind);
+                vertLength=vertName.length();
+                if (vertLength>maxStrLen){
+                    maxStrLen=vertLength;
+                }
+        }
         // Traverse vertices, arrange them vertically
         vertexYPos = 25;
+        layout.setSize(new Dimension(maxStrLen*10,vertexList.size()*31));
+        Dimension d = layout.getSize();
+        if (d!=null){
+            Msg.M("width = " + d.getWidth());
+            Msg.M("height = " + d.getHeight());
+        }
+        else{
+            Msg.M("d is null");
+        }
         for(int i=0; i<vertexList.size(); i++){
-                layout.setLocation(vertexList.get(i), new Point2D.Double(50, vertexYPos));
+                layout.setLocation(vertexList.get(i), new Point2D.Double(d.getWidth()/2, vertexYPos));
                 vertexYPos+=30;
         }
-        //layout.setSize(new Dimension(600,600));
+        
         // create the vis viewer
         progVisServ = new VisualizationViewer<String,String>(layout);
         this.format();
         // create the pane
         final GraphZoomScrollPane progVisScrollPane = new GraphZoomScrollPane(progVisServ);
-        progVisServ.setPreferredSize(new Dimension(250,1000));
+        //progVisServ.setPreferredSize(new Dimension(250,1000));
+        progVisServ.setPreferredSize(d);
         //progVisScrollPane.setPreferredSize(new Dimension(600,600));
         //progVisServ.setSize(this.getSize());
         //progVisScrollPane.setSize(this.getSize());
@@ -134,12 +158,17 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     // formatting
     private void format(){
         //vertexRecolor.transform("BEGIN");
-        progVisServ.getRenderContext().setVertexShapeTransformer(vertexResizer);
+        //progVisServ.getRenderContext().setVertexShapeTransformer(vertexResizer);
+        progVisServ.getRenderContext().setVertexShapeTransformer(new VertexLabelAsShapeRenderer(progVisServ.getRenderContext()));
         progVisServ.getRenderContext().setVertexFillPaintTransformer(vertexRecolor);
 
         //vertexRecolor.setPaintMe("Begin");
         progVisServ.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
         progVisServ.getRenderer().getVertexLabelRenderer().setPosition(Position.E);
+
+        progVisServ.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Orthogonal());
+        progVisServ.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
+
     }
 
     // paint current label green
