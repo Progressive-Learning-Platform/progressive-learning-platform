@@ -44,6 +44,8 @@ import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import edu.uci.ics.jung.visualization.renderers.VertexLabelAsShapeRenderer;
 import edu.uci.ics.jung.visualization.renderers.*;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.Point2D;
@@ -141,6 +143,7 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         // create the vis viewer
         progVisServ = new VisualizationViewer<String,String>(layout);
         this.format();
+
         // create the pane
         final GraphZoomScrollPane progVisScrollPane = new GraphZoomScrollPane(progVisServ);
         //progVisServ.setPreferredSize(new Dimension(250,1000));
@@ -149,6 +152,10 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         //progVisServ.setSize(this.getSize());
         //progVisScrollPane.setSize(this.getSize());
         //this.setResizable(true);
+        DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
+        gm.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+        progVisServ.setGraphMouse(gm);
+
         this.setLayout(new BorderLayout());
         getContentPane().add(progVisScrollPane, BorderLayout.CENTER);
         this.pack();
