@@ -188,12 +188,18 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     }
     private String getFunction(long currentAddress){
         plptool.mips.Formatter progFormat = new plptool.mips.Formatter();
+        int index = -1;
         long objTable[] = plp.asm.getObjectCode();
         long addrTable[] = plp.asm.getAddrTable();
-        int index = Arrays.binarySearch(addrTable, currentAddress);
-        String instrStr = progFormat.mipsInstrStr(objTable[index]);
-        String instrArray[]=instrStr.split(" ");
-        return instrArray[0];
+        index = Arrays.binarySearch(addrTable, currentAddress);
+        if (index > -1){
+            String instrStr = progFormat.mipsInstrStr(objTable[index]);
+            String instrArray[]=instrStr.split(" ");
+            return instrArray[0];
+        }
+        else{
+            return(null);
+        }
     }
 
     // called by SimCoreGUI when there's a GUI update in simulation
