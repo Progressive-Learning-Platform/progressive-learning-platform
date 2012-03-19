@@ -85,7 +85,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 for(int i = 0;i < moduleLoadDirs.size(); i++) {
                     dirPath = moduleLoadDirs.get(i);
                     Msg.D("Loading modules from " + dirPath + "...", 2, null);
-                    DynamicModuleFramework.autoloadModules(dirPath, plp);
+                    DynamicModuleFramework.autoloadModules(dirPath, plp, false);
                 }
             }
 
@@ -424,7 +424,8 @@ public class PLPToolApp extends SingleFrameApplication {
      * @param plp Reference to the ProjectDriver
      */
     public static void loadDynamicModules(String autoloadPath, ProjectDriver plp) {
-        DynamicModuleFramework.autoloadModules(autoloadPath, plp);
+        DynamicModuleFramework.autoloadModules(autoloadPath, plp,
+                plptool.Config.cfgAskBeforeAutoloadingModules);
 
         // Apply manifests from modules loaded with the
         // '-L' option
