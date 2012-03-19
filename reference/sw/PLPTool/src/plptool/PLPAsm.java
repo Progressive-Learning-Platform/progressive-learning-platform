@@ -21,6 +21,7 @@ package plptool;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Arrays;
 
 /**
  * PLPTool assembler abstract.
@@ -204,10 +205,9 @@ public abstract class PLPAsm implements PLPGenericModule {
     public int getFileIndex(long addr) {
         if(addrTable == null) return -1;
 
-        for(int i = 0; i < addrTable.length; i++) {
-            if(addrTable[i] == addr)
-                return objCodeFileMapper[i];
-        }
+        int index = Arrays.binarySearch(addrTable, addr);
+        if(index > -1)
+            return objCodeFileMapper[index];
 
         return -1;
 
@@ -223,10 +223,10 @@ public abstract class PLPAsm implements PLPGenericModule {
     public int getLineNum(long addr) {
         if(addrTable == null) return -1;
 
-        for(int i = 0; i < addrTable.length; i++) {
-            if(addrTable[i] == addr)
-                return objCodeLineNumMapper[i];
-        }
+        int index = Arrays.binarySearch(addrTable, addr);
+
+        if(index > -1)
+            return objCodeLineNumMapper[index];
 
         return -1;
     }
@@ -329,12 +329,7 @@ public abstract class PLPAsm implements PLPGenericModule {
     public int lookupAddrIndex(long addr) {
         if(addrTable == null) return -1;
 
-        for(int i = 0; i < addrTable.length; i++) {
-            if(addrTable[i] == addr)
-                return i;
-        }
-
-        return -1;
+        return Arrays.binarySearch(addrTable, addr);
     }
 
     /**

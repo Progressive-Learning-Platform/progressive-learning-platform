@@ -248,6 +248,7 @@ public class Architecture extends PLPArchitecture {
             }
 
             if(progVis != null) {
+                progVisFrame.stopUpdateThread();
                 progVisFrame.dispose();
                 progVis = null;
             }
