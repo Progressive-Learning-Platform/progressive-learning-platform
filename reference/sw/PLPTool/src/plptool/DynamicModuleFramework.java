@@ -307,9 +307,16 @@ public class DynamicModuleFramework {
     }
 
     /**
-     * Auto-load modules from a directory and apply the manifest file
+     * Autoload modules from the specified directory and apply manifest files
+     * to the provided ProjectDriver instance. If prompt is true, this method
+     * will prompt the user for module autoload.
+     *
+     * @param autoloadPath
+     * @param plp
+     * @param prompt
      */
-    public static void autoloadModules(String autoloadPath, plptool.gui.ProjectDriver plp) {
+    public static void autoloadModules(String autoloadPath,
+            plptool.gui.ProjectDriver plp, boolean prompt) {
         Msg.D("Auto-loading modules...", 1, null);
         File autoloadDir = new File(autoloadPath);
         if(autoloadDir.exists() && autoloadDir.isDirectory()) {
@@ -320,13 +327,13 @@ public class DynamicModuleFramework {
                             " If you click yes, all saved modules will be loaded." +
                             " Continue with module autoload?\n" +
                             "You can disable this prompt from Tools->Options->Miscellaneous.";
-                if(plp.g() && Config.cfgAskBeforeAutoloadingModules) {
+                if(plp.g() && prompt) {
                     int ret = JOptionPane.showConfirmDialog(plp.g_dev,
                             message, "Autoload Modules", JOptionPane.YES_NO_OPTION);
                     if(ret == JOptionPane.CLOSED_OPTION ||
                        ret == JOptionPane.NO_OPTION)
                         return;
-                } else if(Config.cfgAskBeforeAutoloadingModules) {
+                } else if(prompt) {
                     System.out.print(message + " (Y/N) ");
                     try {
                         char response = PLPToolbox.readLine().charAt(0);
