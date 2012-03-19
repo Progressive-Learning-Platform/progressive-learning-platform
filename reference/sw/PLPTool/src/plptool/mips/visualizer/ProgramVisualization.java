@@ -141,6 +141,45 @@ public class ProgramVisualization {
             addr_table = asm.getAddrTable();
             obj_table = asm.getObjectCode();            
         }
+
+        private void traverseProgram(int index, DirectedOrderedSparseMultigraph<String,String> progGraph) {
+            boolean stop = false;
+            String label;
+            long instr;
+            long addr;
+            byte opcode;
+            byte funct;
+            String delimiters = "[ ,\t]+|[()]";
+            
+            while(!stop) {
+                // traverse the program image starting from the specified index
+                addr = addr_table[index];
+                label = asm.lookupLabel(addr);
+                if(label != null)
+                    progGraph.addVertex(label);
+                instr = obj_table[index];
+                opcode = MIPSInstr.opcode(instr);
+                funct = MIPSInstr.opcode(instr);
+
+                // check if this instruction is a branch
+                if(opcode == 0x04 || opcode == 0x05) {
+                    int fileIndex = asm.getFileIndex(addr);
+                    int lineNum = asm.getLineNum(addr);
+                    plp.getAsm(fileIndex).getAsmLine(lineNum);
+                    
+
+                // check if this instruction is a j (j, jal, jr, or jalr)
+                } else if((opcode == 0x02 || opcode == 0x03) ||
+                        (opcode == 0 && (funct == 0x08 || funct == 0x09))) {
+
+                }
+
+                index++;
+                if(index == obj_table.length || progGraph.containsVertex(label))
+                    stop = true;
+            }
+        }
+
         // add every program label as a vertex to the graph
         private void addLabels(DirectedOrderedSparseMultigraph<String,String> progGraph){
             for(int addindex1=0; addindex1 < addr_table.length; addindex1++){
@@ -221,10 +260,12 @@ public class ProgramVisualization {
                     //Msg.M("jumpedaway is " + jumpedAway);
                 }
                 // if not, then add non jump traversal
-                if((currentLabel!=previousLabel) && !(jump) && (testLabel!=null) && (previousLabel!=null) && !(jumpedAway)){
-                    //Msg.M(instr_str);
-                    //Msg.M("non jump traversal from " + previousLabel + " to " + currentLabel);
-                    progGraph.addEdge("njt" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                if(currentLabel != null && previousLabel != null) {
+                    if((currentLabel.equals(previousLabel)) && !(jump) && (testLabel!=null) && (previousLabel!=null) && !(jumpedAway)){
+                        //Msg.M(instr_str);
+                        //Msg.M("non jump traversal from " + previousLabel + " to " + currentLabel);
+                        progGraph.addEdge("njt" + addindex, previousLabel, currentLabel, EdgeType.DIRECTED);
+                    }
                 }
 
                 jump=false;
@@ -292,8 +333,18 @@ public class ProgramVisualization {
             buildTables();
             addLabels(progGraph);
             addEdges(progGraph);
-            removeNonLabels(progGraph);
+            //removeNonLabels(progGraph);
             //Msg.M(progGraph.toString());
+
+            String vertex;
+            Object[] verts = progGraph.getVertices().toArray();
+            for(int i = 0; i < verts.length; i++) {
+                vertex = (String) verts[i];
+                if(progGraph.getIncidentEdges(vertex).isEmpty())
+                    progGraph.removeVertex(vertex);
+            }
+
+
             return progGraph;
         }
     }

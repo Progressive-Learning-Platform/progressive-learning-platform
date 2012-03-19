@@ -60,6 +60,7 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
 
     private ProgramVisualization progVis;
     private ProgramVisualization.programGraph progGraph;
+    private ProgVisUpdateThread repaintThread;
     private ProjectDriver plp;
 
     private Layout<String, String> layout;
@@ -192,18 +193,25 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
         long objTable[] = plp.asm.getObjectCode();
         long addrTable[] = plp.asm.getAddrTable();
         index = Arrays.binarySearch(addrTable, currentAddress);
-        if (index > -1){
+        if (index > -1) {
             String instrStr = progFormat.mipsInstrStr(objTable[index]);
             String instrArray[]=instrStr.split(" ");
             return instrArray[0];
-        }
-        else{
-            return(null);
+        } else {
+            return null;
         }
     }
 
-    // called by SimCoreGUI when there's a GUI update in simulation
     public void updateComponents() {
+        if(repaintThread == null) {
+            repaintThread = new ProgVisUpdateThread(this);
+            repaintThread.start();
+        }
+        repaintThread.scheduleUpdate();
+    }
+
+    // called by SimCoreGUI when there's a GUI update in simulation
+    public void update() {
         long currentAddress = plp.sim.visibleAddr;
         Msg.M("Current Address: " + currentAddress);
         //currentAddress -= 4;
@@ -215,40 +223,54 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
             this.vert_repaint(currentLabel);
         }
         String function = getFunction(currentAddress);
-        Msg.M(function);
-        if(function.equals("jal")){
+        //Msg.M(function);
+        if(function != null && function.equals("jal")){
             Msg.M("JUMP AND LINK YALL");
             jrTargetLabel = currentLabel;
             Msg.M("jr Target: " + jrTargetLabel);
-        }
-        if(function.equals("jr")){
+        } else if(function != null && function.equals("jr")){
             currentLabel = jrTargetLabel;
             this.vert_repaint(jrTargetLabel);
         }
         //this.vert_unpaint("Begin");
         this.repaint();
     }
-    /*
-    public class progVisUpdateThread extends Thread {
+
+    public void stopUpdateThread() {
+        if(repaintThread != null)
+            repaintThread.stopRepaint();
+    }
+    
+    public class ProgVisUpdateThread extends Thread {
         private ProgramVisualizationFrame progVisFrame;
-        public progVisUpdateThread(ProgramVisualizationFrame progVisFrame){
+        private boolean update = false;
+        private boolean stop = false;
+        public ProgVisUpdateThread(ProgramVisualizationFrame progVisFrame){
             this.progVisFrame = progVisFrame;
         }
-        public void run(){
-            long currentAddress = plp.sim.visibleAddr;
-            Msg.M("Current Address: " + currentAddress);
-            //currentAddress -= 4;
-            //Msg.M("Current Address - 4: " + currentAddress);
-            String currentLabel = plp.asm.lookupLabel(currentAddress);
-            Msg.M("currentLabel: " + currentLabel);
-            if(currentLabel != null){
-                progVisFrame.vert_repaint(currentLabel);
+
+        @Override
+        public void run() {
+            while(!stop) {
+                if(update) {
+                    progVisFrame.update();
+                    update = false;
+                }
+                try {
+                    Thread.sleep(100);
+                } catch(Exception e) { }
             }
-            //this.vert_unpaint("Begin");
-            progVisFrame.repaint();
+        }
+
+        public void scheduleUpdate() {
+            update = true;
+        }
+
+        public void stopRepaint() {
+            stop = true;
         }
     }
-    */
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -280,3 +302,4 @@ public class ProgramVisualizationFrame extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 }
+
