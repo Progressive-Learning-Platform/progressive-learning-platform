@@ -44,6 +44,33 @@ public class ProgramVisualization {
         asm = (Asm) plp.asm;
     }
 
+    public class progFunction {
+        String label;
+        long startAddress;
+        long endAddress;
+
+        public progFunction(String newlabel){
+            label = newlabel;
+        }
+
+        public progFunction(String newlabel, long givenStartAddress, long givenEndAddress){
+            label = newlabel;
+            startAddress = givenStartAddress;
+            endAddress = givenEndAddress;
+        }
+        public void setLabel(String newlabel){
+            label = newlabel;
+        }
+
+        public void setStartAddress(long address){
+            startAddress = address;
+        }
+
+        public void setEndAddress(long address){
+            endAddress = address;
+        }
+    }
+
     public void printProgram(){
         //Msg.M("\nTest.");
         plptool.mips.Formatter progformat = new plptool.mips.Formatter();
