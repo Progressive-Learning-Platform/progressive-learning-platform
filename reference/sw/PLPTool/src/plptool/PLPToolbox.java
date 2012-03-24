@@ -404,6 +404,30 @@ public class PLPToolbox {
     }
 
     /**
+     * Write a new file filled with the provided data in string
+     *
+     * @param data Data to be written
+     * @param file Destination file
+     * @return PLP_OK on successful write, IO_ERROR otherwise
+     */
+    public static int writeFile(String data, String file) {
+        File d = new File(file);
+
+        try {
+            FileOutputStream out = new FileOutputStream(d);
+            out.write(data.getBytes());
+            out.close();
+
+        } catch(IOException e) {
+            return Msg.E("File write error: '" + file +
+                    "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
+                    , Constants.PLP_GENERAL_IO_ERROR, null);
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    /**
      * Extract a file from a jar file
      *
      * @param jar Path to JAR file to extract the file from

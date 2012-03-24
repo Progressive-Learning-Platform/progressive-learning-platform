@@ -51,12 +51,6 @@ public class DynamicModuleFramework {
     private static ArrayList<PLPGenericModule> dynamicModuleInstances = new ArrayList<PLPGenericModule>();
 
     /**
-     * A list that denotes whether the loaded class will be saved to user
-     * directory or not
-     */
-    private static ArrayList<Boolean> savedModuleClass = new ArrayList<Boolean>();
-
-    /**
      * Path to the file where the module class is (.class or .jar file)
      */
     private static ArrayList<String> dynamicModuleClassPath = new ArrayList<String>();
@@ -100,7 +94,6 @@ public class DynamicModuleFramework {
             }
             dynamicModuleClasses.add(dynamicModuleClass);
             dynamicModuleClassPath.add(path);
-            savedModuleClass.add(false);
             index++;
         } catch(ClassNotFoundException e) {
             Msg.E("The class " + className + " is not found in " + path,
@@ -290,20 +283,6 @@ public class DynamicModuleFramework {
                     e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Mark a module class to be saved to the user cache
-     *
-     * @param index Index of the class to save
-     */
-    public static void setModuleClassSave(int index, boolean s) {
-        if(index < 0 || index >= dynamicModuleClasses.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DMOD_INVALID_CLASS_INDEX, null);
-            return;
-        }
-
-        savedModuleClass.set(index, s);
     }
 
     /**
@@ -570,19 +549,95 @@ public class DynamicModuleFramework {
     }
 
     /**
-     * Return whether a module class is marked as saved to user cache or not
+     * Generate a plp.manifest file for a given Java package as specified
+     * by the path. This method will recursively go through the directories,
+     * resolve interface/superclass dependencies and generate the manifest file.
      *
-     * @param index Index of the module class in the list
-     * @return True if the class is saved, false otherwise
+     * @param path Path to Java package directory
+     * @param connectorClass Class implementing PLPGenericModule that will be
+     * loaded by PLPTool when the module is loaded
+     * @return String of the plp.manifest file
      */
-    public static boolean isModuleClassSaved(int index) {
-        if(index < 0 || index >= dynamicModuleClasses.size()) {
-            Msg.E("Invalid index.",
-                  Constants.PLP_DMOD_INVALID_CLASS_INDEX, null);
-            return false;
+    public static String generateManifest(String path, String connectorClass) {
+        String manifest = "";
+        ArrayList<File> classes = new ArrayList<File>();
+        File packageDir = new File(path);
+        if(!packageDir.exists() || !packageDir.isDirectory()) {
+            Msg.E("'" + path + "' does not exist or is it not a directory",
+                    Constants.PLP_GENERIC_ERROR, null);
+            return null;
         }
 
-        return savedModuleClass.get(index);
+        generateManifestTraverseDirectory(packageDir, classes);
+
+        // Generate dependencies. We'll do it in the most naive way possible:
+        // try to load all classes, if some of them failed due to interfaces
+        // or superclasses not being loaded first, do a second pass,
+        // and then keep doing passes with alternating order until we don't
+        // have any errors! If this function never exists, it may try to
+        // autoload a class that is already part of PLPTool.
+        boolean done;
+        boolean ascending = true;
+        int i;
+        String className;
+        int packageDirLength = packageDir.getAbsolutePath().length();
+        do {
+            done = true;
+            if(ascending) {
+                ascending = false;
+                for(i = 0; i < classes.size(); i++) {
+                    className = classes.get(i).getAbsolutePath().substring(packageDirLength+1);
+                    className = className.replaceAll("/|\\\\", ".");
+                    className = className.substring(0, className.length() - 6);
+                    if (!(isModuleClassRegistered(className) != -1) &&
+                            loadModuleClass(classes.get(i).getAbsolutePath(), className)) {
+                        classes.remove(i);
+                        i--;
+                        manifest += "class::" + className + "\n";
+                    } else
+                        done = false;
+                }
+            } else {
+                ascending = true;
+                for(i = classes.size()-1; i >= 0; i--) {
+                    className = classes.get(i).getAbsolutePath().substring(packageDirLength+1);
+                    className = className.replaceAll("/|\\\\", ".");
+                    className = className.substring(0, className.length() - 6);
+                    if(!(isModuleClassRegistered(className) != -1) &&
+                            loadModuleClass(classes.get(i).getAbsolutePath(), className)) {
+                        classes.remove(i);
+                        manifest += "class::" + className + "\n";
+                    } else
+                        done = false;
+                }
+            }
+
+        } while(!done);
+
+        manifest += "loadwithproject::" + connectorClass + "\n";
+
+        return manifest;
+    }
+
+    /**
+     * Helper recursive function for generateManifest. This function populates
+     * the classes list from the specified directory
+     *
+     * @param path Path to recurse into
+     * @param classes Array list of classes
+     */
+    private static void generateManifestTraverseDirectory(File path,
+            ArrayList<File> classes) {
+
+        File[] list = path.listFiles();
+        for(int i = 0; i < list.length; i++) {
+            if(list[i].isDirectory())
+                generateManifestTraverseDirectory(list[i], classes);
+            else if(list[i].isFile() && list[i].getName().endsWith(".class")) {
+                Msg.D("- Enumerating " + list[i].getAbsolutePath(), 3, null);
+                classes.add(list[i]);
+            }
+        }
     }
 }
 

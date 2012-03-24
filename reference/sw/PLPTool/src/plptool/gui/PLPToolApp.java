@@ -215,6 +215,13 @@ public class PLPToolApp extends SingleFrameApplication {
                 i++;
 
             // Load classes from a jar with a manifest file
+            } else if(args.length >= activeArgIndex + 3 && args[i].equals("--generate-manifest")) {
+		PLPToolbox.writeFile(DynamicModuleFramework.generateManifest(args[i+1], args[i+2]),
+                        "./plp.manifest");
+                activeArgIndex += 3;
+                i += 2;
+
+            // Load classes from a jar with a manifest file
             } else if(args.length >= activeArgIndex + 2 && args[i].equals("--isa-id")) {
 		Integer archID = Integer.parseInt(args[i+1]);
                 startingArchID = archID;
@@ -386,12 +393,16 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("                            autoloading can be disabled by the user");
         System.out.println("                            (autoloading is enabled by default).");
         System.out.println("   -R                     Delete the autoload cache directory and all of its ");
-        System.out.println("                            contents.");
+        System.out.println("                            contents.");        
         System.out.println();
         System.out.println("MODULE DEBUGGING COMMANDS:");
         System.out.println("  --load-class <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
+        System.out.println("  --generate-manifest <path> <connector class>");
+        System.out.println("                          Generate plp.manifest of Java classes that are in");
+        System.out.println("                            the specified path. This manifest file will be");
+        System.out.println("                            written in the current directory.");
         System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application.");
         System.out.println();
     }
