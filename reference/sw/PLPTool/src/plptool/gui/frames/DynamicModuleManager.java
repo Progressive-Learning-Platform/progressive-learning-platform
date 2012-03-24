@@ -411,7 +411,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             c = DynamicModuleFramework.getDynamicModuleClass(i);
             sC = c.getSuperclass();
             Object[] row = {i, c.getName(), sC != null ? c.getSuperclass().getName() : "N/A",
-                            DynamicModuleFramework.isModuleClassSaved(i)};
+                            false};
             tbl.addRow(row);
         }
     }
