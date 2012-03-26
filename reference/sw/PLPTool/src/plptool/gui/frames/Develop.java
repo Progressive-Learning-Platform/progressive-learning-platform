@@ -203,7 +203,7 @@ public class Develop extends javax.swing.JFrame {
                     @Override
                     public void run() {
                         int pc_index = plp.asm.lookupAddrIndex(plp.sim.visibleAddr);
-                        if(pc_index == -1) {
+                        if(pc_index < 0) {
                             tln.setHighlight(-1);
                             return;
                         }
