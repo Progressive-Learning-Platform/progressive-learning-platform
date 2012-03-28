@@ -558,24 +558,31 @@ public class DynamicModuleFramework {
      * loaded by PLPTool when the module is loaded
      * @return String of the plp.manifest file
      */
-    public static String generateManifest(String path, String connectorClass) {
+    public static String generateManifest(String path) {
         String manifest = "";
         ArrayList<File> classes = new ArrayList<File>();
         File packageDir = new File(path);
-        if(!packageDir.exists() || !packageDir.isDirectory()) {
-            Msg.E("'" + path + "' does not exist or is it not a directory",
+        if(packageDir.getName().endsWith(".jar")) {
+            
+        } else if(!packageDir.exists()) {
+            Msg.E("'" + path + "' does not exist.",
+                    Constants.PLP_GENERIC_ERROR, null);
+            return null;
+        } else if(packageDir.isDirectory()) {
+            Msg.E("'" + path + "' is not a directory or a jar file.",
                     Constants.PLP_GENERIC_ERROR, null);
             return null;
         }
 
         generateManifestTraverseDirectory(packageDir, classes);
 
-        // Generate dependencies. We'll do it in the most naive way possible:
+        // Resolve dependencies. We'll do it in the most naive way possible:
         // try to load all classes, if some of them failed due to interfaces
         // or superclasses not being loaded first, do a second pass,
         // and then keep doing passes with alternating order until we don't
-        // have any errors! If this function never exists, it may try to
-        // autoload a class that is already part of PLPTool.
+        // have any errors! If this function never exits, it may be trying to
+        // autoload a class that is already part of PLPTool. In that case,
+        // the program must be killed externally.
         boolean done;
         boolean ascending = true;
         int i;
@@ -611,10 +618,24 @@ public class DynamicModuleFramework {
                         done = false;
                 }
             }
-
         } while(!done);
 
-        manifest += "loadwithproject::" + connectorClass + "\n";
+        // Find classes that implement the PLPGenericModule interface. This
+        // class will be loaded when the module is loaded in PLPTool
+        boolean found = false;
+        for(i = 0; i < dynamicModuleClasses.size(); i++) {
+            Class[] interfaces = dynamicModuleClasses.get(i).getInterfaces();
+            for(int j = 0; j < interfaces.length; j++) {
+                if(interfaces[j].getCanonicalName().equals("plptool.PLPGenericModule")) {
+                    manifest += "loadwithproject::" +
+                            dynamicModuleClasses.get(i).getCanonicalName() + "\n";
+                    found = true;
+                }
+            }
+        }
+
+        if(!found)
+            Msg.W("No connector module for this package was found.", null);
 
         return manifest;
     }
