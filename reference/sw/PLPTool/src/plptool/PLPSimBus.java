@@ -18,6 +18,7 @@
 
 package plptool;
 
+import plptool.gui.BusEvent;
 import plptool.mods.MemModule;
 import java.util.ArrayList;
 
@@ -105,21 +106,25 @@ public class PLPSimBus {
      * @return Data with successful read, -1 otherwise
      */
     public synchronized Object read(long addr) {
+        DynamicModuleFramework.hook(new BusEvent(BusEvent.READ, addr));
         Object[] modules = bus_modules.toArray();
         Object value = null;
         for(int i = modules.length - 1; i >= 0; i--) {
             PLPSimBusModule module = (PLPSimBusModule)modules[i];
             if(addr >= module.startAddr() &&
                addr <= module.endAddr()) {
-                if(!module.phantom)
+                if(!module.phantom) {                    
                     value = module.read(addr);
-                else
+                    DynamicModuleFramework.hook(new BusEvent(
+                        module.isInstr(addr) ? BusEvent.READ_INSTR : BusEvent.READ_DATA,
+                        value));
+                } else
                     module.read(addr);
             }
         }
 
         if(value != null)
-            return value;
+            return value;        
 
         else if(value == null && this.isMapped(addr))
             Msg.E("read(" + String.format("0x%08x", addr) + "):" +
@@ -143,6 +148,8 @@ public class PLPSimBus {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public synchronized int write(long addr, Object data, boolean isInstr) {
+        Object[] params = {addr, data, isInstr};
+        DynamicModuleFramework.hook(new BusEvent(BusEvent.WRITE, params));
         Msg.D("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
         boolean noMapping = true;
         int ret = Constants.PLP_OK;

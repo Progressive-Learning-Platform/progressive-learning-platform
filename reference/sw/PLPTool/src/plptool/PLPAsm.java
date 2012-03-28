@@ -371,7 +371,7 @@ public abstract class PLPAsm implements PLPGenericModule {
     }
 
     /**
-     * Other ISA-specific checks that the develop may wish to do. Any
+     * Other ISA-specific checks that the developer may wish to do. Any
      * return value other than PLP_OK will prevent the start of the simulation
      *
      * @return ProjectDriver expects PLP_OK to continue with the simulation

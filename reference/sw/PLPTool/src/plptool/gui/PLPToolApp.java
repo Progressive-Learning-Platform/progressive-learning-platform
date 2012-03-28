@@ -215,13 +215,6 @@ public class PLPToolApp extends SingleFrameApplication {
                 i++;
 
             // Load classes from a jar with a manifest file
-            } else if(args.length >= activeArgIndex + 3 && args[i].equals("--generate-manifest")) {
-		PLPToolbox.writeFile(DynamicModuleFramework.generateManifest(args[i+1], args[i+2]),
-                        "./plp.manifest");
-                activeArgIndex += 3;
-                i += 2;
-
-            // Load classes from a jar with a manifest file
             } else if(args.length >= activeArgIndex + 2 && args[i].equals("--isa-id")) {
 		Integer archID = Integer.parseInt(args[i+1]);
                 startingArchID = archID;
@@ -270,6 +263,14 @@ public class PLPToolApp extends SingleFrameApplication {
             // Download a JAR file for autoloading
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-S")) {
                 plptool.PLPToolbox.downloadJARForAutoload(args[i+1], null, false);
+                return;
+
+            // Generate a plp.manifest file from a directory of Java classes
+            } else if(args.length >= activeArgIndex + 2 && args[i].equals("--generate-manifest")) {
+                Msg.M("Generating manifest for '" + args[i+1] + "'...");
+                String manifest = DynamicModuleFramework.generateManifest(args[i+1]);
+                if(manifest != null)
+                    PLPToolbox.writeFile(manifest, "./plp.manifest");
                 return;
 
             // If we encounter '-plp', pass the rest of the arguments to the
@@ -399,7 +400,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --load-class <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
-        System.out.println("  --generate-manifest <path> <connector class>");
+        System.out.println("  --generate-manifest <path>");
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified path. This manifest file will be");
         System.out.println("                            written in the current directory.");
