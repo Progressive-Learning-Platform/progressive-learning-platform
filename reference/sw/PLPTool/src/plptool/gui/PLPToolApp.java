@@ -400,7 +400,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --load-class <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
-        System.out.println("  --generate-manifest <path> <connector class>");
+        System.out.println("  --generate-manifest <path>");
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified path. This manifest file will be");
         System.out.println("                            written in the current directory.");
