@@ -108,3 +108,6 @@ NET "mod_gpio_gpio<14>" LOC = "k3";
 NET "mod_gpio_gpio<15>" LOC = "k5";
 
 NET "i_button" LOC = "c9";
+#Created by Constraints Editor (xc6slx16-csg324-3) - 2012/03/25
+NET "c_t/count" TNM_NET = c_t/count;
+TIMESPEC TS_c_t_count = PERIOD "c_t/count" 20 ns HIGH 50%;
