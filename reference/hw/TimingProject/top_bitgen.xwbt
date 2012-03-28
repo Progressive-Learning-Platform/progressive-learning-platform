@@ -1,0 +1,8 @@
+INTSTYLE=ise
+INFILE=D:\Documents\_ProgressiveLearningPlatform\reference\hw\XilinxProject\top.ncd
+OUTFILE=D:\Documents\_ProgressiveLearningPlatform\reference\hw\XilinxProject\top.bit
+FAMILY=Spartan6
+PART=xc6slx16-3csg324
+WORKINGDIR=D:\Documents\_ProgressiveLearningPlatform\reference\hw\XilinxProject
+LICENSE=WebPack
+USER_INFO=200503598_0_0_539
