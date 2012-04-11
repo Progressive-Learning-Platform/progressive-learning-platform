@@ -22,6 +22,7 @@ import plptool.*;
 import plptool.mips.*;
 //import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 // jung
 import edu.uci.ics.jung.graph.*;
 //import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
@@ -43,33 +44,68 @@ public class ProgramVisualization {
         this.plp=plp;
         asm = (Asm) plp.asm;
     }
+    // new data structure
+    public class progTree{
+        private progFunction root;
 
-    public class progFunction {
-        String label;
-        long startAddress;
-        long endAddress;
-
-        public progFunction(String newlabel){
-            label = newlabel;
+        public progTree(String rootLabel){
+            root = new progFunction();
+            root.data.setLabel(rootLabel);
         }
 
-        public progFunction(String newlabel, long givenStartAddress, long givenEndAddress){
-            label = newlabel;
-            startAddress = givenStartAddress;
-            endAddress = givenEndAddress;
-        }
-        public void setLabel(String newlabel){
-            label = newlabel;
+        private class progFunction{
+            private List<progFunction> progChildren;
+            private functionData data;
+            private progFunction parent;
+
+            progFunction(){
+                data = null;
+            }
+            progFunction(functionData newData){
+                data = newData;
+            }
+            public void addChild(progFunction newchild){
+                progChildren.add(newchild);
+            }
         }
 
-        public void setStartAddress(long address){
-            startAddress = address;
-        }
+        private class functionData {
+            private String label;
+            private long startAddress;
+            private long endAddress;
 
-        public void setEndAddress(long address){
-            endAddress = address;
+            public functionData(){
+            }
+            public functionData(String newlabel){
+                label = newlabel;
+            }
+            public functionData(String newlabel, long givenStartAddress, long givenEndAddress){
+                label = newlabel;
+                startAddress = givenStartAddress;
+                endAddress = givenEndAddress;
+            }
+            public void setLabel(String newlabel){
+                label = newlabel;
+            }
+            public void setStartAddress(long address){
+                startAddress = address;
+            }
+            public void setEndAddress(long address){
+                endAddress = address;
+            }
+            public long getStartAddress(){
+                return startAddress;
+            }
+            public long getEndAddress(){
+                return endAddress;
+            }
+            public String getLabel(){
+                return label;
+            }
+
         }
     }
+    // end new data structure
 
     public void printProgram(){
         //Msg.M("\nTest.");
