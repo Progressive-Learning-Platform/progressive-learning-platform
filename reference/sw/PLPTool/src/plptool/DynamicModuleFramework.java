@@ -789,7 +789,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
             if(fName.endsWith(".class")) {
                 FileInputStream in = new FileInputStream(file);
                 int length = in.read(array);
-                while(length > 0) {
+                while(length >= 0) {
                     out.write(array, 0, length);
                     length = in.read(array);
                 }
@@ -813,7 +813,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
 
                 InputStream in = jar.getInputStream(jarEntry);
                 int length = in.read(array);
-                while(length > 0) {
+                while(length >= 0) {
                     out.write(array, 0, length);
                     length = in.read(array);
                 }
