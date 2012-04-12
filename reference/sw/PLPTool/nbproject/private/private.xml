@@ -2,9 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/wira/Documents/plp/reference/sw/PLPTool/src/plptool/gui/ProjectDriver.java</file>
-        <file>file:/home/wira/Documents/plp/reference/sw/PLPTool/src/plptool/gui/ProjectEvent.java</file>
-        <file>file:/home/wira/Documents/plp/reference/sw/PLPTool/src/plptool/gui/PLPToolApp.java</file>
-        <file>file:/home/wira/Documents/plp/reference/sw/PLPTool/src/plptool/PLPToolbox.java</file>
+        <file>file:/home/will/Development/plp/reference/sw/PLPTool/src/plptool/mips/visualizer/ProgramVisualization.java</file>
+        <file>file:/home/will/Development/plp/reference/sw/PLPTool/src/plptool/mips/visualizer/ProgramVisualizationFrame.java</file>
+        <file>file:/home/will/Development/plp/reference/sw/PLPTool/src/plptool/mips/visualizer/MemoryVisualization.java</file>
+        <file>file:/home/will/Development/plp/reference/sw/PLPTool/src/plptool/gui/frames/ConsoleFrame.java</file>
+        <file>file:/home/will/Development/plp/reference/sw/PLPTool/src/plptool/PLPAsm.java</file>
+        <file>file:/home/will/Development/plp/reference/sw/PLPTool/src/plptool/mips/Architecture.java</file>
+        <file>file:/home/will/Development/plp/reference/sw/PLPTool/src/plptool/gui/frames/Develop.java</file>
     </open-files>
 </project-private>

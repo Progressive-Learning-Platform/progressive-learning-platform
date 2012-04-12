@@ -452,7 +452,7 @@ public class PLPToolbox {
             FileWriter out = new FileWriter(dest);
             char[] buf = new char[Constants.DEFAULT_IO_BUFFER_SIZE];
             int readLen;
-            while((readLen = in.read(buf)) > 0)
+            while((readLen = in.read(buf)) >= 0)
                 out.write(buf, 0, readLen);
             out.close();
             in.close();
