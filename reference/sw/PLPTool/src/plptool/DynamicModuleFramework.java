@@ -561,6 +561,7 @@ public class DynamicModuleFramework {
     public static String generateManifest(String path) {
         String manifest = "";
         ArrayList<File> classes = new ArrayList<File>();
+        ArrayList<String> classNames = new ArrayList<String>();
         File packageDir = new File(path);
         if(packageDir.getName().endsWith(".jar")) {
             
@@ -568,57 +569,60 @@ public class DynamicModuleFramework {
             Msg.E("'" + path + "' does not exist.",
                     Constants.PLP_GENERIC_ERROR, null);
             return null;
-        } else if(packageDir.isDirectory()) {
+        } else if(!packageDir.isDirectory()) {
             Msg.E("'" + path + "' is not a directory or a jar file.",
                     Constants.PLP_GENERIC_ERROR, null);
             return null;
-        }
-
-        generateManifestTraverseDirectory(packageDir, classes);
+        } else
+            generateManifestTraverseDirectory(packageDir, packageDir,
+                    classes, classNames);
 
         // Resolve dependencies. We'll do it in the most naive way possible:
         // try to load all classes, if some of them failed due to interfaces
         // or superclasses not being loaded first, do a second pass,
         // and then keep doing passes with alternating order until we don't
-        // have any errors! If this function never exits, it may be trying to
-        // autoload a class that is already part of PLPTool. In that case,
-        // the program must be killed externally.
+        // have any errors! If we don't get to load all classes after N
+        // alternative iterations (the number of classes found), then something
+        // is wrong and we just give up.
         boolean done;
         boolean ascending = true;
         int i;
-        String className;
-        int packageDirLength = packageDir.getAbsolutePath().length();
+        int iteration = 0;
+        int iterationLimit = classes.size();
         do {
             done = true;
             if(ascending) {
                 ascending = false;
                 for(i = 0; i < classes.size(); i++) {
-                    className = classes.get(i).getAbsolutePath().substring(packageDirLength+1);
-                    className = className.replaceAll("/|\\\\", ".");
-                    className = className.substring(0, className.length() - 6);
-                    if (!(isModuleClassRegistered(className) != -1) &&
-                            loadModuleClass(classes.get(i).getAbsolutePath(), className)) {
+                    if (!(isModuleClassRegistered(classNames.get(i)) != -1) &&
+                            loadModuleClass(classes.get(i).getAbsolutePath(), classNames.get(i))) {
+                        manifest += "class::" + classNames.get(i) + "\n";
                         classes.remove(i);
+                        classNames.remove(i);
                         i--;
-                        manifest += "class::" + className + "\n";
                     } else
                         done = false;
                 }
             } else {
                 ascending = true;
                 for(i = classes.size()-1; i >= 0; i--) {
-                    className = classes.get(i).getAbsolutePath().substring(packageDirLength+1);
-                    className = className.replaceAll("/|\\\\", ".");
-                    className = className.substring(0, className.length() - 6);
-                    if(!(isModuleClassRegistered(className) != -1) &&
-                            loadModuleClass(classes.get(i).getAbsolutePath(), className)) {
+                    if(!(isModuleClassRegistered(classNames.get(i)) != -1) &&
+                            loadModuleClass(classes.get(i).getAbsolutePath(), classNames.get(i))) {
+                        manifest += "class::" + classNames.get(i) + "\n";
                         classes.remove(i);
-                        manifest += "class::" + className + "\n";
+                        classNames.remove(i);
                     } else
                         done = false;
                 }
             }
-        } while(!done);
+            iteration++;
+        } while(!done && iteration < iterationLimit);
+
+        if(!done) {
+            Msg.E("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
+                    null);
+            return null;
+        }
 
         // Find classes that implement the PLPGenericModule interface. This
         // class will be loaded when the module is loaded in PLPTool
@@ -648,15 +652,20 @@ public class DynamicModuleFramework {
      * @param classes Array list of classes
      */
     private static void generateManifestTraverseDirectory(File path,
-            ArrayList<File> classes) {
+            File rootPath, ArrayList<File> classes, ArrayList<String> classNames) {
+        String className;
 
         File[] list = path.listFiles();
         for(int i = 0; i < list.length; i++) {
             if(list[i].isDirectory())
-                generateManifestTraverseDirectory(list[i], classes);
+                generateManifestTraverseDirectory(list[i], rootPath, classes, classNames);
             else if(list[i].isFile() && list[i].getName().endsWith(".class")) {
                 Msg.D("- Enumerating " + list[i].getAbsolutePath(), 3, null);
                 classes.add(list[i]);
+                className = list[i].getAbsolutePath().substring(rootPath.getAbsolutePath().length()+1);
+                className = className.replaceAll("/|\\\\", ".");
+                className = className.substring(0, className.length() - 6);
+                classNames.add(className);
             }
         }
     }
