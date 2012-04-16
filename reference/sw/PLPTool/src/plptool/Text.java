@@ -27,9 +27,16 @@ public class Text {
     public static final String versionString = "4.2";
     public static final String copyrightString =
             "PLP Software Tool (PLPTool) version " + versionString + "\n" +
-            "Copyright 2010-2012 PLP Contributors.\n" +
-            "This software is licensed under GPLv3 (run with '--gpl' for license text).\n" +
+            "Copyright (C) 2010-2012 PLP Contributors.\n" +
+            "This program comes with ABSOLUTELY NO WARRANTY; run with '--gpl' for details.\n" +
             "Run with '--license' for licensing information of third party software."
+            ;
+
+    public static final String contactString =
+            "Developer contact e-mail: wheerdam@gmail.com\n" +
+            "PLP mailing list: progressive-learning-platform@googlegroups.com\n" +
+            "Report bugs to the development website:\n" +
+            "    http://code.google.com/p/progressive-learning-platform/"
             ;
 
     public static final String thirdPartyCopyrightString =
