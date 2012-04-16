@@ -70,7 +70,16 @@ func process(args []string) {
 			fmt.Println(*plpfile)
 		} else {
 			*plpfile = args[1]
-			newPLPFile(args[1])
+			newPLPFile(*plpfile)
+		}
+	case "d":
+		if numArgs == 1 {
+			// disassemble the whole program
+			for i := 0; i < len(image) / 4; i += 4 {
+				fmt.Println(disassemble(image[i:i+4]))
+			}
+		} else {
+			// TODO disassemble one memory address
 		}
 	default:
 		fmt.Println("input error:", args)
@@ -84,6 +93,7 @@ func printHelp() {
 	fmt.Println("	plpfile	<file>		- set active plpfile")
 	fmt.Println("	step,s  		- step N instructions")
 	fmt.Println("	print,p 		- print memory or registers, such as:")
+	fmt.Println("	d <address>		- disassemble address or whole program if blank")
 	fmt.Println("		print $t0")
 	fmt.Println("		print regs")
 	fmt.Println("		print 0xf0200000")

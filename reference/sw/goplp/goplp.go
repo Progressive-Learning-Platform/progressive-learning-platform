@@ -66,9 +66,9 @@ func init() {
 
 	fmt.Println("goplp", version)
 	fmt.Println("goplp  Copyright (C) 2012  David Fritz")
-	fmt.Println("This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.")
+	fmt.Println("This program comes with ABSOLUTELY NO WARRANTY;")
 	fmt.Println("This is free software, and you are welcome to redistribute it")
-	fmt.Println("under certain conditions; type `show c' for details.")
+	fmt.Println("under certain conditions;")
 }
 
 func main() {
