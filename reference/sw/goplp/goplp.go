@@ -62,6 +62,10 @@ func init() {
 		usage()
 	}
 
+	if *plpfile != "" {
+		newPLPFile(*plpfile)
+	}
+
 	fmt.Println("goplp", version)
 	fmt.Println("goplp  Copyright (C) 2012  David Fritz")
 	fmt.Println("This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.")

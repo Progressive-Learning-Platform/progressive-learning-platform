@@ -65,6 +65,13 @@ func process(args []string) {
 		} else {
 			fmt.Println("input error:", args)
 		}
+	case "plpfile":
+		if numArgs == 1 {
+			fmt.Println(*plpfile)
+		} else {
+			*plpfile = args[1]
+			newPLPFile(args[1])
+		}
 	default:
 		fmt.Println("input error:", args)
 	}
@@ -74,6 +81,7 @@ func printHelp() {
 	fmt.Println("	help    		- print this screen")
 	fmt.Println("	debug <true,false> 	- print extra debug info")
 	fmt.Println("	quit    		- quit")
+	fmt.Println("	plpfile	<file>		- set active plpfile")
 	fmt.Println("	step,s  		- step N instructions")
 	fmt.Println("	print,p 		- print memory or registers, such as:")
 	fmt.Println("		print $t0")
