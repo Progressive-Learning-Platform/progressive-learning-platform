@@ -4,7 +4,6 @@
  * usage:
  *
  * todo: 
- *	open plptarballs in place and extract the image
  *	disassemble the program into one nice big structure
  *		instruction type
  *		opcode
@@ -12,7 +11,6 @@
  *		immediate field
  *		jump field
  *		shift amount
- *	extract the org address from the metafile
  *	start simulating!
  *		pc
  *		register file
