@@ -1,0 +1,6 @@
+To install just typing 'make -f makefile.youros' should work on most systems, since it has only one source file and header file, getting it to compile 
+shouldn't be a problem. Where 'youros' is lnx, sparc, or osx, depending 
+on your OS.  
+
+The executable is placed in the bin directory in the main Cver level. 
+See the README.vcd file one level up for more  information on vcddiff.

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- IMPORTANT: This is an internal file that has been generated   -->
+<!--     by the Xilinx ISE software.  Any direct editing or        -->
+<!--     changes made to this file may result in unpredictable     -->
+<!--     behavior or data corruption.  It is strongly advised that -->
+<!--     users do not edit the contents of this file.              -->
+<!--                                                               -->
+<!-- Copyright (c) 1995-2011 Xilinx, Inc.  All rights reserved.    -->
+
+<messages>
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/arbiter.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/clock.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/cpu.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/cpu_ex.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/cpu_id.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/cpu_if.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/cpu_mem.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/cpu_wb.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/debounce.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/inferred_ram.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/inferred_rom.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mm.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_gpio.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_interrupt.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_leds.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_memory_hierarchy.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_plpid.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_pmc.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_rom.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_sram.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_sseg.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_switches.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_timer.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_uart.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/mod_vga.v\&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1769" ><arg fmt="%s" index="1">Analyzing Verilog file \&quot;D:/Documents/_ProgressiveLearningPlatform/reference/hw/verilog/top.v\&quot; into library work</arg>
+</msg>
+
+</messages>
+
