@@ -55,6 +55,7 @@ func step(n int) {
 			} else {
 				pc = calculate(inst)
 			}
+			mod_timer_eval()
 		}
 	}
 	t := time.Since(now)
