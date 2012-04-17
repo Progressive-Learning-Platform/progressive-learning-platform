@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 // the memory map
@@ -39,12 +40,14 @@ var pc uint32 = 0
 var regfile = make([]uint32, 31)
 
 func step(n int) {
+	now := time.Now()
 	for i:=0; i<n; i++ {
 		instruction := cpu_read(pc)
 		log("decoding:", disassemble(instruction))
 		pc += 4
 	}
-	fmt.Println(n, "steps:", disassemble(cpu_read(pc)))
+	t := time.Since(now)
+	fmt.Println(n, "steps in", t, ":", disassemble(cpu_read(pc)))
 }
 
 func cpu_read(address uint32) uint32 {
