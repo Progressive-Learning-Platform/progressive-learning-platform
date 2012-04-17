@@ -60,10 +60,6 @@ func init() {
 		usage()
 	}
 
-	if *plpfile != "" {
-		newPLPFile(*plpfile)
-	}
-
 	fmt.Println("goplp", version)
 	fmt.Println("goplp  Copyright (C) 2012  David Fritz")
 	fmt.Println("This program comes with ABSOLUTELY NO WARRANTY;")
@@ -72,6 +68,9 @@ func init() {
 }
 
 func main() {
+	if *plpfile != "" {
+		newPLPFile(*plpfile)
+	}
 	var c Console
 	r := make(chan []string)
 	c.Init(os.Stdin, r)
