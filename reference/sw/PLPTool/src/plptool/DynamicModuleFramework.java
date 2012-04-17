@@ -563,8 +563,31 @@ public class DynamicModuleFramework {
         ArrayList<File> classes = new ArrayList<File>();
         ArrayList<String> classNames = new ArrayList<String>();
         File packageDir = new File(path);
+        Msg.M("*******************************************************************************");
+        Msg.M("Attempting to enumerate classes...");
         if(packageDir.getName().endsWith(".jar")) {
-            
+            try {
+                JarFile jar = new JarFile(path);
+                Enumeration<JarEntry> entries =  jar.entries();
+                JarEntry entry;
+                String className;
+
+                while(entries.hasMoreElements()) {
+                    entry = entries.nextElement();
+                    if(entry.getName().endsWith(".class")) {
+                        className = entry.getName().replace("/", ".");
+                        className = className.substring(0, className.length() - 6);
+                        classNames.add(className);
+                        classes.add(packageDir);
+                    }
+                }
+
+                jar.close();
+            } catch(IOException e) {
+                Msg.E("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
+                    null);
+                return null;
+            }
         } else if(!packageDir.exists()) {
             Msg.E("'" + path + "' does not exist.",
                     Constants.PLP_GENERIC_ERROR, null);
@@ -589,6 +612,9 @@ public class DynamicModuleFramework {
         int i;
         int iteration = 0;
         int iterationLimit = classes.size();
+        Msg.m("Determining loading order (disregard loadClass warnings and ");
+        Msg.M("errors)...");
+        Msg.M("-------------------------------------------------------------------------------");
         do {
             done = true;
             if(ascending) {
@@ -619,6 +645,7 @@ public class DynamicModuleFramework {
         } while(!done && iteration < iterationLimit);
 
         if(!done) {
+            Msg.M("-------------------------------------------------------------------------------");
             Msg.E("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
                     null);
             return null;
@@ -640,6 +667,12 @@ public class DynamicModuleFramework {
 
         if(!found)
             Msg.W("No connector module for this package was found.", null);
+        Msg.M("-------------------------------------------------------------------------------");
+        Msg.M("Manifest generation complete! You can include the plp.manifest file in the ");
+        Msg.M("package jar file to allow PLPTool to load the module into a PLPTool session. If");
+        Msg.M("no class implementing the connector interface was found, PLPTool will load the");
+        Msg.M("classes, but the module functionality will only be able to be accessed through");
+        Msg.M("the development module manager.");
 
         return manifest;
     }

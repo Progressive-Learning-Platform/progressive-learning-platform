@@ -351,7 +351,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static void printTerseHelpMessage() {
         System.out.println("Usage:");
         System.out.println("  java -jar PLPTool.jar [options] [plpfile]");
-        System.out.println("                          Launch PLP Tool GUI. PLPTool will open [plpfile]");
+        System.out.println("                          Launch PLPTool GUI. PLPTool will open [plpfile]");
         System.out.println("                            if it is provided.");
         System.out.println();
         System.out.println("Non-GUI options:");
@@ -400,12 +400,13 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --load-class <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
-        System.out.println("  --generate-manifest <path>");
+        System.out.println("  --generate-manifest <path or jar file>");
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified path. This manifest file will be");
         System.out.println("                            written in the current directory.");
         System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application.");
         System.out.println();
+	System.out.println(Text.contactString);
     }
 
     /**
