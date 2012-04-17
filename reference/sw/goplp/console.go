@@ -55,7 +55,15 @@ func process(args []string) {
 		}
 		step(n)
 	case "print", "p":
-		// TODO print
+		if numArgs == 1 {
+			fmt.Println("not enough arguments. Try a register or an address, or p regs for all registers")
+		} else if args[1] == "regs" {
+			print_regs()
+		} else if strings.HasPrefix(args[1],"$") {
+			print_register(strings.Trim(args[1],"$"))
+		} else { // it's memory we hope
+			print_memory(args[1])
+		}
 	case "watch", "w":
 		// TODO watch
 	case "quit", "q":
@@ -98,11 +106,49 @@ func printHelp() {
 	fmt.Println("	plpfile	<file>		- set active plpfile")
 	fmt.Println("	step,s  		- step N instructions")
 	fmt.Println("	print,p 		- print memory or registers, such as:")
-	fmt.Println("	d <address>		- disassemble address or whole program if blank")
 	fmt.Println("		print $t0")
 	fmt.Println("		print regs")
 	fmt.Println("		print 0xf0200000")
-	fmt.Println("		print 0xf0200000-0xf0200008")
+	fmt.Println("	d <address>		- disassemble address or whole program if blank")
 	fmt.Println("	watch,w 		- watch memory or registers and print automatically when updated")
 }
 
+func print_regs() {
+	for i:=0; i<32; i++ {
+		print_register(fmt.Sprintf("%v",i))
+	}
+}
+
+func print_register(r string) {
+	// find the register to print
+	found := false
+	for i,reg := range(registers) {
+		n,ok := strconv.Atoi(r)
+		if r == reg || ((n == i) && ok == nil) {
+			fmt.Printf("$%02v/$%v : %#08x\n", i, reg, rf[i])
+			found = true
+		}
+	}
+	if !found {
+		fmt.Println("no register:", r)
+	}
+}
+
+func print_memory(m string) {
+	var a uint64
+	var err error = nil
+	if strings.HasPrefix(m,"0x") {
+		t := strings.TrimLeft(m,"0x")
+		a,err = strconv.ParseUint(t,16,32)
+	} else {
+		// assume base 10
+		a,err = strconv.ParseUint(m,10,32)
+	}
+	if err != nil {
+		fmt.Println("not a valid memory address:", m)
+	}
+	v, ok := cpu_read(uint32(a))
+	if ok {
+		fmt.Printf("%v : %#08x\n", m, v)
+	}
+}

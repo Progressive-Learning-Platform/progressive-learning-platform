@@ -9,11 +9,14 @@ type instruction struct {
 	opcode		string
 	function	string
 	rd		string
+	rd_i		int
 	rs		string
+	rs_i		int
 	rt		string
-	shamt		uint8
-	imm		int16
-	uimm		uint16
+	rt_i		int
+	shamt		uint32
+	imm		int32
+	uimm		uint32
 	jaddr		uint32
 	raw		uint32
 }
@@ -93,6 +96,8 @@ var functions = map[int] string {
 	0x11: "mulhi",
 	0x00: "sll",
 	0x02: "srl",
+	0x08: "jr",
+	0x09: "jalr",
 }
 
 var registers = map[int] string {
@@ -137,11 +142,14 @@ func disassemble(i uint32) (*instruction) {
 	ret.opcode	= opcodes[int((i & 0xfc000000) >> 26)]
 	ret.function	= functions[int(i & 0x0000003f)]
 	ret.rd		= registers[int((i & 0x0000f800) >> 11)]
+	ret.rd_i	= int((i & 0x0000f800) >> 11)
 	ret.rt		= registers[int((i & 0x001f0000) >> 16)]
+	ret.rt_i	= int((i & 0x001f0000) >> 16)
 	ret.rs		= registers[int((i & 0x03e00000) >> 21)]
-	ret.shamt	= uint8((i & 0x000007c0) >> 6)
-	ret.imm		= int16(i & 0x0000ffff)
-	ret.uimm	= uint16(i & 0x0000ffff)
+	ret.rs_i	= int((i & 0x03e00000) >> 21)
+	ret.shamt	= uint32((i & 0x000007c0) >> 6)
+	ret.imm		= int32(int16(i & 0x0000ffff))
+	ret.uimm	= uint32(i & 0x0000ffff)
 	ret.jaddr	= uint32(i & 0x03ffffff)
 	ret.raw		= i
 
