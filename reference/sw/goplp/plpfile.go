@@ -77,7 +77,7 @@ func getImage(f *tar.Reader) bool {
 		return false
 	}
 	b := data.Bytes()
-	for i := 0; i < len(b)/4; i+=4 {
+	for i := 0; i < len(b); i+=4 {
 		image = append(image, (uint32(b[i])<<24) | (uint32(b[i+1])<<16) | (uint32(b[i+2])<<8) | uint32(b[i+3]))
 		log(fmt.Sprintf("added to image: %#08x", image[len(image)-1]))
 	}

@@ -6,9 +6,9 @@ package main
  * func mod_write(address, data int32)
  */
 
-import (
-	"fmt"
-)
+//import (
+//	"fmt"
+//)
 
 const (
 	mod_memory_size = 16777216 / 4
@@ -24,12 +24,12 @@ func init() {
 
 func mod_memory_read(address uint32) uint32 {
 	a := (address - mod_memory_start) / 4
-	log(fmt.Sprintf("mod_memory read: %#08x : %#08x", address, memory[a]))
+	//log(fmt.Sprintf("mod_memory read: %#08x : %#08x", address, memory[a]))
 	return memory[a]
 }
 
 func mod_memory_write(address, data uint32) {
 	a := (address - mod_memory_start) / 4
-	log(fmt.Sprintf("mod_memory write: %#08x : %#08x", address, data))
+	//log(fmt.Sprintf("mod_memory write: %#08x : %#08x", address, data))
 	memory[a] = data
 }
