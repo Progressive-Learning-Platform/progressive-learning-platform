@@ -770,7 +770,7 @@ void handle_selection_statement(node *n) {
 		handle(n->children[2]);
 		e("%s:\n", selection_label_done);
 	} else {
-		lerr(n->line, "selection statement not fully implemented\n");
+	//	lerr(n->line, "selection statement not fully implemented\n");
 	}
 }
 
