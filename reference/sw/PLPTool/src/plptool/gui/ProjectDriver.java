@@ -758,7 +758,9 @@ public class ProjectDriver {
                     dirty = false;
                 if(metaScanner.findWithinHorizon("ARCH=", 0) != null) {
                     String temp = metaScanner.nextLine();
-                    if(temp.equals("plpmips")) {
+                    if(Config.cfgOverrideISA >= 0) { // ISA ID override, ignore the metafile
+                        arch = ArchRegistry.getArchitecture(this, Config.cfgOverrideISA);
+                    } else if (temp.equals("plpmips")) {
                         Msg.W("This project file is made by PLPTool version 3 or earlier. " +
                               "Meta data for this project will be updated " +
                               "with the default ISA (plpmips) when the project " +

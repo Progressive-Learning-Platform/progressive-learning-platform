@@ -214,7 +214,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 activeArgIndex += 2;
                 i++;
 
-            // Load classes from a jar with a manifest file
+            // Override ISA for new projects
             } else if(args.length >= activeArgIndex + 2 && args[i].equals("--isa-id")) {
 		Integer archID = Integer.parseInt(args[i+1]);
                 startingArchID = archID;
@@ -450,6 +450,11 @@ public class PLPToolApp extends SingleFrameApplication {
      * Handle CLI simulator options
      */
     private static void simulateCLI() {
+        String ISA;
+        if(attributes != null && (ISA = attributes.get("force_isa_id")) != null) {
+            plptool.Config.cfgOverrideISA = Integer.parseInt(ISA);
+        }
+
         if(simulateCLI) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
             // Autoload saved modules

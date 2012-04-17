@@ -2,7 +2,9 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/wira/Documents/plp/extras/PLP6811ISA/src/plp.manifest</file>
-        <file>file:/home/wira/Documents/plp/extras/PLP6811ISA/src/plptool/hc11/Architecture.java</file>
+        <file>file:/home/wira/plp/extras/PLP6811ISA/src/plp.manifest</file>
+        <file>file:/home/wira/plp/extras/PLP6811ISA/src/plptool/hc11/Architecture.java</file>
+        <file>file:/home/wira/plp/extras/PLP6811ISA/src/plptool/hc11/Asm.java</file>
+        <file>file:/home/wira/plp/extras/PLP6811ISA/src/plptool/hc11/SimCore.java</file>
     </open-files>
 </project-private>
