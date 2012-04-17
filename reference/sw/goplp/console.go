@@ -11,6 +11,7 @@ import (
 	"bufio"
 	"strings"
 	"os"
+	"strconv"
 )
 
 type Console struct {
@@ -48,7 +49,11 @@ func process(args []string) {
 	case "help", "h":
 		printHelp()
 	case "step", "s":
-		// TODO step
+		n := 1
+		if numArgs != 1 {
+			n,_ = strconv.Atoi(args[1])
+		}
+		step(n)
 	case "print", "p":
 		// TODO print
 	case "watch", "w":
@@ -75,8 +80,8 @@ func process(args []string) {
 	case "d":
 		if numArgs == 1 {
 			// disassemble the whole program
-			for i := 0; i < len(image) / 4; i += 4 {
-				fmt.Println(disassemble(image[i:i+4]))
+			for i := 0; i < len(image); i++ {
+				fmt.Println(disassemble(image[i]))
 			}
 		} else {
 			// TODO disassemble one memory address

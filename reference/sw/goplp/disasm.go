@@ -16,13 +16,12 @@ type instruction struct {
 	uimm		uint16
 	jaddr		uint32
 	raw		uint32
-	rawchars	[]byte
 }
 
 func (i *instruction) String() string {
 	switch i.typ {
 	case data:
-		return fmt.Sprintf("data: %#08x | %q", i.raw, i.rawchars)
+		return fmt.Sprintf("data: %#08x | %q", i.raw, i.raw)
 	case rtype:
 		// there are special cases
 		switch i.function {
@@ -131,21 +130,20 @@ var registers = map[int] string {
 	31: "ra",
 }
 
-func disassemble(i []byte) (*instruction) {
+func disassemble(i uint32) (*instruction) {
 	// i should be a 4 byte slice, containing a single instruction
 	ret := &instruction{}
 
-	ret.opcode	= opcodes[int((i[0] & 0xfc) >> 2)]
-	ret.function	= functions[int(i[3] & 0x3f)]
-	ret.rd		= registers[int((i[2] & 0xf8) >> 3)]
-	ret.rt		= registers[int((i[1] & 0x1f))]
-	ret.rs		= registers[int(((i[1] & 0xe0) >> 5) | ((i[0] & 0x03) << 3))]
-	ret.shamt	= uint8(((i[3] & 0xc0) >> 6) | ((i[2] & 0x07) << 2))
-	ret.imm		= (int16(i[2]) << 8) | int16(i[3])
-	ret.uimm	= (uint16(i[2]) << 8) | uint16(i[3])
-	ret.jaddr	= (uint32(i[0] & 0x03) << 24) | (uint32(i[1]) << 16) | uint32(ret.imm)
-	ret.raw		= (uint32(i[0]) << 24) | (uint32(i[1]) << 16) | (uint32(i[2]) << 8) | uint32(i[3])
-	ret.rawchars	= i
+	ret.opcode	= opcodes[int((i & 0xfc000000) >> 26)]
+	ret.function	= functions[int(i & 0x0000003f)]
+	ret.rd		= registers[int((i & 0x0000f800) >> 11)]
+	ret.rt		= registers[int((i & 0x001f0000) >> 16)]
+	ret.rs		= registers[int((i & 0x03e00000) >> 21)]
+	ret.shamt	= uint8((i & 0x000007c0) >> 6)
+	ret.imm		= int16(i & 0x0000ffff)
+	ret.uimm	= uint16(i & 0x0000ffff)
+	ret.jaddr	= uint32(i & 0x03ffffff)
+	ret.raw		= i
 
 	switch ret.opcode {
 	case "rtype":
