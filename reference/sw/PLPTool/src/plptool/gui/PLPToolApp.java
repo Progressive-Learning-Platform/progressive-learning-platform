@@ -228,6 +228,8 @@ public class PLPToolApp extends SingleFrameApplication {
                 String pair[] = (args[i].substring(2)).split("::", 2);
                 if(pair.length == 2)
                     attributes.put(pair[0], pair[1]);
+                else if(pair.length == 1)
+                    attributes.put(pair[0], "novalue");
                 activeArgIndex++;
 
             // Launch serial terminal instead of the IDE

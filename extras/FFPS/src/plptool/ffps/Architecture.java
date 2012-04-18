@@ -13,11 +13,14 @@ import plptool.*;
  */
 public class Architecture extends PLPArchitecture {
 
+    private boolean override_modules = false;
+
     public Architecture() {
         super(400, "ffps", null);
         Msg.M("PLP CPU ISA implementation with fast functional PLP simulation");
         hasAssembler = true;
         hasSimCore = true;
+        override_modules = plptool.gui.PLPToolApp.getAttributes().containsKey("ffps_override_modules");
     }
 
     public PLPAsm createAssembler() {
@@ -39,5 +42,16 @@ public class Architecture extends PLPArchitecture {
     @Override
     public void launchSimulatorCLI() {
         SimCLI.simCL(plp);
+    }
+
+    /**
+     * Perform simulator initialization
+     */
+    @Override
+    public void simulatorInitializationFinal() {
+        if(override_modules) {
+            plp.ioreg.removeAllModules();
+            plp.ioreg.loadPredefinedPreset(1);
+        }
     }
 }

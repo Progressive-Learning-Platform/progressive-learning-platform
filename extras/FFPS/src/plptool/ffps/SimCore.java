@@ -6,6 +6,7 @@
 package plptool.ffps;
 
 import plptool.*;
+import plptool.gui.PLPToolApp;
 import plptool.mips.*;
 import plptool.mods.MemModule;
 
@@ -19,13 +20,13 @@ public class SimCore extends PLPSimCore {
     public long[] regfile = new long[32];
     private long branch_destination;
     private boolean branch;
+    private boolean no_eval;
 
     public SimCore() {
         super();
         bus = new PLPSimBus();
-        bus.add(new MemModule(0x00000000L, 0x0000800L, true)); //rom
-        bus.add(new MemModule(0x10000000L, 0x1000000L, true)); //ram
         bus.enableAllModules();
+        no_eval = PLPToolApp.getAttributes().containsKey("ffps_no_eval");
     }
 
     public int loadProgram(PLPAsm asm) {
@@ -38,7 +39,11 @@ public class SimCore extends PLPSimCore {
 
     public int step() {
         int ret = Constants.PLP_OK;
-        long instr = (Long) bus.read(visibleAddr);
+        instructionCount++;
+        Long ir = (Long) bus.read(visibleAddr);
+        if(ir == null)
+            return Msg.E("Instruction fetch error.", Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
+        long instr = ir;
         byte opcode = MIPSInstr.opcode(instr);
         byte rs = MIPSInstr.rs(instr);
         byte rd = MIPSInstr.rd(instr);
@@ -69,6 +74,7 @@ public class SimCore extends PLPSimCore {
                     case 0x21:
                         regfile[rd] = s+t;
                         break;
+                        
                     case 0x23:
                         regfile[rd] = s-t;
                         break;
@@ -170,12 +176,14 @@ public class SimCore extends PLPSimCore {
             case 0x23: // lw
                 Long data = (Long) bus.read(s + s_imm);
                 if(data == null)
-                    ret++;
+                    return Msg.E("Bus read error.", Constants.PLP_SIM_BUS_ERROR, this);
                 regfile[rt] = data;
                 break;
 
             case 0x2B: // sw
-                ret += bus.write(s + s_imm, regfile[rt], false);
+                ret = bus.write(s + s_imm, regfile[rt], false);
+                if(ret > 0)
+                    return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
                 break;
 
             case 0x03: // jal
@@ -190,11 +198,17 @@ public class SimCore extends PLPSimCore {
                         Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
         }
 
+        if(!no_eval)
+            bus.eval();
+
         return ret;
     }
 
     public int reset() {
         visibleAddr = asm.getEntryPoint();
+        bus.reset();
+        this.loadProgram(asm);
+        instructionCount = 0;
         branch = false;
         branch_destination = 0;
         for(int i = 0; i < 32; i++)

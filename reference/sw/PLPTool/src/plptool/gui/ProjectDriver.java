@@ -1201,9 +1201,11 @@ public class ProjectDriver {
         Msg.D("I/O Modules: smods is " + (smods == null ? "null" : "not null")
 	      + " and g is " + g, 3, this);
 
-        if(smods == null || !g)
-            ioreg.loadPredefinedPreset(g ? 0 : 1);
-        else if(smods != null && !Config.simIgnoreSavedSimState)
+        // The ISA is responsible for providing a default set of modules.
+        // This can be achieved by overriding the simulatorInitialization()
+        // method in the ISA architecture metaclass.
+        // The I/O registry starts empty otherwise. 
+        if(smods != null && !Config.simIgnoreSavedSimState)
             ioreg.loadPreset(smods);
 
         sim.setStartAddr(asm.getEntryPoint());
@@ -1246,6 +1248,7 @@ public class ProjectDriver {
             // do nothing
         }
 
+        arch.simulatorInitializationFinal();
         hookEvent(new ProjectEvent(ProjectEvent.SIM_POST_INIT, -1));
         return Constants.PLP_OK;
     }
