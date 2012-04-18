@@ -5,20 +5,20 @@ import (
 )
 
 type instruction struct {
-	typ		instructionType
-	opcode		string
-	function	string
-	rd		string
-	rd_i		int
-	rs		string
-	rs_i		int
-	rt		string
-	rt_i		int
-	shamt		uint32
-	imm		int32
-	uimm		uint32
-	jaddr		uint32
-	raw		uint32
+	typ      instructionType
+	opcode   string
+	function string
+	rd       string
+	rd_i     int
+	rs       string
+	rs_i     int
+	rt       string
+	rt_i     int
+	shamt    uint32
+	imm      int32
+	uimm     uint32
+	jaddr    uint32
+	raw      uint32
 }
 
 func (i *instruction) String() string {
@@ -30,7 +30,7 @@ func (i *instruction) String() string {
 		switch i.function {
 		case "srl", "sll":
 			// special case for a nop
-			if (i.raw == 0) {
+			if i.raw == 0 {
 				return fmt.Sprintf("inst: nop")
 			}
 			return fmt.Sprintf("inst: %v $%v, $%v, %v", i.function, i.rd, i.rt, i.shamt)
@@ -62,13 +62,13 @@ func (i *instruction) String() string {
 type instructionType int
 
 const (
-	data	instructionType = iota
-	rtype	instructionType = iota
-	itype	instructionType = iota
-	jtype	instructionType = iota
+	data  instructionType = iota
+	rtype instructionType = iota
+	itype instructionType = iota
+	jtype instructionType = iota
 )
 
-var opcodes = map[int] string {
+var opcodes = map[int]string{
 	0x00: "rtype",
 	0x04: "beq",
 	0x05: "bne",
@@ -84,7 +84,7 @@ var opcodes = map[int] string {
 	0x03: "jal",
 }
 
-var functions = map[int] string {
+var functions = map[int]string{
 	0x21: "addu",
 	0x23: "subu",
 	0x24: "and",
@@ -100,17 +100,17 @@ var functions = map[int] string {
 	0x09: "jalr",
 }
 
-var registers = map[int] string {
-	0: "zero",
-	1: "at",
-	2: "v0",
-	3: "v1",
-	4: "a0",
-	5: "a1",
-	6: "a2",
-	7: "a3",
-	8: "t0",
-	9: "t1",
+var registers = map[int]string{
+	0:  "zero",
+	1:  "at",
+	2:  "v0",
+	3:  "v1",
+	4:  "a0",
+	5:  "a1",
+	6:  "a2",
+	7:  "a3",
+	8:  "t0",
+	9:  "t1",
 	10: "t2",
 	11: "t3",
 	12: "t4",
@@ -135,23 +135,23 @@ var registers = map[int] string {
 	31: "ra",
 }
 
-func disassemble(i uint32) (*instruction) {
+func disassemble(i uint32) *instruction {
 	// i should be a 4 byte slice, containing a single instruction
 	ret := &instruction{}
 
-	ret.opcode	= opcodes[int((i & 0xfc000000) >> 26)]
-	ret.function	= functions[int(i & 0x0000003f)]
-	ret.rd		= registers[int((i & 0x0000f800) >> 11)]
-	ret.rd_i	= int((i & 0x0000f800) >> 11)
-	ret.rt		= registers[int((i & 0x001f0000) >> 16)]
-	ret.rt_i	= int((i & 0x001f0000) >> 16)
-	ret.rs		= registers[int((i & 0x03e00000) >> 21)]
-	ret.rs_i	= int((i & 0x03e00000) >> 21)
-	ret.shamt	= uint32((i & 0x000007c0) >> 6)
-	ret.imm		= int32(int16(i & 0x0000ffff))
-	ret.uimm	= uint32(i & 0x0000ffff)
-	ret.jaddr	= uint32(i & 0x03ffffff)
-	ret.raw		= i
+	ret.opcode = opcodes[int((i&0xfc000000)>>26)]
+	ret.function = functions[int(i&0x0000003f)]
+	ret.rd = registers[int((i&0x0000f800)>>11)]
+	ret.rd_i = int((i & 0x0000f800) >> 11)
+	ret.rt = registers[int((i&0x001f0000)>>16)]
+	ret.rt_i = int((i & 0x001f0000) >> 16)
+	ret.rs = registers[int((i&0x03e00000)>>21)]
+	ret.rs_i = int((i & 0x03e00000) >> 21)
+	ret.shamt = uint32((i & 0x000007c0) >> 6)
+	ret.imm = int32(int16(i & 0x0000ffff))
+	ret.uimm = uint32(i & 0x0000ffff)
+	ret.jaddr = uint32(i & 0x03ffffff)
+	ret.raw = i
 
 	switch ret.opcode {
 	case "rtype":

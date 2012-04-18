@@ -11,15 +11,15 @@ package main
 //)
 
 const (
-	mod_rom_size = 2048
+	mod_rom_size  = 2048
 	mod_rom_start = 0x00000000
 )
 
-var rom = make([]uint32,mod_rom_size) // 2048KB rom
+var rom = make([]uint32, mod_rom_size) // 2048KB rom
 
 // modules register themselves in the rom map :)
 func init() {
-	map_register(mod_rom_start, mod_rom_start + mod_rom_size - 1, mod_rom_read, mod_rom_write)
+	map_register(mod_rom_start, mod_rom_start+mod_rom_size-1, mod_rom_read, mod_rom_write)
 }
 
 func mod_rom_read(address uint32) uint32 {
