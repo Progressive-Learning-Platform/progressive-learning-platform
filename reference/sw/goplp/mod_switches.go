@@ -11,13 +11,13 @@ package main
 //)
 
 const (
-	mod_switches_size = 4
+	mod_switches_size  = 4
 	mod_switches_start = 0xf0100000
 )
 
 // modules register themselves in the switches map :)
 func init() {
-	map_register(mod_switches_start, mod_switches_start + mod_switches_size - 4, mod_switches_read, mod_switches_write)
+	map_register(mod_switches_start, mod_switches_start+mod_switches_size-4, mod_switches_read, mod_switches_write)
 }
 
 func mod_switches_read(address uint32) uint32 {

@@ -1,43 +1,26 @@
 /* 
  * a go implementation of a plp cpu simulator
  *
- * usage:
+ * fritz 2012
  *
- * todo: 
- *	disassemble the program into one nice big structure
- *		instruction type
- *		opcode
- *		registers
- *		immediate field
- *		jump field
- *		shift amount
- *	start simulating!
- *		pc
- *		register file
- *		branches/jumps get a delay slot
- *	output
- *		>> command line
- *			help
- *			step / s
- *			print / p
- *			watch / w
- *	
  */
 
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	"flag"
+	"runtime/pprof"
 )
 
 const version = "1.0"
 
 var (
-	help		= flag.Bool("h", false, "print this help")
-	plpfile		= flag.String("plp", "", "plp file to open")
-	debug		= flag.Bool("v", false, "print extra information")
+	help    = flag.Bool("h", false, "print this help")
+	plpfile = flag.String("plp", "", "plp file to open")
+	debug   = flag.Bool("v", false, "print extra information")
+	prof    = flag.Bool("p", false, "output pprof info to goplp.prof")
 )
 
 func log(arg ...interface{}) {
@@ -74,9 +57,19 @@ func main() {
 	var c Console
 	r := make(chan []string)
 	c.Init(os.Stdin, r)
+	if *prof {
+		f, err := os.Create("goplp.prof")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 	for {
 		go c.Run()
-		process(<-r)
+		if !process(<-r) {
+			break
+		}
 	}
 }
-

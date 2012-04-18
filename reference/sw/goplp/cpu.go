@@ -7,10 +7,10 @@ import (
 
 // the memory map
 type memory_map_item struct {
-	start	uint32
-	stop	uint32
-	read	func(uint32) uint32
-	write	func(uint32, uint32)
+	start uint32
+	stop  uint32
+	read  func(uint32) uint32
+	write func(uint32, uint32)
 }
 
 var memory_map []*memory_map_item
@@ -19,14 +19,14 @@ func map_register(start, stop uint32, read func(uint32) uint32, write func(uint3
 	log("registering:", start, ":", stop)
 	memory_map = append(memory_map, &memory_map_item{
 		start: start,
-		stop: stop,
-		read: read,
+		stop:  stop,
+		read:  read,
 		write: write,
 	})
 }
 
 func map_find(address uint32) *memory_map_item {
-	for _,i := range memory_map {
+	for _, i := range memory_map {
 		if i.start <= address && address <= i.stop {
 			//log(fmt.Sprintf("found module at %#08x", i.start))
 			return i
@@ -43,7 +43,7 @@ var jpc uint32 = 0
 
 func step(n int) {
 	now := time.Now()
-	for i:=0; i<n; i++ {
+	for i := 0; i < n; i++ {
 		raw, ok := cpu_read(pc)
 		if ok {
 			inst := disassemble(raw)
@@ -67,7 +67,7 @@ func step(n int) {
 }
 
 func cpu_read(address uint32) (uint32, bool) {
-	if address % 4 != 0 {
+	if address%4 != 0 {
 		fmt.Println("misaligned read:", address, ", pc:", pc)
 		return 0, false
 	}
@@ -80,7 +80,7 @@ func cpu_read(address uint32) (uint32, bool) {
 }
 
 func cpu_write(address, data uint32) bool {
-	if address % 4 != 0 {
+	if address%4 != 0 {
 		fmt.Println("misaligned write:", address, ", pc:", pc)
 		return false
 	}
@@ -89,8 +89,7 @@ func cpu_write(address, data uint32) bool {
 		fmt.Printf("unmapped address: %#08x, pc: %#08x\n", address, pc)
 		return false
 	}
-	map_item.write(address,data)
-	watched_m(address)
+	map_item.write(address, data)
 	return true
 }
 
@@ -140,13 +139,12 @@ func calculate(i *instruction) uint32 {
 			jpc = rf[i.rs_i]
 			rf[i.rd_i] = pc + 8
 		}
-		watched_r(uint32(i.rd_i))
 	default: // itype or jtype
 		switch i.opcode {
 		case "beq":
 			if rf[i.rt_i] == rf[i.rs_i] {
 				j = true
-				jpc =  uint32(int32(pc) + 4 + (i.imm << 2))
+				jpc = uint32(int32(pc) + 4 + (i.imm << 2))
 			}
 		case "bne":
 			if rf[i.rt_i] != rf[i.rs_i] {
@@ -174,10 +172,10 @@ func calculate(i *instruction) uint32 {
 		case "lui":
 			rf[i.rt_i] = i.uimm << 16
 		case "lw":
-			raw,_ := cpu_read(uint32(int32(rf[i.rs_i]) + i.imm))
+			raw, _ := cpu_read(uint32(int32(rf[i.rs_i]) + i.imm))
 			rf[i.rt_i] = raw
 		case "sw":
-			cpu_write(uint32(int32(rf[i.rs_i]) + i.imm), rf[i.rt_i])
+			cpu_write(uint32(int32(rf[i.rs_i])+i.imm), rf[i.rt_i])
 		case "j":
 			j = true
 			jpc = (pc & 0xf0000000) | (i.jaddr << 2)
@@ -187,8 +185,6 @@ func calculate(i *instruction) uint32 {
 			jpc = (pc & 0xf0000000) | (i.jaddr << 2)
 		}
 		rf[0] = 0
-		watched_r(uint32(i.rt_i))
 	}
 	return pc + 4
 }
-

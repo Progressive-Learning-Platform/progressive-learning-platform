@@ -6,18 +6,17 @@
 package main
 
 import (
-	"io"
-	"fmt"
 	"bufio"
-	"strings"
-	"os"
+	"fmt"
+	"io"
 	"strconv"
+	"strings"
 )
 
 type Console struct {
-	src	io.Reader
-	dst	chan []string
-	in	*bufio.Reader
+	src io.Reader
+	dst chan []string
+	in  *bufio.Reader
 }
 
 func (c *Console) Init(src io.Reader, dst chan []string) *Console {
@@ -35,12 +34,12 @@ func (c *Console) Run() {
 		fmt.Println("error")
 	}
 	args := strings.Split(line, " ")
-	args[len(args)-1] = strings.TrimRight(args[len(args)-1],"\n")
+	args[len(args)-1] = strings.TrimRight(args[len(args)-1], "\n")
 	log("console thread got:", args)
 	c.dst <- args
 }
 
-func process(args []string) {
+func process(args []string) bool {
 	log("process thread got:", args)
 	numArgs := len(args)
 	command := args[0]
@@ -51,7 +50,7 @@ func process(args []string) {
 	case "step", "s":
 		n := 1
 		if numArgs != 1 {
-			n,_ = strconv.Atoi(args[1])
+			n, _ = strconv.Atoi(args[1])
 		}
 		step(n)
 	case "print", "p":
@@ -59,8 +58,8 @@ func process(args []string) {
 			fmt.Println("not enough arguments. Try a register or an address, or p regs for all registers")
 		} else if args[1] == "regs" {
 			print_regs()
-		} else if strings.HasPrefix(args[1],"$") {
-			print_register(strings.Trim(args[1],"$"))
+		} else if strings.HasPrefix(args[1], "$") {
+			print_register(strings.Trim(args[1], "$"))
 		} else { // it's memory we hope
 			print_memory(args[1])
 		}
@@ -73,13 +72,13 @@ func process(args []string) {
 			watch_memory(args[1])
 		}
 	case "quit", "q":
-		os.Exit(0)
+		return false
 	case "debug":
 		if numArgs == 1 {
 			fmt.Println(*debug)
-		} else if (args[1] == "true") {
+		} else if args[1] == "true" {
 			*debug = true
-		} else if (args[1] == "false") {
+		} else if args[1] == "false" {
 			*debug = false
 		} else {
 			fmt.Println("input error:", args)
@@ -109,6 +108,7 @@ func process(args []string) {
 	default:
 		fmt.Println("input error:", args)
 	}
+	return true
 }
 
 func printHelp() {
@@ -126,16 +126,16 @@ func printHelp() {
 }
 
 func print_regs() {
-	for i:=0; i<32; i++ {
-		print_register(fmt.Sprintf("%v",i))
+	for i := 0; i < 32; i++ {
+		print_register(fmt.Sprintf("%v", i))
 	}
 }
 
 func print_register(r string) {
 	// find the register to print
 	found := false
-	for i,reg := range(registers) {
-		n,ok := strconv.Atoi(r)
+	for i, reg := range registers {
+		n, ok := strconv.Atoi(r)
 		if r == reg || ((n == i) && ok == nil) {
 			fmt.Printf("$%02v/$%v : %#08x\n", i, reg, rf[i])
 			found = true
@@ -149,12 +149,12 @@ func print_register(r string) {
 func strToAddr(m string) (uint32, bool) {
 	var a uint64
 	var err error = nil
-	if strings.HasPrefix(m,"0x") {
-		t := strings.TrimLeft(m,"0x")
-		a,err = strconv.ParseUint(t,16,32)
+	if strings.HasPrefix(m, "0x") {
+		t := strings.TrimLeft(m, "0x")
+		a, err = strconv.ParseUint(t, 16, 32)
 	} else {
 		// assume base 10
-		a,err = strconv.ParseUint(m,10,32)
+		a, err = strconv.ParseUint(m, 10, 32)
 	}
 	if err != nil {
 		fmt.Println("not a valid memory address:", m)

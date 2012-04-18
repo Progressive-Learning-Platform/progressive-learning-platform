@@ -11,7 +11,7 @@ package main
 //)
 
 const (
-	mod_plpid_size = 8
+	mod_plpid_size  = 8
 	mod_plpid_start = 0xf0500000
 )
 
@@ -20,7 +20,7 @@ var plpid_id uint32 = 0x00000401
 
 // modules register themselves in the plpid map :)
 func init() {
-	map_register(mod_plpid_start, mod_plpid_start + mod_plpid_size - 4, mod_plpid_read, mod_plpid_write)
+	map_register(mod_plpid_start, mod_plpid_start+mod_plpid_size-4, mod_plpid_read, mod_plpid_write)
 }
 
 func mod_plpid_read(address uint32) uint32 {
