@@ -7,7 +7,7 @@ package main
  */
 
 const (
-	mod_sseg_size = 4
+	mod_sseg_size  = 4
 	mod_sseg_start = 0xf0a00000
 )
 
@@ -15,7 +15,7 @@ var sseg uint32 = 0
 
 // modules register themselves in the sseg map :)
 func init() {
-	map_register(mod_sseg_start, mod_sseg_start + mod_sseg_size - 4, mod_sseg_read, mod_sseg_write)
+	map_register(mod_sseg_start, mod_sseg_start+mod_sseg_size-4, mod_sseg_read, mod_sseg_write)
 }
 
 func mod_sseg_read(address uint32) uint32 {
