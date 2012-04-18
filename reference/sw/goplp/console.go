@@ -65,7 +65,13 @@ func process(args []string) {
 			print_memory(args[1])
 		}
 	case "watch", "w":
-		// TODO watch
+		if numArgs == 1 {
+			print_watches()
+		} else if strings.HasPrefix(args[1],"$") {
+			watch_register(strings.Trim(args[1],"$"))
+		} else { // it's a memory watch
+			watch_memory(args[1])
+		}
 	case "quit", "q":
 		os.Exit(0)
 	case "debug":
@@ -92,7 +98,13 @@ func process(args []string) {
 				fmt.Println(disassemble(image[i]))
 			}
 		} else {
-			// TODO disassemble one memory address
+			a,ok := strToAddr(args[1])
+			if ok {
+				inst, ok := cpu_read(a)
+				if ok {
+					fmt.Println(disassemble(inst))
+				}
+			}
 		}
 	default:
 		fmt.Println("input error:", args)
@@ -134,7 +146,7 @@ func print_register(r string) {
 	}
 }
 
-func print_memory(m string) {
+func strToAddr(m string) (uint32, bool) {
 	var a uint64
 	var err error = nil
 	if strings.HasPrefix(m,"0x") {
@@ -146,8 +158,17 @@ func print_memory(m string) {
 	}
 	if err != nil {
 		fmt.Println("not a valid memory address:", m)
+		return 0, false
 	}
-	v, ok := cpu_read(uint32(a))
+	return uint32(a), true
+}
+
+func print_memory(m string) {
+	a, ok := strToAddr(m)
+	if !ok {
+		return
+	}
+	v, ok := cpu_read(a)
 	if ok {
 		fmt.Printf("%v : %#08x\n", m, v)
 	}

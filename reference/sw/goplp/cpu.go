@@ -90,6 +90,7 @@ func cpu_write(address, data uint32) bool {
 		return false
 	}
 	map_item.write(address,data)
+	watched_m(address)
 	return true
 }
 
@@ -139,6 +140,7 @@ func calculate(i *instruction) uint32 {
 			jpc = rf[i.rs_i]
 			rf[i.rd_i] = pc + 8
 		}
+		watched_r(uint32(i.rd_i))
 	default: // itype or jtype
 		switch i.opcode {
 		case "beq":
@@ -185,6 +187,7 @@ func calculate(i *instruction) uint32 {
 			jpc = (pc & 0xf0000000) | (i.jaddr << 2)
 		}
 		rf[0] = 0
+		watched_r(uint32(i.rt_i))
 	}
 	return pc + 4
 }
