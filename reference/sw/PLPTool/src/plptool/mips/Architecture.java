@@ -93,6 +93,8 @@ public class Architecture extends PLPArchitecture {
 
         plp.sim.bus.add(new plptool.mods.InterruptController(0xf0700000L, plp.sim));
         plp.sim.bus.add(new plptool.mods.Button(8, 0xfffffff7L, plp.sim));
+        if(plp.smods == null) // if no modules are defined, load the PLP preset
+            plp.ioreg.loadPredefinedPreset(plp.g() ? 0 : 1);
         plp.sim.bus.enableAllModules();
 
         // add our button interrupt to g_dev toolbar

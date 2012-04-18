@@ -6,6 +6,7 @@
 package plptool.ffps;
 
 import plptool.*;
+import plptool.mods.MemModule;
 import plptool.mips.MIPSInstr;
 import plptool.gui.ProjectDriver;
 
@@ -15,8 +16,7 @@ import plptool.gui.ProjectDriver;
  */
 public class SimCLI {
     public static void simCL(ProjectDriver plp) {
-        //plp.sim.loadProgram(plp.asm);
-        plp.ioreg.loadPredefinedPreset(2);
+        plp.sim.reset();
         String in = "start";
         while(!in.equals("q")) {
             System.out.println("pc:" + PLPToolbox.format32Hex(plp.sim.visibleAddr));
@@ -45,8 +45,11 @@ public class SimCLI {
                 String tokens[] = in.split(" ");
                 if(tokens.length > 1)
                     System.out.println(PLPToolbox.format32Hex((Long) plp.sim.bus.read(PLPToolbox.parseNum(tokens[1]))));
+            } else if(in.equals("pmmap")) {
+                for(int i = 0; i < plp.sim.bus.getNumOfMods(); i++) {
+                    System.out.println(i +"\t:\t" + plp.sim.bus.getRefMod(i));
+                }
             }
-
         }
     }
 }
