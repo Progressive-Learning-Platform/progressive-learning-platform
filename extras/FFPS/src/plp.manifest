@@ -6,4 +6,6 @@ version::0.0.1
 class::plptool.ffps.SimCore
 class::plptool.ffps.SimCLI
 class::plptool.ffps.Architecture
+class::plptool.ffps.Timer
+class::plptool.ffps.FastMemory
 registerisa::plptool.ffps.Architecture::ffps::400

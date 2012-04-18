@@ -6,6 +6,7 @@
 package plptool.ffps;
 
 import plptool.*;
+import plptool.gui.PLPToolApp;
 
 /**
  *
@@ -20,7 +21,7 @@ public class Architecture extends PLPArchitecture {
         Msg.M("PLP CPU ISA implementation with fast functional PLP simulation");
         hasAssembler = true;
         hasSimCore = true;
-        override_modules = plptool.gui.PLPToolApp.getAttributes().containsKey("ffps_override_modules");
+        override_modules = PLPToolApp.getAttributes().containsKey("ffps_override_modules");
     }
 
     public PLPAsm createAssembler() {
@@ -50,8 +51,16 @@ public class Architecture extends PLPArchitecture {
     @Override
     public void simulatorInitializationFinal() {
         if(override_modules) {
+            Msg.W("FFPS Module Override!", this);
             plp.ioreg.removeAllModules();
-            plp.ioreg.loadPredefinedPreset(1);
+            plp.sim.bus.add(new FastMemory(0x10000000L, 0x800, "ROM"));
+            plp.sim.bus.add(new FastMemory(0x10000000L, 0x1000000, "RAM"));
+            plp.sim.bus.add(new Timer(0xf0600000L));
+            plp.sim.bus.add(new FastMemory(0xf0a00000L, 4, "Seven segments"));
+            plp.sim.bus.add(new FastMemory(0xf0500000L, 4, "PLPID1"));
+            plp.sim.bus.add(new FastMemory(0xf0500004L, 4, "PLPID2"));
+            plp.sim.bus.add(new FastMemory(0xf0100000L, 4, "Switches"));
+            plp.sim.bus.add(new FastMemory(0xf0200000L, 4, "LEDs"));
         }
     }
 }

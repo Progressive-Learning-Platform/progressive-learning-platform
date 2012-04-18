@@ -20,13 +20,17 @@ public class SimCore extends PLPSimCore {
     public long[] regfile = new long[32];
     private long branch_destination;
     private boolean branch;
-    private boolean no_eval;
+    private boolean no_eval;	
+    public long total_bus_eval_latency;
+    private long bus_eval_latency_start_time;
 
     public SimCore() {
         super();
         bus = new PLPSimBus();
         bus.enableAllModules();
         no_eval = PLPToolApp.getAttributes().containsKey("ffps_no_eval");
+        if(no_eval) Msg.W("Bus evaluation is disabled.", this);
+        total_bus_eval_latency = 0;
     }
 
     public int loadProgram(PLPAsm asm) {
@@ -198,8 +202,9 @@ public class SimCore extends PLPSimCore {
                         Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
         }
 
-        if(!no_eval)
-            bus.eval();
+        if(!no_eval) {
+            bus.eval(); 
+	}
 
         return ret;
     }
@@ -209,6 +214,7 @@ public class SimCore extends PLPSimCore {
         bus.reset();
         this.loadProgram(asm);
         instructionCount = 0;
+        total_bus_eval_latency = 0;
         branch = false;
         branch_destination = 0;
         for(int i = 0; i < 32; i++)

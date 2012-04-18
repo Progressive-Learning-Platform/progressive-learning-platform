@@ -107,10 +107,10 @@ public class PLPSimBus {
      */
     public synchronized Object read(long addr) {
         DynamicModuleFramework.hook(new BusEvent(BusEvent.READ, addr));
-        Object[] modules = bus_modules.toArray();
         Object value = null;
-        for(int i = modules.length - 1; i >= 0; i--) {
-            PLPSimBusModule module = (PLPSimBusModule)modules[i];
+        PLPSimBusModule module;
+        for(int i = bus_modules.size() - 1; i >= 0; i--) {
+            module = bus_modules.get(i);
             if(addr >= module.startAddr() &&
                addr <= module.endAddr()) {
                 if(!module.phantom) {                    
@@ -153,11 +153,12 @@ public class PLPSimBus {
         Msg.D("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
         boolean noMapping = true;
         int ret = Constants.PLP_OK;
-        Object[] modules = bus_modules.toArray();
-        for(int i = modules.length - 1; i >= 0; i--) {
-            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
-               addr <= ((PLPSimBusModule)modules[i]).endAddr()) {
-                ret = ((PLPSimBusModule)modules[i]).write(addr, data, isInstr);
+        PLPSimBusModule module;
+        for(int i = bus_modules.size() - 1; i >= 0; i--) {
+            module = bus_modules.get(i);
+            if(addr >= module.startAddr() &&
+               addr <= module.endAddr()) {
+                ret = module.write(addr, data, isInstr);
                 noMapping = false;
             }
         }
@@ -178,11 +179,12 @@ public class PLPSimBus {
      * @return true if the specified address is valid and initialized
      */
     public synchronized boolean isInitialized(long addr) {
-        Object[] modules = bus_modules.toArray();
-        for(int i = modules.length - 1; i >= 0; i--) {
-            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
-               addr <= ((PLPSimBusModule)modules[i]).endAddr() &&
-               ((PLPSimBusModule)modules[i]).isInitialized(addr))
+        PLPSimBusModule module;
+        for(int i = bus_modules.size() - 1; i >= 0; i--) {
+            module = bus_modules.get(i);
+            if(addr >= module.startAddr() &&
+               addr <= module.endAddr() &&
+               module.isInitialized(addr))
                return true;
         }
 
@@ -196,11 +198,12 @@ public class PLPSimBus {
      * @return true if the specified address is valid
      */
     public synchronized boolean isMapped(long addr) {
-        Object[] modules = bus_modules.toArray();
-        for(int i = modules.length - 1; i >= 0; i--) {
-            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
-               addr <= ((PLPSimBusModule)modules[i]).endAddr() &&
-               ((PLPSimBusModule)modules[i]).checkAlignment(addr))
+        PLPSimBusModule module;
+        for(int i = bus_modules.size() - 1; i >= 0; i--) {
+            module = bus_modules.get(i);
+            if(addr >= module.startAddr() &&
+               addr <= module.endAddr() &&
+               module.checkAlignment(addr))
                return true;
         }
 
@@ -214,11 +217,12 @@ public class PLPSimBus {
      * @return true if the specified address contains an instruction
      */
     public synchronized boolean isInstr(long addr) {
-        Object[] modules = bus_modules.toArray();
-        for(int i = modules.length - 1; i >= 0; i--) {
-            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
-               addr <= ((PLPSimBusModule)modules[i]).endAddr() &&
-               ((PLPSimBusModule)modules[i]).isInstr(addr))
+        PLPSimBusModule module;
+        for(int i = bus_modules.size() - 1; i >= 0; i--) {
+            module = bus_modules.get(i);
+            if(addr >= module.startAddr() &&
+               addr <= module.endAddr() &&
+               module.isInstr(addr))
                return true;
         }
 
@@ -232,9 +236,8 @@ public class PLPSimBus {
      */
     public synchronized int eval() {
         int ret = Constants.PLP_OK;
-        Object[] modules = bus_modules.toArray();
-        for(int i = 0; i < modules.length; i++)
-            ret += ((PLPSimBusModule)modules[i]).eval();
+        for(int i = 0; i < bus_modules.size(); i++)
+            ret += bus_modules.get(i).eval();
 
         return ret;
     }
@@ -246,10 +249,8 @@ public class PLPSimBus {
      * @return PLP_OK, or error code
      */
     public int eval(int index) {
-        Object[] modules = bus_modules.toArray();
         try {
-        return ((PLPSimBusModule)modules[index]).eval();
-
+            return bus_modules.get(index).eval();
         } catch(Exception e) {
             return Msg.E("eval(" + index + "): error: " + e,
                             Constants.PLP_SIM_BUS_ERROR, this);
@@ -264,12 +265,11 @@ public class PLPSimBus {
      * @return PLP_OK, or error code
      */
     public int gui_eval(int index, Object x) {
-        Object[] modules = bus_modules.toArray();
         try {
-        if(!((PLPSimBusModule)modules[index]).threaded)
-            return ((PLPSimBusModule)modules[index]).gui_eval(x);
+        if(!bus_modules.get(index).threaded)
+            return bus_modules.get(index).gui_eval(x);
         else {
-            ((PLPSimBusModule)modules[index]).notify();
+            bus_modules.get(index).notify();
             return Constants.PLP_OK;
         }
 
@@ -286,10 +286,8 @@ public class PLPSimBus {
      * @return Returns 0 on completion.
      */
     public synchronized int enableAllModules() {
-        Object[] modules =bus_modules.toArray();
-
-        for(int i = 0; i < modules.length; i++)
-            ((PLPSimBusModule)modules[i]).enable();
+        for(int i = 0; i < bus_modules.size(); i++)
+            bus_modules.get(i).enable();
 
         return Constants.PLP_OK;
     }
@@ -301,10 +299,8 @@ public class PLPSimBus {
      * @return Returns 0 on completion.
      */
     public synchronized int disableAllModules() {
-        Object[] modules = bus_modules.toArray();
-
-        for(int i = 0; i < modules.length; i++)
-            ((PLPSimBusModule)modules[i]).disable();
+        for(int i = 0; i < bus_modules.size(); i++)
+            bus_modules.get(i).disable();
 
         return Constants.PLP_OK;
     }
@@ -316,10 +312,8 @@ public class PLPSimBus {
      * @return Boolean on whether the module is enabled
      */
     public synchronized boolean getEnabled(int index) {
-        Object[] modules = bus_modules.toArray();
-
         try {
-        return ((PLPSimBusModule)modules[index]).enabled();
+            return bus_modules.get(index).enabled();
 
         } catch(Exception e) {
             Msg.E("enabled(" + index + "): error: " + e,
@@ -335,11 +329,9 @@ public class PLPSimBus {
      * @param index Index of the module
      * @return PLP_OK, or error code
      */
-    public synchronized int enableMod(int index) {
-        Object[] modules = bus_modules.toArray();
-
+    public synchronized int enableMod(int index) {        
         try {
-        ((PLPSimBusModule)modules[index]).enable();
+            bus_modules.get(index).enable();
         return Constants.PLP_OK;
 
         } catch(Exception e) {
@@ -355,10 +347,8 @@ public class PLPSimBus {
      * @return PLP_OK, or error code
      */
     public synchronized int disableMod(int index) {
-        Object[] modules = bus_modules.toArray();
-
         try {
-        ((PLPSimBusModule)modules[index]).disable();
+            bus_modules.get(index).disable();
         return Constants.PLP_OK;
 
         } catch(Exception e) {
@@ -375,10 +365,8 @@ public class PLPSimBus {
      * @return PLP_OK, or error code
      */
     public int clearModRegisters(int index) {
-        Object[] modules = bus_modules.toArray();
-
         try {
-        ((PLPSimBusModule)modules[index]).clear();
+            bus_modules.get(index).clear();
         return Constants.PLP_OK;
 
         } catch(Exception e) {
@@ -394,11 +382,8 @@ public class PLPSimBus {
      * @return String of introduction
      */
     public String introduceMod(int index) {
-        Object[] modules = bus_modules.toArray();
         try {
-
-        return ((PLPSimBusModule)modules[index]).introduce();
-
+            return bus_modules.get(index).introduce();
         } catch(Exception e) {
             Msg.E("introduceio(" + index + "): error: " + e,
                      Constants.PLP_SIM_BUS_ERROR, this);
@@ -414,11 +399,8 @@ public class PLPSimBus {
      * @return Starting address in (long)
      */
     public synchronized long getModStartAddress(int index) {
-        Object[] modules = bus_modules.toArray();
         try {
-
-        return ((PLPSimBusModule)modules[index]).startAddr();
-
+            return bus_modules.get(index).startAddr();
         } catch(Exception e) {
             Msg.E("iostartaddr(" + index + "): error: " + e,
                      Constants.PLP_SIM_BUS_ERROR, this);
@@ -434,11 +416,8 @@ public class PLPSimBus {
      * @return Ending address in (long)
      */
     public synchronized long getModEndAddress(int index) {
-        Object[] modules = bus_modules.toArray();
         try {
-
-        return ((PLPSimBusModule)modules[index]).endAddr();
-
+            return bus_modules.get(index).endAddr();
         } catch(Exception e) {
             Msg.E("ioendaddr(" + index + "): error: " + e,
                      Constants.PLP_SIM_BUS_ERROR, this);
@@ -453,9 +432,7 @@ public class PLPSimBus {
      * @return Number of modules in (int)
      */
     public synchronized int getNumOfMods() {
-        Object[] modules = bus_modules.toArray();
-
-        return modules.length;
+        return bus_modules.size();
     }
 
     /**
@@ -465,11 +442,8 @@ public class PLPSimBus {
      * @return PLPSimBusModule reference of the module
      */
     public synchronized PLPSimBusModule getRefMod(int index) {
-        Object[] modules = bus_modules.toArray();
         try {
-
-        return (PLPSimBusModule) modules[index];
-
+            return bus_modules.get(index);
         } catch(Exception e) {
             Msg.E("getRefMod(" + index + "): error: " + e,
                      Constants.PLP_SIM_BUS_ERROR, this);
@@ -507,12 +481,13 @@ public class PLPSimBus {
      * @return Data with successful read, -1 otherwise
      */
     public synchronized Object uncheckedRead(long addr) {
-        Object[] modules = bus_modules.toArray();
         Object value = null;
-        for(int i = modules.length - 1; i >= 0; i--) {
-            if(addr >= ((PLPSimBusModule)modules[i]).startAddr() &&
-               addr <= ((PLPSimBusModule)modules[i]).endAddr())
-                value = ((PLPSimBusModule)modules[i]).read(addr);
+        PLPSimBusModule module;
+        for(int i = bus_modules.size() - 1; i >= 0; i--) {
+            module = bus_modules.get(i);
+            if(addr >= module.startAddr() &&
+               addr <= module.endAddr())
+                value = module.read(addr);
         }
 
         if(value != null)
