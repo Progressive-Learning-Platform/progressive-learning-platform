@@ -14,6 +14,7 @@ import plptool.PLPSimBusModule;
  */
 public class Timer extends PLPSimBusModule {
     private long value;
+    private long overflow = (long) Math.pow(2, 32);
 
     public Timer(long addr) {
         super(addr, addr, true);
@@ -22,7 +23,7 @@ public class Timer extends PLPSimBusModule {
     @Override
     public int eval() {
         value++;
-        if(value == (long) Math.pow(2, 32))
+        if(value == overflow)
             value = 0;
         return Constants.PLP_OK;
     }
