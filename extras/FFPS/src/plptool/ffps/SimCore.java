@@ -240,6 +240,17 @@ public class SimCore extends PLPSimCore {
 
             case 0x2B: // sw
                 ret = bus.write(s + s_imm, regfile[rt], false);
+                if(pre_disassemble_program && disassembly_addr_map.containsKey(s + s_imm)) {
+                    disassembly_index = disassembly_addr_map.get(s + s_imm);
+                    opcode = opcode_array[disassembly_index];
+                    funct = funct_array[disassembly_index];
+                    rs = rs_array[disassembly_index];
+                    rd = rd_array[disassembly_index];
+                    rt = rt_array[disassembly_index];
+                    sa = sa_array[disassembly_index];
+                    imm = imm_array[disassembly_index];
+                    jaddr = jaddr_array[disassembly_index];
+                }
                 if(ret > 0)
                     return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
                 break;
@@ -274,5 +285,10 @@ public class SimCore extends PLPSimCore {
         for(int i = 0; i < 32; i++)
             regfile[i] = 0;
         return Constants.PLP_OK;
+    }
+
+    @Override
+    public String toString() {
+        return "FFPS SimCore";
     }
 }

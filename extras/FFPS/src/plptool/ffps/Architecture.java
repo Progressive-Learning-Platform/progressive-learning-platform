@@ -63,4 +63,9 @@ public class Architecture extends PLPArchitecture {
             plp.sim.bus.add(new FastMemory(0xf0200000L, 4, "LEDs"));
         }
     }
+
+    @Override
+    public String toString() {
+        return "FFPS";
+    }
 }
