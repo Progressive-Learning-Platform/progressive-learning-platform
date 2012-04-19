@@ -284,6 +284,16 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     prev = out.getText();
                     out.setText(prev + i + ":\t" + plptool.DynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
                 }
+            } else if(command.equals("getarchlist")) {
+                out.setText("");
+                Object[][] archs = ArchRegistry.getArchList();
+                for(int i = 0; i < archs.length; i++) {
+                    int id = (Integer) archs[i][0];
+                    Class c = (Class) archs[i][1];
+                    String strID = (String) archs[i][2];
+                    Msg.I(id + ": " + c.getCanonicalName() + " \"" + strID + "\"", null);
+                }
+
             } else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
                     plptool.Config.devFont = tokens[1];

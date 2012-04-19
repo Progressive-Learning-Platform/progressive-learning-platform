@@ -47,7 +47,8 @@ public class Text {
             "RXTX\n" +
             "Copyright 1997-2007 Trent Jarvi tjarvi@qbang.org and others.\n" +
             "Licensed under LGPL v2.1 + Linking Over Controlled Interface.\n" +
-            "http://users.frii.com/jarvi/rxtx/license.html for more licensing information of this software.\n\n" +
+            "http://users.frii.com/jarvi/rxtx/license.html for more licensing\n" +
+            "information of this software.\n\n" +
             "JUNG - Java Universal Network/Graph Framework\n" +
             "Copyright JUNG Developers\n" +
             "Licensed under the Berkeley Software Distribution (BSD) License" +
