@@ -90,6 +90,7 @@ func cpu_write(address, data uint32) bool {
 		return false
 	}
 	map_item.write(address, data)
+	watched_m(address)
 	return true
 }
 
@@ -101,90 +102,92 @@ func calculate(i *instruction) uint32 {
 		fmt.Println("attempt to execute data:", i)
 	case rtype:
 		switch i.function {
-		case "addu":
-			rf[i.rd_i] = rf[i.rs_i] + rf[i.rt_i]
-		case "subu":
-			rf[i.rd_i] = rf[i.rs_i] - rf[i.rt_i]
-		case "and":
-			rf[i.rd_i] = rf[i.rs_i] & rf[i.rt_i]
-		case "or":
-			rf[i.rd_i] = rf[i.rs_i] | rf[i.rt_i]
-		case "nor":
-			rf[i.rd_i] = ^(rf[i.rs_i] | rf[i.rt_i])
-		case "slt":
-			if int32(rf[i.rs_i]) < int32(rf[i.rt_i]) {
-				rf[i.rd_i] = 1
+		case 0x21:
+			rf[i.rd] = rf[i.rs] + rf[i.rt]
+		case 0x23:
+			rf[i.rd] = rf[i.rs] - rf[i.rt]
+		case 0x24:
+			rf[i.rd] = rf[i.rs] & rf[i.rt]
+		case 0x25:
+			rf[i.rd] = rf[i.rs] | rf[i.rt]
+		case 0x27:
+			rf[i.rd] = ^(rf[i.rs] | rf[i.rt])
+		case 0x2a:
+			if int32(rf[i.rs]) < int32(rf[i.rt]) {
+				rf[i.rd] = 1
 			} else {
-				rf[i.rd_i] = 0
+				rf[i.rd] = 0
 			}
-		case "sltu":
-			if rf[i.rs_i] < rf[i.rt_i] {
-				rf[i.rd_i] = 1
+		case 0x2b:
+			if rf[i.rs] < rf[i.rt] {
+				rf[i.rd] = 1
 			} else {
-				rf[i.rd_i] = 0
+				rf[i.rd] = 0
 			}
-		case "mullo":
-			rf[i.rd_i] = rf[i.rs_i] * rf[i.rt_i]
-		case "mulhi":
-			rf[i.rd_i] = uint32((uint64(rf[i.rs_i]) * uint64(rf[i.rt_i])) >> 32)
-		case "sll":
-			rf[i.rd_i] = rf[i.rt_i] << i.shamt
-		case "srl":
-			rf[i.rd_i] = rf[i.rt_i] >> i.shamt
-		case "jr":
+		case 0x10:
+			rf[i.rd] = rf[i.rs] * rf[i.rt]
+		case 0x11:
+			rf[i.rd] = uint32((uint64(rf[i.rs]) * uint64(rf[i.rt])) >> 32)
+		case 0x00:
+			rf[i.rd] = rf[i.rt] << i.shamt
+		case 0x02:
+			rf[i.rd] = rf[i.rt] >> i.shamt
+		case 0x08:
 			j = true
-			jpc = rf[i.rs_i]
-		case "jalr":
+			jpc = rf[i.rs]
+		case 0x09:
 			j = true
-			jpc = rf[i.rs_i]
-			rf[i.rd_i] = pc + 8
+			jpc = rf[i.rs]
+			rf[i.rd] = pc + 8
 		}
+		watched_r(i.rd)
 	default: // itype or jtype
 		switch i.opcode {
-		case "beq":
-			if rf[i.rt_i] == rf[i.rs_i] {
+		case 0x04:
+			if rf[i.rt] == rf[i.rs] {
 				j = true
 				jpc = uint32(int32(pc) + 4 + (i.imm << 2))
 			}
-		case "bne":
-			if rf[i.rt_i] != rf[i.rs_i] {
+		case 0x05:
+			if rf[i.rt] != rf[i.rs] {
 				j = true
 				jpc = uint32(int32(pc) + 4 + (i.imm << 2))
 			}
-		case "addiu":
-			rf[i.rt_i] = uint32(int32(rf[i.rs_i]) + i.imm)
-		case "andi":
-			rf[i.rt_i] = rf[i.rs_i] & i.uimm
-		case "ori":
-			rf[i.rt_i] = rf[i.rs_i] | i.uimm
-		case "slti":
-			if int32(rf[i.rs_i]) < i.imm {
-				rf[i.rt_i] = 1
+		case 0x09:
+			rf[i.rt] = uint32(int32(rf[i.rs]) + i.imm)
+		case 0x0c:
+			rf[i.rt] = rf[i.rs] & i.uimm
+		case 0x0d:
+			rf[i.rt] = rf[i.rs] | i.uimm
+		case 0x0a:
+			if int32(rf[i.rs]) < i.imm {
+				rf[i.rt] = 1
 			} else {
-				rf[i.rt_i] = 0
+				rf[i.rt] = 0
 			}
-		case "sltu":
-			if rf[i.rs_i] < i.uimm {
-				rf[i.rt_i] = 1
+		case 0x0b:
+			if rf[i.rs] < i.uimm {
+				rf[i.rt] = 1
 			} else {
-				rf[i.rt_i] = 0
+				rf[i.rt] = 0
 			}
-		case "lui":
-			rf[i.rt_i] = i.uimm << 16
-		case "lw":
-			raw, _ := cpu_read(uint32(int32(rf[i.rs_i]) + i.imm))
-			rf[i.rt_i] = raw
-		case "sw":
-			cpu_write(uint32(int32(rf[i.rs_i])+i.imm), rf[i.rt_i])
-		case "j":
+		case 0x0f:
+			rf[i.rt] = i.uimm << 16
+		case 0x23:
+			raw, _ := cpu_read(uint32(int32(rf[i.rs]) + i.imm))
+			rf[i.rt] = raw
+		case 0x2b:
+			cpu_write(uint32(int32(rf[i.rs])+i.imm), rf[i.rt])
+		case 0x02:
 			j = true
 			jpc = (pc & 0xf0000000) | (i.jaddr << 2)
-		case "jal":
+		case 0x03:
 			rf[31] = pc + 8
 			j = true
 			jpc = (pc & 0xf0000000) | (i.jaddr << 2)
 		}
 		rf[0] = 0
+		watched_r(i.rt)
 	}
 	return pc + 4
 }

@@ -6,14 +6,11 @@ import (
 
 type instruction struct {
 	typ      instructionType
-	opcode   string
-	function string
-	rd       string
-	rd_i     int
-	rs       string
-	rs_i     int
-	rt       string
-	rt_i     int
+	opcode   int
+	function int
+	rd       int
+	rs       int
+	rt       int
 	shamt    uint32
 	imm      int32
 	uimm     uint32
@@ -22,39 +19,45 @@ type instruction struct {
 }
 
 func (i *instruction) String() string {
+	function := functions[i.function]
+	opcode := opcodes[i.opcode]
+	rd := registers[i.rd]
+	rs := registers[i.rs]
+	rt := registers[i.rt]
+
 	switch i.typ {
 	case data:
 		return fmt.Sprintf("data: %#08x | %q", i.raw, i.raw)
 	case rtype:
 		// there are special cases
-		switch i.function {
+		switch function {
 		case "srl", "sll":
 			// special case for a nop
 			if i.raw == 0 {
 				return fmt.Sprintf("inst: nop")
 			}
-			return fmt.Sprintf("inst: %v $%v, $%v, %v", i.function, i.rd, i.rt, i.shamt)
+			return fmt.Sprintf("inst: %v $%v, $%v, %v", function, rd, rt, i.shamt)
 		case "jr":
-			return fmt.Sprintf("inst: jr $%v", i.rs)
+			return fmt.Sprintf("inst: jr $%v", rs)
 		case "jalr":
-			return fmt.Sprintf("inst: jalr $%v, $%v", i.rd, i.rs)
+			return fmt.Sprintf("inst: jalr $%v, $%v", rd, rs)
 		default:
-			return fmt.Sprintf("inst: %v $%v, $%v, $%v", i.function, i.rd, i.rs, i.rt)
+			return fmt.Sprintf("inst: %v $%v, $%v, $%v", function, rd, rs, rt)
 		}
 	case itype:
 		// more special cases
-		switch i.opcode {
+		switch opcode {
 		case "andi", "ori": // unsigned immediate field
-			return fmt.Sprintf("inst: %v $%v, $%v, %#04x", i.opcode, i.rt, i.rs, i.uimm)
+			return fmt.Sprintf("inst: %v $%v, $%v, %#04x", opcode, rt, rs, i.uimm)
 		case "lui":
-			return fmt.Sprintf("inst: lui $%v, %#04x", i.rt, i.uimm)
+			return fmt.Sprintf("inst: lui $%v, %#04x", rt, i.uimm)
 		case "lw", "sw":
-			return fmt.Sprintf("inst: %v $%v, %#04x($%v)", i.opcode, i.rt, i.imm, i.rs)
+			return fmt.Sprintf("inst: %v $%v, %#04x($%v)", opcode, rt, i.imm, rs)
 		default:
-			return fmt.Sprintf("inst: %v $%v, $%v, %#04x", i.opcode, i.rt, i.rs, i.imm)
+			return fmt.Sprintf("inst: %v $%v, $%v, %#04x", opcode, rt, rs, i.imm)
 		}
 	case jtype:
-		return fmt.Sprintf("inst: %v %#08x", i.opcode, i.jaddr)
+		return fmt.Sprintf("inst: %v %#08x", opcode, i.jaddr)
 	}
 	return fmt.Sprintf("something went wrong: %#08x", i.raw)
 }
@@ -139,14 +142,11 @@ func disassemble(i uint32) *instruction {
 	// i should be a 4 byte slice, containing a single instruction
 	ret := &instruction{}
 
-	ret.opcode = opcodes[int((i&0xfc000000)>>26)]
-	ret.function = functions[int(i&0x0000003f)]
-	ret.rd = registers[int((i&0x0000f800)>>11)]
-	ret.rd_i = int((i & 0x0000f800) >> 11)
-	ret.rt = registers[int((i&0x001f0000)>>16)]
-	ret.rt_i = int((i & 0x001f0000) >> 16)
-	ret.rs = registers[int((i&0x03e00000)>>21)]
-	ret.rs_i = int((i & 0x03e00000) >> 21)
+	ret.opcode = int((i&0xfc000000)>>26)
+	ret.function = int(i&0x0000003f)
+	ret.rd = int((i & 0x0000f800) >> 11)
+	ret.rt = int((i & 0x001f0000) >> 16)
+	ret.rs = int((i & 0x03e00000) >> 21)
 	ret.shamt = uint32((i & 0x000007c0) >> 6)
 	ret.imm = int32(int16(i & 0x0000ffff))
 	ret.uimm = uint32(i & 0x0000ffff)
@@ -154,17 +154,17 @@ func disassemble(i uint32) *instruction {
 	ret.raw = i
 
 	switch ret.opcode {
-	case "rtype":
+	case 0:
 		/* this may not be an r-type instruction, check the function */
 		switch ret.function {
-		case "":
-			ret.typ = data
-		default:
+		case 0x21,0x23,0x24,0x25,0x27,0x2a,0x2b,0x10,0x11,0x00,0x02,0x08,0x09:
 			ret.typ = rtype
+		default:
+			ret.typ = data
 		}
-	case "beq", "bne", "addiu", "andi", "ori", "slti", "sltiu", "lui", "lw", "sw":
+	case 0x04, 0x05, 0x09, 0x0c, 0x0d, 0x0a, 0x0b, 0x0f, 0x23, 0x2b:
 		ret.typ = itype
-	case "j", "jal":
+	case 0x02, 0x03:
 		ret.typ = jtype
 	default:
 		ret.typ = data

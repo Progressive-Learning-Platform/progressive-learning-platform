@@ -67,9 +67,9 @@ func watched_m(a uint32) {
 	}
 }
 
-func watched_r(r uint32) {
+func watched_r(r int) {
 	for i:=0; i<len(watches_r); i++ {
-		if watches_r[i] == r {
+		if watches_r[i] == uint32(r) {
 			fmt.Printf("watch: $%02d/$%v : %#08x\n", i, registers[int(r)], rf[r])
 		}
 	}
