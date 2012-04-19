@@ -8,7 +8,7 @@ package plptool.ffps;
 import plptool.*;
 import plptool.gui.PLPToolApp;
 import plptool.mips.*;
-import plptool.mods.MemModule;
+import java.util.HashMap;
 
 /**
  * we use visibleAddr from PLPSimCore as our pc
@@ -22,21 +22,63 @@ public class SimCore extends PLPSimCore {
     private boolean branch;
     private boolean no_eval;	
     public long total_bus_eval_latency;
-    private long bus_eval_latency_start_time;
+    private boolean pre_disassemble_program;
+    byte[] opcode_array;
+    byte[] funct_array;
+    byte[] rs_array;
+    byte[] rd_array;
+    byte[] rt_array;
+    byte[] sa_array;
+    long[] imm_array;
+    long[] jaddr_array;
+
+    private byte opcode, rs, rd, rt, funct, sa;
+    private long imm, jaddr, pcplus4, instr;
+    private long s, t, s_imm;
+    private Long ir;
+    private HashMap<Long, Integer> disassembly_addr_map;
+    private int disassembly_index;
 
     public SimCore() {
         super();
         bus = new PLPSimBus();
         bus.enableAllModules();
         no_eval = PLPToolApp.getAttributes().containsKey("ffps_no_eval");
+        pre_disassemble_program = PLPToolApp.getAttributes().containsKey("ffps_predisassemble");
         if(no_eval) Msg.W("Bus evaluation is disabled.", this);
+        if(pre_disassemble_program) Msg.I("Pre-disassembling of the program is enabled", this);
         total_bus_eval_latency = 0;
     }
 
     public int loadProgram(PLPAsm asm) {
         this.asm = (plptool.mips.Asm) asm;
-        for(int i = 0; i < asm.getObjectCode().length; i++)
+        if(pre_disassemble_program) {
+            int programLength = asm.getObjectCode().length;
+            opcode_array = new byte[programLength];
+            funct_array = new byte[programLength];
+            rs_array = new byte[programLength];
+            rd_array = new byte[programLength];
+            rt_array = new byte[programLength];
+            sa_array = new byte[programLength];
+            imm_array = new long[programLength];
+            jaddr_array = new long[programLength];
+            disassembly_addr_map = new HashMap<Long, Integer>();
+        }
+        for(int i = 0; i < asm.getObjectCode().length; i++) {
             bus.write(asm.getAddrTable()[i], asm.getObjectCode()[i], true);
+            if(pre_disassemble_program) {
+                instr = asm.getObjectCode()[i];
+                opcode_array[i] = MIPSInstr.opcode(instr);
+                funct_array[i] = MIPSInstr.funct(instr);
+                rs_array[i] = MIPSInstr.rs(instr);
+                rd_array[i] = MIPSInstr.rd(instr);
+                rt_array[i] = MIPSInstr.rt(instr);
+                sa_array[i] = MIPSInstr.sa(instr);
+                imm_array[i] = MIPSInstr.imm(instr);
+                jaddr_array[i] = MIPSInstr.jaddr(instr);
+                disassembly_addr_map.put(asm.getAddrTable()[i], i);
+            }
+        }
 
         return Constants.PLP_OK;
     }
@@ -44,24 +86,36 @@ public class SimCore extends PLPSimCore {
     public int step() {
         int ret = Constants.PLP_OK;
         instructionCount++;
-        Long ir = (Long) bus.read(visibleAddr);
-        if(ir == null)
-            return Msg.E("Instruction fetch error.", Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
-        long instr = ir;
-        byte opcode = MIPSInstr.opcode(instr);
-        byte rs = MIPSInstr.rs(instr);
-        byte rd = MIPSInstr.rd(instr);
-        byte rt = MIPSInstr.rt(instr);
-        byte funct = MIPSInstr.funct(instr);
-        byte sa = MIPSInstr.sa(instr);
-        long imm = MIPSInstr.imm(instr);
-        long jaddr = MIPSInstr.jaddr(instr);
-        long pcplus4 = visibleAddr+4;
+        if(!pre_disassemble_program) {
+            ir = (Long) bus.read(visibleAddr);
+            if(ir == null)
+                return Msg.E("Instruction fetch error.", Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
+            instr = ir;
+            opcode = MIPSInstr.opcode(instr);
+            rs = MIPSInstr.rs(instr);
+            rd = MIPSInstr.rd(instr);
+            rt = MIPSInstr.rt(instr);
+            funct = MIPSInstr.funct(instr);
+            sa = MIPSInstr.sa(instr);
+            imm = MIPSInstr.imm(instr);
+            jaddr = MIPSInstr.jaddr(instr);            
+        } else {
+            disassembly_index = disassembly_addr_map.get(visibleAddr);
+            instr = asm.getObjectCode()[disassembly_index];
+            opcode = opcode_array[disassembly_index];
+            funct = funct_array[disassembly_index];
+            rs = rs_array[disassembly_index];
+            rd = rd_array[disassembly_index];
+            rt = rt_array[disassembly_index];
+            sa = sa_array[disassembly_index];
+            imm = imm_array[disassembly_index];
+            jaddr = jaddr_array[disassembly_index];
+        }
 
-        long s = (rs == 0) ? 0 : regfile[rs];
-        long t = (rt == 0) ? 0 : regfile[rt];
-        //long d = (rd == 0) ? 0 : regfile[rd];
-        long s_imm =  (short) imm & ((long) 0xfffffff << 4 | 0xf);
+        pcplus4 = visibleAddr+4;
+        s = (rs == 0) ? 0 : regfile[rs];
+        t = (rt == 0) ? 0 : regfile[rt];
+        s_imm =  (short) imm & ((long) 0xfffffff << 4 | 0xf);
 
         // are we in the branch delay slot
         if(!branch)
