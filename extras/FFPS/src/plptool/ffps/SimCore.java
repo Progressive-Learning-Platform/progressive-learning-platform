@@ -242,14 +242,14 @@ public class SimCore extends PLPSimCore {
                 ret = bus.write(s + s_imm, regfile[rt], false);
                 if(pre_disassemble_program && disassembly_addr_map.containsKey(s + s_imm)) {
                     disassembly_index = disassembly_addr_map.get(s + s_imm);
-                    opcode = opcode_array[disassembly_index];
-                    funct = funct_array[disassembly_index];
-                    rs = rs_array[disassembly_index];
-                    rd = rd_array[disassembly_index];
-                    rt = rt_array[disassembly_index];
-                    sa = sa_array[disassembly_index];
-                    imm = imm_array[disassembly_index];
-                    jaddr = jaddr_array[disassembly_index];
+                    opcode_array[disassembly_index] = MIPSInstr.opcode(instr);
+                    funct_array[disassembly_index] = MIPSInstr.funct(instr);
+                    rs_array[disassembly_index] = MIPSInstr.rs(instr);
+                    rd_array[disassembly_index] = MIPSInstr.rd(instr);
+                    rt_array[disassembly_index] = MIPSInstr.rt(instr);
+                    sa_array[disassembly_index] = MIPSInstr.sa(instr);
+                    imm_array[disassembly_index] = MIPSInstr.imm(instr);
+                    jaddr_array[disassembly_index] = MIPSInstr.jaddr(instr);
                 }
                 if(ret > 0)
                     return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
