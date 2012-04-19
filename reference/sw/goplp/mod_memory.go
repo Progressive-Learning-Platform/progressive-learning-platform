@@ -15,7 +15,7 @@ const (
 	mod_memory_start = 0x10000000
 )
 
-var memory = make([]uint32, mod_memory_size) // 16MB memory
+var memory = make([]uint32, mod_memory_size / 4) // 16MB memory
 
 // modules register themselves in the memory map :)
 func init() {

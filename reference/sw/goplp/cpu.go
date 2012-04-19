@@ -44,19 +44,24 @@ var jpc uint32 = 0
 func step(n int) {
 	now := time.Now()
 	for i := 0; i < n; i++ {
-		raw, ok := cpu_read(pc)
-		if ok {
-			inst := disassemble(raw)
-			//log("decoding:", inst)
-			if j {
-				calculate(inst)
-				pc = jpc
-				j = false
-			} else {
-				pc = calculate(inst)
+		// check the trace cache first
+		inst, ok := trace_lookup(pc)
+		if !ok {
+			raw, ok := cpu_read(pc)
+			if ok {
+				inst = disassemble(raw)
+				trace_insert(pc, inst)
 			}
-			mod_timer_eval()
 		}
+		//log("decoding:", inst)
+		if j {
+			calculate(inst)
+			pc = jpc
+			j = false
+		} else {
+			pc = calculate(inst)
+		}
+		mod_timer_eval()
 	}
 	t := time.Since(now)
 	raw, ok := cpu_read(pc)
@@ -190,4 +195,20 @@ func calculate(i *instruction) uint32 {
 		watched_r(i.rt)
 	}
 	return pc + 4
+}
+
+// trace cache
+var trace_cache = make([]*instruction, mod_memory_size / 4)
+
+func trace_lookup(a uint32) (*instruction, bool) {
+	e := (a - mod_memory_start) / 4
+	if trace_cache[e] != nil {
+		return trace_cache[e], true
+	}
+	return nil, false
+}
+
+func trace_insert(a uint32, i *instruction) {
+	e := (a - mod_memory_start) / 4
+	trace_cache[e] = i
 }
