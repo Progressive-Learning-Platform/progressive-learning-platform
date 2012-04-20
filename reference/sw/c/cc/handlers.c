@@ -247,6 +247,32 @@ void handle_unary_expr(node *n) {
 		if (!LVALUE) { /* dereference it */
 			e("lw $t0, 0($t0)\n");
 		}
+	} else if (strcmp(n->children[0]->id, "+") == 0) {
+		lerr(n->line, "[code_gen] unary + is just silly\n");
+	} else if (strcmp(n->children[0]->id, "-") == 0) {
+		lerr(n->line, "[code_gen] unary - is just silly\n");
+	} else if (strcmp(n->children[0]->id, "~") == 0) {
+		/* bitwise invert */
+		if (LVALUE) {
+			lerr(n->line, "[code_gen] invalid lvalue\n");
+		} else {
+			handle(n->children[1]);
+			e("nor $t0, $t0, $t0\n");
+		}
+	} else if (strcmp(n->children[0]->id, "!") == 0) {
+		/* boolean true/false */
+		if (LVALUE) {
+			lerr(n->line, "[code_gen] invalid lvalue\n");
+		} else {
+			char *done = gen_label();
+			handle(n->children[1]);
+			e("move $t1, $t0\n");
+			e("move $t0, $zero\n");
+			e("bne $t1, $t0, %s\n", done);
+			e("nop\n");
+			e("ori $t0, $zero, 1\n");
+			e("%s:\n", done);
+		}
 	} else {
 		lerr(n->line, "[code_gen] unary expressions not fully implemented\n");
 	}			

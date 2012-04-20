@@ -63,7 +63,7 @@ primary_expression
 	: IDENTIFIER { vlog("[parser] IDENTIFIER: %s\n", $1->id); /* the lexer already made this object a constant */ }
 	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1->id); /* the lexer already made this object a constant */ } 
 	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1->id); /* the lexer already made this object a string */ }
-	| '(' expression ')' { vlog("[parser] EXPRESSION"); /* no bother */ }
+	| '(' expression ')' { vlog("[parser] EXPRESSION\n"); $$ = $2; }
 	;
 
 postfix_expression
