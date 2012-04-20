@@ -21,6 +21,7 @@ package plptool;
 import plptool.gui.ProjectDriver;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class associates an ISA implementation to its member classes.
@@ -135,5 +136,23 @@ public class ArchRegistry {
             return "plpmips";
         else
             return archIdentifiers.get(ID);
+    }
+
+    /**
+     * Return a list of the ISAs registered
+     *
+     * @return An object array of registered ISA classes
+     */
+    public static Object[][] getArchList() {
+        Object[][] archs = new Object[archClasses.size()][3];        
+        Object[] classes = archClasses.entrySet().toArray();
+        for(int i = 0; i < archs.length; i++) {
+            @SuppressWarnings("unchecked")
+            Map.Entry<Integer, Class> entry = (Map.Entry<Integer, Class>) classes[i];
+            archs[i][0] = entry.getKey();
+            archs[i][1] = entry.getValue();
+            archs[i][2] = archIdentifiers.get(entry.getKey());
+        }
+        return archs;
     }
 }

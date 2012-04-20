@@ -18,7 +18,7 @@ public class Architecture extends PLPArchitecture {
 
     public Architecture() {
         super(400, "ffps", null);
-        Msg.M("PLP CPU ISA implementation with fast functional PLP simulation");
+        Msg.M("FFPS: PLP CPU ISA implementation with Fast Functional PLP Simulation");
         hasAssembler = true;
         hasSimCore = true;
         override_modules = PLPToolApp.getAttributes().containsKey("ffps_override_modules");
@@ -62,5 +62,10 @@ public class Architecture extends PLPArchitecture {
             plp.sim.bus.add(new FastMemory(0xf0100000L, 4, "Switches"));
             plp.sim.bus.add(new FastMemory(0xf0200000L, 4, "LEDs"));
         }
+    }
+
+    @Override
+    public String toString() {
+        return "FFPS";
     }
 }
