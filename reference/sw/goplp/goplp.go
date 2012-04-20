@@ -55,8 +55,7 @@ func main() {
 		newPLPFile(*plpfile)
 	}
 	var c Console
-	r := make(chan []string)
-	c.Init(os.Stdin, r)
+	c.Init(os.Stdin)
 	if *prof {
 		f, err := os.Create("goplp.prof")
 		if err != nil {
@@ -66,10 +65,5 @@ func main() {
 		pprof.StartCPUProfile(f)
 		defer pprof.StopCPUProfile()
 	}
-	for {
-		go c.Run()
-		if !process(<-r) {
-			break
-		}
-	}
+	c.Run()
 }

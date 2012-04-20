@@ -11,6 +11,8 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"os/signal"
+	"os"
 )
 
 type Console struct {
@@ -19,24 +21,49 @@ type Console struct {
 	in  *bufio.Reader
 }
 
-func (c *Console) Init(src io.Reader, dst chan []string) *Console {
+var (
+	sig_c = make(chan os.Signal,1)
+	r_run bool = false
+	stop_run bool = false
+)
+
+func init() {
+	signal.Notify(sig_c, os.Interrupt)
+	go signal_catcher()
+}
+
+func signal_catcher() {
+	for {
+		<-sig_c
+		if r_run {
+			stop_run = true
+			continue
+		}
+		os.Exit(0)
+	}
+}
+
+func (c *Console) Init(src io.Reader) *Console {
 	c.src = src
-	c.dst = dst
 	c.in = bufio.NewReader(c.src)
 	return c
 }
 
 func (c *Console) Run() {
-	fmt.Print(">> ")
-	line, err := c.in.ReadString('\n')
-	if err != nil {
-		// TODO print an error the right way, perhaps with log
-		fmt.Println("error")
+	for {
+		fmt.Print(">> ")
+		line, err := c.in.ReadString('\n')
+		if err != nil {
+			// TODO print an error the right way, perhaps with log
+			fmt.Println("error")
+		}
+		args := strings.Split(line, " ")
+		args[len(args)-1] = strings.TrimRight(args[len(args)-1], "\n")
+		log("console thread got:", args)
+		if !process(args) {
+			return 
+		}
 	}
-	args := strings.Split(line, " ")
-	args[len(args)-1] = strings.TrimRight(args[len(args)-1], "\n")
-	log("console thread got:", args)
-	c.dst <- args
 }
 
 func process(args []string) bool {

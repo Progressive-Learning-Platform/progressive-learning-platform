@@ -42,6 +42,8 @@ var j bool = false
 var jpc uint32 = 0
 
 func step(n int) {
+	steps := 0
+	r_run = true
 	now := time.Now()
 	for i := 0; i < n; i++ {
 		// check the trace cache first
@@ -62,13 +64,19 @@ func step(n int) {
 			pc = calculate(inst)
 		}
 		mod_timer_eval()
+		steps++
+		if stop_run {
+			stop_run = false
+			break
+		}
 	}
 	t := time.Since(now)
 	raw, ok := cpu_read(pc)
 	if ok {
 		inst := disassemble(raw)
-		fmt.Printf("%v steps in %v | %#08x : %v\n", n, t, pc, inst)
+		fmt.Printf("%v steps in %v | %#08x : %v\n", steps, t, pc, inst)
 	}
+	r_run = false
 }
 
 func cpu_read(address uint32) (uint32, bool) {
