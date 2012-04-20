@@ -22,12 +22,10 @@ public class FastMemory extends PLPSimBusModule {
         data = new long[size/4+1];
     }
 
-    @Override
     public int eval() {
         return Constants.PLP_OK;
     }
 
-    @Override
     public int gui_eval(Object x) {
         return Constants.PLP_OK;
     }
