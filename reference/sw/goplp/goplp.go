@@ -21,6 +21,7 @@ var (
 	plpfile = flag.String("plp", "", "plp file to open")
 	debug   = flag.Bool("v", false, "print extra information")
 	prof    = flag.Bool("p", false, "output pprof info to goplp.prof")
+	uart_port = flag.Int("uart", 1337, "uart port")
 )
 
 func log(arg ...interface{}) {

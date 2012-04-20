@@ -80,6 +80,10 @@ func process(args []string) bool {
 			n, _ = strconv.Atoi(args[1])
 		}
 		step(n)
+	case "continue", "c":
+		step(-1)
+	case "reset", "r":
+		pc = org
 	case "print", "p":
 		if numArgs == 1 {
 			fmt.Println("not enough arguments. Try a register or an address, or p regs for all registers")
@@ -144,6 +148,8 @@ func printHelp() {
 	fmt.Println("	quit    		- quit")
 	fmt.Println("	plpfile	<file>		- set active plpfile")
 	fmt.Println("	step,s  		- step N instructions")
+	fmt.Println("	continue,c		- run until stopped with ctrl-c")
+	fmt.Println("	reset,r			- reset the PC to the original org address")
 	fmt.Println("	print,p 		- print memory or registers, such as:")
 	fmt.Println("		print $t0")
 	fmt.Println("		print regs")

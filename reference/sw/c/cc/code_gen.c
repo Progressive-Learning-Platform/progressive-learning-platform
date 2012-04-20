@@ -226,7 +226,10 @@ void handle(node *n) {
 	} else if (strcmp(n->id,"function_definition") == 0) {
 		vlog("[code_gen] handle: function_definition \n");
 		handle_function_definition(n);
-	} 
+	} else if (strcmp(n->id,"asm") == 0) {
+		vlog("[code_gen] handle: inline_assembly \n");
+		handle_asm(n);
+	}
 
 	}
 }
