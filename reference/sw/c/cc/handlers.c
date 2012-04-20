@@ -916,3 +916,10 @@ void handle_function_definition(node *n) {
 
 	epilogue(n);
 }
+
+void handle_asm(node *n) {
+	/* the first child should just be a string, emit it */
+	e("#inline assembly begin\n")
+	e("%s\n",n->children[0]->id);
+	e("#inline assembly end\n");
+}

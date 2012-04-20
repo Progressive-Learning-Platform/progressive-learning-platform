@@ -45,7 +45,7 @@ func step(n int) {
 	steps := 0
 	r_run = true
 	now := time.Now()
-	for i := 0; i < n; i++ {
+	for i := 0; (i < n) || n == -1 ; i++ {
 		// check the trace cache first
 		inst, ok := trace_lookup(pc)
 		if !ok {

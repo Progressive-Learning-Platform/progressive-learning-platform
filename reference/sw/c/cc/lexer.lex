@@ -76,6 +76,7 @@ extern symbol_table *sym;
 "void"			{ count(); return(VOID); }
 "volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
+"__asm"			{ count(); return(ASM); }
 
 {L}({L}|{D})*		{ yylval = id((char*)yytext); count(); return(check_type((char*)yytext)); }
 

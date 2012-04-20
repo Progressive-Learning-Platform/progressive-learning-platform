@@ -53,6 +53,8 @@ char *s;
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
+%token ASM
+
 %nonassoc IFX
 %nonassoc ELSE
 
@@ -64,6 +66,7 @@ primary_expression
 	| CONSTANT { vlog("[parser] CONSTANT: %s\n", $1->id); /* the lexer already made this object a constant */ } 
 	| STRING_LITERAL { vlog("[parser] STRING_LITERAL: %s\n", $1->id); /* the lexer already made this object a string */ }
 	| '(' expression ')' { vlog("[parser] EXPRESSION\n"); $$ = $2; }
+	| ASM '(' STRING_LITERAL ')' { vlog("[parser] INLINE ASSEMBLY\n"); $$ = op("asm", 1, $3); }
 	;
 
 postfix_expression
