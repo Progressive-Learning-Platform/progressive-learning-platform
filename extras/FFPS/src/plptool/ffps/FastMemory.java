@@ -16,6 +16,15 @@ public class FastMemory extends PLPSimBusModule {
     private String id;
     private long[] data;
 
+    public FastMemory() {}
+
+    @Override
+    public void setNewParameters(long startAddr, long endAddr, boolean isWordAligned) {
+        super.setNewParameters(startAddr, endAddr, isWordAligned);
+        this.id = "Dynamically Loaded";
+        data = new long[(int)(endAddr-startAddr)/4+1];
+    }
+
     public FastMemory(long addr, int size, String id) {
         super(addr, addr+size-4, true);
         this.id = id;
