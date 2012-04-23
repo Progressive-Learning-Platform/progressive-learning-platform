@@ -451,9 +451,12 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="askBeforeAutoloadingModules" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="askBeforeAutoloadingModules" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="askForISAForNewProjects" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace pref="213" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -463,7 +466,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="askBeforeAutoloadingModules" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="376" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="askForISAForNewProjects" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="353" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -476,6 +481,15 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="askBeforeAutoloadingModulesActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="askForISAForNewProjects">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="askForISAForNewProjects.text"/>
+                <Property name="name" type="java.lang.String" value="askForISAForNewProjects" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="askForISAForNewProjectsActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

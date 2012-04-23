@@ -29,12 +29,6 @@
           <Group type="102" attributes="0">
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="appTitleLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="82" max="32767" attributes="0"/>
-                      <Component id="appDescLabel" min="-2" pref="298" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="closeButton" min="-2" max="-2" attributes="0"/>
@@ -45,19 +39,25 @@
                       <EmptySpace pref="10" max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="appTitleLabel" pref="321" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="appHomepageLabel" alignment="1" max="32767" attributes="1"/>
+                          <Component id="appDescLabel" alignment="1" pref="298" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="appHomepageLabel" min="-2" pref="168" max="-2" attributes="0"/>
+              <Component id="appVendorLabel" pref="451" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="196" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="tabText" pref="645" max="32767" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="appVendorLabel" pref="633" max="32767" attributes="0"/>
+              <Component id="tabText" pref="637" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -70,12 +70,13 @@
                   <Component id="appTitleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="appDescLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-              <Component id="appHomepageLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-              <Component id="appVendorLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="tabText" pref="262" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="appVendorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="appHomepageLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="tabText" pref="274" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
@@ -132,6 +133,7 @@
       <Properties>
         <Property name="font" type="java.awt.Font" resourceKey="appHomepageLabel.font"/>
         <Property name="foreground" type="java.awt.Color" resourceKey="appHomepageLabel.foreground"/>
+        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" resourceKey="Application.homepage"/>
         <Property name="name" type="java.lang.String" value="appHomepageLabel" noResource="true"/>
       </Properties>
@@ -211,7 +213,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollAbout" pref="616" max="32767" attributes="0"/>
+                      <Component id="scrollAbout" pref="612" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -220,7 +222,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollAbout" pref="211" max="32767" attributes="0"/>
+                      <Component id="scrollAbout" pref="227" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -240,6 +242,7 @@
                 <Component class="javax.swing.JTextArea" name="txtAbout">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="font" type="java.awt.Font" resourceKey="txtAbout.font"/>
                     <Property name="rows" type="int" value="5"/>
                     <Property name="name" type="java.lang.String" value="txtAbout" noResource="true"/>
@@ -266,7 +269,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollContact" pref="616" max="32767" attributes="0"/>
+                      <Component id="scrollContact" pref="612" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -275,7 +278,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollContact" pref="211" max="32767" attributes="0"/>
+                      <Component id="scrollContact" pref="227" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -295,6 +298,7 @@
                 <Component class="javax.swing.JTextArea" name="txtContact">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="font" type="java.awt.Font" resourceKey="txtContact.font"/>
                     <Property name="rows" type="int" value="5"/>
                     <Property name="name" type="java.lang.String" value="txtContact" noResource="true"/>
@@ -321,7 +325,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollThirdParty" pref="616" max="32767" attributes="0"/>
+                      <Component id="scrollThirdParty" pref="612" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -330,7 +334,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollThirdParty" pref="211" max="32767" attributes="0"/>
+                      <Component id="scrollThirdParty" pref="227" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -350,6 +354,7 @@
                 <Component class="javax.swing.JTextArea" name="txtThirdParty">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="font" type="java.awt.Font" resourceKey="txtThirdParty.font"/>
                     <Property name="rows" type="int" value="5"/>
                     <Property name="name" type="java.lang.String" value="txtThirdParty" noResource="true"/>
@@ -376,7 +381,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollGPL" pref="616" max="32767" attributes="0"/>
+                      <Component id="scrollGPL" pref="612" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -385,7 +390,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="scrollGPL" pref="211" max="32767" attributes="0"/>
+                      <Component id="scrollGPL" pref="227" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -405,6 +410,7 @@
                 <Component class="javax.swing.JTextArea" name="txtGPL">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="font" type="java.awt.Font" resourceKey="txtGPL.font"/>
                     <Property name="rows" type="int" value="5"/>
                     <Property name="name" type="java.lang.String" value="txtGPL" noResource="true"/>

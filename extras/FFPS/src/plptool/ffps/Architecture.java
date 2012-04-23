@@ -17,11 +17,12 @@ public class Architecture extends PLPArchitecture {
     private boolean override_modules = false;
 
     public Architecture() {
-        super(400, "ffps", null);
+        super(400, "Fast Functional PLP Simulation", null);
         Msg.M("FFPS: PLP CPU ISA implementation with Fast Functional PLP Simulation");
         hasAssembler = true;
         hasSimCore = true;
         override_modules = PLPToolApp.getAttributes().containsKey("ffps_override_modules");
+        informationString = "PLP CPU ISA implementation with Fast Functional PLP Simulation (FFPS)";
     }
 
     public PLPAsm createAssembler() {
