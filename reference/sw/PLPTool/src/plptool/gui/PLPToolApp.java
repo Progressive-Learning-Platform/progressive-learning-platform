@@ -129,6 +129,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
         int activeArgIndex = 0;
         java.io.File fileToOpen = null;
+        ArchRegistry.setup();
 
         // Copyright notice can only be suppressed with this as the first
         // command line argument

@@ -36,6 +36,8 @@ public class ArchRegistry {
             new HashMap<Integer, Class>();
     private static HashMap<Integer, String> archIdentifiers =
             new HashMap<Integer, String>();
+    private static HashMap<Integer, String> archDescriptions =
+            new HashMap<Integer, String>();
 
     public static final int        ISA_PLPMIPS         =           0;
 
@@ -84,7 +86,8 @@ public class ArchRegistry {
      * @return PLP_OK if the class is successfully registered, error code
      * otherwise
      */
-    public static int registerArchitecture(Class arch, int ID, String strID) {
+    public static int registerArchitecture(Class arch, int ID, String strID,
+            String description) {
         Msg.D("Registering ISA class " + arch.getCanonicalName() +
                 " with ID=" + ID + " strID=" + strID, 2, null);
 
@@ -99,6 +102,7 @@ public class ArchRegistry {
         
         archClasses.put(ID, arch);
         archIdentifiers.put(ID, strID);
+        archDescriptions.put(ID, description);
 
         if(Constants.debugLevel >= 5) {
             java.util.Set IDs = archClasses.keySet();
@@ -119,10 +123,7 @@ public class ArchRegistry {
      * @return Reference to the ISA class, or null if it is not registered
      */
     public static Class getRegisteredArchitectureClass(int ID) {
-        if(ID == 0)
-            return plptool.mips.Architecture.class;
-        else
-            return archClasses.get(ID);
+        return archClasses.get(ID);
     }
 
     /**
@@ -132,19 +133,37 @@ public class ArchRegistry {
      * @return the string identifier of the ISA
      */
     public static String getStringID(int ID) {
-        if(ID == 0)
-            return "plpmips";
-        else
-            return archIdentifiers.get(ID);
+        return archIdentifiers.get(ID);
     }
 
     /**
-     * Return a list of the ISAs registered
      *
-     * @return An object array of registered ISA classes
+     * @param ID
+     * @return
+     */
+    public static String getDescription(int ID) {
+        return archDescriptions.get(ID);
+    }
+
+    /**
+     * PLPToolApp calls this method during initialization
+     */
+    public static void setup() {
+        archClasses.put(0, plptool.mips.Architecture.class);
+        archIdentifiers.put(0, "PLPCPU");
+        archDescriptions.put(0, "PLP CPU ISA Implementation for PLPTool. " +
+                "This is the default built-in ISA for the PLP project.");
+    }
+
+    /**
+     * Return a list of the ISAs currently registered in the PLPTool session.
+     *
+     * @return A two-dimensional object array of registered ISA classes.
+     * Information fields are: 0: ISA numerical ID, 1: reference to the ISA
+     * meta-class, 2: ISA string identifier.
      */
     public static Object[][] getArchList() {
-        Object[][] archs = new Object[archClasses.size()][3];        
+        Object[][] archs = new Object[archClasses.size()][4];
         Object[] classes = archClasses.entrySet().toArray();
         for(int i = 0; i < archs.length; i++) {
             @SuppressWarnings("unchecked")
@@ -152,6 +171,7 @@ public class ArchRegistry {
             archs[i][0] = entry.getKey();
             archs[i][1] = entry.getValue();
             archs[i][2] = archIdentifiers.get(entry.getKey());
+            archs[i][3] = archDescriptions.get(entry.getKey());
         }
         return archs;
     }
