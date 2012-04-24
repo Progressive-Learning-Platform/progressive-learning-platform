@@ -5,6 +5,7 @@
 package plptool.gui.frames;
 
 import plptool.Text;
+import plptool.gui.PLPToolApp;
 import org.jdesktop.application.Action;
 import java.net.URI;
 import java.awt.Desktop;
@@ -20,7 +21,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         this.setTitle("About: PLPTool " + plptool.Text.versionString + " (" + plptool.Version.stamp + ")");
         this.setLocationRelativeTo(null);
         txtContact.setText(Text.contactString);
-        txtAbout.setText(Text.copyrightString);
+        txtAbout.setText(Text.copyrightString + "\n\n" + PLPToolApp.getBuildInfo());
         txtThirdParty.setText(Text.thirdPartyCopyrightString);
         txtGPL.setText(Text.GPL);
         txtContact.setCaretPosition(0);

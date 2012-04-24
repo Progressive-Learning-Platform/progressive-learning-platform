@@ -33,9 +33,14 @@ import java.io.File;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
- * The main class of the application.
+ * This is the main class of PLPTool. This class handles command line arguments
+ * and sets up the environment for PLPTool execution. This class is responsible
+ * to setup runtime environments (app properties), load dynamic modules
+ * specified in command line arguments, initiate module autoload procedure,
+ * and determines next phase of execution (GUI or command line).
  */
 public class PLPToolApp extends SingleFrameApplication {
     
@@ -124,12 +129,12 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
-  
+        ArchRegistry.setup();           // SETUP ISA REGISTRY
+
 /******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 
         int activeArgIndex = 0;
-        java.io.File fileToOpen = null;
-        ArchRegistry.setup();
+        java.io.File fileToOpen = null;        
 
         // Copyright notice can only be suppressed with this as the first
         // command line argument
@@ -261,6 +266,7 @@ public class PLPToolApp extends SingleFrameApplication {
             // Print buildinfo and quit
             } else if (args.length >= activeArgIndex + 1 && args[i].equals("--buildinfo")) {
                 Msg.M(plptool.Version.stamp);
+                Msg.M(getBuildInfo());
                 return;
 
             // Download a JAR file for autoloading
@@ -492,6 +498,26 @@ public class PLPToolApp extends SingleFrameApplication {
             }
             System.exit(Constants.PLP_OK);
         }
+    }
+
+    /**
+     * Get build information of this PLPTool build
+     *
+     * @return Build information in String
+     */
+    public static String getBuildInfo() {
+        String ret = "";
+        Properties prop = new Properties();
+        try {
+            prop.load(PLPToolApp.class.getResourceAsStream("resources/build.properties"));
+        } catch(java.io.IOException e) {
+
+        }
+        ret += "This PLPTool package is built on " + prop.getProperty("buildstamp") + " by " + prop.getProperty("builder") + "\n";
+        ret += "javac: " + prop.getProperty("javainfo") + "\n";
+        ret += "ant: " + prop.getProperty("antinfo") +"\n";
+        ret += "Built on: " + prop.getProperty("osinfo");
+        return ret;
     }
 }
 
