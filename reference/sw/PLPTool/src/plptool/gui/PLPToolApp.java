@@ -510,8 +510,10 @@ public class PLPToolApp extends SingleFrameApplication {
         Properties prop = new Properties();
         try {
             prop.load(PLPToolApp.class.getResourceAsStream("resources/build.properties"));
-        } catch(java.io.IOException e) {
-
+        } catch(Exception e) {
+            Msg.E("Unable to retrieve build information.",
+                    Constants.PLP_GENERIC_ERROR, null);
+            return ret;
         }
         ret += "This PLPTool package is built on " + prop.getProperty("buildstamp") + " by " + prop.getProperty("builder") + "\n";
         ret += "javac: " + prop.getProperty("javainfo") + "\n";
