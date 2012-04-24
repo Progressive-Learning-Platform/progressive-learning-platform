@@ -16,6 +16,8 @@ public class Timer extends PLPSimBusModule {
     private long value;
     private long overflow = (long) Math.pow(2, 32);
 
+    public Timer() {}
+
     public Timer(long addr) {
         super(addr, addr, true);
     }

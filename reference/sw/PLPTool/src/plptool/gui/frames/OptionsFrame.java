@@ -108,6 +108,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         }
 
         Config.cfgAskBeforeAutoloadingModules = askBeforeAutoloadingModules.isSelected();
+        Config.cfgAskForISAForNewProjects = askForISAForNewProjects.isSelected();
 
         if(plp.g_simctrl != null)
             plp.g_simctrl.updateSlider();
@@ -156,6 +157,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgReadTimeout.setText("" + Config.prgReadTimeout);
         simFunctional.setSelected(Config.simFunctional);
         askBeforeAutoloadingModules.setSelected(Config.cfgAskBeforeAutoloadingModules);
+        askForISAForNewProjects.setSelected(Config.cfgAskForISAForNewProjects);
         update();
     }
 
@@ -195,6 +197,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         lblPrgWarning = new javax.swing.JLabel();
         paneExtensions = new javax.swing.JPanel();
         askBeforeAutoloadingModules = new javax.swing.JCheckBox();
+        askForISAForNewProjects = new javax.swing.JCheckBox();
         btnClose = new javax.swing.JButton();
         btnApply = new javax.swing.JButton();
 
@@ -487,13 +490,23 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
+        askForISAForNewProjects.setText(resourceMap.getString("askForISAForNewProjects.text")); // NOI18N
+        askForISAForNewProjects.setName("askForISAForNewProjects"); // NOI18N
+        askForISAForNewProjects.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                askForISAForNewProjectsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout paneExtensionsLayout = new javax.swing.GroupLayout(paneExtensions);
         paneExtensions.setLayout(paneExtensionsLayout);
         paneExtensionsLayout.setHorizontalGroup(
             paneExtensionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneExtensionsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(askBeforeAutoloadingModules)
+                .addGroup(paneExtensionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(askBeforeAutoloadingModules)
+                    .addComponent(askForISAForNewProjects))
                 .addContainerGap(213, Short.MAX_VALUE))
         );
         paneExtensionsLayout.setVerticalGroup(
@@ -501,7 +514,9 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(paneExtensionsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(askBeforeAutoloadingModules)
-                .addContainerGap(376, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(askForISAForNewProjects)
+                .addContainerGap(353, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneExtensions.TabConstraints.tabTitle"), paneExtensions); // NOI18N
@@ -625,8 +640,13 @@ public class OptionsFrame extends javax.swing.JFrame {
         triggerChange();
     }//GEN-LAST:event_askBeforeAutoloadingModulesActionPerformed
 
+    private void askForISAForNewProjectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_askForISAForNewProjectsActionPerformed
+        triggerChange();
+    }//GEN-LAST:event_askForISAForNewProjectsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox askBeforeAutoloadingModules;
+    private javax.swing.JCheckBox askForISAForNewProjects;
     private javax.swing.JButton btnApply;
     private javax.swing.JButton btnClose;
     private javax.swing.JComboBox cmbFontName;

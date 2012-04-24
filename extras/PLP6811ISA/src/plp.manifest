@@ -6,4 +6,4 @@ version::0.0.1
 class::plptool.hc11.Asm
 class::plptool.hc11.SimCore
 class::plptool.hc11.Architecture
-registerisa::plptool.hc11.Architecture::hc11::6811
+registerisa::plptool.hc11.Architecture::hc11::6811::6811 ISA support for PLPTool

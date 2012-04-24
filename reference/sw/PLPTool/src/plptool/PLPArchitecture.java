@@ -39,6 +39,7 @@ public abstract class PLPArchitecture {
     protected boolean hasSimCoreGUI = false;
     protected boolean hasProgrammer = false;
     protected boolean hasSyntaxHighlightSupport = false;
+    protected String  informationString = "UNDEFINED";
 
     public PLPArchitecture(int archID, String identifier, ProjectDriver plp) {
         this.identifier = identifier;
@@ -227,6 +228,15 @@ public abstract class PLPArchitecture {
      * @return A reference to an object returned from the hook function
      */
     public Object hook(Object param) {return null;}
+
+    /**
+     * Get information string for the architecture
+     *
+     * @return
+     */
+    public String getInformationString() {
+        return informationString;
+    }
 
     public boolean equals(String str) {
         return identifier.equals(str);
