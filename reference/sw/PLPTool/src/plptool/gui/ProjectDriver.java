@@ -131,6 +131,7 @@ public class ProjectDriver {
     public SimControl              g_simctrl;  // Simulation Control Frame
     public ASMSimView              g_asmview;  // ASM Sim viewer
     public QuickRef                g_qref;     // Quick Reference
+    public ISASelector             g_isaselect;// ISA selector window
     public FindAndReplace          g_find;     // Find and Replace
     private boolean                g;          // are we driving a GUI?
     private boolean                applet;     // are we driving an applet?
@@ -181,6 +182,7 @@ public class ProjectDriver {
             this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
             this.g_find = new FindAndReplace(this);
+            this.g_isaselect = new ISASelector(this.g_dev, this);
             
             java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
             int X = Config.devWindowPositionX;
@@ -296,7 +298,7 @@ public class ProjectDriver {
                 String lines[] = new String(str).toString().split("\\r?\\n");
 
                 for(int i = 0; i < lines.length; i++) {
-                    tokens = lines[i].split("::");
+                    tokens = lines[i].split("::", 2);
 
                     if(tokens[0].equals("devFont")) {
                         Config.devFont = tokens[1];
@@ -316,8 +318,10 @@ public class ProjectDriver {
                         Config.devWindowHeight = Integer.parseInt(tokens[1]);
                     } else if(tokens[0].equals("cfgAskBeforeAutoloadingModules")) {
                         Config.cfgAskBeforeAutoloadingModules = Boolean.parseBoolean(tokens[1]);
-                    }
-
+                    } else if(tokens[0].equals("cfgAskForISAForNewProjects")) {
+                        Config.cfgAskForISAForNewProjects = Boolean.parseBoolean(tokens[1]);
+                    } else
+                        PLPToolApp.getAttributes().put(tokens[0], tokens.length==2 ? tokens[1] : null);
                 }
 
             } catch(Exception e) {
@@ -360,6 +364,12 @@ public class ProjectDriver {
                 out.write("devWindowWidth::" + Config.devWindowWidth + "\n");
                 out.write("devWindowHeight::" + Config.devWindowHeight + "\n");
                 out.write("cfgAskBeforeAutoloadingModules::" + Config.cfgAskBeforeAutoloadingModules + "\n");
+                out.write("cfgAskForISAForNewProjects::" + Config.cfgAskForISAForNewProjects + "\n");
+                for(int i = 0; i < 5; i++) {
+                    String key = "develop_recent_" + i;
+                    if(PLPToolApp.getAttributes().containsKey(key))
+                        out.write(key + "::" + PLPToolApp.getAttributes().get(key) + "\n");
+                }
                 out.close();
 
             } catch(Exception e) {
@@ -940,6 +950,7 @@ public class ProjectDriver {
             
             this.setUnModified();
             updateWindowTitle();
+            g_dev.updateDevelopRecentProjectList(plpFile.getAbsolutePath());
         }
 
         hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1, plpFile));
@@ -1062,6 +1073,7 @@ public class ProjectDriver {
         metaScanner.findWithinHorizon("DIRTY=", 0);
         int meta_dirty =  metaScanner.nextInt();
         metaRoot.add(new DefaultMutableTreeNode("meta.DIRTY=" + meta_dirty));
+        metaRoot.add(new DefaultMutableTreeNode("ISA=" + ArchRegistry.getStringID(arch.getID())));
 
         g_dev.getProjectTree().setModel(new DefaultTreeModel(root));
         for(int i = 0; i < g_dev.getProjectTree().getRowCount(); i++)

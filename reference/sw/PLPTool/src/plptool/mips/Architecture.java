@@ -47,6 +47,7 @@ public class Architecture extends PLPArchitecture {
         hasProgrammer = true;
         hasSyntaxHighlightSupport = true;
         syntaxHighlightSupport = new SyntaxHighlightSupport();
+        informationString = "PLP CPU ISA implementation";
     }
 
     /**

@@ -18,7 +18,6 @@
 
 package plptool.gui.frames;
 
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Point;
 import javax.swing.*;
@@ -30,6 +29,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLDocument;
 import java.net.URI;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import plptool.Msg;
 import plptool.Constants;
@@ -55,6 +56,7 @@ public class Develop extends javax.swing.JFrame {
     private DevUndoManager undoManager;
     private HighlighterThread highlighterThread;
     private javax.swing.JPopupMenu popupProject;
+    private ArrayList<File> recentProjectList;
 
     private TextLineNumber tln;
     private TextLineHighlighter tlh;
@@ -120,6 +122,7 @@ public class Develop extends javax.swing.JFrame {
         undoManager.setLimit(Config.devMaxUndoEntries);
 
         txtOutput.addHyperlinkListener(new OutputHyperlinkListener(plp));
+        populateRecentProjectList();
 
         // Hide development stuff here
         if(Constants.debugLevel == 0) {
@@ -135,6 +138,74 @@ public class Develop extends javax.swing.JFrame {
 
         Msg.P(Text.copyrightString);
         Msg.M("");
+    }
+
+    /*
+     * Check for develop_recent_# attribute from PLPToolApp and populate the
+     * recent open project submenu
+     */
+    private void populateRecentProjectList() {
+        menuOpenRecentProject.removeAll();
+        final HashMap<String, String> attributes = PLPToolApp.getAttributes();
+        if(!attributes.containsKey("develop_recent_0")) {
+            JMenuItem emptyMenu = new JMenuItem("No recent projects");
+            emptyMenu.setEnabled(false);
+            menuOpenRecentProject.add(emptyMenu);
+        } else {
+            for(int i = 0; i < 5; i++) {
+                final String key = "develop_recent_" + i;
+                if(attributes.containsKey(key)) {
+                    JMenuItem recentItem = new JMenuItem((i+1) + " " + attributes.get("develop_recent_" + i));
+                    recentItem.setMnemonic(String.valueOf(i+1).charAt(0));
+                    recentItem.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                            switch(askSaveFirst("open a project", "Open a project")) {
+                                case 2:
+                                    return;
+                                default:
+                                    open(new File(attributes.get(key)));
+                            }
+                        }
+                    });
+                    menuOpenRecentProject.add(recentItem);
+                }
+            }
+        }
+    }
+
+    /**
+     * Go through the recent project list attributes and update the list
+     * if needed with the given path
+     *
+     * @param path Path of project file to add to the list
+     */
+    public void updateDevelopRecentProjectList(String path) {
+        boolean found = false;
+        String[] recentList = new String[5];
+        for(int i = 0; i < 5; i++) {
+            recentList[i] = PLPToolApp.getAttributes().get("develop_recent_" + i);
+            if(recentList[i] != null && recentList[i].equals(path) && !found) {
+                for(int j = i; j > 0; j--)
+                    recentList[j] = recentList[j-1];
+                found = true;
+            }
+        }
+
+        if(!found) {
+            for(int i = 4; i > 0; i--) {
+                recentList[i] = recentList[i-1];
+            }
+        }
+        recentList[0] = path;
+
+        for(int i = 0; i < 5; i++) {
+            if(recentList[i] != null) {
+                PLPToolApp.getAttributes().remove("develop_recent_" + i);
+                PLPToolApp.getAttributes().put("develop_recent_" + i, recentList[i]);
+            }
+        }
+        
+        populateRecentProjectList();
     }
 
     /**
@@ -521,6 +592,12 @@ public class Develop extends javax.swing.JFrame {
                     plp.getArch().getSyntaxHighlightSupport().newStyle();
                 else
                     changeFormatting();
+                if(Config.cfgAskForISAForNewProjects &&
+                        plptool.ArchRegistry.getArchList().length > 1) {
+                    plp.g_isaselect.setLocationRelativeTo(this);
+                    plp.g_isaselect.populateISASelector();
+                    plp.g_isaselect.setVisible(true);
+                }
         }
     }
 
@@ -541,16 +618,25 @@ public class Develop extends javax.swing.JFrame {
 
                 int retVal = fc.showOpenDialog(null);
 
-                if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-                    if(plp.isSimulating())
-                        simEnd();
-                    plp.curdir = fc.getSelectedFile().getParent();
-                    plp.open(fc.getSelectedFile().getAbsolutePath(), true);
-                    if(plp.getArch().hasSyntaxHighlightSupport())
-                        plp.getArch().getSyntaxHighlightSupport().newStyle();
-                    else
-                        changeFormatting();
-                }
+                if(retVal == javax.swing.JFileChooser.APPROVE_OPTION)
+                    open(fc.getSelectedFile());
+        }
+    }
+
+    /**
+     * Wrapper for the ProjectDriver open method
+     *
+     * @param f File to open
+     */
+    public void open(File f) {
+        if(plp.isSimulating())
+            simEnd();
+        plp.curdir = f.getParent();
+        if(plp.open(f.getAbsolutePath(), true) == Constants.PLP_OK) {
+            if(plp.getArch().hasSyntaxHighlightSupport())
+                plp.getArch().getSyntaxHighlightSupport().newStyle();
+            else
+                changeFormatting();
         }
     }
 
@@ -1311,7 +1397,10 @@ public class Develop extends javax.swing.JFrame {
             }
         }
     }
-    
+
+    /**
+     * Simulation step wrapper for the GUI
+     */
     public void simStep() {
         boolean breakpoint = false;
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
@@ -1409,6 +1498,12 @@ public class Develop extends javax.swing.JFrame {
                         });
     }
 
+    /**
+     * Move the text editor cursor to the specified file and line number
+     *
+     * @param file File name of the source program to go to
+     * @param line Line number to go to
+     */
     public void gotoLocation(String file, int line) {
         int index = plp.getAsmIndex(file);
         if(index < 0) {
@@ -1497,6 +1592,8 @@ public class Develop extends javax.swing.JFrame {
         menuNew = new javax.swing.JMenuItem();
         menuSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuOpen = new javax.swing.JMenuItem();
+        menuOpenRecentProject = new javax.swing.JMenu();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuSave = new javax.swing.JMenuItem();
         menuSaveAs = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
@@ -1522,6 +1619,8 @@ public class Develop extends javax.swing.JFrame {
         menuSimulate = new javax.swing.JCheckBoxMenuItem();
         menuProgram = new javax.swing.JMenuItem();
         menuQuickProgram = new javax.swing.JMenuItem();
+        jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        menuSetNewProjectISA = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuNewASM = new javax.swing.JMenuItem();
         menuImportASM = new javax.swing.JMenuItem();
@@ -1641,10 +1740,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1665,11 +1764,11 @@ public class Develop extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 609, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
@@ -1683,7 +1782,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1706,7 +1805,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -2044,6 +2143,14 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuFile.add(menuOpen);
 
+        menuOpenRecentProject.setMnemonic('R');
+        menuOpenRecentProject.setText(resourceMap.getString("menuOpenRecentProject.text")); // NOI18N
+        menuOpenRecentProject.setName("menuOpenRecentProject"); // NOI18N
+        rootmenuFile.add(menuOpenRecentProject);
+
+        jSeparator3.setName("jSeparator3"); // NOI18N
+        rootmenuFile.add(jSeparator3);
+
         menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuSave.setIcon(resourceMap.getIcon("menuSave.icon")); // NOI18N
         menuSave.setMnemonic('S');
@@ -2252,6 +2359,7 @@ public class Develop extends javax.swing.JFrame {
         rootmenuProject.add(menuAssemble);
 
         menuSimulate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
+        menuSimulate.setMnemonic('S');
         menuSimulate.setText(resourceMap.getString("menuSimulate.text")); // NOI18N
         menuSimulate.setIcon(resourceMap.getIcon("menuSimulate.icon")); // NOI18N
         menuSimulate.setName("menuSimulate"); // NOI18N
@@ -2284,6 +2392,19 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         rootmenuProject.add(menuQuickProgram);
+
+        jSeparator12.setName("jSeparator12"); // NOI18N
+        rootmenuProject.add(jSeparator12);
+
+        menuSetNewProjectISA.setMnemonic('E');
+        menuSetNewProjectISA.setText(resourceMap.getString("menuSetNewProjectISA.text")); // NOI18N
+        menuSetNewProjectISA.setName("menuSetNewProjectISA"); // NOI18N
+        menuSetNewProjectISA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSetNewProjectISAActionPerformed(evt);
+            }
+        });
+        rootmenuProject.add(menuSetNewProjectISA);
 
         jSeparator1.setName("jSeparator1"); // NOI18N
         rootmenuProject.add(jSeparator1);
@@ -3454,6 +3575,12 @@ public class Develop extends javax.swing.JFrame {
         (new ModuleManager(this, true, plp)).setVisible(true);
     }//GEN-LAST:event_menuModuleManagerActionPerformed
 
+    private void menuSetNewProjectISAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetNewProjectISAActionPerformed
+        plp.g_isaselect.setLocationRelativeTo(this);
+        plp.g_isaselect.populateISASelector();
+        plp.g_isaselect.setVisible(true);
+    }//GEN-LAST:event_menuSetNewProjectISAActionPerformed
+
     private void initPopupMenus() {
         popupmenuNewASM = new javax.swing.JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
@@ -3554,7 +3681,9 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
@@ -3587,6 +3716,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuNewASM;
     private javax.swing.JMenuItem menuNumberConverter;
     private javax.swing.JMenuItem menuOpen;
+    private javax.swing.JMenu menuOpenRecentProject;
     private javax.swing.JMenuItem menuOptions;
     private javax.swing.JCheckBoxMenuItem menuOutputPane;
     private javax.swing.JMenuItem menuPaste;
@@ -3605,6 +3735,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator menuSeparator5;
     private javax.swing.JMenuItem menuSerialTerminal;
     private javax.swing.JMenuItem menuSetMainProgram;
+    private javax.swing.JMenuItem menuSetNewProjectISA;
     private javax.swing.JMenuItem menuSimAsmView;
     private javax.swing.JCheckBoxMenuItem menuSimControl;
     private javax.swing.JCheckBoxMenuItem menuSimGPIO;

@@ -5,6 +5,7 @@
 package plptool.gui.frames;
 
 import plptool.Text;
+import plptool.gui.PLPToolApp;
 import org.jdesktop.application.Action;
 import java.net.URI;
 import java.awt.Desktop;
@@ -20,7 +21,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         this.setTitle("About: PLPTool " + plptool.Text.versionString + " (" + plptool.Version.stamp + ")");
         this.setLocationRelativeTo(null);
         txtContact.setText(Text.contactString);
-        txtAbout.setText(Text.copyrightString);
+        txtAbout.setText(Text.copyrightString + "\n\n" + PLPToolApp.getBuildInfo());
         txtThirdParty.setText(Text.thirdPartyCopyrightString);
         txtGPL.setText(Text.GPL);
         txtContact.setCaretPosition(0);
@@ -84,6 +85,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
 
         appHomepageLabel.setFont(resourceMap.getFont("appHomepageLabel.font")); // NOI18N
         appHomepageLabel.setForeground(resourceMap.getColor("appHomepageLabel.foreground")); // NOI18N
+        appHomepageLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         appHomepageLabel.setText(resourceMap.getString("Application.homepage")); // NOI18N
         appHomepageLabel.setName("appHomepageLabel"); // NOI18N
         appHomepageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -124,6 +126,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         scrollAbout.setName("scrollAbout"); // NOI18N
 
         txtAbout.setColumns(20);
+        txtAbout.setEditable(false);
         txtAbout.setFont(resourceMap.getFont("txtAbout.font")); // NOI18N
         txtAbout.setRows(5);
         txtAbout.setName("txtAbout"); // NOI18N
@@ -135,14 +138,14 @@ public class AboutBoxDialog extends javax.swing.JDialog {
             panelAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAboutLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollAbout, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
+                .addComponent(scrollAbout, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelAboutLayout.setVerticalGroup(
             panelAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAboutLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollAbout, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                .addComponent(scrollAbout, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -153,6 +156,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         scrollContact.setName("scrollContact"); // NOI18N
 
         txtContact.setColumns(20);
+        txtContact.setEditable(false);
         txtContact.setFont(resourceMap.getFont("txtContact.font")); // NOI18N
         txtContact.setRows(5);
         txtContact.setName("txtContact"); // NOI18N
@@ -164,14 +168,14 @@ public class AboutBoxDialog extends javax.swing.JDialog {
             panelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelContactLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollContact, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
+                .addComponent(scrollContact, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelContactLayout.setVerticalGroup(
             panelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelContactLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollContact, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                .addComponent(scrollContact, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -182,6 +186,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         scrollThirdParty.setName("scrollThirdParty"); // NOI18N
 
         txtThirdParty.setColumns(20);
+        txtThirdParty.setEditable(false);
         txtThirdParty.setFont(resourceMap.getFont("txtThirdParty.font")); // NOI18N
         txtThirdParty.setRows(5);
         txtThirdParty.setName("txtThirdParty"); // NOI18N
@@ -193,14 +198,14 @@ public class AboutBoxDialog extends javax.swing.JDialog {
             panelThirdPartyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelThirdPartyLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollThirdParty, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
+                .addComponent(scrollThirdParty, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelThirdPartyLayout.setVerticalGroup(
             panelThirdPartyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelThirdPartyLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollThirdParty, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                .addComponent(scrollThirdParty, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -211,6 +216,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         scrollGPL.setName("scrollGPL"); // NOI18N
 
         txtGPL.setColumns(20);
+        txtGPL.setEditable(false);
         txtGPL.setFont(resourceMap.getFont("txtGPL.font")); // NOI18N
         txtGPL.setRows(5);
         txtGPL.setName("txtGPL"); // NOI18N
@@ -222,14 +228,14 @@ public class AboutBoxDialog extends javax.swing.JDialog {
             panelGPLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGPLLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollGPL, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
+                .addComponent(scrollGPL, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelGPLLayout.setVerticalGroup(
             panelGPLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGPLLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollGPL, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                .addComponent(scrollGPL, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -243,27 +249,27 @@ public class AboutBoxDialog extends javax.swing.JDialog {
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(appTitleLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
-                        .addComponent(appDescLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(closeButton)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(lblVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3))))
+                        .addComponent(jLabel3))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(appTitleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(appHomepageLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(appDescLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
+                        .addContainerGap())))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(appVendorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addGap(196, 196, 196))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(appHomepageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabText, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(appVendorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
+                .addComponent(tabText, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -273,12 +279,12 @@ public class AboutBoxDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(appTitleLabel)
                     .addComponent(appDescLabel))
-                .addGap(1, 1, 1)
-                .addComponent(appHomepageLabel)
-                .addGap(3, 3, 3)
-                .addComponent(appVendorLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tabText, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(appVendorLabel)
+                    .addComponent(appHomepageLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabText, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()

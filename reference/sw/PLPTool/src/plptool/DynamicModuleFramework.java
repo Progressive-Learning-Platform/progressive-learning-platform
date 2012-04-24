@@ -747,14 +747,17 @@ class ManifestHandlers {
 
     public static void m_registerisa() {
         String tokens[] = entry.split("::");
-        if(tokens.length != 4)
+        if(tokens.length != 5) {
+            Msg.E("Invalid 'registerisa' manifest entry usage",
+                    Constants.PLP_DMOD_INVALID_MANIFEST_ENTRY, null);
             return;
+        }
         int ret = DynamicModuleFramework.isModuleClassRegistered(tokens[1]);
         if(ret > -1) {
-            Msg.M("Applying manifest entry: " + entry);
+            Msg.M("Registering ISA: " + tokens[2] + " ID: " + tokens[3]);
             ArchRegistry.registerArchitecture(
                     DynamicModuleFramework.getDynamicModuleClass(ret),
-                    Integer.parseInt(tokens[3]), tokens[2]);
+                    Integer.parseInt(tokens[3]), tokens[2], tokens[4]);
         }
     }
 
