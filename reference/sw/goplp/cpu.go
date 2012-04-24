@@ -45,7 +45,7 @@ func step(n int) {
 	steps := 0
 	r_run = true
 	now := time.Now()
-	for i := 0; (i < n) || n == -1 ; i++ {
+	for i := 0; (i < n) || n == -1; i++ {
 		// check the trace cache first
 		inst, ok := trace_lookup(pc)
 		if !ok {
@@ -206,7 +206,7 @@ func calculate(i *instruction) uint32 {
 }
 
 // trace cache
-var trace_cache = make([]*instruction, mod_memory_size / 4)
+var trace_cache = make([]*instruction, mod_memory_size/4)
 
 func trace_lookup(a uint32) (*instruction, bool) {
 	e := (a - mod_memory_start) / 4

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"sync"
 	"fmt"
 	"net"
+	"sync"
 )
 
 const (
@@ -30,13 +30,13 @@ func mod_uart_read(address uint32) uint32 {
 		log("uart read command")
 		return 0
 	case 4:
-		log("uart read status:",uart_status)
+		log("uart read status:", uart_status)
 		return uart_status
 	case 8:
-		log("uart read receive:",uart_receive)
+		log("uart read receive:", uart_receive)
 		return uart_receive
 	case 12:
-		log("uart read send:",uart_send)
+		log("uart read send:", uart_send)
 		return uart_send
 	default:
 		return 0
@@ -48,10 +48,10 @@ func mod_uart_write(address, data uint32) {
 	a := address - mod_uart_start
 	switch a {
 	case 0:
-		log("uart write command:",data)
+		log("uart write command:", data)
 		mod_uart_command(data)
 	case 12:
-		log("uart write send:",data)
+		log("uart write send:", data)
 		uart_send = data
 	}
 }
@@ -68,7 +68,7 @@ func mod_uart_command(d uint32) {
 }
 
 func uart_listen() {
-	ln, err := net.Listen("tcp", fmt.Sprintf(":%v",*uart_port))
+	ln, err := net.Listen("tcp", fmt.Sprintf(":%v", *uart_port))
 	if err != nil {
 		fmt.Println("could not bind to port:", *uart_port, err)
 		return
@@ -79,10 +79,10 @@ func uart_listen() {
 			fmt.Println("uart error accepting:", err)
 		}
 		done := make(chan bool)
-		ack  := make(chan bool)
+		ack := make(chan bool)
 		go func() {
 			for {
-				var d = make([]byte,1)
+				var d = make([]byte, 1)
 				_, err := conn.Read(d)
 				if err != nil {
 					fmt.Println(err)

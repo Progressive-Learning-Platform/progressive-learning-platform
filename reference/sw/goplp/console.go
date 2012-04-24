@@ -9,10 +9,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
+	"os/signal"
 	"strconv"
 	"strings"
-	"os/signal"
-	"os"
 )
 
 type Console struct {
@@ -22,8 +22,8 @@ type Console struct {
 }
 
 var (
-	sig_c = make(chan os.Signal,1)
-	r_run bool = false
+	sig_c         = make(chan os.Signal, 1)
+	r_run    bool = false
 	stop_run bool = false
 )
 
@@ -61,7 +61,7 @@ func (c *Console) Run() {
 		args[len(args)-1] = strings.TrimRight(args[len(args)-1], "\n")
 		log("console thread got:", args)
 		if !process(args) {
-			return 
+			return
 		}
 	}
 }
@@ -97,8 +97,8 @@ func process(args []string) bool {
 	case "watch", "w":
 		if numArgs == 1 {
 			print_watches()
-		} else if strings.HasPrefix(args[1],"$") {
-			watch_register(strings.Trim(args[1],"$"))
+		} else if strings.HasPrefix(args[1], "$") {
+			watch_register(strings.Trim(args[1], "$"))
 		} else { // it's a memory watch
 			watch_memory(args[1])
 		}
@@ -128,7 +128,7 @@ func process(args []string) bool {
 				fmt.Println(disassemble(image[i]))
 			}
 		} else {
-			a,ok := strToAddr(args[1])
+			a, ok := strToAddr(args[1])
 			if ok {
 				inst, ok := cpu_read(a)
 				if ok {

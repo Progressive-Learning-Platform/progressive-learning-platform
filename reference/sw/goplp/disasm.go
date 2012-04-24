@@ -142,8 +142,8 @@ func disassemble(i uint32) *instruction {
 	// i should be a 4 byte slice, containing a single instruction
 	ret := &instruction{}
 
-	ret.opcode = int((i&0xfc000000)>>26)
-	ret.function = int(i&0x0000003f)
+	ret.opcode = int((i & 0xfc000000) >> 26)
+	ret.function = int(i & 0x0000003f)
 	ret.rd = int((i & 0x0000f800) >> 11)
 	ret.rt = int((i & 0x001f0000) >> 16)
 	ret.rs = int((i & 0x03e00000) >> 21)
@@ -157,7 +157,7 @@ func disassemble(i uint32) *instruction {
 	case 0:
 		/* this may not be an r-type instruction, check the function */
 		switch ret.function {
-		case 0x21,0x23,0x24,0x25,0x27,0x2a,0x2b,0x10,0x11,0x00,0x02,0x08,0x09:
+		case 0x21, 0x23, 0x24, 0x25, 0x27, 0x2a, 0x2b, 0x10, 0x11, 0x00, 0x02, 0x08, 0x09:
 			ret.typ = rtype
 		default:
 			ret.typ = data
