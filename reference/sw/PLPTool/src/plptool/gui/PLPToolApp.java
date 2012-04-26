@@ -275,11 +275,11 @@ public class PLPToolApp extends SingleFrameApplication {
                 return;
 
             // Generate a plp.manifest file from a directory of Java classes
-            } else if(args.length >= activeArgIndex + 2 && args[i].equals("--generate-manifest")) {
+            } else if(args.length >= activeArgIndex + 3 && args[i].equals("--generate-manifest")) {
                 Msg.M("Generating manifest for '" + args[i+1] + "'...");
                 String manifest = DynamicModuleFramework.generateManifest(args[i+1]);
                 if(manifest != null)
-                    PLPToolbox.writeFile(manifest, "./plp.manifest");
+                    PLPToolbox.writeFile(manifest, args[i+2] + "/plp.manifest");
                 return;
 
             // If we encounter '-plp', pass the rest of the arguments to the
@@ -409,10 +409,10 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --load-class <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
-        System.out.println("  --generate-manifest <path or jar file>");
+        System.out.println("  --generate-manifest <path or jar file> <destination directory>");
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified path. This manifest file will be");
-        System.out.println("                            written in the current directory.");
+        System.out.println("                            written in the destination directory.");
         System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application.");
         System.out.println();
 	System.out.println(Text.contactString);

@@ -1,12 +1,26 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+    Copyright 2012 PLP Contributors
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 package plptool.ffps;
 
 import plptool.*;
 import plptool.gui.PLPToolApp;
+import plptool.mips.*;
 
 /**
  *
@@ -15,12 +29,16 @@ import plptool.gui.PLPToolApp;
 public class Architecture extends PLPArchitecture {
 
     private boolean override_modules = false;
+    private plptool.mips.SyntaxHighlightSupport syntaxHighlightSupport;
 
     public Architecture() {
         super(400, "Fast Functional PLP Simulation", null);
         Msg.M("FFPS: PLP CPU ISA implementation with Fast Functional PLP Simulation");
         hasAssembler = true;
         hasSimCore = true;
+        hasProgrammer = true;
+        hasSyntaxHighlightSupport = true;
+        syntaxHighlightSupport = new SyntaxHighlightSupport();
         override_modules = PLPToolApp.getAttributes().containsKey("ffps_override_modules");
         informationString = "PLP CPU ISA implementation with Fast Functional PLP Simulation (FFPS)";
     }
@@ -30,15 +48,20 @@ public class Architecture extends PLPArchitecture {
     }
 
     public PLPSerialProgrammer createProgrammer() {
-        return null;
+        return new plptool.mips.SerialProgrammer(plp);
     }
 
     public PLPSimCore createSimCore() {
-        return new SimCore();
+        return new plptool.ffps.SimCore();
     }
 
     public PLPSimCoreGUI createSimCoreGUI() {
         return null;
+    }
+
+    @Override
+    public PLPSyntaxHighlightSupport getSyntaxHighlightSupport() {
+        return syntaxHighlightSupport;
     }
 
     @Override
