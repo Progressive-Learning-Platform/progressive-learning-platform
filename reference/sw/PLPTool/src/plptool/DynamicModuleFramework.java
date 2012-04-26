@@ -600,6 +600,13 @@ public class DynamicModuleFramework {
             generateManifestTraverseDirectory(packageDir, packageDir,
                     classes, classNames);
 
+        // Write out header information
+        manifest += "title::<enter title here>\n";
+        manifest += "author::<enter author here>\n";
+        manifest += "license::<enter module license here>\n";
+        manifest += "description::<enter description here>\n";
+        manifest += "version::<enter version here>\n";
+
         // Resolve dependencies. We'll do it in the most naive way possible:
         // try to load all classes, if some of them failed due to interfaces
         // or superclasses not being loaded first, do a second pass,
@@ -664,10 +671,10 @@ public class DynamicModuleFramework {
                 }
             }
         }
-
-        if(!found)
-            Msg.W("No connector module for this package was found.", null);
+        
         Msg.M("-------------------------------------------------------------------------------");
+        if(!found)
+            Msg.W("No connector module for this package was found.\n", null);
         Msg.M("Manifest generation complete! You can include the plp.manifest file in the ");
         Msg.M("package jar file to allow PLPTool to load the module into a PLPTool session. If");
         Msg.M("no class implementing the connector interface was found, PLPTool will load the");
