@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
     </Component>
@@ -169,7 +169,7 @@
                 <Component class="javax.swing.JTable" name="tblClients">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="5" rowCount="4">
+                      <Table columnCount="5" rowCount="0">
                         <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="false" title="IP Addr" type="java.lang.String"/>
                         <Column editable="false" title="Nickname" type="java.lang.String"/>
@@ -333,14 +333,21 @@
                   <Dimension value="[100, 23]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tglSolicitActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JToggleButton" name="tglLive">
               <Properties>
                 <Property name="text" type="java.lang.String" value="LIVE"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[100, 23]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tglLiveActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>

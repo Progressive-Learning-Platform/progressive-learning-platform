@@ -91,8 +91,9 @@ public class ServerService extends Thread {
                 c.start();
                 control.update();
             } catch(IOException e) {
-                Msg.E("Unable to open connection",
-                        Constants.PLP_GENERIC_ERROR, null);
+                if(listening)
+                    Msg.E("Unable to open connection",
+                            Constants.PLP_GENERIC_ERROR, null);
             }
         }
         Msg.I("Collab server service exiting.", null);
@@ -102,6 +103,13 @@ public class ServerService extends Thread {
 
     public synchronized void removeClient(int ID) {
         
+    }
+
+    public synchronized boolean arbitrate() {
+        if(!control.soliciting)
+            return false;
+        else
+            return true;
     }
 
     public String toString() {
@@ -115,6 +123,7 @@ class ClientService extends Thread {
     private int ID;
     private boolean disconnect = false;
     BufferedReader in;
+    PrintWriter out;
 
     public ClientService(int ID, ServerService server, Socket socket) {
         this.ID = ID;
@@ -124,32 +133,51 @@ class ClientService extends Thread {
 
     public synchronized void disconnect() {
         disconnect = true;
+    }
+
+    @Override
+    public void run() {
+        String line;
+        boolean text = false;
+        try {
+            in = new BufferedReader(new InputStreamReader(
+                    socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+            while(!disconnect) {
+                line = in.readLine();
+                if(line.startsWith("%%") && !text) {
+                    Msg.I("Received command: " + line, this);
+                }
+                if(line.equals("%%ENDTEXT")) {
+                    text = false;
+                    cmd("MUTE");
+                } else if (line.equals("%%TEXT"))
+                    text = true;
+                else if(line.equals("%%QUIT")) {
+                    disconnect = true;
+                    cmd("DISCONNECT");
+                } else if (line.equals("%%REQ")) {
+                    cmd(server.arbitrate() ? "ACK" : "MUTE");
+                }
+                else if(text)
+                    server.deliverData(line + "\n");
+            }
+        } catch(IOException e) {
+            Msg.E("I/O error.",
+                    Constants.PLP_GENERAL_IO_ERROR, this);
+        }
         try {
             in.close();
             socket.close();
         } catch(IOException e) {
             Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
         }
+        Msg.I("service exiting.", this);
     }
 
-    @Override
-    public void run() {
-        try {
-            in = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            while(!disconnect)
-                server.deliverData(in.readLine() + "\n");
-        } catch(IOException e) {
-            Msg.E("I/O error.",
-                    Constants.PLP_GENERAL_IO_ERROR, this);
-        }
-        try {
-            socket.close();
-        } catch(IOException e) {
-            Msg.E("unable to close connection.",
-                    Constants.PLP_GENERAL_IO_ERROR, this);
-        }
-        Msg.I("service exiting.", this);
+    public void cmd(String cmd) {
+        out.write("%%" + cmd + "\n");
+        out.flush();
     }
 
     public String toString() {
