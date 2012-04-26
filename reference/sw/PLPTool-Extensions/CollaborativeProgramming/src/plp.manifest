@@ -3,12 +3,15 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
+class::plptool.extras.collab.Client$1
+class::plptool.extras.collab.Client$2
 class::plptool.extras.collab.Client
 class::plptool.extras.collab.ClientService
 class::plptool.extras.collab.PLPToolConnector$1
 class::plptool.extras.collab.PLPToolConnector$2
 class::plptool.extras.collab.PLPToolConnector
 class::plptool.extras.collab.ServerControl$1
+class::plptool.extras.collab.ServerControl$2
 class::plptool.extras.collab.ServerControl
 class::plptool.extras.collab.ServerService
 loadwithproject::plptool.extras.collab.PLPToolConnector
