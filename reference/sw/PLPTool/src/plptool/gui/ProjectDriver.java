@@ -1237,7 +1237,8 @@ public class ProjectDriver {
                 g_dev.attachModuleFrameListeners(g_sim, Constants.PLP_TOOLFRAME_SIMCPU);
             }
             g_watcher = new Watcher(this);
-            g_watcher.setVisible(false);
+            Boolean watcher_visibility = (Boolean) getProjectAttribute("watcher_visibility");
+            g_watcher.setVisible(watcher_visibility != null ? watcher_visibility : false);
             g_dev.attachModuleFrameListeners(g_watcher, Constants.PLP_TOOLFRAME_WATCHER);
             g_simctrl = new SimControl(this);
             g_simctrl.setVisible(false);
@@ -1298,6 +1299,7 @@ public class ProjectDriver {
 
         if(g_watcher != null) {
             watcher = g_watcher.getEntries();
+            addProjectAttribute("watcher_visibility", g_watcher.isVisible());
             g_watcher.dispose();
         }
 

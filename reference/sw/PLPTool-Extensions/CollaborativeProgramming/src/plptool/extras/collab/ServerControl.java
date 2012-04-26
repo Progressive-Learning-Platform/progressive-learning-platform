@@ -39,6 +39,27 @@ public class ServerControl extends javax.swing.JFrame {
         
     }
 
+    public void startListening() {
+        service = new ServerService(this, plp,
+                Integer.parseInt(txtPort.getText()), 256);
+        service.start();
+        setStates(true);
+    }
+
+    public void stopListening() {
+        service.stopListening();
+        setStates(false);
+    }
+
+    public void setStates(boolean c) {
+        paneServerConfig.setVisible(c);
+        paneCollabControl.setVisible(c);
+        if(!c)
+            tabbedPane.setSelectedIndex(0);
+        txtPort.setEnabled(!c);
+        tglGoLive.setSelected(c);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -50,25 +71,25 @@ public class ServerControl extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         lblStatus = new javax.swing.JLabel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        tabbedPane = new javax.swing.JTabbedPane();
+        paneServerConfig = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtPort = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        tglBtnListen = new javax.swing.JToggleButton();
-        jButton1 = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        tglGoLive = new javax.swing.JToggleButton();
+        btnClose = new javax.swing.JButton();
+        paneClients = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
+        tblClients = new javax.swing.JTable();
+        paneCollabControl = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jTextField1 = new javax.swing.JTextField();
+        radioSingleContributor = new javax.swing.JRadioButton();
+        radioMultipleContributors = new javax.swing.JRadioButton();
+        radioFreeForAll = new javax.swing.JRadioButton();
+        txtMaximumContributors = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jToggleButton2 = new javax.swing.JToggleButton();
+        tglSolicit = new javax.swing.JToggleButton();
+        tglLive = new javax.swing.JToggleButton();
         jLabel5 = new javax.swing.JLabel();
 
         lblStatus.setText("Server status :");
@@ -79,47 +100,52 @@ public class ServerControl extends javax.swing.JFrame {
 
         jLabel2.setText("Server options :");
 
-        tglBtnListen.setText("GO LIVE");
+        tglGoLive.setText("GO LIVE");
+        tglGoLive.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglGoLiveActionPerformed(evt);
+            }
+        });
 
-        jButton1.setText("Close");
+        btnClose.setText("Close");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout paneServerConfigLayout = new javax.swing.GroupLayout(paneServerConfig);
+        paneServerConfig.setLayout(paneServerConfigLayout);
+        paneServerConfigLayout.setHorizontalGroup(
+            paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneServerConfigLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(paneServerConfigLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(txtPort, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE))
                     .addComponent(jLabel2)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(tglBtnListen)
+                    .addGroup(paneServerConfigLayout.createSequentialGroup()
+                        .addComponent(tglGoLive)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(btnClose)))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        paneServerConfigLayout.setVerticalGroup(
+            paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneServerConfigLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tglBtnListen)
-                    .addComponent(jButton1))
+                .addGroup(paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tglGoLive)
+                    .addComponent(btnClose))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Server Config", jPanel1);
+        tabbedPane.addTab("Server Config", paneServerConfig);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblClients.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -145,92 +171,96 @@ public class ServerControl extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tblClients.setEnabled(false);
+        jScrollPane1.setViewportView(tblClients);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout paneClientsLayout = new javax.swing.GroupLayout(paneClients);
+        paneClients.setLayout(paneClientsLayout);
+        paneClientsLayout.setHorizontalGroup(
+            paneClientsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        paneClientsLayout.setVerticalGroup(
+            paneClientsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Clients", jPanel2);
+        tabbedPane.addTab("Clients", paneClients);
+
+        paneCollabControl.setEnabled(false);
 
         jLabel3.setText("Mode :");
 
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("Single contributor");
+        buttonGroup1.add(radioSingleContributor);
+        radioSingleContributor.setSelected(true);
+        radioSingleContributor.setText("Single contributor");
 
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Multiple contributors");
+        buttonGroup1.add(radioMultipleContributors);
+        radioMultipleContributors.setText("Multiple contributors");
 
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Free for All");
+        buttonGroup1.add(radioFreeForAll);
+        radioFreeForAll.setText("Free for All");
 
         jLabel4.setText("maximum contributors");
 
-        jToggleButton1.setText("SOLICIT");
-        jToggleButton1.setPreferredSize(new java.awt.Dimension(100, 23));
+        tglSolicit.setText("SOLICIT");
+        tglSolicit.setPreferredSize(new java.awt.Dimension(100, 23));
 
-        jToggleButton2.setText("LIVE");
-        jToggleButton2.setPreferredSize(new java.awt.Dimension(100, 23));
+        tglLive.setText("LIVE");
+        tglLive.setPreferredSize(new java.awt.Dimension(100, 23));
 
         jLabel5.setText("Currently live client ID(s):");
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout paneCollabControlLayout = new javax.swing.GroupLayout(paneCollabControl);
+        paneCollabControl.setLayout(paneCollabControlLayout);
+        paneCollabControlLayout.setHorizontalGroup(
+            paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneCollabControlLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(paneCollabControlLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton3)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jRadioButton2)
+                        .addGroup(paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioFreeForAll)
+                            .addGroup(paneCollabControlLayout.createSequentialGroup()
+                                .addComponent(radioMultipleContributors)
                                 .addGap(18, 18, 18)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtMaximumContributors, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel4))
-                            .addComponent(jRadioButton1)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(radioSingleContributor)))
+                    .addGroup(paneCollabControlLayout.createSequentialGroup()
+                        .addComponent(tglSolicit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(tglLive, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel5))
                 .addContainerGap(147, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        paneCollabControlLayout.setVerticalGroup(
+            paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneCollabControlLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jRadioButton1))
+                    .addComponent(radioSingleContributor))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radioMultipleContributors)
+                    .addComponent(txtMaximumContributors, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadioButton3)
+                .addComponent(radioFreeForAll)
                 .addGap(9, 9, 9)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tglSolicit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tglLive, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Collaboration Control", jPanel3);
+        tabbedPane.addTab("Collaboration Control", paneCollabControl);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -239,7 +269,7 @@ public class ServerControl extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
+                    .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
                     .addComponent(lblStatus))
                 .addContainerGap())
         );
@@ -249,35 +279,42 @@ public class ServerControl extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblStatus)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void tglGoLiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglGoLiveActionPerformed
+        if(tglGoLive.isSelected())
+            startListening();
+        else
+            stopListening();
+    }//GEN-LAST:event_tglGoLiveActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClose;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JLabel lblStatus;
-    private javax.swing.JToggleButton tglBtnListen;
+    private javax.swing.JPanel paneClients;
+    private javax.swing.JPanel paneCollabControl;
+    private javax.swing.JPanel paneServerConfig;
+    private javax.swing.JRadioButton radioFreeForAll;
+    private javax.swing.JRadioButton radioMultipleContributors;
+    private javax.swing.JRadioButton radioSingleContributor;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable tblClients;
+    private javax.swing.JToggleButton tglGoLive;
+    private javax.swing.JToggleButton tglLive;
+    private javax.swing.JToggleButton tglSolicit;
+    private javax.swing.JTextField txtMaximumContributors;
     private javax.swing.JTextField txtPort;
     // End of variables declaration//GEN-END:variables
 

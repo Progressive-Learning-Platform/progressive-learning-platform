@@ -18,15 +18,85 @@
 
 package plptool.extras.collab;
 
+import plptool.*;
+import java.io.*;
+import java.net.*;
+
 /**
  *
  * @author Wira
  */
 public class Client extends javax.swing.JFrame {
 
+    private Socket out;
+    PrintWriter writer;
+
     /** Creates new form Client */
     public Client() {
         initComponents();
+    }
+
+    public void connect() {
+        try {
+            out = new Socket(txtHost.getText(), Integer.parseInt(txtPort.getText()));
+            writer = new PrintWriter(out.getOutputStream(), true);
+            setState(true);
+        } catch(UnknownHostException uhe) {
+            Msg.E("Client.connect: Unable to connect to " + txtHost.getText() + ":" +
+                   txtHost.getText(), Constants.PLP_GENERAL_IO_ERROR, null);
+            tglConnect.setSelected(false);
+            setState(false);
+        } catch(IOException ioe) {
+            Msg.E("Client.connect: I/O error", Constants.PLP_GENERAL_IO_ERROR,
+                    null);
+            tglConnect.setSelected(false);
+            setState(false);
+        } catch(Exception e) {
+            Msg.E("Client.connect: Unknown error", Constants.PLP_GENERIC_ERROR,
+                    null);
+            if(Constants.debugLevel >= 2)
+                e.printStackTrace();
+            tglConnect.setSelected(false);
+            setState(false);
+        }     
+    }
+
+    public void disconnect() {
+        try {
+            writer.close();
+            out.close();
+        } catch(IOException e) {
+            Msg.E("Failed to close connection.",
+                    Constants.PLP_GENERAL_IO_ERROR, null);
+        }
+        tglConnect.setSelected(false);
+        setState(false);
+    }
+
+    public void setState(boolean c) {
+        Msg.D("Setting to " + c, 2, null);
+        txtNickname.setEnabled(!c);
+        btnME.setEnabled(c);
+        txtHost.setEnabled(!c);
+        txtPort.setEnabled(!c);
+        txtCapture.setEnabled(c);
+        btnSend.setEnabled(c);
+    }
+
+    public void sendText() {
+        try {
+            String lines[] = txtCapture.getText().split("\\r?\\n");
+            for(int i = 0; i < lines.length; i++)
+                writer.write(lines[i] + "\n");
+            writer.flush();
+            txtCapture.setText("");
+        } catch(Exception ioe) {
+            Msg.E("Send data failed.", Constants.PLP_GENERAL_IO_ERROR, this);
+        }
+    }
+
+    public String toString() {
+        return "collab.Client";
     }
 
     /** This method is called from within the constructor to
@@ -39,42 +109,62 @@ public class Client extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        txtHost = new javax.swing.JTextField();
+        tglConnect = new javax.swing.JToggleButton();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        txtNickname = new javax.swing.JTextField();
+        btnME = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtStatus = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        txtCapture = new javax.swing.JTextArea();
+        btnClose = new javax.swing.JButton();
+        btnSend = new javax.swing.JButton();
+        txtPort = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
 
         setResizable(false);
 
         jLabel1.setText("Host server : ");
 
-        jToggleButton1.setText("CONNECT");
+        tglConnect.setText("CONNECT");
+        tglConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglConnectActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Nickname :");
 
-        jButton1.setText("ME!");
+        btnME.setText("ME!");
+        btnME.setEnabled(false);
 
         jLabel3.setText("Status :");
 
-        jTextField3.setText("Not connected");
+        txtStatus.setEditable(false);
+        txtStatus.setText("Not connected");
 
         jLabel4.setText("Keyboard capture area :");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        txtCapture.setColumns(20);
+        txtCapture.setRows(5);
+        txtCapture.setEnabled(false);
+        jScrollPane1.setViewportView(txtCapture);
 
-        jButton2.setText("I'm done...");
+        btnClose.setText("I'm done...");
 
-        jButton3.setText("SEND");
+        btnSend.setText("SEND");
+        btnSend.setEnabled(false);
+        btnSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendActionPerformed(evt);
+            }
+        });
+
+        txtPort.setText("11000");
+
+        jLabel5.setText(":");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -83,29 +173,33 @@ public class Client extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
+                                .addComponent(txtHost, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel3))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))))
+                                    .addComponent(txtStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                                    .addComponent(txtNickname, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jToggleButton1))
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                        .addComponent(tglConnect))
+                    .addComponent(btnME, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                     .addComponent(jLabel4)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 237, Short.MAX_VALUE)
-                        .addComponent(jButton2)))
+                        .addComponent(btnSend)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 255, Short.MAX_VALUE)
+                        .addComponent(btnClose)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -114,46 +208,61 @@ public class Client extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToggleButton1))
+                    .addComponent(txtHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tglConnect)
+                    .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNickname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnME, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(btnClose)
+                    .addComponent(btnSend))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void tglConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglConnectActionPerformed
+        if(tglConnect.isSelected())
+            connect();
+        else
+            disconnect();
+    }//GEN-LAST:event_tglConnectActionPerformed
+
+    private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
+        sendText();
+    }//GEN-LAST:event_btnSendActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnME;
+    private javax.swing.JButton btnSend;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JToggleButton tglConnect;
+    private javax.swing.JTextArea txtCapture;
+    private javax.swing.JTextField txtHost;
+    private javax.swing.JTextField txtNickname;
+    private javax.swing.JTextField txtPort;
+    private javax.swing.JTextField txtStatus;
     // End of variables declaration//GEN-END:variables
 
 }

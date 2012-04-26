@@ -44,7 +44,7 @@ public class ServerService extends Thread {
         this.plp = plp;
         clientServices = new HashMap<Integer, ClientService>();
         clientIndex = 0;
-        listening = false;
+        listening = true;
         try {
             socket = new ServerSocket(port);
         } catch(IOException e) {
@@ -58,14 +58,20 @@ public class ServerService extends Thread {
         int offset = plp.g_dev.getEditor().getCaretPosition();
         try {
             doc.insertString(offset, text, null);
+            plp.g_dev.getEditor().setCaretPosition(offset+text.length());
         } catch(BadLocationException ble) {
             Msg.E("Collab: Text insert error", Constants.PLP_GENERIC_ERROR,
                     null);
         }
     }
 
-    public void setListening(boolean b) {
-        listening = b;
+    public synchronized void stopListening() {
+        listening = false;
+        try {
+            socket.close();
+        } catch(IOException e) {
+            Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
+        }
     }
 
     public ServerControl getControls() {
@@ -74,11 +80,13 @@ public class ServerService extends Thread {
 
     @Override
     public void run() {
+        Msg.I("Listening on port " + socket.getLocalPort(), this);
         while(listening) {
             try {
                 Socket client = socket.accept();
                 ClientService c = new ClientService(clientIndex, this, client);
                 clientServices.put(clientIndex, c);
+                Msg.I("Client[" + clientIndex + "] connected", this);
                 clientIndex++;
                 c.start();
                 control.update();
@@ -88,10 +96,16 @@ public class ServerService extends Thread {
             }
         }
         Msg.I("Collab server service exiting.", null);
+        for(int i = 0; i < clientIndex; i++)
+            clientServices.get(i).disconnect();
     }
 
     public synchronized void removeClient(int ID) {
         
+    }
+
+    public String toString() {
+        return "collab.ServerService";
     }
 }
 
@@ -100,6 +114,7 @@ class ClientService extends Thread {
     private Socket socket;
     private int ID;
     private boolean disconnect = false;
+    BufferedReader in;
 
     public ClientService(int ID, ServerService server, Socket socket) {
         this.ID = ID;
@@ -107,28 +122,37 @@ class ClientService extends Thread {
         this.socket = socket;
     }
 
-    public void disconnect() {
+    public synchronized void disconnect() {
         disconnect = true;
+        try {
+            in.close();
+            socket.close();
+        } catch(IOException e) {
+            Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
+        }
     }
 
     @Override
     public void run() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(
+            in = new BufferedReader(new InputStreamReader(
                     socket.getInputStream()));
-            while(!disconnect) {
-                server.deliverData(in.readLine());
-            }
+            while(!disconnect)
+                server.deliverData(in.readLine() + "\n");
         } catch(IOException e) {
-            Msg.E("Collab CLIENT[" + ID + "]: I/O error.",
-                    Constants.PLP_GENERAL_IO_ERROR, null);
+            Msg.E("I/O error.",
+                    Constants.PLP_GENERAL_IO_ERROR, this);
         }
         try {
             socket.close();
         } catch(IOException e) {
-            Msg.E("Collab CLIENT[" + ID + "]: unable to close connection.",
-                    Constants.PLP_GENERAL_IO_ERROR, null);
+            Msg.E("unable to close connection.",
+                    Constants.PLP_GENERAL_IO_ERROR, this);
         }
-        Msg.I("Collab CLIENT[" + ID + "]: service exiting.", null);
+        Msg.I("service exiting.", this);
+    }
+
+    public String toString() {
+        return "collab.ClientService[" + ID + "]";
     }
 }
