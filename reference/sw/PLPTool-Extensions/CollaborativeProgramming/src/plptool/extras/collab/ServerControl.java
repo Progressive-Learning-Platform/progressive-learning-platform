@@ -28,11 +28,16 @@ public class ServerControl extends javax.swing.JFrame {
     public static final int MAX_CLIENTS = 256;
     private ProjectDriver plp;
     private ServerService service;
+    public boolean listening, soliciting, live;
 
     /** Creates new form ServerControl */
     public ServerControl(ProjectDriver plp) {
         initComponents();
         this.plp = plp;
+        setStates(false);
+        listening = false;
+        soliciting = false;
+        live = false;
     }
 
     public synchronized void update() {
@@ -43,17 +48,22 @@ public class ServerControl extends javax.swing.JFrame {
         service = new ServerService(this, plp,
                 Integer.parseInt(txtPort.getText()), 256);
         service.start();
+        listening = true;
         setStates(true);
     }
 
     public void stopListening() {
         service.stopListening();
+        listening = false;
+        soliciting = false;
+        live = false;
         setStates(false);
     }
 
     public void setStates(boolean c) {
-        paneServerConfig.setVisible(c);
-        paneCollabControl.setVisible(c);
+        tabbedPane.setEnabledAt(1, c);
+        tabbedPane.setEnabledAt(2, c);
+        paneCollabControl.setEnabled(c);
         if(!c)
             tabbedPane.setSelectedIndex(0);
         txtPort.setEnabled(!c);
@@ -147,10 +157,7 @@ public class ServerControl extends javax.swing.JFrame {
 
         tblClients.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "IP Addr", "Nickname", "BAN", "LIVE"
@@ -205,9 +212,20 @@ public class ServerControl extends javax.swing.JFrame {
 
         tglSolicit.setText("SOLICIT");
         tglSolicit.setPreferredSize(new java.awt.Dimension(100, 23));
+        tglSolicit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglSolicitActionPerformed(evt);
+            }
+        });
 
         tglLive.setText("LIVE");
+        tglLive.setEnabled(false);
         tglLive.setPreferredSize(new java.awt.Dimension(100, 23));
+        tglLive.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tglLiveActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Currently live client ID(s):");
 
@@ -292,6 +310,18 @@ public class ServerControl extends javax.swing.JFrame {
         else
             stopListening();
     }//GEN-LAST:event_tglGoLiveActionPerformed
+
+    private void tglSolicitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglSolicitActionPerformed
+        soliciting = tglSolicit.isSelected();
+        if(!soliciting)
+            tglLive.setEnabled(false);
+        else
+            tglLive.setEnabled(true);
+    }//GEN-LAST:event_tglSolicitActionPerformed
+
+    private void tglLiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglLiveActionPerformed
+        live = tglLive.isSelected();
+    }//GEN-LAST:event_tglLiveActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;

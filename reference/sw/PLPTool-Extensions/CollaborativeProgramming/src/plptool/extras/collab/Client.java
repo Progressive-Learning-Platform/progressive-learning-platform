@@ -28,7 +28,8 @@ import java.net.*;
  */
 public class Client extends javax.swing.JFrame {
 
-    private Socket out;
+    private Socket s;
+    private ClientReceiveService cs;
     PrintWriter writer;
 
     /** Creates new form Client */
@@ -38,61 +39,73 @@ public class Client extends javax.swing.JFrame {
 
     public void connect() {
         try {
-            out = new Socket(txtHost.getText(), Integer.parseInt(txtPort.getText()));
-            writer = new PrintWriter(out.getOutputStream(), true);
-            setState(true);
+            s = new Socket(txtHost.getText(), Integer.parseInt(txtPort.getText()));
+            writer = new PrintWriter(s.getOutputStream(), true);
+            cs = new ClientReceiveService(s, this);
+            cs.start();
+            setState(true, false);
         } catch(UnknownHostException uhe) {
             Msg.E("Client.connect: Unable to connect to " + txtHost.getText() + ":" +
                    txtHost.getText(), Constants.PLP_GENERAL_IO_ERROR, null);
             tglConnect.setSelected(false);
-            setState(false);
+            setState(false, false);
         } catch(IOException ioe) {
             Msg.E("Client.connect: I/O error", Constants.PLP_GENERAL_IO_ERROR,
                     null);
             tglConnect.setSelected(false);
-            setState(false);
+            setState(false, false);
         } catch(Exception e) {
             Msg.E("Client.connect: Unknown error", Constants.PLP_GENERIC_ERROR,
                     null);
             if(Constants.debugLevel >= 2)
                 e.printStackTrace();
             tglConnect.setSelected(false);
-            setState(false);
+            setState(false, false);
         }     
     }
 
     public void disconnect() {
-        try {
-            writer.close();
-            out.close();
-        } catch(IOException e) {
-            Msg.E("Failed to close connection.",
-                    Constants.PLP_GENERAL_IO_ERROR, null);
-        }
+        cmd("QUIT");
         tglConnect.setSelected(false);
-        setState(false);
+        setState(false, false);
     }
 
-    public void setState(boolean c) {
+    public void cleanup() {
+        try {
+            writer.close();
+            s.close();
+        } catch(IOException e) {
+            Msg.E("Cleanup error.", Constants.PLP_GENERAL_IO_ERROR, this);
+        }
+    }
+
+    public void setState(boolean c, boolean v) {
         Msg.D("Setting to " + c, 2, null);
         txtNickname.setEnabled(!c);
         btnME.setEnabled(c);
         txtHost.setEnabled(!c);
         txtPort.setEnabled(!c);
         txtCapture.setEnabled(c);
-        btnSend.setEnabled(c);
+        btnSend.setEnabled(v);
     }
 
     public void sendText() {
         try {
+            cmd("TEXT");
             String lines[] = txtCapture.getText().split("\\r?\\n");
             for(int i = 0; i < lines.length; i++)
                 writer.write(lines[i] + "\n");
             writer.flush();
+            cmd("ENDTEXT");
             txtCapture.setText("");
         } catch(Exception ioe) {
             Msg.E("Send data failed.", Constants.PLP_GENERAL_IO_ERROR, this);
         }
+    }
+
+    public void cmd(String cmd) {
+        writer.write("%%" + cmd + "\n");
+        writer.flush();
     }
 
     public String toString() {
@@ -139,6 +152,11 @@ public class Client extends javax.swing.JFrame {
 
         btnME.setText("ME!");
         btnME.setEnabled(false);
+        btnME.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMEActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Status :");
 
@@ -246,6 +264,10 @@ public class Client extends javax.swing.JFrame {
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
         sendText();
     }//GEN-LAST:event_btnSendActionPerformed
+
+    private void btnMEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMEActionPerformed
+        cmd("REQ");
+    }//GEN-LAST:event_btnMEActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
