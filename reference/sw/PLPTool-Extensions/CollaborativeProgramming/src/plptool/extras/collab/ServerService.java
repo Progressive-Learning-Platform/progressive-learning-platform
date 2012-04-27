@@ -68,6 +68,11 @@ public class ServerService extends Thread {
     public synchronized void stopListening() {
         listening = false;
         try {
+            Object[][] clients = PLPToolbox.mapToArray(clientServices);
+            for(int i = 0; i < clients.length; i++) {
+                ClientService cs = (ClientService) clients[i][1];
+                cs.forceDisconnect();
+            }
             socket.close();
         } catch(IOException e) {
             Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
@@ -84,7 +89,7 @@ public class ServerService extends Thread {
         while(listening) {
             try {
                 Socket client = socket.accept();
-                ClientService c = new ClientService(clientIndex, this, client);
+                ClientService c = new ClientService(clientIndex, this, client, null);
                 clientServices.put(clientIndex, c);
                 Msg.I("Client[" + clientIndex + "] connected", this);
                 clientIndex++;
@@ -96,13 +101,25 @@ public class ServerService extends Thread {
                             Constants.PLP_GENERIC_ERROR, null);
             }
         }
-        Msg.I("Collab server service exiting.", null);
-        for(int i = 0; i < clientIndex; i++)
-            clientServices.get(i).disconnect();
+        Msg.D("Collab server service exiting.", 2, null);
     }
 
     public synchronized void removeClient(int ID) {
-        
+        ClientService cs = clientServices.remove(ID);
+        if(cs != null) cs.forceDisconnect();
+        control.update();
+    }
+
+    public ClientService getClient(int ID) {
+        return clientServices.get(ID);
+    }
+
+    public HashMap<Integer, ClientService> getClients() {
+        return clientServices;
+    }
+
+    public void updateControl() {
+        control.update();
     }
 
     public synchronized boolean arbitrate() {
@@ -112,75 +129,20 @@ public class ServerService extends Thread {
             return true;
     }
 
+    public synchronized boolean checkNickname(String nick) {
+        Object[][] clients = PLPToolbox.mapToArray(clientServices);
+        String tempNick;
+        for(int i = 0; i < clients.length; i++) {
+            tempNick = ((ClientService)clients[i][1]).getClientName();
+            if(nick.equals(tempNick))
+                return false;
+        }
+
+        return true;
+    }
+
     public String toString() {
         return "collab.ServerService";
     }
 }
 
-class ClientService extends Thread {
-    private ServerService server;
-    private Socket socket;
-    private int ID;
-    private boolean disconnect = false;
-    BufferedReader in;
-    PrintWriter out;
-
-    public ClientService(int ID, ServerService server, Socket socket) {
-        this.ID = ID;
-        this.server = server;
-        this.socket = socket;
-    }
-
-    public synchronized void disconnect() {
-        disconnect = true;
-    }
-
-    @Override
-    public void run() {
-        String line;
-        boolean text = false;
-        try {
-            in = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
-            while(!disconnect) {
-                line = in.readLine();
-                if(line.startsWith("%%") && !text) {
-                    Msg.I("Received command: " + line, this);
-                }
-                if(line.equals("%%ENDTEXT")) {
-                    text = false;
-                    cmd("MUTE");
-                } else if (line.equals("%%TEXT"))
-                    text = true;
-                else if(line.equals("%%QUIT")) {
-                    disconnect = true;
-                    cmd("DISCONNECT");
-                } else if (line.equals("%%REQ")) {
-                    cmd(server.arbitrate() ? "ACK" : "MUTE");
-                }
-                else if(text)
-                    server.deliverData(line + "\n");
-            }
-        } catch(IOException e) {
-            Msg.E("I/O error.",
-                    Constants.PLP_GENERAL_IO_ERROR, this);
-        }
-        try {
-            in.close();
-            socket.close();
-        } catch(IOException e) {
-            Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
-        }
-        Msg.I("service exiting.", this);
-    }
-
-    public void cmd(String cmd) {
-        out.write("%%" + cmd + "\n");
-        out.flush();
-    }
-
-    public String toString() {
-        return "collab.ClientService[" + ID + "]";
-    }
-}

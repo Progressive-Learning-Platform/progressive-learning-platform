@@ -5,6 +5,9 @@
     <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
     </Component>
   </NonVisualComponents>
+  <Properties>
+    <Property name="title" type="java.lang.String" value="Collaborative Programming Server"/>
+  </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
@@ -39,7 +42,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblStatus" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="tabbedPane" pref="212" max="32767" attributes="0"/>
+              <Component id="tabbedPane" pref="222" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -96,7 +99,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="102" max="32767" attributes="0"/>
+                      <EmptySpace pref="112" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="tglGoLive" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnClose" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -149,12 +152,27 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace pref="362" max="32767" attributes="0"/>
+                      <Component id="btnKickBan" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnKick" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
                   <Component id="jScrollPane1" alignment="0" pref="512" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="187" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="jScrollPane1" pref="152" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="btnKick" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnKickBan" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -173,7 +191,7 @@
                         <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="false" title="IP Addr" type="java.lang.String"/>
                         <Column editable="false" title="Nickname" type="java.lang.String"/>
-                        <Column editable="true" title="BAN" type="java.lang.Boolean"/>
+                        <Column editable="true" title="Muted" type="java.lang.Boolean"/>
                         <Column editable="false" title="LIVE" type="java.lang.Boolean"/>
                       </Table>
                     </Property>
@@ -206,14 +224,29 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
-                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblClientsMousePressed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JButton" name="btnKick">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="KICK"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKickActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnKickBan">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="KICKBAN"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="paneCollabControl">
@@ -278,7 +311,7 @@
                       <Component id="radioFreeForAll" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="43" max="32767" attributes="0"/>
+                      <EmptySpace pref="53" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="tglSolicit" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="tglLive" alignment="3" min="-2" max="-2" attributes="0"/>

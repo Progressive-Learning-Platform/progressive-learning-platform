@@ -481,5 +481,23 @@ public class PLPToolbox {
                     Constants.PLP_GENERAL_IO_ERROR, null);
         }
     }
+
+    /**
+     * Convert a map to 2-dimensional array
+     *
+     * @param map Reference to the map object to convert
+     * @return 2-dimensional array with keys in the first field and the values
+     * in the second
+     */
+    public static Object[][] mapToArray(java.util.Map map) {
+        Object[][] mapArray = new Object[map.size()][2];
+        Object[] keys = map.keySet().toArray();
+        for(int i = 0; i < mapArray.length; i++) {
+            mapArray[i][0] = keys[i];
+            mapArray[i][1] = map.get(keys[i]);
+        }
+
+        return mapArray;
+    }
 }
 
