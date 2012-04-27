@@ -40,20 +40,30 @@ public class ClientReceiveService extends Thread {
     public void run() {
         String line;
         boolean disconnect = false;
+        boolean online = false;
         try {
             in = new BufferedReader(new InputStreamReader(s.getInputStream()));
             while(!disconnect) {
                 line = in.readLine();
-                Msg.I("Received: " + line, this);
-                if(line.equals("%%DISCONNECT")) {
+                Msg.D("Received: " + line, 3, this);
+                if(!online && line.equals("%%NICKNAME_OK"))
+                    online = true;
+                else if (line.equals("%%DISCONNECT")) {
+                    if(!online)
+                        Msg.W("Server refused connection. Nickname is probably" +
+                                " already taken", this);
                     Msg.I("Closing connection", this);
-                    disconnect = true;
-                    in.close();
-                    c.cleanup();
+                    online = false;
                 } else if(line.equals("%%MUTE"))
                     c.setState(true, false);
                 else if(line.equals("%%ACK"))
                     c.setState(true, true);
+
+                if(!online) {
+                    disconnect = true;
+                    in.close();
+                    c.cleanup();
+                }
             }
         } catch(IOException e) {
             Msg.E("I/O error.", Constants.PLP_GENERAL_IO_ERROR, this);
@@ -62,6 +72,6 @@ public class ClientReceiveService extends Thread {
 
     @Override
     public String toString() {
-        return "collab.Client service";
+        return "collab.ClientReceiveService";
     }
 }

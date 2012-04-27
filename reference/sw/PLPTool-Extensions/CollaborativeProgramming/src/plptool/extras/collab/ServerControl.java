@@ -18,7 +18,9 @@
 
 package plptool.extras.collab;
 
+import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
+import javax.swing.table.*;
 
 /**
  *
@@ -41,7 +43,18 @@ public class ServerControl extends javax.swing.JFrame {
     }
 
     public synchronized void update() {
-        
+        Object[][] clients = PLPToolbox.mapToArray(service.getClients());
+        DefaultTableModel tbl = (DefaultTableModel) tblClients.getModel();
+        ClientService c;
+        while(tbl.getRowCount() > 0)
+            tbl.removeRow(0);
+        for(int i = 0; i < clients.length; i++) {
+            c = (ClientService) clients[i][1];
+            Object[] row = {c.getClientID(), c.getClientIP(),
+                            c.getClientName(), false, false};
+            tbl.addRow(row);
+        }
+        tblClients.setModel(tbl);
     }
 
     public void startListening() {
@@ -91,6 +104,8 @@ public class ServerControl extends javax.swing.JFrame {
         paneClients = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblClients = new javax.swing.JTable();
+        btnKick = new javax.swing.JButton();
+        btnKickBan = new javax.swing.JButton();
         paneCollabControl = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         radioSingleContributor = new javax.swing.JRadioButton();
@@ -101,6 +116,8 @@ public class ServerControl extends javax.swing.JFrame {
         tglSolicit = new javax.swing.JToggleButton();
         tglLive = new javax.swing.JToggleButton();
         jLabel5 = new javax.swing.JLabel();
+
+        setTitle("Collaborative Programming Server");
 
         lblStatus.setText("Server status :");
 
@@ -146,7 +163,7 @@ public class ServerControl extends javax.swing.JFrame {
                     .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
                 .addGroup(paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tglGoLive)
                     .addComponent(btnClose))
@@ -160,7 +177,7 @@ public class ServerControl extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "IP Addr", "Nickname", "BAN", "LIVE"
+                "ID", "IP Addr", "Nickname", "Muted", "LIVE"
             }
         ) {
             Class[] types = new Class [] {
@@ -178,18 +195,43 @@ public class ServerControl extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tblClients.setEnabled(false);
+        tblClients.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblClientsMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblClients);
+
+        btnKick.setText("KICK");
+        btnKick.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKickActionPerformed(evt);
+            }
+        });
+
+        btnKickBan.setText("KICKBAN");
 
         javax.swing.GroupLayout paneClientsLayout = new javax.swing.GroupLayout(paneClients);
         paneClients.setLayout(paneClientsLayout);
         paneClientsLayout.setHorizontalGroup(
             paneClientsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneClientsLayout.createSequentialGroup()
+                .addContainerGap(362, Short.MAX_VALUE)
+                .addComponent(btnKickBan)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnKick)
+                .addContainerGap())
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
         );
         paneClientsLayout.setVerticalGroup(
             paneClientsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneClientsLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(paneClientsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnKick)
+                    .addComponent(btnKickBan))
+                .addContainerGap())
         );
 
         tabbedPane.addTab("Clients", paneClients);
@@ -271,7 +313,7 @@ public class ServerControl extends javax.swing.JFrame {
                 .addComponent(radioFreeForAll)
                 .addGap(9, 9, 9)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                 .addGroup(paneCollabControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tglSolicit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tglLive, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -297,7 +339,7 @@ public class ServerControl extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblStatus)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -323,8 +365,22 @@ public class ServerControl extends javax.swing.JFrame {
         live = tglLive.isSelected();
     }//GEN-LAST:event_tglLiveActionPerformed
 
+    private void tblClientsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientsMousePressed
+
+    }//GEN-LAST:event_tblClientsMousePressed
+
+    private void btnKickActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKickActionPerformed
+        int selectedRow = tblClients.getSelectedRow();
+        if(selectedRow > -1) {
+            int ID = (Integer) tblClients.getValueAt(selectedRow, 0);
+            service.removeClient(ID);
+        }
+    }//GEN-LAST:event_btnKickActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnKick;
+    private javax.swing.JButton btnKickBan;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

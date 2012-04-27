@@ -197,6 +197,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 Object[] entrySet = attributes.entrySet().toArray();
                 Msg.P("Project attributes:");
                 for(int i = 0; i < entrySet.length; i++) {
+                    @SuppressWarnings("unchecked")
                     java.util.Map.Entry<String, Object> entry =
                             (java.util.Map.Entry<String, Object>) entrySet[i];
                     Msg.p(entry.getKey() + "::" + entry.getValue());
@@ -207,6 +208,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 Object[] entrySet = attributes.entrySet().toArray();
                 Msg.P("Application attributes:");
                 for(int i = 0; i < entrySet.length; i++) {
+                    @SuppressWarnings("unchecked")
                     java.util.Map.Entry<String, String> entry =
                             (java.util.Map.Entry<String, String>) entrySet[i];
                     Msg.p(entry.getKey() + "::" + entry.getValue());
