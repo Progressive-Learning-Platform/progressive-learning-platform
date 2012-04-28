@@ -21,7 +21,6 @@ package plptool;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Arrays;
 
 /**
  * PLPTool assembler abstract.
@@ -205,9 +204,10 @@ public abstract class PLPAsm implements PLPGenericModule {
     public int getFileIndex(long addr) {
         if(addrTable == null) return -1;
 
-        int index = Arrays.binarySearch(addrTable, addr);
-        if(index > -1)
-            return objCodeFileMapper[index];
+        for(int i = 0; i < addrTable.length; i++) {
+            if(addrTable[i] == addr)
+                return objCodeFileMapper[i];
+        }
 
         return -1;
 
@@ -223,10 +223,10 @@ public abstract class PLPAsm implements PLPGenericModule {
     public int getLineNum(long addr) {
         if(addrTable == null) return -1;
 
-        int index = Arrays.binarySearch(addrTable, addr);
-
-        if(index > -1)
-            return objCodeLineNumMapper[index];
+        for(int i = 0; i < addrTable.length; i++) {
+            if(addrTable[i] == addr)
+                return objCodeLineNumMapper[i];
+        }
 
         return -1;
     }
@@ -329,7 +329,12 @@ public abstract class PLPAsm implements PLPGenericModule {
     public int lookupAddrIndex(long addr) {
         if(addrTable == null) return -1;
 
-        return Arrays.binarySearch(addrTable, addr);
+        for(int i = 0; i < addrTable.length; i++) {
+            if(addrTable[i] == addr)
+                return i;
+        }
+
+        return -1;
     }
 
     /**
@@ -371,7 +376,7 @@ public abstract class PLPAsm implements PLPGenericModule {
     }
 
     /**
-     * Other ISA-specific checks that the developer may wish to do. Any
+     * Other ISA-specific checks that the develop may wish to do. Any
      * return value other than PLP_OK will prevent the start of the simulation
      *
      * @return ProjectDriver expects PLP_OK to continue with the simulation
