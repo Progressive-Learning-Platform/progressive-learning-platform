@@ -1164,6 +1164,7 @@ public class ProjectDriver {
             g_dev.getEditor().setCaretPosition(caretPos);
         }
 
+        hookEvent(new ProjectEvent(ProjectEvent.POST_ASSEMBLE, -1));
         return Constants.PLP_OK;
     }
 

@@ -1,0 +1,16 @@
+title::<enter title here>
+author::<enter author here>
+license::<enter module license here>
+description::<enter description here>
+version::<enter version here>
+class::plptool.extras.flowchart.Main
+class::plptool.extras.flowchart.Node
+class::plptool.extras.flowchart.NodeCollection
+class::plptool.extras.flowchart.PLPCPUProgram
+class::plptool.extras.flowchart.PLPToolConnector
+class::plptool.extras.flowchart.JumpNode
+class::plptool.extras.flowchart.ExitNode
+class::plptool.extras.flowchart.DecisionNode
+class::plptool.extras.flowchart.CallNode
+class::plptool.extras.flowchart.BranchNode
+loadwithproject::plptool.extras.flowchart.PLPToolConnector
