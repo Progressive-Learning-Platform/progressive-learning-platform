@@ -43,6 +43,7 @@ public class ProjectEvent {
     public final static int         EDITOR_TEXT_SET                 = 12;
     public final static int         EXIT                            = 13;
     public final static int         NEW_PROJECT                     = 14;
+    public final static int         POST_ASSEMBLE                   = 15;
 
     /* OPEN ROUTINES */
     public final static int         OPEN_ASM_ENTRY                  = 128;
