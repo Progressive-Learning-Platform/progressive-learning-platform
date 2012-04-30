@@ -51,7 +51,7 @@ public class PLPCPUProgram {
         obj = asm.getObjectCode();
         addr = asm.getAddrTable();
         routines = new ArrayList<NodeCollection>();
-        head = new Node("__start", asm.getEntryPoint());
+        head = new Node("__entry", asm.getEntryPoint());
         routines.add(new NodeCollection());
         traverseCount = 0;
         process();
@@ -65,11 +65,14 @@ public class PLPCPUProgram {
 
     public void printProgram(int routine) {
         NodeCollection collection = routines.get(routine);
+        NodeCollection reachedNodes = new NodeCollection();
         Node next = collection.getHead();
-        Msg.P("\n\n** R O U T I N E ********************************************");
+        Msg.P("\n\n*************************************************************");
+        Msg.P(    "   R O U T I N E");
         Msg.P(next.getLabel() + " | #nodes: " + collection.size());
         int i = 0;
         while(next != null) {
+            reachedNodes.addNode(next);
             Msg.P("*************************************");
             Msg.pn("node[" + i + "]: ");
             if(next.getLabel() != null)
@@ -77,7 +80,6 @@ public class PLPCPUProgram {
             Msg.pn(PLPToolbox.format32Hex(next.getAddress()));
             Msg.P();
             if(next instanceof ExitNode) {
-                ExitNode eNode = (ExitNode) next;
                 Msg.pn("**Exit node");
                 Msg.P();
             } else if(next instanceof BranchNode) {
@@ -109,6 +111,74 @@ public class PLPCPUProgram {
             next = next.getNext();
             i++;
         }
+        int r = reachedNodes.size();
+        int c = collection.size();
+        if(r != c) {
+            Msg.I("There were " + (c-r) + " non-merging branches.", this);
+        }
+    }
+
+    public String generateDOT(int routine) {
+        Msg.I("Generating DOT output", this);
+        NodeCollection c = routines.get(routine);
+        String ret = "digraph G {\n";
+        String code;
+        
+        // generate vertices
+        for(int i = 0; i < c.size(); i++) {
+            Node n = c.getNode(i);
+            code = n.getCode().trim().replace("\n", "\\n");
+            
+            if(n.getLabel() != null)
+                ret += "label_node" + i + " [shape=Mrecord] [label=\"" + n.getLabel() + "\"];\n";
+            if(n instanceof BranchNode) {
+                ret += "code_node" + i + " [shape=diamond] [label=\"" + code + "\"];\n";
+            } else if(n instanceof JumpNode) {
+                ret += "code_node" + i + " [shape=box] [label=\"" + code + "\"];\n";
+            } else if(n instanceof CallNode) {
+                ret += "code_node" + i + " [shape=parallelogram] [label=\"" + code + "\"];\n";
+            } else if(n instanceof ExitNode) {
+                ret += "code_node" + i + " [shape=invhouse] [label=\"" + code + "\"];\n";
+            } else {// if(!code.equals("")) {
+                ret += "code_node" + i + " [shape=box] [label=\"";
+                ret += code;
+                ret += "\"];\n";
+            }
+        }
+        // create edges
+        for(int i = 0; i < c.size(); i++) {
+            Node n = c.getNode(i);
+            Node next = n.getNext();
+            if(n.getLabel() != null)
+                ret += "label_node" + i + " -> code_node" + i + ";\n";
+            if(next != null && !(n instanceof JumpNode)) {
+                if(next.getLabel() != null)
+                    ret += "code_node" + i + " -> label_node" +
+                            c.hasNodeWithAddress(next.getAddress()) + ";\n";
+                else
+                    ret += "code_node" + i + " -> code_node" +
+                            c.hasNodeWithAddress(next.getAddress()) + ";\n";
+            }
+
+            if(n instanceof BranchNode) {
+                BranchNode b = (BranchNode) n;
+                Node dest = b.getBranchDestination();
+                ret += "code_node" + i + " -> label_node" + c.hasNodeWithAddress(dest.getAddress()) +
+                       " [label=\"Yes\"] [color=blue];\n";
+            } else if(n instanceof JumpNode) {
+                JumpNode j = (JumpNode) n;
+                Node dest = j.getDestination();
+                ret += "code_node" + i + " -> label_node" + c.hasNodeWithAddress(dest.getAddress()) + ";\n";
+            } else if(n instanceof CallNode) {
+
+            } else if(n instanceof ExitNode) {
+
+            } else {
+                
+            }
+        }
+        ret += "}";
+        return ret;
     }
 
     private boolean traverse(Node node, NodeCollection collection, int count) {
@@ -141,6 +211,7 @@ public class PLPCPUProgram {
             instr = obj[index];
             opcode = MIPSInstr.opcode(instr);
             addrLabel = asm.lookupLabel(pc);
+
             switch(opcode) {
                 case BEQ:
                     Msg.D("BEQ", 3, this);
@@ -148,6 +219,8 @@ public class PLPCPUProgram {
                     branch_destination = (pc+4 + (imm<<2)) & ((long) 0xfffffff << 4 | 0xf);
                     tempNode = new BranchNode(addrLabel, pc, null, true);
                     current.setNext(tempNode);
+                    if(current instanceof JumpNode)
+                        ((JumpNode)current).setDestination(tempNode);
                     current = tempNode;
                     appendCode(current, pc);
                     appendCode(current, pc+4);
@@ -172,6 +245,8 @@ public class PLPCPUProgram {
                     branch_destination = (pc+4 + (imm<<2)) & ((long) 0xfffffff << 4 | 0xf);
                     tempNode = new BranchNode(addrLabel, pc, null, false);
                     current.setNext(tempNode);
+                    if(current instanceof JumpNode)
+                        ((JumpNode)current).setDestination(tempNode);
                     current = tempNode;
                     appendCode(current, pc);
                     appendCode(current, pc+4);
@@ -195,6 +270,8 @@ public class PLPCPUProgram {
                     jaddr = ((pc+8) & 0xff000000L) | (MIPSInstr.jaddr(instr)<<2);
                     tempNode = new JumpNode(addrLabel, pc, null);
                     current.setNext(tempNode);
+                    if(current instanceof JumpNode)
+                        ((JumpNode)current).setDestination(tempNode);
                     current = tempNode;
                     appendCode(current, pc);
                     appendCode(current, pc+4);
@@ -214,6 +291,8 @@ public class PLPCPUProgram {
                     jaddr = ((pc+8) & 0xff000000L) | (MIPSInstr.jaddr(instr)<<2);
                     tempNode = new CallNode(addrLabel, pc, asm.lookupLabel(jaddr), jaddr);
                     current.setNext(tempNode);
+                    if(current instanceof JumpNode)
+                        ((JumpNode)current).setDestination(tempNode);
                     current = tempNode;
                     appendCode(current, pc);
                     appendCode(current, pc+4);
@@ -239,28 +318,30 @@ public class PLPCPUProgram {
                     switch(funct) {
                         case JR:
                             Msg.D("JR", 3, this);
-                            if(MIPSInstr.rs(instr) == 31) {
-                                // this routine is done
-                                tempNode = new ExitNode(addrLabel, pc);
-                                current.setNext(tempNode);
-                                current = tempNode;
-                                appendCode(current, pc);
-                                appendCode(current, pc+4);
-                                collection.addNode(current);
-                                Msg.D("traverse[" + count +"]: Routine return, we're done", 3, this);
-                                return true;
-                            } else {
+                            if(MIPSInstr.rs(instr) != 31) {
                                 // there is no way to figure out where we go
                                 // without actually executing the program, just
                                 // give a warning and return
-                                Msg.W("jr using other than $ra is NOT supported", this);
-                                return false;
+                                Msg.W("jr using other than $ra is NOT supported" +
+                                        ". Assuming exit node.", this);
                             }
+                            // this routine is done
+                            tempNode = new ExitNode(addrLabel, pc);
+                            current.setNext(tempNode);
+                            if(current instanceof JumpNode)
+                                ((JumpNode)current).setDestination(tempNode);
+                            current = tempNode;
+                            appendCode(current, pc);
+                            appendCode(current, pc+4);
+                            collection.addNode(current);
+                            Msg.D("traverse[" + count +"]: Routine return, we're done", 3, this);
+                            return true;
+                           
                         case JALR:
                             Msg.W("jalr instruction is not supported", this);
                             return false;
                         default:
-                            if(addrLabel != null) {
+                            if(postBranch || addrLabel != null) {
                                 tempNode = new Node(addrLabel, pc);
                                 if(current instanceof JumpNode)
                                     ((JumpNode)current).setDestination(tempNode);
@@ -268,6 +349,7 @@ public class PLPCPUProgram {
                                 current = tempNode;
                                 collection.addNode(current);
                             }
+                            postBranch = false;
                             appendCode(current, pc);
                             pc+=4;
                     }
@@ -285,7 +367,7 @@ public class PLPCPUProgram {
                     if(postBranch || addrLabel != null) {
                         tempNode = new Node(addrLabel, pc);
                         if(current instanceof JumpNode)
-                                    ((JumpNode)current).setDestination(tempNode);
+                            ((JumpNode)current).setDestination(tempNode);
                         current.setNext(tempNode);
                         current = tempNode;
                         collection.addNode(current);
@@ -303,7 +385,8 @@ public class PLPCPUProgram {
 
     private void appendCode(Node node, long addr) {
         PLPAsmSource src = asms.get(asm.getFileIndex(addr));
-        node.append(src.getAsmLine(asm.getLineNum(addr)));
+        String tokens[] = src.getAsmLine(asm.getLineNum(addr)).trim().split("#", 2);
+        node.append(tokens[0].trim());
     }
 
     public int getNumberOfRoutines() {
@@ -317,6 +400,10 @@ public class PLPCPUProgram {
         }
 
         return false;
+    }
+
+    public NodeCollection getRoutine(int index) {
+        return routines.get(index);
     }
 
     @Override

@@ -60,7 +60,7 @@ public class NodeCollection {
     }
 
     public int hasNodeWithLabel(String label) {
-        for(int i = 0; i < nodes.size(); i++) {
+        for(int i = nodes.size()-1; i >= 0; i--) {
             if(nodes.get(i).getLabel().equals(label))
                 return i;
         }
@@ -68,7 +68,7 @@ public class NodeCollection {
     }
 
     public int hasNodeWithAddress(long address) {
-        for(int i = 0; i < nodes.size(); i++) {
+        for(int i = nodes.size()-1; i >= 0; i--) {
             if(nodes.get(i).getAddress() == address)
                 return i;
         }
