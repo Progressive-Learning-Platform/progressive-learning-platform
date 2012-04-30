@@ -77,7 +77,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Select which routine to export as .DOT file:"/>
+        <Property name="text" type="java.lang.String" value="Select which routine to export as a .DOT file:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="cmbRoutines">

@@ -26,11 +26,11 @@ import plptool.PLPToolbox;
  *
  * @author wira
  */
-public class Flowchart extends javax.swing.JDialog {
+public class ExportDOT extends javax.swing.JDialog {
     private PLPCPUProgram p;
 
-    /** Creates new form Flowchart */
-    public Flowchart(java.awt.Frame parent) {
+    /** Creates new form ExportDOT */
+    public ExportDOT(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
         init();
@@ -70,7 +70,7 @@ public class Flowchart extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Generate Flowchart");
 
-        jLabel1.setText("Select which routine to export as .DOT file:");
+        jLabel1.setText("Select which routine to export as a .DOT file:");
 
         cmbRoutines.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 

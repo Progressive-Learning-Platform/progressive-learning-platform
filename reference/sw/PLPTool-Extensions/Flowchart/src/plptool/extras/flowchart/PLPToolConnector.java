@@ -22,6 +22,7 @@ import plptool.*;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
 import javax.swing.JMenuItem;
+import javax.swing.JMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,7 +34,7 @@ public class PLPToolConnector implements PLPGenericModule {
     private ProjectDriver plp;
     private boolean processed = false;
     private PLPCPUProgram flowchart;
-    private Flowchart frame;
+    private ExportDOT frame;
 
     public Object hook(Object param) {
         if(param instanceof ProjectDriver) {
@@ -71,9 +72,12 @@ public class PLPToolConnector implements PLPGenericModule {
     }
 
     private void init() {
-        Msg.I("Ready!", this);
-        frame = new Flowchart(plp.g_dev);
-        JMenuItem menuFlowchartGenerator = new JMenuItem("Generate flowchart...");
+        Msg.I("<em>Flowchart Generator</em> is ready &mdash; This module can be accessed through the <b>Tools" +
+                "</b>&rarr;<b>Flowchart Generator</b> menu",
+                null);
+        frame = new ExportDOT(plp.g_dev);
+        JMenu menuFlowchart = new JMenu("Flowchart Generator");
+        JMenuItem menuFlowchartGenerator = new JMenuItem("Save program routine as a .DOT file...");
         menuFlowchartGenerator.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(plp.isAssembled()) {
@@ -83,7 +87,8 @@ public class PLPToolConnector implements PLPGenericModule {
                 }
             }
         });
-        plp.g_dev.addToolsItem(menuFlowchartGenerator);
+        menuFlowchart.add(menuFlowchartGenerator);
+        plp.g_dev.addToolsItem(menuFlowchart);
     }
 
     @Override

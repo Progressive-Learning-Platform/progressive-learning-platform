@@ -3,6 +3,10 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
+class::plptool.extras.flowchart.ExportDOT$1
+class::plptool.extras.flowchart.ExportDOT$2
+class::plptool.extras.flowchart.ExportDOT$3
+class::plptool.extras.flowchart.ExportDOT
 class::plptool.extras.flowchart.Flowchart$1
 class::plptool.extras.flowchart.Flowchart$2
 class::plptool.extras.flowchart.Flowchart$3
