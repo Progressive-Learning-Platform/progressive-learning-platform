@@ -71,6 +71,7 @@ public class ProjectEvent {
 
     /* MISCELLANEOUS */
     public static final int         THIRDPARTY_LICENSE              = 1028;
+    public static final int         CONFIG_SAVE                     = 1029;
 
     /**
      * Event identifier
