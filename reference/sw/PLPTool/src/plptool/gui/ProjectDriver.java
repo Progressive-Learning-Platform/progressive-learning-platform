@@ -370,6 +370,12 @@ public class ProjectDriver {
                     if(PLPToolApp.getAttributes().containsKey(key))
                         out.write(key + "::" + PLPToolApp.getAttributes().get(key) + "\n");
                 }
+                // see if any modules want to save out their configuration
+                // --- any configuration saved will be loaded by loadConfig to
+                //     the application attributes, so no hook on loading is
+                //     necessary. The converse is not true, the module will have
+                //     to use this hook to keep its configuration
+                DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.CONFIG_SAVE, -1, out));
                 out.close();
 
             } catch(Exception e) {

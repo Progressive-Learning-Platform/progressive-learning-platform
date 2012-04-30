@@ -19,6 +19,7 @@
 package plptool.extras.flowchart;
 
 import plptool.*;
+import plptool.gui.PLPToolApp;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
 import javax.swing.JMenuItem;
@@ -34,7 +35,8 @@ public class PLPToolConnector implements PLPGenericModule {
     private ProjectDriver plp;
     private boolean processed = false;
     private PLPCPUProgram flowchart;
-    private ExportDOT frame;
+    private ExportDOT exportFrame;
+    private String dotPath;
 
     public Object hook(Object param) {
         if(param instanceof ProjectDriver) {
@@ -62,9 +64,15 @@ public class PLPToolConnector implements PLPGenericModule {
         } else if(param instanceof ProjectEvent) {
             ProjectEvent ev = (ProjectEvent) param;
             switch(ev.getIdentifier()) {
-                case ProjectEvent.NEW_PROJECT:
-                case ProjectEvent.PROJECT_OPEN:
-                    processed = false;
+                case ProjectEvent.CONFIG_SAVE:
+                    java.io.FileWriter out = (java.io.FileWriter) ev.getParameters();
+                    try {
+                        out.write("flowchart_dotpath::" + dotPath + "\n");
+                    } catch(java.io.IOException e) {
+                        return Msg.E("Unable to save configuration.",
+                                Constants.PLP_GENERAL_IO_ERROR, this);
+                    }
+                    return true;
             }
         }
 
@@ -75,20 +83,49 @@ public class PLPToolConnector implements PLPGenericModule {
         Msg.I("<em>Flowchart Generator</em> is ready &mdash; This module can be accessed through the <b>Tools" +
                 "</b>&rarr;<b>Flowchart Generator</b> menu",
                 null);
-        frame = new ExportDOT(plp.g_dev);
+        this.dotPath = PLPToolApp.getAttributes().get("flowchart_dotpath");
+        exportFrame = new ExportDOT(plp.g_dev);
         JMenu menuFlowchart = new JMenu("Flowchart Generator");
-        JMenuItem menuFlowchartGenerator = new JMenuItem("Save program routine as a .DOT file...");
-        menuFlowchartGenerator.addActionListener(new ActionListener() {
+        JMenuItem menuFlowchartDisplay = new JMenuItem("Display flowchart for the project");
+        menuFlowchartDisplay.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(plp.isAssembled()) {
                     flowchart = new PLPCPUProgram(plp);
-                    frame.update(flowchart);
-                    frame.setVisible(true);
-                }
+                    //exportFrame.update(flowchart);
+                    //exportFrame.setVisible(true);
+                } else
+                    Msg.I("The project needs to be assembled first.", null);
             }
         });
-        menuFlowchart.add(menuFlowchartGenerator);
+        JMenuItem menuFlowchartSetupDOT = new JMenuItem("Setup DOT for flowchart generation in PLPTool...");
+        menuFlowchartSetupDOT.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        JMenuItem menuFlowchartExportDOT = new JMenuItem("Export a program routine as a .DOT file...");
+        menuFlowchartExportDOT.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(plp.isAssembled()) {
+                    flowchart = new PLPCPUProgram(plp);
+                    exportFrame.update(flowchart);
+                    exportFrame.setVisible(true);
+                } else
+                    Msg.I("The project needs to be assembled first.", null);
+            }
+        });
+        menuFlowchart.add(menuFlowchartDisplay);
+        menuFlowchart.add(menuFlowchartSetupDOT);
+        menuFlowchart.add(menuFlowchartExportDOT);
         plp.g_dev.addToolsItem(menuFlowchart);
+    }
+
+    public void setDotPath(String dotPath) {
+        this.dotPath = dotPath;
+    }
+
+    public String getDotPath() {
+        return dotPath;
     }
 
     @Override
