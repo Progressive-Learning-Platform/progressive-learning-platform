@@ -515,7 +515,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     Constants.PLP_GENERIC_ERROR, null);
             return ret;
         }
-        ret += "This PLPTool package is built on " + prop.getProperty("buildstamp") + " by " + prop.getProperty("builder") + "\n";
+        ret += "This PLPTool package was built on " + prop.getProperty("buildstamp") + " by " + prop.getProperty("builder") + "\n";
         ret += "javac: " + prop.getProperty("javainfo") + "\n";
         ret += "ant: " + prop.getProperty("antinfo") +"\n";
         ret += "Built on: " + prop.getProperty("osinfo");
