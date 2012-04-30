@@ -21,6 +21,9 @@ package plptool.extras.flowchart;
 import plptool.*;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -30,10 +33,12 @@ public class PLPToolConnector implements PLPGenericModule {
     private ProjectDriver plp;
     private boolean processed = false;
     private PLPCPUProgram flowchart;
+    private Flowchart frame;
 
     public Object hook(Object param) {
         if(param instanceof ProjectDriver) {
             this.plp = (ProjectDriver) param;
+            init();
         } else if(param instanceof String) {
             String cmd = (String) param;
             if(cmd.equals("process")) {
@@ -45,21 +50,45 @@ public class PLPToolConnector implements PLPGenericModule {
                 if(flowchart != null)
                     for(int i = 0; i < flowchart.getNumberOfRoutines(); i++)
                         flowchart.printProgram(i);
-            } 
+            } else if(cmd.equals("dot")) {
+                if(processed) {
+                    for(int i = 0; i < flowchart.getNumberOfRoutines(); i++) {
+                        Msg.I("Flowchart for " + flowchart.getRoutine(i).getHead().getLabel(), this);
+                        Msg.P(flowchart.generateDOT(i));
+                    }
+                }
+            }
         } else if(param instanceof ProjectEvent) {
             ProjectEvent ev = (ProjectEvent) param;
             switch(ev.getIdentifier()) {
-                case ProjectEvent.POST_ASSEMBLE:
-                    if(plp.isAssembled()) {
-                        flowchart = new PLPCPUProgram(plp);
-                        processed = true;
-                    }
-                    break;
+                case ProjectEvent.NEW_PROJECT:
+                case ProjectEvent.PROJECT_OPEN:
+                    processed = false;
             }
         }
 
-
         return null;
+    }
+
+    private void init() {
+        Msg.I("Ready!", this);
+        frame = new Flowchart(plp.g_dev);
+        JMenuItem menuFlowchartGenerator = new JMenuItem("Generate flowchart...");
+        menuFlowchartGenerator.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(plp.isAssembled()) {
+                    flowchart = new PLPCPUProgram(plp);
+                    frame.update(flowchart);
+                    frame.setVisible(true);
+                }
+            }
+        });
+        plp.g_dev.addToolsItem(menuFlowchartGenerator);
+    }
+
+    @Override
+    public String toString() {
+        return "Flowchart Generator";
     }
 
     public String getVersion() {

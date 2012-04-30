@@ -499,5 +499,51 @@ public class PLPToolbox {
 
         return mapArray;
     }
+
+    /**
+     * Bring up the file save dialog
+     *
+     * @param startPath Starting path to browse from
+     * @param filter Filter to be used with the dialog
+     * @return The file object on successful browsing, null otherwise
+     */
+    public static File saveFileDialog(String startPath, javax.swing.filechooser.FileFilter filter) {
+        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileFilter(filter);
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setCurrentDirectory(new File(startPath));
+
+        int retVal = fc.showSaveDialog(null);
+
+        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION)
+            return fc.getSelectedFile();
+        return null;
+    }
+
+    public static javax.swing.filechooser.FileFilter createFileFilter(final String extensions, final String description) {
+        javax.swing.filechooser.FileFilter filter = new javax.swing.filechooser.FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                if(f.isDirectory())
+                    return true;
+
+                String[] extensionTokens = extensions.split(",");
+                for(int i = 0; i < extensionTokens.length; i++) {
+                    if(f.getAbsolutePath().endsWith("." + extensionTokens[i]))
+                        return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return description;
+            }
+        };
+
+        return filter;
+    }
 }
 
