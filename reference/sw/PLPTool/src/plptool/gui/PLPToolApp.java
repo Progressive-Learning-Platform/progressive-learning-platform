@@ -38,9 +38,9 @@ import java.util.Properties;
 /**
  * This is the main class of PLPTool. This class handles command line arguments
  * and sets up the environment for PLPTool execution. This class is responsible
- * to setup runtime environments (app properties), load dynamic modules
- * specified in command line arguments, initiate module autoload procedure,
- * and determines next phase of execution (GUI or command line).
+ * for setting up runtime environments (app properties), loading dynamic modules
+ * specified in command line arguments, initiating module autoload procedure,
+ * and determining next phase of execution (GUI or command line).
  */
 public class PLPToolApp extends SingleFrameApplication {
     

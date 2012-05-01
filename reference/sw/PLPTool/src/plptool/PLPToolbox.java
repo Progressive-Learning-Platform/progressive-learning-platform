@@ -177,6 +177,7 @@ public class PLPToolbox {
      * @return Temporary directory path in String
      */
     public static String getTmpDir() {
+        checkCreateTempDirectory();
         return getConfDir() + "/tmp";
     }
 
@@ -428,6 +429,35 @@ public class PLPToolbox {
     }
 
     /**
+     * Open a file and return the contents as string.
+     *
+     * @param path Path to the file to open
+     * @return Contents of the file as string, or null if there was an error
+     */
+    public static String openFile(String path) {
+        String data = null;
+        try {
+            FileInputStream in = new FileInputStream(new File(path));
+            BufferedReader r = new BufferedReader(new InputStreamReader(in));
+            String line;
+
+            while((line = r.readLine()) != null) {
+                if(data == null)
+                    data = "";
+                data += line + "\n";
+            }
+
+        } catch(Exception e) {
+            Msg.E("File open error: '" + path +
+                    "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
+                    , Constants.PLP_GENERAL_IO_ERROR, null);
+            return null;
+        }
+
+        return data;
+    }
+
+    /**
      * Extract a file from a jar file
      *
      * @param jar Path to JAR file to extract the file from
@@ -486,8 +516,8 @@ public class PLPToolbox {
      * Convert a map to 2-dimensional array
      *
      * @param map Reference to the map object to convert
-     * @return 2-dimensional array with keys in the first field and the values
-     * in the second
+     * @return 2-dimensional array with keys in the first field and the matching
+     * values in the second
      */
     public static Object[][] mapToArray(java.util.Map map) {
         Object[][] mapArray = new Object[map.size()][2];
@@ -498,6 +528,30 @@ public class PLPToolbox {
         }
 
         return mapArray;
+    }
+
+    /**
+     * Execute an external program
+     *
+     * @param program Command to be executed by the Runtime class
+     * @return Exit code of the program
+     */
+    public static int execute(String program) {
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(program);
+        } catch(IOException ioe) {
+            Msg.E("I/O error while attempting to execute '" + program + "'",
+                    Constants.PLP_GENERAL_IO_ERROR, null);
+            return -1000;
+        }
+        try {
+            p.waitFor();
+        } catch(InterruptedException ie) {
+
+        }
+
+        return p.exitValue();
     }
 
     /**
@@ -520,6 +574,36 @@ public class PLPToolbox {
         return null;
     }
 
+    /**
+     * Bring up the file open dialog
+     *
+     * @param startPath Starting path to browse from
+     * @param filter Filter to be used with the dialog
+     * @return The file object on successful browsing, null otherwise
+     */
+    public static File openFileDialog(String startPath, javax.swing.filechooser.FileFilter filter) {
+        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        fc.setFileFilter(filter);
+        fc.setAcceptAllFileFilterUsed(true);
+        fc.setCurrentDirectory(new File(startPath));
+
+        int retVal = fc.showOpenDialog(null);
+
+        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION)
+            return fc.getSelectedFile();
+        return null;
+    }
+
+    /**
+     * Create a filter for JFileChooser. Extensions are given in a comma-
+     * delimited list with no preceding period. e.g. "txt,text" will create
+     * a filter for files with .txt or .text extension
+     *
+     * @param extensions Comma-delimited list of extensions to filter for
+     * @param description Description of the filter to be shown in the
+     * filechooser
+     * @return An instance of the requested FileFilter
+     */
     public static javax.swing.filechooser.FileFilter createFileFilter(final String extensions, final String description) {
         javax.swing.filechooser.FileFilter filter = new javax.swing.filechooser.FileFilter() {
 

@@ -36,6 +36,8 @@ public class PLPToolConnector implements PLPGenericModule {
     private boolean processed = false;
     private PLPCPUProgram flowchart;
     private ExportDOT exportFrame;
+    private SetupDOT setupFrame;
+    private DisplayFlowchart displayFrame;
     private String dotPath;
 
     public Object hook(Object param) {
@@ -85,14 +87,16 @@ public class PLPToolConnector implements PLPGenericModule {
                 null);
         this.dotPath = PLPToolApp.getAttributes().get("flowchart_dotpath");
         exportFrame = new ExportDOT(plp.g_dev);
+        setupFrame = new SetupDOT(plp.g_dev, this);
+        displayFrame = new DisplayFlowchart(plp.g_dev);
         JMenu menuFlowchart = new JMenu("Flowchart Generator");
         JMenuItem menuFlowchartDisplay = new JMenuItem("Display flowchart for the project");
         menuFlowchartDisplay.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(plp.isAssembled()) {
                     flowchart = new PLPCPUProgram(plp);
-                    //exportFrame.update(flowchart);
-                    //exportFrame.setVisible(true);
+                    displayFrame.update(flowchart);
+                    displayFrame.setVisible(true);
                 } else
                     Msg.I("The project needs to be assembled first.", null);
             }
@@ -100,7 +104,7 @@ public class PLPToolConnector implements PLPGenericModule {
         JMenuItem menuFlowchartSetupDOT = new JMenuItem("Setup DOT for flowchart generation in PLPTool...");
         menuFlowchartSetupDOT.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                setupFrame.setVisible(true);
             }
         });
         JMenuItem menuFlowchartExportDOT = new JMenuItem("Export a program routine as a .DOT file...");
