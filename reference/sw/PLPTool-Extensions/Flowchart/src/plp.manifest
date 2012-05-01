@@ -5,6 +5,10 @@ description::<enter description here>
 version::<enter version here>
 class::plptool.extras.flowchart.DisplayFlowchart$1
 class::plptool.extras.flowchart.DisplayFlowchart$2
+class::plptool.extras.flowchart.DisplayFlowchart$3
+class::plptool.extras.flowchart.DisplayFlowchart$4
+class::plptool.extras.flowchart.DisplayFlowchart$5
+class::plptool.extras.flowchart.DisplayFlowchart$6
 class::plptool.extras.flowchart.DisplayFlowchart
 class::plptool.extras.flowchart.ExportDOT$1
 class::plptool.extras.flowchart.ExportDOT$2

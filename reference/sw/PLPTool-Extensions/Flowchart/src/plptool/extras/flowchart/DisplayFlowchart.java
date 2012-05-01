@@ -18,20 +18,29 @@
 
 package plptool.extras.flowchart;
 
-import plptool.Constants;
+import plptool.*;
 import plptool.gui.PLPToolApp;
-import plptool.PLPToolbox;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.imageio.*;
+import java.awt.Image;
+import java.awt.image.*;
+import java.io.*;
 
 /**
  *
  * @author wira
  */
-public class DisplayFlowchart extends javax.swing.JDialog {
+public class DisplayFlowchart extends javax.swing.JFrame {
     private PLPCPUProgram p;
+    private Image i;
+    private Image originalI;
+    private JLabel fLabel;
+    private double zoomFactor;
+    private BufferedImage img;
 
     /** Creates new form ExportDOT */
     public DisplayFlowchart(java.awt.Frame parent) {
-        super(parent, true);
         initComponents();
         init();
         this.setLocationRelativeTo(parent);
@@ -39,6 +48,9 @@ public class DisplayFlowchart extends javax.swing.JDialog {
 
     private void init() {
         PLPToolbox.attachHideOnEscapeListener(this);
+        fLabel = new JLabel();
+        scroller.getViewport().add(fLabel);
+        zoomFactor = 1;
     }
 
     public void update(PLPCPUProgram p) {
@@ -62,6 +74,11 @@ public class DisplayFlowchart extends javax.swing.JDialog {
         jSeparator1 = new javax.swing.JSeparator();
         btnCancel = new javax.swing.JButton();
         btnDisplay = new javax.swing.JButton();
+        scroller = new javax.swing.JScrollPane();
+        btnZoomOut = new javax.swing.JButton();
+        btnOriginal = new javax.swing.JButton();
+        btnZoomIn = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Generate Flowchart");
@@ -86,6 +103,34 @@ public class DisplayFlowchart extends javax.swing.JDialog {
             }
         });
 
+        btnZoomOut.setText("-");
+        btnZoomOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomOutActionPerformed(evt);
+            }
+        });
+
+        btnOriginal.setText("Original");
+        btnOriginal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOriginalActionPerformed(evt);
+            }
+        });
+
+        btnZoomIn.setText("+");
+        btnZoomIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomInActionPerformed(evt);
+            }
+        });
+
+        btnSave.setText("Save Flowchart");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -93,11 +138,21 @@ public class DisplayFlowchart extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
                     .addComponent(jLabel1)
-                    .addComponent(btnCancel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(cmbRoutines, 0, 311, Short.MAX_VALUE)
+                        .addComponent(btnZoomOut)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnOriginal)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnZoomIn)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSave)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+                        .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(cmbRoutines, 0, 388, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -111,10 +166,17 @@ public class DisplayFlowchart extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbRoutines, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 165, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnZoomOut)
+                    .addComponent(btnOriginal)
+                    .addComponent(btnZoomIn)
+                    .addComponent(btnSave))
                 .addContainerGap())
         );
 
@@ -135,18 +197,67 @@ public class DisplayFlowchart extends javax.swing.JDialog {
             if(dotPath != null) {
                 PLPToolbox.execute(dotPath + " -Tpng " + tempDOTPath +
                         " -o " + tempPNGPath);
+                try {
+                    img = ImageIO.read(new File(tempPNGPath));
+                    i = java.awt.Toolkit.getDefaultToolkit().createImage(img.getSource());
+                    originalI = i;
+                    zoomFactor = 1;
+                    fLabel.setIcon(new ImageIcon(i));
+                } catch(IOException e) {
+                    Msg.E("Unable to read DOT output.", Constants.PLP_GENERAL_IO_ERROR,
+                            null);
+                }
             }
         }
 
     }//GEN-LAST:event_btnDisplayActionPerformed
 
+    private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
+        zoomFactor /= 2;
+        int lx = originalI.getWidth(null);
+        int ly = originalI.getHeight(null);
+        i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
+        fLabel.setIcon(new ImageIcon(i));
+    }//GEN-LAST:event_btnZoomOutActionPerformed
+
+    private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
+        zoomFactor *= 2;
+        int lx = originalI.getWidth(null);
+        int ly = originalI.getHeight(null);
+        i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
+        fLabel.setIcon(new ImageIcon(i));
+    }//GEN-LAST:event_btnZoomInActionPerformed
+
+    private void btnOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOriginalActionPerformed
+        zoomFactor = 1;
+        fLabel.setIcon(new ImageIcon(originalI));
+    }//GEN-LAST:event_btnOriginalActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        File f = PLPToolbox.saveFileDialog(Constants.launchPath,
+                PLPToolbox.createFileFilter("png", "PNG image"));
+        if(f != null) {
+            try {
+                ImageIO.write(img, "png", f);
+            } catch(IOException e) {
+                Msg.E("Failed to write '" + f.getAbsolutePath() + "'",
+                        Constants.PLP_GENERAL_IO_ERROR, null);
+            }
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnDisplay;
+    private javax.swing.JButton btnOriginal;
+    private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnZoomIn;
+    private javax.swing.JButton btnZoomOut;
     private javax.swing.JComboBox cmbRoutines;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JScrollPane scroller;
     // End of variables declaration//GEN-END:variables
 
 }
