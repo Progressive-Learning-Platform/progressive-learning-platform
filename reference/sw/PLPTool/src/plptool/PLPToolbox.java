@@ -429,12 +429,12 @@ public class PLPToolbox {
     }
 
     /**
-     * Open a file and return the contents as string.
+     * Read a file and return the contents as string.
      *
-     * @param path Path to the file to open
+     * @param path Path to the file to read from
      * @return Contents of the file as string, or null if there was an error
      */
-    public static String openFile(String path) {
+    public static String readFileAsString(String path) {
         String data = null;
         try {
             FileInputStream in = new FileInputStream(new File(path));
@@ -454,6 +454,36 @@ public class PLPToolbox {
             return null;
         }
 
+        return data;
+    }
+
+    /**
+     * Read a file and return it as a byte array
+     *
+     * @param path Path to the file to read from
+     * @return Contents of the file as byte array, or null if there was an error
+     */
+    public static byte[] readFile(String path) {
+        byte[] data = new byte[0];
+        int readBytes;
+        try {
+            FileInputStream in = new FileInputStream(new File(path));
+            byte[] buf = new byte[Constants.DEFAULT_IO_BUFFER_SIZE];
+            byte[] copyBuf;
+
+            while((readBytes = in.read(buf)) != -1) {
+                copyBuf = new byte[data.length+readBytes];
+                System.arraycopy(buf, 0, copyBuf, data.length, readBytes);
+                System.arraycopy(data, 0, copyBuf, 0, data.length);
+                data = copyBuf;
+            }
+
+        } catch(Exception e) {
+            Msg.E("File open error: '" + path +
+                    "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
+                    , Constants.PLP_GENERAL_IO_ERROR, null);
+            return null;
+        }
         return data;
     }
 
@@ -536,22 +566,18 @@ public class PLPToolbox {
      * @param program Command to be executed by the Runtime class
      * @return Exit code of the program
      */
-    public static int execute(String program) {
+    public static void execute(final String program) {
+        Msg.M("execute: '" + program + "'");
         Process p;
         try {
             p = Runtime.getRuntime().exec(program);
+            p.waitFor();
         } catch(IOException ioe) {
             Msg.E("I/O error while attempting to execute '" + program + "'",
                     Constants.PLP_GENERAL_IO_ERROR, null);
-            return -1000;
-        }
-        try {
-            p.waitFor();
         } catch(InterruptedException ie) {
 
         }
-
-        return p.exitValue();
     }
 
     /**

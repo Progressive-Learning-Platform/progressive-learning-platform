@@ -156,7 +156,14 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("openfiletest")) {
                 java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
                 if(f != null)
-                    System.out.println("**OPENFILETEST**\n" + PLPToolbox.openFile(f.getAbsolutePath()));
+                    System.out.println("**OPENFILETEST**\n" +
+                            PLPToolbox.readFileAsString(f.getAbsolutePath()));
+            } else if(command.equals("openfileasbytestest")) {
+                java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
+                if(f != null) {
+                    String str = new String(PLPToolbox.readFile(f.getAbsolutePath()));
+                    System.out.println("**OPENFILEBYTETEST**\n" + str);
+                }
             } else if(command.equals("hide")) {
                 this.setVisible(false);
             } else if(command.equals("hloff")) {
