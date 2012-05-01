@@ -38,7 +38,7 @@ public class ExportDOT extends javax.swing.JDialog {
     }
 
     private void init() {
-        
+        PLPToolbox.attachHideOnEscapeListener(this);
     }
 
     public void update(PLPCPUProgram p) {

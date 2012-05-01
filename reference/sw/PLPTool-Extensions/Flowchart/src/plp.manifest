@@ -3,6 +3,9 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
+class::plptool.extras.flowchart.DisplayFlowchart$1
+class::plptool.extras.flowchart.DisplayFlowchart$2
+class::plptool.extras.flowchart.DisplayFlowchart
 class::plptool.extras.flowchart.ExportDOT$1
 class::plptool.extras.flowchart.ExportDOT$2
 class::plptool.extras.flowchart.ExportDOT$3
@@ -15,6 +18,10 @@ class::plptool.extras.flowchart.PLPToolConnector$1
 class::plptool.extras.flowchart.PLPToolConnector$2
 class::plptool.extras.flowchart.PLPToolConnector$3
 class::plptool.extras.flowchart.PLPToolConnector
+class::plptool.extras.flowchart.SetupDOT$1
+class::plptool.extras.flowchart.SetupDOT$2
+class::plptool.extras.flowchart.SetupDOT$3
+class::plptool.extras.flowchart.SetupDOT
 class::plptool.extras.flowchart.JumpNode
 class::plptool.extras.flowchart.ExitNode
 class::plptool.extras.flowchart.DecisionNode

@@ -69,8 +69,7 @@ public class PLPToolConnector implements PLPGenericModule {
         JMenuItem menuClient = new JMenuItem("Collaborative Programming Client...");
         menuClient.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(active)
-                    client.setVisible(true);
+                client.setVisible(true);
             }
         });
         plp.g_dev.addToolsItem(menuClient);

@@ -24,7 +24,7 @@ package plptool;
  * @author wira
  */
 public class Text {
-    public static final String versionString = "4.2";
+    public static final String versionString = "5.0";
     public static final String copyrightString =
             "PLP Software Tool (PLPTool) version " + versionString + "\n" +
             "Copyright (C) 2010-2012 PLP Contributors.\n" +
