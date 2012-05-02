@@ -208,6 +208,13 @@ public class PLPCPUProgram {
                 Msg.W("traverse[" + count + "]: Looks like we fell off the program!", this);
                 return true;
             }
+            tempIndex = collection.hasNodeWithAddress(pc);
+            if(!first && tempIndex >= 0) {
+                // branches merged, we're done
+                current.setNext(collection.getNode(tempIndex));
+                Msg.D("traverse[" + count +"]: Merged branches, we're done.", 3, this);
+                return true;
+            }
             instr = obj[index];
             opcode = MIPSInstr.opcode(instr);
             addrLabel = asm.lookupLabel(pc);
@@ -356,14 +363,6 @@ public class PLPCPUProgram {
                     break;
                     
                 default:
-                    tempIndex = collection.hasNodeWithAddress(pc);
-                    if(!first && tempIndex >= 0) {
-                        // branches merged, we're done
-                        current.setNext(collection.getNode(tempIndex));
-                        Msg.D("traverse[" + count +"]: Merged branches, we're done.", 3, this);
-                        return true;
-                    }
-
                     if(postBranch || addrLabel != null) {
                         tempNode = new Node(addrLabel, pc);
                         if(current instanceof JumpNode)
