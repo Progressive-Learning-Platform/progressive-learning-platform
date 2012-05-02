@@ -447,6 +447,9 @@ public class PLPToolbox {
                 data += line + "\n";
             }
 
+            r.close();
+            in.close();
+
         } catch(Exception e) {
             Msg.E("File open error: '" + path +
                     "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
@@ -477,6 +480,8 @@ public class PLPToolbox {
                 System.arraycopy(data, 0, copyBuf, 0, data.length);
                 data = copyBuf;
             }
+
+            in.close();
 
         } catch(Exception e) {
             Msg.E("File open error: '" + path +
@@ -564,7 +569,6 @@ public class PLPToolbox {
      * Execute an external program
      *
      * @param program Command to be executed by the Runtime class
-     * @return Exit code of the program
      */
     public static void execute(final String program) {
         Msg.M("execute: '" + program + "'");

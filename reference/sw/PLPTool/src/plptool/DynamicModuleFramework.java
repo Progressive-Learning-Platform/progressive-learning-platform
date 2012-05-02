@@ -845,6 +845,8 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                     out.write(array, 0, length);
                     length = in.read(array);
                 }
+                out.close();
+                in.close();
 
                 try {
                     ret = defineClass(name, out.toByteArray(), 0, out.size());
