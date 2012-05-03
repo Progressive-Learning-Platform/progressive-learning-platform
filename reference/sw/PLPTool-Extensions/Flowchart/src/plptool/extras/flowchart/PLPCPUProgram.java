@@ -118,7 +118,7 @@ public class PLPCPUProgram {
         }
     }
 
-    public String generateDOT(int routine) {
+    public String generateDOT(int routine, boolean useColors) {
         Msg.I("Generating DOT output", this);
         NodeCollection c = routines.get(routine);
         String ret = "digraph G {\n";
@@ -130,15 +130,25 @@ public class PLPCPUProgram {
             code = n.getCode().trim().replace("\n", "\\n");
             
             if(n.getLabel() != null)
-                ret += "label_node" + i + " [shape=Mrecord] [label=\"" + n.getLabel() + "\"];\n";
+                ret += "label_node" + i + " [shape=Mrecord] " +
+                        (useColors ? "[style=filled fillcolor=green fontcolor=black]" : "") +
+                        "[label=\"" + n.getLabel() + "\"];\n";
             if(n instanceof BranchNode) {
-                ret += "code_node" + i + " [shape=diamond] [label=\"" + code + "\"];\n";
+                ret += "code_node" + i + " [shape=diamond] " +
+                        (useColors ? "[style=filled fillcolor=yellow fontcolor=black]" : "") +
+                        "[label=\"" + code + "\"];\n";
             } else if(n instanceof JumpNode) {
-                ret += "code_node" + i + " [shape=box] [label=\"" + code + "\"];\n";
+                ret += "code_node" + i + " [shape=box] " +
+                        (useColors ? "[style=filled fillcolor=yellow fontcolor=black]" : "") +""
+                        + "[label=\"" + code + "\"];\n";
             } else if(n instanceof CallNode) {
-                ret += "code_node" + i + " [shape=parallelogram] [label=\"" + code + "\"];\n";
+                ret += "code_node" + i + " [shape=parallelogram] " +
+                        (useColors ? "[style=filled fillcolor=blue fontcolor=white]" : "") +
+                        "[label=\"" + code + "\"];\n";
             } else if(n instanceof ExitNode) {
-                ret += "code_node" + i + " [shape=invhouse] [label=\"" + code + "\"];\n";
+                ret += "code_node" + i + " [shape=invhouse] " +
+                        (useColors ? "[style=filled fillcolor=red fontcolor=white]" : "") +
+                        "[label=\"" + code + "\"];\n";
             } else {// if(!code.equals("")) {
                 ret += "code_node" + i + " [shape=box] [label=\"";
                 ret += code;

@@ -79,6 +79,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
         btnOriginal = new javax.swing.JButton();
         btnZoomIn = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
+        chkColors = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Generate Flowchart");
@@ -131,6 +132,8 @@ public class DisplayFlowchart extends javax.swing.JFrame {
             }
         });
 
+        chkColors.setText("Use colors");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -138,7 +141,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                    .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnZoomOut)
@@ -148,12 +151,14 @@ public class DisplayFlowchart extends javax.swing.JFrame {
                         .addComponent(btnZoomIn)
                         .addGap(18, 18, 18)
                         .addComponent(btnSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 205, Short.MAX_VALUE)
                         .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(cmbRoutines, 0, 388, Short.MAX_VALUE)
+                        .addComponent(cmbRoutines, 0, 419, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chkColors)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -165,7 +170,8 @@ public class DisplayFlowchart extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbRoutines, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chkColors))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -193,7 +199,8 @@ public class DisplayFlowchart extends javax.swing.JFrame {
             String tempDOTPath = PLPToolbox.getTmpDir() + "/flowchart_temp.dot";
             String tempPNGPath = PLPToolbox.getTmpDir() + "/flowchart_temp.png";
             String dotPath = PLPToolApp.getAttributes().get("flowchart_dotpath");
-            PLPToolbox.writeFile(p.generateDOT(routineIndex), tempDOTPath);
+            PLPToolbox.writeFile(p.generateDOT(routineIndex,
+                    chkColors.isSelected()), tempDOTPath);
             if(dotPath != null) {
                 PLPToolbox.execute(dotPath + " -Tpng " + tempDOTPath +
                         " -o " + tempPNGPath);
@@ -254,6 +261,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
+    private javax.swing.JCheckBox chkColors;
     private javax.swing.JComboBox cmbRoutines;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator1;

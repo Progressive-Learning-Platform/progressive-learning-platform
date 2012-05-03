@@ -59,7 +59,7 @@ public class PLPToolConnector implements PLPGenericModule {
                 if(processed) {
                     for(int i = 0; i < flowchart.getNumberOfRoutines(); i++) {
                         Msg.I("Flowchart for " + flowchart.getRoutine(i).getHead().getLabel(), this);
-                        Msg.P(flowchart.generateDOT(i));
+                        Msg.P(flowchart.generateDOT(i, false));
                     }
                 }
             }
