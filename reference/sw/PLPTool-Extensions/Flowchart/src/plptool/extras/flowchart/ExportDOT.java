@@ -166,7 +166,7 @@ public class ExportDOT extends javax.swing.JDialog {
         int routineIndex = cmbRoutines.getSelectedIndex();
         String out;
         if(routineIndex > -1) {
-            out = p.generateDOT(routineIndex);            
+            out = p.generateDOT(routineIndex, false);
             if(chkConsoleOut.isSelected())
                 Msg.P(out);
             else
