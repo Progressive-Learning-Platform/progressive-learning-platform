@@ -18,6 +18,7 @@
 
 package plptool;
 
+import plptool.dmf.DynamicModuleFramework;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.jar.*;

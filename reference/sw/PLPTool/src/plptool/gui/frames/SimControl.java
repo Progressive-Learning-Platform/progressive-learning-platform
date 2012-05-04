@@ -22,7 +22,7 @@ import plptool.Msg;
 import plptool.Config;
 import plptool.Constants;
 import plptool.gui.ProjectDriver;
-import plptool.PLPSimCore;
+import plptool.dmf.CallbackRegistry;
 
 import java.awt.event.ActionEvent;
 
@@ -245,13 +245,16 @@ public class SimControl extends javax.swing.JFrame {
 
     private void btnSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimStepActionPerformed
         boolean breakpoint = false;
+        CallbackRegistry.callback_Event_Sim_Step_Aggregate(Config.simCyclesPerStep);
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
+            CallbackRegistry.callback_Event_Sim_Step();
             plp.sim.step();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                 Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }
+        CallbackRegistry.callback_Event_Sim_Post_Step_Aggregate();
         plp.updateComponents(true);
     }//GEN-LAST:event_btnSimStepActionPerformed
 

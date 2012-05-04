@@ -3,6 +3,7 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
+class::plptool.extras.collab.Callback_Project_Change_Handler
 class::plptool.extras.collab.Client$1
 class::plptool.extras.collab.Client$2
 class::plptool.extras.collab.Client$3
@@ -21,4 +22,4 @@ class::plptool.extras.collab.ServerControl$5
 class::plptool.extras.collab.ServerControl$6
 class::plptool.extras.collab.ServerControl
 class::plptool.extras.collab.ServerService
-loadwithproject::plptool.extras.collab.PLPToolConnector
+loadmodule5::plptool.extras.collab.PLPToolConnector

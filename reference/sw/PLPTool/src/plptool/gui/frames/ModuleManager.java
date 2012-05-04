@@ -18,7 +18,7 @@
 
 package plptool.gui.frames;
 
-import plptool.DynamicModuleFramework;
+import plptool.dmf.*;
 import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
 
@@ -62,6 +62,25 @@ public class ModuleManager extends javax.swing.JDialog {
             }
             tblMods.setModel(tbl);
         }
+
+        DefaultTableModel tblLoaded = (DefaultTableModel) tblLoadedMods.getModel();
+        while(tblLoaded.getRowCount() > 0)
+            tblLoaded.removeRow(0);
+        for(int i = 0; i < DynamicModuleFramework.getNumberOfModuleInstances(); i++) {
+            Object temp = DynamicModuleFramework.getModuleInstance(i);
+            if(temp instanceof ModuleInterface5) {
+                ModuleInterface5 mod = (ModuleInterface5) temp;
+                String[] row = new String[4];
+                row[0] = mod.getName();
+                row[1] = "";
+                for(int j = 0; j < mod.getVersion().length; j++)
+                    row[1] += mod.getVersion()[j] + (j != mod.getVersion().length-1 ? "." : "");
+                row[2] = mod.getDescription();
+                row[3] = mod.getClass().getCanonicalName();
+                tblLoaded.addRow(row);
+            }
+        }
+        tblLoadedMods.setModel(tblLoaded);
     }
 
     /** This method is called from within the constructor to
@@ -73,16 +92,21 @@ public class ModuleManager extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblInfo = new javax.swing.JLabel();
+        tabbedPane = new javax.swing.JTabbedPane();
+        panelAutoload = new javax.swing.JPanel();
+        lblDownload = new javax.swing.JLabel();
+        btnLoad = new javax.swing.JButton();
+        btnClose = new javax.swing.JButton();
         scrollerTable = new javax.swing.JScrollPane();
         tblMods = new javax.swing.JTable();
-        btnDelete = new javax.swing.JButton();
-        btnBrowse = new javax.swing.JButton();
-        lblDownload = new javax.swing.JLabel();
         txtURL = new javax.swing.JTextField();
+        btnBrowse = new javax.swing.JButton();
+        lblInfo = new javax.swing.JLabel();
         btnDownload = new javax.swing.JButton();
-        btnClose = new javax.swing.JButton();
-        btnLoad = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        panelLoadedMods = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblLoadedMods = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ModuleManager.class);
@@ -90,8 +114,28 @@ public class ModuleManager extends javax.swing.JDialog {
         setName("Form"); // NOI18N
         setResizable(false);
 
-        lblInfo.setText(resourceMap.getString("lblInfo.text")); // NOI18N
-        lblInfo.setName("lblInfo"); // NOI18N
+        tabbedPane.setName("tabbedPane"); // NOI18N
+
+        panelAutoload.setName("panelAutoload"); // NOI18N
+
+        lblDownload.setText(resourceMap.getString("lblDownload.text")); // NOI18N
+        lblDownload.setName("lblDownload"); // NOI18N
+
+        btnLoad.setText(resourceMap.getString("btnLoad.text")); // NOI18N
+        btnLoad.setName("btnLoad"); // NOI18N
+        btnLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadActionPerformed(evt);
+            }
+        });
+
+        btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
+        btnClose.setName("btnClose"); // NOI18N
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         scrollerTable.setName("scrollerTable"); // NOI18N
 
@@ -124,13 +168,8 @@ public class ModuleManager extends javax.swing.JDialog {
         tblMods.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblMods.columnModel.title1")); // NOI18N
         tblMods.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblMods.columnModel.title3")); // NOI18N
 
-        btnDelete.setText(resourceMap.getString("btnDelete.text")); // NOI18N
-        btnDelete.setName("btnDelete"); // NOI18N
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
-            }
-        });
+        txtURL.setText(resourceMap.getString("txtURL.text")); // NOI18N
+        txtURL.setName("txtURL"); // NOI18N
 
         btnBrowse.setText(resourceMap.getString("btnBrowse.text")); // NOI18N
         btnBrowse.setName("btnBrowse"); // NOI18N
@@ -140,11 +179,8 @@ public class ModuleManager extends javax.swing.JDialog {
             }
         });
 
-        lblDownload.setText(resourceMap.getString("lblDownload.text")); // NOI18N
-        lblDownload.setName("lblDownload"); // NOI18N
-
-        txtURL.setText(resourceMap.getString("txtURL.text")); // NOI18N
-        txtURL.setName("txtURL"); // NOI18N
+        lblInfo.setText(resourceMap.getString("lblInfo.text")); // NOI18N
+        lblInfo.setName("lblInfo"); // NOI18N
 
         btnDownload.setText(resourceMap.getString("btnDownload.text")); // NOI18N
         btnDownload.setName("btnDownload"); // NOI18N
@@ -154,68 +190,135 @@ public class ModuleManager extends javax.swing.JDialog {
             }
         });
 
-        btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
-        btnClose.setName("btnClose"); // NOI18N
-        btnClose.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.setText(resourceMap.getString("btnDelete.text")); // NOI18N
+        btnDelete.setName("btnDelete"); // NOI18N
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCloseActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
 
-        btnLoad.setText(resourceMap.getString("btnLoad.text")); // NOI18N
-        btnLoad.setName("btnLoad"); // NOI18N
-        btnLoad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLoadActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        javax.swing.GroupLayout panelAutoloadLayout = new javax.swing.GroupLayout(panelAutoload);
+        panelAutoload.setLayout(panelAutoloadLayout);
+        panelAutoloadLayout.setHorizontalGroup(
+            panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelAutoloadLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollerTable, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
+                .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scrollerTable, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                     .addComponent(lblInfo, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
+                    .addGroup(panelAutoloadLayout.createSequentialGroup()
+                        .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelAutoloadLayout.createSequentialGroup()
                                 .addComponent(lblDownload)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtURL, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtURL, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
+                            .addGroup(panelAutoloadLayout.createSequentialGroup()
                                 .addComponent(btnBrowse)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                                 .addComponent(btnLoad, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(4, 4, 4)))
                         .addGap(12, 12, 12)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnDownload, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+        );
+        panelAutoloadLayout.setVerticalGroup(
+            panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelAutoloadLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblInfo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(scrollerTable, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDownload)
+                    .addComponent(txtURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDownload))
+                .addGap(18, 18, 18)
+                .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBrowse)
+                    .addComponent(btnClose)
+                    .addComponent(btnLoad)
+                    .addComponent(btnDelete))
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab(resourceMap.getString("panelAutoload.TabConstraints.tabTitle"), panelAutoload); // NOI18N
+
+        panelLoadedMods.setName("panelLoadedMods"); // NOI18N
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        tblLoadedMods.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Name", "Version", "Description", "Connector Class"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblLoadedMods.setName("tblLoadedMods"); // NOI18N
+        jScrollPane1.setViewportView(tblLoadedMods);
+        tblLoadedMods.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title0")); // NOI18N
+        tblLoadedMods.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title1")); // NOI18N
+        tblLoadedMods.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title2")); // NOI18N
+        tblLoadedMods.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title3")); // NOI18N
+
+        javax.swing.GroupLayout panelLoadedModsLayout = new javax.swing.GroupLayout(panelLoadedMods);
+        panelLoadedMods.setLayout(panelLoadedModsLayout);
+        panelLoadedModsLayout.setHorizontalGroup(
+            panelLoadedModsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelLoadedModsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        panelLoadedModsLayout.setVerticalGroup(
+            panelLoadedModsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelLoadedModsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab(resourceMap.getString("panelLoadedMods.TabConstraints.tabTitle"), panelLoadedMods); // NOI18N
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 580, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblInfo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scrollerTable, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblDownload)
-                    .addComponent(txtURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDownload))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBrowse)
-                    .addComponent(btnClose)
-                    .addComponent(btnLoad)
-                    .addComponent(btnDelete))
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -294,9 +397,14 @@ public class ModuleManager extends javax.swing.JDialog {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDownload;
     private javax.swing.JButton btnLoad;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblDownload;
     private javax.swing.JLabel lblInfo;
+    private javax.swing.JPanel panelAutoload;
+    private javax.swing.JPanel panelLoadedMods;
     private javax.swing.JScrollPane scrollerTable;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable tblLoadedMods;
     private javax.swing.JTable tblMods;
     private javax.swing.JTextField txtURL;
     // End of variables declaration//GEN-END:variables

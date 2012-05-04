@@ -22,7 +22,7 @@ import plptool.PLPSimBusModule;
 import plptool.Constants;
 import plptool.gui.ProjectDriver;
 import plptool.Msg;
-import plptool.DynamicModuleFramework;
+import plptool.dmf.DynamicModuleFramework;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JFrame;

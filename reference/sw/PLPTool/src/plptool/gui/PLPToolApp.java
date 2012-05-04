@@ -25,7 +25,7 @@ import plptool.Msg;
 import plptool.Constants;
 import plptool.ArchRegistry;
 import plptool.Text;
-import plptool.DynamicModuleFramework;
+import plptool.dmf.DynamicModuleFramework;
 import plptool.PLPToolbox;
 
 import java.io.FileInputStream;
@@ -129,7 +129,8 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
-        ArchRegistry.setup();           // SETUP ISA REGISTRY
+        ArchRegistry.setup();                   // Setup ISA registry
+        plptool.dmf.CallbackRegistry.setup();   // Setup callback registry
 
 /******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 

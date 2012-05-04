@@ -280,12 +280,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
                     java.io.File file = fc.getSelectedFile();
                     String shortName = file.getName();
-                    plptool.DynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
+                    plptool.dmf.DynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
                 }          
             } else if(command.equals("listdmodclasses")) {
                 Msg.M("Registered dynamic module classes:");
-                for(int i = 0; i < plptool.DynamicModuleFramework.getNumberOfClasses(); i++) {
-                    Class c = plptool.DynamicModuleFramework.getDynamicModuleClass(i);
+                for(int i = 0; i < plptool.dmf.DynamicModuleFramework.getNumberOfClasses(); i++) {
+                    Class c = plptool.dmf.DynamicModuleFramework.getDynamicModuleClass(i);
                     Class sc = c.getSuperclass();
                     Msg.m(i + ":\t" + c.getName());
                     Msg.M((sc != null) ? " extends " + sc.getName() : "");
@@ -293,9 +293,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("listdmods")) {
                 out.setText("");
                 String prev = "";
-                for(int i = 0; i < plptool.DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
+                for(int i = 0; i < plptool.dmf.DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
                     prev = out.getText();
-                    out.setText(prev + i + ":\t" + plptool.DynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
+                    out.setText(prev + i + ":\t" + plptool.dmf.DynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
                 }
             } else if(command.equals("getarchlist")) {
                 out.setText("");
@@ -306,6 +306,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     String strID = (String) archs[i][2];
                     Msg.I(id + ": " + c.getCanonicalName() + " \"" + strID + "\"", null);
                 }
+
+            } else if(command.startsWith("cmd ")) {
+                out.setText("");
+                String[] t = command.split(" ", 2);
+                if(t.length == 2)
+                    plptool.dmf.CallbackRegistry.callback_Command(t[1]);
 
             } else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
@@ -322,21 +328,21 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 } else if(tokens[0].equals("program") && tokens.length == 2) {
                     plp.program(tokens[1]);
                 } else if(tokens[0].equals("checkdmodclass") && tokens.length == 2) {
-                    out.setText("dmodclass index: " + plptool.DynamicModuleFramework.isModuleClassRegistered(tokens[1]) + "\n");
+                    out.setText("dmodclass index: " + plptool.dmf.DynamicModuleFramework.isModuleClassRegistered(tokens[1]) + "\n");
                 } else if(tokens[0].equals("newdmod") && tokens.length == 2) {
-                    out.setText("Instantiating new object for " + plptool.DynamicModuleFramework.getDynamicModuleClass(PLPToolbox.parseNumInt(tokens[1])).getName() +"\n");
-                    plptool.DynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                    out.setText("Instantiating new object for " + plptool.dmf.DynamicModuleFramework.getDynamicModuleClass(PLPToolbox.parseNumInt(tokens[1])).getName() +"\n");
+                    plptool.dmf.DynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
                 } else if(tokens[0].equals("rmdmod") && tokens.length == 2) {
-                    plptool.DynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                    plptool.dmf.DynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
                 } else if(tokens[0].equals("setnewarch") && tokens.length == 2) {
                     int archid = Integer.parseInt(tokens[1]);
                     plp.setArch(archid);
                 } else if(tokens[0].equals("h") && tokens.length == 2) {
                     String[] temp = tokens[1].split(" ", 2);
                     out.setText("hook: " + temp[0] + "-" + temp[1] + "\n");
-                    plptool.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(temp[0]), temp[1]);
+                    plptool.dmf.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(temp[0]), temp[1]);
                 } else if(tokens[0].equals("hplp") && tokens.length == 2) {
-                    Object ret = plptool.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(tokens[1]), plp);
+                    Object ret = plptool.dmf.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(tokens[1]), plp);
                     if(ret != null)
                         out.setText("Module seems to have ProjectDriver hook.");
                     else
