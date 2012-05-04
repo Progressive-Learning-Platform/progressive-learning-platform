@@ -3,9 +3,6 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
-class::plptool.extras.flowchart.Callback_Clear
-class::plptool.extras.flowchart.Callback_Command
-class::plptool.extras.flowchart.Callback_Save_Config
 class::plptool.extras.flowchart.DisplayFlowchart$1
 class::plptool.extras.flowchart.DisplayFlowchart$2
 class::plptool.extras.flowchart.DisplayFlowchart$3
@@ -24,6 +21,9 @@ class::plptool.extras.flowchart.PLPCPUProgram
 class::plptool.extras.flowchart.PLPToolConnector$1
 class::plptool.extras.flowchart.PLPToolConnector$2
 class::plptool.extras.flowchart.PLPToolConnector$3
+class::plptool.extras.flowchart.PLPToolConnector$Callback_Clear
+class::plptool.extras.flowchart.PLPToolConnector$Callback_Command
+class::plptool.extras.flowchart.PLPToolConnector$Callback_Save_Config
 class::plptool.extras.flowchart.PLPToolConnector
 class::plptool.extras.flowchart.SetupDOT$1
 class::plptool.extras.flowchart.SetupDOT$2

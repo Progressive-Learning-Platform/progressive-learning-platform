@@ -106,9 +106,9 @@ public class PLPToolConnector implements ModuleInterface5 {
         menuFlowchart.add(menuFlowchartSetupDOT);
         menuFlowchart.add(menuFlowchartExportDOT);
         plp.g_dev.addToolsItem(menuFlowchart);
-        CallbackRegistry.register_Save_Config(new Callback_Save_Config(this));
-        CallbackRegistry.register_Command(new Callback_Command(this));
-        Callback_Clear cb = new Callback_Clear(displayFrame);
+        CallbackRegistry.register_Save_Config(new Callback_Save_Config());
+        CallbackRegistry.register_Command(new Callback_Command());
+        Callback_Clear cb = new Callback_Clear();
         CallbackRegistry.register_Project_New(cb);
         CallbackRegistry.register_Project_Open_Successful(cb);
         return Constants.PLP_OK;
@@ -144,54 +144,39 @@ public class PLPToolConnector implements ModuleInterface5 {
         int[] ver = {1, 0};
         return ver;
     }
-}
 
-class Callback_Save_Config implements Callback {
-    private PLPToolConnector c;
 
-    public Callback_Save_Config(PLPToolConnector c) {
-        this.c = c;
-    }
+    class Callback_Save_Config implements Callback {
+        public boolean callback(Object param) {
+            java.io.FileWriter out = (java.io.FileWriter) param;
+            try {
+                Msg.I("Saving configuration.", null);
+                out.write("flowchart_dotpath::" + dotPath + "\n");
+                return true;
+            } catch(java.io.IOException e) {
+                Msg.E("Unable to save configuration.",
+                        Constants.PLP_GENERAL_IO_ERROR, this);
+            }
 
-    public boolean callback(Object param) {
-        java.io.FileWriter out = (java.io.FileWriter) param;
-        try {
-            Msg.I("Saving configuration.", c);
-            out.write("flowchart_dotpath::" + c.getDotPath() + "\n");
-            return true;
-        } catch(java.io.IOException e) {
-            Msg.E("Unable to save configuration.",
-                    Constants.PLP_GENERAL_IO_ERROR, this);
+            return false;
         }
-
-        return false;
     }
+
+    class Callback_Command implements Callback {
+        public boolean callback(Object param) {
+            command((String) param);
+            return true;
+        }
+    }
+
+    class Callback_Clear implements Callback {
+        public boolean callback(Object param) {
+            Msg.D("Callback: clear", 2, null);
+
+            displayFrame.clearCanvas();
+            return true;
+        }
+    }
+
 }
 
-class Callback_Command implements Callback {
-    private PLPToolConnector c;
-
-    public Callback_Command(PLPToolConnector c) {
-        this.c = c;
-    }
-
-    public boolean callback(Object param) {
-        c.command((String) param);
-        return true;
-    }
-}
-
-class Callback_Clear implements Callback {
-    private DisplayFlowchart displayFrame;
-
-    public Callback_Clear(DisplayFlowchart displayFrame) {
-        this.displayFrame = displayFrame;
-    }
-
-    public boolean callback(Object param) {
-        Msg.D("Callback: clear", 2, null);
-        
-        displayFrame.clearCanvas();
-        return true;
-    }
-}
