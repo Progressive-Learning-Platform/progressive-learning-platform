@@ -57,6 +57,7 @@ public class CallbackRegistry {
     private static ArrayList<Callback> callbacks_Event_Sim_Run_Start = new ArrayList<Callback>();
     private static ArrayList<Callback> callbacks_Event_Sim_Run_Stop = new ArrayList<Callback>();
     private static ArrayList<Callback> callbacks_Event_Sim_Step = new ArrayList<Callback>();
+    private static ArrayList<Callback> callbacks_Event_Sim_Reset = new ArrayList<Callback>();
 
     private static ArrayList<Callback> callbacks_Project_OpenAsm_Change = new ArrayList<Callback>();
 
@@ -87,6 +88,7 @@ public class CallbackRegistry {
     public static boolean callback_Event_Sim_Run_Start()                               {return performCallback(callbacks_Event_Sim_Run_Start, null);}
     public static boolean callback_Event_Sim_Run_Stop()                                {return performCallback(callbacks_Event_Sim_Run_Stop, null);}
     public static boolean callback_Event_Sim_Step()                                    {return performCallback(callbacks_Event_Sim_Step, null);}
+    public static boolean callback_Event_Sim_Reset()                                   {return performCallback(callbacks_Event_Sim_Reset, null);}
 
     public static boolean callback_Project_OpenAsm_Change(Integer open_asm)            {return performCallback(callbacks_Project_OpenAsm_Change, open_asm);}
 
@@ -127,6 +129,7 @@ public class CallbackRegistry {
     public static void register_Event_Sim_Run_Start(Callback c)                               {callbacks_Event_Sim_Run_Start.add(c);}
     public static void register_Event_Sim_Run_Stop(Callback c)                                {callbacks_Event_Sim_Run_Stop.add(c);}
     public static void register_Event_Sim_Step(Callback c)                                    {callbacks_Event_Sim_Step.add(c);}
+    public static void register_Event_Sim_Reset(Callback c)                                   {callbacks_Event_Sim_Reset.add(c);}
 
     public static void register_Project_OpenAsm_Change(Callback c)                            {callbacks_Project_OpenAsm_Change.add(c);}
 }
