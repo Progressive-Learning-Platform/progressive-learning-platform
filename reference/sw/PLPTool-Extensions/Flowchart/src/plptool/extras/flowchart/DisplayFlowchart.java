@@ -53,6 +53,10 @@ public class DisplayFlowchart extends javax.swing.JFrame {
         zoomFactor = 1;
     }
 
+    public void clearCanvas() {
+        fLabel.setIcon(null);
+    }
+
     public void update(PLPCPUProgram p) {
         this.p = p;
         cmbRoutines.removeAllItems();

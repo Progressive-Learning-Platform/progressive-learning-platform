@@ -19,9 +19,9 @@
 package plptool.extras.flowchart;
 
 import plptool.*;
+import plptool.dmf.*;
 import plptool.gui.PLPToolApp;
 import plptool.gui.ProjectDriver;
-import plptool.gui.ProjectEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import java.awt.event.ActionEvent;
@@ -31,7 +31,7 @@ import java.awt.event.ActionListener;
  *
  * @author wira
  */
-public class PLPToolConnector implements PLPGenericModule {
+public class PLPToolConnector implements ModuleInterface5 {
     private ProjectDriver plp;
     private boolean processed = false;
     private PLPCPUProgram flowchart;
@@ -40,48 +40,32 @@ public class PLPToolConnector implements PLPGenericModule {
     private DisplayFlowchart displayFrame;
     private String dotPath;
 
-    public Object hook(Object param) {
-        if(param instanceof ProjectDriver) {
-            this.plp = (ProjectDriver) param;
-            init();
-        } else if(param instanceof String) {
-            String cmd = (String) param;
-            if(cmd.equals("process")) {
-                if(plp.isAssembled()) {
-                    flowchart = new PLPCPUProgram(plp);
-                    processed = true;
-                }
-            } else if(cmd.equals("print")) {
-                if(flowchart != null)
-                    for(int i = 0; i < flowchart.getNumberOfRoutines(); i++)
-                        flowchart.printProgram(i);
-            } else if(cmd.equals("dot")) {
-                if(processed) {
-                    for(int i = 0; i < flowchart.getNumberOfRoutines(); i++) {
-                        Msg.I("Flowchart for " + flowchart.getRoutine(i).getHead().getLabel(), this);
-                        Msg.P(flowchart.generateDOT(i, false));
-                    }
-                }
-            }
-        } else if(param instanceof ProjectEvent) {
-            ProjectEvent ev = (ProjectEvent) param;
-            switch(ev.getIdentifier()) {
-                case ProjectEvent.CONFIG_SAVE:
-                    java.io.FileWriter out = (java.io.FileWriter) ev.getParameters();
-                    try {
-                        out.write("flowchart_dotpath::" + dotPath + "\n");
-                    } catch(java.io.IOException e) {
-                        return Msg.E("Unable to save configuration.",
-                                Constants.PLP_GENERAL_IO_ERROR, this);
-                    }
-                    return true;
-            }
-        }
-
-        return null;
+    public int initialize(ProjectDriver plp) {
+        this.plp = plp;
+        return init();
     }
 
-    private void init() {
+    public void command(String cmd) {
+        if(cmd.equals("flowchart process")) {
+            if(plp.isAssembled()) {
+                flowchart = new PLPCPUProgram(plp);
+                processed = true;
+            }
+        } else if(cmd.equals("flowchart print")) {
+            if(flowchart != null)
+                for(int i = 0; i < flowchart.getNumberOfRoutines(); i++)
+                    flowchart.printProgram(i);
+        } else if(cmd.equals("flowchart dot")) {
+            if(processed) {
+                for(int i = 0; i < flowchart.getNumberOfRoutines(); i++) {
+                    Msg.I("Flowchart for " + flowchart.getRoutine(i).getHead().getLabel(), this);
+                    Msg.P(flowchart.generateDOT(i, false));
+                }
+            }
+        }
+    }
+
+    private int init() {
         Msg.I("<em>Flowchart Generator</em> is ready &mdash; This module can be accessed through the <b>Tools" +
                 "</b>&rarr;<b>Flowchart Generator</b> menu",
                 null);
@@ -122,6 +106,12 @@ public class PLPToolConnector implements PLPGenericModule {
         menuFlowchart.add(menuFlowchartSetupDOT);
         menuFlowchart.add(menuFlowchartExportDOT);
         plp.g_dev.addToolsItem(menuFlowchart);
+        CallbackRegistry.register_Save_Config(new Callback_Save_Config(this));
+        CallbackRegistry.register_Command(new Callback_Command(this));
+        Callback_Clear cb = new Callback_Clear(displayFrame);
+        CallbackRegistry.register_Project_New(cb);
+        CallbackRegistry.register_Project_Open_Successful(cb);
+        return Constants.PLP_OK;
     }
 
     public void setDotPath(String dotPath) {
@@ -137,7 +127,71 @@ public class PLPToolConnector implements PLPGenericModule {
         return "Flowchart Generator";
     }
 
-    public String getVersion() {
-        return "0.1";
+    public String getName() {
+        return "Flowchart Generator";
+    }
+
+    public String getDescription() {
+        return "Flowchart tool for PLPTool. Requires GraphViz.";
+    }
+
+    public int[] getMinimumPLPToolVersion() {
+        int[] ret = {5, 0};
+        return ret;
+    }
+
+    public int[] getVersion() {
+        int[] ver = {1, 0};
+        return ver;
+    }
+}
+
+class Callback_Save_Config implements Callback {
+    private PLPToolConnector c;
+
+    public Callback_Save_Config(PLPToolConnector c) {
+        this.c = c;
+    }
+
+    public boolean callback(Object param) {
+        java.io.FileWriter out = (java.io.FileWriter) param;
+        try {
+            Msg.I("Saving configuration.", c);
+            out.write("flowchart_dotpath::" + c.getDotPath() + "\n");
+            return true;
+        } catch(java.io.IOException e) {
+            Msg.E("Unable to save configuration.",
+                    Constants.PLP_GENERAL_IO_ERROR, this);
+        }
+
+        return false;
+    }
+}
+
+class Callback_Command implements Callback {
+    private PLPToolConnector c;
+
+    public Callback_Command(PLPToolConnector c) {
+        this.c = c;
+    }
+
+    public boolean callback(Object param) {
+        c.command((String) param);
+        return true;
+    }
+}
+
+class Callback_Clear implements Callback {
+    private DisplayFlowchart displayFrame;
+
+    public Callback_Clear(DisplayFlowchart displayFrame) {
+        this.displayFrame = displayFrame;
+    }
+
+    public boolean callback(Object param) {
+        Msg.D("Callback: clear", 2, null);
+        
+        displayFrame.clearCanvas();
+        return true;
     }
 }

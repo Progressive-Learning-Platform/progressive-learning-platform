@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2012 PLP Contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,28 +16,25 @@
 
  */
 
-package plptool;
+package plptool.dmf;
 
 /**
- * PLP generic module interface. This interface is used as a framework for
- * dynamic module loading and interfacing for PLPTool version 4.1. Use
- * plptool.dmf.ModuleInterface for modules intended for newer PLPTool versions.
+ * Callback interface for the dynamic module framework. Modules that need to
+ * register a callback will have to implement this interface and pass an
+ * instance of the callback to the appropriate register method in
+ * CallbackRegistry class.
  *
- * @author wira
+ * @author Wira
  */
-public interface PLPGenericModule {
+public interface Callback {
     /**
-     * Generic hook function for the module.
+     * The callback function can take any type of parameter. The callback
+     * should return true if it actually does work for the event (such as
+     * handling a file when the project file is being open to notify
+     * ProjectDriver that the file is handled).
      *
-     * @param param Reference to hook parameters
-     * @return Reference to return values
+     * @param param
+     * @return
      */
-    abstract Object hook(Object param);
-
-    /**
-     * Version identifier
-     *
-     * @return Version of the module in String
-     */
-    abstract String getVersion();
+    abstract public boolean callback(Object param);
 }

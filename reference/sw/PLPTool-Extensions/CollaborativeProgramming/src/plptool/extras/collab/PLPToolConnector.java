@@ -19,8 +19,8 @@
 package plptool.extras.collab;
 
 import plptool.*;
+import plptool.dmf.*;
 import plptool.gui.ProjectDriver;
-import plptool.gui.ProjectEvent;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,33 +29,25 @@ import java.awt.event.ActionListener;
  *
  * @author Wira
  */
-public class PLPToolConnector implements PLPGenericModule {
+public class PLPToolConnector implements ModuleInterface5 {
     private ProjectDriver plp;
     private boolean active = false;
     private ServerService service;
     private ServerControl serverControl;
     private Client client;
 
-    public Object hook(Object param) {
-        if(param instanceof ProjectDriver) {
-            this.plp = (ProjectDriver) param;
-            active = plp.plpfile != null;
-            init();
-            return true;
-        } else if(param instanceof ProjectEvent) {
-            ProjectEvent ev = (ProjectEvent) param;
-            switch(ev.getIdentifier()) {
-                case ProjectEvent.NEW_PROJECT:
-                case ProjectEvent.PROJECT_OPEN:
-                    active = true;
-            }
-            return true;
-        }
-
-        return null;
+    public String getName() {
+        return "PLPTool Collaborative Programming Module";
     }
 
-    private void init() {
+    public String getDescription() {
+        return "This module enables collaborative environment in classroom by" +
+                "using the network.";
+    }
+
+    public int initialize(ProjectDriver plp) {
+        this.plp = plp;
+        active = plp.plpfile != null;
         Msg.I("enabled", this);
         serverControl = new ServerControl(plp);
         client = new Client();
@@ -74,14 +66,42 @@ public class PLPToolConnector implements PLPGenericModule {
         });
         plp.g_dev.addToolsItem(menuClient);
         plp.g_dev.addToolsItem(menuServerControl);
+        Callback_Project_Change_Handler cb = new Callback_Project_Change_Handler(this);
+        CallbackRegistry.register_Project_New(cb);
+        CallbackRegistry.register_Project_Open_Successful(cb);
+        return Constants.PLP_OK;
     }
 
-    public String getVersion() {
-        return "0.1";
+    public void setActive() {
+        active = true;
+    }
+
+    public int[] getVersion() {
+        int[] version = {0, 2};
+        return version;
+    }
+
+    public int[] getMinimumPLPToolVersion() {
+        int[] version = {5, 0};
+        return version;
     }
 
     @Override
     public String toString() {
         return "Collaborative Programming";
+    }
+}
+
+class Callback_Project_Change_Handler implements Callback {
+    private PLPToolConnector c;
+
+    public Callback_Project_Change_Handler(PLPToolConnector c) {
+        this.c = c;
+    }
+
+    public boolean callback(Object param) {
+        Msg.D("Now we're talking.", 2, null);
+        c.setActive();
+        return true;
     }
 }

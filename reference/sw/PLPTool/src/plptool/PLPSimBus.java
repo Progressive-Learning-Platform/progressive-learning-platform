@@ -18,6 +18,8 @@
 
 package plptool;
 
+import plptool.dmf.DynamicModuleFramework;
+import plptool.dmf.CallbackRegistry;
 import plptool.gui.BusEvent;
 import plptool.mods.MemModule;
 import java.util.ArrayList;

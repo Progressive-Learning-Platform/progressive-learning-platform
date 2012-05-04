@@ -18,7 +18,7 @@
 
 package plptool.gui.frames;
 
-import plptool.DynamicModuleFramework;
+import plptool.dmf.DynamicModuleFramework;
 import plptool.PLPToolbox;
 import plptool.mods.IORegistry;
 import plptool.mods.Preset;

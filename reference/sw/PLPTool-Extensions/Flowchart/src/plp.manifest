@@ -3,6 +3,9 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
+class::plptool.extras.flowchart.Callback_Clear
+class::plptool.extras.flowchart.Callback_Command
+class::plptool.extras.flowchart.Callback_Save_Config
 class::plptool.extras.flowchart.DisplayFlowchart$1
 class::plptool.extras.flowchart.DisplayFlowchart$2
 class::plptool.extras.flowchart.DisplayFlowchart$3
@@ -31,4 +34,4 @@ class::plptool.extras.flowchart.ExitNode
 class::plptool.extras.flowchart.DecisionNode
 class::plptool.extras.flowchart.CallNode
 class::plptool.extras.flowchart.BranchNode
-loadwithproject::plptool.extras.flowchart.PLPToolConnector
+loadmodule5::plptool.extras.flowchart.PLPToolConnector

@@ -18,6 +18,7 @@
 
 package plptool.gui.frames;
 
+import plptool.dmf.DynamicModuleFramework;
 import plptool.*;
 import plptool.gui.ProjectDriver;
 

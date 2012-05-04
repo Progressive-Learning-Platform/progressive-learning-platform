@@ -36,10 +36,11 @@ import plptool.Msg;
 import plptool.Constants;
 import plptool.Config;
 import plptool.PLPSimBusModule;
-import plptool.DynamicModuleFramework;
+import plptool.dmf.DynamicModuleFramework;
 import plptool.PLPToolbox;
 import plptool.Text;
 import plptool.mods.*;
+import plptool.dmf.CallbackRegistry;
 import plptool.gui.PLPToolApp;
 import plptool.gui.ProjectDriver;
 import plptool.gui.ProjectEvent;
@@ -1403,8 +1404,10 @@ public class Develop extends javax.swing.JFrame {
      */
     public void simStep() {
         boolean breakpoint = false;
+        CallbackRegistry.callback_Event_Sim_Step_Aggregate(Config.simCyclesPerStep);
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
             plp.hookEvent(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));
+            CallbackRegistry.callback_Event_Sim_Step();
             plp.sim.step();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                 Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
@@ -1412,6 +1415,7 @@ public class Develop extends javax.swing.JFrame {
             }
         }
         plp.hookEvent(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1, Config.simCyclesPerStep));
+        CallbackRegistry.callback_Event_Sim_Post_Step_Aggregate();
         plp.updateComponents(true);
     }
 

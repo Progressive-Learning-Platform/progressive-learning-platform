@@ -18,10 +18,10 @@
 
 package plptool.gui;
 
-import java.awt.Color;
 import plptool.PLPSimCore;
 import plptool.Msg;
 import plptool.Config;
+import plptool.dmf.CallbackRegistry;
 
 /**
  *
@@ -57,6 +57,7 @@ public class SimRunner extends Thread {
             if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps && Msg.lastError == 0 && stepCount > 0; i++) {
                     plp.sim.step();
+                    CallbackRegistry.callback_Event_Sim_Step();
                     if(plp.sim.breakpoints.hasBreakpoint()) {
                         if(plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                             stepCount = 0;
