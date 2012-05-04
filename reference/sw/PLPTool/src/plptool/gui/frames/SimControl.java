@@ -262,6 +262,7 @@ public class SimControl extends javax.swing.JFrame {
         if(plp.g_simrun != null)
             plp.stopSimulation();
         plp.sim.reset();
+        CallbackRegistry.callback_Event_Sim_Reset();
 
         plp.updateComponents(true);
         //plp.refreshProjectView(false);
