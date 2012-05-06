@@ -574,6 +574,7 @@ public class Develop extends javax.swing.JFrame {
                 Config.devWindowHeight = getHeight();
                 ProjectDriver.saveConfig();
                 plp.hookEvent(new ProjectEvent(ProjectEvent.EXIT, -1));
+                CallbackRegistry.callback_Exit();
                 System.exit(0);
         }
     }
