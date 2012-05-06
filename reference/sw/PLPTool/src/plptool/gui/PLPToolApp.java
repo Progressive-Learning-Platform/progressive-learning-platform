@@ -26,6 +26,7 @@ import plptool.Constants;
 import plptool.ArchRegistry;
 import plptool.Text;
 import plptool.dmf.DynamicModuleFramework;
+import plptool.dmf.CallbackRegistry;
 import plptool.PLPToolbox;
 
 import java.io.FileInputStream;
@@ -78,6 +79,7 @@ public class PLPToolApp extends SingleFrameApplication {
             // Launch the ProjectDriver
             ProjectDriver.loadConfig();
             ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
+            CallbackRegistry.callback_Start();
             if(Constants.debugLevel > 0) {
                 con = new ConsoleFrame(plp);
                 con.setVisible(true);
@@ -87,7 +89,7 @@ public class PLPToolApp extends SingleFrameApplication {
             // Load modules inside the directories specified by the '-D' option
             if(moduleLoadDirs != null && moduleLoadDirs.size() > 0) {
                 String dirPath;
-                for(int i = 0;i < moduleLoadDirs.size(); i++) {
+                for(int i = 0; i < moduleLoadDirs.size(); i++) {
                     dirPath = moduleLoadDirs.get(i);
                     Msg.D("Loading modules from " + dirPath + "...", 2, null);
                     DynamicModuleFramework.autoloadModules(dirPath, plp, false);
@@ -130,7 +132,7 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {
         ArchRegistry.setup();                   // Setup ISA registry
-        plptool.dmf.CallbackRegistry.setup();   // Setup callback registry
+        CallbackRegistry.setup();               // Setup callback registry
 
 /******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 

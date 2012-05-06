@@ -79,9 +79,12 @@ public class PLPSimBus {
     public int add(PLPSimBusModule module) {
         boolean ret = bus_modules.add(module);
 
-        if(ret)
-            return bus_modules.indexOf(module);
-        else
+        if(ret) {
+            int index = bus_modules.indexOf(module);
+            Object[] params = {module, index};
+            CallbackRegistry.callback_Event_Bus_Add(params);
+            return index;
+        } else
             return Msg.E("Failed to attach module " + module,
                             Constants.PLP_ERROR_RETURN, this);
     }
@@ -93,6 +96,8 @@ public class PLPSimBus {
      * @return Always returns PLP_OK
      */
     public int remove(int index) {
+        Object[] params = {bus_modules.get(index), index};
+        CallbackRegistry.callback_Event_Bus_Remove(params);
         bus_modules.remove(index);
 
         return Constants.PLP_OK;
@@ -109,6 +114,7 @@ public class PLPSimBus {
      */
     public synchronized Object read(long addr) {
         DynamicModuleFramework.hook(new BusEvent(BusEvent.READ, addr));
+        CallbackRegistry.callback_Event_Bus_Read(addr);
         Object value = null;
         PLPSimBusModule module;
         for(int i = bus_modules.size() - 1; i >= 0; i--) {
@@ -125,8 +131,11 @@ public class PLPSimBus {
             }
         }
 
-        if(value != null)
-            return value;        
+        if(value != null) {
+            Object[] params = {addr, value};
+            CallbackRegistry.callback_Event_Bus_Post_Read(params);
+            return value;  
+        }
 
         else if(value == null && this.isMapped(addr))
             Msg.E("read(" + String.format("0x%08x", addr) + "):" +
@@ -152,6 +161,7 @@ public class PLPSimBus {
     public synchronized int write(long addr, Object data, boolean isInstr) {
         Object[] params = {addr, data, isInstr};
         DynamicModuleFramework.hook(new BusEvent(BusEvent.WRITE, params));
+        CallbackRegistry.callback_Event_Bus_Write(params);
         Msg.D("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
         boolean noMapping = true;
         int ret = Constants.PLP_OK;
@@ -238,6 +248,7 @@ public class PLPSimBus {
      */
     public synchronized int eval() {
         int ret = Constants.PLP_OK;
+        CallbackRegistry.callback_Event_Bus_Eval();
         for(int i = 0; i < bus_modules.size(); i++)
             ret += bus_modules.get(i).eval();
 
