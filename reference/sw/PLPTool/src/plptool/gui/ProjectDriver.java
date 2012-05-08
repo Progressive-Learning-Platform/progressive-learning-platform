@@ -698,6 +698,7 @@ public class ProjectDriver {
 
         // Hook for project save
         DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_SAVE, -1, tOut));
+        CallbackRegistry.callback_Project_Save(tOut);
 
         Msg.D("Closing tar archive...", 2, this);
         tOut.close();

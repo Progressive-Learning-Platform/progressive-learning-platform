@@ -39,6 +39,7 @@ public class CallbackRegistry {
     private static ArrayList<Callback> callbacks_Project_Open = new ArrayList<Callback>();
     private static ArrayList<Callback> callbacks_Project_Open_Successful = new ArrayList<Callback>();
     private static ArrayList<Callback> callbacks_Project_Open_Entry = new ArrayList<Callback>();
+    private static ArrayList<Callback> callbacks_Project_OpenAsm_Change = new ArrayList<Callback>();
 
     private static ArrayList<Callback> callbacks_Load_Config_Line = new ArrayList<Callback>();
     private static ArrayList<Callback> callbacks_Save_Config = new ArrayList<Callback>();
@@ -66,17 +67,17 @@ public class CallbackRegistry {
     private static ArrayList<Callback> callbacks_Event_Bus_Add = new ArrayList<Callback>();
     private static ArrayList<Callback> callbacks_Event_Bus_Remove = new ArrayList<Callback>();
 
-    private static ArrayList<Callback> callbacks_Project_OpenAsm_Change = new ArrayList<Callback>();
-
     public static boolean callback_Exit()                                              {return performCallback(callbacks_Exit, null);}
     public static boolean callback_Start()                                             {return performCallback(callbacks_Start, null);}
     public static boolean callback_Command(String cmd)                                 {return performCallback(callbacks_Command, cmd);}
 
     public static boolean callback_Project_New()                                       {return performCallback(callbacks_Project_New, null);}
-    public static boolean callback_Project_Save()                                      {return performCallback(callbacks_Project_Save, null);}
+    public static boolean callback_Project_Save(org.apache.commons.compress.archivers.tar.TarArchiveOutputStream out)
+                                                                                       {return performCallback(callbacks_Project_Save, out);}
     public static boolean callback_Project_Open()                                      {return performCallback(callbacks_Project_Open, null);}
     public static boolean callback_Project_Open_Successful()                           {return performCallback(callbacks_Project_Open_Successful, null);}
     public static boolean callback_Project_Open_Entry(Object[] params)                 {return performCallback(callbacks_Project_Open_Entry, params);}
+    public static boolean callback_Project_OpenAsm_Change(Integer open_asm)            {return performCallback(callbacks_Project_OpenAsm_Change, open_asm);}
 
     public static boolean callback_Load_Config_Line(String[] config)                   {return performCallback(callbacks_Load_Config_Line, config);}
     public static boolean callback_Save_Config(java.io.FileWriter out)                 {return performCallback(callbacks_Save_Config, out);}
@@ -104,8 +105,6 @@ public class CallbackRegistry {
     public static boolean callback_Event_Bus_Add(Object[] params)                      {return performCallback(callbacks_Event_Bus_Add, params);}
     public static boolean callback_Event_Bus_Remove(Object[] params)                   {return performCallback(callbacks_Event_Bus_Remove, params);}
 
-    public static boolean callback_Project_OpenAsm_Change(Integer open_asm)            {return performCallback(callbacks_Project_OpenAsm_Change, open_asm);}
-
     private static boolean performCallback(ArrayList<Callback> callbacks, Object param) {
         boolean ret = false;
         for(int i = 0; i < callbacks.size(); i++) {
@@ -125,6 +124,7 @@ public class CallbackRegistry {
     public static void register_Project_Open(Callback c)                                      {callbacks_Project_Open.add(c);}
     public static void register_Project_Open_Successful(Callback c)                           {callbacks_Project_Open_Successful.add(c);}
     public static void register_Project_Open_Entry(Callback c)                                {callbacks_Project_Open_Entry.add(c);}
+    public static void register_Project_OpenAsm_Change(Callback c)                            {callbacks_Project_OpenAsm_Change.add(c);}
 
     public static void register_Load_Config_Line(Callback c)                                  {callbacks_Load_Config_Line.add(c);}
     public static void register_Save_Config(Callback c)                                       {callbacks_Save_Config.add(c);}
@@ -151,6 +151,4 @@ public class CallbackRegistry {
     public static void register_Event_Bus_Eval(Callback c)                                    {callbacks_Event_Bus_Eval.add(c);}
     public static void register_Event_Bus_Add(Callback c)                                     {callbacks_Event_Bus_Add.add(c);}
     public static void register_Event_Bus_Remove(Callback c)                                  {callbacks_Event_Bus_Remove.add(c);}
-
-    public static void register_Project_OpenAsm_Change(Callback c)                            {callbacks_Project_OpenAsm_Change.add(c);}
 }
