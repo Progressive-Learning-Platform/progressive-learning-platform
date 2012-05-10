@@ -410,20 +410,43 @@ public class PLPToolbox {
      *
      * @param data Data to be written
      * @param file Destination file
-     * @return PLP_OK on successful write, IO_ERROR otherwise
+     * @return PLP_OK on successful write, IO_WRITE_ERROR otherwise
      */
     public static int writeFile(String data, String file) {
         File d = new File(file);
 
         try {
+            FileWriter out = new FileWriter(d);
+            out.write(data);
+            out.close();
+        } catch(IOException e) {
+            return Msg.E("File write error: '" + file +
+                    "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
+                    , Constants.PLP_IO_WRITE_ERROR, null);
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Write a new file filled with the provided data in byte array
+     *
+     * @param data Data to be written
+     * @param file Destination file
+     * @return PLP_OK on successful write, IO_WRITE_ERROR otherwise
+     */
+    public static int writeFile(byte[] data, String file) {
+        File d = new File(file);
+
+        try {
             FileOutputStream out = new FileOutputStream(d);
-            out.write(data.getBytes());
+            out.write(data);
             out.close();
 
         } catch(IOException e) {
             return Msg.E("File write error: '" + file +
                     "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
-                    , Constants.PLP_GENERAL_IO_ERROR, null);
+                    , Constants.PLP_IO_WRITE_ERROR, null);
         }
 
         return Constants.PLP_OK;

@@ -1703,9 +1703,7 @@ public class ProjectDriver {
 
         try {
 
-        FileWriter asmWriter = new FileWriter(asmFile);
-        asmWriter.write(asms.get(index).getAsmString());
-        asmWriter.close();
+        PLPToolbox.writeFile(asms.get(index).getAsmString(), path);
 
         } catch(Exception e) {
             if(Constants.debugLevel >= 10) e.printStackTrace();
