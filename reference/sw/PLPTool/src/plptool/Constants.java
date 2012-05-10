@@ -166,6 +166,13 @@ public class Constants {
     public static final int PLP_IO_PERMISSION_ERROR              = 8;
     public static final int PLP_GENERAL_IO_ERROR                 = 9;
 
+    // Specific I/O errors
+    public static final int PLP_IO_PERMISSION_EXCEPTION          = 9192;
+    public static final int PLP_IO_FILE_DOES_NOT_EXIST           = 9193;
+    public static final int PLP_IO_IS_NOT_A_DIRECTORY            = 9194;
+    public static final int PLP_IO_READ_ERROR                    = 9195;
+    public static final int PLP_IO_WRITE_ERROR                   = 9196;
+
     public static final int PLP_ERROR_RETURN                     = -1;
     public static final int PLP_OOPS                             = 9001;
 

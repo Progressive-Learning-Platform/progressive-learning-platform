@@ -106,9 +106,9 @@ public class DynamicModuleFramework {
                   Constants.PLP_DMOD_CLASS_NOT_FOUND_ERROR, null);
             return false;
         } catch(Exception e) {
-            Msg.E("Unable to load module. Set debug level to 1 or higher for" +
+            Msg.E("Unable to load module. Set debug level to 2 or higher for" +
                   " stack trace.", Constants.PLP_DMOD_GENERAL_ERROR, null);
-            if(Constants.debugLevel >= 1)
+            if(Constants.debugLevel >= 2)
                 e.printStackTrace();
             return false;
         }
@@ -1001,6 +1001,8 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
         } catch(Exception e) {
             Msg.E("Unable to load dynamic module " + name + " from the file " + path,
                   Constants.PLP_DMOD_PATH_ERROR, null);
+            if(Constants.debugLevel >= 2)
+                e.printStackTrace();
             return null;
         }
     }

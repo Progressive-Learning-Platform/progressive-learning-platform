@@ -536,6 +536,88 @@ public class PLPToolbox {
     }
 
     /**
+     * Pack a directory into a JAR file
+     *
+     * @param jar JAR file to create
+     * @param dirPath Directory to pack
+     * @return PLP_OK on successful packing, error code otherwise
+     */
+    public static int createJar(String jar, String dirPath) {
+        File dir = new File(dirPath);
+        int ret;
+        if(!dir.exists())
+            return Msg.E("'" + dir.getAbsolutePath() + "' does not exist",
+                    Constants.PLP_IO_FILE_DOES_NOT_EXIST, null);
+        else if(!dir.isDirectory())
+            return Msg.E("'" + dir.getAbsolutePath() + "' is not a directory",
+                    Constants.PLP_IO_IS_NOT_A_DIRECTORY, null);
+
+        try {
+            FileOutputStream fOut = new FileOutputStream(new File(jar));
+            JarOutputStream out = new JarOutputStream(fOut);
+            ret = addDirToJar(out, dir, dir);
+            out.close();
+            fOut.close();
+            if(ret != Constants.PLP_OK)
+                return ret;
+        } catch(IOException e) {
+            return Msg.E("I/O error while trying to archive '" +
+                    dir.getAbsolutePath() + "' into '" + jar + "'",
+                    Constants.PLP_GENERAL_IO_ERROR, null);
+        }
+
+        return Constants.PLP_OK;
+    }
+
+    /**
+     * Helper method for the createJar method. This method will recurse into
+     * directories and add entries to the JAR file. Entries are formatted
+     * with UNIX-style path separator (forward slashes) for compatibility
+     * with PLPTool class loader
+     *
+     * @param out JAR output stream
+     * @param dir Directory to recurse into
+     * @param root Root directory
+     * @return PLP_OK on successful operation, error code otherwise
+     */
+    private static int addDirToJar(JarOutputStream out, File dir, File root) {
+        String entryPath;
+        File[] files = dir.listFiles();
+        FileInputStream in;
+        byte buf[] = new byte[Constants.DEFAULT_IO_BUFFER_SIZE];
+        int readBytes;
+        int ret;
+        if(files != null) {
+            for(int i = 0; i < files.length; i++) {
+                if(files[i].isDirectory()) {
+                    if((ret = addDirToJar(out, files[i], root)) != Constants.PLP_OK)
+                        return ret;
+                } else {
+                    try {
+                        in = new FileInputStream(files[i]);
+                        entryPath = files[i].getAbsolutePath().replace(root.getAbsolutePath(), "").substring(1);
+                        if(File.separatorChar == '\\')
+                            entryPath = entryPath.replace("\\", "/");
+                        Msg.M("- Adding '" + entryPath + "'...");
+                        JarEntry entry = new JarEntry(entryPath);
+                        entry.setSize(files[i].length());
+                        out.putNextEntry(entry);
+                        while((readBytes = in.read(buf)) != -1)
+                            out.write(buf, 0, readBytes);
+                        out.flush();
+                        out.closeEntry();
+                    } catch(IOException e) {
+                        return Msg.E("I/O error while adding '" +
+                                files[i].getAbsolutePath() + "' to JAR archive.",
+                                Constants.PLP_GENERAL_IO_ERROR, null);
+                    }
+                }
+            }
+        }
+        return Constants.PLP_OK;
+    }
+
+    /**
      * Check if ~/.plp/tmp exists and create it if it doesn't.
      */
     public static void checkCreateTempDirectory() {
