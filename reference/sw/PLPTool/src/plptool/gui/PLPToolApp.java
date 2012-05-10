@@ -285,6 +285,12 @@ public class PLPToolApp extends SingleFrameApplication {
                     PLPToolbox.writeFile(manifest, args[i+2] + "/plp.manifest");
                 return;
 
+            // Pack a directory into a JAR file
+            } else if(args.length >= activeArgIndex + 3 && args[i].equals("--pack")) {
+                Msg.M("Packing '" + args[i+1] + "' to '" + args[i+2] + "'...");
+                PLPToolbox.createJar(args[i+2], args[i+1]);
+                return;
+
             // If we encounter '-plp', pass the rest of the arguments to the
             // project file manipulator
             } else if(args[i].equals("-plp")) {
@@ -313,11 +319,17 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println("\nRun with '--full-help' option for complete listing of options.");
                 return;
 
+            } else if(args[i].equals("--module-debugging")) {
+                printModuleDebuggingHelpMessage();
+                System.out.println(Text.contactString);
+                return;
+
             } else if(args[i].equals("--full-help")) {
                 printTerseHelpMessage();
                 System.out.println();
                 ProjectFileManipulator.helpMessage();
                 printFullHelpMessage();
+                System.out.println(Text.contactString);
                 return;
 
 /****************** FILE TO OPEN / CREATE *************************************/
@@ -388,7 +400,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --isa-id <arch id>      Force PLPTool to use the ISA with <arch id> for newly");
         System.out.println("                            created projects.");
         System.out.println("  --remove-config         Remove saved configuration and reset all settings.");
-        System.out.println("  --serialterminal        Launch serial terminal instead of the IDE.");
+        System.out.println("  --serialterminal        Launch the serial terminal instead of the IDE.");
         System.out.println("  --suppress-output       Engage silent mode.");
         System.out.println("  --suppress-warning      Suppress all warning messages.");
         System.out.println("   -d <level>             Set debug level (0 to infinity).");
@@ -406,9 +418,13 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("                            autoloading can be disabled by the user");
         System.out.println("                            (autoloading is enabled by default).");
         System.out.println("   -R                     Delete the autoload cache directory and all of its ");
-        System.out.println("                            contents.");        
-        System.out.println();
-        System.out.println("MODULE DEBUGGING COMMANDS:");
+        System.out.println("                            contents.");
+        System.out.println("  --module-debugging      Print a list of module debugging options.");
+        System.out.println();       
+    }
+
+    private static void printModuleDebuggingHelpMessage() {
+        System.out.println("Module debugging commands:");
         System.out.println("  --load-class <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
@@ -416,9 +432,10 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified path. This manifest file will be");
         System.out.println("                            written in the destination directory.");
+        System.out.println("  --pack <directory> <jar file>");
+        System.out.println("                          Pack a directory into a JAR file.");
         System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application.");
         System.out.println();
-	System.out.println(Text.contactString);
     }
 
     /**
