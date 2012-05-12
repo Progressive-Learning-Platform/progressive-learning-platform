@@ -59,7 +59,7 @@ void print_usage(void) {
 	printf("--front			run the front end only, do not call handle() on the parse tree\n");
 	printf("--noannotate		do not annotate output with original source\n");
 	printf("\n");
-	printf("binary blob options:\n");
+	printf("binary builder options:\n");
 	printf("--entry <filename>	use alternate entry point\n");
 	printf("--metafile <filename>	use alternate metafile\n");
 	printf("--builtin		print builtin entry point and metafile and exit\n");
@@ -230,9 +230,9 @@ int main(int argc, char *argv[]) {
 
 	/* BINARY BLOB */
 
-	log("[plpc] binary blob\n");
+	log("[plpc] binary builder\n");
 
-	/* build binary blob options */
+	/* build binary builder options */
 	sprintf(command, "plpbb -o %s -d %d %s %s %s %s %s %s.asm", 
 		S_FILE_OUTPUT,				/* output file name */
 		LOG_LEVEL,				/* debug level */
@@ -243,12 +243,12 @@ int main(int argc, char *argv[]) {
 		PBUILTIN ? "-p" : "",			/* print builtins */
 		S_FILE_OUTPUT
 	);	
-	vlog("[plpc] binary blob arguments: %s\n", command);
+	vlog("[plpc] binary builder arguments: %s\n", command);
 	
 	/* run it! */
 	ret = system(command);
 	if (ret != 0) {
-		err("[plpc] binary blob returned error: %d\n", ret);
+		err("[plpc] binary builder returned error: %d\n", ret);
 	}
 
 	/* unlink the files we created, maybe. */

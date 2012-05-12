@@ -200,6 +200,8 @@ int main(int argc, char *argv[]) {
 	if (SYMBOL_OUTPUT != NULL) {
 		vlog("[plpcc] printing symbol table\n");
 		print_symbols(sym, SYMBOL_OUTPUT, 0);
+		vlog("[plpcc] printing activation records\n");
+		print_frames(sym, SYMBOL_OUTPUT);
 	}
 
 	/* call the backend to compile the parse tree, starting from the head */

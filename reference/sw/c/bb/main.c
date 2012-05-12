@@ -108,7 +108,7 @@ char *build_metafile(char *f) {
 }
 
 void print_usage(void) {
-	printf("plpbb - plp binary blob\n\n");
+	printf("plpbb - plp binary builder\n\n");
 	printf("usage: plpbb <options> <input files>\n");
 	printf("options:\n");
 	printf("-o <filename>	output filename\n");

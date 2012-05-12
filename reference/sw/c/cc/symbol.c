@@ -268,6 +268,11 @@ void print_symbols(symbol_table* t, FILE* o, int depth) {
 			print_symbols(t->children[i], o, depth+1);
 }
 
+void print_frames(symbol_table* t, FILE* o) {
+	symbol *curr = NULL;
+
+}
+
 node* install_function(symbol_table *t, node *n) {
 	/* function definition nodes are one of four types:
 		1: specifiers, declarator, declaration list, compound statement

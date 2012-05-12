@@ -87,5 +87,6 @@ void handle_iteration_statement(node *);
 void handle_jump_statement(node *);
 void handle_translation_unit(node *);
 void handle_function_definition(node *);
+void handle_asm(node *);
 
 #endif
