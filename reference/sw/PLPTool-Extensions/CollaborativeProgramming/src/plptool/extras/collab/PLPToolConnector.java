@@ -64,8 +64,10 @@ public class PLPToolConnector implements ModuleInterface5 {
                 client.setVisible(true);
             }
         });
-        plp.g_dev.addToolsItem(menuClient);
-        plp.g_dev.addToolsItem(menuServerControl);
+        if(plp.g()) {
+            plp.g_dev.addToolsItem(menuClient);
+            plp.g_dev.addToolsItem(menuServerControl);
+        }
         Callback_Project_Change_Handler cb = new Callback_Project_Change_Handler(this);
         CallbackRegistry.register_Project_New(cb);
         CallbackRegistry.register_Project_Open_Successful(cb);
