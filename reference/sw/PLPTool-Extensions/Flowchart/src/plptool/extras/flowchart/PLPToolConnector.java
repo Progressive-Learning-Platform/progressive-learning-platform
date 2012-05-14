@@ -105,7 +105,8 @@ public class PLPToolConnector implements ModuleInterface5 {
         menuFlowchart.add(menuFlowchartDisplay);
         menuFlowchart.add(menuFlowchartSetupDOT);
         menuFlowchart.add(menuFlowchartExportDOT);
-        plp.g_dev.addToolsItem(menuFlowchart);
+        if(plp.g())
+            plp.g_dev.addToolsItem(menuFlowchart);
         CallbackRegistry.register_Save_Config(new Callback_Save_Config());
         CallbackRegistry.register_Command(new Callback_Command());
         Callback_Clear cb = new Callback_Clear();
