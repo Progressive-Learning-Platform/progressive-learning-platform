@@ -949,7 +949,7 @@ public class Develop extends javax.swing.JFrame {
         if(plp.g_simrun != null)
             plp.stopSimulation();
         plp.sim.reset();
-        CallbackRegistry.callback_Event_Sim_Reset();
+        CallbackRegistry.callback_Sim_Reset();
 
         tln.setHighlight(-1);
         tlh.setY(-1);
@@ -1406,18 +1406,18 @@ public class Develop extends javax.swing.JFrame {
      */
     public void simStep() {
         boolean breakpoint = false;
-        CallbackRegistry.callback_Event_Sim_Step_Aggregate(Config.simCyclesPerStep);
+        CallbackRegistry.callback_Sim_Step_Aggregate(Config.simCyclesPerStep);
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
-            plp.hookEvent(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));
-            CallbackRegistry.callback_Event_Sim_Step();
+            plp.hookEvent(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));            
             plp.sim.step();
+            CallbackRegistry.callback_Sim_Step();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                 Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }
         plp.hookEvent(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1, Config.simCyclesPerStep));
-        CallbackRegistry.callback_Event_Sim_Post_Step_Aggregate();
+        CallbackRegistry.callback_Sim_Post_Step_Aggregate();
         plp.updateComponents(true);
     }
 
