@@ -61,6 +61,14 @@ public class MIPSInstr {
         return (int) (instr & consts.J_MASK);
     }
 
+    public static long resolve_jaddr(long pc, long instr) { //pc=address of jump instruction
+        return ((pc+8) & 0xff000000L) | (jaddr(instr)<<2);
+    }
+
+    public static long resolve_baddr(long pc, long instr) { //pc=address of branch instruction
+        return (pc+4 + (imm(instr)<<2)) & ((long) 0xfffffff << 4 | 0xf);
+    }
+
     public static String mnemonic(long instr) {
         if(opcode(instr) != 0)
             return Asm.lookupInstrOpcode(opcode(instr));

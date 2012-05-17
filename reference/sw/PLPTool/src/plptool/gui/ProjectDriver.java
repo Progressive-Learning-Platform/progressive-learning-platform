@@ -1349,7 +1349,7 @@ public class ProjectDriver {
      */
     public int runSimulation() {
         hookEvent(new ProjectEvent(ProjectEvent.RUN_START, -1));
-        CallbackRegistry.callback_Event_Sim_Run_Start();
+        CallbackRegistry.callback_Sim_Run_Start();
         g_simrun = new plptool.gui.SimRunner(this);
         g_simrun.start();
 
@@ -1368,7 +1368,7 @@ public class ProjectDriver {
      */
     public int stopSimulation() {
         hookEvent(new ProjectEvent(ProjectEvent.RUN_END, -1));
-        CallbackRegistry.callback_Event_Sim_Run_Stop();
+        CallbackRegistry.callback_Sim_Run_Stop();
         if(g_simrun != null) {
             try {
                 g_simrun.stepCount = 0;
@@ -1626,6 +1626,8 @@ public class ProjectDriver {
         }
 
         asms.add(new PLPAsmSource("# New ASM File", name, asms.size()));
+        Object[] cParams = {asms.get(asms.size()-1), asms.size()-1};
+        CallbackRegistry.callback_Project_New_Asm(cParams);
         setModified();
 
         if(g) refreshProjectView(true);
@@ -1667,6 +1669,8 @@ public class ProjectDriver {
 
         asms.add(new PLPAsmSource(null, path, asms.size()));
         asms.get(asms.size() - 1).setAsmFilePath(asmFile.getName());
+        Object[] cParams = {asms.get(asms.size() - 1), asms.size() - 1};
+        CallbackRegistry.callback_Project_New_Asm(cParams);
 
         setModified();
 
@@ -1746,6 +1750,8 @@ public class ProjectDriver {
         }
             
         Msg.I("Removing " + asms.get(index).getAsmFilePath(), null);
+        Object[] cParams = {asms.get(index), index};
+        CallbackRegistry.callback_Project_Remove_Asm(cParams);
         asms.remove(index);
         if(g) refreshProjectView(false);
 

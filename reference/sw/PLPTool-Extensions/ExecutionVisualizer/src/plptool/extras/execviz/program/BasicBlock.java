@@ -53,6 +53,11 @@ public class BasicBlock {
         return addresses.get(index);
     }
 
+    public void addAddress(long addr) {
+        if(!hasAddress(addr))
+            addresses.add(addr);
+    }
+
     public int size() {
         return addresses.size();
     }
@@ -65,7 +70,7 @@ public class BasicBlock {
         return next;
     }
     
-    public void setDecisionNode(DecisionNode n) {
+    public void setBranchingNode(DecisionNode n) {
         this.branch = n;
     }
 

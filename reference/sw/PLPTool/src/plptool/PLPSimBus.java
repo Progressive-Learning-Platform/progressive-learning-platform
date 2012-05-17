@@ -82,7 +82,7 @@ public class PLPSimBus {
         if(ret) {
             int index = bus_modules.indexOf(module);
             Object[] params = {module, index};
-            CallbackRegistry.callback_Event_Bus_Add(params);
+            CallbackRegistry.callback_Bus_Add(params);
             return index;
         } else
             return Msg.E("Failed to attach module " + module,
@@ -97,7 +97,7 @@ public class PLPSimBus {
      */
     public int remove(int index) {
         Object[] params = {bus_modules.get(index), index};
-        CallbackRegistry.callback_Event_Bus_Remove(params);
+        CallbackRegistry.callback_Bus_Remove(params);
         bus_modules.remove(index);
 
         return Constants.PLP_OK;
@@ -114,7 +114,7 @@ public class PLPSimBus {
      */
     public synchronized Object read(long addr) {
         DynamicModuleFramework.hook(new BusEvent(BusEvent.READ, addr));
-        CallbackRegistry.callback_Event_Bus_Read(addr);
+        CallbackRegistry.callback_Bus_Read(addr);
         Object value = null;
         PLPSimBusModule module;
         for(int i = bus_modules.size() - 1; i >= 0; i--) {
@@ -133,7 +133,7 @@ public class PLPSimBus {
 
         if(value != null) {
             Object[] params = {addr, value};
-            CallbackRegistry.callback_Event_Bus_Post_Read(params);
+            CallbackRegistry.callback_Bus_Post_Read(params);
             return value;  
         }
 
@@ -161,7 +161,7 @@ public class PLPSimBus {
     public synchronized int write(long addr, Object data, boolean isInstr) {
         Object[] params = {addr, data, isInstr};
         DynamicModuleFramework.hook(new BusEvent(BusEvent.WRITE, params));
-        CallbackRegistry.callback_Event_Bus_Write(params);
+        CallbackRegistry.callback_Bus_Write(params);
         Msg.D("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
         boolean noMapping = true;
         int ret = Constants.PLP_OK;
@@ -248,7 +248,7 @@ public class PLPSimBus {
      */
     public synchronized int eval() {
         int ret = Constants.PLP_OK;
-        CallbackRegistry.callback_Event_Bus_Eval();
+        CallbackRegistry.callback_Bus_Eval();
         for(int i = 0; i < bus_modules.size(); i++)
             ret += bus_modules.get(i).eval();
 
