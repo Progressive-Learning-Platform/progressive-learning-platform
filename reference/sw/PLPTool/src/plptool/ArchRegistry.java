@@ -148,11 +148,12 @@ public class ArchRegistry {
     /**
      * PLPToolApp calls this method during initialization
      */
-    public static void setup() {
+    public static String[] setup(String[] args) {
         archClasses.put(0, plptool.mips.Architecture.class);
         archIdentifiers.put(0, "PLPCPU");
         archDescriptions.put(0, "PLP CPU ISA Implementation for PLPTool. " +
                 "This is the default built-in ISA for the PLP project.");
+        return args;
     }
 
     /**

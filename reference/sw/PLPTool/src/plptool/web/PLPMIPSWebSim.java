@@ -113,7 +113,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
     private int step() {
         txtEditor.setText("");
         int ret;
-        ret = plp.sim.step();
+        ret = plp.sim.stepW();
         SimCore sc = (SimCore) plp.sim;
 
         Msg.M("Register File Contents");

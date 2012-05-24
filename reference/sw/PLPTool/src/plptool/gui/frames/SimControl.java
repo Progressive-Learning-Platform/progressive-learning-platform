@@ -245,16 +245,15 @@ public class SimControl extends javax.swing.JFrame {
 
     private void btnSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimStepActionPerformed
         boolean breakpoint = false;
-        CallbackRegistry.callback_Sim_Step_Aggregate(Config.simCyclesPerStep);
+        CallbackRegistry.callback(CallbackRegistry.SIM_STEP_AGGREGATE, Config.simCyclesPerStep);
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {            
-            plp.sim.step();
-            CallbackRegistry.callback_Sim_Step();
+            plp.sim.stepW();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                 Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }
-        CallbackRegistry.callback_Sim_Post_Step_Aggregate();
+        CallbackRegistry.callback(CallbackRegistry.SIM_POST_STEP_AGGREGATE, null);
         plp.updateComponents(true);
     }//GEN-LAST:event_btnSimStepActionPerformed
 
@@ -262,7 +261,7 @@ public class SimControl extends javax.swing.JFrame {
         if(plp.g_simrun != null)
             plp.stopSimulation();
         plp.sim.reset();
-        CallbackRegistry.callback_Sim_Reset();
+        CallbackRegistry.callback(CallbackRegistry.SIM_RESET, null);
 
         plp.updateComponents(true);
         //plp.refreshProjectView(false);

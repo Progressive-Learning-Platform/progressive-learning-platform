@@ -22,142 +22,115 @@ import plptool.*;
 import java.util.ArrayList;
 
 /**
+ * This class handles callback registration in PLPTool. Callbacks are
+ * registered by passing an implementation of the Callback interface to the
+ * register method along with the callback number.
  *
  * @author Wira
  */
 public class CallbackRegistry {
-    public static void setup() {
+    private static boolean unit_test = false;
+    
+    public static final int CALLBACKS                   = 35;
 
+    public static final int EXIT                        = 0;
+    public static final int START                       = 1;
+    public static final int COMMAND                     = 2;
+    public static final int EVENT                       = 3;
+
+    public static final int PROJECT_NEW                 = 4;
+    public static final int PROJECT_SAVE                = 5;
+    public static final int PROJECT_OPEN                = 6;
+    public static final int PROJECT_OPEN_SUCCESSFUL     = 7;
+    public static final int PROJECT_OPEN_ENTRY          = 8;
+    public static final int PROJECT_OPENASM_CHANGE      = 9;
+    public static final int PROJECT_NEW_ASM             = 10;
+    public static final int PROJECT_REMOVE_ASM          = 11;
+
+    public static final int LOAD_CONFIG_LINE            = 12;
+    public static final int SAVE_CONFIG                 = 13;
+
+    public static final int EVENT_SIMULATE              = 14;
+    public static final int EVENT_DESIMULATE            = 15;
+    public static final int EVENT_SIM_INIT              = 16;
+    public static final int EVENT_SIM_POST_INIT         = 17;
+    public static final int EVENT_SIM_POST_UNINIT       = 18;
+    public static final int EVENT_ASSEMBLE              = 19;
+    public static final int EVENT_POST_ASSEMBLE         = 20;
+    public static final int EVENT_PROGRAM               = 21;
+
+    public static final int SIM_STEP_AGGREGATE          = 22;
+    public static final int SIM_POST_STEP_AGGREGATE     = 23;
+    public static final int SIM_RUN_START               = 24;
+    public static final int SIM_RUN_STOP                = 25;
+    public static final int SIM_STEP                    = 26;
+    public static final int SIM_POST_STEP               = 27;
+    public static final int SIM_RESET                   = 28;
+
+    public static final int BUS_READ                    = 29;
+    public static final int BUS_POST_READ               = 30;
+    public static final int BUS_WRITE                   = 31;
+    public static final int BUS_EVAL                    = 32;
+    public static final int BUS_ADD                     = 33;
+    public static final int BUS_REMOVE                  = 34;
+
+    private static final ArrayList<Callback>[] callbacks = new ArrayList[CALLBACKS];
+
+    /**
+     * Runtime setup for the registry
+     *
+     * @param args
+     * @return
+     */
+    public static String[] setup(String[] args) {
+        String[] ret = args;
+        for(int i = 0; i < args.length; i++)
+            if(args[i].equals("--callback-unit-test")) {
+                Msg.P("CallbackRegistry.setup: callback-unit-test");
+                unit_test = true;   
+                ret = PLPToolbox.gobble(args, i);
+            }
+
+        for(int i = 0; i < CALLBACKS; i++)
+            callbacks[i] = new ArrayList<Callback>();
+
+        return ret;
     }
 
-    private static ArrayList<Callback> callbacks_Exit = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Start = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Command = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event = new ArrayList<Callback>();
-
-    private static ArrayList<Callback> callbacks_Project_New = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Project_Save = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Project_Open = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Project_Open_Successful = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Project_Open_Entry = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Project_OpenAsm_Change = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Project_New_Asm = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Project_Remove_Asm = new ArrayList<Callback>();
-
-    private static ArrayList<Callback> callbacks_Load_Config_Line = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Save_Config = new ArrayList<Callback>();
-
-    private static ArrayList<Callback> callbacks_Event_Simulate = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event_Desimulate = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event_Sim_Init = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event_Sim_Post_Init = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event_Sim_Post_Uninit = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event_Assemble = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event_Post_Assemble = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Event_Program = new ArrayList<Callback>();
-
-    private static ArrayList<Callback> callbacks_Sim_Step_Aggregate = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Sim_Post_Step_Aggregate = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Sim_Run_Start = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Sim_Run_Stop = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Sim_Step = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Sim_Reset = new ArrayList<Callback>();
-
-    private static ArrayList<Callback> callbacks_Bus_Read = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Bus_Post_Read = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Bus_Write = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Bus_Eval = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Bus_Add = new ArrayList<Callback>();
-    private static ArrayList<Callback> callbacks_Bus_Remove = new ArrayList<Callback>();
-
-    public static boolean callback_Exit()                                              {return performCallback(callbacks_Exit, null);}
-    public static boolean callback_Start()                                             {return performCallback(callbacks_Start, null);}
-    public static boolean callback_Command(String cmd)                                 {return performCallback(callbacks_Command, cmd);}
-    public static boolean callback_Event(plptool.gui.ProjectEvent event)               {return performCallback(callbacks_Event, event);}
-
-    public static boolean callback_Project_New()                                       {return performCallback(callbacks_Project_New, null);}
-    public static boolean callback_Project_Save(org.apache.commons.compress.archivers.tar.TarArchiveOutputStream out)
-                                                                                       {return performCallback(callbacks_Project_Save, out);}
-    public static boolean callback_Project_Open()                                      {return performCallback(callbacks_Project_Open, null);}
-    public static boolean callback_Project_Open_Successful()                           {return performCallback(callbacks_Project_Open_Successful, null);}
-    public static boolean callback_Project_Open_Entry(Object[] params)                 {return performCallback(callbacks_Project_Open_Entry, params);}
-    public static boolean callback_Project_OpenAsm_Change(Integer open_asm)            {return performCallback(callbacks_Project_OpenAsm_Change, open_asm);}
-    public static boolean callback_Project_New_Asm(Object[] params)                    {return performCallback(callbacks_Project_New_Asm, params);}
-    public static boolean callback_Project_Remove_Asm(Object[] params)                 {return performCallback(callbacks_Project_Remove_Asm, params);}
-
-    public static boolean callback_Load_Config_Line(String[] config)                   {return performCallback(callbacks_Load_Config_Line, config);}
-    public static boolean callback_Save_Config(java.io.FileWriter out)                 {return performCallback(callbacks_Save_Config, out);}
-
-    public static boolean callback_Event_Simulate()                                    {return performCallback(callbacks_Event_Simulate, null);}
-    public static boolean callback_Event_Desimulate()                                  {return performCallback(callbacks_Event_Desimulate, null);}
-    public static boolean callback_Event_Sim_Init()                                    {return performCallback(callbacks_Event_Sim_Init, null);}
-    public static boolean callback_Event_Sim_Post_Init()                               {return performCallback(callbacks_Event_Sim_Post_Init, null);}
-    public static boolean callback_Event_Sim_Post_Uninit()                             {return performCallback(callbacks_Event_Sim_Post_Uninit, null);}
-    public static boolean callback_Event_Assemble()                                    {return performCallback(callbacks_Event_Assemble, null);}
-    public static boolean callback_Event_Post_Assemble()                               {return performCallback(callbacks_Event_Post_Assemble, null);}
-    public static boolean callback_Event_Program()                                     {return performCallback(callbacks_Event_Program, null);}
-
-    public static boolean callback_Sim_Step_Aggregate(Integer steps)                   {return performCallback(callbacks_Sim_Step_Aggregate, steps);}
-    public static boolean callback_Sim_Post_Step_Aggregate()                           {return performCallback(callbacks_Sim_Post_Step_Aggregate, null);}
-    public static boolean callback_Sim_Run_Start()                                     {return performCallback(callbacks_Sim_Run_Start, null);}
-    public static boolean callback_Sim_Run_Stop()                                      {return performCallback(callbacks_Sim_Run_Stop, null);}
-    public static boolean callback_Sim_Step()                                          {return performCallback(callbacks_Sim_Step, null);}
-    public static boolean callback_Sim_Reset()                                         {return performCallback(callbacks_Sim_Reset, null);}
-
-    public static boolean callback_Bus_Read(Long addr)                                 {return performCallback(callbacks_Bus_Read, addr);}
-    public static boolean callback_Bus_Post_Read(Object[] params)                      {return performCallback(callbacks_Bus_Post_Read, params);}
-    public static boolean callback_Bus_Write(Object[] params)                          {return performCallback(callbacks_Bus_Write, params);}
-    public static boolean callback_Bus_Eval()                                          {return performCallback(callbacks_Bus_Eval, null);}
-    public static boolean callback_Bus_Add(Object[] params)                            {return performCallback(callbacks_Bus_Add, params);}
-    public static boolean callback_Bus_Remove(Object[] params)                         {return performCallback(callbacks_Bus_Remove, params);}
-
-    private static boolean performCallback(ArrayList<Callback> callbacks, Object param) {
+    /**
+     * Perform callback. Should be triggered by PLPTool ONLY. Do NOT call this
+     * method from a module.
+     *
+     * @param callbackNum Callback number to perform
+     * @param param Parameter to the callback implementation
+     * @return True if one of the methods registered to this callback return
+     * true, false otherwise
+     */
+    public static boolean callback(int callbackNum, Object param) {
         boolean ret = false;
-        for(int i = 0; i < callbacks.size(); i++) {
-            Callback c = callbacks.get(i);
+        if(unit_test) Msg.P("callback[" + callbackNum + "]");
+        for(int i = 0; i < callbacks[callbackNum].size(); i++) {
+            Callback c = callbacks[callbackNum].get(i);
             Msg.D("callback: " + c.getClass().getCanonicalName(), 4, null);
             ret = c.callback(param) || ret;
         }
         return ret;
     }
 
-    public static void register_Exit(Callback c)                                              {callbacks_Exit.add(c);}
-    public static void register_Start(Callback c)                                             {callbacks_Start.add(c);}
-    public static void register_Command(Callback c)                                           {callbacks_Command.add(c);}
-    public static void register_Event(Callback c)                                             {callbacks_Event.add(c);}
+    /**
+     * Register a callback interface implementation to the specified callback
+     * number.
+     *
+     * @param callbackNum Callback number to register for
+     * @param callback Reference to an instance of the callback interface
+     * implementation
+     * @return False if the callback number is invalid, true otherwise
+     */
+    public static boolean register(int callbackNum, Callback callback) {
+        if(callbackNum < 0 || callbackNum >= CALLBACKS)
+            return false;
 
-    public static void register_Project_New(Callback c)                                       {callbacks_Project_New.add(c);}
-    public static void register_Project_Save(Callback c)                                      {callbacks_Project_Save.add(c);}
-    public static void register_Project_Open(Callback c)                                      {callbacks_Project_Open.add(c);}
-    public static void register_Project_Open_Successful(Callback c)                           {callbacks_Project_Open_Successful.add(c);}
-    public static void register_Project_Open_Entry(Callback c)                                {callbacks_Project_Open_Entry.add(c);}
-    public static void register_Project_OpenAsm_Change(Callback c)                            {callbacks_Project_OpenAsm_Change.add(c);}
-    public static void register_Project_New_Asm(Callback c)                                   {callbacks_Project_New_Asm.add(c);}
-    public static void register_Project_Remove_Asm(Callback c)                                {callbacks_Project_Remove_Asm.add(c);}
-
-    public static void register_Load_Config_Line(Callback c)                                  {callbacks_Load_Config_Line.add(c);}
-    public static void register_Save_Config(Callback c)                                       {callbacks_Save_Config.add(c);}
-
-    public static void register_Event_Simulate(Callback c)                                    {callbacks_Event_Simulate.add(c);}
-    public static void register_Event_Desimulate(Callback c)                                  {callbacks_Event_Desimulate.add(c);}
-    public static void register_Event_Sim_Init(Callback c)                                    {callbacks_Event_Sim_Init.add(c);}
-    public static void register_Event_Sim_Post_Init(Callback c)                               {callbacks_Event_Sim_Post_Init.add(c);}
-    public static void register_Event_Sim_Post_Uninit(Callback c)                             {callbacks_Event_Sim_Post_Uninit.add(c);}
-    public static void register_Event_Assemble(Callback c)                                    {callbacks_Event_Assemble.add(c);}
-    public static void register_Event_Post_Assemble(Callback c)                               {callbacks_Event_Post_Assemble.add(c);}
-    public static void register_Event_Program(Callback c)                                     {callbacks_Event_Program.add(c);}
-
-    public static void register_Sim_Step_Aggregate(Callback c)                                {callbacks_Sim_Step_Aggregate.add(c);}
-    public static void register_Sim_Post_Step_Aggregate(Callback c)                           {callbacks_Sim_Post_Step_Aggregate.add(c);}
-    public static void register_Sim_Run_Start(Callback c)                                     {callbacks_Sim_Run_Start.add(c);}
-    public static void register_Sim_Run_Stop(Callback c)                                      {callbacks_Sim_Run_Stop.add(c);}
-    public static void register_Sim_Step(Callback c)                                          {callbacks_Sim_Step.add(c);}
-    public static void register_Sim_Reset(Callback c)                                         {callbacks_Sim_Reset.add(c);}
-
-    public static void register_Bus_Read(Callback c)                                          {callbacks_Bus_Read.add(c);}
-    public static void register_Bus_Post_Read(Callback c)                                     {callbacks_Bus_Post_Read.add(c);}
-    public static void register_Bus_Write(Callback c)                                         {callbacks_Bus_Write.add(c);}
-    public static void register_Bus_Eval(Callback c)                                          {callbacks_Bus_Eval.add(c);}
-    public static void register_Bus_Add(Callback c)                                           {callbacks_Bus_Add.add(c);}
-    public static void register_Bus_Remove(Callback c)                                        {callbacks_Bus_Remove.add(c);}
+        callbacks[callbackNum].add(callback);
+        return true;
+    }
 }

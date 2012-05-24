@@ -115,7 +115,7 @@ public class SimCLI {
     }
 
     public static void cmd_s() {
-        if(core.step() != Constants.PLP_OK)
+        if(core.stepW() != Constants.PLP_OK)
              Msg.E("Simulation is stale. Please reset.",
                       Constants.PLP_SIM_STALE, null);
         else if(!silent) {
@@ -149,7 +149,7 @@ public class SimCLI {
                 time = System.currentTimeMillis();
             }
             for(int i = 0; i < steps && Msg.lastError == 0 && !breakpoint; i++) {
-                if(core.step() != Constants.PLP_OK)
+                if(core.stepW() != Constants.PLP_OK)
                     Msg.E("Simulation is stale. Please reset.",
                              Constants.PLP_SIM_STALE, null);
                 else if(!silent) {

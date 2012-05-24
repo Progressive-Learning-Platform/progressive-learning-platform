@@ -79,7 +79,7 @@ public class PLPToolApp extends SingleFrameApplication {
             // Launch the ProjectDriver
             ProjectDriver.loadConfig();
             ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
-            CallbackRegistry.callback_Start();
+            CallbackRegistry.callback(CallbackRegistry.START, null);
             if(Constants.debugLevel > 0) {
                 con = new ConsoleFrame(plp);
                 con.setVisible(true);
@@ -131,8 +131,8 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {
-        ArchRegistry.setup();                   // Setup ISA registry
-        CallbackRegistry.setup();               // Setup callback registry
+        args = ArchRegistry.setup(args);                   // Setup ISA registry
+        args = CallbackRegistry.setup(args);               // Setup callback registry
 
 /******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 

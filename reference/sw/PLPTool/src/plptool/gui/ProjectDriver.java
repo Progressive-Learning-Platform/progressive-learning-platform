@@ -301,7 +301,7 @@ public class ProjectDriver {
 
                 for(int i = 0; i < lines.length; i++) {
                     tokens = lines[i].split("::", 2);
-                    CallbackRegistry.callback_Load_Config_Line(tokens);
+                    CallbackRegistry.callback(CallbackRegistry.LOAD_CONFIG_LINE, tokens);
                     if(tokens[0].equals("devFont")) {
                         Config.devFont = tokens[1];
                     } else if(tokens[0].equals("devFontSize")) {
@@ -378,7 +378,7 @@ public class ProjectDriver {
                 //     necessary. The converse is not true, the module will have
                 //     to use this hook to keep its configuration
                 DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.CONFIG_SAVE, -1, out));
-                CallbackRegistry.callback_Save_Config(out);
+                CallbackRegistry.callback(CallbackRegistry.SAVE_CONFIG, out);
                 out.close();
 
             } catch(Exception e) {
@@ -444,7 +444,7 @@ public class ProjectDriver {
             g_dev.disableSimControls();
             g_dev.enableBuildControls();
         }
-        CallbackRegistry.callback_Project_New();
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW, null);
         return Constants.PLP_OK;
     }
 
@@ -496,7 +496,7 @@ public class ProjectDriver {
             g_dev.disableSimControls();
             g_dev.enableBuildControls();
         }
-        CallbackRegistry.callback_Project_New();
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW, null);
         return Constants.PLP_OK;
     }
 
@@ -698,7 +698,7 @@ public class ProjectDriver {
 
         // Hook for project save
         DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_SAVE, -1, tOut));
-        CallbackRegistry.callback_Project_Save(tOut);
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_SAVE, tOut);
 
         Msg.D("Closing tar archive...", 2, this);
         tOut.close();
@@ -730,7 +730,7 @@ public class ProjectDriver {
     public int open(String path, boolean assemble) {
         File plpFile = new File(path);
         hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1, plpFile));
-        CallbackRegistry.callback_Project_Open();
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN, plpFile);
         
         if(!plpFile.exists())
             return Msg.E("open(" + path + "): File not found.",
@@ -832,7 +832,7 @@ public class ProjectDriver {
                 if(ret != null && ret instanceof Boolean)
                     handled = (Boolean) ret;
             }
-            handled = CallbackRegistry.callback_Project_Open_Entry(eParams) || handled;
+            handled = CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_ENTRY, eParams) || handled;
 
             if(entry.getName().endsWith("asm") && !entry.getName().startsWith("plp.")) {
                 Integer order = (Integer) asmFileOrder.get(entry.getName());
@@ -966,7 +966,7 @@ public class ProjectDriver {
             g_dev.updateDevelopRecentProjectList(plpFile.getAbsolutePath());
         }
 
-        CallbackRegistry.callback_Project_Open_Successful();
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_SUCCESSFUL, null);
         return Constants.PLP_OK;
     }
 
@@ -1129,7 +1129,7 @@ public class ProjectDriver {
      */
     public int assemble() {
         hookEvent(new ProjectEvent(ProjectEvent.ASSEMBLE, -1));
-        CallbackRegistry.callback_Event_Assemble();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_ASSEMBLE, null);
         if(!arch.hasAssembler())
             return Msg.E("This ISA does not implement an assembler.",
                          Constants.PLP_ISA_NO_ASSEMBLER, this);
@@ -1179,7 +1179,7 @@ public class ProjectDriver {
         }
 
         hookEvent(new ProjectEvent(ProjectEvent.POST_ASSEMBLE, -1));
-        CallbackRegistry.callback_Event_Post_Assemble();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_POST_ASSEMBLE, null);
         return Constants.PLP_OK;
     }
 
@@ -1198,7 +1198,7 @@ public class ProjectDriver {
      */
     public int simulate() {
         hookEvent(new ProjectEvent(ProjectEvent.SIMULATE, -1));
-        CallbackRegistry.callback_Event_Simulate();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_SIMULATE, null);
         if(!arch.hasSimCore())
             return Msg.E("simulate: This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
@@ -1226,7 +1226,7 @@ public class ProjectDriver {
         sim = arch.createSimCore();
         ioreg = new IORegistry(this);
         arch.simulatorInitialization();
-        CallbackRegistry.callback_Event_Sim_Init();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_SIM_INIT, null);
 
         Msg.D("I/O Modules: smods is " + (smods == null ? "null" : "not null")
 	      + " and g is " + g, 3, this);
@@ -1281,7 +1281,7 @@ public class ProjectDriver {
 
         arch.simulatorInitializationFinal();
         hookEvent(new ProjectEvent(ProjectEvent.SIM_POST_INIT, -1));
-        CallbackRegistry.callback_Event_Sim_Post_Init();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_SIM_POST_INIT, null);
         return Constants.PLP_OK;
     }
 
@@ -1292,7 +1292,7 @@ public class ProjectDriver {
      */
     public int desimulate() {
         hookEvent(new ProjectEvent(ProjectEvent.DESIMULATE, -1));
-        CallbackRegistry.callback_Event_Desimulate();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_DESIMULATE, null);
         if(!sim_mode)
             return Constants.PLP_OK;
 
@@ -1338,7 +1338,7 @@ public class ProjectDriver {
         updateWindowTitle();
 
         hookEvent(new ProjectEvent(ProjectEvent.SIM_POST_UNINIT, -1));
-        CallbackRegistry.callback_Event_Sim_Post_Uninit();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_SIM_POST_UNINIT, null);
         return Constants.PLP_OK;
     }
 
@@ -1349,7 +1349,7 @@ public class ProjectDriver {
      */
     public int runSimulation() {
         hookEvent(new ProjectEvent(ProjectEvent.RUN_START, -1));
-        CallbackRegistry.callback_Sim_Run_Start();
+        CallbackRegistry.callback(CallbackRegistry.SIM_RUN_START, null);
         g_simrun = new plptool.gui.SimRunner(this);
         g_simrun.start();
 
@@ -1368,7 +1368,7 @@ public class ProjectDriver {
      */
     public int stopSimulation() {
         hookEvent(new ProjectEvent(ProjectEvent.RUN_END, -1));
-        CallbackRegistry.callback_Sim_Run_Stop();
+        CallbackRegistry.callback(CallbackRegistry.SIM_RUN_STOP, null);
         if(g_simrun != null) {
             try {
                 g_simrun.stepCount = 0;
@@ -1400,7 +1400,7 @@ public class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int program(String port) {
-        CallbackRegistry.callback_Event_Program();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_PROGRAM, port);
         if(!arch.hasProgrammer())
                 return Msg.E("This ISA does not implement a board programmer.",
                              Constants.PLP_ISA_NO_PROGRAMMER, this);
@@ -1515,7 +1515,7 @@ public class ProjectDriver {
         if(index >= 0 && index < asms.size()) {
             open_asm = index;
             hookEvent(new ProjectEvent(ProjectEvent.OPENASM_CHANGE, -1, open_asm));
-            CallbackRegistry.callback_Project_OpenAsm_Change(open_asm);
+            CallbackRegistry.callback(CallbackRegistry.PROJECT_OPENASM_CHANGE, open_asm);
         }
     }
 
@@ -1627,7 +1627,7 @@ public class ProjectDriver {
 
         asms.add(new PLPAsmSource("# New ASM File", name, asms.size()));
         Object[] cParams = {asms.get(asms.size()-1), asms.size()-1};
-        CallbackRegistry.callback_Project_New_Asm(cParams);
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW_ASM, cParams);
         setModified();
 
         if(g) refreshProjectView(true);
@@ -1670,7 +1670,7 @@ public class ProjectDriver {
         asms.add(new PLPAsmSource(null, path, asms.size()));
         asms.get(asms.size() - 1).setAsmFilePath(asmFile.getName());
         Object[] cParams = {asms.get(asms.size() - 1), asms.size() - 1};
-        CallbackRegistry.callback_Project_New_Asm(cParams);
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW_ASM, cParams);
 
         setModified();
 
@@ -1751,7 +1751,7 @@ public class ProjectDriver {
             
         Msg.I("Removing " + asms.get(index).getAsmFilePath(), null);
         Object[] cParams = {asms.get(index), index};
-        CallbackRegistry.callback_Project_Remove_Asm(cParams);
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_REMOVE_ASM, cParams);
         asms.remove(index);
         if(g) refreshProjectView(false);
 

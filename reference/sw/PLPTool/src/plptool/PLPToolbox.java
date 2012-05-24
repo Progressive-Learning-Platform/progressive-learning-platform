@@ -765,5 +765,15 @@ public class PLPToolbox {
 
         return filter;
     }
+
+    // 0, 1, 2, 3, 4, 5   index = 3 ('3') len = 6
+    // 0, 1, 2, x, x
+    // 0, 1, 2, 4, 5      index+1 = 4 delta_len = 2
+    public static String[] gobble(String[] args, int index) {
+        String[] temp = new String[args.length-1];
+        System.arraycopy(args, 0, temp, 0, index);
+        System.arraycopy(args, index+1, temp, index, args.length-index-1);
+        return temp;
+    }
 }
 
