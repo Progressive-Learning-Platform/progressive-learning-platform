@@ -19,6 +19,7 @@
 package plptool;
 
 import java.util.ArrayList;
+import plptool.dmf.CallbackRegistry;
 
 /**
  * This abstract class defines the simulated CPU interface.
@@ -94,6 +95,20 @@ public abstract class PLPSimCore implements PLPGenericModule {
      * a simulation core.
      */
     abstract public int loadProgram(PLPAsm asm);
+
+    /**
+     * Wrapper for the step handler. This is the actual method called by the
+     * framework
+     *
+     * @return
+     */
+    public int stepW() {
+        int ret;
+        CallbackRegistry.callback(CallbackRegistry.SIM_STEP, null);
+        ret = step();
+        CallbackRegistry.callback(CallbackRegistry.SIM_POST_STEP, null);
+        return ret;
+    }
 
     /**
      * Returns simulation flags.

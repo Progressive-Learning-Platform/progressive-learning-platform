@@ -56,8 +56,7 @@ public class SimRunner extends Thread {
             int steps = Config.simCyclesPerStep;
             if(steps <= plptool.Constants.PLP_MAX_STEPS && steps > 0) {
                 for(int i = 0; i < steps && Msg.lastError == 0 && stepCount > 0; i++) {
-                    plp.sim.step();
-                    CallbackRegistry.callback_Sim_Step();
+                    plp.sim.stepW();
                     if(plp.sim.breakpoints.hasBreakpoint()) {
                         if(plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                             stepCount = 0;

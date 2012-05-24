@@ -59,6 +59,12 @@ public class RuntimeProfile {
             cur = t;
         } else if((t = checkAddress(pc)) != null)
             cur = t;
+        else if(p.lookupLabel(pc) != null) {
+            cur = new BasicBlock(pc);
+            blocks.add(cur);
+            current = blocks.size()-1;
+            cur.stats.VISITS++;
+        }
 
         cur.stats.CYCLES++;
         long instr  = p.getObjectCode()[index];

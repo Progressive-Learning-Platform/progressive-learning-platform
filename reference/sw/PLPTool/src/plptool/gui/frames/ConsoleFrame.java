@@ -311,7 +311,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 out.setText("");
                 String[] t = command.split(" ", 2);
                 if(t.length == 2)
-                    plptool.dmf.CallbackRegistry.callback_Command(t[1]);
+                    plptool.dmf.CallbackRegistry.callback(plptool.dmf.CallbackRegistry.COMMAND, t[1]);
 
             } else if(tokens.length > 1) {
                 if(tokens[0].equals("font")) {
