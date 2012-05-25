@@ -74,6 +74,7 @@ public class CallbackRegistry {
     public static final int BUS_ADD                     = 33;
     public static final int BUS_REMOVE                  = 34;
 
+    @SuppressWarnings("unchecked")
     private static final ArrayList<Callback>[] callbacks = new ArrayList[CALLBACKS];
 
     /**
@@ -112,7 +113,7 @@ public class CallbackRegistry {
         for(int i = 0; i < callbacks[callbackNum].size(); i++) {
             Callback c = callbacks[callbackNum].get(i);
             Msg.D("callback: " + c.getClass().getCanonicalName(), 4, null);
-            ret = c.callback(param) || ret;
+            ret = c.callback(callbackNum, param) || ret;
         }
         return ret;
     }
