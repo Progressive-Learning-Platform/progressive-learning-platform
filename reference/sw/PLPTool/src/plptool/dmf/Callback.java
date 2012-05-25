@@ -33,8 +33,9 @@ public interface Callback {
      * handling a file when the project file is being open to notify
      * ProjectDriver that the file is handled).
      *
-     * @param param
+     * @param callbackNum The number of the callback event that occurred
+     * @param param Reference to the parameters passed to this callback
      * @return
      */
-    abstract public boolean callback(Object param);
+    abstract public boolean callback(int callbackNum, Object param);
 }
