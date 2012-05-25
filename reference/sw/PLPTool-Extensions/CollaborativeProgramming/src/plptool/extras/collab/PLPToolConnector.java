@@ -101,7 +101,7 @@ class Callback_Project_Change_Handler implements Callback {
         this.c = c;
     }
 
-    public boolean callback(Object param) {
+    public boolean callback(int callbackNum, Object param) {
         Msg.D("Now we're talking.", 2, null);
         c.setActive();
         return true;

@@ -148,7 +148,7 @@ public class PLPToolConnector implements ModuleInterface5 {
 
 
     class Callback_Save_Config implements Callback {
-        public boolean callback(Object param) {
+        public boolean callback(int callbackNum, Object param) {
             java.io.FileWriter out = (java.io.FileWriter) param;
             try {
                 Msg.I("Saving configuration.", null);
@@ -164,14 +164,14 @@ public class PLPToolConnector implements ModuleInterface5 {
     }
 
     class Callback_Command implements Callback {
-        public boolean callback(Object param) {
+        public boolean callback(int callbackNum, Object param) {
             command((String) param);
             return true;
         }
     }
 
     class Callback_Clear implements Callback {
-        public boolean callback(Object param) {
+        public boolean callback(int callbackNum, Object param) {
             Msg.D("Callback: clear", 2, null);
 
             displayFrame.clearCanvas();

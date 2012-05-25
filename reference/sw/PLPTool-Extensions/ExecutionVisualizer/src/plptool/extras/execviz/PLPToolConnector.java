@@ -48,7 +48,7 @@ public class PLPToolConnector implements ModuleInterface5 {
 	}
 
 	class Callback_Step implements Callback {
-		public boolean callback(Object param) {
+		public boolean callback(int callbackNum, Object param) {
 			
 			return true;
 		}
