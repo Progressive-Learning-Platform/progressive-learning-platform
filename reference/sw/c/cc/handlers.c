@@ -28,12 +28,19 @@
 #include "handlers.h"
 #include "line.h"
 
+/* the call/return instrcutions put 92 bytes of state on the stack, which sits between parameters and the local frame.
+ * this gets added when looking up a parameter variable in get_offset and the o() macro
+ */
+#define PARAM_OFFSET 92
+#define WORD 4
+
 #define e(...) { v(n); sprintf(buffer, __VA_ARGS__); program = emit(program, buffer); }
 #define v(x) { if (!is_visited(n->line) && ANNOTATE_SOURCE) { visit(n->line); sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line)); program = emit(program, buffer); }}
-#define o(x) (get_offset(x->t, x->id) + (adjust * 4))
+#define o(x) (get_offset(x->t, x->id) + (adjust * WORD))
 #define g(x) (is_global(x->t, x->id))
 #define push(x) { e("push %s\n", x); adjust++; }
 #define pop(x) { e("pop %s\n", x); adjust--; }
+#define eq(x,y) (strcmp(x,y) == 0)
 
 extern char *program;
 char *strings = NULL;
@@ -44,6 +51,7 @@ char buffer[1024];
 int adjust = 1;
 int LVALUE = 0;
 int params = 0;
+int param_words = 0;
 int locals = 0;
 
 void epilogue(node *n) {
@@ -64,16 +72,19 @@ int is_global(symbol_table *t, char *s) {
 	
 	while (curr != NULL) {
 		if (strcmp(curr->value,s) == 0) {
-			if (t->parent == NULL)
+			if (t->parent == NULL) {
+				param_words = curr->size;
 				return 1;
-			else
+			} else {
 				return 0;
+			}
 		}
 		curr = curr->up;
 	}
 	return is_global(t->parent, s);
 }
 
+/* TODO: replace with get_symbol->offset */
 int get_offset(symbol_table *t, char *s) {
 	int offset = 0;
 	symbol *curr;
@@ -88,13 +99,16 @@ int get_offset(symbol_table *t, char *s) {
 	/* look up in the current symbol table, then up to the next, and so forth */
 	while (curr != NULL) {
 		if (strcmp(curr->value,s) == 0) {
+			vlog("found symbol %s %s, size %d, attr %08x, ", curr->type, curr->value, curr->size, curr->attr);
 			if (curr->attr & ATTR_PARAM)
 				/* if this is a parameter, then add another 92 bytes to the offset, to get past the saved state of the caller */
-				return offset + 92;
+				offset += PARAM_OFFSET;
+			vlog("%d\n", offset);
+			param_words = curr->size; /* this is needed in case a parameter is being passed */
 			return offset;
 		}
-		if (!(curr->attr & ATTR_FUNCTION))
-			offset += 4;
+		if (!(curr->attr & ATTR_FUNCTION)) /* functions don't sit on the stack */
+			offset += curr->size * WORD;
 		curr = curr->up;
 	}
 	
@@ -125,6 +139,7 @@ void handle_identifier(node *n) {
 
 void handle_constant(node *n) {
 	e("li $t0, %s\n", n->id);
+	param_words = 1; /* constants are ALWAYS one word */
 }
 
 void handle_string(node *n) {
@@ -174,7 +189,7 @@ void handle_postfix_expr(node *n) {
 		/* function call */
 		handle(n->children[1]);
 		e("call %s\n", n->children[0]->id);
-		e("addiu $sp, $sp, %d\n", params * 4);
+		e("addiu $sp, $sp, %d\n", params * WORD);
 		e("move $t0, $v0\n");
 		params = 0;
 	} else if (strcmp(n->children[1]->id, "paren") == 0) {
@@ -204,7 +219,9 @@ void handle_argument_expr_list(node *n) {
 	for (i=n->num_children; i>0; i--) {
 		handle(n->children[i-1]);
 		push("$t0");
-		params++;
+		vlog("[handlers] pushed parameter with size %d words\n", param_words);
+		params += param_words;
+		param_words = 0;
 	}
 }
 
@@ -640,7 +657,7 @@ void handle_init_declarator(node *n) {
 				int i;
 				for (i=0; i<n->children[1]->children[0]->num_children; i++) {
 					handle(n->children[1]->children[0]->children[i]);
-					e("sw $t0, %d($sp)\n", o(x)+(4*i));
+					e("sw $t0, %d($sp)\n", o(x)+(WORD*i));
 				}
 			} else {
 				handle(n->children[1]);
@@ -909,8 +926,8 @@ void handle_function_definition(node *n) {
 		curr = curr->up;
 	}
 
-	e("addiu $sp, $sp, -%d\n", i*4);
-	locals = i*4;
+	e("addiu $sp, $sp, -%d\n", i*WORD);
+	locals = i*WORD;
 	
 	/* call handle on the compound statement */
 	handle(n->children[n->num_children-1]);
