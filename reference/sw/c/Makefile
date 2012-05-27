@@ -1,4 +1,4 @@
-all: clean build
+all: clean build test
 
 DIRS=\
 	pp\
@@ -32,6 +32,9 @@ copy_bin:
 	+@cp bb/plpbb bin
 	+@cp plpc/plpc bin
 
+test:
+	+@echo test
+	+@$(MAKE) -C tests
+
 clean: clean.dirs clean_bin
 build: build.dirs copy_bin
-
