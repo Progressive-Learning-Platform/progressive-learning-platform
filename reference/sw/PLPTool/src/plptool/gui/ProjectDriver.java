@@ -725,6 +725,7 @@ public class ProjectDriver {
      * Open plp file specified by path.
      *
      * @param path Path to project file to load.
+     * @param assemble Attempt to assemble after opening (if dirty is not set)
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int open(String path, boolean assemble) {
