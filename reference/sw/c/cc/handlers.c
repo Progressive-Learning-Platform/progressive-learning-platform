@@ -132,7 +132,7 @@ void handle_string(node *n) {
 	/* we use emit() to add to the string table */
 	sprintf(buffer, "%s:\n", s);
 	strings = emit(strings, buffer);
-	sprintf(buffer, ".asciiz %s\n", n->id);
+	sprintf(buffer, ".array %s\n", n->id);
 	strings = emit(strings, buffer);
 	
 	/* get a pointer to our string in $t0 */
@@ -189,6 +189,7 @@ void handle_postfix_expr(node *n) {
 		handle(n->children[1]); /* the offset in the array */
 		LVALUE = prev_lvalue;
 		pop("$t1");
+		e("sll $t0, $t0, 2\n"); /*TODO: not all array indexes are multiples of 4! */
 		e("addu $t0, $t0, $t1\n");
 		if (!LVALUE) { /* dereference it */
 			e("lw $t0, 0($t0)\n");

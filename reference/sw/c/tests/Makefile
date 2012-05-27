@@ -3,6 +3,10 @@ all: build test clean
 TESTS=\
 	for\
 	func\
+	array\
+	string\
+	define\
+	recursion\
 
 %.test:
 	+@echo build $*
