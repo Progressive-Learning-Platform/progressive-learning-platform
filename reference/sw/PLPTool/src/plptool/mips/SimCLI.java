@@ -342,8 +342,11 @@ public class SimCLI {
         if(tokens.length != 3) {
             Msg.P("Usage: wbus <address> <data>");
         } else {
-            core.bus.write(PLPToolbox.parseNum(tokens[1]),
-                              PLPToolbox.parseNum(tokens[2]), false);
+            long addr = PLPToolbox.tryResolveLabel(tokens[1], asm);
+            if(addr > -1)
+                core.bus.write(addr, PLPToolbox.parseNum(tokens[2]), false);
+            else
+                Msg.E("Invalid address.", Constants.PLP_NUMBER_ERROR, null);
         }
     }
 
@@ -351,13 +354,16 @@ public class SimCLI {
         if(tokens.length != 2) {
             Msg.P("Usage: rbus <address>");
         } else {
-            long addr = PLPToolbox.parseNum(tokens[1]);
-            Object ret = core.bus.read(addr);
-            if(ret != null) {
-                long value = (Long) ret;
-                Msg.P(String.format("0x%08x=", addr) +
-                                   String.format("0x%08x", value));
-            }
+            long addr = PLPToolbox.tryResolveLabel(tokens[1], asm);
+            if(addr > -1) {
+                Object ret = core.bus.read(addr);
+                if(ret != null) {
+                    long value = (Long) ret;
+                    Msg.P(String.format("0x%08x=", addr) +
+                                       String.format("0x%08x", value));
+                }
+            } else
+                Msg.E("Invalid address.", Constants.PLP_NUMBER_ERROR, null);
         }
     }
 
