@@ -492,8 +492,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 loadDynamicModules(PLPToolbox.getConfDir() + "/autoload", plp);
             if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK))
                 System.exit(Constants.PLP_GENERIC_ERROR);
-            if(plp.asm.isAssembled())
-                plp.simulate();
+            plp.simulate();
             plp.getArch().launchSimulatorCLI();
             System.exit(Constants.PLP_OK);
 
@@ -507,13 +506,14 @@ public class PLPToolApp extends SingleFrameApplication {
                 Scanner sIn = new Scanner(in);
                 if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK))
                     System.exit(Constants.PLP_GENERIC_ERROR);
-                if(plp.asm.isAssembled())
-                    plp.simulate();
+                plp.simulate();
                 Msg.silent = false;
                 while(sIn.hasNext())
                     plp.getArch().simCLICommand(sIn.nextLine());
             } catch(Exception e) {
-                System.out.println("Unable to open/run the script '" + scriptFileToRun + "'");
+                System.out.print("Unable to open/run the script '" + scriptFileToRun + "'. ");
+                System.out.println("Set debug level to 2 or greater for stack trace.");
+                if(Constants.debugLevel >= 2) e.printStackTrace();
                 System.exit(Constants.PLP_GENERIC_ERROR);
             }
             System.exit(Constants.PLP_OK);

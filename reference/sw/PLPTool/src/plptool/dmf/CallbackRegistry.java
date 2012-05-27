@@ -29,8 +29,6 @@ import java.util.ArrayList;
  * @author Wira
  */
 public class CallbackRegistry {
-    private static boolean unit_test = false;
-    
     public static final int CALLBACKS                   = 35;
 
     public static final int EXIT                        = 0;
@@ -88,7 +86,8 @@ public class CallbackRegistry {
         for(int i = 0; i < args.length; i++)
             if(args[i].equals("--callback-unit-test")) {
                 Msg.P("CallbackRegistry.setup: callback-unit-test");
-                unit_test = true;   
+                // perform unit test
+                plptool.testsuite.StartupSanityCheck.test_CallbackRegistry();
                 ret = PLPToolbox.gobble(args, i);
             }
 
@@ -109,10 +108,10 @@ public class CallbackRegistry {
      */
     public static boolean callback(int callbackNum, Object param) {
         boolean ret = false;
-        if(unit_test) Msg.P("callback[" + callbackNum + "]");
         for(int i = 0; i < callbacks[callbackNum].size(); i++) {
             Callback c = callbacks[callbackNum].get(i);
-            Msg.D("callback: " + c.getClass().getCanonicalName(), 4, null);
+            Msg.D("callback[" + callbackNum + "]: " +
+                    c.getClass().getCanonicalName(), 4, null);
             ret = c.callback(callbackNum, param) || ret;
         }
         return ret;
@@ -133,5 +132,20 @@ public class CallbackRegistry {
 
         callbacks[callbackNum].add(callback);
         return true;
+    }
+
+    /**
+     * Register a callback interface implementation to multiple callback numbers
+     *
+     * @param callbackNumbers Callback numbers to register for
+     * @param callback Reference to an instance of the callback interface
+     * implementation
+     * @return False if any of the specified numbers is invalid, true otherwise
+     */
+    public static boolean register(int[] callbackNumbers, Callback callback) {
+        boolean ret = true;
+        for(int i = 0; i < callbackNumbers.length; i ++)
+            ret = register(callbackNumbers[i], callback) && ret;
+        return ret;
     }
 }
