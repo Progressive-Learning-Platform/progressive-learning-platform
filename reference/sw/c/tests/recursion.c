@@ -8,6 +8,7 @@
 */
 
 int depth = 10;
+int result = 0;
 
 int fib(int fn1, int fn2) {
 	int fn0 = fn1 + fn2;
@@ -19,5 +20,5 @@ int fib(int fn1, int fn2) {
 }
 
 void main(void) {
-	fib(1,0);
+	result = fib(1,0);
 }	
