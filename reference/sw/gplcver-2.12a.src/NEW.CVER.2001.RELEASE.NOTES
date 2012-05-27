@@ -1,0 +1,64 @@
+
+RELEASE NOTES FOR VERILOG 2001 BETA FOR PEOPLE TO TRY 
+
+  This directory contains release of a new code base that supports many
+  of the Verilog 2001 features as described in IEEE P1364 Verilog 2001
+  Language Reference Manual.
+
+  Cver supports the following Verilog 2001/2005 LRM features:
+
+    1) Implements Verilog 2001 signed evaluation algorithm.  Supports signed
+       keyword and signed constants plus handles sign extension during
+       expression evaluation.
+
+    2) Support for Verilog 2001 config.  Use the +config [config file name] 
+       option to specify the library mapping file.  You can place a file
+       named lib.map in your current directory, but that is not recommended
+       since it will always silently use that file for configuring your
+       design. See tests_and_examples/v2001/config for some small examples.
+
+    3) Supports new file io Unix Stdlib stream file input and output
+       operations.
+   
+    5) Supports new module and task port and module parameter header  
+       declarations.  Here is an example:
+
+
+            module test
+             #(parameter integer p1 = 5,
+               parameter p2 = 7,
+               parameter r1 = 7.3
+              )
+
+             (
+              input [7:0] a,
+              input signed [7:0] b, c, d,
+              output [7:0] e,
+              output signed [7:0] f,g,
+              output signed [7:0] h
+             ) ;
+
+             task my_task(input a, b, inout c, output signed [15:0] d, e);
+              begin
+               c = a;
+               d = f;
+               e= 2*f;
+              end
+             endtask
+            endmodule
+
+    6) Supports Verilog 2001 implicit event forms @(*) and @*.  Also
+       supports events lists with comma as substitute for
+       event or.  Now (a, b, c) and (a or b or c) are both legal.
+       You can see the result of @(*) by running cver with the -c and -d
+       options (-c means compile only and -d means dump internal net list).
+
+    7) Added support for localparams.  The localparam keyword is now
+       supported.
+
+  Main missing Verilog 2001 features are multi-dimensional arrays and
+  generate.
+
+  See tests_and_example/v2001 for a growing directory of verilog 2001 test
+  files. 
+  

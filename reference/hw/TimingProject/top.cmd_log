@@ -1,0 +1,37 @@
+xst -intstyle ise -ifn "D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/XilinxProject/top.xst" -ofn "D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/XilinxProject/top.syr" 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -i -p xc3s500e-fg320-5 "top.ngc" top.ngd  
+map -intstyle ise -p xc3s500e-fg320-5 -cm area -ir off -pr off -c 100 -o top_map.ncd top.ngd top.pcf 
+trce -intstyle ise -v 3 -s 5 -n 3 -fastpaths -xml top_preroute.twx top_map.ncd -o top_preroute.twr top.pcf 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc "D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/build/build_500k_skeleton/top.ucf" -p xc3s500e-fg320-5 "top.ngc" top.ngd  
+map -intstyle ise -p xc3s500e-fg320-5 -cm area -ir off -pr off -c 100 -o top_map.ncd top.ngd top.pcf 
+xst -intstyle ise -ifn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.xst" -ofn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.syr" 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc D:/Documents/_ProgressiveLearningPlatform/reference/hw/build/build_nexys3_skeleton/top.ucf -p xc6slx16-csg324-3 top.ngc top.ngd  
+map -intstyle ise -p xc6slx16-csg324-3 -w -logic_opt on -ol high -xe c -t 1 -xt 0 -r 4 -global_opt speed -equivalent_register_removal on -mt off -ir off -pr off -lc off -power off -o top_map.ncd top.ngd top.pcf 
+par -w -intstyle ise -ol high -xe c -mt off top_map.ncd top.ncd top.pcf 
+trce -intstyle ise -v 3 -s 3 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf 
+bitgen -intstyle ise -f top.ut top.ncd 
+xst -intstyle ise -ifn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.xst" -ofn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.syr" 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc D:/Documents/_ProgressiveLearningPlatform/reference/hw/build/build_nexys3_skeleton/top.ucf -p xc6slx16-csg324-3 top.ngc top.ngd  
+map -intstyle ise -p xc6slx16-csg324-3 -w -logic_opt on -ol high -xe c -t 1 -xt 0 -r 4 -global_opt speed -equivalent_register_removal on -mt off -ir off -pr off -lc off -power off -o top_map.ncd top.ngd top.pcf 
+par -w -intstyle ise -ol high -xe c -mt off top_map.ncd top.ncd top.pcf 
+trce -intstyle ise -v 3 -s 3 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf 
+bitgen -intstyle ise -f top.ut top.ncd 
+xst -intstyle ise -ifn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.xst" -ofn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.syr" 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc D:/Documents/_ProgressiveLearningPlatform/reference/hw/build/build_nexys3_skeleton/top.ucf -p xc6slx16-csg324-3 top.ngc top.ngd  
+map -intstyle ise -p xc6slx16-csg324-3 -w -logic_opt on -ol high -xe c -t 1 -xt 0 -r 4 -global_opt speed -equivalent_register_removal on -mt off -ir off -pr off -lc off -power off -o top_map.ncd top.ngd top.pcf 
+par -w -intstyle ise -ol high -xe c -mt off top_map.ncd top.ncd top.pcf 
+trce -intstyle ise -v 3 -s 3 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf 
+bitgen -intstyle ise -f top.ut top.ncd 
+xst -intstyle ise -ifn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.xst" -ofn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.syr" 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc D:/Documents/_ProgressiveLearningPlatform/reference/hw/build/build_nexys3_skeleton/top.ucf -p xc6slx16-csg324-3 top.ngc top.ngd  
+map -intstyle ise -p xc6slx16-csg324-3 -w -logic_opt on -ol high -xe c -t 1 -xt 0 -r 4 -global_opt speed -equivalent_register_removal on -mt off -ir off -pr off -lc off -power off -o top_map.ncd top.ngd top.pcf 
+par -w -intstyle ise -ol high -xe c -mt off top_map.ncd top.ncd top.pcf 
+trce -intstyle ise -v 3 -s 3 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf 
+bitgen -intstyle ise -f top.ut top.ncd 
+xst -intstyle ise -ifn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.xst" -ofn "D:/Documents/_ProgressiveLearningPlatform/reference/hw/XilinxProject/top.syr" 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc D:/Documents/_ProgressiveLearningPlatform/reference/hw/build/build_nexys3_skeleton/top.ucf -p xc6slx16-csg324-3 top.ngc top.ngd  
+map -intstyle ise -p xc6slx16-csg324-3 -w -logic_opt on -ol high -xe c -t 1 -xt 0 -r 4 -global_opt speed -equivalent_register_removal on -mt off -ir off -pr off -lc off -power off -o top_map.ncd top.ngd top.pcf 
+par -w -intstyle ise -ol high -xe c -mt off top_map.ncd top.ncd top.pcf 
+trce -intstyle ise -v 3 -s 3 -n 3 -fastpaths -xml top.twx top.ncd -o top.twr top.pcf 
+bitgen -intstyle ise -f top.ut top.ncd 
+map -intstyle ise -p xc6slx16-csg324-3 -w -logic_opt off -ol high -xe c -t 1 -xt 0 -r 4 -global_opt speed -equivalent_register_removal on -mt off -ir off -pr off -lc off -power off -o top_map.ncd top.ngd top.pcf 
