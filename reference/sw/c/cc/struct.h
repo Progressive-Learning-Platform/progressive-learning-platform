@@ -21,7 +21,7 @@
 #include "types.h"
 
 node* install_struct_symbol(node*);
-node* install_struct(node*);
+void install_struct(node*);
 symbol* find_struct_symbol(struct_table*, char*);
 struct_table* find_struct(char*);
 void print_structs(FILE*, int);
