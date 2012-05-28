@@ -219,7 +219,7 @@ void handle_argument_expr_list(node *n) {
 	for (i=n->num_children; i>0; i--) {
 		handle(n->children[i-1]);
 		push("$t0");
-		vlog("[handlers] pushed parameter with size %d words\n", param_words);
+		vlog("[code_gen] pushed parameter with size %d words\n", param_words);
 		params += param_words;
 		param_words = 0;
 	}

@@ -8,10 +8,6 @@ TESTS=\
 	define\
 	recursion\
 
-%.test:
-	+@echo build $*
-	+@java -jar
-
 build.tests:	$(addsuffix .build, $(TESTS))
 clean.tests:	$(addsuffix .clean, $(TESTS))
 test.tests:	$(addsuffix .test, $(TESTS))

@@ -50,6 +50,13 @@ typedef struct symbol_table_t {
         struct symbol_table_t **children;
 } symbol_table;
 
+/* struct element */
+typedef struct struct_table_t {
+	struct struct_table_t *next;
+	char *name;
+	symbol_table *s;
+} struct_table;
+
 /* node types */
 typedef enum {
         type_con,
