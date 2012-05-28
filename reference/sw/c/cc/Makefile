@@ -19,6 +19,7 @@ FILES=\
 	handlers\
 	lex.yy\
 	parser.tab\
+	struct
 	
 OBJECTS = $(addsuffix .o, $(FILES))
 OBJECTS_STANDALONE = $(addsuffix .o, $(FILES_STANDALONE))

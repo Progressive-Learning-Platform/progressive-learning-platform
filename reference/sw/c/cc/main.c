@@ -22,6 +22,7 @@
 #include "parser.tab.h"
 #include "log.h"
 #include "symbol.h"
+#include "struct.h"
 #include "parse_tree.h"
 #include "code_gen.h"
 #include "line.h"
@@ -49,6 +50,7 @@ static FILE *PARSE_OUTPUT = NULL;
 static FILE *SYMBOL_OUTPUT = NULL;
 
 symbol_table *sym = NULL;	/* scoped symbol tables */
+struct_table *structs = NULL;
 symbol *constants = NULL;	/* constants */
 symbol *labels	  = NULL;	/* labels */
 node *parse_tree_head = NULL;
