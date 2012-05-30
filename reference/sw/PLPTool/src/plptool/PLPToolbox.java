@@ -775,5 +775,19 @@ public class PLPToolbox {
         System.arraycopy(args, index+1, temp, index, args.length-index-1);
         return temp;
     }
+
+    /**
+     * Transform a string with embedded escapes to a character array
+     *
+     * @param str String to trasnform
+     * @param escapes Escape character strings. For example, to escape newlines
+     * with
+     * @return
+     */
+    public char[] parseStringAsChars(String str, String[]... escapes) {
+
+
+        return null;
+    }
 }
 

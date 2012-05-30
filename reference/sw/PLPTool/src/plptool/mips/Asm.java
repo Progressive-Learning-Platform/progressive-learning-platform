@@ -269,8 +269,8 @@ public class Asm extends plptool.PLPAsm {
 
     /**
      * Pre-process / perform 1st pass assembly on all assembly sources
-     * attached to this assembler. Resolves assembler directives, pseudo-ops and
-     * populates the symbol table.
+     * attached to this assembler. Resolve assembler directives, pseudo-ops and
+     * populate the symbol table.
      *
      * @return Returns 0 on completion, error code otherwise
      * @param asmIndex asm source index to preprocess
@@ -548,13 +548,14 @@ public class Asm extends plptool.PLPAsm {
             }
 
             // Text handler
-            else if(asmTokens[0].equals(".ascii") || asmTokens[0].equals(".asciiz")) {
+            else if(asmTokens[0].equals(".ascii") || asmTokens[0].equals(".asciiz") ||
+                    asmTokens[0].equals(".asciiw")) {
                 if(asmTokens.length < 2) {
                    error++; Msg.E("preprocess(" + formatHyperLink(curActiveFile, i) + "): " +
                                      "Directive syntax error",
                                      Constants.PLP_ASM_DIRECTIVE_SYNTAX_ERROR, this);
                 } else {
-
+                    boolean wordAligned = asmTokens[0].equals(".asciiw");
                     String tString[] = asmLines[i - 1].split("[ \t]+", 2);
 
                     Msg.D("l: " + tString.length + " :" + tString[tString.length - 1], 6, this);
@@ -598,6 +599,10 @@ public class Asm extends plptool.PLPAsm {
                                     tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\\").toString();
                                     break;
 
+                                // Null
+                                case '0':
+                                    tString[1] = new StringBuffer(tString[1]).replace(j, j + 2, "\0").toString();
+                                    break;
 
                                 default:
                                     Msg.W("preprocess(" + formatHyperLink(curActiveFile, i) + "): "
@@ -616,7 +621,7 @@ public class Asm extends plptool.PLPAsm {
                     Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 6, this);
 
                     // pad with zeroes if we the string length is not word-aligned
-                    if(strLen % 4 != 0) {
+                    if(strLen % 4 != 0 && !wordAligned) {
                         strLen = strLen + 4 - (strLen % 4);
 
                         for(j = 0; j < (4 - (strLen % 4)); j++)
@@ -625,13 +630,16 @@ public class Asm extends plptool.PLPAsm {
 
                     // add ASM__WORD__ 2nd pass directives and we're done
                     for(j = 0; j < strLen; j++) {
-                        if(j % 4 == 0)
+                        if(j % (wordAligned ? 1 : 4) == 0)
                             appendPreprocessedAsm("ASM__WORD__ 0x", i, false);
 
-                        appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
+                        if(!wordAligned)
+                            appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
+                        else
+                            appendPreprocessedAsm(String.format("%08x", (int) tString[1].charAt(j)), i, true);
 
                         // advance address on every 4th byte (on next iteration)
-                        if((j + 1) % 4 == 0 && j > 0) {
+                        if(!wordAligned && (j + 1) % 4 == 0 && j > 0) {
                             regionMap.add(curRegion);
                             curAddr += 4;
                             appendPreprocessedAsm("", i, true);

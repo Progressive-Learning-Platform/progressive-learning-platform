@@ -24,18 +24,29 @@ package plptool.testsuite;
  */
 public class StartupSanityCheck {
     public static void test_CallbackRegistry() {
-        plptool.dmf.Callback testcall = new plptool.dmf.Callback() {
-            private String msgStr;
-
-            public boolean callback(int callbackNum, Object param) {
-                System.out.println("callback #" + callbackNum + " called.");
-                return false;
-            }
-        };
+        Callback_Test cb = new Callback_Test("app_events");
         int[] nums = {
                     plptool.dmf.CallbackRegistry.START,
+                    plptool.dmf.CallbackRegistry.LOAD_CONFIG_LINE,
+                    plptool.dmf.CallbackRegistry.SAVE_CONFIG,
+                    plptool.dmf.CallbackRegistry.COMMAND,
+                    plptool.dmf.CallbackRegistry.EVENT,
                     plptool.dmf.CallbackRegistry.EXIT
                 };
-        plptool.dmf.CallbackRegistry.register(nums, testcall);
+        plptool.dmf.CallbackRegistry.register(nums, cb);
+    }
+
+
+    static class Callback_Test implements plptool.dmf.Callback {
+        private String identifier;
+
+        public Callback_Test(String identifier) {
+            this.identifier = identifier;
+        }
+
+        public boolean callback(int callbackNum, Object param) {
+            System.out.println("callback_test: " + identifier + " #" +callbackNum);
+            return false;
+        }
     }
 }
