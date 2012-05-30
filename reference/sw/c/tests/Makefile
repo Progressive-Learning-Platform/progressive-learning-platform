@@ -3,10 +3,10 @@ all: build test clean
 TESTS=\
 	for\
 	func\
-
-%.test:
-	+@echo build $*
-	+@java -jar
+	array\
+	string\
+	define\
+	recursion\
 
 build.tests:	$(addsuffix .build, $(TESTS))
 clean.tests:	$(addsuffix .clean, $(TESTS))
