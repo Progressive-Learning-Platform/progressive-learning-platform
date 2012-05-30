@@ -36,5 +36,9 @@ test:
 	+@echo test
 	+@$(MAKE) -C tests
 
-clean: clean.dirs clean_bin
+clean_test:
+	+@echo clean test
+	+@$(MAKE) -C tests clean
+
+clean: clean.dirs clean_test clean_bin
 build: build.dirs copy_bin
