@@ -1,0 +1,19 @@
+\BOOKMARK [1][-]{section.1}{Building PLP}{}
+\BOOKMARK [1][-]{section.2}{CPU}{}
+\BOOKMARK [2][-]{subsection.2.1}{Notes}{section.2}
+\BOOKMARK [2][-]{subsection.2.2}{Forwarding and Hazards}{section.2}
+\BOOKMARK [2][-]{subsection.2.3}{Interrupts}{section.2}
+\BOOKMARK [1][-]{section.3}{Bus Arbiter}{}
+\BOOKMARK [1][-]{section.4}{Modules}{}
+\BOOKMARK [2][-]{subsection.4.1}{Boot ROM}{section.4}
+\BOOKMARK [2][-]{subsection.4.2}{Memory Hierarchy}{section.4}
+\BOOKMARK [2][-]{subsection.4.3}{Cache}{section.4}
+\BOOKMARK [2][-]{subsection.4.4}{UART}{section.4}
+\BOOKMARK [2][-]{subsection.4.5}{VGA}{section.4}
+\BOOKMARK [2][-]{subsection.4.6}{PLPID}{section.4}
+\BOOKMARK [2][-]{subsection.4.7}{Timer}{section.4}
+\BOOKMARK [2][-]{subsection.4.8}{Programmable Interrupt Controller}{section.4}
+\BOOKMARK [2][-]{subsection.4.9}{Switches}{section.4}
+\BOOKMARK [2][-]{subsection.4.10}{LEDs}{section.4}
+\BOOKMARK [2][-]{subsection.4.11}{GPIO}{section.4}
+\BOOKMARK [2][-]{subsection.4.12}{Seven Segment Display}{section.4}
