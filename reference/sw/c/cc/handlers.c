@@ -53,6 +53,7 @@ int LVALUE = 0;
 int params = 0;
 int param_words = 0;
 int locals = 0;
+symbol *last_symbol = NULL;
 
 void epilogue(node *n) {
 	e("addiu $sp, $sp, %d\n", locals);
@@ -117,6 +118,7 @@ int get_offset(symbol_table *t, char *s) {
 }
 
 void handle_identifier(node *n) {
+	last_symbol = find_symbol(n->t, n->id);
 	if (LVALUE) {
 		if (g(n)) {
 			/* just grab the global named pointer */
@@ -198,6 +200,11 @@ void handle_postfix_expr(node *n) {
 		e("move $t0, $v0\n");
 	} else if (strcmp(n->children[1]->id, "expression") == 0) {
 		/* array index */
+		if (last_symbol != NULL) {
+			if (last_symbol->attr & ATTR_POINTER) {
+				e("lw $t0, 0($t0)\n");
+			}
+		}
 		push("$t0");
 		prev_lvalue = LVALUE;
 		LVALUE = 0;
@@ -864,6 +871,7 @@ void handle_jump_statement(node *n) {
 	if (strcmp(t->id, "return") == 0) {
 		if (n->num_children == 2)
 			handle(n->children[1]);
+			last_symbol = NULL; /* we want to support something like my_function()[5], which assumes that the pointer returned is just that, and doesn't need dereference magic */
 			e("move $v0, $t0\n");
 		epilogue(n);
 	} else {
