@@ -147,7 +147,7 @@ void handle_string(node *n) {
 	/* we use emit() to add to the string table */
 	sprintf(buffer, "%s:\n", s);
 	strings = emit(strings, buffer);
-	sprintf(buffer, ".array %s\n", n->id);
+	sprintf(buffer, ".asciiw %s\n", n->id);
 	strings = emit(strings, buffer);
 	
 	/* get a pointer to our string in $t0 */
