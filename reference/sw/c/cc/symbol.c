@@ -62,13 +62,17 @@ id_chain* get_ids(id_chain* i, node *n) {
 				err("[symbol] cannot allocate id_chain\n");
 			}
 			t->up = i;
-			/* also check for array declarations, by looking for a constant node next to the id */
+			/* declarators are pointers if they're explicitly declared with *, if they have a constant node next to the id, which is like a[4], or if they have an initializer_list, which is like a[] = {1,2,3} */
 			if (strcmp(n->children[0]->id, "pointer") == 0) {
 				t->pointer = 1;
 				t->id = n->children[1]->children[0]->id;
 				t->size = get_size(n->children[1]);
 			} else {
-				t->pointer = 0;
+				if (n->children[0]->num_children > 1) {
+					t->pointer = 1;
+				} else {
+					t->pointer = 0;
+				}
 				t->id = n->children[0]->children[0]->id;
 				t->size = get_size(n->children[0]);
 			}
@@ -78,8 +82,9 @@ id_chain* get_ids(id_chain* i, node *n) {
 			/* the number of initializers set the size multiplier for the last generated id ala:
 			 * int b[] = {1,2,3}; has size 3
 			 */
+			i->pointer = 1;
 			i->size *= n->num_children;
-		}else {
+		} else {
 			int j;
 			/* call this on all children */
 			for (j=0; j<n->num_children; j++)
