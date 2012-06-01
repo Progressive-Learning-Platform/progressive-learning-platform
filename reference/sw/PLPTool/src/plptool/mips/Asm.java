@@ -635,8 +635,11 @@ public class Asm extends plptool.PLPAsm {
 
                         if(!wordAligned)
                             appendPreprocessedAsm(String.format("%02x", (int) tString[1].charAt(j)), i, false);
-                        else
+                        else {
                             appendPreprocessedAsm(String.format("%08x", (int) tString[1].charAt(j)), i, true);
+                            regionMap.add(curRegion);
+                            curAddr += 4;
+                        }
 
                         // advance address on every 4th byte (on next iteration)
                         if(!wordAligned && (j + 1) % 4 == 0 && j > 0) {
