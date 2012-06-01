@@ -19,6 +19,7 @@
 package plptool.gui.frames;
 
 import plptool.Constants;
+import plptool.PLPToolbox;
 import javax.swing.table.DefaultTableModel;
 import plptool.gui.ProjectDriver;
 
@@ -46,16 +47,33 @@ public class ASMSimView extends javax.swing.JFrame {
             model.removeRow(0);
 
         long[] objCode = plp.asm.getObjectCode();
+        String display = "";
 
         for(int i = 0; i < objCode.length; i++) {
+            switch(cmbDisplay.getSelectedIndex()) {
+                case 0:
+                    display = plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmLine(plp.asm.getLineNumMapper()[i]);
+                    break;
+                case 1:
+                    display = PLPToolbox.format32Hex(objCode[i]);
+                    break;
+                case 2:
+                    display = "" + objCode[i];
+                    break;
+                case 3:
+                    display = String.format("%32s", Long.toBinaryString(objCode[i])).replace(" ", "0");
+                    break;
+                case 4:
+                    display = PLPToolbox.asciiWord(objCode[i]);
+                    break;
+            }
             Object[] row = new Object[] {
+                (plp.asm.lookupLabel(plp.asm.getAddrTable()[i]) != null ? plp.asm.lookupLabel(plp.asm.getAddrTable()[i]) : ""),
                 String.format("0x%08x", plp.asm.getAddrTable()[i]) +
                         " " + ((plp.sim != null) ?
                             ((((plptool.mips.SimCore) plp.sim).pc.eval() == plp.asm.getAddrTable()[i]) ? "[PC]" : "")
                             : ""),
-                (plp.asm.lookupLabel(plp.asm.getAddrTable()[i]) != null ? plp.asm.lookupLabel(plp.asm.getAddrTable()[i]) : ""),
-                plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmLine(plp.asm.getLineNumMapper()[i]),
-                false,
+                display,
                 plp.asm.getAsmList().get(plp.asm.getFileMapper()[i]).getAsmFilePath(),
                 String.valueOf(plp.asm.getLineNumMapper()[i])
             };
@@ -73,10 +91,6 @@ public class ASMSimView extends javax.swing.JFrame {
 
         for(int i = 0; i < objCode.length; i++) {
             if(((plptool.mips.SimCore) plp.sim).pc.eval() == plp.asm.getAddrTable()[i]) {
-                if((Boolean) model.getValueAt(i, Constants.ASMVIEW_BREAKPOINT)) {
-                    plp.g_simrun.stepCount = -1;
-                    plp.stopSimulation();
-                }
                 model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]) + " [PC]", i, Constants.ASMVIEW_ADDR);
             } else {
                 model.setValueAt(String.format("0x%08x",plp.asm.getAddrTable()[i]), i, Constants.ASMVIEW_ADDR);
@@ -95,6 +109,9 @@ public class ASMSimView extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tblASM = new javax.swing.JTable();
+        lblDisplay = new javax.swing.JLabel();
+        cmbDisplay = new javax.swing.JComboBox();
+        btnApply = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ASMSimView.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -105,20 +122,20 @@ public class ASMSimView extends javax.swing.JFrame {
         tblASM.setFont(resourceMap.getFont("tblASM.font")); // NOI18N
         tblASM.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Address", "Label", "String", "Break", "Source", "#"
+                "Label", "Address", "String", "Source", "#"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -135,35 +152,67 @@ public class ASMSimView extends javax.swing.JFrame {
         tblASM.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tblASM);
         tblASM.getColumnModel().getColumn(0).setPreferredWidth(100);
-        tblASM.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblASM.columnModel.title0")); // NOI18N
+        tblASM.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblASM.columnModel.title1")); // NOI18N
         tblASM.getColumnModel().getColumn(1).setPreferredWidth(100);
-        tblASM.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblASM.columnModel.title1")); // NOI18N
+        tblASM.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblASM.columnModel.title0")); // NOI18N
         tblASM.getColumnModel().getColumn(2).setPreferredWidth(350);
         tblASM.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblASM.columnModel.title4")); // NOI18N
-        tblASM.getColumnModel().getColumn(3).setPreferredWidth(35);
-        tblASM.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblASM.columnModel.title5")); // NOI18N
-        tblASM.getColumnModel().getColumn(4).setPreferredWidth(100);
-        tblASM.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblASM.columnModel.title2")); // NOI18N
-        tblASM.getColumnModel().getColumn(5).setPreferredWidth(35);
-        tblASM.getColumnModel().getColumn(5).setHeaderValue(resourceMap.getString("tblASM.columnModel.title3")); // NOI18N
+        tblASM.getColumnModel().getColumn(3).setPreferredWidth(100);
+        tblASM.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblASM.columnModel.title2")); // NOI18N
+        tblASM.getColumnModel().getColumn(4).setPreferredWidth(35);
+        tblASM.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("tblASM.columnModel.title3")); // NOI18N
+
+        lblDisplay.setText(resourceMap.getString("lblDisplay.text")); // NOI18N
+        lblDisplay.setName("lblDisplay"); // NOI18N
+
+        cmbDisplay.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Source code line", "Hexadecimal", "Decimal", "Binary", "ASCII" }));
+        cmbDisplay.setName("cmbDisplay"); // NOI18N
+
+        btnApply.setText(resourceMap.getString("btnApply.text")); // NOI18N
+        btnApply.setName("btnApply"); // NOI18N
+        btnApply.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnApplyActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblDisplay)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cmbDisplay, 0, 404, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnApply))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDisplay)
+                    .addComponent(btnApply))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApplyActionPerformed
+        updateTable();
+    }//GEN-LAST:event_btnApplyActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnApply;
+    private javax.swing.JComboBox cmbDisplay;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblDisplay;
     private javax.swing.JTable tblASM;
     // End of variables declaration//GEN-END:variables
 
