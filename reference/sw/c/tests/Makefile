@@ -7,6 +7,7 @@ TESTS=\
 	string\
 	define\
 	recursion\
+	struct\
 
 build.tests:	$(addsuffix .build, $(TESTS))
 clean.tests:	$(addsuffix .clean, $(TESTS))

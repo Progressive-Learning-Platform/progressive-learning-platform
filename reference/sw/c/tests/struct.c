@@ -1,3 +1,7 @@
+int result0 = 0;
+int result1 = 0;
+int result2 = 0;
+
 struct a {
 	int b;
 	int c;
