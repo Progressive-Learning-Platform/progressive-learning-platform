@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>2.1 Notes</TITLE>
+<META NAME="description" CONTENT="2.1 Notes">
+<META NAME="keywords" CONTENT="ReferenceHardwareManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="ReferenceHardwareManual.css">
+
+<LINK REL="next" HREF="node5.html">
+<LINK REL="previous" HREF="node3.html">
+<LINK REL="up" HREF="node3.html">
+<LINK REL="next" HREF="node5.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html92"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html88"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html82"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html90"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html93"
+  HREF="node5.html">2.2 Forwarding and Hazards</A>
+<B> Up:</B> <A NAME="tex2html89"
+  HREF="node3.html">2 CPU</A>
+<B> Previous:</B> <A NAME="tex2html83"
+  HREF="node3.html">2 CPU</A>
+ &nbsp; <B>  <A NAME="tex2html91"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00031000000000000000">
+2.1 Notes</A>
+</H2>
+
+<P>
+The diagram reflects how the CPU is implemented on the FPGA.
+
+<P>
+The branch target calculation is abstracted in the diagram. Branch target is actually calculated by adding PC + 4 to the branch target which is sign extended and left shifted twice.
+
+<P>
+All instructions except for load word (lw) resolve in the EX stage. This has implications in potential data and control hazards. For example, we could eliminate the branch control hazard by moving the branch resolution hardware to the ID stage. The branch instruction already has a delay slot defined, so by resolving the branch in the ID stage, there would be no control hazard. However, this move introduces 5 additional data hazards, 3 of which require stalling the pipeline, including one that stalls for 2 cycles. Due to the likelihood of branch instructions depending on immediately previous instructions (calculate/branch), this stall would significantly impact performance. Therefore, branch instructions are resolved in the EX stage. There are also educational reasons for this configuration, as it incorporates a stall, several forwards, and a flush event which are valuable to learn about in the lab.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html92"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html88"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html82"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html90"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html93"
+  HREF="node5.html">2.2 Forwarding and Hazards</A>
+<B> Up:</B> <A NAME="tex2html89"
+  HREF="node3.html">2 CPU</A>
+<B> Previous:</B> <A NAME="tex2html83"
+  HREF="node3.html">2 CPU</A>
+ &nbsp; <B>  <A NAME="tex2html91"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-02-08
+</ADDRESS>
+</BODY>
+</HTML>

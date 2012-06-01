@@ -1,0 +1,10 @@
+silent
+loadpreset 2
+bp set _halt
+s 1000000
+assert 3 result0 1
+rbus result0
+assert 3 result1 7
+rbus result1
+assert 3 result2 2
+rbus result2
