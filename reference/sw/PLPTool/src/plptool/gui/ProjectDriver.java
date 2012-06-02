@@ -424,6 +424,7 @@ public class ProjectDriver {
             System.exit(-1);
         }
 
+        asm = null;
         asms = new ArrayList<PLPAsmSource>();
         asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
         open_asm = 0;
@@ -443,6 +444,9 @@ public class ProjectDriver {
             desimulate();
             g_dev.disableSimControls();
             g_dev.enableBuildControls();
+
+            if(g_asmview != null)
+                g_asmview.dispose();
         }
         CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW, null);
         return Constants.PLP_OK;
@@ -474,6 +478,7 @@ public class ProjectDriver {
             System.exit(-1);
         }
 
+        asm = null;
         asms = new ArrayList<PLPAsmSource>();
         if(importAsm(asmPath) != Constants.PLP_OK) {
             asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
@@ -495,6 +500,9 @@ public class ProjectDriver {
             desimulate();
             g_dev.disableSimControls();
             g_dev.enableBuildControls();
+
+            if(g_asmview != null)
+                g_asmview.dispose();
         }
         CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW, null);
         return Constants.PLP_OK;
@@ -743,7 +751,7 @@ public class ProjectDriver {
         Msg.I("Opening " + path, null);
 
         arch = null;
-
+        asm = null;
         asms = new ArrayList<PLPAsmSource>();
         smods = null;
         watcher = null;
@@ -965,6 +973,8 @@ public class ProjectDriver {
             this.setUnModified();
             updateWindowTitle();
             g_dev.updateDevelopRecentProjectList(plpFile.getAbsolutePath());
+            if(g_asmview != null)
+                g_asmview.dispose();
         }
 
         CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_SUCCESSFUL, null);
@@ -1179,6 +1189,8 @@ public class ProjectDriver {
             g_dev.getEditor().setCaretPosition(caretPos);
         }
 
+        if(g && asm != null && g_asmview != null)
+            g_asmview.updateTable();
         hookEvent(new ProjectEvent(ProjectEvent.POST_ASSEMBLE, -1));
         CallbackRegistry.callback(CallbackRegistry.EVENT_POST_ASSEMBLE, null);
         return Constants.PLP_OK;
@@ -1323,9 +1335,6 @@ public class ProjectDriver {
             addProjectAttribute("watcher_visibility", g_watcher.isVisible());
             g_watcher.dispose();
         }
-
-        if(g_asmview != null)
-            g_asmview.dispose();
 
         if(g_simctrl != null)
             g_simctrl.dispose();
