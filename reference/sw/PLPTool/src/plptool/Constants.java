@@ -203,12 +203,8 @@ public class Constants {
     public static final int PLP_TOOLFRAME_SIMGPIO                = 13;
 
     // ASMView Columns identifiers
-    public static final int ASMVIEW_ADDR                         = 0;
-    public static final int ASMVIEW_LABEL                        = 1;
-    public static final int ASMVIEW_STRING                       = 2;
-    public static final int ASMVIEW_BREAKPOINT                   = 3;
-    public static final int ASMVIEW_LINENUM                      = 4;
-    public static final int ASMVIEW_SOURCEFILE                   = 5;
+    public static final int ASMVIEW_ADDR                         = 1;
+    public static final int ASMVIEW_LABEL                        = 0;
 
     // Programmer constants
     public static final int PLP_PRG_CHUNK_BUFFER_SIZE            = 1048576; // 1MB

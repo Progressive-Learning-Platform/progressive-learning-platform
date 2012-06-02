@@ -769,6 +769,15 @@ public class PLPToolbox {
     // 0, 1, 2, 3, 4, 5   index = 3 ('3') len = 6
     // 0, 1, 2, x, x
     // 0, 1, 2, 4, 5      index+1 = 4 delta_len = 2
+
+    /**
+     * Consume an argument and return a string array without the consumed
+     * argument
+     *
+     * @param args Input string array
+     * @param index Index of element to gobble
+     * @return String array without the gobbled element
+     */
     public static String[] gobble(String[] args, int index) {
         String[] temp = new String[args.length-1];
         System.arraycopy(args, 0, temp, 0, index);
@@ -784,10 +793,24 @@ public class PLPToolbox {
      * with
      * @return
      */
-    public char[] parseStringAsChars(String str, String[]... escapes) {
+    public static char[] parseStringAsChars(String str, String[]... escapes) {
 
 
         return null;
+    }
+
+    /**
+     * Copy a string to the system clipboard
+     *
+     * @param str String to copy
+     */
+    public static void copy(String str) {
+        try {
+            java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                    new java.awt.datatransfer.StringSelection(str), null);
+        } catch(Exception e) {
+            Msg.W("clipboard copy failed.", null);
+        }
     }
 }
 

@@ -1625,6 +1625,7 @@ public class Develop extends javax.swing.JFrame {
         menuProgram = new javax.swing.JMenuItem();
         menuQuickProgram = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        menuSimAsmView = new javax.swing.JMenuItem();
         menuSetNewProjectISA = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuNewASM = new javax.swing.JMenuItem();
@@ -1662,7 +1663,6 @@ public class Develop extends javax.swing.JFrame {
         menuSimControl = new javax.swing.JCheckBoxMenuItem();
         menuSimTools = new javax.swing.JMenu();
         menuSimIO = new javax.swing.JCheckBoxMenuItem();
-        menuSimAsmView = new javax.swing.JMenuItem();
         menuIOReg = new javax.swing.JMenu();
         menuSimLEDs = new javax.swing.JCheckBoxMenuItem();
         menuSimSwitches = new javax.swing.JCheckBoxMenuItem();
@@ -1787,7 +1787,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -2401,6 +2401,15 @@ public class Develop extends javax.swing.JFrame {
         jSeparator12.setName("jSeparator12"); // NOI18N
         rootmenuProject.add(jSeparator12);
 
+        menuSimAsmView.setText(resourceMap.getString("menuSimAsmView.text")); // NOI18N
+        menuSimAsmView.setName("menuSimAsmView"); // NOI18N
+        menuSimAsmView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSimAsmViewActionPerformed(evt);
+            }
+        });
+        rootmenuProject.add(menuSimAsmView);
+
         menuSetNewProjectISA.setMnemonic('E');
         menuSetNewProjectISA.setText(resourceMap.getString("menuSetNewProjectISA.text")); // NOI18N
         menuSetNewProjectISA.setName("menuSetNewProjectISA"); // NOI18N
@@ -2727,15 +2736,6 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         menuSimTools.add(menuSimIO);
-
-        menuSimAsmView.setText(resourceMap.getString("menuSimAsmView.text")); // NOI18N
-        menuSimAsmView.setName("menuSimAsmView"); // NOI18N
-        menuSimAsmView.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuSimAsmViewActionPerformed(evt);
-            }
-        });
-        menuSimTools.add(menuSimAsmView);
 
         rootmenuSim.add(menuSimTools);
 
@@ -3468,10 +3468,14 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCPUActionPerformed
 
     private void menuSimAsmViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimAsmViewActionPerformed
-        if(plp.g_asmview == null)
+        if(plp.isAssembled() && plp.g_asmview == null)
             plp.g_asmview = new ASMSimView(plp);
 
-        plp.g_asmview.setVisible(true);
+        if(plp.isAssembled()) {
+            plp.g_asmview.updateTable();
+            plp.g_asmview.setVisible(true);
+        } else
+            Msg.E("The project must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
     }//GEN-LAST:event_menuSimAsmViewActionPerformed
 
     private void menuProjectPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProjectPaneActionPerformed
