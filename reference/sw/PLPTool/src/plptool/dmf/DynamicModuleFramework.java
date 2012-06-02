@@ -375,7 +375,7 @@ public class DynamicModuleFramework {
      */
     public static void autoloadModules(String autoloadPath,
             plptool.gui.ProjectDriver plp, boolean prompt) {
-        Msg.D("Auto-loading modules...", 1, null);
+        Msg.D("Loading modules from " + autoloadPath + "...", 1, null);
         File autoloadDir = new File(autoloadPath);
         if(autoloadDir.exists() && autoloadDir.isDirectory()) {
             File[] files = autoloadDir.listFiles();
@@ -737,8 +737,9 @@ public class DynamicModuleFramework {
             return null;
         }
 
-        // Find classes that implement the PLPGenericModule interface. This
-        // class will be loaded when the module is loaded in PLPTool
+        // Find classes that implement the PLPGenericModule or ModuleInterface5
+        // interface. This class will be loaded when the module is loaded in
+        // PLPTool
         boolean found = false;
         for(i = 0; i < dynamicModuleClasses.size(); i++) {
             Class[] interfaces = dynamicModuleClasses.get(i).getInterfaces();

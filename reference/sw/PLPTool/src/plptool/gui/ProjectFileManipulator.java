@@ -37,7 +37,8 @@ public class ProjectFileManipulator {
         ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
         // Autoload saved modules
         if(autoloadModules)
-            PLPToolApp.loadDynamicModules(PLPToolbox.getConfDir() + "/autoload", plp);
+            PLPToolApp.loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
+                                               PLPToolbox.getConfDir() + "/usermods");
         File plpHandler = new File(args[1]);
 	
 	if(plpHandler.exists() && !(args.length > 2 && args[2].equals("-c"))) {
