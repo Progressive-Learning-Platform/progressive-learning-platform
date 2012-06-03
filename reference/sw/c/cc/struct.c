@@ -31,6 +31,7 @@ extern struct_table *structs;
    pointing to our dummy struct table.
  */ 
 node* install_struct_symbol(node* n) {
+	vlog("[struct] installing symbol(s)\n");
 	if (struct_temp == NULL)
 		struct_temp = new_symbol_table(NULL);
 	
