@@ -241,7 +241,7 @@ type_specifier
 	| DOUBLE { vlog("[parser] DOUBLE\n"); $$ = type("double"); }
 	| SIGNED { vlog("[parser] SIGNED\n"); $$ = type("signed"); }
 	| UNSIGNED { vlog("[parser] UNSIGNED\n"); $$ = type("unsigned"); }
-	| struct_or_union_specifier { vlog("[parser] STRUCT_UNION\n"); $$ = type("struct_union"); }
+	| struct_or_union_specifier { vlog("[parser] STRUCT_UNION\n"); /* do nothing */ }
 	| enum_specifier { vlog("[parser] ENUM\n"); $$ = type("enum"); }
 	| TYPE_NAME { vlog("[parser] TYPE_NAME\n"); $$ = type($1->id); }
 	;
@@ -263,7 +263,7 @@ struct_declaration_list
 	;
 
 struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';'  { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); $$ = op("struct_declaration", 2, $1, $2); } 
+	: specifier_qualifier_list struct_declarator_list ';'  { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); $$ = op("struct_declaration", 2, $1, $2); $$ = install_struct_symbol($$); } 
 	;
 
 specifier_qualifier_list
