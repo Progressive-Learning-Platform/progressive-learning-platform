@@ -859,9 +859,26 @@ class ManifestHandlers {
                         Constants.PLP_DMOD_INSTANTIATION_ERROR, mod.getName());
                 DynamicModuleFramework.removeModuleInstance(cIndex);
             } else {
-                retLoad = mod.initialize(plp);
+                try {
+                    retLoad = mod.initialize(plp);
+                } catch(Exception e) {
+                    retLoad = Msg.E("Module did not initialize cleanly."
+                            + " Set debug level to at least 2 for stack trace.",
+                            Constants.PLP_DMOD_INSTANTIATION_ERROR, mod);
+                    if(Constants.debugLevel >= 2)
+                        e.printStackTrace();
+                } catch(java.lang.NoClassDefFoundError e) {
+                    retLoad = Msg.E("Class dependency error occured during init."
+                            + " Requested class not found: " + e.getMessage()
+                            + " - Is the module packaged correctly?",
+                            Constants.PLP_DMOD_INSTANTIATION_ERROR, mod);
+                }
                 if(retLoad != Constants.PLP_OK) {
-                    Msg.W("Module didn't return OK signal.", null);
+                    if(plp.g())
+                        PLPToolbox.showErrorDialog(plp.g_dev, "Module initialization failed."
+                                + " PLPTool may need to be restarted.");
+                    Msg.E("Module initialization failed. PLPTool may need to be restarted.",
+                            Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
                     DynamicModuleFramework.removeModuleInstance(cIndex);
                 }
             }
