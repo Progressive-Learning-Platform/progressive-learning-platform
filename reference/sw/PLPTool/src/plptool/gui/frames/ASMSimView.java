@@ -199,9 +199,14 @@ public class ASMSimView extends javax.swing.JFrame {
             out += "Project: " + plp.plpfile.getAbsolutePath() + "\n\n";
         }
 
+        t = "";
+        for(int i = 0; i < 24; i++)
+            t += " ";
+
         for(int i = start; i <= end; i++) {
-            out += chkIncludeFile.isSelected() ? source[i] + " " : "";
-            out += chkIncludeLabels.isSelected() ? labels[i] + " " : "";
+            out += !chkIncludeFile.isSelected() ? "" :
+                   i != start && source[i-1].equals(source[i]) ? t + " " : source[i] + " ";
+            out += !chkIncludeLabels.isSelected() ? "" : labels[i] + " ";
             for(int j = 1; j < tblASM.getColumnCount()-1; j++) {
                 if(tblASM.getColumnName(j).equals("Source"))
                     out += "| ";

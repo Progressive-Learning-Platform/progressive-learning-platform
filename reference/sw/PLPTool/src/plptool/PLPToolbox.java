@@ -766,10 +766,6 @@ public class PLPToolbox {
         return filter;
     }
 
-    // 0, 1, 2, 3, 4, 5   index = 3 ('3') len = 6
-    // 0, 1, 2, x, x
-    // 0, 1, 2, 4, 5      index+1 = 4 delta_len = 2
-
     /**
      * Consume an argument and return a string array without the consumed
      * argument
@@ -786,15 +782,19 @@ public class PLPToolbox {
     }
 
     /**
+     * NOT IMPLEMENTED YET
      * Transform a string with embedded escapes to a character array
      *
-     * @param str String to trasnform
-     * @param escapes Escape character strings. For example, to escape newlines
-     * with
+     * @param str String to transform
+     * @param escapes Escaped characters
      * @return
      */
-    public static char[] parseStringAsChars(String str, String[]... escapes) {
+    public static char[] parseStringAsChars(String str, char[]... escapes) {
+        char[] ret = new char[str.length()]; // result is at least length of str
 
+        for(int i = 0; i < str.length(); i++) {
+
+        }
 
         return null;
     }
