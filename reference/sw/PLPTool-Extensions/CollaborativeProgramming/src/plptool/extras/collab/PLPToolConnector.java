@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- */
+*/
 
 package plptool.extras.collab;
 
@@ -68,7 +68,7 @@ public class PLPToolConnector implements ModuleInterface5 {
             plp.g_dev.addToolsItem(menuClient);
             plp.g_dev.addToolsItem(menuServerControl);
         }
-        Callback_Project_Change_Handler cb = new Callback_Project_Change_Handler(this);
+        Callback_Project_Change_Handler cb = new Callback_Project_Change_Handler();
         CallbackRegistry.register(CallbackRegistry.PROJECT_NEW, cb);
         CallbackRegistry.register(CallbackRegistry.PROJECT_OPEN_SUCCESSFUL, cb);
         return Constants.PLP_OK;
@@ -92,18 +92,13 @@ public class PLPToolConnector implements ModuleInterface5 {
     public String toString() {
         return "Collaborative Programming";
     }
-}
 
-class Callback_Project_Change_Handler implements Callback {
-    private PLPToolConnector c;
-
-    public Callback_Project_Change_Handler(PLPToolConnector c) {
-        this.c = c;
-    }
-
-    public boolean callback(int callbackNum, Object param) {
-        Msg.D("Now we're talking.", 2, null);
-        c.setActive();
-        return true;
+    class Callback_Project_Change_Handler implements Callback {
+        public boolean callback(int callbackNum, Object param) {
+            Msg.D("Now we're talking.", 2, null);
+            setActive();
+            return true;
+        }
     }
 }
+

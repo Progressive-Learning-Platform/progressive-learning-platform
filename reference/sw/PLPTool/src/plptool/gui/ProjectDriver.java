@@ -1341,7 +1341,6 @@ public class ProjectDriver {
 
         g_ioreg = null;
         g_watcher = null;
-        g_asmview = null;
         g_simctrl = null;
 
         sim_mode = false;

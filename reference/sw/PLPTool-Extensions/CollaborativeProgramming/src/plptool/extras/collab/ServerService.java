@@ -50,6 +50,7 @@ public class ServerService extends Thread {
         } catch(IOException e) {
             Msg.E("Unable to open port " + port, Constants.PLP_GENERAL_IO_ERROR,
                     null);
+            if(Constants.debugLevel >= 2) e.printStackTrace();
         }
     }
 
@@ -76,6 +77,7 @@ public class ServerService extends Thread {
             socket.close();
         } catch(IOException e) {
             Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
+            if(Constants.debugLevel >= 2) e.printStackTrace();
         }
     }
 

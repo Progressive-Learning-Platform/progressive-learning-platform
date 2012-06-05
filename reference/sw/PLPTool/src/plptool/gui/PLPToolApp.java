@@ -51,8 +51,6 @@ public class PLPToolApp extends SingleFrameApplication {
     private static boolean simulateCLI = false;
     private static boolean simulateScripted = false;
     private static boolean loadModules = true;
-    private static ArrayList<String[]> manifests;
-    private static ArrayList<String> jars;
     private static ArrayList<String> moduleLoadDirs;
     private static ArrayList<String> moduleLoadJars;
     private static HashMap<String, String> attributes;
@@ -474,7 +472,19 @@ public class PLPToolApp extends SingleFrameApplication {
                 jarPath = moduleLoadJars.get(i);
                 Msg.D("Loading module from " + jarPath + "...", 2, null);
                 String[] manifest = DynamicModuleFramework.loadJarWithManifest(jarPath);
-                DynamicModuleFramework.applyManifestEntries(jarPath, manifest, plp);
+                if(manifest == null)
+                    System.exit(Constants.PLP_DMOD_GENERAL_ERROR);
+                try {
+                    DynamicModuleFramework.applyManifestEntries(jarPath, manifest, plp);
+                } catch(Exception e) {
+                    System.err.println("Module load routine failed for " + jarPath);
+                    System.err.println(e.getMessage());
+                    System.exit(Constants.PLP_DMOD_GENERAL_ERROR);
+                } catch(java.lang.NoClassDefFoundError e) {
+                    System.err.println("Module load routine failed for " + jarPath);
+                    System.err.println("error: " + e.getMessage());
+                    System.exit(Constants.PLP_DMOD_GENERAL_ERROR);
+                }
             }
         }
     }
