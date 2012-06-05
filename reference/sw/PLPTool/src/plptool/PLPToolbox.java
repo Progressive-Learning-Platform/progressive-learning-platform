@@ -812,5 +812,16 @@ public class PLPToolbox {
             Msg.W("clipboard copy failed.", null);
         }
     }
+
+    /**
+     * Show an error dialog box
+     *
+     * @param parent Parent component for the dialog box
+     * @param str String to display
+     */
+    public static void showErrorDialog(java.awt.Component parent, String str) {
+        javax.swing.JOptionPane.showMessageDialog(parent, str, "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
 }
 
