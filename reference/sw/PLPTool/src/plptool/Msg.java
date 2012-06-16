@@ -89,39 +89,36 @@ public class Msg {
     }
 
     /**
-     * This function either prints out an error message to stdout or the
-     * specified JTextArea in the output pointer.
+     * This function either prints out an error message to stderr or the
+     * specified JTextArea in the output pointer. Error numbers equal or greater
+     * to 1024 will always be printed to stderr.
      *
      * @param errStr Error string to print.
      * @param errorCode Error code.
      * @param objIdentifier A reference to the offending object.
      * @return The error code for further handling.
      */
-    public static int E(String errStr, int errorCode, Object objIdentifier) {
-            
-        try {
-        
-        if(objIdentifier != null)
-
-
-            if(output == null)
-                System.out.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr);
-            else {
-                kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
-                        (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n"
-                        , 0, 0, null);
-                output.setCaretPosition(doc.getLength());
+    public static int E(String errStr, int errorCode, Object objIdentifier) {           
+        try {   
+            if(objIdentifier != null) {
+                if(output == null || errorCode >= 1024)
+                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr);
+                if(output != null) {
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
+                            (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n"
+                            , 0, 0, null);
+                    output.setCaretPosition(doc.getLength());
+                }
+            } else {
+                if(output == null || errorCode >= 1024)
+                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr);
+                if(output != null) {
+                    kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
+                            (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n"
+                            , 0, 0, null);
+                    output.setCaretPosition(doc.getLength());
+                }
             }
-        else
-            if(output == null)
-                System.out.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr);
-            else {
-                kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
-                        (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n"
-                        , 0, 0, null);
-                output.setCaretPosition(doc.getLength());
-            }
-
         } catch(Exception e) {
         }
 

@@ -1503,7 +1503,7 @@ public class Asm extends plptool.PLPAsm {
     public int preSimulationCheck() {
         if(getObjectCode().length == 0)
             return Msg.E("simulate: Empty program.",
-                            Constants.PLP_BACKEND_EMPTY_PROGRAM, this);
+                            Constants.PLP_SIM_EMPTY_PROGRAM, this);
         return Constants.PLP_OK;
     }
 
