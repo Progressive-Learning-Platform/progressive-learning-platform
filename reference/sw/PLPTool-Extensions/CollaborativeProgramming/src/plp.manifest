@@ -3,16 +3,18 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
-class::plptool.extras.collab.Callback_Project_Change_Handler
 class::plptool.extras.collab.Client$1
 class::plptool.extras.collab.Client$2
 class::plptool.extras.collab.Client$3
 class::plptool.extras.collab.Client$4
 class::plptool.extras.collab.Client
 class::plptool.extras.collab.ClientReceiveService
+class::plptool.extras.collab.ClientService$1
+class::plptool.extras.collab.ClientService$State
 class::plptool.extras.collab.ClientService
 class::plptool.extras.collab.PLPToolConnector$1
 class::plptool.extras.collab.PLPToolConnector$2
+class::plptool.extras.collab.PLPToolConnector$Callback_Project_Change_Handler
 class::plptool.extras.collab.PLPToolConnector
 class::plptool.extras.collab.ServerControl$1
 class::plptool.extras.collab.ServerControl$2

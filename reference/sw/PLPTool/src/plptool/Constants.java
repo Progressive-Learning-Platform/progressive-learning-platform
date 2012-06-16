@@ -84,6 +84,7 @@ public class Constants {
     public static final int PLP_SIM_UNSUPPORTED_ARCHITECTURE     = 272;
     public static final int PLP_SIM_WRONG_MODULE_TYPE            = 273;
     public static final int PLP_SIM_MODHOOK_ERROR                = 274;
+    public static final int PLP_SIM_EMPTY_PROGRAM                = 275;
 
     // Programmer errors
     public static final int PLP_PRG_SOURCES_NOT_ASSEMBLED        = 512;
@@ -97,6 +98,8 @@ public class Constants {
     public static final int PLP_PRG_UNABLE_TO_CLOSE_PORT         = 520;
     public static final int PLP_PRG_TIMEOUT                      = 521;
     public static final int PLP_PRG_EMPTY_PROGRAM                = 522;
+
+    // Error codes >= 1024 will also always be printed to the terminal
 
     // Backend errors
     public static final int PLP_BACKEND_PLP_OPEN_ERROR           = 1024;
