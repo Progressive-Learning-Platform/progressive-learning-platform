@@ -69,8 +69,8 @@ public class PLPToolConnector implements ModuleInterface5 {
             plp.g_dev.addToolsItem(menuServerControl);
         }
         Callback_Project_Change_Handler cb = new Callback_Project_Change_Handler();
-        CallbackRegistry.register(CallbackRegistry.PROJECT_NEW, cb);
-        CallbackRegistry.register(CallbackRegistry.PROJECT_OPEN_SUCCESSFUL, cb);
+        CallbackRegistry.register(cb, CallbackRegistry.PROJECT_NEW);
+        CallbackRegistry.register(cb, CallbackRegistry.PROJECT_OPEN_SUCCESSFUL);
         return Constants.PLP_OK;
     }
 

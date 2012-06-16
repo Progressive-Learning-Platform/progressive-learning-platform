@@ -43,7 +43,7 @@ public class PLPToolConnector implements ModuleInterface5 {
 	public int initialize(ProjectDriver plp) {
 		this.plp = plp;
 		Msg.P("Initializing!");
-		CallbackRegistry.register(CallbackRegistry.SIM_STEP, new Callback_Step());
+		CallbackRegistry.register(new Callback_Step(), CallbackRegistry.SIM_STEP);
                 return Constants.PLP_OK;
 	}
 
