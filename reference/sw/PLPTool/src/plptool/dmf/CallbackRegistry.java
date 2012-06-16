@@ -127,7 +127,7 @@ public class CallbackRegistry {
      * implementation
      * @return False if the callback number is invalid, true otherwise
      */
-    public static boolean register(int callbackNum, Callback callback) {
+    public static boolean register(Callback callback, int callbackNum) {
         if(callbackNum < 0 || callbackNum >= CALLBACKS)
             return false;
 
@@ -143,10 +143,10 @@ public class CallbackRegistry {
      * implementation
      * @return False if any of the specified numbers is invalid, true otherwise
      */
-    public static boolean register(int[] callbackNumbers, Callback callback) {
+    public static boolean register(Callback callback, int...callbackNumbers) {
         boolean ret = true;
         for(int i = 0; i < callbackNumbers.length; i ++)
-            ret = register(callbackNumbers[i], callback) && ret;
+            ret = register(callback, callbackNumbers[i]) && ret;
         return ret;
     }
 }

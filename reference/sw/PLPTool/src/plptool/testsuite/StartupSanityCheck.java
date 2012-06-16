@@ -33,7 +33,7 @@ public class StartupSanityCheck {
                     plptool.dmf.CallbackRegistry.EVENT,
                     plptool.dmf.CallbackRegistry.EXIT
                 };
-        plptool.dmf.CallbackRegistry.register(nums, cb);
+        plptool.dmf.CallbackRegistry.register(cb, nums);
     }
 
 
