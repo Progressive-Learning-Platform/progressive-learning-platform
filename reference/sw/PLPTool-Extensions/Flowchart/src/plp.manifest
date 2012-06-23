@@ -28,6 +28,7 @@ class::plptool.extras.flowchart.PLPToolConnector
 class::plptool.extras.flowchart.SetupDOT$1
 class::plptool.extras.flowchart.SetupDOT$2
 class::plptool.extras.flowchart.SetupDOT$3
+class::plptool.extras.flowchart.SetupDOT$4
 class::plptool.extras.flowchart.SetupDOT
 class::plptool.extras.flowchart.JumpNode
 class::plptool.extras.flowchart.ExitNode
