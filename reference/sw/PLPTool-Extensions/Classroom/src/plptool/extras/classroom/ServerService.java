@@ -16,7 +16,7 @@
 
  */
 
-package plptool.extras.collab;
+package plptool.extras.classroom;
 
 import plptool.*;
 import plptool.gui.ProjectDriver;

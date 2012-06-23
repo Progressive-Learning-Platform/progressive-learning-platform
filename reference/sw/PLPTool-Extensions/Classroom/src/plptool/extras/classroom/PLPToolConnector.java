@@ -16,7 +16,7 @@
 
 */
 
-package plptool.extras.collab;
+package plptool.extras.classroom;
 
 import plptool.*;
 import plptool.dmf.*;
@@ -51,14 +51,14 @@ public class PLPToolConnector implements ModuleInterface5 {
         Msg.I("enabled", this);
         serverControl = new ServerControl(plp);
         client = new Client();
-        JMenuItem menuServerControl = new JMenuItem("Collaborative Programming Server Controls...");
+        JMenuItem menuServerControl = new JMenuItem("Classroom Server Controls...");
         menuServerControl.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(active)
                     serverControl.setVisible(true);
             }
         });
-        JMenuItem menuClient = new JMenuItem("Collaborative Programming Client...");
+        JMenuItem menuClient = new JMenuItem("Classroom Client...");
         menuClient.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 client.setVisible(true);
@@ -69,8 +69,9 @@ public class PLPToolConnector implements ModuleInterface5 {
             plp.g_dev.addToolsItem(menuServerControl);
         }
         Callback_Project_Change_Handler cb = new Callback_Project_Change_Handler();
-        CallbackRegistry.register(cb, CallbackRegistry.PROJECT_NEW);
-        CallbackRegistry.register(cb, CallbackRegistry.PROJECT_OPEN_SUCCESSFUL);
+        CallbackRegistry.register(cb,
+                CallbackRegistry.PROJECT_OPEN_SUCCESSFUL,
+                CallbackRegistry.PROJECT_NEW);
         return Constants.PLP_OK;
     }
 
@@ -90,7 +91,7 @@ public class PLPToolConnector implements ModuleInterface5 {
 
     @Override
     public String toString() {
-        return "Collaborative Programming";
+        return "PLPTool Classroom Module";
     }
 
     class Callback_Project_Change_Handler implements Callback {
