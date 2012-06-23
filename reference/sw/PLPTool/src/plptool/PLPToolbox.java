@@ -823,5 +823,24 @@ public class PLPToolbox {
         javax.swing.JOptionPane.showMessageDialog(parent, str, "Error",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
     }
+    /**
+     * Show a yes/no confirmation dialog
+     *
+     * @param parent Parent component for dialog box
+     * @param str String to display
+     * @param title Title to display
+     * @return True if the user clicked YES, false otherwise
+     */
+    public static boolean showYesNoDialog(java.awt.Component parent, String str, String title) {
+        int ret;
+        ret = javax.swing.JOptionPane.showConfirmDialog(parent, str, title,
+                javax.swing.JOptionPane.YES_NO_OPTION);
+        switch(ret) {
+            case javax.swing.JOptionPane.YES_OPTION:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
 

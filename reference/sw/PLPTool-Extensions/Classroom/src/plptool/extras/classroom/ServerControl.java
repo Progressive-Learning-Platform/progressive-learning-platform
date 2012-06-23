@@ -16,7 +16,7 @@
 
  */
 
-package plptool.extras.collab;
+package plptool.extras.classroom;
 
 import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
@@ -30,6 +30,7 @@ public class ServerControl extends javax.swing.JFrame {
     public static final int MAX_CLIENTS = 256;
     private ProjectDriver plp;
     private ServerService service;
+    private MyIP myIPFrame;
     public boolean listening, soliciting, live;
 
     /** Creates new form ServerControl */
@@ -40,6 +41,7 @@ public class ServerControl extends javax.swing.JFrame {
         listening = false;
         soliciting = false;
         live = false;
+        myIPFrame = new MyIP();
     }
 
     public synchronized void update() {
@@ -101,6 +103,7 @@ public class ServerControl extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         tglGoLive = new javax.swing.JToggleButton();
         btnClose = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         paneClients = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblClients = new javax.swing.JTable();
@@ -135,6 +138,18 @@ public class ServerControl extends javax.swing.JFrame {
         });
 
         btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Show IP");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout paneServerConfigLayout = new javax.swing.GroupLayout(paneServerConfig);
         paneServerConfig.setLayout(paneServerConfigLayout);
@@ -150,7 +165,9 @@ public class ServerControl extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addGroup(paneServerConfigLayout.createSequentialGroup()
                         .addComponent(tglGoLive)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
                         .addComponent(btnClose)))
                 .addContainerGap())
         );
@@ -166,7 +183,8 @@ public class ServerControl extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
                 .addGroup(paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tglGoLive)
-                    .addComponent(btnClose))
+                    .addComponent(btnClose)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -377,11 +395,25 @@ public class ServerControl extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnKickActionPerformed
 
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        if(listening &&
+           !PLPToolbox.showYesNoDialog(this, "This will shut down the server. Are you sure?", "Shutting down classroom server"))
+            return;
+        if(listening)
+            stopListening();
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        myIPFrame.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnKick;
     private javax.swing.JButton btnKickBan;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
