@@ -3,6 +3,7 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
+class::plptool.extras.classroom.Aggregator
 class::plptool.extras.classroom.Client$1
 class::plptool.extras.classroom.Client$2
 class::plptool.extras.classroom.Client$3
@@ -26,6 +27,7 @@ class::plptool.extras.classroom.ServerControl$5
 class::plptool.extras.classroom.ServerControl$6
 class::plptool.extras.classroom.ServerControl$7
 class::plptool.extras.classroom.ServerControl$8
+class::plptool.extras.classroom.ServerControl$State
 class::plptool.extras.classroom.ServerControl
 class::plptool.extras.classroom.ServerService
 loadmodule5::plptool.extras.classroom.PLPToolConnector

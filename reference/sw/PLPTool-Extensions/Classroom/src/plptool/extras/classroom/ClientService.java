@@ -126,6 +126,10 @@ public class ClientService extends Thread {
                             state = State.MUTED;
                             cmd("MUTE");
                             break;
+                        
+                        // this is where the action is
+                        case LIVE:
+                            break;
                     }
                 }
             }

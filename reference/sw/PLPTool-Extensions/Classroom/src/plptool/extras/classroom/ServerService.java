@@ -34,7 +34,6 @@ public class ServerService extends Thread {
     private HashMap<Integer, ClientService> clientServices;
     private ProjectDriver plp;
     private int clientIndex;
-    private boolean listening;
     private ServerSocket socket;
     private ServerControl control;
 
@@ -44,7 +43,7 @@ public class ServerService extends Thread {
         this.plp = plp;
         clientServices = new HashMap<Integer, ClientService>();
         clientIndex = 0;
-        listening = true;
+
         try {
             socket = new ServerSocket(port);
         } catch(IOException e) {
@@ -67,7 +66,6 @@ public class ServerService extends Thread {
     }
 
     public synchronized void stopListening() {
-        listening = false;
         try {
             Object[][] clients = PLPToolbox.mapToArray(clientServices);
             for(int i = 0; i < clients.length; i++) {
@@ -88,7 +86,7 @@ public class ServerService extends Thread {
     @Override
     public void run() {
         Msg.I("Listening on port " + socket.getLocalPort(), this);
-        while(listening) {
+        while(control.getServerState() == ServerControl.State.LISTENING) {
             try {
                 Socket client = socket.accept();
                 ClientService c = new ClientService(clientIndex, this, client, null);
@@ -98,7 +96,7 @@ public class ServerService extends Thread {
                 c.start();
                 control.update();
             } catch(IOException e) {
-                if(listening)
+                if(control.getServerState() == ServerControl.State.LISTENING)
                     Msg.E("Unable to open connection",
                             Constants.PLP_GENERIC_ERROR, null);
             }
@@ -125,7 +123,7 @@ public class ServerService extends Thread {
     }
 
     public synchronized boolean arbitrate() {
-        if(!control.soliciting)
+        if(control.getServerState() != ServerControl.State.SOLICITING)
             return false;
         else
             return true;
@@ -141,6 +139,13 @@ public class ServerService extends Thread {
         }
 
         return true;
+    }
+
+    public synchronized void broadcastCommand(String str) {
+        Object[][] clients = PLPToolbox.mapToArray(clientServices);
+        for(int i = 0; i < clients.length; i++) {
+            ((ClientService)clients[i][1]).cmd(str);
+        }
     }
 
     public String toString() {

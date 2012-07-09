@@ -20,6 +20,7 @@ package plptool.extras.classroom;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import plptool.PLPToolbox;
 
 /**
  *
@@ -31,6 +32,7 @@ public class MyIP extends javax.swing.JFrame {
     public MyIP() {
         initComponents();
         getAddress();
+        this.setLocationRelativeTo(null);
     }
 
     private void getAddress() {
@@ -57,28 +59,33 @@ public class MyIP extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        myIP.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        myIP.setFont(new java.awt.Font("Tahoma", 1, 64)); // NOI18N
+        myIP.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         myIP.setText("jLabel1");
+        myIP.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0), 3));
+        myIP.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                myIPMousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(myIP)
-                .addContainerGap(418, Short.MAX_VALUE))
+            .addComponent(myIP, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(myIP)
-                .addContainerGap(250, Short.MAX_VALUE))
+            .addComponent(myIP, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void myIPMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_myIPMousePressed
+        this.setVisible(false);
+    }//GEN-LAST:event_myIPMousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel myIP;
