@@ -31,17 +31,25 @@ public class ServerControl extends javax.swing.JFrame {
     private ProjectDriver plp;
     private ServerService service;
     private MyIP myIPFrame;
-    public boolean listening, soliciting, live;
+    private State state;
+
+    public enum State {
+        IDLE,
+        LISTENING,
+        SOLICITING,
+        LIVE
+    }
 
     /** Creates new form ServerControl */
     public ServerControl(ProjectDriver plp) {
         initComponents();
         this.plp = plp;
         setStates(false);
-        listening = false;
-        soliciting = false;
-        live = false;
+        state = State.IDLE;
         myIPFrame = new MyIP();
+        myIPFrame.dispose();
+        myIPFrame.setUndecorated(true);
+        PLPToolbox.attachHideOnEscapeListener(myIPFrame);
     }
 
     public synchronized void update() {
@@ -63,19 +71,17 @@ public class ServerControl extends javax.swing.JFrame {
         service = new ServerService(this, plp,
                 Integer.parseInt(txtPort.getText()), 256);
         service.start();
-        listening = true;
+        state = State.LISTENING;
         setStates(true);
     }
 
     public void stopListening() {
         service.stopListening();
-        listening = false;
-        soliciting = false;
-        live = false;
+        state = State.IDLE;
         setStates(false);
     }
 
-    public void setStates(boolean c) {
+    public final void setStates(boolean c) {
         tabbedPane.setEnabledAt(1, c);
         tabbedPane.setEnabledAt(2, c);
         paneCollabControl.setEnabled(c);
@@ -83,6 +89,10 @@ public class ServerControl extends javax.swing.JFrame {
             tabbedPane.setSelectedIndex(0);
         txtPort.setEnabled(!c);
         tglGoLive.setSelected(c);
+    }
+
+    public State getServerState() {
+        return state;
     }
 
     /** This method is called from within the constructor to
@@ -103,7 +113,7 @@ public class ServerControl extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         tglGoLive = new javax.swing.JToggleButton();
         btnClose = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnShowIP = new javax.swing.JButton();
         paneClients = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblClients = new javax.swing.JTable();
@@ -120,7 +130,7 @@ public class ServerControl extends javax.swing.JFrame {
         tglLive = new javax.swing.JToggleButton();
         jLabel5 = new javax.swing.JLabel();
 
-        setTitle("Collaborative Programming Server");
+        setTitle("Classroom Server Control");
 
         lblStatus.setText("Server status :");
 
@@ -144,10 +154,10 @@ public class ServerControl extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Show IP");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnShowIP.setText("Show IP");
+        btnShowIP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnShowIPActionPerformed(evt);
             }
         });
 
@@ -166,7 +176,7 @@ public class ServerControl extends javax.swing.JFrame {
                     .addGroup(paneServerConfigLayout.createSequentialGroup()
                         .addComponent(tglGoLive)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
+                        .addComponent(btnShowIP)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
                         .addComponent(btnClose)))
                 .addContainerGap())
@@ -184,7 +194,7 @@ public class ServerControl extends javax.swing.JFrame {
                 .addGroup(paneServerConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tglGoLive)
                     .addComponent(btnClose)
-                    .addComponent(jButton1))
+                    .addComponent(btnShowIP))
                 .addContainerGap())
         );
 
@@ -372,15 +382,15 @@ public class ServerControl extends javax.swing.JFrame {
     }//GEN-LAST:event_tglGoLiveActionPerformed
 
     private void tglSolicitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglSolicitActionPerformed
-        soliciting = tglSolicit.isSelected();
-        if(!soliciting)
+        state = tglSolicit.isSelected() ? State.SOLICITING : state;
+        if(state != State.SOLICITING)
             tglLive.setEnabled(false);
         else
             tglLive.setEnabled(true);
     }//GEN-LAST:event_tglSolicitActionPerformed
 
     private void tglLiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tglLiveActionPerformed
-        live = tglLive.isSelected();
+        state = tglLive.isSelected() ? State.LIVE : state;
     }//GEN-LAST:event_tglLiveActionPerformed
 
     private void tblClientsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientsMousePressed
@@ -396,24 +406,24 @@ public class ServerControl extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKickActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        if(listening &&
+        if(state == State.LISTENING &&
            !PLPToolbox.showYesNoDialog(this, "This will shut down the server. Are you sure?", "Shutting down classroom server"))
             return;
-        if(listening)
+        if(state == State.LISTENING)
             stopListening();
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnShowIPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowIPActionPerformed
         myIPFrame.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnShowIPActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnKick;
     private javax.swing.JButton btnKickBan;
+    private javax.swing.JButton btnShowIP;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

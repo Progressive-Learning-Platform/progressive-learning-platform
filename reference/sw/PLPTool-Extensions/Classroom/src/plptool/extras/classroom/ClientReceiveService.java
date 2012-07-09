@@ -30,10 +30,12 @@ public class ClientReceiveService extends Thread {
     private Socket s;
     private BufferedReader in;
     private Client c;
+    private ClientService.State state;
 
     public ClientReceiveService(Socket s, Client c) {
         this.s = s;
         this.c = c;
+        state = ClientService.State.DISCONNECT;
     }
 
     @Override

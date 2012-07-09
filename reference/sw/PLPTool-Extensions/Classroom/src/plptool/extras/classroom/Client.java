@@ -339,7 +339,8 @@ public class Client extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMEActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        disconnect();
+        if(s != null)
+            disconnect();
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
 
