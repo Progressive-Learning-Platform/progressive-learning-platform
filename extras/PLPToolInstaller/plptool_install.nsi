@@ -4,7 +4,7 @@
 !include x64.nsh
 !include FileAssociation.nsh
 
-!define PRODUCT_NAME "PLPTool 4"
+!define PRODUCT_NAME "PLPTool 5"
 !define JRE_VERSION "1.6"
 !define JRE_URL "http://javadl.sun.com/webapps/download/AutoDL?BundleId=18714&/jre-6u5-windows-i586-p.exe"
 
@@ -15,11 +15,11 @@ Name "PLPTool"
 OutFile "plptoolsetup.exe"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\PLPTool4
+InstallDir $PROGRAMFILES\PLPTool5
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKLM "Software\PLPTool4" "Install_Dir"
+InstallDirRegKey HKLM "Software\PLPTool5" "Install_Dir"
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
@@ -40,7 +40,7 @@ UninstPage instfiles
 
 ; The stuff to install
 Section "PLPTool Install (required)"
-
+  Call DetectJREandFail
   SectionIn RO
   
   ; Set output path to the installation directory.
@@ -51,8 +51,14 @@ Section "PLPTool Install (required)"
 
   IfFileExists $INSTDIR\PLPToolWin.bat 0 +2
     Delete $INSTDIR\PLPToolWin.bat    
-  Push `cd /D $INSTDIR$\r$\njava -Djava.library.path=. -jar PLPToolStatic.jar %1 %2 %3 %4 %5 %6 %7 %8 %9$\r$\n`
+  Push `cd /D $INSTDIR$\r$\n"$R0" -Djava.library.path=. -jar PLPToolStatic.jar -D .\resources %1 %2 %3 %4 %5 %6 %7 %8 %9$\r$\n`
   Push `$INSTDIR\PLPToolWin.bat`
+  Call WriteToFile
+  
+  IfFileExists $INSTDIR\PLPToolWinSafe.bat 0 +2
+    Delete $INSTDIR\PLPToolWinSafe.bat    
+  Push `cd /D $INSTDIR$\r$\n"$R0" -Djava.library.path=. -jar PLPToolStatic.jar -N %1 %2 %3 %4 %5 %6 %7 %8 %9$\r$\n`
+  Push `$INSTDIR\PLPToolWinSafe.bat`
   Call WriteToFile
   
   ${If} ${RunningX64}
@@ -69,13 +75,13 @@ Section "PLPTool Install (required)"
   SetOutPath $INSTDIR
   
   ; Write the installation path into the registry
-  WriteRegStr HKLM SOFTWARE\PLPTool4 "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM SOFTWARE\PLPTool5 "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool4" "DisplayName" "PLPTool Uninstallation"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool4" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool4" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool4" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool5" "DisplayName" "PLPTool Uninstallation"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool5" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool5" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool5" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
   
 SectionEnd
@@ -90,12 +96,12 @@ SectionEnd
 
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
-  CreateDirectory "$SMPROGRAMS\PLPTool 4"
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "-D .\resources" "$INSTDIR\resources\appicon.ico" 0
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLPTool (Safe Mode).lnk" "$INSTDIR\PLPToolWin.bat" "-N" "$INSTDIR\resources\appicon.ico" 0
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\PLP Serial Terminal.lnk" "$INSTDIR\PLPToolWin.bat" "--serialterminal" "$INSTDIR\resources\terminal.ico" 0  
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\Browse Installation Directory.lnk" "$INSTDIR" "" "$INSTDIR\resources\folder.ico" 0    
-  CreateShortCut "$SMPROGRAMS\PLPTool 4\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0   
+  CreateDirectory "$SMPROGRAMS\PLPTool 5"
+  CreateShortCut "$SMPROGRAMS\PLPTool 5\PLPTool.lnk" "$INSTDIR\PLPToolWin.bat" "" "$INSTDIR\resources\appicon.ico" 0
+  CreateShortCut "$SMPROGRAMS\PLPTool 5\PLPTool (Safe Mode).lnk" "$INSTDIR\PLPToolWinSafe.bat" "" "$INSTDIR\resources\appicon.ico" 0
+  CreateShortCut "$SMPROGRAMS\PLPTool 5\PLP Serial Terminal.lnk" "$INSTDIR\PLPToolWin.bat" "--serialterminal" "$INSTDIR\resources\terminal.ico" 0  
+  CreateShortCut "$SMPROGRAMS\PLPTool 5\Browse Installation Directory.lnk" "$INSTDIR" "" "$INSTDIR\resources\folder.ico" 0    
+  CreateShortCut "$SMPROGRAMS\PLPTool 5\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0   
   
 SectionEnd
 
@@ -104,16 +110,16 @@ Section "Example Programs and Software Library"
   File /r "..\..\reference\sw\libplp"
 SectionEnd
 
-Section /o "PLPTool Extensions (AutoSaver and Lecture Publisher)"
+Section /o "PLPTool Extensions"
   SetOutPath $INSTDIR\resources
   File "..\..\extras\AutoSaver\store\AutoSaver.jar"
-  File "..\..\extras\LecturePublisher\store\LecturePublisher.jar"
+  File "..\..\reference\sw\PLPTool-Extensions\Flowchart\dist\Flowchart.jar"
   SetOutPath $INSTDIR
 SectionEnd
 
-Section /o "PLP CPU Hardware for Nexys2/3"
-  File /r "hardware"
-SectionEnd
+;Section /o "PLP CPU Hardware for Nexys2/3"
+;  File /r "hardware"
+;SectionEnd
 
 ;--------------------------------
 
@@ -122,8 +128,8 @@ SectionEnd
 Section "Uninstall"
   
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool4"
-  DeleteRegKey HKLM SOFTWARE\PLPTool4
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool5"
+  DeleteRegKey HKLM SOFTWARE\PLPTool5
 
   ; Remove file association
   ${unregisterExtension} ".plp" "PLP project"
@@ -141,10 +147,10 @@ Section "Uninstall"
   Delete "$INSTDIR\resources\*.*"
 
   ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\PLPTool 4\*.*"
+  Delete "$SMPROGRAMS\PLPTool 5\*.*"
 
   ; Remove directories used
-  RMDir "$SMPROGRAMS\PLPTool 4"
+  RMDir "$SMPROGRAMS\PLPTool 5"
   RMDir "$INSTDIR\libplp"
   RMDir "$INSTDIR\examples"
   RMDir "$INSTDIR\hardware"
@@ -176,6 +182,29 @@ Function DetectJRE
   Call GetJRE
  
   done:
+FunctionEnd
+
+Function DetectJREandFail
+
+  ${If} ${RunningX64}
+	SetRegView 64
+  ${Else}
+	SetRegView 32
+  ${EndIf}
+
+  ReadRegStr $R1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+    ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
+    StrCpy $R0 "$R0\bin\java.exe"
+    IfErrors error
+    IfFileExists $R0 0 error
+   
+   Goto done
+   
+   error:
+    MessageBox MB_ICONSTOP "Failed to detect a Java Runtime Environment"
+    Abort   
+   
+   done:
 FunctionEnd
 
 Function WriteToFile
