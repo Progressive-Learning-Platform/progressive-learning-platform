@@ -39,9 +39,9 @@ UninstPage instfiles
 ;--------------------------------
 
 ; The stuff to install
-Section "Download Java Runtime (if not already installed)"
-  Call DetectJRE
-SectionEnd
+;Section "Download Java Runtime (if not already installed)"
+;  Call DetectJRE
+;SectionEnd
 
 Section "PLPTool Install (required)"
   Call DetectJREandFail
@@ -140,6 +140,7 @@ Section "Uninstall"
   Delete $INSTDIR\rxtxSerial32.dll
   Delete $INSTDIR\rxtxSerial64.dll
   Delete $INSTDIR\PLPToolWin.bat
+  Delete $INSTDIR\PLPToolWinSafe.bat
   Delete $INSTDIR\uninstall.exe
   Delete "$INSTDIR\libplp\*.*"
   Delete "$INSTDIR\examples\*.*"
@@ -159,31 +160,6 @@ Section "Uninstall"
 
 SectionEnd
 
-Function GetJRE
-        MessageBox MB_OK "${PRODUCT_NAME} uses Java ${JRE_VERSION}, it will now \
-                         be downloaded and installed"
- 
-        StrCpy $2 "$TEMP\Java Runtime Environment.exe"
-        nsisdl::download /TIMEOUT=30000 ${JRE_URL} $2
-        Pop $R0 ;Get the return value
-                StrCmp $R0 "success" +3
-                MessageBox MB_OK "Download failed: $R0"
-                Quit
-        ExecWait $2
-        Delete $2
-FunctionEnd
- 
- 
-Function DetectJRE
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" \
-             "CurrentVersion"
-  StrCmp $2 ${JRE_VERSION} done
- 
-  Call GetJRE
- 
-  done:
-FunctionEnd
-
 Function DetectJREandFail
 
   ${If} ${RunningX64}
@@ -201,7 +177,7 @@ Function DetectJREandFail
    Goto done
    
    error:
-    MessageBox MB_ICONSTOP "Failed to detect a Java Runtime Environment"
+    MessageBox MB_ICONSTOP "Failed to detect a Java Runtime Environment! You can download Java Runtime from www.oracle.com"
     Abort   
    
    done:
