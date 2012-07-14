@@ -39,6 +39,10 @@ UninstPage instfiles
 ;--------------------------------
 
 ; The stuff to install
+Section "Download Java Runtime (if not already installed)"
+  Call DetectJRE
+SectionEnd
+
 Section "PLPTool Install (required)"
   Call DetectJREandFail
   SectionIn RO
@@ -84,10 +88,6 @@ Section "PLPTool Install (required)"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool5" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
   
-SectionEnd
-
-Section "Download Java Runtime (if not already installed)"
-  Call DetectJRE
 SectionEnd
 
 Section "Associate PLP projects with PLPTool"
