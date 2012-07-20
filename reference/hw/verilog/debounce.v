@@ -1,21 +1,22 @@
-module debounce(clk, rst, rst_debounced);
-	input clk;
-	input rst;
-	output rst_debounced;
+module debounce(
+  input  clk,
+  input  button_i,
+  output button_debounced_o
+  );
 
-	parameter FREQ = 1250000;
+parameter MIN_DELAY = 50; // minimum number of cycles to count
+parameter W_COUNTER = 3;
+reg [W_COUNTER:0] counter; // one bit wider than min_delay
 
-	reg [31:0] count;
+assign button_debounced_o = counter[W_COUNTER];
 
-	assign rst_debounced = count == FREQ;
+always @(posedge clk) begin
+  if (!button_i) begin
+    // if button sensor is showing 'off' state, reset the counter
+    counter <= 0;
+  end else if (!counter[W_COUNTER]) begin
+    counter <= counter + 1'b1;
+  end
+end
 
-	always @(posedge clk) begin
-		if (rst && count == 0) begin
-			count <= 1;
-		end else if (count != 0 && count != FREQ) begin
-			count <= count + 1;
-		end else if (count == FREQ) begin
-			count <= 0;
-		end
-	end
 endmodule

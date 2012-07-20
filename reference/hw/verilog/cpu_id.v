@@ -1,5 +1,6 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+  Instruction decode stage for Progressive Learning Platform
+    Copyright 2012 David Fritz, Brian Gordon, Wira Mulia, Matthew Gaalswyk
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,156 +17,176 @@
 
  */
 
+module cpu_id (
+  input             rst,
+  input             clk,
+  input             cpu_stall,
+  input      [31:0] if_pc,
+  input      [31:0] if_inst,
+  input             wb_rfw,
+  input       [4:0] wb_rf_waddr,
+  input      [31:0] wb_rf_wdata,
+  input             int_flush,
+  output reg [31:0] p_rfa,
+  output reg [31:0] p_rfb,
+  output reg [31:0] p_imm32,
+  output reg  [4:0] p_shamt,
+  output reg  [5:0] p_func,
+  output reg  [4:0] p_rf_waddr,
+  output reg        p_c_rfw,
+  output reg  [1:0] p_c_wbsource,
+  output reg  [1:0] p_c_drw,
+  output reg  [5:0] p_c_alucontrol,
+  output reg        p_c_j,
+  output reg        p_c_b,
+  output reg        p_c_jjr,
+  output reg [25:0] p_jaddr,
+  output reg [31:0] p_pc,
+  output reg        p_c_rfbse,
+  output reg  [4:0] p_rs,
+  output reg  [4:0] p_rt,
+  output            c_stall
+);
 
-/*
+`include "parameters.v"
 
-fritz
+reg [31:0] rf [31:1];
 
-instruction decode phase
+// opcode | rs | rt | rd | shamt | func
+// opcode | rs | rt | imm
+// opcode | jaddr
+// Split up the instruction into its component fields
+wire  [5:0] opcode = if_inst[31:26];
+wire  [4:0] rf_rs  = if_inst[25:21];
+wire  [4:0] rf_rt  = if_inst[20:16];
+wire  [4:0] rf_rd  = if_inst[15:11];
+wire  [4:0] shamt  = if_inst[10: 6];
+wire  [5:0] func   = if_inst[ 5: 0];
+wire [15:0] imm    = if_inst[15: 0];
+wire [25:0] jaddr  = if_inst[25: 0];
 
-*/
+wire [31:0] rfa    = rf_rs == 0 ? 0 : rf[rf_rs];
+wire [31:0] rfb    = rf_rt == 0 ? 0 : rf[rf_rt];
 
-module cpu_id(rst, clk, cpu_stall, if_pc, if_inst, wb_rfw,
-		wb_rf_waddr, wb_rf_wdata, p_rfa, p_rfb, p_se, 
-		p_shamt, p_func, p_rf_waddr, p_c_rfw, p_c_wbsource,
-		p_c_drw, p_c_alucontrol, p_c_j, p_c_b, p_c_jjr,
-		p_jaddr, p_pc, p_c_rfbse, p_rs, p_rt, c_stall, int_flush);
-	input 		rst, clk, cpu_stall;
-	input	[31:0]	if_pc;
-	input	[31:0]	if_inst;
-	input 		wb_rfw;
-	input   [4:0]	wb_rf_waddr;
-	input   [31:0]  wb_rf_wdata;
-	input		int_flush;
-	output reg [31:0] p_rfa;
-	output reg [31:0] p_rfb;
-	output reg [31:0] p_se;
-	output reg [4:0]  p_shamt;
-	output reg [5:0]  p_func;
-	output reg [4:0]  p_rf_waddr;
-	output reg 	  p_c_rfw;
-	output reg [1:0]  p_c_wbsource;
-	output reg [1:0]  p_c_drw;
-	output reg [5:0]  p_c_alucontrol;
-	output reg 	  p_c_j;
-	output reg	  p_c_b;
-	output reg 	  p_c_jjr;
-	output reg [25:0] p_jaddr;
-	output reg [31:0] p_pc;
-	output reg	  p_c_rfbse;
-	output reg [4:0]  p_rs;
-	output reg [4:0]  p_rt;
-	output		  c_stall;
+/// HAZARD LOGIC
+assign c_stall =
+  p_c_rfw &&                          // writing to register,
+  p_c_alucontrol == LW &&             // from a LW operation,
+  (p_rt == rf_rs || p_rt == rf_rt) && // and target is same as incoming rs or rt,
+  p_rt != 0 &&                        // (and is not zero register),
+  opcode != SW;                       // and incoming instruction is not SW
 
-	reg [31:0] rf [31:1];
+/// CONTROL LOGIC
+wire c_rfw =
+  opcode != BEQ &&
+  opcode != BNE &&
+  opcode != SW  &&
+  opcode != J   &&
+  !c_stall; // secret bug, jump register asserts write enable but the assembler sets rd = 0
 
-	wire [5:0] opcode = if_inst[31:26];
-	wire [4:0] rf_rs = if_inst[25:21];
-	wire [4:0] rf_rt = if_inst[20:16];
-	wire [4:0] rf_rd = if_inst[15:11];
-	wire [15:0] imm = if_inst[15:0];
-	wire [4:0] shamt = if_inst[10:6];
-	wire [5:0] func = if_inst[5:0];
-	wire [25:0] jaddr = if_inst[25:0];
-	wire [31:0] rfa = rf_rs == 0 ? 0 : rf[rf_rs];
-	wire [31:0] rfb = rf_rt == 0 ? 0 : rf[rf_rt];
+wire [1:0] c_wbsource =
+  (opcode == LW ) ? MUX_DWORD :
+  (opcode == JAL) || (opcode == R_TYPE && func == JALR)
+                  ? MUX_JALRA :
+                    MUX_ALU_R ;
 
-	/* hazard logic */
-	wire stall = (p_c_rfw & (p_c_alucontrol == 6'h23) & ((p_rt == rf_rs) | (p_rt == rf_rt)) & (p_rt != 0) & (opcode != 6'h2b));
-	assign c_stall = stall;
+wire [1:0] c_drw =
+  (opcode == SW && !c_stall) ? DMEM_WRITE :
+  (opcode == LW && !c_stall) ? DMEM_READ  :
+                               DMEM_NOP   ;
 
-	/* control logic */
-	wire c_rfw = ( 
-		opcode != 6'h04 && 
-		opcode != 6'h05 && 
-		opcode != 6'h2b && 
-		opcode != 6'h02 && 
-		!stall); /* secret bug, jump register asserts write enable but the assembler sets rd = 0 */
-	wire [1:0] c_wbsource = 
-		(opcode == 6'h23) ? 2'h1 :
-		(opcode == 6'h03) ? 2'h2 :
-		(opcode == 6'h00 && func == 6'h09) ? 2'h2 : 0; 
-	wire [1:0] c_drw = (opcode == 6'h2b && !stall) ? 2'b01 : 
-			   (opcode == 6'h23 && !stall) ? 2'b10 : 2'b00;	/* c_drw[1] = read, c_drw[0] = write, 00 = nop */
-	wire [5:0] c_alucontrol = opcode;
-	wire c_se = (opcode == 6'h0c || opcode == 6'h0d) ? 0 : 1;
-	wire c_rfbse = (opcode == 6'h00 || opcode == 6'h04 || opcode == 6'h05) ? 0 : 1;
-	wire c_jjr = 
-		opcode == 6'h02 ? 0 :
-		opcode == 6'h03 ? 0 : 1;
-	wire [1:0] c_rd_rt_31 = 
-		(opcode == 6'h03) ? 2'b10 : /* jal */
-		(opcode == 6'h00) ? 2'b00 : 2'b01;
+wire [5:0] c_alucontrol = opcode; // just pass-through the opcode
 
-	/* internal logic */
-	wire [31:0] signext_imm = {{16{imm[15]}},imm};
-        wire [31:0] zeroext_imm = {{16{1'b0}},imm};
-	wire [31:0] se = c_se ? signext_imm : zeroext_imm;
-	wire [4:0] rd_rt_31 = 
-		(c_rd_rt_31 == 2'b00) ? rf_rd :
-		(c_rd_rt_31 == 2'b01) ? rf_rt :
-		(c_rd_rt_31 == 2'b10) ? 5'b11111 : rf_rd;
+// zero/sign extension
+// TODO: rename?
+wire c_se = (opcode == ANDI || opcode == ORI) ? MUX_ZE : MUX_SE;
 
-	wire c_j = 
-		((opcode == 6'h02) || 
-		(opcode == 6'h03) || 
-		(opcode == 6'h00 && func == 6'h08) || 
-		(opcode == 6'h00 && func == 6'h09)) && !stall;
+// ALU Y source (rfb or immediate extended value)
+// TODO: I think I want to rename this
+wire c_rfbse =
+  opcode == R_TYPE || opcode == BEQ || opcode == BNE ? MUX_RFB : MUX_IMM;
 
-	wire c_b = ((opcode == 6'h04) || (opcode == 6'h05)) && !stall;
+wire c_jjr = (opcode == J || opcode == JAL ) ? MUX_JADDR : MUX_JRA;
 
-	always @(posedge clk) begin
-		if (!cpu_stall) begin
-		if (rst || int_flush) begin		
-			p_rfa <= 0;
-			p_rfb <= 0;
-			p_shamt <= 0;
-			p_func <= 0;
-			p_rf_waddr <= 0;
-			p_c_rfw <= 0;
-			p_c_wbsource <= 0;
-			p_c_drw <= 0;
-			p_c_alucontrol <= 0;
-			p_c_j <= 0;
-			p_c_b <= 0;
-			p_c_jjr <= 0;
-			p_jaddr <= 0;
-			p_pc <= 0;
-			p_c_rfbse <= 0;
-			p_rs <= 0;
-			p_rt <= 0;
-			p_se <= 0;
-		end else begin
-			p_rfa <= rfa;
-			p_rfb <= rfb;
-			p_shamt <= shamt;
-			p_func <= func;
-			p_rf_waddr <= rd_rt_31;
-			p_c_rfw <= c_rfw;
-			p_c_wbsource <= c_wbsource;
-			p_c_drw <= c_drw;
-			p_c_alucontrol <= c_alucontrol;
-			p_c_j <= c_j;
-			p_c_b <= c_b;
-			p_c_jjr <= c_jjr;
-			p_jaddr <= jaddr;
-			p_pc <= if_pc;
-			p_c_rfbse <= c_rfbse;
-			p_rs <= rf_rs;
-			p_rt <= rf_rt;
-			p_se <= se;
-		end
-	
-		/* debug statements, not synthesized by Xilinx */
-		//$display("ID: INST: %x", if_inst);
-		end
-	end
+wire [1:0] c_rd_rt_31 =
+  (opcode == JAL   ) ? MUX_RA :
+  (opcode == R_TYPE) ? MUX_RD :
+                       MUX_RT ;
 
-	always @(negedge clk) begin
-		/* regfile */
-		if (wb_rfw && wb_rf_waddr != 5'd0) begin
-			rf[wb_rf_waddr] <= wb_rf_wdata;
-		end
-	end
-	
+/// INTERNAL LOGIC
+
+// immediate field zero/sign extension
+wire [15:0] imm_extension = c_se ? {16{imm[15]}} : 16'b0;
+wire [31:0] imm32 = {imm_extension, imm};
+
+
+wire [4:0] rd_rt_31 =
+  (c_rd_rt_31 == MUX_RD) ? rf_rd :
+  (c_rd_rt_31 == MUX_RT) ? rf_rt :
+  (c_rd_rt_31 == MUX_RA) ? SPR_JRA :
+                           rf_rd;
+
+// assert jump signal if not stalled and instruction is one of the 4 Jump inst
+wire c_j =
+  !c_stall &&
+  ( (opcode == J  ) ||
+    (opcode == JAL) ||
+    (func   == JR   && opcode == R_TYPE ) ||
+    (func   == JALR && opcode == R_TYPE ) );
+
+wire c_b = (opcode == BEQ || opcode == BNE) && !c_stall;
+
+always @(posedge clk) begin
+  // TODO: reorganize to proper reset block
+  if (!cpu_stall) begin
+    if (rst || int_flush) begin
+      // TODO: do these all need to be reset to zero?
+      p_rfa          <= 0;
+      p_rfb          <= 0;
+      p_shamt        <= 0;
+      p_func         <= 0;
+      p_rf_waddr     <= 0;
+      p_c_rfw        <= 0;
+      p_c_wbsource   <= 0;
+      p_c_drw        <= 0;
+      p_c_alucontrol <= 0;
+      p_c_j          <= 0;
+      p_c_b          <= 0;
+      p_c_jjr        <= 0;
+      p_jaddr        <= 0;
+      p_pc           <= 0;
+      p_c_rfbse      <= 0;
+      p_rs           <= 0;
+      p_rt           <= 0;
+      p_imm32        <= 0;
+    end else begin
+      p_rfa          <= rfa;
+      p_rfb          <= rfb;
+      p_shamt        <= shamt;
+      p_func         <= func;
+      p_rf_waddr     <= rd_rt_31;
+      p_c_rfw        <= c_rfw;
+      p_c_wbsource   <= c_wbsource;
+      p_c_drw        <= c_drw;
+      p_c_alucontrol <= c_alucontrol;
+      p_c_j          <= c_j;
+      p_c_b          <= c_b;
+      p_c_jjr        <= c_jjr;
+      p_jaddr        <= jaddr;
+      p_pc           <= if_pc;
+      p_c_rfbse      <= c_rfbse;
+      p_rs           <= rf_rs;
+      p_rt           <= rf_rt;
+      p_imm32        <= imm32;
+    end
+  end
+end
+
+always @(negedge clk) begin
+  // writes to register file on negative clock edge
+  if (wb_rfw && wb_rf_waddr != 5'd0) begin
+    rf[wb_rf_waddr] <= wb_rf_wdata;
+  end
+end
+
 endmodule
