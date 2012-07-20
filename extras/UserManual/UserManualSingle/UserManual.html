@@ -1,0 +1,1563 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>User Manual</TITLE>
+<META NAME="description" CONTENT="User Manual">
+<META NAME="keywords" CONTENT="UserManual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="UserManual.css">
+
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev_g.png">   
+<BR>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<P>
+<H1 ALIGN="CENTER">User Manual</H1>
+<DIV>
+
+<P ALIGN="CENTER"><STRONG>PLP Dev Team</STRONG></P>
+<P ALIGN="CENTER"><I>        ECEN</I></P>
+<P ALIGN="LEFT"><SMALL>        Oklahoma State University, OK</SMALL></P>
+</DIV>
+<BR>
+
+<H2><A NAME="SECTION00010000000000000000">
+Contents</A>
+</H2>
+<!--Table of Contents-->
+
+<UL>
+<LI><A NAME="tex2html56"
+  HREF="UserManual.html#SECTION00020000000000000000">1 Introduction</A>
+<LI><A NAME="tex2html57"
+  HREF="UserManual.html#SECTION00030000000000000000">2 Getting PLP</A>
+<LI><A NAME="tex2html58"
+  HREF="UserManual.html#SECTION00040000000000000000">3 Software Tools (PLPTool)</A>
+<UL>
+<LI><A NAME="tex2html59"
+  HREF="UserManual.html#SECTION00041000000000000000">3.1 Running PLPTool</A>
+<LI><A NAME="tex2html60"
+  HREF="UserManual.html#SECTION00042000000000000000">3.2 Graphical User Interface</A>
+<LI><A NAME="tex2html61"
+  HREF="UserManual.html#SECTION00043000000000000000">3.3 Cycle Accurate Simulator</A>
+<LI><A NAME="tex2html62"
+  HREF="UserManual.html#SECTION00044000000000000000">3.4 Programmer</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html63"
+  HREF="UserManual.html#SECTION00050000000000000000">4 Instruction Set and Assembly Language</A>
+<UL>
+<LI><A NAME="tex2html64"
+  HREF="UserManual.html#SECTION00051000000000000000">4.1 Syntax</A>
+<LI><A NAME="tex2html65"
+  HREF="UserManual.html#SECTION00052000000000000000">4.2 Ops</A>
+<LI><A NAME="tex2html66"
+  HREF="UserManual.html#SECTION00053000000000000000">4.3 Pseudo-ops</A>
+<LI><A NAME="tex2html67"
+  HREF="UserManual.html#SECTION00054000000000000000">4.4 Notes on Register Usage</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html68"
+  HREF="UserManual.html#SECTION00060000000000000000">5 Hardware Description</A>
+<UL>
+<LI><A NAME="tex2html69"
+  HREF="UserManual.html#SECTION00061000000000000000">5.1 Memory Map</A>
+<LI><A NAME="tex2html70"
+  HREF="UserManual.html#SECTION00062000000000000000">5.2 ROM</A>
+<LI><A NAME="tex2html71"
+  HREF="UserManual.html#SECTION00063000000000000000">5.3 RAM</A>
+<LI><A NAME="tex2html72"
+  HREF="UserManual.html#SECTION00064000000000000000">5.4 UART</A>
+<LI><A NAME="tex2html73"
+  HREF="UserManual.html#SECTION00065000000000000000">5.5 Switches</A>
+<LI><A NAME="tex2html74"
+  HREF="UserManual.html#SECTION00066000000000000000">5.6 LEDs</A>
+<LI><A NAME="tex2html75"
+  HREF="UserManual.html#SECTION00067000000000000000">5.7 GPIO</A>
+<LI><A NAME="tex2html76"
+  HREF="UserManual.html#SECTION00068000000000000000">5.8 VGA</A>
+<LI><A NAME="tex2html77"
+  HREF="UserManual.html#SECTION00069000000000000000">5.9 PLPID</A>
+<LI><A NAME="tex2html78"
+  HREF="UserManual.html#SECTION000610000000000000000">5.10 Timer</A>
+<LI><A NAME="tex2html79"
+  HREF="UserManual.html#SECTION000611000000000000000">5.11 Seven Segment</A>
+<LI><A NAME="tex2html80"
+  HREF="UserManual.html#SECTION000612000000000000000">5.12 Interrupt Controller</A>
+<LI><A NAME="tex2html81"
+  HREF="UserManual.html#SECTION000613000000000000000">5.13 Performance Counters</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html82"
+  HREF="UserManual.html#SECTION00070000000000000000">6 Bootloader (fload)</A>
+</UL>
+<!--End of Table of Contents-->
+<P>
+
+<H1><A NAME="SECTION00020000000000000000">
+1 Introduction</A>
+</H1>
+This document serves as the hardware and software developers guide for the 
+Progressive Learning Platform (PLP) System on a Chip. The PLP board is a 
+unique learning platform designed to be simple, open, and of course, useful 
+for education. 
+
+<H1><A NAME="SECTION00030000000000000000">
+2 Getting PLP</A>
+</H1>
+Always make sure to download the latest version of PLP. This manual 
+reflects the latest version.
+
+<P>
+PLP is available for download in the 
+<A NAME="tex2html1"
+  HREF="http://code.google.com/p/progressive-learning-platform/downloads/list">downloads</A>
+section. The archive contains the following directory structure:
+
+<P>
+
+<OL>
+<LI>hw - Hardware images for the CPU
+</LI>
+<LI>sw - Software tools, example programs, and software library
+	
+<OL>
+<LI>PLPTool - PLP Software tools, see next section
+</LI>
+<LI>libplp - <A NAME="tex2html2"
+  HREF="http://code.google.com/p/progressive-learning-platform/wiki/libplp">PLP software library</A>
+</LI>
+<LI>examples - <A NAME="tex2html3"
+  HREF="http://code.google.com/p/progressive-learning-platform/wiki/SoftwareExamples">Software examples</A>
+</LI>
+</OL>
+</LI>
+</OL> 
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+3 Software Tools (PLPTool)</A>
+</H1>
+PLPTool is a software suite for PLP that includes an assembler, a simulator, 
+and a board programmer interface. 
+
+<H2><A NAME="SECTION00041000000000000000">
+3.1 Running PLPTool</A>
+</H2>
+PLPTool requires a 
+<A NAME="tex2html4"
+  HREF="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment</A>
+that complies with at least Java 2 Platform SE 5 (1.5) specifications. PLPTool 
+is shipped with 
+<A NAME="tex2html5"
+  HREF="http://rxtx.qbang.org/wiki/index.php/Main_Page">RXTX library</A>
+for serial communication in Windows. If you use Linux, you will have to 
+install the library provided by the distribution that you use. Serial 
+communication is used to download programs to the board.
+
+<P>
+PLPTool is located in <code>sw/PLPTool</code> in the PLP download archive. You 
+need to uncompress this folder to run the software. If you use Windows, you 
+need to run the batch file <code>PLPToolWin32.bat</code> if you use the 32-bit 
+version of Windows, or <code>PLPToolWin64.bat</code> if you use the 64-bit version. 
+PLPTool will give a 
+warning if it can not detect the RXTX library, and the user will not be 
+able to program the board or use the serial terminal. 
+
+<H3><A NAME="SECTION00041100000000000000">
+3.1.1 Command Line Options</A>
+</H3>
+Launching PLPTool with no command line arguments will launch the GUI. Launching PLPTool with a <code>.plp</code> file as the only argument will launch the GUI and 
+open that project.
+
+<P>
+<PRE>
+java -jar PLPTool.jar &lt;.plp file to open&gt;
+</PRE>
+
+<P>
+or in Windows, where XX is the CPU type (32- or 64-bit):
+
+<P>
+<PRE>
+PLPToolWinXX.bat &lt;.plp file to open&gt;
+</PRE>
+
+<P>
+Running PLPTool with the command line argument below will list the source files that are in the project. It will also display the index of said source files that is used to export, remove, or set a source file as top level source.
+
+<P>
+<PRE>
+java -jar PLPTool.jar -plp &lt;plpfile&gt;
+</PRE>
+
+<P>
+The <code>-plp &lt;plpfile&gt;</code> command can also take additional arguments that can be used to manipulate the project file without launching the GUI: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Command Line Option</TD>
+<TD ALIGN="LEFT">Description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-c &lt;asm 1&gt;&lt;asm 2&gt;...</TD>
+<TD ALIGN="LEFT">Creates &lt;plpfile&gt;and imports &lt;asm 1&gt;, &lt;asm 2&gt;, ... to the project</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-p &lt;port&gt;</TD>
+<TD ALIGN="LEFT">Programs &lt;plpfile&gt;to serial port &lt;port&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-a</TD>
+<TD ALIGN="LEFT">Performs an assembly of the source files inside &lt;plpfile&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-i &lt;asm 1&gt;&lt;asm 2&gt;...</TD>
+<TD ALIGN="LEFT">Imports &lt;asm 1&gt;, &lt;asm 2&gt;, ... into &lt;plpfile&gt;project file</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-d &lt;directory&gt;</TD>
+<TD ALIGN="LEFT">Imports all files in &lt;directory&gt;to the &lt;plpfile&gt;project file</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-e &lt;index&gt;&lt;file&gt;</TD>
+<TD ALIGN="LEFT">Exports the source file with the index &lt;index&gt;as &lt;file&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-r &lt;index&gt;</TD>
+<TD ALIGN="LEFT">Removes the source file with the index &lt;index&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-s &lt;index&gt;</TD>
+<TD ALIGN="LEFT">Set the source file with the index &lt;index&gt;as the main program</TD>
+</TR>
+<TR><TD ALIGN="LEFT">-m &lt;index&gt;&lt;new index&gt;</TD>
+<TD ALIGN="LEFT">Set &lt;new index&gt;for the source file with the index &lt;index&gt;</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A NAME="SECTION00042000000000000000">
+3.2 Graphical User Interface</A>
+</H2>
+PLPTool starts in the development environment view, displaying the current open file, files in the project, and a status window. From this view, you can import or create new assembly files, assemble the project, launch the simulator, and program the PLP board. 
+
+<P>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="429" HEIGHT="268" ALIGN="BOTTOM" BORDER="0"
+ SRC="./plptool30_editor_view.png"
+ ALT="Image plptool30_editor_view">
+
+</DIV>
+
+<P>
+The <B>Project Pane</B> contains all the source files in the project. 
+The <B>Editor Pane</B> displays the contents of the currently open source 
+file. The <B>Output Pane</B> displays informative, warning, and error 
+messages. 
+
+<H2><A NAME="SECTION00043000000000000000">
+3.3 Cycle Accurate Simulator</A>
+</H2>
+PLPTool includes a cycle-accurate simulator of the system. This simulator can be accessed from the command-line, or through the graphical user interface. 
+
+<P>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="429" HEIGHT="268" ALIGN="BOTTOM" BORDER="0"
+ SRC="./plptool30_simulation_mode.png"
+ ALT="Image plptool30_simulation_mode">
+
+</DIV>
+
+<P>
+The simulation mode adds additional controls to the main window. The first three are the step, run, and reset buttons. Step (F5) will advance the simulation by one cycle, the run toggle button (F7) will continuously run the simulation, and the reset button (F9) will return the CPU to the reset state. The CPU view button will display the CPU window where users can view and modify register file contents, see the disassembly listing, and access the debug console for advanced interaction with the simulation. 
+
+<H3><A NAME="SECTION00043100000000000000">
+3.3.1 Setting a Breakpoint</A>
+</H3>
+Breakpoint can be set by double-clicking the line number column. This can only 
+applies in lines where there is actually an instruction present. 
+Double-click on an existing breakpoint to clear it, or use 
+<code>Tools -&gt; Clear Breakpoints</code> to clear ALL breakpoints. 
+
+<P>
+
+<H3><A NAME="SECTION00043200000000000000">
+3.3.2 Command-Line Mode</A>
+</H3>
+To run the command-line simulator:
+
+<P>
+<PRE>
+java -jar PLPTool.jar -s &lt;plp file to simulate&gt;
+</PRE>
+<H2><A NAME="SECTION00044000000000000000">
+3.4 Programmer</A>
+</H2>
+You can program the PLP board by selecting 
+<code>Project-&gt;Program PLP Board</code> 
+in the development view. The programmer dialog allows you to select the 
+communications port.
+
+<P>
+Additionally, you can program the PLP board from the command line with:
+
+<P>
+<PRE>
+java -jar PLPTool.jar -plp &lt;plp project&gt; -p &lt;communications port&gt;
+</PRE>
+<H1><A NAME="SECTION00050000000000000000">
+4 Instruction Set and Assembly Language</A>
+</H1>
+This section describes all supported instructions and pseudo-instructions by the PLP system. It also gives examples on how to use each instruction in a program and notes on limitations. 
+
+<H2><A NAME="SECTION00051000000000000000">
+4.1 Syntax</A>
+</H2>
+
+<H3><A NAME="SECTION00051100000000000000">
+4.1.1 Instructions</A>
+</H3>
+Instructions are written in 
+<code>&lt;opcode&gt; &lt;destination&gt;,&lt;operands&gt;</code>
+format, which differ slightly for each type of instruction.
+
+<P>
+R-type instructions have an opcode and three arguments (either registers or shift amount). For example, to add register 
+<code>$s0</code> and <code>$s1</code>, 
+and store it in register <code>$t0</code>, the instruction would be:
+
+<P>
+<PRE>
+add $t0, $s0, $s1
+</PRE>
+
+<P>
+Shift instructions use the last argument for the shift amount:
+
+<P>
+<PRE>
+sll $t0, $s0, 5  #shift s0 left 5 bits and store into t0
+</PRE>
+
+<P>
+I-type instructions have two register arguments and an immediate field. For example, to perform a logical OR on 
+<code>$s0</code> with the value 0xfeed and store the result in 
+<code>$t0</code>, the instruction would be:
+
+<P>
+<PRE>
+ori $t0, $s0, 0xfeed
+</PRE>
+
+<P>
+You may also specify the immediate field in decimal by leaving off the leading '0x'.
+
+<P>
+Branch instructions require the immediate field to be a label name:
+
+<P>
+<PRE>
+beq $s0, $s1, loop #if s0 == s1, branch to label "loop"
+</PRE>
+
+<P>
+J-type instructions have only one argument, and must be a label:
+
+<P>
+<PRE>
+jal my_function #jump and link to label "my_function"
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00051200000000000000">
+4.1.2 Pseudo-ops</A>
+</H3>
+PLPTool supports a number of pseudo instructions designed to ease programming and make the assembly more human readable. A list of these instructions, as well as what they map to in the core instruction set is given later in this document. 
+
+<H3><A NAME="SECTION00051300000000000000">
+4.1.3 Memory Organization (.org)</A>
+</H3>
+In order to resolve branch and jump targets, the programmer must inform the 
+assembler <B>before</B> any instructions, labels, or includes, where the 
+program starts in memory. The address must be word aligned (multiple of 4).
+
+<P>
+<PRE>
+For example, to begin the program at address 0x10000000 (RAM):
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00051400000000000000">
+4.1.4 Labels</A>
+</H3>
+Label support allows the programmer to use branch and jump instructions. Labels are appended with a colon.
+
+<P>
+For example, to create a label "main": 
+
+<P>
+<PRE>
+&lt;instructions&gt;
+main:
+&lt;instructions&gt;
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00051500000000000000">
+4.1.5 Comments</A>
+</H3>
+Comments may appear anywhere in the program code, including on label, 
+instruction, and directive lines. Comments are prefixed with a <code>'#'</code>
+character, and all text after the comment character until the end of the line is ignored by the assembler. 
+
+<P>
+<PRE>
+#a comment on my own line!
+add $s0, $s0, $s1 #another comment!
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00051600000000000000">
+4.1.6 Data and String Allocation</A>
+</H3>
+There are three ways to allocate space for data with PLPTool: allocating (and optionally initializing) a single word, allocating space in terms of number of words, and by allocating a string. 
+
+<H4><A NAME="SECTION00051610000000000000">
+4.1.6.1 Allocate and Initialize Word</A>
+</H4>
+The <code>.word</code> directive allocates a single word with or without an initial 
+value. This is especially useful after a label for easy access.
+
+<P>
+For example, to allocate a variable, initialized to the value 4: 
+
+<P>
+<PRE>
+my_variable:
+.word 4
+
+...
+
+li $t0, my_variable #get a pointer to my variable
+lw $t1, 0($t0)      #t1 has my_variable now
+</PRE>
+
+<P>
+
+<H4><A NAME="SECTION00051620000000000000">
+4.1.6.2 Empty Space Allocation</A>
+</H4>
+PLPTool supports allocating space by taking the number of words to allocate, 
+as opposed to a single word with the <code>.word</code> directive. This is 
+accomplished using the <code>.space</code> directive. For example, to allocate a 
+variable with length of 2 words: 
+
+<P>
+<PRE>
+long_variable:
+.space 2
+
+...
+
+li $t0, long_variable #get a pointer to the variable
+lw $t1, 0($t0)        #get first word
+lw $t2, 4($t0)        #get second word
+</PRE>
+
+<P>
+
+<H4><A NAME="SECTION00051630000000000000">
+4.1.6.3 String Allocation</A>
+</H4>
+PLPTool also supports two types of string allocation
+<code>.ascii, and .asciiz. .ascii</code>
+allocates a packed array of characters without a trailing null 
+terminator, which indicates the end of a string.
+<code>.asciiz</code> allocates a packed array of characters with a trailing 
+null terminator. 
+
+<P>
+<PRE>
+#a string of characters
+my_string:
+.ascii "a bunch of characters" #no null terminator here!
+#a null terminated string of characters
+my_string_null:
+.asciiz "a bunch of characters" #null terminated! use me for string operations
+</PRE>
+PLPTool also supports escaping newline characters with <code>\n</code>. 
+
+<H3><A NAME="SECTION00051700000000000000">
+4.1.7 Notes on the Assembler</A>
+</H3>
+<code>.org</code> must be the first non-comment statement in the program.
+
+<P>
+It is possible to load a pointer to a label using the load immediate pseudo instruction (li). 
+
+<H2><A NAME="SECTION00052000000000000000">
+4.2 Ops</A>
+</H2>
+
+<H3><A NAME="SECTION00052100000000000000">
+4.2.1 R-type Arithmetic and Logical Instructions</A>
+</H3>
+These instructions receive inputs from two registers, do an arithmetic or logical operation, and write the result in the destination register. The general syntax is: 
+<PRE>
+op    $destination_register, $source_register_1, $source_register_2
+</PRE>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode/Function</TD>
+</TR>
+<TR><TD ALIGN="LEFT">addu $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = rs + rt;</TD>
+<TD ALIGN="LEFT">addu $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Unsigned addition</TD>
+<TD ALIGN="LEFT">0x00 / 0x21</TD>
+</TR>
+<TR><TD ALIGN="LEFT">subu $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = rs - rt;</TD>
+<TD ALIGN="LEFT">subu $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Unsigned subtraction</TD>
+<TD ALIGN="LEFT">0x00 / 0x23</TD>
+</TR>
+<TR><TD ALIGN="LEFT">and $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = rs &amp; rt;</TD>
+<TD ALIGN="LEFT">and $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Bitwise logical AND</TD>
+<TD ALIGN="LEFT">0x00 / 0x24</TD>
+</TR>
+<TR><TD ALIGN="LEFT">or $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = rs | rt;</TD>
+<TD ALIGN="LEFT">or $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Bitwise logical OR</TD>
+<TD ALIGN="LEFT">0x00 / 0x25</TD>
+</TR>
+<TR><TD ALIGN="LEFT">nor $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd =&nbsp;(rs | rt);</TD>
+<TD ALIGN="LEFT">nor $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Bitwise logical NOR</TD>
+<TD ALIGN="LEFT">0x00 / 0x27</TD>
+</TR>
+<TR><TD ALIGN="LEFT">slt $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = (rs &lt; rt) ? 1 : 0;</TD>
+<TD ALIGN="LEFT">slt $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Signed compare</TD>
+<TD ALIGN="LEFT">0x00 / 0x2a</TD>
+</TR>
+<TR><TD ALIGN="LEFT">sltu $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = (rs &lt; rt) ? 1 : 0;</TD>
+<TD ALIGN="LEFT">sltu $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Unsigned compare</TD>
+<TD ALIGN="LEFT">0x00 / 0x2b</TD>
+</TR>
+<TR><TD ALIGN="LEFT">mullo $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = (rs * rt) &amp; 0xFFFFFFFF;</TD>
+<TD ALIGN="LEFT">mullo $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Multiply (return low order bits)</TD>
+<TD ALIGN="LEFT">0x00 / 0x10</TD>
+</TR>
+<TR><TD ALIGN="LEFT">mulhi $rd, $rs, $rt</TD>
+<TD ALIGN="LEFT">rd = (rs * rt) <code>&gt;&gt;&gt;</code> 32;</TD>
+<TD ALIGN="LEFT">mulhi $v0, $a0, $a1</TD>
+<TD ALIGN="LEFT">Multiply (return high order bits)</TD>
+<TD ALIGN="LEFT">0x00 / 0x11</TD>
+</TR>
+</TABLE>
+<H3><A NAME="SECTION00052200000000000000">
+4.2.2 R-type Shift Instructions</A>
+</H3>
+PLP supports logical shift left and right instructions. The general syntax is:
+
+<P>
+<PRE>
+op    $destination_register, $source_register, shift_amount
+</PRE>
+
+<P>
+Where shift_amount is a 5-bit integer that can be represented in decimal or hex (with 0x prefix). <B>If this value is greater than 5 bits, the assembler will truncate the more significant bit positions beyond the 5th bit place. </B>
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode/Function</TD>
+</TR>
+<TR><TD ALIGN="LEFT">sll $rd, $rt, shamt</TD>
+<TD ALIGN="LEFT">rd = rt <code>&lt;&lt;</code> shamt;</TD>
+<TD ALIGN="LEFT">sll $v0, $a0, 0x12</TD>
+<TD ALIGN="LEFT">Shift $a0 by 18 to the left and store the result in $v0</TD>
+<TD ALIGN="LEFT">0x00 / 0x00</TD>
+</TR>
+<TR><TD ALIGN="LEFT">srl $rd, $rt, shamt</TD>
+<TD ALIGN="LEFT">rd = rt <code>&gt;&gt;</code> shamt;</TD>
+<TD ALIGN="LEFT">srl $v0, $a0, 18</TD>
+<TD ALIGN="LEFT">Shift $a0 by 18 to the right and store the result in $v0</TD>
+<TD ALIGN="LEFT">0x00 / 0x02</TD>
+</TR>
+</TABLE>
+<H3><A NAME="SECTION00052300000000000000">
+4.2.3 R-type Jump Register Instructions</A>
+</H3>
+Jump register loads the content of the specified register $rs into the program counter. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode/Function</TD>
+</TR>
+<TR><TD ALIGN="LEFT">jr $rs</TD>
+<TD ALIGN="LEFT">PC = rs;</TD>
+<TD ALIGN="LEFT">jr $ra</TD>
+<TD ALIGN="LEFT">Load the content of $ra into PC register</TD>
+<TD ALIGN="LEFT">0x00 / 0x08</TD>
+</TR>
+<TR><TD ALIGN="LEFT">jalr $rd, $rs</TD>
+<TD ALIGN="LEFT">rd = PC + 4; PC = rs;</TD>
+<TD ALIGN="LEFT">jalr $s5, $t0</TD>
+<TD ALIGN="LEFT">Jump to location specified by the contents of rs, save return address in rd.</TD>
+<TD ALIGN="LEFT">0x00 / 0x09</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H3><A NAME="SECTION00052400000000000000">
+4.2.4 I-type Branch Instructions</A>
+</H3>
+The system supports two branch instructions: branch on equal and branch on not equal. Two registers are compared and appropriate action will be taken depending on the result. The general syntax is: 
+
+<P>
+<PRE>
+op    $source_register_1, $source_register_2, branch_target
+</PRE>
+
+<P>
+branch_target has to be a valid label in the program. The assembler takes the address of the label and will calculate the branch offset to be put into the immediate_field. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">beq $rt, $rs, label</TD>
+<TD ALIGN="LEFT">if(rt == rs) PC = PC + 4 + imm;</TD>
+<TD ALIGN="LEFT">beq $a0, $a1, done</TD>
+<TD ALIGN="LEFT">Branch to done if $a0 and $a1 are equal</TD>
+<TD ALIGN="LEFT">0x04</TD>
+</TR>
+<TR><TD ALIGN="LEFT">bne $rt, $rs, label</TD>
+<TD ALIGN="LEFT">if(rt != rs) PC = PC + 4 + imm;</TD>
+<TD ALIGN="LEFT">bne $a0, $a1, error</TD>
+<TD ALIGN="LEFT">Branch to error if $a0 and $a1 are NOT equal</TD>
+<TD ALIGN="LEFT">0x05</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H3><A NAME="SECTION00052500000000000000">
+4.2.5 I-type Arithmetic and Logical Instructions</A>
+</H3>
+These instructions receive inputs from a source register $rs and the immediate field, and store it in the target register $rt. The general syntax is: 
+
+<P>
+<PRE>
+op    $target_register, $source_register, immediate_field
+</PRE>
+
+<P>
+immediate_field is a 16-bit integer that can be represented in either decimal or hex. <B>If this field is greater than 16 bits, the assembler will truncate the more significant bit positions beyond the 16th place.</B> The processor extends the sign bit of immediate_field to make it a 32-bit number. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">addiu $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = rs + SignExtend(imm);</TD>
+<TD ALIGN="LEFT">addiu $v0, $a0, 0xBEEF</TD>
+<TD ALIGN="LEFT">Unsigned addition, add $a0 with 48879</TD>
+<TD ALIGN="LEFT">0x09</TD>
+</TR>
+<TR><TD ALIGN="LEFT">andi $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = rs &amp; ZeroExtend(imm);</TD>
+<TD ALIGN="LEFT">andi $v0, $a0, 1337</TD>
+<TD ALIGN="LEFT">Bitwise Logical AND</TD>
+<TD ALIGN="LEFT">0x0c</TD>
+</TR>
+<TR><TD ALIGN="LEFT">ori $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = rs | ZeroExtend(imm);</TD>
+<TD ALIGN="LEFT">ori $v0, $a0, 0x0539</TD>
+<TD ALIGN="LEFT">Bitwise Logical OR</TD>
+<TD ALIGN="LEFT">0x0d</TD>
+</TR>
+<TR><TD ALIGN="LEFT">slti $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
+<TD ALIGN="LEFT">slti $v0, $a0, 0xDEAD</TD>
+<TD ALIGN="LEFT">Signed compare</TD>
+<TD ALIGN="LEFT">0x0a</TD>
+</TR>
+<TR><TD ALIGN="LEFT">sltiu $rt, $rs, imm</TD>
+<TD ALIGN="LEFT">rt = (rs &lt; SignExtend(imm)) ? 1 : 0;</TD>
+<TD ALIGN="LEFT">sltiu $v0, $a0, 0xDEAD</TD>
+<TD ALIGN="LEFT">Unsigned compare</TD>
+<TD ALIGN="LEFT">0x0b</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H3><A NAME="SECTION00052600000000000000">
+4.2.6 I-type Load Upper Immediate Instruction</A>
+</H3>
+This instruction loads the immediate field to the upper 2 bytes of the specified target register. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">lui $rt, imm</TD>
+<TD ALIGN="LEFT">rt = imm &#171; 16;</TD>
+<TD ALIGN="LEFT">lui $a0, 0xBEEF</TD>
+<TD ALIGN="LEFT">Write 0xBEEF0000 to $a0 register. Note that the lower 16 bits are filled with zeroes</TD>
+<TD ALIGN="LEFT">0x0f</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H3><A NAME="SECTION00052700000000000000">
+4.2.7 I-type Load and Store Word Instructions</A>
+</H3>
+These instructions read or write data from or to memory. The general syntax is: 
+
+<P>
+<PRE>
+op    $register, immediate_field($offset_register)
+</PRE>
+
+<P>
+immediate_field is 16-bit wide and sign extended to 32-bit by the processor to resolve the memory address. If immediate_field is larger than 16-bit, it will be truncated by the assembler. $offset_register acts as an index to the memory address, e.g. an index for an array. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">lw $rt, imm($rs)</TD>
+<TD ALIGN="LEFT">rt = SignExtend(imm)[rs];</TD>
+<TD ALIGN="LEFT">lw $v0, 0x4000($a1)</TD>
+<TD ALIGN="LEFT">Load contents of 0x4000 + $a1 into $v0</TD>
+<TD ALIGN="LEFT">0x23</TD>
+</TR>
+<TR><TD ALIGN="LEFT">sw $rt, imm($rs)</TD>
+<TD ALIGN="LEFT">SignExtend(imm)[rs] = rt;</TD>
+<TD ALIGN="LEFT">sw $a0, 128($v0)</TD>
+<TD ALIGN="LEFT">Store contents of register $a0 to 128 + $v0</TD>
+<TD ALIGN="LEFT">0x2b</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H3><A NAME="SECTION00052800000000000000">
+4.2.8 J-type Instructions</A>
+</H3>
+There are two j-type instructions: jump, and jump-and-link. Jump-and-link writes the return address to $ra when it is called, while jump does not. The syntax is: 
+
+<P>
+<PRE>
+op    jump_target
+</PRE>
+
+<P>
+jump_target has to be a valid label. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Syntax</TD>
+<TD ALIGN="LEFT">C Expression</TD>
+<TD ALIGN="LEFT">Sample Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+<TD ALIGN="LEFT">Opcode</TD>
+</TR>
+<TR><TD ALIGN="LEFT">j label</TD>
+<TD ALIGN="LEFT">PC = jump_target;</TD>
+<TD ALIGN="LEFT">j loop</TD>
+<TD ALIGN="LEFT">Jump to loop label</TD>
+<TD ALIGN="LEFT">0x02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">jal label</TD>
+<TD ALIGN="LEFT">ra = PC + 4; PC = jump_target;</TD>
+<TD ALIGN="LEFT">jal read_serial</TD>
+<TD ALIGN="LEFT">Jump to read_serial after saving return address to $ra</TD>
+<TD ALIGN="LEFT">0x03</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A NAME="SECTION00053000000000000000">
+4.3 Pseudo-ops</A>
+</H2>
+The assembler supports a few pseudo-ops to make programming easier. These pseudo-ops are resolved during stage 1 of assembly.
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Pseudo-op</TD>
+<TD ALIGN="LEFT">Equivalent instruction(s)</TD>
+<TD ALIGN="LEFT">Notes</TD>
+</TR>
+<TR><TD ALIGN="LEFT">nop</TD>
+<TD ALIGN="LEFT">sll $0, $0, 0</TD>
+<TD ALIGN="LEFT">No-operation. Can be used for branch delay slots</TD>
+</TR>
+<TR><TD ALIGN="LEFT">b label</TD>
+<TD ALIGN="LEFT">beq $0, $0, label</TD>
+<TD ALIGN="LEFT">Branch always to label</TD>
+</TR>
+<TR><TD ALIGN="LEFT">move $rd, $rs</TD>
+<TD ALIGN="LEFT">add $rd, $0, $rs</TD>
+<TD ALIGN="LEFT">Copy $rs to $rd</TD>
+</TR>
+<TR><TD ALIGN="LEFT">push $rt</TD>
+<TD ALIGN="LEFT">sw $rt, 0($sp); addiu $sp, $sp, -4</TD>
+<TD ALIGN="LEFT">Push $rt into the stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">pop $rt</TD>
+<TD ALIGN="LEFT">addiu $sp, $sp, 4; lw $rt, 0($sp)</TD>
+<TD ALIGN="LEFT">Pop $rt from the stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">li $rd, imm</TD>
+<TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
+<TD ALIGN="LEFT">Load a 32-bit number to $rd</TD>
+</TR>
+<TR><TD ALIGN="LEFT">li $rd, label</TD>
+<TD ALIGN="LEFT">lui $rd, (imm &amp; 0xff00) <code>&gt;&gt;</code> 16; ori $rd, imm &amp; 0x00ff</TD>
+<TD ALIGN="LEFT">Load the address of a label to a register to be used as a pointer.</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A NAME="SECTION00054000000000000000">
+4.4 Notes on Register Usage</A>
+</H2>
+Aside from $zero, $i0, $i1, and $ra, the architecture does not explicitly assign special functions to a register. This section lays down some conventions on how the other registers should be used to prevent data from being clobbered across function calls. All the supplied libraries adhere to this guideline. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1" WIDTH="100%">
+<TR><TD ALIGN="LEFT">Register</TD>
+<TD ALIGN="LEFT">Usage</TD>
+<TD ALIGN="LEFT">Notes</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$zero</TD>
+<TD ALIGN="LEFT">Constant value 0</TD>
+<TD ALIGN="LEFT">This register can not be written to and always returns the value 0</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$at</TD>
+<TD ALIGN="LEFT">Assembler temporary</TD>
+<TD ALIGN="LEFT">Assembler reserved, do not use</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$v0 - $v1</TD>
+<TD ALIGN="LEFT">Values for results</TD>
+<TD ALIGN="LEFT">Use for return values of functions</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$a0 - $a3</TD>
+<TD ALIGN="LEFT">Arguments</TD>
+<TD ALIGN="LEFT">Use for arguments of functions</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$t0 - $t9</TD>
+<TD ALIGN="LEFT">Temporaries</TD>
+<TD ALIGN="LEFT">Do not use these registers across function calls, as they will most likely be clobbered</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$s0 - $s7</TD>
+<TD ALIGN="LEFT">Saved temporaries</TD>
+<TD ALIGN="LEFT">-</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$i0</TD>
+<TD ALIGN="LEFT">Interrupt vector</TD>
+<TD ALIGN="LEFT">The CPU jumps to the address pointed by this register when an interrupt occurs</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$i1</TD>
+<TD ALIGN="LEFT">Interrupt return address</TD>
+<TD ALIGN="LEFT">Written by the CPU when an interrupt occurs</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$gp</TD>
+<TD ALIGN="LEFT">Global pointer</TD>
+<TD ALIGN="LEFT">-</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$sp</TD>
+<TD ALIGN="LEFT">Stack pointer</TD>
+<TD ALIGN="LEFT">Use this register to implement a stack</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$fp</TD>
+<TD ALIGN="LEFT">Frame pointer</TD>
+<TD ALIGN="LEFT">-</TD>
+</TR>
+<TR><TD ALIGN="LEFT">$ra</TD>
+<TD ALIGN="LEFT">Return address</TD>
+<TD ALIGN="LEFT">Do not manually write to this register unless restoring from the stack for nested function calls. Use this register to return from a function using the jump register instruction</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+5 Hardware Description</A>
+</H1>
+
+<H2><A NAME="SECTION00061000000000000000">
+5.1 Memory Map</A>
+</H2>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TH ALIGN="LEFT"><B>beginning address</B></TH>
+<TH ALIGN="LEFT"><B>length (bytes)</B></TH>
+<TD ALIGN="LEFT">device</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0x00000000</TD>
+<TD ALIGN="LEFT">2048</TD>
+<TD ALIGN="LEFT">boot ROM</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0x10000000</TD>
+<TD ALIGN="LEFT">16777216</TD>
+<TD ALIGN="LEFT">RAM</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0000000</TD>
+<TD ALIGN="LEFT">16</TD>
+<TD ALIGN="LEFT">UART</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0100000</TD>
+<TD ALIGN="LEFT">4</TD>
+<TD ALIGN="LEFT">switches</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0200000</TD>
+<TD ALIGN="LEFT">4</TD>
+<TD ALIGN="LEFT">LEDs</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0300000</TD>
+<TD ALIGN="LEFT">12</TD>
+<TD ALIGN="LEFT">GPIO</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0400000</TD>
+<TD ALIGN="LEFT">8</TD>
+<TD ALIGN="LEFT">VGA</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0500000</TD>
+<TD ALIGN="LEFT">8</TD>
+<TD ALIGN="LEFT">PLPID</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0600000</TD>
+<TD ALIGN="LEFT">4</TD>
+<TD ALIGN="LEFT">timer</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0700000</TD>
+<TD ALIGN="LEFT">8</TD>
+<TD ALIGN="LEFT">interrupt controller</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0800000</TD>
+<TD ALIGN="LEFT">?</TD>
+<TD ALIGN="LEFT">performance counter hardware</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0a00000</TD>
+<TD ALIGN="LEFT">4</TD>
+<TD ALIGN="LEFT">seven segment</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A NAME="SECTION00062000000000000000">
+5.2 ROM</A>
+</H2>
+The ROM module is a non-volatile, read-only memory that stores the fload bootloader, which is used with PLPTool to load programs over the serial port. The PLP board starts at address 0x00000000 on power-up and board reset, causing the bootloader to run. 
+
+<H2><A NAME="SECTION00063000000000000000">
+5.3 RAM</A>
+</H2>
+The RAM module is a volatile, random access memory that stores all downloaded program code and data. Generally, the programmer will place their program in RAM, beginning at the beginning of RAM using the .org statement (.org 0x10000000). Additionally, the stack is generally initialized at the top of RAM <code>($sp = 0x10fffffc)</code>.
+
+<H2><A NAME="SECTION00064000000000000000">
+5.4 UART</A>
+</H2>
+The UART module is a UART, running at 57600 baud, with 8 data bits, 1 stop bit, and no parity. The UART module is connected to the serial port on the Nexys 2 development kit.
+
+<P>
+The UART module is designed to send or receive a single byte at a time, and can only store one byte in the receive buffer. This means that you must read received data (by polling) before the next byte is available.
+
+<P>
+There are four registers that the UART module uses: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">0xf0000000</TD>
+<TD ALIGN="LEFT">command register</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0000004</TD>
+<TD ALIGN="LEFT">status register</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0000008</TD>
+<TD ALIGN="LEFT">receive buffer</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf000000c</TD>
+<TD ALIGN="LEFT">send buffer</TD>
+</TR>
+</TABLE>
+
+<P>
+The command register always reads 0. Writing the value 0x01 will initiate a send operation using the lowest byte in the send buffer. Writing a 0x02 will clear the ready flag in the status register.
+
+<P>
+The status register uses only the bottom two bits, with the remaining bits always reading as 0. status0? is the clear to send bit, which is set after a successful transfer of the data in the send buffer, indicating that another transfer may be made. The cts bit is 0 during a transfer, and the data in the send buffer should not be modified. status1? is the ready bit, which is set when a new byte has been successfully received. The ready bit can be cleared by writing 0x02 to the command register.
+
+<P>
+The receive buffer holds the last received byte. On a successful receive, the ready bit will be set, allowing the programmer to poll the status register for incoming data. When the ready bit is not set, the receive buffer is considered invalid.
+
+<P>
+The send buffer holds the byte that will be sent or is ready to send. During a send operation (cts is 0), the data in the transmit buffer must not be modified. Only update the send buffer when cts is set.
+
+<P>
+The UART supports interrupts, and will trigger an interrupt whenever data is available in the receive buffer. <B>The user must complete a receive and clear the status bit in the UART before clearing the interrupt status bit for the UART.</B>
+
+<H2><A NAME="SECTION00065000000000000000">
+5.5 Switches</A>
+</H2>
+The switches module is a read-only register that always holds the current value of the switch positions. There are 8 switches on the Nexys2 development board, which are mapped to the lowest byte of the switches module register. Writing to this location has no effect. 
+
+<H2><A NAME="SECTION00066000000000000000">
+5.6 LEDs</A>
+</H2>
+The LEDs module is a read-write register that stores the value of the on-board LEDs. There are 8 LEDs, mapped to the lowest byte of the LED register. Reading this value returns the current LED state, writing will update the LEDs. 
+
+<H2><A NAME="SECTION00067000000000000000">
+5.7 GPIO</A>
+</H2>
+The GPIO module connects two of the Nexys2 board's I/O connectors to the PLP system, enabling 16 GPIO ports.
+
+<P>
+There are three registers that are used with the GPIO module: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Address</TD>
+<TD ALIGN="LEFT">Description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0300000</TD>
+<TD ALIGN="LEFT">Tristate register</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0300004</TD>
+<TD ALIGN="LEFT">GPIO Block A</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0300008</TD>
+<TD ALIGN="LEFT">GPIO Block B</TD>
+</TR>
+</TABLE>
+
+<P>
+Each GPIO block on the Nexys2 board has 12 pins: 8 I/O, 2 ground, and 2 Vdd.
+
+<P>
+The tristate register controls the direction of data on each of the GPIO pins. At startup and on reset, all GPIO are set to be inputs (the tristate register is zeroed). This protects circuits that are driving any pins on the GPIO ports. The user can set GPIO to be outputs by enabling the tristate pins for those outputs. The tristate bits map to GPIO pins in the following table. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Tristate register bit</TD>
+<TD ALIGN="LEFT">GPIO pin</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT">A0</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">A1</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">A2</TD>
+</TR>
+<TR><TD ALIGN="LEFT">3</TD>
+<TD ALIGN="LEFT">A3</TD>
+</TR>
+<TR><TD ALIGN="LEFT">4</TD>
+<TD ALIGN="LEFT">A4</TD>
+</TR>
+<TR><TD ALIGN="LEFT">5</TD>
+<TD ALIGN="LEFT">A5</TD>
+</TR>
+<TR><TD ALIGN="LEFT">6</TD>
+<TD ALIGN="LEFT">A6</TD>
+</TR>
+<TR><TD ALIGN="LEFT">7</TD>
+<TD ALIGN="LEFT">A7</TD>
+</TR>
+<TR><TD ALIGN="LEFT">8</TD>
+<TD ALIGN="LEFT">B0</TD>
+</TR>
+<TR><TD ALIGN="LEFT">9</TD>
+<TD ALIGN="LEFT">B1</TD>
+</TR>
+<TR><TD ALIGN="LEFT">10</TD>
+<TD ALIGN="LEFT">B2</TD>
+</TR>
+<TR><TD ALIGN="LEFT">11</TD>
+<TD ALIGN="LEFT">B3</TD>
+</TR>
+<TR><TD ALIGN="LEFT">12</TD>
+<TD ALIGN="LEFT">B4</TD>
+</TR>
+<TR><TD ALIGN="LEFT">13</TD>
+<TD ALIGN="LEFT">B5</TD>
+</TR>
+<TR><TD ALIGN="LEFT">14</TD>
+<TD ALIGN="LEFT">B6</TD>
+</TR>
+<TR><TD ALIGN="LEFT">15</TD>
+<TD ALIGN="LEFT">B7</TD>
+</TR>
+</TABLE>
+
+<P>
+The GPIO registers use the bottom 8 bits of the data word. The other bits are always read 0. 
+
+<P>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="107" HEIGHT="129" ALIGN="BOTTOM" BORDER="0"
+ SRC="./GPIO.png"
+ ALT="Image GPIO">
+
+</DIV>
+
+<P>
+The figure above shows the pin mappings to the below table. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Pin</TD>
+<TD ALIGN="LEFT">Mapping/Bit Position</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">0</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">1</TD>
+</TR>
+<TR><TD ALIGN="LEFT">3</TD>
+<TD ALIGN="LEFT">2</TD>
+</TR>
+<TR><TD ALIGN="LEFT">4</TD>
+<TD ALIGN="LEFT">3</TD>
+</TR>
+<TR><TD ALIGN="LEFT">5</TD>
+<TD ALIGN="LEFT">GND</TD>
+</TR>
+<TR><TD ALIGN="LEFT">6</TD>
+<TD ALIGN="LEFT">Vdd</TD>
+</TR>
+<TR><TD ALIGN="LEFT">7</TD>
+<TD ALIGN="LEFT">4</TD>
+</TR>
+<TR><TD ALIGN="LEFT">8</TD>
+<TD ALIGN="LEFT">5</TD>
+</TR>
+<TR><TD ALIGN="LEFT">9</TD>
+<TD ALIGN="LEFT">6</TD>
+</TR>
+<TR><TD ALIGN="LEFT">10</TD>
+<TD ALIGN="LEFT">7</TD>
+</TR>
+<TR><TD ALIGN="LEFT">11</TD>
+<TD ALIGN="LEFT">GND</TD>
+</TR>
+<TR><TD ALIGN="LEFT">12</TD>
+<TD ALIGN="LEFT">Vdd</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A NAME="SECTION00068000000000000000">
+5.8 VGA</A>
+</H2>
+The VGA module controls a 640x480 display with an 8-bit color depth.
+
+<P>
+An 8-bit color depth provides 3 red bits, 3 green bits, and 2 blue bits per pixel. The blue channel only has two bits because of a bit-depth limitation as well as the human eye's poor sensitivity to blue intensity. 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">bit</TD>
+<TD ALIGN="LEFT">color</TD>
+</TR>
+<TR><TD ALIGN="LEFT">7</TD>
+<TD ALIGN="LEFT">red[2]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">6</TD>
+<TD ALIGN="LEFT">red[1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">5</TD>
+<TD ALIGN="LEFT">red[0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">4</TD>
+<TD ALIGN="LEFT">green[2]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">3</TD>
+<TD ALIGN="LEFT">green[1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">green[0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">blue[1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT">blue[0]</TD>
+</TR>
+</TABLE>
+
+<P>
+The VGA module has two registers: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">register</TD>
+<TD ALIGN="LEFT">description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0400000</TD>
+<TD ALIGN="LEFT">control</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0400004</TD>
+<TD ALIGN="LEFT">frame buffer pointer</TD>
+</TR>
+</TABLE>
+
+<P>
+The control register uses only the least significant bit, which enables or disables the VGA controller output. When the control register is 0, the VGA module is disabled. When the control register is 0x1, the VGA module is enabled.
+
+<P>
+Enabling the VGA module has significant impact on memory performance. The VGA module uses RAM as VGA memory, and has a higher priority to the RAM bus than the CPU. During a draw cycle, the CPU will not be able to access the SRAM for 640 cycles. This effect will be reduced with the inclusion of caches in version 2.2.
+
+<P>
+The frame buffer pointer is a pointer to the pixel data to draw in memory. For example, if your pixel data begins at 0x100f0000, you would set the frame buffer pointer to that location. The frame buffer must be 0x4b000 bytes long. The pixel data is arranged as starting from the upper left hand corner of the screen (0,0), and drawing to the right, one row at a time (like reading a book). That is, the zeroth pixel in the pixel data is the upper left hand corner. The upper right hand corner is the 639th pixel, and the left most pixel of the second row is the 640th pixel.
+
+<P>
+A pixel can be indexed by its row and column address (with 0,0 being the upper left hand corner) with : address = base_address + (640*row) + column 
+
+<P>
+
+<H2><A NAME="SECTION00069000000000000000">
+5.9 PLPID</A>
+</H2>
+The PLPID module contains two registers that describe the board identity and frequency. Writing to either register has no effect.
+
+<P>
+0xf0500000 - PLPID (0xdeadbeef for this version) 0xf0500004 - Board frequency (50MHz, 0x2faf080, for the reference design)
+
+<P>
+The CPUID module is useful for dynamically calculating wait time in a busy-wait loop. For example, if you wanted to wait .5 seconds, you could read the board frequency, shift right by 1 bit, and call the <code>libplp_wait</code> function. 
+
+<P>
+
+<H2><A NAME="SECTION000610000000000000000">
+5.10 Timer</A>
+</H2>
+The timer module is a single 32-bit counter that increments by one every clock cycle. It can be written to at any time. At overflow, the timer will continue counting. The timer module is useful for waiting a specific amount of time with high resolution (20ns on the reference design).
+
+<P>
+The timer module supports interrupts, and will trigger an interrupt when the timer overflows. The user can configure a specific timed interrupt by presetting the timer value to N cycles before the overflow condition. 
+
+<P>
+
+<H2><A NAME="SECTION000611000000000000000">
+5.11 Seven Segment</A>
+</H2>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="100" HEIGHT="125" ALIGN="BOTTOM" BORDER="0"
+ SRC="./sseg.png"
+ ALT="Image sseg">
+
+</DIV>
+The seven segment module exposes the raw seven segment LEDs to the user, allowing for specialized output. libplp wrappers exist for various abstractions.
+
+<P>
+There are 4 seven segment displays (seven segments plus a dot), mapped to four bytes in the control word.
+
+<P>
+The byte order is: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">[31:24]</TD>
+<TD ALIGN="LEFT">[23:16]</TD>
+<TD ALIGN="LEFT">[15:8]</TD>
+<TD ALIGN="LEFT">[7:0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT">leftmost</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">rightmost</TD>
+</TR>
+</TABLE>
+
+<P>
+The segments map to each of the four bytes as indicated by the above figure. Bit 0 maps to the top most segment, bit 7 maps to the dot. 
+
+<P>
+
+<H2><A NAME="SECTION000612000000000000000">
+5.12 Interrupt Controller</A>
+</H2>
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">register</TD>
+<TD ALIGN="LEFT">description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0700000</TD>
+<TD ALIGN="LEFT">mask</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0700004</TD>
+<TD ALIGN="LEFT">status</TD>
+</TR>
+</TABLE>
+
+<P>
+Status register: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">bit</TD>
+<TD ALIGN="LEFT">interrupt reason</TD>
+</TR>
+<TR><TD ALIGN="LEFT">31-3</TD>
+<TD ALIGN="LEFT">reserved (always 0)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">UART interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">timer interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT">always 1</TD>
+</TR>
+</TABLE>
+
+<P>
+Mask register: 
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">bit</TD>
+<TD ALIGN="LEFT">description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">31-3</TD>
+<TD ALIGN="LEFT">reserved</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">UART interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">timer interrupt</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT">global interrupt enable</TD>
+</TR>
+</TABLE>
+
+<P>
+The interrupt controller marshals the interrupt behavior of the plp system.
+
+<P>
+The user uses the two registers in the interrupt controller, mask and status, along with the interrupt registers, $i0 and $i1, to control all interrupt behavior.
+
+<P>
+Before enabling interrupts, the user must supply a pointer to the interrupt vector in register $i0. 
+
+<P>
+<PRE>
+main:
+  li $i0, isr #put a pointer to our isr in $i0
+
+isr: .
+</PRE>
+When an interrupt occurs, the interrupt controller sets the corresponding bit in the status register. Before returning from an interrupt the user must clear any status bits that are resolved or unwanted.
+
+<P>
+The user enables interrupts by setting any desired interrupts in the mask register, as well as setting the global interrupt enable (GIE) bit. When an interrupt occurs, the GIE bit is automatically cleared and must be set on interrupt exit.
+
+<P>
+<B>When returning from an interrupt, set the GIE bit in the delay slot of the returning jump instruction.</B> This is necessary to prevent any interrupts from occurring while still in the interrupt vector.
+
+<P>
+When an interrupt occurs, the return address is stored in $i1.
+
+<P>
+A typical interrupt vector: 
+<PRE>
+isr:
+  li $t0, 0xf0700000
+  lw $t1, 4($t0)     #read the status register
+  
+  #check status bits and handle any pending interrupts
+  #clear any handled interrupts in $t1
+
+  sw $t1, 4($t0)     #clear any handled interrupts in the status register
+  lw $t1, 0($t0)     #get the mask register
+  ori $t1, $t1, 1    #set GIE
+
+  jr $i1
+  sw $t1, 0($t0)     #store the mask register in the delay slot to guarantee proper exit
+</PRE>
+
+<P>
+
+<H2><A NAME="SECTION000613000000000000000">
+5.13 Performance Counters</A>
+</H2>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">register</TD>
+<TD ALIGN="LEFT">description</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0800000</TD>
+<TD ALIGN="LEFT">interrupts</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0800004</TD>
+<TD ALIGN="LEFT">i-cache misses</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0800008</TD>
+<TD ALIGN="LEFT">i-cache accesses</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf080000c</TD>
+<TD ALIGN="LEFT">d-cache misses</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0800010</TD>
+<TD ALIGN="LEFT">d-cache accesses</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0800014</TD>
+<TD ALIGN="LEFT">UART bytes received</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0xf0800018</TD>
+<TD ALIGN="LEFT">UART bytes sent</TD>
+</TR>
+</TABLE>
+
+<P>
+The performance counter module stores a number of registers that keep count of various events, as shown above. Performance counters are read-only and reset only during board reset. 
+
+<H1><A NAME="SECTION00070000000000000000">
+6 Bootloader (fload)</A>
+</H1>
+The PLP board comes with the fload bootloader programmed to the board ROM. fload starts at power-up and reset.
+
+<P>
+fload currently supports three functions:
+
+<UL>
+<LI>loading data from the UART
+</LI>
+<LI>memory test
+</LI>
+<LI>memory test with VGA module enabled 
+</LI>
+</UL>
+These three functions are initiated by setting the appropriate switch after power-up. When all switches are unset, fload will scroll the LEDs indefinitely. When one of the above functions is enabled, only LED 0 will be illuminated.
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">switch</TD>
+<TD ALIGN="LEFT">function</TD>
+</TR>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT">UART boot</TD>
+</TR>
+<TR><TD ALIGN="LEFT">1</TD>
+<TD ALIGN="LEFT">memory test</TD>
+</TR>
+<TR><TD ALIGN="LEFT">2</TD>
+<TD ALIGN="LEFT">memory test with VGA module enabled</TD>
+</TR>
+</TABLE>
+
+<P>
+The board can be reset at any time by pressing button 0 on the Nexys2 board (or BTNL on the Nexys3). This causes all modules and the CPU to reset, setting the PC to 0. This will restart fload (which resides at address 0x00000000). 
+
+<H1><A NAME="SECTION00080000000000000000">
+About this document ...</A>
+</H1>
+ <STRONG>User Manual</STRONG><P>
+This document was generated using the
+<A HREF="http://www.latex2html.org/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2008 (1.71)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<BR>
+Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>UserManual.tex -show_section_numbers -split 0 -dir UserManualSingle</TT>
+<P>
+The translation was initiated by will on 2012-02-29<HR>
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev_g.png">   
+<BR>
+<!--End of Navigation Panel-->
+<ADDRESS>
+will
+2012-02-29
+</ADDRESS>
+</BODY>
+</HTML>

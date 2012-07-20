@@ -1,0 +1,33 @@
+title::<enter title here>
+author::<enter author here>
+license::<enter module license here>
+description::<enter description here>
+version::<enter version here>
+class::plptool.extras.classroom.Aggregator
+class::plptool.extras.classroom.Client$1
+class::plptool.extras.classroom.Client$2
+class::plptool.extras.classroom.Client$3
+class::plptool.extras.classroom.Client$4
+class::plptool.extras.classroom.Client
+class::plptool.extras.classroom.ClientReceiveService
+class::plptool.extras.classroom.ClientService$1
+class::plptool.extras.classroom.ClientService$State
+class::plptool.extras.classroom.ClientService
+class::plptool.extras.classroom.MyIP$1
+class::plptool.extras.classroom.MyIP
+class::plptool.extras.classroom.PLPToolConnector$1
+class::plptool.extras.classroom.PLPToolConnector$2
+class::plptool.extras.classroom.PLPToolConnector$Callback_Project_Change_Handler
+class::plptool.extras.classroom.PLPToolConnector
+class::plptool.extras.classroom.ServerControl$1
+class::plptool.extras.classroom.ServerControl$2
+class::plptool.extras.classroom.ServerControl$3
+class::plptool.extras.classroom.ServerControl$4
+class::plptool.extras.classroom.ServerControl$5
+class::plptool.extras.classroom.ServerControl$6
+class::plptool.extras.classroom.ServerControl$7
+class::plptool.extras.classroom.ServerControl$8
+class::plptool.extras.classroom.ServerControl$State
+class::plptool.extras.classroom.ServerControl
+class::plptool.extras.classroom.ServerService
+loadmodule5::plptool.extras.classroom.PLPToolConnector
