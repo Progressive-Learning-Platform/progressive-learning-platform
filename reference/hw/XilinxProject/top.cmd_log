@@ -1,6 +1,0 @@
-xst -intstyle ise -ifn "D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/XilinxProject/top.xst" -ofn "D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/XilinxProject/top.syr" 
-ngdbuild -intstyle ise -dd _ngo -nt timestamp -i -p xc3s500e-fg320-5 "top.ngc" top.ngd  
-map -intstyle ise -p xc3s500e-fg320-5 -cm area -ir off -pr off -c 100 -o top_map.ncd top.ngd top.pcf 
-trce -intstyle ise -v 3 -s 5 -n 3 -fastpaths -xml top_preroute.twx top_map.ncd -o top_preroute.twr top.pcf 
-ngdbuild -intstyle ise -dd _ngo -nt timestamp -uc "D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/build/build_500k_skeleton/top.ucf" -p xc3s500e-fg320-5 "top.ngc" top.ngd  
-map -intstyle ise -p xc3s500e-fg320-5 -cm area -ir off -pr off -c 100 -o top_map.ncd top.ngd top.pcf 
