@@ -1,5 +1,6 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Pipelined CPU for Progressive Learning Platform
+    Copyright 2012 David Fritz, Brian Gordon, Wira Mulia, Matthew Gaalswyk
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,97 +17,233 @@
 
  */
 
+module cpu(
+  input         rst,
+  input         clk,
+  input         cpu_stall,
 
+  input  [31:0] iin,
+  input  [31:0] din,
 
-/*
+  output [31:0] imem_addr,
+  output [31:0] dmem_addr,
+  output [31:0] dout,
 
-David Fritz
+  output  [1:0] drw,
 
-pipelined mips machine
+  input         int,
+  output        int_ack
+);
 
-*/
+wire [31:0] if_pc;
+wire [31:0] if_inst;
 
-module cpu(rst, clk, cpu_stall, daddr, dout, din, drw, iaddr, iin, int, int_ack);
-	input clk, rst, cpu_stall;
-	output [31:0] daddr;
-	output [31:0] dout;
-	input [31:0] din;
-	output [1:0] drw;
-	output [31:0] iaddr;
-	input [31:0] iin;
-	input int;
-	output int_ack;
+wire        id_stall; // not a register
 
-	wire 	[31:0] 	ifid_pc;
-	wire	[31:0]	ifid_inst;
+wire [31:0] id_rfa;
+wire [31:0] id_rfb;
+wire [31:0] id_imm32;
+wire  [4:0] id_shamt;
+wire  [5:0] id_func;
+wire  [4:0] id_rf_waddr;
+wire        id_c_rfw;
+wire  [1:0] id_c_wbsource;
+wire  [1:0] id_c_drw;
+wire  [5:0] id_c_alucontrol;
+wire        id_c_j;
+wire        id_c_b;
+wire        id_c_jjr;
+wire [25:0] id_jaddr;
+wire [31:0] id_pc;
+wire        id_c_rfbse;
+wire  [4:0] id_rs;
+wire  [4:0] id_rt;
 
-	wire	[31:0]	idex_rfa;
-	wire	[31:0]	idex_rfb;
-	wire	[31:0]	idex_se;
-	wire	[4:0]	idex_shamt;
-	wire	[5:0]	idex_func;
-	wire	[4:0]	idex_rf_waddr;
-	wire		idex_c_rfw;
-	wire	[1:0]	idex_c_wbsource;
-	wire	[1:0]	idex_c_drw;
-	wire	[5:0]	idex_c_alucontrol;
-	wire		idex_c_j;
-	wire		idex_c_b;
-	wire		idex_c_jjr;
-	wire	[25:0]	idex_jaddr;
-	wire	[31:0]	idex_pc;
-	wire		idex_c_rfbse;
-	wire	[4:0]	idex_rs;
-	wire	[4:0]	idex_rt;
-	wire		idif_stall;
+wire        ex_c_rfw;
+wire  [1:0] ex_c_wbsource;
+wire  [1:0] ex_c_drw;
+wire [31:0] ex_alu_r;
+wire [31:0] ex_rfb;
+wire  [4:0] ex_rf_waddr;
+wire [31:0] ex_jalra;
+wire  [4:0] ex_rt;
+wire [31:0] ex_baddr;
+wire [31:0] ex_jaddr;
+wire        ex_b;
+wire        ex_j;
 
-	wire		exmem_c_rfw;
-	wire	[1:0]	exmem_c_wbsource;
-	wire	[1:0]	exmem_c_drw;
-	wire	[31:0]	exmem_alu_r;
-	wire	[31:0]	exmem_rfb;
-	wire	[4:0]	exmem_rf_waddr;
-	wire	[31:0]	exmem_jalra;
-	wire	[4:0]	exmem_rt;
-	wire	[31:0]	exif_baddr;
-	wire	[31:0]	exif_jaddr;
-	wire		exif_b;
-	wire		exif_j;
+wire        mem_c_rfw;
+wire  [1:0] mem_c_wbsource;
+wire [31:0] mem_alu_r;
+wire  [4:0] mem_rf_waddr;
+wire [31:0] mem_jalra;
+wire [31:0] mem_dout;
 
-	wire		memwb_c_rfw;
-	wire	[1:0]	memwb_c_wbsource;
-	wire	[31:0]	memwb_alu_r;
-	wire	[4:0]	memwb_rf_waddr;
-	wire	[31:0]	memwb_jalra;
-	wire	[31:0]	memwb_dout;
+wire        wb_rfw;
+wire [31:0] wb_wdata;
+wire  [4:0] wb_waddr;
 
-	wire		wbid_rfw;
-	wire	[31:0]	wbid_wdata;
-	wire	[4:0]	wbid_waddr;	
+wire [31:0] int_pc;
+wire        int_flush;
 
-	wire	[31:0]	int_pc;
-	wire		int_flush;
+cpu_if  stage_if (
+  .rst       (rst      ),
+  .clk       (clk      ),
+  .cpu_stall (cpu_stall),
+  .stall     (id_stall ),
 
-	cpu_if  stage_if (rst, clk, cpu_stall, iaddr, ifid_pc, exif_j,
-			exif_b, exif_baddr, exif_jaddr, iin, ifid_inst, idif_stall, int, int_ack, int_flush, int_pc);
-	cpu_id  stage_id (rst, clk, cpu_stall, ifid_pc, ifid_inst, wbid_rfw,
-			wbid_waddr, wbid_wdata, idex_rfa, idex_rfb, idex_se,
-			idex_shamt, idex_func, idex_rf_waddr, idex_c_rfw, idex_c_wbsource,
-			idex_c_drw, idex_c_alucontrol, idex_c_j, idex_c_b, idex_c_jjr,
-			idex_jaddr, idex_pc, idex_c_rfbse, idex_rs, idex_rt,
-			idif_stall, int_flush);
-	cpu_ex  stage_ex (rst, clk, cpu_stall, idex_c_rfw, idex_c_wbsource, idex_c_drw,
-			idex_c_alucontrol, idex_c_j, idex_c_b, idex_c_jjr, idex_rfa,
-			idex_rfb, idex_se, idex_shamt, idex_func, idex_rf_waddr,
-			idex_pc, idex_jaddr, idex_c_rfbse, idex_rs, idex_rt, 
-			wbid_wdata, wbid_rfw, wbid_waddr, exmem_c_rfw, exmem_c_wbsource, 
-			exmem_c_drw, exmem_alu_r, exmem_rfb, exmem_rf_waddr, exmem_jalra, 
-			exmem_rt, exif_baddr, exif_jaddr, exif_b, exif_j, int_flush, int_pc);
-	cpu_mem stage_mem (rst, clk, cpu_stall, exmem_c_rfw, exmem_c_wbsource, exmem_c_drw,
-			exmem_alu_r, exmem_rfb, exmem_rf_waddr, exmem_jalra, exmem_rt,
-			wbid_wdata, memwb_c_rfw, memwb_c_wbsource, memwb_alu_r, dout, 
-			memwb_rf_waddr, memwb_jalra, daddr, drw, din, 
-			memwb_dout);
-	cpu_wb  stage_wb (memwb_c_rfw, memwb_c_wbsource, memwb_alu_r, memwb_dout, memwb_rf_waddr,
-			memwb_jalra, wbid_rfw, wbid_wdata, wbid_waddr);
-endmodule 
+  .iin       (iin      ),
+  .imem_addr (imem_addr), // output
+
+  // pipeline inputs
+  .pc_b      (ex_b     ),
+  .pc_j      (ex_j     ),
+  .b_addr    (ex_baddr ),
+  .j_addr    (ex_jaddr ),
+
+  // pipeline outputs
+  .p_pc      (if_pc    ),
+  .p_inst    (if_inst  ),
+
+  // interrupt signals
+  .int       (int      ),
+  .int_pc    (int_pc   ),
+  .int_ack   (int_ack  ), // output
+  .int_flush (int_flush)  // output
+);
+
+cpu_id  stage_id (
+  .rst            (rst            ),
+  .clk            (clk            ),
+  .cpu_stall      (cpu_stall      ),
+
+  // pipeline inputs
+  .if_pc          (if_pc          ),
+  .if_inst        (if_inst        ),
+  .wb_rfw         (wb_rfw         ),
+  .wb_rf_waddr    (wb_waddr       ),
+  .wb_rf_wdata    (wb_wdata       ),
+
+  // interrupt signal
+  .int_flush      (int_flush      ),
+
+  // pipeline outputs
+  .p_rfa          (id_rfa         ),
+  .p_rfb          (id_rfb         ),
+  .p_imm32        (id_imm32       ),
+  .p_shamt        (id_shamt       ),
+  .p_func         (id_func        ),
+  .p_rf_waddr     (id_rf_waddr    ),
+  .p_c_rfw        (id_c_rfw       ),
+  .p_c_wbsource   (id_c_wbsource  ),
+  .p_c_drw        (id_c_drw       ),
+  .p_c_alucontrol (id_c_alucontrol),
+  .p_c_j          (id_c_j         ),
+  .p_c_b          (id_c_b         ),
+  .p_c_jjr        (id_c_jjr       ),
+  .p_jaddr        (id_jaddr       ),
+  .p_pc           (id_pc          ),
+  .p_c_rfbse      (id_c_rfbse     ),
+  .p_rs           (id_rs          ),
+  .p_rt           (id_rt          ),
+
+  // stall output (not a reg)
+  .c_stall        (id_stall       )
+);
+
+cpu_ex  stage_ex (
+  .rst             (rst            ),
+  .clk             (clk            ),
+  .cpu_stall       (cpu_stall      ),
+
+  // pipeline inputs
+  .id_c_rfw        (id_c_rfw       ),
+  .id_c_wbsource   (id_c_wbsource  ),
+  .id_c_drw        (id_c_drw       ),
+  .id_c_alucontrol (id_c_alucontrol),
+  .id_c_j          (id_c_j         ),
+  .id_c_b          (id_c_b         ),
+  .id_c_jjr        (id_c_jjr       ),
+  .id_rfa          (id_rfa         ),
+  .id_rfb          (id_rfb         ),
+  .id_imm32        (id_imm32       ),
+  .id_shamt        (id_shamt       ),
+  .id_func         (id_func        ),
+  .id_rf_waddr     (id_rf_waddr    ),
+  .id_pc           (id_pc          ),
+  .id_jaddr        (id_jaddr       ),
+  .id_c_rfbse      (id_c_rfbse     ),
+  .id_rs           (id_rs          ),
+  .id_rt           (id_rt          ),
+
+  .wb_wdata        (wb_wdata       ),
+  .wb_rfw          (wb_rfw         ),
+  .wb_waddr        (wb_waddr       ),
+
+  // interrupt signals
+  .int_flush       (int_flush      ),
+  .int_pc          (int_pc         ), // output
+
+  // pipeline outputs
+  .p_c_rfw         (ex_c_rfw       ),
+  .p_c_wbsource    (ex_c_wbsource  ),
+  .p_c_drw         (ex_c_drw       ),
+  .p_alu_r         (ex_alu_r       ),
+  .p_rfb           (ex_rfb         ),
+  .p_rf_waddr      (ex_rf_waddr    ),
+  .p_jalra         (ex_jalra       ),
+  .p_rt            (ex_rt          ),
+
+  // outputs
+  .baddr           (ex_baddr       ),
+  .jaddr           (ex_jaddr       ),
+  .c_b             (ex_b           ),
+  .c_j             (ex_j           )
+);
+
+cpu_mem stage_mem (
+  .rst           (rst           ),
+  .clk           (clk           ),
+  .cpu_stall     (cpu_stall     ),
+
+  // pipeline inputs
+  .ex_c_rfw      (ex_c_rfw      ),
+  .ex_c_wbsource (ex_c_wbsource ),
+  .ex_c_drw      (ex_c_drw      ),
+  .ex_alu_r      (ex_alu_r      ),
+  .ex_rfb        (ex_rfb        ),
+  .ex_rf_waddr   (ex_rf_waddr   ),
+  .ex_jalra      (ex_jalra      ),
+  .ex_rt         (ex_rt         ),
+  .wb_wdata      (wb_wdata      ), // TODO: check the nomenclature on this
+
+  // memory i/o
+  .dmem_in       (din           ), // input
+  .dmem_data     (dout          ), // output
+  .dmem_addr     (dmem_addr     ), // output
+  .dmem_drw      (drw           ), // output
+
+  // pipeline outputs
+  .p_c_rfw       (mem_c_rfw     ),
+  .p_c_wbsource  (mem_c_wbsource),
+  .p_alu_r       (mem_alu_r     ),
+  .p_rf_waddr    (mem_rf_waddr  ),
+  .p_jalra       (mem_jalra     ),
+  .p_dout        (mem_dout      )
+);
+
+cpu_wb  stage_wb (
+  // pipeline inputs
+  mem_c_rfw,
+  mem_c_wbsource,
+  mem_alu_r,
+  mem_dout,
+  mem_rf_waddr,
+  mem_jalra,
+
+  // pipeline outputs
+  wb_rfw,
+  wb_wdata,
+  wb_waddr
+);
+endmodule
