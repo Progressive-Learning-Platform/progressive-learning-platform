@@ -56,7 +56,7 @@ id_chain* get_ids(id_chain* i, node *n) {
 	/* is the current node an id? */
 	if (n != NULL) {
 		if (strcmp(n->id, "declarator") == 0) {
-			/* declarators either have children[0] as the direct declarator or a pointer note */
+			/* declarators either have children[0] as the direct declarator or a pointer node */
 			id_chain *t = malloc(sizeof(id_chain));
 			if (t == NULL) {
 				err("[symbol] cannot allocate id_chain\n");
@@ -120,7 +120,12 @@ char* match_type(char *t) {
 		return t;
 	return NULL;
 }
-	
+
+/*
+ * install a symbol into the given symbol table. This is done both for regular
+ * symbols like declarations globally or in a function, as well as symbols
+ * installed in a struct.
+ */
 node* install_symbol(symbol_table *t, node *n) {
 	symbol *s = malloc(sizeof(symbol));
 	symbol *end;
@@ -138,12 +143,13 @@ node* install_symbol(symbol_table *t, node *n) {
 	s->attr = 0;
 	s->type = NULL;
 	s->value = NULL;
+	
+	//print_tree(n, stdout, 0); /* leave for debugging */
 
 	/* get the id and all attributes for this symbol */
-	//print_tree(n, stdout, 0); 
 	
 	/* the first child node should be the types and attributes */
-	if (strcmp(n->children[0]->id,"declaration_specifier") != 0) {
+	if (strcmp(n->children[0]->id,"declaration_specifier") != 0 && strcmp(n->children[0]->id,"specifier_qualifier_list") != 0) {
 		lerr(n->line, "[symbol] cannot extract type/attr information\n");
 	} else {
 		/* all children of declaration_specifiers should be type:id */
