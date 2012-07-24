@@ -20,14 +20,11 @@
 // divides input clock by 2
 // TODO: Use BUFG?
 
-module clock(i_clk, o_clk);
-	input  i_clk;
-	output o_clk;
+module clock(
+  input      i_clk,
+  output reg o_clk = 0
+);
 
-	reg [1:0] count = 0;
-
-	assign o_clk = count[1];
-
-	always @(posedge i_clk)
-		count = count + 1;
+  always @(posedge i_clk)
+    o_clk = ~o_clk;
 endmodule

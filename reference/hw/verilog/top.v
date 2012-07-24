@@ -86,7 +86,7 @@ wire        rst_debounced;
 wire        int;
 wire        int_ack;
 
-debounce d_t(
+debounce reset_t(
   .clk(clk),
   .i_button(rst),
   .o_signal(rst_debounced)

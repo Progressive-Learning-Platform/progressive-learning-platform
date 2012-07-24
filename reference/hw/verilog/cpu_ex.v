@@ -80,7 +80,7 @@ wire [31:0] x =
   (forwardX == 2'b00) ? id_rfa :
   (forwardX == 2'b01) ? p_alu_r :
   (forwardX == 2'b10) ? wb_wdata : 0;
-wire [31:0] eff_y = 
+wire [31:0] eff_y =
   (forwardY == 2'b00) ? id_rfb :
   (forwardY == 2'b01) ? p_alu_r :
   (forwardY == 2'b10) ? wb_wdata : 0;
@@ -93,13 +93,14 @@ wire cmp_unsigned = x < y;
 wire [63:0] r_mul = $signed(x) * $signed(y);
 
 /// ALU Control
-// 
+//
 wire [5:0] alu_func =
   (id_c_alucontrol == R_TYPE) ? id_func  :
   (id_c_alucontrol == JR    ) ? F_ADD    :
   (id_c_alucontrol == JALR  ) ? F_ADD    :
   (id_c_alucontrol == ANDI  ) ? F_AND    :
   (id_c_alucontrol == ORI   ) ? F_OR     :
+  (id_c_alucontrol == XORI  ) ? F_XOR    :
   (id_c_alucontrol == SLTI  ) ? F_CMP_S  :
   (id_c_alucontrol == SLTIU ) ? F_CMP_U  :
   (id_c_alucontrol == LW    ) ? F_ADD    :
@@ -109,24 +110,31 @@ wire [5:0] alu_func =
   (id_c_alucontrol == BNE   ) ? F_EQ     :
                                 0;
 
-wire [4:0] shamt = id_c_alucontrol == LUI ? 5'd16 : id_shamt;
+wire [4:0] shamt =
+  (id_c_alucontrol == LUI) ? 5'd16 :
+  (alu_func == F_LSHIFTV ||
+   alu_func == F_RSHIFTV ) ? id_rfa[4:0] : // we only use the lower 5 bits
+                             id_shamt;
 
 /// The ALU
 // This is a major portion of FPGA area
 wire [31:0] alu_r =
-  (alu_func == F_ADD   ) ? x + y        :
-  (alu_func == F_AND   ) ? x & y        :
-  (alu_func == F_NOR   ) ? ~(x|y)       : 
-  (alu_func == F_OR    ) ? x | y        :
-  (alu_func == F_CMP_S ) ? cmp_signed   :     
-  (alu_func == F_CMP_U ) ? cmp_unsigned :       
-  (alu_func == F_LSHIFT) ? y << shamt   :     
-  (alu_func == F_RSHIFT) ? y >> shamt   :     
-  (alu_func == F_SUB   ) ? x - y        :
-  (alu_func == F_NEQ   ) ? x != y       : 
-  (alu_func == F_EQ    ) ? x == y       : 
-  (alu_func == F_MULLO ) ? r_mul[31:0]  :
-  (alu_func == F_MULHI ) ? r_mul[63:32] :
+  (alu_func == F_ADD    ) ? x + y        :
+  (alu_func == F_AND    ) ? x & y        :
+  (alu_func == F_NOR    ) ? ~(x|y)       :
+  (alu_func == F_OR     ) ? x | y        :
+  (alu_func == F_XOR    ) ? x ^ y        :
+  (alu_func == F_CMP_S  ) ? cmp_signed   :
+  (alu_func == F_CMP_U  ) ? cmp_unsigned :
+  (alu_func == F_LSHIFT ||
+   alu_func == F_LSHIFTV) ? y << shamt   :
+  (alu_func == F_RSHIFT ||
+   alu_func == F_RSHIFTV) ? y >> shamt   :
+  (alu_func == F_SUB    ) ? x - y        :
+  (alu_func == F_NEQ    ) ? x != y       :
+  (alu_func == F_EQ     ) ? x == y       :
+  (alu_func == F_MULLO  ) ? r_mul[31:0]  :
+  (alu_func == F_MULHI  ) ? r_mul[63:32] :
                            0;
 
 
