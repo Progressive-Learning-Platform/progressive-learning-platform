@@ -87,19 +87,19 @@ wire        int;
 wire        int_ack;
 
 debounce d_t(
-  clk,
-  rst,
-  rst_debounced
+  .clk(clk),
+  .i_button(rst),
+  .o_signal(rst_debounced)
 );
 
 clock c_t(
-  clk,
-  c
+  .i_clk(clk),
+  .o_clk(c)
 );
 
 cpu cpu_t(
   rst_debounced,
-  clk,
+  c,
   cpu_stall,
   iin,
   din,
@@ -113,7 +113,7 @@ cpu cpu_t(
 
 arbiter arbiter_t(
   rst_debounced,
-  clk,
+  c,
   daddr,
   dout,
   din,
