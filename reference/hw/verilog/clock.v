@@ -1,11 +1,33 @@
-module clock(clk, c);
-	input clk;
-	output c;
+/*
+    Clock divider module for Progressive Learning Platform
+    Copyright 2012 Matthew Gaalswyk
 
-	reg count = 0;
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	assign c = count;
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	always @(posedge clk)
-		count = ~count;
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+ 
+// divides input clock by 2
+// TODO: Use BUFG?
+
+module clock(i_clk, o_clk);
+	input  i_clk;
+	output o_clk;
+
+	reg [1:0] count = 0;
+
+	assign o_clk = count[1];
+
+	always @(posedge i_clk)
+		count = count + 1;
 endmodule
