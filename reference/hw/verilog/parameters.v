@@ -68,6 +68,7 @@ localparam SLTI   = 6'h0a;
 localparam SLTIU  = 6'h0b;
 localparam ANDI   = 6'h0c;
 localparam ORI    = 6'h0d;
+localparam XORI   = 6'h0e;
 
 localparam LUI    = 6'h0f;
 
@@ -98,6 +99,7 @@ localparam ADDU   = 6'h21;
 localparam SUBU   = 6'h23;
 localparam AND    = 6'h24;
 localparam OR     = 6'h25;
+localparam XOR    = 6'h26;
 localparam NOR    = 6'h27;
 
 localparam SLT    = 6'h2a;
@@ -123,6 +125,7 @@ localparam F_ADD     = 6'h21;
 localparam F_SUB     = 6'h23;
 localparam F_AND     = 6'h24;
 localparam F_OR      = 6'h25;
+localparam F_XOR     = 6'h26;
 localparam F_NOR     = 6'h27;
 
 localparam F_CMP_S   = 6'h2a; // x < y signed

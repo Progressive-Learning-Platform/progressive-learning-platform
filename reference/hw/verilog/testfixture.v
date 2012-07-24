@@ -44,11 +44,11 @@ initial begin
   //$readmemh("../programs/multtest.hex",`RAM);
   rst = 0; 
   clk = 0;
-  #4;
+  #50;
   rst = 1;
-  #26;
+  #50;
   rst = 0;
-  #470
+  #400
   $display("500 time units done");
   $stop;
  
@@ -59,6 +59,7 @@ end
 //
 // ASCII decoding
 //
+// TODO: turn into a task so we can have this info for any stage
 reg  [39:0] _ascii_instruction; // 40 bits, 5 bytes/chars
 reg  [23:0] _ascii_alu_op;
 wire [5:0] opcode = `CPU_T.iin[31:26];
@@ -89,6 +90,8 @@ always @(opcode or func or shamt or rs or rt) begin
       _ascii_alu_op = " & ";
     F_OR:
       _ascii_alu_op = " | ";
+    F_XOR:
+      _ascii_alu_op = " ^ ";
     F_NOR:
       _ascii_alu_op = "~| ";
     F_CMP_S:
@@ -121,6 +124,7 @@ always @(opcode or func or shamt or rs or rt) begin
     MULLO:   _ascii_instruction = "mullo";
     NOR  :   _ascii_instruction = "nor  ";
     OR   :   _ascii_instruction = "or   ";
+    XOR  :   _ascii_instruction = "xor  ";
     SLL  :
       case({shamt})
         0:   _ascii_instruction = "nop  "; // pseudo-op
@@ -130,7 +134,12 @@ always @(opcode or func or shamt or rs or rt) begin
     SLLV :   _ascii_instruction = "sllv ";
     SLT  :   _ascii_instruction = "slt  ";
     SLTU :   _ascii_instruction = "sltu ";
-    SRL  :   _ascii_instruction = "srl  ";
+    SRL  :
+      case({shamt})
+        0:   _ascii_instruction = "nop  "; // pseudo-op
+        default:
+             _ascii_instruction = "srl  ";
+      endcase
     SRLV :   _ascii_instruction = "srlv ";
     SUBU :   _ascii_instruction = "subu ";
     default:
@@ -153,6 +162,7 @@ always @(opcode or func or shamt or rs or rt) begin
     LUI  :   _ascii_instruction = "lui  ";
     LW   :   _ascii_instruction = "lw   ";
     ORI  :   _ascii_instruction = "ori  ";
+    XORI :   _ascii_instruction = "xori ";
     SLTI :   _ascii_instruction = "slti ";
     SLTIU:   _ascii_instruction = "sltiu";
     SW   :   _ascii_instruction = "sw   ";
