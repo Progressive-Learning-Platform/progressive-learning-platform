@@ -824,6 +824,7 @@ public class PLPToolbox {
         javax.swing.JOptionPane.showMessageDialog(parent, str, "Error",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
     }
+
     /**
      * Show a yes/no confirmation dialog
      *

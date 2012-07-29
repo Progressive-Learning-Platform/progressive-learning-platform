@@ -225,7 +225,10 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     Msg.p(entry.getKey() + "::" + entry.getValue());
                 }
                 Msg.P();
-            }else if(command.equals("vismem")) {
+            } else if(command.equals("errordialog")) {
+                Config.cfgErrorDialog ^= true;
+                Msg.P("cfgErrorDialog=" + Config.cfgErrorDialog);
+            } else if(command.equals("vismem")) {
                 if(plp.isSimulating()) {
                     plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);
                     ((plptool.mips.SimCoreGUI)plp.g_sim).attachMemoryVisualizer(memVis);

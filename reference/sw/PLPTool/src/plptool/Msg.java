@@ -119,6 +119,8 @@ public class Msg {
                     output.setCaretPosition(doc.getLength());
                 }
             }
+            if(Config.cfgErrorDialog)
+                PLPToolbox.showErrorDialog(null, "#" + errorCode + ": " + errStr);
         } catch(Exception e) {
         }
 

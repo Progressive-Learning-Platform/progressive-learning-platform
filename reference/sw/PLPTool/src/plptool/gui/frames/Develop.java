@@ -517,15 +517,18 @@ public class Develop extends javax.swing.JFrame {
     }
 
     /**
-     * Close project (UNUSED)
+     * Close project
      */
     public final void closeProject() {
         plp.plpfile = null;
-        plp.setUnModified();
         txtCurFile.setText("No file open");
         simEnd();
         //plp.refreshProjectView(false);
+        btnSave.setEnabled(false);
+        btnAssemble.setEnabled(false);
+        setTitle("PLP Software Tool " + Text.versionString);
         safeRefresh(false);
+        plp.setUnModified();
     }
 
     /**
@@ -639,7 +642,8 @@ public class Develop extends javax.swing.JFrame {
                 plp.getArch().getSyntaxHighlightSupport().newStyle();
             else
                 changeFormatting();
-        }
+        } else // if open failed, close
+            closeProject();
     }
 
     /**
@@ -3151,7 +3155,7 @@ public class Develop extends javax.swing.JFrame {
             modified = true;
         }
 
-        if(modified) {
+        if(modified && plp.plpfile != null) {
             Msg.D("Text has been modified.", 9, this);
             plp.setModified();
 
@@ -4022,7 +4026,7 @@ class DevEditorDocListener implements DocumentListener {
     public void removeUpdate(final javax.swing.event.DocumentEvent e) {
        if(!enable || !Config.nothighlighting) return;
 
-        if(!plp.isReplaying()) {
+        if(plp.plpfile != null && !plp.isReplaying()) {
             plp.setModified();
             plp.requireAssemble();
         }
@@ -4032,7 +4036,7 @@ class DevEditorDocListener implements DocumentListener {
     public void insertUpdate(final javax.swing.event.DocumentEvent e) {
         if(!enable || !Config.nothighlighting) return;
 
-        if(!plp.isReplaying()) {
+        if(plp.plpfile != null && !plp.isReplaying()) {
             plp.setModified();
             plp.requireAssemble();
         }

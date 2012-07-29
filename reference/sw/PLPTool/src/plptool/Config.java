@@ -34,6 +34,7 @@ public class Config {
     public static boolean cfgAskBeforeAutoloadingModules   = true;
     public static int     cfgOverrideISA                   = -1;
     public static boolean cfgAskForISAForNewProjects       = false;
+    public static boolean cfgErrorDialog                   = false;
 
     public static boolean simForwardingUnit                = true;
     public static boolean simDynamicMemoryAllocation       = false;
