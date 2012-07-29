@@ -263,7 +263,7 @@ struct_declaration_list
 	;
 
 struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';'  { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); $$ = op("struct_declaration", 2, $1, $2); $$ = install_struct_symbol($$); } 
+	: specifier_qualifier_list struct_declarator_list ';'  { vlog("[parser] SPECIFIER_QUALIFIER_LIST_STRUCT_DECLARATOR_LIST\n"); $$ = op("struct_declaration", 2, $1, $2); } 
 	;
 
 specifier_qualifier_list
