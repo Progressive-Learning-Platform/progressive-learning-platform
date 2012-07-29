@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2011-10-12T18:04:08</DateModified>
+  <DateModified>2012-07-24T15:37:39</DateModified>
   <ModuleName>top</ModuleName>
-  <SummaryTimeStamp>Unknown</SummaryTimeStamp>
-  <SavedFilePath>D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/XilinxProject/iseconfig/top.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>D:/Documents/_ProgressiveLearningPlatform/PLP Source/progressive-learning-platform/reference/hw/XilinxProject</ImplementationReportsDirectory>
+  <SummaryTimeStamp>2012-05-31T15:27:51</SummaryTimeStamp>
+  <SavedFilePath>C:/Dropbox/progressive-learning-platform/reference/hw/XilinxProject/iseconfig/top.xreport</SavedFilePath>
+  <ImplementationReportsDirectory>C:/Dropbox/progressive-learning-platform/reference/hw/XilinxProject\</ImplementationReportsDirectory>
   <DateInitialized>2011-10-12T18:03:51</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>
