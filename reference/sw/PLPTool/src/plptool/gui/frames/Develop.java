@@ -274,6 +274,8 @@ public class Develop extends javax.swing.JFrame {
             SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        if(plp.asm == null || plp.sim == null)
+                            return;
                         int pc_index = plp.asm.lookupAddrIndex(plp.sim.visibleAddr);
                         if(pc_index < 0) {
                             tln.setHighlight(-1);
