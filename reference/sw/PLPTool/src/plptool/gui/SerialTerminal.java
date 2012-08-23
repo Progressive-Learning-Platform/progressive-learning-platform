@@ -25,17 +25,15 @@ import gnu.io.SerialPort;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.swing.JTextPane;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.SwingUtilities;
 import java.awt.Color;
 
-import plptool.Msg;
 import plptool.Constants;
 import plptool.Config;
 import plptool.PLPToolbox;
+import plptool.Msg;
 
 /**
  *
@@ -49,7 +47,6 @@ public class SerialTerminal extends javax.swing.JFrame {
     private OutputStream out;
     private SerialPort port;
     private boolean streamReaderRunning;
-    private boolean standalone;
 
     protected boolean stop;
 
@@ -57,7 +54,6 @@ public class SerialTerminal extends javax.swing.JFrame {
     public SerialTerminal(boolean standalone) {
         initComponents();
 
-        this.standalone = standalone;
         stop = true;
         streamReaderRunning = false;
 
@@ -91,8 +87,6 @@ public class SerialTerminal extends javax.swing.JFrame {
                 }
             });
         }
-
-
 
         cmbBaud.removeAllItems();
         cmbBaud.addItem(9600);
@@ -158,7 +152,7 @@ public class SerialTerminal extends javax.swing.JFrame {
         console.setCaretPosition(doc.getLength() - 1);
     }
 
-    protected void appendStringFormatted(String data, Color color) throws Exception {
+    protected final void appendStringFormatted(String data, Color color) throws Exception {
         StyledDocument doc = console.getStyledDocument();
 
         SimpleAttributeSet attrib = new SimpleAttributeSet();
@@ -179,7 +173,7 @@ public class SerialTerminal extends javax.swing.JFrame {
         console.setCaretPosition(doc.getLength() - 1);
     }
 
-    protected void appendString(String str) {
+    protected final void appendString(String str) {
         try {
 
         StyledDocument doc = console.getStyledDocument();
@@ -590,41 +584,35 @@ public class SerialTerminal extends javax.swing.JFrame {
 
 
     class SerialStreamReader extends Thread {
+        int bytes;
+
         @Override
         public void run() {
-            final byte[] buffer = new byte[Config.serialTerminalBufferSize];
-            int bytes;
-            String str;
+            final byte[] buffer = new byte[Config.serialTerminalBufferSize];           
 
-            try {
-                
-            if(streamReaderRunning) {
-               appendString("Another stream reader thread is already running.");
-               return;
-            }
+            try {                
+                if(streamReaderRunning) {
+                   appendString("Another stream reader thread is already running.");
+                   return;
+                }
+                appendString("Stream reader is running.");
 
-            streamReaderRunning = true;
+                streamReaderRunning = true;
 
-            while(!stop) {
+                while(!stop) {
+                    bytes = in.read(buffer);
+                    Msg.D("term: " + bytes + " bytes read.", 6, this);
+                    if(bytes > 0)
+                        try {
+                            appendStringFormatted(new String(buffer, 0, bytes, "US-ASCII"), Color.RED);
+                        } catch(Exception e) {
 
-                bytes = in.read(buffer);
-                if(bytes > 0)
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                appendStringFormatted(new String(buffer), Color.RED);
-                            } catch(Exception e) {
-                                
-                            }
                         }
-                    });
+                    Thread.sleep(Config.serialTerminalReadDelayMs);
+                }
 
-                Thread.sleep(Config.serialTerminalReadDelayMs);
-            }
-
-            streamReaderRunning = false;
-            appendString("Stream reader is stopped.");
+                streamReaderRunning = false;
+                appendString("Stream reader is stopped.");
 
             } catch(Exception e) {
                 streamReaderRunning = false;
