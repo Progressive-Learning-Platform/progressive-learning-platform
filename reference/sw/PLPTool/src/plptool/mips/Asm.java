@@ -24,6 +24,7 @@ import java.util.Iterator;
 import plptool.PLPAsmSource;
 import plptool.Msg;
 import plptool.Constants;
+import plptool.PLPToolbox;
 
 
 /**
@@ -1321,7 +1322,10 @@ public class Asm extends plptool.PLPAsm {
 
         Msg.D("assemble(): Assembly completed.", 1, this);
         
-        } catch(Exception e) {
+        } catch(NumberFormatException e) {
+            error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Failed to parse literal: " + e.getMessage(),
+                              Constants.PLP_GENERIC_ERROR, this);
+        }catch(Exception e) {
             error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Unhandled exception: " + e,
                               Constants.PLP_GENERIC_ERROR, this);
         }
@@ -1416,6 +1420,7 @@ public class Asm extends plptool.PLPAsm {
      * @see sanitize32bits(String)
      */
     public static long sanitize16bits(String number) throws Exception {
+        long ret;
         if(number.startsWith("0x") || number.startsWith("0h")) {
             number = number.substring(2);
             return Long.parseLong(number, 16) & 0xFFFF;
@@ -1424,11 +1429,12 @@ public class Asm extends plptool.PLPAsm {
             number = number.substring(2);
             return Long.parseLong(number, 2) & 0xFFFF;
         }
-        else if (number.startsWith("'") && number.endsWith("'") && number.length()==3) {
-            return number.charAt(1);
+        else if (number.startsWith("'") && number.endsWith("'")) {
+            ret = PLPToolbox.parseEscapeCharacter(number);
+            if(ret != Constants.PLP_NUMBER_ERROR)
+                return ret;
         }
-        else
-            return Long.parseLong(number) & 0xFFFF;
+        return Long.parseLong(number) & 0xFFFF;
     }
 
     /**
@@ -1443,6 +1449,7 @@ public class Asm extends plptool.PLPAsm {
      * @see sanitize16bits(String)
      */
     public static long sanitize32bits(String number) throws Exception {
+        long ret;
         if(number.startsWith("0x") || number.startsWith("0h")) {
             number = number.substring(2);
             return Long.parseLong(number, 16) & 0xFFFFFFFF;
@@ -1451,11 +1458,12 @@ public class Asm extends plptool.PLPAsm {
             number = number.substring(2);
             return Long.parseLong(number, 2) & 0xFFFFFFFF;
         }
-        else if (number.startsWith("'") && number.endsWith("'") && number.length()==3) {
-            return number.charAt(1);
+        else if (number.startsWith("'") && number.endsWith("'")) {
+            ret = PLPToolbox.parseEscapeCharacter(number);
+            if(ret != Constants.PLP_NUMBER_ERROR)
+                return ret;
         }
-        else
-            return Long.parseLong(number) & 0xFFFFFFFF;
+        return Long.parseLong(number) & 0xFFFFFFFF;
     }
 
     public Byte getRegisterNumberFromName(String name) {

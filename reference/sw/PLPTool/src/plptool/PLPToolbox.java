@@ -783,6 +783,40 @@ public class PLPToolbox {
     }
 
     /**
+     * Takes a string representing a character enclosed by single quotes and
+     * checks for escaped characters. If escaped character is detected, the
+     * function will return the actual character code. It will only strip
+     * the single quotes otherwise. For example, 'A' will be returned as
+     * A as long, and '\n' will be returned as the newline character.
+     *
+     * @param str The string representing the character
+     * @return Character code in long
+     */
+    public static long parseEscapeCharacter(String str) {
+        if (str.startsWith("'") && str.endsWith("'")) {
+            if(str.length() == 3)
+                return str.charAt(1);
+            else if (str.length() == 4) {
+                if(str.charAt(1) == '\\') {
+                    switch(str.charAt(2)) {
+                        case 'n':
+                            return '\n';
+                        case 'r':
+                            return '\r';
+                        case 't':
+                            return '\t';
+                        case '\\':
+                            return '\\';
+                        case '0':
+                            return '\0';
+                    }
+                }
+            }
+        }
+        return Constants.PLP_NUMBER_ERROR;
+    }
+
+    /**
      * NOT IMPLEMENTED YET
      * Transform a string with embedded escapes to a character array
      *
