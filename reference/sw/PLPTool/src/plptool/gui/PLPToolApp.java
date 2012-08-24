@@ -78,7 +78,6 @@ public class PLPToolApp extends SingleFrameApplication {
             // Launch the ProjectDriver
             ProjectDriver.loadConfig();
             ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
-            CallbackRegistry.callback(CallbackRegistry.START, plp);
             if(Constants.debugLevel > 0) {
                 con = new ConsoleFrame(plp);
                 con.setVisible(true);

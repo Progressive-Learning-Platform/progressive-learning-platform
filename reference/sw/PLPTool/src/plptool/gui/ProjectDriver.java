@@ -239,6 +239,8 @@ public class ProjectDriver {
         } catch(NoClassDefFoundError e) {
             Msg.W("Unsatisfied RXTX link.", null);
         }
+
+        CallbackRegistry.callback(CallbackRegistry.START, this);
     }
 
     /**
