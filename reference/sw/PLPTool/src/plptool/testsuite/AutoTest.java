@@ -128,6 +128,7 @@ public class AutoTest {
                     plp = (ProjectDriver) param;
                     driver = new DriverThread();
                     driver.start();
+                    return false;
             }
             return false;
         }
@@ -266,10 +267,14 @@ public class AutoTest {
                 if(!start) {
                     p("Press enter to start");
                     PLPToolbox.readLine();
-                } else {
-                    p("Starting in 2 seconds");
-                    delay(2000);
                 }
+                p("Starting in 2 seconds");
+                delay(1000);
+                if(plp.g()) {
+                    plp.g_dev.requestFocus();
+                    plp.g_dev.toFront();
+                }
+                delay(1000);
                 if(external) {
                     t.run(plp);
                 } else {
@@ -281,7 +286,8 @@ public class AutoTest {
                 System.err.println("             Driver thread has crashed!              ");
                 System.err.println("=====================================================");
                 e.printStackTrace();
-                PLPToolbox.showErrorDialog(null, "Autotest Failed. Reason: Crashed.");
+                if(plp.g())
+                    PLPToolbox.showErrorDialog(null, "Autotest Failed. Reason: Crashed.");
                 System.exit(-1);
             }
 
