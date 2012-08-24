@@ -370,5 +370,23 @@ public class Msg {
         if(Constants.debugLevel >= 10)
             e.printStackTrace();
     }
+
+    /**
+     * Shorthand for System.out.println
+     *
+     * @param str String to print
+     */
+    public static void S(String str) {
+        System.out.println(str);
+    }
+
+    /**
+     * Shorthand for System.out.print
+     *
+     * @param str String to print
+     */
+    public static void s(String str) {
+        System.out.print(str);
+    }
 }
 
