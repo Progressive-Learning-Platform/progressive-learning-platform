@@ -136,10 +136,10 @@ public class AutoTest {
     public static void typeChar(int...code) {
         for(int i = 0; i < code.length; i++)
             r.keyPress(code[i]);
-        sl(50);
+        delay(50);
         for(int i = 0; i < code.length; i++)
             r.keyRelease(code[i]);
-        sl(50);
+        delay(50);
 
     }
 
@@ -251,7 +251,7 @@ public class AutoTest {
         }
     }
 
-    public static void sl(long ms) {
+    public static void delay(long ms) {
         try {
             Thread.sleep(ms);
         } catch(Exception e) {
@@ -268,7 +268,7 @@ public class AutoTest {
                     PLPToolbox.readLine();
                 } else {
                     p("Starting in 2 seconds");
-                    sl(2000);
+                    delay(2000);
                 }
                 if(external) {
                     t.run(plp);
