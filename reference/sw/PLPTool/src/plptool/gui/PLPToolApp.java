@@ -27,6 +27,7 @@ import plptool.ArchRegistry;
 import plptool.Text;
 import plptool.dmf.DynamicModuleFramework;
 import plptool.dmf.CallbackRegistry;
+import plptool.testsuite.AutoTest;
 import plptool.PLPToolbox;
 
 import java.io.FileInputStream;
@@ -123,7 +124,7 @@ public class PLPToolApp extends SingleFrameApplication {
     public static void main(String[] args) {        
         args = ArchRegistry.setup(args);                   // Setup ISA registry
         args = CallbackRegistry.setup(args);               // Setup callback registry
-        args = plptool.testsuite.AutoTest.setup(args);     // Run unit tests
+        args = AutoTest.setup(args);                       // Run unit tests
 
 /******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 
