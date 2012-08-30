@@ -36,17 +36,18 @@ public class AutoTest {
     private static boolean gui = false;
     private static boolean force = false;
     private static boolean start = false;
-    private static boolean external = false;
+    private static boolean load = false;
     private static long startTime;
     private static Tester t;
+    public static long TYPING_DELAY = 50;
 
     public static String[] setup(String[] args) {
         String[] ret = args;
         startTime = System.currentTimeMillis();
 
         for(int i = 0; i < ret.length; i++)
-            if(ret[i].equals("--debug-autotest-gui")) {
-                if(external) {
+            if(ret[i].equals("--autotest-gui")) {
+                if(load) {
                     p("can not use built-in GUI tester and external tester at the same time!");
                     System.exit(-1);
                 }
@@ -57,17 +58,17 @@ public class AutoTest {
                 configure();
                 guiTester = new GUITester();
                 guiTester.configure(r);                
-            } else if(ret[i].equals("--debug-autotest-force")) {
+            } else if(ret[i].equals("--autotest-force")) {
                 ret = PLPToolbox.gobble(ret, i);
                 i--;
                 force = true;
-            } else if(ret[i].equals("--debug-autotest-force-start")) {
+            } else if(ret[i].equals("--autotest-force-start")) {
                 ret = PLPToolbox.gobble(ret, i);
                 i--;
                 start = true;
-            } else if(ret[i].equals("--debug-autotest-external") && (i+2) < ret.length) {
-                if(gui) {
-                    p("can not use built-in GUI tester and external tester at the same time!");
+            } else if(ret[i].equals("--autotest-load") && (i+2) < ret.length) {
+                if(gui || load) {
+                    p("can not use multiple testers at the same time!");
                     System.exit(-1);
                 }
                 if(!DynamicModuleFramework.loadModuleClass(ret[i+2], ret[i+1])) {
@@ -90,7 +91,20 @@ public class AutoTest {
                 ret = PLPToolbox.gobble(ret, i);
                 
                 i--;
-                external = true;
+                load = true;
+            } else if(ret[i].equals("--autotest")) {
+                if(gui) {
+                    p("can not use '--autotest' with '--autotest-gui'");
+                    System.exit(-1);
+                }
+                if(!load) {
+                    p("'--autotest' requires '--autotest-load'");
+                    System.exit(-1);
+                }
+
+                /* create a ProjectDriver and start AutoTest */
+                CallbackRegistry.callback(CallbackRegistry.START,
+                        new ProjectDriver(Constants.PLP_DEFAULT));
             }
 
         return ret;
@@ -137,10 +151,10 @@ public class AutoTest {
     public static void typeChar(int...code) {
         for(int i = 0; i < code.length; i++)
             r.keyPress(code[i]);
-        delay(50);
+        delay(TYPING_DELAY);
         for(int i = 0; i < code.length; i++)
             r.keyRelease(code[i]);
-        delay(50);
+        delay(TYPING_DELAY);
 
     }
 
@@ -275,7 +289,7 @@ public class AutoTest {
                     plp.g_dev.toFront();
                 }
                 delay(1000);
-                if(external) {
+                if(load) {
                     t.run(plp);
                 } else {
                     guiTester.run(plp);

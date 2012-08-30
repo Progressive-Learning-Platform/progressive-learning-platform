@@ -43,7 +43,7 @@ public class GUITester implements Tester {
 
     public void run(ProjectDriver plp) {
         File f = new File(Constants.launchPath + "/test.plp");
-        AutoTest.p("Checking if " + f.getAbsolutePath() + " exists");
+        AutoTest.p("checking if " + f.getAbsolutePath() + " exists");
         if(f.exists()) {
             if(!AutoTest.isForced()) {
                 AutoTest.p(f.getAbsolutePath() + " exists. Delete this file first before running GUI autotest.");
@@ -51,9 +51,10 @@ public class GUITester implements Tester {
             } else
                 f.delete();
         }
-        AutoTest.p("Creating new project");
+        AutoTest.TYPING_DELAY = 5;
+        AutoTest.p("creating new project");
         plp.create(ArchRegistry.ISA_PLPMIPS);
-        AutoTest.p("Commencing tests");
+        AutoTest.p("commencing tests");
         AutoTest.delay(1000);
         plp.g_dev.toFront();
         AutoTest.delay(500);
@@ -87,9 +88,9 @@ public class GUITester implements Tester {
         AutoTest.p("save test");
         AutoTest.typeChar(KeyEvent.VK_CONTROL, KeyEvent.VK_S);
         AutoTest.delay(1000);
-        AutoTest.type("test.plp");
-        AutoTest.delay(100);
-        AutoTest.typeChar(KeyEvent.VK_ALT, KeyEvent.VK_S);
+        AutoTest.type("test.plp\n");
+        //AutoTest.delay(100);
+        //AutoTest.typeChar(KeyEvent.VK_ALT, KeyEvent.VK_S);
         AutoTest.delay(1000);
         AutoTest.p("assemble test");
         AutoTest.typeChar(KeyEvent.VK_F2);
