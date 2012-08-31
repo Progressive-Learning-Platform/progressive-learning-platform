@@ -58,7 +58,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author wira
  */
-public class ProjectDriver {
+public final class ProjectDriver {
 
     public PLPToolApp              app;        // App
 
