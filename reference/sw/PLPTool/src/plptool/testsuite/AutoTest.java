@@ -309,7 +309,7 @@ public class AutoTest {
                 System.exit(-1);
             }
 
-            p("Autotest thread exiting");
+            p("autotest thread exiting");
         }
     }
 }
