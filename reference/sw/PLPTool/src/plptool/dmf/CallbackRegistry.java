@@ -87,14 +87,6 @@ public class CallbackRegistry {
         for(int i = 0; i < CALLBACKS; i++)
             callbacks[i] = new ArrayList<Callback>();
 
-        for(int i = 0; i < args.length; i++)
-            if(args[i].equals("--callback-unit-test")) {
-                Msg.P("CallbackRegistry.setup: callback-unit-test");
-                // perform unit test
-                plptool.testsuite.StartupSanityCheck.test_CallbackRegistry();
-                ret = PLPToolbox.gobble(args, i);
-            }
-
         return ret;
     }
 

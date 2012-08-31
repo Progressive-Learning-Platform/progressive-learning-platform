@@ -25,6 +25,7 @@ import plptool.dmf.*;
 import java.awt.event.KeyEvent;
 
 /**
+ * PLPTool unit test framework
  *
  * @author Wira
  */
@@ -79,7 +80,8 @@ public class AutoTest {
                 configure();
                 try {
                     t = (Tester) DynamicModuleFramework.getDynamicModuleClass(index).newInstance();
-                    p("configuring external tester");
+                    p("configuring external tester '" + ret[i+1] + "' from '" +
+                            ret[i+2] + "'");
                     t.configure(r);
                 } catch(Exception e) {
                     p("external tester instantiation failed.");
@@ -92,19 +94,21 @@ public class AutoTest {
                 
                 i--;
                 load = true;
-            } else if(ret[i].equals("--autotest")) {
+            } else if(ret[i].equals("--autotest-core")) {
                 if(gui) {
-                    p("can not use '--autotest' with '--autotest-gui'");
+                    p("can not use '--autotest-core' with '--autotest-gui'");
                     System.exit(-1);
                 }
                 if(!load) {
-                    p("'--autotest' requires '--autotest-load'");
+                    p("'--autotest-core' requires '--autotest-load', and must" +
+                            " be invoked last in the argument list.");
                     System.exit(-1);
                 }
 
+                p("commencing core test with external tester class");
                 /* create a ProjectDriver and start AutoTest */
-                CallbackRegistry.callback(CallbackRegistry.START,
-                        new ProjectDriver(Constants.PLP_DEFAULT));
+                plp = new ProjectDriver(Constants.PLP_DEFAULT);
+                ret[i] = "-q";
             }
 
         return ret;
@@ -279,10 +283,10 @@ public class AutoTest {
         public void run() {
             try {
                 if(!start) {
-                    p("Press enter to start");
+                    p("press enter to start");
                     PLPToolbox.readLine();
                 }
-                p("Starting in 2 seconds");
+                p("starting in 2 seconds");
                 delay(1000);
                 if(plp.g()) {
                     plp.g_dev.requestFocus();
