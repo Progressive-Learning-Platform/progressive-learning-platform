@@ -242,6 +242,12 @@ public class PLPToolApp extends SingleFrameApplication {
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("-q")) {
                 return;
 
+            // Instantiate project driver and exit. Used by autotest
+            } else if(args.length >= activeArgIndex + 1 && args[i].equals("--debug-projectdriver")) {
+                Msg.M("Creating default ProjectDriver for debugging...");
+                AutoTest.plp = new ProjectDriver(Constants.PLP_DEFAULT);
+                return;
+
             // Print GPL license text and quit
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
                 Msg.M("\n" + Text.GPL + "\n");

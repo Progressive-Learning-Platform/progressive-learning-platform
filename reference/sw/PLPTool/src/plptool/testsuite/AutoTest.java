@@ -30,7 +30,7 @@ import java.awt.event.KeyEvent;
  * @author Wira
  */
 public class AutoTest {
-    private static ProjectDriver plp;
+    public static ProjectDriver plp;
     private static DriverThread driver;
     private static GUITester guiTester;
     private static java.awt.Robot r;
@@ -38,6 +38,7 @@ public class AutoTest {
     private static boolean force = false;
     private static boolean start = false;
     private static boolean load = false;
+    private static boolean delay = true;
     private static long startTime;
     private static Tester t;
     public static long TYPING_DELAY = 50;
@@ -63,15 +64,25 @@ public class AutoTest {
                 ret = PLPToolbox.gobble(ret, i);
                 i--;
                 force = true;
+            } else if(ret[i].equals("--autotest-no-delay")) {
+                ret = PLPToolbox.gobble(ret, i);
+                i--;
+                delay = false;
             } else if(ret[i].equals("--autotest-force-start")) {
                 ret = PLPToolbox.gobble(ret, i);
                 i--;
                 start = true;
+            } else if(ret[i].equals("--autotest-disable-messages")) {
+                ret = PLPToolbox.gobble(ret, i);
+                i--;
+                Msg.silent = true;
+                Msg.suppressWarnings = true;
             } else if(ret[i].equals("--autotest-load") && (i+2) < ret.length) {
                 if(gui || load) {
                     p("can not use multiple testers at the same time!");
                     System.exit(-1);
                 }
+                DynamicModuleFramework.disableWarning();
                 if(!DynamicModuleFramework.loadModuleClass(ret[i+2], ret[i+1])) {
                     p("external tester class load failed.");
                     System.exit(-1);
@@ -94,21 +105,19 @@ public class AutoTest {
                 
                 i--;
                 load = true;
-            } else if(ret[i].equals("--autotest-core")) {
+            } else if(ret[i].equals("--autotest-run")) {
                 if(gui) {
-                    p("can not use '--autotest-core' with '--autotest-gui'");
+                    p("can not use '--autotest-run' with '--autotest-gui'");
                     System.exit(-1);
                 }
                 if(!load) {
-                    p("'--autotest-core' requires '--autotest-load', and must" +
+                    p("'--autotest-run' requires '--autotest-load', and must" +
                             " be invoked last in the argument list.");
                     System.exit(-1);
                 }
 
                 p("commencing core test with external tester class");
-                /* create a ProjectDriver and start AutoTest */
-                plp = new ProjectDriver(Constants.PLP_DEFAULT);
-                ret[i] = "-q";
+                ret[i] = "--debug-projectdriver";
             }
 
         return ret;
@@ -130,7 +139,7 @@ public class AutoTest {
             p("failed to initialize robot");
             System.exit(-1);
         }
-        p("installing autotest hooks");
+        p("installing autotest callback");
         CallbackRegistry.register(cb, nums);
     }
 
@@ -144,6 +153,7 @@ public class AutoTest {
             switch(callbackNum) {
                 case CallbackRegistry.START:
                     plp = (ProjectDriver) param;
+                    AutoTest.p("*** handing control to autotest thread ***");
                     driver = new DriverThread();
                     driver.start();
                     return false;
@@ -286,13 +296,16 @@ public class AutoTest {
                     p("press enter to start");
                     PLPToolbox.readLine();
                 }
-                p("starting in 2 seconds");
-                delay(1000);
+                if(delay) {
+                    p("starting in 2 seconds");
+                    delay(1000);
+                }
                 if(plp.g()) {
                     plp.g_dev.requestFocus();
                     plp.g_dev.toFront();
                 }
-                delay(1000);
+                if(delay)
+                    delay(1000);
                 if(load) {
                     t.run(plp);
                 } else {

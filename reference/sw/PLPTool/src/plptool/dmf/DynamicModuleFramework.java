@@ -795,6 +795,13 @@ public class DynamicModuleFramework {
             }
         }
     }
+
+    /**
+     * Turn off first-time module warning
+     */
+    public static void disableWarning() {
+        warn = true;
+    }
 }
 
 /**
