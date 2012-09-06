@@ -79,6 +79,7 @@ public class PLPToolApp extends SingleFrameApplication {
             // Launch the ProjectDriver
             ProjectDriver.loadConfig();
             ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
+            CallbackRegistry.callback(CallbackRegistry.START, plp);
             if(Constants.debugLevel > 0) {
                 con = new ConsoleFrame(plp);
                 con.setVisible(true);
@@ -246,6 +247,7 @@ public class PLPToolApp extends SingleFrameApplication {
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--debug-projectdriver")) {
                 Msg.M("Creating default ProjectDriver for debugging...");
                 AutoTest.plp = new ProjectDriver(Constants.PLP_DEFAULT);
+                CallbackRegistry.callback(CallbackRegistry.START, AutoTest.plp);
                 return;
 
             // Print GPL license text and quit
@@ -397,6 +399,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --suppress-output       Engage silent mode.");
         System.out.println("  --suppress-warning      Suppress all warning messages.");
         System.out.println("   -d <level>             Set debug level (0 to infinity).");
+        System.out.println("  --autotest-help         Unit test / automation framework information.");
         System.out.println();
         System.out.println("Dynamic modules / extensions controls:");
         System.out.println("   -L <jar file>          Load a PLPTool module JAR file, locate the manifest,");
@@ -418,7 +421,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
     private static void printModuleDebuggingHelpMessage() {
         System.out.println("Module debugging commands:");
-        System.out.println("  --load-class <Java class file>");
+        System.out.println("  --load-class <canonical class name> <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader.");
         System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
         System.out.println("  --generate-manifest <path or jar file> <destination directory>");
@@ -507,6 +510,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
         if(simulateCLI) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
+            CallbackRegistry.callback(CallbackRegistry.START, plp);
             // Autoload saved modules
             if(loadModules)
                 loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
@@ -519,6 +523,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
         } else if(simulateScripted) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
+            CallbackRegistry.callback(CallbackRegistry.START, plp);
             // Autoload saved modules
             if(loadModules)
                 loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
