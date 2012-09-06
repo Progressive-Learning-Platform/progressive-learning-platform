@@ -110,14 +110,12 @@ public class AutoTest {
                     p("can not use '--autotest-run' with '--autotest-gui'");
                     System.exit(-1);
                 }
-                if(!load) {
-                    p("'--autotest-run' requires '--autotest-load', and must" +
-                            " be invoked last in the argument list.");
-                    System.exit(-1);
-                }
 
-                p("commencing core test with external tester class");
+                p("debug execution path selected");
                 ret[i] = "--debug-projectdriver";
+            } else if(ret[i].equals("--autotest-help")) {
+                printHelp();
+                System.exit(0);
             }
 
         return ret;
@@ -324,5 +322,66 @@ public class AutoTest {
 
             p("autotest thread exiting");
         }
+    }
+
+    public static void printHelp() {
+        System.out.println("");
+        System.out.println("PLPTool has a built-in autotest framework that can be used to perform unit");
+        System.out.println("tests and other automated tasks. The framework is located in plptool.testsuite");
+        System.out.println("package of the PLPTool archive, and it consists of a utility class (AutoTest) ");
+        System.out.println("and a test interface (Tester).");
+        System.out.println("");
+        System.out.println("A template for a class implementing the test interface is as follows:");
+        System.out.println("");
+        System.out.println("import plptool.*;");
+        System.out.println("import plptool.testsuite.*;");
+        System.out.println("import plptool.gui.ProjectDriver;");
+        System.out.println("");
+        System.out.println("public class Test1 implements Tester {");
+        System.out.println("    public void configure(java.awt.Robot r) { }");
+        System.out.println("    public void run(ProjectDriver plp)      { }");
+        System.out.println("}");
+        System.out.println("");
+        System.out.println("The configure method is called immediately after PLPTool starts and before");
+        System.out.println("non-autotest command line arguments are parsed. The run method is called");
+        System.out.println("immediately after the ProjectDriver is instantiated. The tester is free to");
+        System.out.println("drive the program in its separate thread with the run method. The tester");
+        System.out.println("class must NOT have subclasses and anonymous classes (it must compile into a");
+        System.out.println("single .class file).");
+        System.out.println("");
+        System.out.println("plptool.testsuite.AutoTest members:");
+        System.out.println("  p(String s)             Print a message with a timestamp since the program");
+        System.out.println("                            launched in milliseconds. This message will not be");
+        System.out.println("                            disabled by --autotest-disable-messages");
+        System.out.println("  delay(int t)            Wait for t milliseconds");
+        System.out.println("  type(String s)          Type the string as if the user is using the keyboard");
+        System.out.println("  typeChar(int... code)   Press and release the specified virtual keycodes.");
+        System.out.println("                            See: java.awt.event.KeyEvent constants");
+        System.out.println("  long TYPING_DELAY       Amount of time in milliseconds for: how long a key is");
+        System.out.println("                            pressed, and the amount of time that must pass ");
+        System.out.println("                            after it is released");
+        System.out.println("");
+        System.out.println("Autotest command line arguments:");
+        System.out.println("  --autotest-load <class name> <class file path>");
+        System.out.println("                          Load tester class (e.g. Test1 ./Test1.class)");
+        System.out.println("  --autotest-run          Run debug-ProjectDriver for autotesting instead of");
+        System.out.println("                            the default execution path");
+        System.out.println("  --autotest-force-start  Run autotest without prompting");
+        System.out.println("  --autotest-no-delay     Skip the 2-second delay before the autotest");
+        System.out.println("  --autotest-disable-messages");
+        System.out.println("                          Disable all messages except from AutoTest.p method");
+        System.out.println("                            and System.out or System.err streams");
+        System.out.println("");
+        System.out.println("Compiling and running a test");
+        System.out.println("");
+        System.out.println("The PLPTool archive must be included in the classpath when the tester class is");
+        System.out.println("compiled. E.g.:");
+        System.out.println("  javac -cp ./PLPTool.jar Test1.java");
+        System.out.println("");
+        System.out.println("To run the test without starting up the GUI:");
+        System.out.println("  java -jar ./PLPTool.jar --autotest-load Test1 Test1.class \\");
+        System.out.println("                          --autotest-run");
+        System.out.println("");
+
     }
 }
