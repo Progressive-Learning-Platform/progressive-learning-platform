@@ -134,8 +134,7 @@ public class AutoTest {
         try {
             r = new java.awt.Robot();
         } catch(Exception e) {
-            p("failed to initialize robot");
-            System.exit(-1);
+            p("failed to initialize robot - use of robot will crash the autotest");
         }
         p("installing autotest callback");
         CallbackRegistry.register(cb, nums);
