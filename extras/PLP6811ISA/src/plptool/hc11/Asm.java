@@ -16,6 +16,8 @@ import java.util.ArrayList;
 public class Asm extends PLPAsm {
     private String[] lines;
 
+    int PC;
+
     public Asm(ArrayList<PLPAsmSource> asms) {
         super(asms);
     }
@@ -30,7 +32,11 @@ public class Asm extends PLPAsm {
     }
 
     public int preprocess(int index) {
-        assemble();
+        /* In first pass, we populate our symbol table and map addresses to
+         * the correspding source file and line number. For this, we also need
+         * to figure out instruction lengths (damn variable length instructions!)
+         */
+
 
         return Constants.PLP_OK;
     }

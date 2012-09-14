@@ -1,9 +1,10 @@
-title::PLP 6811 ISA
-author::PLP Project
-license::GPLv3
-description::6811 ISA support for PLPTool
-version::0.0.1
-class::plptool.hc11.Asm
-class::plptool.hc11.SimCore
+title::<enter title here>
+author::<enter author here>
+license::<enter module license here>
+description::<enter description here>
+version::<enter version here>
 class::plptool.hc11.Architecture
-registerisa::plptool.hc11.Architecture::hc11::6811::6811 ISA support for PLPTool
+class::plptool.hc11.Asm
+class::plptool.hc11.BuffaloInterface
+class::plptool.hc11.SimCore
+registerisa::plptool.hc11.Architecture::PLP68HC11::6811::68HC11 implementation for PLP

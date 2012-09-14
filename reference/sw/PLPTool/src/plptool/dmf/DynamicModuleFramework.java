@@ -756,6 +756,18 @@ public class DynamicModuleFramework {
                     found = true;
                 }
             }
+
+            if(dynamicModuleClasses.get(i).getSuperclass().getCanonicalName().equals("plptool.PLPArchitecture")) {
+                Msg.M("PLP ISA implementation found!");
+                manifest += "registerisa::" +
+                        dynamicModuleClasses.get(i).getCanonicalName() + "::";
+                Msg.m("Please enter ISA string ID: ");
+                manifest += PLPToolbox.readLine() + "::";
+                Msg.m("Please enter ISA numerical ID: ");
+                manifest += PLPToolbox.readLine() + "::";
+                Msg.m("Please enter ISA description: ");
+                manifest += PLPToolbox.readLine() + "\n";
+            }
         }
         
         Msg.M("-------------------------------------------------------------------------------");

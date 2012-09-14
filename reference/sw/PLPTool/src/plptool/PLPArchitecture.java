@@ -213,6 +213,17 @@ public abstract class PLPArchitecture {
     public void restoreArchSpecificSimStates(String[] configStr) {}
 
     /**
+     * Called when a new project with the specified ISA has been called
+     */
+    public void newProject(ProjectDriver plp) {}
+
+    /**
+     * Cleanup the mess the project might have done. This is called when the
+     * user changes the ISA for the project, or the project is closed
+     */
+    public void cleanup() {}
+
+    /**
      * CLI Simulation command, called when PLPTool is being run in scripted
      * simulation mode from command line. This function interprets a
      * simulation script line.
