@@ -248,6 +248,7 @@ public final class ProjectDriver {
      * @return
      */
     public int setArch(int archID) {
+        arch.cleanup();
         this.arch = ArchRegistry.getArchitecture(this, archID);
 
         if(arch == null) {
@@ -255,8 +256,9 @@ public final class ProjectDriver {
             return Msg.E("Invalid ISA ID: " + archID + ". Defaulting to " +
                          "plpmips (id 0).",
                          Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, this);
-        } else
+        } else {        
             return Constants.PLP_OK;
+        }
     }
 
     /**
@@ -409,12 +411,14 @@ public final class ProjectDriver {
         modified = true;
         asm_req = true;
         plpfile = new File("Unsaved Project");
+        if(arch != null)
+            arch.cleanup();
 
         try {
             this.arch = ArchRegistry.getArchitecture(this, archID);
             if(arch == null) {
                 Msg.W("Invalid architecture ID is specified, reverting to " +
-                      "default (plpmips).", this);
+                      "default (PLPCPU).", this);
                 this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
             }
         } catch(Exception e) {
@@ -425,9 +429,7 @@ public final class ProjectDriver {
         }
 
         asm = null;
-        asms = new ArrayList<PLPAsmSource>();
-        asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
-        open_asm = 0;
+        asms = new ArrayList<PLPAsmSource>();   
         smods = null;
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
@@ -436,6 +438,9 @@ public final class ProjectDriver {
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
         dirty = true;
+        asms.add(new PLPAsmSource("", "main.asm", 0));
+        open_asm = 0;
+        arch.newProject(this);    
         hookEvent(new ProjectEvent(ProjectEvent.NEW_PROJECT, -1));
         Msg.I("New project initialized.", null);
 
@@ -448,6 +453,7 @@ public final class ProjectDriver {
             if(g_asmview != null)
                 g_asmview.dispose();
         }
+
         CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW, null);
         return Constants.PLP_OK;
     }
@@ -463,6 +469,8 @@ public final class ProjectDriver {
         modified = true;
         asm_req = true;
         plpfile = new File("Unsaved Project");
+        if(arch != null)
+            arch.cleanup();
 
         try {
             this.arch = ArchRegistry.getArchitecture(this, archID);
@@ -481,9 +489,9 @@ public final class ProjectDriver {
         asm = null;
         asms = new ArrayList<PLPAsmSource>();
         if(importAsm(asmPath) != Constants.PLP_OK) {
-            asms.add(new PLPAsmSource("# main source file\n\n.org 0x10000000", "main.asm", 0));
+            asms.add(new PLPAsmSource("", "main.asm", 0));
         }
-        open_asm = 0;
+
         smods = null;
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
@@ -493,6 +501,9 @@ public final class ProjectDriver {
         meta += "DIRTY=1\n\n";
         dirty = true;
 
+        open_asm = 0;
+        arch.newProject(this);
+        hookEvent(new ProjectEvent(ProjectEvent.NEW_PROJECT, -1));
         Msg.I("New project initialized.", null);
 
         if(g) {
@@ -504,6 +515,7 @@ public final class ProjectDriver {
             if(g_asmview != null)
                 g_asmview.dispose();
         }
+
         CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW, null);
         return Constants.PLP_OK;
     }
@@ -750,7 +762,10 @@ public final class ProjectDriver {
 
         Msg.I("Opening " + path, null);
 
-        arch = null;
+        if(arch != null) {
+            arch.cleanup();
+            arch = null;
+        }
         asm = null;
         asms = new ArrayList<PLPAsmSource>();
         smods = null;

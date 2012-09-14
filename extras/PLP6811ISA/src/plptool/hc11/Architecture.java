@@ -6,6 +6,7 @@
 package plptool.hc11;
 
 import plptool.*;
+import plptool.gui.ProjectDriver;
 
 /**
  *
@@ -15,7 +16,7 @@ public class Architecture extends PLPArchitecture {
 
     public Architecture() {
         super(6811, "hc11", null);
-        Msg.M("PLP 6811 ISA Implementation is called.");
+        Msg.M("PLP 68HC11 ISA Implementation is called.");
         hasAssembler = true;
         hasSimCore = true;
     }
@@ -34,5 +35,15 @@ public class Architecture extends PLPArchitecture {
 
     public PLPSimCoreGUI createSimCoreGUI() {
         return null;
+    }
+
+    @Override
+    public void newProject(ProjectDriver plp) {
+
+    }
+
+    @Override
+    public void cleanup() {
+        Msg.M("PLP 68HC11 ISA Implementation is cleaning up.");
     }
 }

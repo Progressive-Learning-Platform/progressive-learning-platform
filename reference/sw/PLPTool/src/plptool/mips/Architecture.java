@@ -514,4 +514,10 @@ public class Architecture extends PLPArchitecture {
 
         return str;
     }
+
+    @Override
+    public void newProject(ProjectDriver plp) {
+        plp.getAsm(0).setAsmString("# main source file\n\n.org 0x10000000");
+        
+    }
 }

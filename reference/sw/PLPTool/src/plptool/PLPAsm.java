@@ -40,9 +40,21 @@ public abstract class PLPAsm implements PLPGenericModule {
     protected int[]       objCodeFileMapper;
     protected int[]       objCodeLineNumMapper;
 
+    /**
+     * Entry point to the assembled program to be optionally used by the rest
+     * of the framework
+     */
     protected long          entryPoint;
 
+    /**
+     * First pass string builder. Use this object for faster string
+     * manipulation such as appending preprocessed text
+     */
     protected StringBuilder pass1Str;
+
+    /**
+     * Optional preprocessed assembly string to be used by assemble()
+     */
     protected String        preprocessedAsm;
 
     /**
@@ -53,20 +65,38 @@ public abstract class PLPAsm implements PLPGenericModule {
      */
     public String getVersion() { return Text.versionString; }
 
+    /**
+     * Constructor for the assembler object that takes a string of assembly
+     * and informational assembly file path. This constructor will create and
+     * populate the source list with one assembly source
+     *
+     * @param strAsm Source string
+     * @param strFilePath Source path information
+     */
     public PLPAsm(String strAsm, String strFilePath) {
         PLPAsmSource plpAsmObj = new PLPAsmSource(strAsm, strFilePath, 0);
         sourceList = new ArrayList<PLPAsmSource>();
         sourceList.add(plpAsmObj);
+        pass1Str = new StringBuilder();
         preprocessedAsm = new String();
+        symTable = new HashMap();
 
         asmIndex = 0;
         mapperIndex = 0;
         assembled = false;
     }
 
+    /**
+     * Constructor for the assembler object that takes an arraylist of
+     * PLPAsmSource objects
+     *
+     * @param asms List ouf assembly sources
+     */
     public PLPAsm(ArrayList<PLPAsmSource> asms) {
         sourceList = asms;
+        pass1Str = new StringBuilder();
         preprocessedAsm = new String();
+        symTable = new HashMap();
 
         asmIndex = 0;
         mapperIndex = 0;
