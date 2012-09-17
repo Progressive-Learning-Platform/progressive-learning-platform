@@ -558,7 +558,7 @@ public final class ProjectDriver {
                 Msg.D("Creating verilog hex code...", 2, this);
                 verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
             }
-            if(objCode.length > 0)
+            if(objCode != null && objCode.length > 0)
                 meta += "START=" + asm.getAddrTable()[0] + "\n";
             else
                 meta += "START=0\n";
@@ -816,7 +816,7 @@ public final class ProjectDriver {
                         arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
                         if(arch == null) {
                             Msg.W("Invalid ISA ID is specified in the project file: '" + temp +
-                                  "'. Assuming plpmips.", this);
+                                  "'. Assuming PLPCPU.", this);
                             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                         }
                     }

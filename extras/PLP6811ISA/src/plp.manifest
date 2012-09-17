@@ -7,4 +7,4 @@ class::plptool.hc11.Architecture
 class::plptool.hc11.Asm
 class::plptool.hc11.BuffaloInterface
 class::plptool.hc11.SimCore
-registerisa::plptool.hc11.Architecture::PLP68HC11::6811::68HC11 implementation for PLP
+registerisa::plptool.hc11.Architecture::68HC11::6811::68HC11 ISA for PLPTool
