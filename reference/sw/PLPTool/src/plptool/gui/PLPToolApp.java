@@ -264,9 +264,10 @@ public class PLPToolApp extends SingleFrameApplication {
                 return;
 
             // Print third party licensing information and quit
-            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--license")) {
-                Msg.M("\n" + Text.copyrightString + "\n");
+            } else if (args.length >= activeArgIndex + 1 && args[i].equals("--about")) {
+                Msg.M(Text.licenseBanner + "\n");
                 Msg.M(Text.thirdPartyCopyrightString + "\n");
+                Msg.M(Text.contactString + "\n");
                 return;
 
             // Print buildinfo and quit
@@ -398,8 +399,8 @@ public class PLPToolApp extends SingleFrameApplication {
     private static void printFullHelpMessage() {
         System.out.println("Other options:");
         System.out.println("  --buildinfo             Print build information and quit");
-        System.out.println("  --gpl                   Print GPL license text and quit");
-        System.out.println("  --license               Print third party licensing information and quit");
+        System.out.println("  --about                 Print licensing information and quit");
+        System.out.println("  --gpl                   Print GPL license text and quit");        
         System.out.println("  --isa-id <arch id>      Force PLPTool to use the ISA with <arch id> for newly");
         System.out.println("                            created projects");
         System.out.println("  --remove-config         Remove saved configuration and reset all settings");
