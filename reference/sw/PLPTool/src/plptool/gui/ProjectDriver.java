@@ -185,7 +185,6 @@ public final class ProjectDriver {
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
             this.g_find = new FindAndReplace(this);
             this.g_isaselect = new ISASelector(this.g_dev, this);
-            
             java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
             int X = Config.devWindowPositionX;
             int Y = Config.devWindowPositionY;
@@ -729,7 +728,7 @@ public final class ProjectDriver {
         Msg.I(plpfile.getAbsolutePath() + " written", null);
 
         } catch(Exception e) {
-            if(Constants.debugLevel >= 2) e.printStackTrace();
+            Msg.trace(e);
             Msg.E("save: Unable to write to " +
                     plpfile.getAbsolutePath() + ". " +
                     "Do you have access to the specified location?",
@@ -952,7 +951,7 @@ public final class ProjectDriver {
 
         }
         catch(Exception e) {
-            if(Constants.debugLevel >= 2) e.printStackTrace();
+            Msg.trace(e);
             return Msg.E("open(" + path + "): Invalid PLP archive.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
@@ -1734,7 +1733,7 @@ public final class ProjectDriver {
         PLPToolbox.writeFile(asms.get(index).getAsmString(), path);
 
         } catch(Exception e) {
-            if(Constants.debugLevel >= 10) e.printStackTrace();
+            Msg.trace(e);
             return Msg.E("exportAsm(" + asms.get(index).getAsmFilePath() +
                             "): Unable to write to " + path + "\n",
                             Constants.PLP_FILE_SAVE_ERROR, this);
@@ -1901,9 +1900,7 @@ public final class ProjectDriver {
         } catch(Exception e) {
             // GUI update error has occured
             System.out.println("GUI error has occured. Switch to debug level 2 or above to print stack trace.");
-            if(Constants.debugLevel >= 2) {
-                e.printStackTrace();
-            }
+            Msg.trace(e);
         }
     }
 

@@ -388,5 +388,15 @@ public class Msg {
     public static void s(String str) {
         System.out.print(str);
     }
+
+    /**
+     * Print stack trace if debug level is at least 2
+     *
+     * @param e Exception reference
+     */
+    public static void trace(Exception e) {
+        if(Constants.debugLevel >= 2)
+            e.printStackTrace();
+    }
 }
 

@@ -240,17 +240,17 @@ public class ProjectFileManipulator {
     public static void helpMessage() {
         System.out.println("Project file manipulator commands, to be run with -plp <plpfile> [command]:");
         System.out.println("  -c <asm 1> <asm 2> ...  Create a new PLP project <plpfile> and import");
-        System.out.println("                            <asm 1>, <asm 2>, ... into the project.");
+        System.out.println("                            <asm 1>, <asm 2>, ... into the project");
         System.out.println("  -p <port>               Program PLP target board with <plpfile> using serial");
-        System.out.println("                            port <port>.");
-        System.out.println("  -a                      Assemble <plpfile>.");
-        System.out.println("  -i <asm 1> <asm 2> ...  Import <asm 1>, <asm 2>, ... into <plpfile>.");
-        System.out.println("  -d <directory>          Import all files within <directory> into <plpfile>.");
-        System.out.println("  -e <index> <file>       Export source file with <index> as <file>.");
-        System.out.println("  -r <index>              Remove source file with <index> from <plpfile>.");
-        System.out.println("  -s <index>              Set source file with <index> as the main program.");
+        System.out.println("                            port <port>");
+        System.out.println("  -a                      Assemble <plpfile>");
+        System.out.println("  -i <asm 1> <asm 2> ...  Import <asm 1>, <asm 2>, ... into <plpfile>");
+        System.out.println("  -d <directory>          Import all files within <directory> into <plpfile>");
+        System.out.println("  -e <index> <file>       Export source file with <index> as <file>");
+        System.out.println("  -r <index>              Remove source file with <index> from <plpfile>");
+        System.out.println("  -s <index>              Set source file with <index> as the main program");
         System.out.println("  -m <index> <new index>  Move the source file with <index> to a new position");
-        System.out.println("                            <new index> in the project.");
+        System.out.println("                            <new index> in the project");
         System.out.println();
     }
 }
