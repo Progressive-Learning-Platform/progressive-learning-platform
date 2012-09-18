@@ -71,35 +71,43 @@ public class PLPToolApp extends SingleFrameApplication {
             System.exit(-1);
         }
 
-        if(serialTerminal) {
-            plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
-            term.setVisible(true);
-            
-        } else {
-            // Launch the ProjectDriver
-            ProjectDriver.loadConfig();
-            ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
-            CallbackRegistry.callback(CallbackRegistry.START, plp);
-            if(Constants.debugLevel > 0) {
-                con = new ConsoleFrame(plp);
-                con.setVisible(true);
-            }
-            plp.app = this;
-            
-            // Load modules from .plp/autoload, .plp/usermods, -D and -L, in
-            // that order
-            if(loadModules)
-                loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
-                                        PLPToolbox.getConfDir() + "/usermods");
+        try {
+            if(serialTerminal) {
+                plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
+                term.setVisible(true);
 
-            Msg.setOutput(plp.g_dev.getOutput());
-            if(plpFilePath != null)
-                if(newProject) {
-                    plp.create(startingArchID);
-                    plp.plpfile = new File(plpFilePath);
-                    plp.refreshProjectView(false);
-                } else
-                    plp.open(plpFilePath, true);
+            } else {
+                // Launch the ProjectDriver
+                ProjectDriver.loadConfig();
+                ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
+                CallbackRegistry.callback(CallbackRegistry.START, plp);
+                if(Constants.debugLevel > 0) {
+                    con = new ConsoleFrame(plp);
+                    con.setVisible(true);
+                }
+                plp.app = this;
+
+                // Load modules from .plp/autoload, .plp/usermods, -D and -L, in
+                // that order
+                if(loadModules)
+                    loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
+                                            PLPToolbox.getConfDir() + "/usermods");
+
+                Msg.setOutput(plp.g_dev.getOutput());
+                if(plpFilePath != null)
+                    if(newProject) {
+                        plp.create(startingArchID);
+                        plp.plpfile = new File(plpFilePath);
+                        plp.refreshProjectView(false);
+                    } else
+                        plp.open(plpFilePath, true);
+            }
+        } catch(Exception e) {
+            System.err.println("=====================================");
+            System.err.println("FATAL ERROR: Failed to initialize GUI");
+            System.err.println("=====================================");
+            Msg.trace(e);
+            System.exit(-1);
         }
     }
 
@@ -371,17 +379,17 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("Usage:");
         System.out.println("  java -jar PLPTool.jar [options] [plpfile]");
         System.out.println("                          Launch PLPTool GUI. PLPTool will open [plpfile]");
-        System.out.println("                            if it is provided.");
+        System.out.println("                            if it is provided");
         System.out.println();
         System.out.println("Non-GUI options:");
         System.out.println("  -plp <plpfile> [command]");
         System.out.println("                          If no command is specified, print out the list of");
         System.out.println("                            source files contained in <plpfile>. This will also");
         System.out.println("                            create <plpfile> if it does not exist.");
-        System.out.println("                            Use '-plp' by itself for command listing.");
+        System.out.println("                            Use '-plp' by itself for command listing");
         System.out.println("  -s <plpfile>            Launch the command line simulator to simulate");
         System.out.println("                            <plpfile>.");
-        System.out.println("  -r <plpfile> <script>   Run the simulator in non-interactive mode.");
+        System.out.println("  -r <plpfile> <script>   Run the simulator in non-interactive mode");
     }
 
     /**
@@ -389,48 +397,48 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     private static void printFullHelpMessage() {
         System.out.println("Other options:");
-        System.out.println("  --buildinfo             Print build information and quit.");
-        System.out.println("  --gpl                   Print GPL license text and quit.");
-        System.out.println("  --license               Print third party licensing information and quit.");
+        System.out.println("  --buildinfo             Print build information and quit");
+        System.out.println("  --gpl                   Print GPL license text and quit");
+        System.out.println("  --license               Print third party licensing information and quit");
         System.out.println("  --isa-id <arch id>      Force PLPTool to use the ISA with <arch id> for newly");
-        System.out.println("                            created projects.");
-        System.out.println("  --remove-config         Remove saved configuration and reset all settings.");
-        System.out.println("  --serialterminal        Launch the serial terminal instead of the IDE.");
-        System.out.println("  --suppress-output       Engage silent mode.");
-        System.out.println("  --suppress-warning      Suppress all warning messages.");
-        System.out.println("   -d <level>             Set debug level (0 to infinity).");
-        System.out.println("  --autotest-help         Unit test / automation framework information.");
+        System.out.println("                            created projects");
+        System.out.println("  --remove-config         Remove saved configuration and reset all settings");
+        System.out.println("  --serialterminal        Launch the serial terminal instead of the IDE");
+        System.out.println("  --suppress-output       Engage silent mode");
+        System.out.println("  --suppress-warning      Suppress all warning messages");
+        System.out.println("   -d <level>             Set debug level (0 to infinity)");
+        System.out.println("  --autotest-help         Unit test / automation framework information");
         System.out.println();
         System.out.println("Dynamic modules / extensions controls:");
         System.out.println("   -L <jar file>          Load a PLPTool module JAR file, locate the manifest,");
         System.out.println("                            and interpret the file accordingly. PLPTool will");
-        System.out.println("                            ONLY launch if the module is successfully loaded.");
+        System.out.println("                            ONLY launch if the module is successfully loaded");
         System.out.println("   -D <path>              Attempt to load all modules in the directory ");
-        System.out.println("                            specified by <path>.");
-        System.out.println("   -N                     Do NOT autoload modules for this PLPTool session.");
+        System.out.println("                            specified by <path>");
+        System.out.println("   -N                     Do NOT autoload modules for this PLPTool session");
         System.out.println("   -S <URL>               Fetch a module's jar file from URL, save it to the");
         System.out.println("                            the autoload directory, and quit. This module will");
         System.out.println("                            be autoloaded the next time PLPTool starts. Module");
         System.out.println("                            autoloading can be disabled by the user");
-        System.out.println("                            (autoloading is enabled by default).");
+        System.out.println("                            (autoloading is enabled by default)");
         System.out.println("   -R                     Delete the autoload cache directory and all of its ");
-        System.out.println("                            contents.");
-        System.out.println("  --module-debugging      Print a list of module debugging options.");
+        System.out.println("                            contents");
+        System.out.println("  --module-debugging      Print a list of module debugging options");
         System.out.println();       
     }
 
     private static void printModuleDebuggingHelpMessage() {
         System.out.println("Module debugging commands:");
         System.out.println("  --load-class <canonical class name> <Java class file>");
-        System.out.println("                          Load Java class file with the ClassLoader.");
-        System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file.");
+        System.out.println("                          Load Java class file with the ClassLoader");
+        System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file");
         System.out.println("  --generate-manifest <path or jar file> <destination directory>");
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified path. This manifest file will be");
-        System.out.println("                            written in the destination directory.");
+        System.out.println("                            written in the destination directory");
         System.out.println("  --pack <directory> <jar file>");
-        System.out.println("                          Pack a directory into a JAR file.");
-        System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application.");
+        System.out.println("                          Pack a directory into a JAR file");
+        System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application");
         System.out.println();
     }
 
