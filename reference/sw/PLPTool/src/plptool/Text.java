@@ -29,15 +29,30 @@ public class Text {
     public static final String copyrightString =
             "PLP Software Tool (PLPTool) version " + versionString + "\n" +
             "Copyright (C) 2010-2012 PLP Contributors.\n" +
-            "This program comes with ABSOLUTELY NO WARRANTY; run with '--gpl' for details.\n" +
-            "Run with '--license' for licensing information of third party software."
+            "This program comes with ABSOLUTELY NO WARRANTY.\n" +
+            "This is free software, and you are welcome to redistribute it under certain\n" +
+            "conditions; run with '--about' for details."
             ;
 
     public static final String contactString =
-            "Developer contact e-mail: wheerdam@gmail.com\n" +
+            "Developer contact e-mail: wira.d.mulia@gmail.com\n" +
             "PLP mailing list: progressive-learning-platform@googlegroups.com\n" +
             "Report bugs to the development website:\n" +
             "    http://code.google.com/p/progressive-learning-platform/"
+            ;
+
+    public static final String licenseBanner =
+            "This program is free software: you can redistribute it and/or modify\n" +
+            "it under the terms of the GNU General Public License as published by\n" +
+            "the Free Software Foundation, either version 3 of the License, or\n" +
+            "(at your option) any later version.\n" +
+            "\n" +
+            "This program is distributed in the hope that it will be useful,\n" +
+            "but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+            "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+            "GNU General Public License for more details.\n" +
+            "\n" +
+            "Run with '--gpl' for a copy of the license."
             ;
 
     public static final String thirdPartyCopyrightString =
