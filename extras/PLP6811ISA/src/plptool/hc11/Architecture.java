@@ -29,7 +29,9 @@ public class Architecture extends PLPArchitecture {
 
     public Architecture() {
         super(6811, "hc11", null);
-        Msg.M("PLP 68HC11 ISA Implementation is called.");
+        Msg.M("***************************************");
+        Msg.M("PLP HC11 ISA Implementation Module");
+        Msg.M("***************************************");
         hasAssembler = true;
         hasSimCore = true;
     }

@@ -389,7 +389,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("                            create <plpfile> if it does not exist.");
         System.out.println("                            Use '-plp' by itself for command listing");
         System.out.println("  -s <plpfile>            Launch the command line simulator to simulate");
-        System.out.println("                            <plpfile>.");
+        System.out.println("                            <plpfile>");
         System.out.println("  -r <plpfile> <script>   Run the simulator in non-interactive mode");
     }
 
@@ -549,7 +549,7 @@ public class PLPToolApp extends SingleFrameApplication {
             } catch(Exception e) {
                 System.out.print("Unable to open/run the script '" + scriptFileToRun + "'. ");
                 System.out.println("Set debug level to 2 or greater for stack trace.");
-                if(Constants.debugLevel >= 2) e.printStackTrace();
+                Msg.trace(e);
                 System.exit(Constants.PLP_GENERIC_ERROR);
             }
             System.exit(Constants.PLP_OK);

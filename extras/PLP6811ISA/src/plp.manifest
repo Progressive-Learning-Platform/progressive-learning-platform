@@ -4,7 +4,10 @@ license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
 class::plptool.hc11.Architecture
+class::plptool.hc11.Asm$HC11Instr
 class::plptool.hc11.Asm
+class::plptool.hc11.Buffalo$1
+class::plptool.hc11.Buffalo
 class::plptool.hc11.BuffaloInterface
 class::plptool.hc11.SimCore
-registerisa::plptool.hc11.Architecture::68HC11::6811::68HC11 ISA for PLPTool
+registerisa::plptool.hc11.Architecture::hc11::6811::PLP HC11 Implementation
