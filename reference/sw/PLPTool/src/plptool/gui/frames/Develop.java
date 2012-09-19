@@ -3474,14 +3474,18 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCPUActionPerformed
 
     private void menuSimAsmViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimAsmViewActionPerformed
-        if(plp.isAssembled() && plp.g_asmview == null)
-            plp.g_asmview = new ASMSimView(plp);
+        if(plp.getArch().getID() != 0)
+            plp.getArch().listing();
+        else {
+            if(plp.isAssembled() && plp.g_asmview == null)
+                plp.g_asmview = new ASMSimView(plp);
 
-        if(plp.isAssembled()) {
-            plp.g_asmview.updateTable();
-            plp.g_asmview.setVisible(true);
-        } else
-            Msg.E("The project must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
+            if(plp.isAssembled()) {
+                plp.g_asmview.updateTable();
+                plp.g_asmview.setVisible(true);
+            } else
+                Msg.E("The project must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
+        }
     }//GEN-LAST:event_menuSimAsmViewActionPerformed
 
     private void menuProjectPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProjectPaneActionPerformed

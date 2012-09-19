@@ -38,10 +38,10 @@ public class Asm extends PLPAsm {
     public static final int REL        = 0x040;
 
     // Additional parameters bitmask
-    public static final int REGA       = 0x080;
-    public static final int REGB       = 0x100;
-    public static final int MASK       = 0x200;
-    public static final int LONG       = 0x400;
+    public static final int REGA       = 0x100;
+    public static final int REGB       = 0x200;
+    public static final int MASK       = 0x400;
+    public static final int LONG       = 0x800;
 
     public ArrayList<HC11Instr> instructions;
     public HashMap<String, HC11Instr> instrMap;
@@ -65,7 +65,7 @@ public class Asm extends PLPAsm {
 
         /* In the first pass, we populate our symbol table and map addresses to
          * the corresponding source file and line number. For this, we also need
-         * to figure out instruction lengths (damn variable length instructions!)
+         * to figure out instruction lengths
          */
         for(int i = 0; i < sourceList.size(); i++) {
             lines = sourceList.get(i).getAsmString().split("\\r?\\n");

@@ -213,6 +213,11 @@ public abstract class PLPArchitecture {
     public void restoreArchSpecificSimStates(String[] configStr) {}
 
     /**
+     * Called when the user requests for a program listing
+     */
+    public void listing() {}
+
+    /**
      * Called when a new project with the specified ISA has been called
      */
     public void newProject(ProjectDriver plp) {}
