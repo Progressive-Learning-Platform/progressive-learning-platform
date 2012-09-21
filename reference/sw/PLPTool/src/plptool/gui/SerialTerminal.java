@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.BadLocationException;
 import java.awt.Color;
 
 import plptool.Constants;
@@ -290,6 +291,8 @@ public class SerialTerminal extends javax.swing.JFrame {
         console = new javax.swing.JTextPane();
         chkHEX = new javax.swing.JCheckBox();
         chkEcho = new javax.swing.JCheckBox();
+        btnCopyAll = new javax.swing.JButton();
+        btnCopySelection = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SerialTerminal.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -379,6 +382,22 @@ public class SerialTerminal extends javax.swing.JFrame {
         chkEcho.setText(resourceMap.getString("chkEcho.text")); // NOI18N
         chkEcho.setName("chkEcho"); // NOI18N
 
+        btnCopyAll.setText(resourceMap.getString("btnCopyAll.text")); // NOI18N
+        btnCopyAll.setName("btnCopyAll"); // NOI18N
+        btnCopyAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCopyAllActionPerformed(evt);
+            }
+        });
+
+        btnCopySelection.setText(resourceMap.getString("btnCopySelection.text")); // NOI18N
+        btnCopySelection.setName("btnCopySelection"); // NOI18N
+        btnCopySelection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCopySelectionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -386,7 +405,7 @@ public class SerialTerminal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 748, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(chkHEX)
                         .addGap(18, 18, 18)
@@ -402,17 +421,21 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblOpts)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbOpts, 0, 249, Short.MAX_VALUE))
+                        .addComponent(cmbOpts, 0, 394, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(btnOpen)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnClose)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 332, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
+                        .addComponent(btnCopySelection)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCopyAll)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
+                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSend)))
                 .addContainerGap())
@@ -432,7 +455,9 @@ public class SerialTerminal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOpen)
                     .addComponent(btnClose)
-                    .addComponent(btnClear))
+                    .addComponent(btnClear)
+                    .addComponent(btnCopyAll)
+                    .addComponent(btnCopySelection))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -552,6 +577,14 @@ public class SerialTerminal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_consoleKeyTyped
 
+    private void btnCopyAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopyAllActionPerformed
+        PLPToolbox.copy(console.getText());
+    }//GEN-LAST:event_btnCopyAllActionPerformed
+
+    private void btnCopySelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopySelectionActionPerformed
+        PLPToolbox.copy(console.getSelectedText());
+    }//GEN-LAST:event_btnCopySelectionActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -566,6 +599,8 @@ public class SerialTerminal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnCopyAll;
+    private javax.swing.JButton btnCopySelection;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSend;
     private javax.swing.JCheckBox chkEcho;
