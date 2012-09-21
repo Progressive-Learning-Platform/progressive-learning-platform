@@ -21,11 +21,14 @@ package plptool.hc11;
 import plptool.*;
 import plptool.gui.ProjectDriver;
 
+import javax.swing.*;
+
 /**
  *
  * @author wira
  */
 public class Architecture extends PLPArchitecture {
+    JMenuItem menuBuffaloInterface;
 
     public Architecture() {
         super(6811, "hc11", null);
@@ -34,6 +37,7 @@ public class Architecture extends PLPArchitecture {
         Msg.M("***************************************");
         hasAssembler = true;
         hasSimCore = true;
+
     }
 
     public PLPAsm createAssembler() {

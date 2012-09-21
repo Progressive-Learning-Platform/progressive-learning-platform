@@ -26,7 +26,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="736" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="748" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="chkHEX" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -43,13 +43,17 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="lblOpts" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="cmbOpts" pref="249" max="32767" attributes="0"/>
+                      <Component id="cmbOpts" pref="394" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="btnOpen" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnClose" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="455" max="32767" attributes="0"/>
+                      <EmptySpace pref="281" max="32767" attributes="0"/>
+                      <Component id="btnCopySelection" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnCopyAll" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnClear" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -81,6 +85,8 @@
                   <Component id="btnOpen" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnClose" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnClear" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnCopyAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnCopySelection" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="286" max="32767" attributes="0"/>
@@ -254,6 +260,24 @@
         <Property name="text" type="java.lang.String" resourceKey="chkEcho.text"/>
         <Property name="name" type="java.lang.String" value="chkEcho" noResource="true"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnCopyAll">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="btnCopyAll.text"/>
+        <Property name="name" type="java.lang.String" value="btnCopyAll" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCopyAllActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnCopySelection">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="btnCopySelection.text"/>
+        <Property name="name" type="java.lang.String" value="btnCopySelection" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCopySelectionActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
