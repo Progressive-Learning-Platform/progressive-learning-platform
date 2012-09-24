@@ -29,8 +29,14 @@
                   <Component id="jScrollPane1" alignment="0" pref="748" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="chkHEX" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkEcho" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="chkUnprintable" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="chkEnter" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cmbEnter" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="lblPort" min="-2" max="-2" attributes="0"/>
@@ -49,17 +55,21 @@
                       <Component id="btnOpen" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnClose" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="281" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="93" max="32767" attributes="0"/>
                       <Component id="btnCopySelection" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnCopyAll" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnClear" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="cmbFormat" min="-2" pref="186" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtInput" pref="491" max="32767" attributes="0"/>
+                      <Component id="txtInput" pref="447" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnSend" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -87,6 +97,7 @@
                   <Component id="btnClear" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnCopyAll" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnCopySelection" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="286" max="32767" attributes="0"/>
@@ -94,12 +105,16 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="chkHEX" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="chkEcho" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="chkUnprintable" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="chkEnter" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbEnter" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="cmbFormat" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtInput" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnSend" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cmbFormat" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -197,6 +212,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnClear">
       <Properties>
+        <Property name="mnemonic" type="int" value="76"/>
         <Property name="text" type="java.lang.String" resourceKey="btnClear.text"/>
         <Property name="name" type="java.lang.String" value="btnClear" noResource="true"/>
       </Properties>
@@ -244,6 +260,7 @@
             <Property name="name" type="java.lang.String" value="console" noResource="true"/>
           </Properties>
           <Events>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="consoleKeyPressed"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="consoleKeyTyped"/>
           </Events>
         </Component>
@@ -251,18 +268,21 @@
     </Container>
     <Component class="javax.swing.JCheckBox" name="chkHEX">
       <Properties>
+        <Property name="mnemonic" type="int" value="88"/>
         <Property name="text" type="java.lang.String" resourceKey="chkHEX.text"/>
         <Property name="name" type="java.lang.String" value="chkHEX" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="chkEcho">
       <Properties>
+        <Property name="mnemonic" type="int" value="69"/>
         <Property name="text" type="java.lang.String" resourceKey="chkEcho.text"/>
         <Property name="name" type="java.lang.String" value="chkEcho" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnCopyAll">
       <Properties>
+        <Property name="mnemonic" type="int" value="65"/>
         <Property name="text" type="java.lang.String" resourceKey="btnCopyAll.text"/>
         <Property name="name" type="java.lang.String" value="btnCopyAll" noResource="true"/>
       </Properties>
@@ -272,12 +292,53 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnCopySelection">
       <Properties>
+        <Property name="mnemonic" type="int" value="83"/>
         <Property name="text" type="java.lang.String" resourceKey="btnCopySelection.text"/>
         <Property name="name" type="java.lang.String" value="btnCopySelection" noResource="true"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCopySelectionActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="chkUnprintable">
+      <Properties>
+        <Property name="mnemonic" type="int" value="68"/>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" resourceKey="chkUnprintable.text"/>
+        <Property name="name" type="java.lang.String" value="chkUnprintable" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="chkEnter">
+      <Properties>
+        <Property name="mnemonic" type="int" value="73"/>
+        <Property name="text" type="java.lang.String" resourceKey="chkEnter.text"/>
+        <Property name="name" type="java.lang.String" value="chkEnter" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="cmbEnter">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="Item 1"/>
+            <StringItem index="1" value="Item 2"/>
+            <StringItem index="2" value="Item 3"/>
+            <StringItem index="3" value="Item 4"/>
+          </StringArray>
+        </Property>
+        <Property name="name" type="java.lang.String" value="cmbEnter" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="jLabel1.text"/>
+        <Property name="name" type="java.lang.String" value="jLabel1" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel2">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
+        <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
