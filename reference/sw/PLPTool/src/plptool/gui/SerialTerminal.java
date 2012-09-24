@@ -48,6 +48,7 @@ public class SerialTerminal extends javax.swing.JFrame {
     private OutputStream out;
     private SerialPort port;
     private boolean streamReaderRunning;
+    private String lastCommand;
 
     protected boolean stop;
 
@@ -116,10 +117,17 @@ public class SerialTerminal extends javax.swing.JFrame {
         cmbOpts.removeAllItems();
         cmbOpts.addItem("8N1");
 
+        cmbEnter.removeAllItems();
+        cmbEnter.addItem("CR (0xD)");
+        cmbEnter.addItem("LF (0xA)");
+        cmbEnter.addItem("CR LF");
+        cmbEnter.addItem("LF CR");
+
         cmbFormat.removeAllItems();
         cmbFormat.addItem("ASCII String");
-        cmbFormat.addItem("1-byte raw");
-        cmbFormat.addItem("Space-delimited raw");
+        cmbFormat.addItem("1-byte number");
+        cmbFormat.addItem("Space-delimited numbers");
+        cmbFormat.addItem("ASCII String, append CR (0xD)");
 
         this.setLocationRelativeTo(null);
 
@@ -293,6 +301,11 @@ public class SerialTerminal extends javax.swing.JFrame {
         chkEcho = new javax.swing.JCheckBox();
         btnCopyAll = new javax.swing.JButton();
         btnCopySelection = new javax.swing.JButton();
+        chkUnprintable = new javax.swing.JCheckBox();
+        chkEnter = new javax.swing.JCheckBox();
+        cmbEnter = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SerialTerminal.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -344,6 +357,7 @@ public class SerialTerminal extends javax.swing.JFrame {
             }
         });
 
+        btnClear.setMnemonic('L');
         btnClear.setText(resourceMap.getString("btnClear.text")); // NOI18N
         btnClear.setName("btnClear"); // NOI18N
         btnClear.addActionListener(new java.awt.event.ActionListener() {
@@ -370,18 +384,24 @@ public class SerialTerminal extends javax.swing.JFrame {
         console.setFont(resourceMap.getFont("console.font")); // NOI18N
         console.setName("console"); // NOI18N
         console.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                consoleKeyPressed(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 consoleKeyTyped(evt);
             }
         });
         jScrollPane1.setViewportView(console);
 
+        chkHEX.setMnemonic('X');
         chkHEX.setText(resourceMap.getString("chkHEX.text")); // NOI18N
         chkHEX.setName("chkHEX"); // NOI18N
 
+        chkEcho.setMnemonic('E');
         chkEcho.setText(resourceMap.getString("chkEcho.text")); // NOI18N
         chkEcho.setName("chkEcho"); // NOI18N
 
+        btnCopyAll.setMnemonic('A');
         btnCopyAll.setText(resourceMap.getString("btnCopyAll.text")); // NOI18N
         btnCopyAll.setName("btnCopyAll"); // NOI18N
         btnCopyAll.addActionListener(new java.awt.event.ActionListener() {
@@ -390,6 +410,7 @@ public class SerialTerminal extends javax.swing.JFrame {
             }
         });
 
+        btnCopySelection.setMnemonic('S');
         btnCopySelection.setText(resourceMap.getString("btnCopySelection.text")); // NOI18N
         btnCopySelection.setName("btnCopySelection"); // NOI18N
         btnCopySelection.addActionListener(new java.awt.event.ActionListener() {
@@ -397,6 +418,24 @@ public class SerialTerminal extends javax.swing.JFrame {
                 btnCopySelectionActionPerformed(evt);
             }
         });
+
+        chkUnprintable.setMnemonic('D');
+        chkUnprintable.setSelected(true);
+        chkUnprintable.setText(resourceMap.getString("chkUnprintable.text")); // NOI18N
+        chkUnprintable.setName("chkUnprintable"); // NOI18N
+
+        chkEnter.setMnemonic('I');
+        chkEnter.setText(resourceMap.getString("chkEnter.text")); // NOI18N
+        chkEnter.setName("chkEnter"); // NOI18N
+
+        cmbEnter.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbEnter.setName("cmbEnter"); // NOI18N
+
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -408,8 +447,14 @@ public class SerialTerminal extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 748, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(chkHEX)
-                        .addGap(18, 18, 18)
-                        .addComponent(chkEcho))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chkEcho)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chkUnprintable)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chkEnter)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbEnter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(lblPort)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -426,16 +471,20 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addComponent(btnOpen)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnClose)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
                         .addComponent(btnCopySelection)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCopyAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSend)))
                 .addContainerGap())
@@ -457,18 +506,23 @@ public class SerialTerminal extends javax.swing.JFrame {
                     .addComponent(btnClose)
                     .addComponent(btnClear)
                     .addComponent(btnCopyAll)
-                    .addComponent(btnCopySelection))
+                    .addComponent(btnCopySelection)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkHEX)
-                    .addComponent(chkEcho))
+                    .addComponent(chkEcho)
+                    .addComponent(chkUnprintable)
+                    .addComponent(chkEnter)
+                    .addComponent(cmbEnter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSend))
+                    .addComponent(btnSend)
+                    .addComponent(jLabel1)
+                    .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -536,6 +590,15 @@ public class SerialTerminal extends javax.swing.JFrame {
 
                 break;
 
+            case 3:
+                out.write(txtInput.getText().getBytes());
+                out.write(0xD);
+                if(chkEcho.isSelected())
+                    for(int i = 0; i < txtInput.getText().length(); i++)
+                        appendByte((char) txtInput.getText().charAt(i),
+                                (chkHEX.isSelected() ? Color.MAGENTA :Color.BLUE));
+                break;
+
             default:
         }
 
@@ -548,23 +611,64 @@ public class SerialTerminal extends javax.swing.JFrame {
 
             }
         }
+
+        lastCommand = txtInput.getText();
+        txtInput.setText("");
     }//GEN-LAST:event_btnSendActionPerformed
 
     private void txtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInputKeyPressed
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER)
             btnSendActionPerformed(null);
+        else if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
+            if(lastCommand != null)
+                txtInput.setText(lastCommand);
+        } else if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
+
+        }
     }//GEN-LAST:event_txtInputKeyPressed
 
     private void consoleKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_consoleKeyTyped
+
+    }//GEN-LAST:event_consoleKeyTyped
+
+    private void btnCopyAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopyAllActionPerformed
+        PLPToolbox.copy(console.getText());
+    }//GEN-LAST:event_btnCopyAllActionPerformed
+
+    private void btnCopySelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopySelectionActionPerformed
+        PLPToolbox.copy(console.getSelectedText());
+    }//GEN-LAST:event_btnCopySelectionActionPerformed
+
+    private void consoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_consoleKeyPressed
         char data = evt.getKeyChar();
 
         try {
+            if(chkEnter.isSelected() && evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                switch(cmbEnter.getSelectedIndex()) {
+                    case 0:
+                        out.write(0xD);
+                        break;
+                    case 1:
+                        out.write(0xA);
+                        break;
+                    case 2:
+                        out.write(0xD);
+                        out.write(0xA);
+                        break;
+                    case 3:
+                        out.write(0xA);
+                        out.write(0xD);
+                        break;
+                    default:
 
-        out.write(data);
+                }
+            } else {
+                out.write(data);
 
-        if(chkEcho.isSelected())
-            appendByte((char) data,
-                    (chkHEX.isSelected() ? Color.MAGENTA : Color.BLUE));
+                if(chkEcho.isSelected())
+                    appendByte((char) data,
+                            (chkHEX.isSelected() ? Color.MAGENTA : Color.BLUE));
+            }
 
         } catch(Exception e) {
             try {
@@ -575,15 +679,7 @@ public class SerialTerminal extends javax.swing.JFrame {
 
             }
         }
-    }//GEN-LAST:event_consoleKeyTyped
-
-    private void btnCopyAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopyAllActionPerformed
-        PLPToolbox.copy(console.getText());
-    }//GEN-LAST:event_btnCopyAllActionPerformed
-
-    private void btnCopySelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopySelectionActionPerformed
-        PLPToolbox.copy(console.getSelectedText());
-    }//GEN-LAST:event_btnCopySelectionActionPerformed
+    }//GEN-LAST:event_consoleKeyPressed
 
     /**
     * @param args the command line arguments
@@ -604,12 +700,17 @@ public class SerialTerminal extends javax.swing.JFrame {
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSend;
     private javax.swing.JCheckBox chkEcho;
+    private javax.swing.JCheckBox chkEnter;
     private javax.swing.JCheckBox chkHEX;
+    private javax.swing.JCheckBox chkUnprintable;
     private javax.swing.JComboBox cmbBaud;
+    private javax.swing.JComboBox cmbEnter;
     private javax.swing.JComboBox cmbFormat;
     private javax.swing.JComboBox cmbOpts;
     private javax.swing.JComboBox cmbPort;
     private javax.swing.JTextPane console;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblBaud;
     private javax.swing.JLabel lblOpts;
@@ -624,6 +725,8 @@ public class SerialTerminal extends javax.swing.JFrame {
         @Override
         public void run() {
             final byte[] buffer = new byte[Config.serialTerminalBufferSize];           
+            byte c;
+            int i;
 
             try {                
                 if(streamReaderRunning) {
@@ -639,6 +742,13 @@ public class SerialTerminal extends javax.swing.JFrame {
                     Msg.D("term: " + bytes + " bytes read.", 6, this);
                     if(bytes > 0)
                         try {
+                            for(i = 0; i < bytes; i++) {
+                                c = buffer[i];
+                                if(chkUnprintable.isSelected() &&
+                                        (c > 127 || c < 9 || (c < 32 && c > 13) || c == 11 || c == 12))
+                                    buffer[i] = '.';
+                            }
+
                             appendStringFormatted(new String(buffer, 0, bytes, "US-ASCII"), Color.RED);
                         } catch(Exception e) {
 
