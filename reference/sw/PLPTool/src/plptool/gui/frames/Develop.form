@@ -955,15 +955,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuAboutActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuThirdPartyLicense">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="menuThirdPartyLicense.text"/>
-                <Property name="name" type="java.lang.String" value="menuThirdPartyLicense" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuThirdPartyLicenseActionPerformed"/>
-              </Events>
-            </MenuItem>
           </SubComponents>
         </Menu>
       </SubComponents>

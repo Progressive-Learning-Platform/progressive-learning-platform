@@ -129,6 +129,8 @@ public class SerialTerminal extends javax.swing.JFrame {
         cmbFormat.addItem("Space-delimited numbers");
         cmbFormat.addItem("ASCII String, append CR (0xD)");
 
+        console.setBackground(Color.BLACK);
+
         this.setLocationRelativeTo(null);
 
         try {
@@ -306,6 +308,7 @@ public class SerialTerminal extends javax.swing.JFrame {
         cmbEnter = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        btnSave = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SerialTerminal.class);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -437,6 +440,14 @@ public class SerialTerminal extends javax.swing.JFrame {
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
 
+        btnSave.setText(resourceMap.getString("btnSave.text")); // NOI18N
+        btnSave.setName("btnSave"); // NOI18N
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -454,7 +465,9 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(chkEnter)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbEnter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cmbEnter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 226, Short.MAX_VALUE)
+                        .addComponent(btnSave))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(lblPort)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -509,14 +522,15 @@ public class SerialTerminal extends javax.swing.JFrame {
                     .addComponent(btnCopySelection)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkHEX)
                     .addComponent(chkEcho)
                     .addComponent(chkUnprintable)
                     .addComponent(chkEnter)
-                    .addComponent(cmbEnter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbEnter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSave))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -641,9 +655,18 @@ public class SerialTerminal extends javax.swing.JFrame {
 
     private void consoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_consoleKeyPressed
         char data = evt.getKeyChar();
-
+        int code = evt.getKeyCode();
+        
         try {
-            if(chkEnter.isSelected() && evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            if(code == java.awt.event.KeyEvent.VK_CONTROL) {
+
+            } else if(code == java.awt.event.KeyEvent.VK_ALT) {
+
+            } else if(code == java.awt.event.KeyEvent.VK_SHIFT) {
+
+            } else if(code == java.awt.event.KeyEvent.VK_META) {
+
+            } else if(chkEnter.isSelected() && code == java.awt.event.KeyEvent.VK_ENTER) {
                 switch(cmbEnter.getSelectedIndex()) {
                     case 0:
                         out.write(0xD);
@@ -681,6 +704,12 @@ public class SerialTerminal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_consoleKeyPressed
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        java.io.File f = PLPToolbox.saveFileDialog(Constants.launchPath, null);
+        if(f != null)
+            PLPToolbox.writeFile(console.getText(), f.getAbsolutePath());
+    }//GEN-LAST:event_btnSaveActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -698,6 +727,7 @@ public class SerialTerminal extends javax.swing.JFrame {
     private javax.swing.JButton btnCopyAll;
     private javax.swing.JButton btnCopySelection;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSend;
     private javax.swing.JCheckBox chkEcho;
     private javax.swing.JCheckBox chkEnter;
@@ -749,7 +779,7 @@ public class SerialTerminal extends javax.swing.JFrame {
                                     buffer[i] = '.';
                             }
 
-                            appendStringFormatted(new String(buffer, 0, bytes, "US-ASCII"), Color.RED);
+                            appendStringFormatted(new String(buffer, 0, bytes, "US-ASCII"), Color.GREEN);
                         } catch(Exception e) {
 
                         }

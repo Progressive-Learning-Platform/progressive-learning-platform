@@ -1687,7 +1687,6 @@ public class Develop extends javax.swing.JFrame {
         menuIssuesPage = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         menuAbout = new javax.swing.JMenuItem();
-        menuThirdPartyLicense = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Develop.class);
@@ -1751,10 +1750,10 @@ public class Develop extends javax.swing.JFrame {
             }
         });
         txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
                 txtEditorCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2915,15 +2914,6 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuHelp.add(menuAbout);
 
-        menuThirdPartyLicense.setText(resourceMap.getString("menuThirdPartyLicense.text")); // NOI18N
-        menuThirdPartyLicense.setName("menuThirdPartyLicense"); // NOI18N
-        menuThirdPartyLicense.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuThirdPartyLicenseActionPerformed(evt);
-            }
-        });
-        rootmenuHelp.add(menuThirdPartyLicense);
-
         jMenuBar1.add(rootmenuHelp);
 
         setJMenuBar(jMenuBar1);
@@ -3576,12 +3566,6 @@ public class Develop extends javax.swing.JFrame {
         setGPIOFrame(menuSimGPIO.isSelected());
     }//GEN-LAST:event_menuSimGPIOActionPerformed
 
-    private void menuThirdPartyLicenseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuThirdPartyLicenseActionPerformed
-        JOptionPane.showMessageDialog(this, Text.thirdPartyCopyrightString,
-                "Thank you", JOptionPane.INFORMATION_MESSAGE);
-        plp.hookEvent(new ProjectEvent(ProjectEvent.THIRDPARTY_LICENSE, -1));
-    }//GEN-LAST:event_menuThirdPartyLicenseActionPerformed
-
     private void menuRemoveAutoloadDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRemoveAutoloadDirActionPerformed
         int ret = JOptionPane.showConfirmDialog(this, "WARNING! This will remove all saved modules. Are you sure?",
                 "Clear Module Auto-load Cache", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -3778,7 +3762,6 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem menuStep4;
     private javax.swing.JRadioButtonMenuItem menuStep5;
     private javax.swing.JMenu menuStepSize;
-    private javax.swing.JMenuItem menuThirdPartyLicense;
     private javax.swing.JCheckBoxMenuItem menuToolbar;
     private javax.swing.JMenuItem menuUndo;
     private javax.swing.JMenu rootmenuEdit;
