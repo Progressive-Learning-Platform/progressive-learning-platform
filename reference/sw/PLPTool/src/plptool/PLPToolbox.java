@@ -51,7 +51,7 @@ public class PLPToolbox {
 
         } catch(Exception e) {
             Msg.lastError = -1;
-            return Msg.E("parseNum: '" + number + "' is not a valid number",
+            return Msg.E("Number error: '" + number + "' is not a valid number",
                             Constants.PLP_NUMBER_ERROR, null);
         }
     }
@@ -105,7 +105,7 @@ public class PLPToolbox {
 
         } catch(Exception e) {
             Msg.lastError = -1;
-            return Msg.E("parseNum: '" + number + "' is not a valid number",
+            return Msg.E("Number error: '" + number + "' is not a valid number",
                             Constants.PLP_NUMBER_ERROR, null);
         }
     }

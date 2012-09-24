@@ -37,6 +37,8 @@
                       <Component id="chkEnter" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cmbEnter" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="226" max="32767" attributes="0"/>
+                      <Component id="btnSave" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="lblPort" min="-2" max="-2" attributes="0"/>
@@ -100,7 +102,7 @@
                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="286" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="285" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="chkHEX" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -108,6 +110,7 @@
                   <Component id="chkUnprintable" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="chkEnter" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cmbEnter" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnSave" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -339,6 +342,15 @@
         <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
         <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnSave">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="btnSave.text"/>
+        <Property name="name" type="java.lang.String" value="btnSave" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
