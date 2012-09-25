@@ -36,7 +36,7 @@ public class Asm extends PLPAsm {
     public static final int INDX       = 0x010;
     public static final int INDY       = 0x020;
     public static final int REL        = 0x040;
-    
+
     public static final int I16        = 0x080;
 
     // Additional parameters bitmask
@@ -48,7 +48,7 @@ public class Asm extends PLPAsm {
     public ArrayList<HC11Instr> instructions;
     public HashMap<String, HC11Instr> instrMap;
     private String[] lines;
-    private ArrayList<ModeParseObject> modeObj;
+    private ArrayList<DataBlob> modeObj;
 
     int PC;
 
@@ -58,14 +58,61 @@ public class Asm extends PLPAsm {
     }
 
     public int assemble() {
-        
+        int errors = 0;
+        DataBlob o;
+        for(int i = 0; i < modeObj.size(); i++) {
+            o = modeObj.get(i);
+            try {
+                if(o instanceof InstructionBlob) {
+                    InstructionBlob ib = (InstructionBlob) o;
+                    if(ib.opr_deferred != null) {
+                        Long val = symTable.get(ib.opr_deferred);
+                        if(val == null)
+                            throw new Exception("'" + ib.opr_deferred + "' is undefined");
+                        if(getSymbolLength(val) == 2) {
+                            if(I16(ib.mode) || EXT(ib.mode)) {
+                                ib.prependOperand((short) (val % 256));
+                                ib.prependOperand((short) (val / 256));
+                                ib.opr_deferred = null;
+                            } else
+                                throw new Exception("Symbol resolves into a 2-byte number " +
+                                        "while the instruction only takes a 1-byte number");
+                        } else if(getSymbolLength(val) == 1) {
+                            ib.prependOperand((short) (val % 256));
+                            if(I16(ib.mode) || EXT(ib.mode))
+                                ib.prependOperand((short) 0);
+                            ib.opr_deferred = null;
+                        }
+                    }
+                    if(ib.rel != null) {
+                        Long val = symTable.get(ib.rel);
+                        if(val == null)
+                            throw new Exception("'" + ib.opr_deferred + "' is undefined");
+                    }
+                }
+            } catch(Exception e) {
+                Msg.E(PLPToolbox.formatHyperLink(sourceList.get(o.getSourceFileIndex()).getAsmFilePath(), o.getSourceLine()) +
+                        ": " + e.getMessage(), Constants.PLP_ASM_ASSEMBLE_FAILED, null);
+                errors++;
+            }
+        }
+
+        if(errors > 0)
+            return Msg.E("Assembly failed", Constants.PLP_ASM_ASSEMBLE_FAILED, null);
+
+        printListing();
         setAssembled(true);
         return Constants.PLP_OK;
     }
 
     public int preprocess(int index) {
         PC = 0x0000;
-        modeObj = new ArrayList<ModeParseObject>();
+        modeObj = new ArrayList<DataBlob>();
+        DataBlob o;
+        int errors = 0;
+        boolean equ;
+        String stripped;
+        String[] tokens;
 
         /* In the first pass, we populate our symbol table and map addresses to
          * the corresponding source file and line number. For this, we also need
@@ -76,24 +123,110 @@ public class Asm extends PLPAsm {
 
             for(int l = 0; l < lines.length; l++) {
                 try {
-                    modeObj.add(parseExpression(lines[l]));
+                    equ = false;
+                    o = null;
+                    // separate comments
+                    stripped = lines[l].split("[;*]", 2)[0];
+
+                    // parse out label
+                    if(stripped.matches("^[a-zA-Z].*")) {
+                        tokens = stripped.split("\\s+", 2);
+
+                        if(tokens.length > 1) {
+                            stripped = tokens[1].trim();
+                            // parse directive, in case it manipulates current
+                            // assembler PC that the label will be assigned to
+                            if(stripped.startsWith("EQU")) {
+                                equ = true;
+                                String[] equTokens = stripped.split("\\s+", 2);
+                                if(equTokens.length != 2)
+                                    throw new InvalidDirectiveException("Invalid EQU directive syntax");
+                                if(symTable.containsKey(tokens[0]))
+                                    throw new SymbolAlreadyDefinedException("'" + tokens[0] + "' is already defined");
+                               symTable.put(tokens[0], (long) parseGenericNumber(equTokens[1], 2));
+                            } else {
+                                o = parseDirective(stripped);
+                            }
+                        } else
+                            stripped = "";
+                        if(!equ) {
+                            if(symTable.containsKey(tokens[0]))
+                                throw new SymbolAlreadyDefinedException("'" + tokens[0] + "' is already defined");
+                            symTable.put(tokens[0], (long) PC);
+                        }
+                    }
+                    stripped = stripped.trim();
+                    if(!stripped.equals("")) {
+                        if(o == null)
+                            o = parseDirective(stripped);  // parse directive
+                        if(o == null)
+                            o = parseExpression(stripped); // parse instruction
+                    }
+                    if(o != null) {
+                        modeObj.add(o);
+                        o.setAddr(PC);
+                        o.setSource(i, l+1);  // record source location
+                        PC += o.getLength();
+                    }
+
                 } catch(InvalidInstructionException e) {
-                    Msg.E(e.getMessage(), e.type, null);
+                    Msg.E(PLPToolbox.formatHyperLink(sourceList.get(i).getAsmFilePath(), l+1) + ": " +
+                            e.getMessage(), Constants.PLP_ASM_PREPROCESS_FAILED, null);
+                    errors++;
                 } catch(NumberFormatException e) {
-                    Msg.E("Number format error: " + e.getMessage(), Constants.PLP_NUMBER_ERROR, null);
+                    Msg.E(PLPToolbox.formatHyperLink(sourceList.get(i).getAsmFilePath(), l+1) + ": " +
+                            "Number format error: " + e.getMessage(), Constants.PLP_NUMBER_ERROR, null);
                     Msg.trace(e);
+                    errors++;
+                } catch(InvalidDirectiveException e) {
+                    Msg.E(PLPToolbox.formatHyperLink(sourceList.get(i).getAsmFilePath(), l+1) + ": " +
+                            e.getMessage(), Constants.PLP_ASM_PREPROCESS_FAILED, null);
+                    errors++;
+                } catch(Exception e) {
+                    Msg.E(PLPToolbox.formatHyperLink(sourceList.get(i).getAsmFilePath(), l+1) + ": " +
+                            e.getMessage(), Constants.PLP_ASM_PREPROCESS_FAILED, null);
+                    errors++;
                 }
             }
         }
 
-        ModeParseObject t;
-        for(int i = 0; i < modeObj.size(); i++) {
-            t = modeObj.get(i);
-            Msg.M(t.getInstr().mnemonic + ": " +
-                    t.getFormattedObject());
+        if(errors > 0)
+            return Msg.E("First pass errors: " + errors, Constants.PLP_ASM_PREPROCESS_FAILED, null);
+
+        Object[][] symTableArray = PLPToolbox.mapToArray(symTable);
+
+        Msg.P("Symbol Table");
+        for(int i = 0; i < symTableArray.length; i++) {
+            String key = (String) symTableArray[i][0];
+            long val = (Long) symTableArray[i][1];
+            Msg.pn(key + "\t");
+            Msg.pn((getSymbolLength(val) == 2) ?
+                String.format("%02x %02x", val / 256, val % 256) : String.format("%02x", val % 256));
+            Msg.P();
         }
 
+        printListing();
+
         return Constants.PLP_OK;
+    }
+
+    public void printListing() {
+        Msg.P("\nListing");
+        DataBlob t;
+        for(int i = 0; i < modeObj.size(); i++) {
+            t = modeObj.get(i);
+            if(t instanceof InstructionBlob) {
+                InstructionBlob p = (InstructionBlob) t;
+                Msg.P(String.format("%04x", t.addr) + "\t" + p.getInstr().mnemonic + ":\t" +
+                        p.getFormattedObject());
+            } else if(t.getLength() > 0){
+                Msg.pn(String.format("%04x", t.addr) + "\t&lt;data&gt;:\t");
+                short[] d = t.getData();
+                for(int j = 0; j < d.length; j++)
+                    Msg.pn(String.format("%02x ", d[j]));
+                Msg.P();
+            }
+        }
     }
 
     public String[] getLines() {
@@ -299,6 +432,50 @@ public class Asm extends PLPAsm {
         instructions.add(new HC11Instr(mnemonic, modes, opcodes));
     }
 
+    private DataBlob parseDirective(String exp) throws InvalidDirectiveException, NumberFormatException, Exception {
+        String tokens[] = exp.split("\\s+", 2);
+        DataBlob d = null;
+
+        if(tokens[0].equals("ORG") && tokens.length == 2) {
+            PC = parseGenericNumber(tokens[1], 2);
+            d = new DataBlob(); // dummy
+
+        } else if(tokens[0].equals("EQU") && tokens.length == 2) {
+            int num = parseGenericNumber(tokens[1], 2);
+
+            d = new DataBlob(); // dummy
+
+        } else if(tokens[0].equals("FCB") && tokens.length == 2) {
+            String bytes[] = tokens[1].split(",");
+            short[] b = new short[bytes.length];
+            for(int i = 0; i < b.length; i++)
+                b[i] = (short) parseGenericNumber(bytes[i].trim(), 1);
+            d = new DataBlob(b);
+
+        } else if(tokens[0].equals("FDB") && tokens.length == 2) {
+            String bytes[] = tokens[1].split(",");
+            short[] b = new short[bytes.length*2];
+            int data;
+            for(int i = 0; i < bytes.length; i++) {
+                data = parseGenericNumber(bytes[i].trim(), 2);
+                b[i*2+1] = (short) (data % 256);
+                b[i*2] = (short) (data / 256);
+            }
+            d = new DataBlob(b);
+
+        }  else if(tokens[0].equals("FCC") && tokens.length == 2 &&
+                tokens[1].startsWith("\"") && tokens[1].endsWith("\"")) {
+            tokens[1] = tokens[1].substring(1, tokens[1].length()-1);
+            String str = PLPToolbox.parseStringReplaceEscapedChars(tokens[1]);
+            short[] b = new short[str.length()];
+            for(int i = 0; i < b.length; i++)
+                b[i] = (short) str.charAt(i);
+            d = new DataBlob(b);
+        }
+
+        return d;
+    }
+
     /**
      * Get mode of the specified instruction expression and validate the literal
      * input
@@ -306,21 +483,21 @@ public class Asm extends PLPAsm {
      * @param instr Instruction expression to validate
      * @return parsed mode object, throws exception if invalid literal is provided
      */
-    public ModeParseObject parseExpression(String exp) throws InvalidInstructionException, NumberFormatException {
+    private InstructionBlob parseExpression(String exp) throws InvalidInstructionException, NumberFormatException {
         String tokens[] = exp.split("\\s+");
         String opr, msk;
 
         // Map the mnemonic to the instruction
         HC11Instr instr = instrMap.get(tokens[0]);
-        ModeParseObject ret = new ModeParseObject(instr);
+        InstructionBlob ret = new InstructionBlob(instr);
 
         if(instr == null)
-            throw new InvalidInstructionException("Invalid instruction mnemonic: " + tokens[0], -1);
+            throw new InvalidInstructionException("Invalid mnemonic OR invalid directive syntax: " + tokens[0], -1);
 
         // easy one
         if(tokens.length == 1)
             ret.mode |= INH;
-        
+
         else if(tokens.length > 1) {
             int oprlen = 0;
             boolean imm = false;
@@ -330,8 +507,8 @@ public class Asm extends PLPAsm {
             if(REL(instr.addr_modes) && tokens.length == 4) {
                 ret.rel = tokens[3];
                 ret.mode |= REL;
-            }     
-                            
+            }
+
             // parse opr
             if (opr.startsWith("#")) {
                 opr = opr.substring(1);
@@ -380,12 +557,9 @@ public class Asm extends PLPAsm {
             // special case, the instruction takes 2-byte immediate field, but
             // we only parsed 1 byte off the immediate operand
             if(I16(instr.addr_modes) && imm && oprlen == 1) {
-                ret.prependOperand((byte) 0);
+                ret.prependOperand((short) 0);
+                ret.mode |= I16;
                 oprlen = 0;
-            }
-
-            if(EXT(instr.addr_modes) && !DIR(instr.addr_modes) && oprlen == 1) {
-
             }
 
             // determine non-inherent, non-indexed addressing mode
@@ -403,6 +577,10 @@ public class Asm extends PLPAsm {
             // parse mask, which only true if we have more than 2 tokens
             // 'OP opr msk' -or- 'OP opr msk rel'
             if(tokens.length > 2) {
+                if(!MASK(instr.addr_modes))
+                    throw new InvalidInstructionException("This instruction does not have a mask field", -2);
+
+
                 msk = tokens[2]; // msk is always the 3rd token, and it's 1-byte
                 if(msk.startsWith("$"))
                     parseHex(msk, ret, 1);
@@ -453,33 +631,37 @@ public class Asm extends PLPAsm {
         return ret;
     }
 
-    public int parseDec(String opr, ModeParseObject ret, int widthBytes) throws NumberFormatException {
+    public int parseDec(String opr, InstructionBlob ret, int widthBytes) throws NumberFormatException {
         int bytes = 0;
         int ceiling = (int) Math.pow(2, 8 * widthBytes);
         int num = Integer.parseInt(opr);
-        byte digit;
+        int digit;
+
         if(num >= ceiling)
             throw new NumberFormatException("Number can not be wider than " + widthBytes + " byte(s)");
         if(num < 0)
             throw new NumberFormatException("I'm sorry, my decimal parser can't do negative numbers :(");
-        for(int i = widthBytes; i != 0; i--) {
-            digit = (byte) (num / (int) Math.pow(2, (i-1)*8));
-            if(digit > 0) {
-                ret.appendOperand(digit);
-                bytes++;
-            } else if(digit == 0 && i == 1) {
-                ret.appendOperand(digit);
+        if(widthBytes < 1 || widthBytes > 2)
+            throw new NumberFormatException("parseDec internal error");
+
+        if(widthBytes == 2) {
+            digit = num / 256 & 0xff;
+            if(digit != 0) {
+                ret.appendOperand((short) digit);
                 bytes++;
             }
         }
+        digit = num % 256;
+        ret.appendOperand((short) digit);
+        bytes++;
 
         return bytes;
     }
 
-    public int parseHex(String opr, ModeParseObject ret, int widthBytes) throws NumberFormatException {
+    public int parseHex(String opr, InstructionBlob ret, int widthBytes) throws NumberFormatException {
         opr = opr.substring(1);
         int bytes = 0;
-        ArrayList<Byte> byteBuf = new ArrayList();
+        ArrayList<Short> byteBuf = new ArrayList();
 
         String buf = "";
         for(int i = 0; i < opr.length(); i++) {
@@ -488,7 +670,7 @@ public class Asm extends PLPAsm {
 
             buf = opr.charAt(opr.length() - (i+1)) + buf;
             if((i != 0 && (i % 2 == 1)) || i == opr.length() - 1) {
-                byteBuf.add((byte) Integer.parseInt(buf, 16));
+                byteBuf.add((short) (Short.parseShort(buf, 16) & 0xff));
                 bytes++;
                 buf = "";
             }
@@ -500,10 +682,10 @@ public class Asm extends PLPAsm {
         return bytes;
     }
 
-    public int parseBin(String opr, ModeParseObject ret, int widthBytes) throws NumberFormatException {
+    public int parseBin(String opr, InstructionBlob ret, int widthBytes) throws NumberFormatException {
         opr = opr.substring(1);
         int bytes = 0;
-        ArrayList<Byte> byteBuf = new ArrayList();
+        ArrayList<Short> byteBuf = new ArrayList();
 
         String buf = "";
         for(int i = 0; i < opr.length(); i++) {
@@ -511,21 +693,39 @@ public class Asm extends PLPAsm {
                 throw new NumberFormatException("Number can not be wider than " + widthBytes + " byte(s)");
 
             buf = opr.charAt(opr.length() - (i+1)) + buf;
-            if((i != 0 && (i % 8 == 1)) || i == opr.length() - 1) {
-                byteBuf.add((byte) Integer.parseInt(buf, 16));
+            if((i != 0 && ((i+1) % 8 == 0)) || i == opr.length() - 1) {
+                byteBuf.add((short) (Short.parseShort(buf, 2) & 0xff));
                 bytes++;
                 buf = "";
             }
         }
-        
+
         for(int i = byteBuf.size()-1; i >= 0; i--)
             ret.appendOperand(byteBuf.get(i));
 
         return bytes;
     }
 
-    public int[] parseBin(String str) throws NumberFormatException {
-        return null;
+    public int parseGenericNumber(String exp, int widthBytes) throws NumberFormatException {
+        int ret = -1;
+
+        if(exp.startsWith("$")) {
+            exp = exp.substring(1);
+            ret = Integer.parseInt(exp, 16);
+        } else if(exp.startsWith("%")) {
+            exp = exp.substring(1);
+            ret = Integer.parseInt(exp, 2);
+        } else if(exp.startsWith("'") && exp.endsWith("'") &&
+                        (exp.length() == 3 || exp.length() == 4)) {
+            ret = (short) PLPToolbox.parseEscapeCharacter(exp);
+        } else {
+            ret = Integer.parseInt(exp);
+        }
+
+        if(ret >= (int) Math.pow(2, widthBytes*8))
+            throw new NumberFormatException("Number exceeds allowable width");
+
+        return ret;
     }
 
     public boolean INH(int modes) {
@@ -564,6 +764,14 @@ public class Asm extends PLPAsm {
         return (modes & LONG) == LONG;
     }
 
+    public boolean MASK(int modes) {
+        return (modes & MASK) == MASK;
+    }
+
+    private int getSymbolLength(long val) {
+        return (val / 256 == 0) ? 1 : 2;
+    }
+
     public class HC11Instr {
         public String mnemonic;
         public int addr_modes;
@@ -586,38 +794,95 @@ public class Asm extends PLPAsm {
             this.opcodes = opcodes;
         }
     }
-    
-    public class ModeParseObject {
+
+    public class DataBlob {
+        private ArrayList<Short> bytes;
+        private int addr;
+        private int sourceFile;
+        private int sourceLine;
+
+        public DataBlob() {
+            bytes = new ArrayList<Short>();
+        }
+
+        public DataBlob(short...d) {
+            bytes = new ArrayList<Short>();
+            for(int i = 0; i < d.length; i++)
+                bytes.add(d[i]);
+        }
+
+        public short[] getData() {
+            short[] ret = new short[bytes.size()];
+            for(int i = 0; i < ret.length; i++)
+                ret[i] = bytes.get(i);
+            return ret;
+        }
+
+        public void setData(short...data) {
+            for(int i = 0; i < data.length; i++)
+                bytes.add(data[i]);
+        }
+
+        public void setAddr(int addr) {
+            this.addr = addr & 0xffff;
+        }
+
+        public int getLength() {
+            return bytes.size();
+        }
+
+        public int getAddr() {
+            return addr;
+        }
+
+        public void setSource(int file, int line) {
+            sourceFile = file;
+            sourceLine = line;
+        }
+
+        public int getSourceFileIndex() {
+            return sourceFile;
+        }
+
+        public int getSourceLine() {
+            return sourceLine;
+        }
+    }
+
+    public class InstructionBlob extends DataBlob {
         public int mode;
-        private ArrayList<Byte> operand;
+        private ArrayList<Short> operand;
         private HC11Instr instr;
         public String opr_deferred;
         public String rel; // second pass
-        
-        public ModeParseObject(HC11Instr instr) {
+        public int addr;
+
+        public InstructionBlob(HC11Instr instr) {
+            super();
             this.instr = instr;
             this.mode = 0;
             this.opr_deferred = null;
-            operand = new ArrayList<Byte>();
+            this.addr = -1;
+            operand = new ArrayList<Short>();
         }
 
-        public void setOperand(byte...operand) {
-            this.operand = new ArrayList<Byte>();
+        public void setOperand(short...operand) {
+            this.operand = new ArrayList<Short>();
             for(int i = 0; i < operand.length; i++) {
                 this.operand.add(operand[i]);
-            }            
+            }
         }
 
-        public void appendOperand(byte operand) {
-            this.operand.add(operand);
+        public void appendOperand(short operand) {
+            this.operand.add((short) (operand & 0xff));
         }
 
-        public void prependOperand(byte operand) {
-            this.operand.add(0, operand);
+        public void prependOperand(short operand) {
+            this.operand.add(0, (short) (operand & 0xff));
         }
 
-        public Integer[] getOperand() {
-            return (Integer[]) operand.toArray();
+        public Short[] getOperand() {
+            return (Short[]) operand.toArray();
         }
 
         public int getOperandLength() {
@@ -627,40 +892,93 @@ public class Asm extends PLPAsm {
         public int getOpcodeLength() {
             // only instructions with indexed-Y mode and long flags have two
             // byte opcodes
-            return INDY(mode) || LONG(mode) ? 2 : 1;
+            return (INDY(mode) || LONG(instr.addr_modes)) ? 2 : 1;
         }
 
+        @Override
         public int getLength() {
-            return getOpcodeLength() + getOperandLength();
+            int len = getOpcodeLength() + getOperandLength();
+            if(REL(mode))
+                len += 1;
+            if(opr_deferred != null) {
+                len += (EXT(mode) || I16(mode)) ? 2 : 1;
+            }
+            return len;
         }
 
         public HC11Instr getInstr() {
             return instr;
         }
 
+        @Override
+        public short[] getData() {
+            // we're not done crafting this object code, return null
+            if(opr_deferred != null || rel != null)
+                return null;
+
+            short[] ret = new short[getLength()];
+            int i = 1;
+            int start;
+
+            if(getOpcodeLength() == 2) {
+                ret[0] = (short) (getOpcode() % 256);
+                ret[1] = (short) (getOpcode() / 256);
+                i = 2;
+            } else
+                ret[0] = (short) (getOpcode() / 256);
+
+            start = i;
+            while(i < getLength()) {
+                ret[i] = operand.get(i-start);
+            }
+
+            return ret;
+        }
+
+        public int getOpcode() {
+            int opcode = -1;
+
+            if(INH(mode))
+                opcode = instr.opcodes[HC11Instr.i_INH];
+            else if(IMM(mode))
+                opcode = instr.opcodes[HC11Instr.i_IMM];
+            else if(I16(mode))
+                opcode = instr.opcodes[HC11Instr.i_I16];
+            else if(DIR(mode))
+                opcode = instr.opcodes[HC11Instr.i_DIR];
+            else if(EXT(mode))
+                opcode = instr.opcodes[HC11Instr.i_EXT];
+            else if(INDX(mode))
+                opcode = instr.opcodes[HC11Instr.i_INDX];
+            else if(INDY(mode))
+                opcode = instr.opcodes[HC11Instr.i_INDY];
+
+            // REL must be last, because some REL instructions can have INDX
+            // or INDY
+            else if(REL(mode))
+                opcode = instr.opcodes[HC11Instr.i_REL];
+
+            return opcode;
+        }
+
         public String getFormattedObject() {
             String ret = "";
-            if(INH(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_INH]);
-            else if(IMM(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_IMM]);
-            else if(I16(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_I16]);
-            else if(DIR(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_DIR]);
-            else if(EXT(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_EXT]);
-            else if(REL(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_REL]);
-            else if(INDX(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_INDX]);
-            else if(INDY(mode))
-                ret += String.format("%02x", instr.opcodes[HC11Instr.i_INDY]);
+            int opcode = getOpcode();
 
-            ret += (opr_deferred != null) ? " " + opr_deferred + " " : "";
+            if(INDY(mode) || LONG(instr.addr_modes)) {
+                ret += String.format("%02x %02x", opcode / 256, opcode % 256);
+            } else {
+                ret += String.format("%02x", opcode);
+            }
+
+            ret += " ";
+            ret += (opr_deferred != null) ? "[" + opr_deferred + "] " : "";
 
             for(int i = 0; i < operand.size(); i++)
-                ret += " " + String.format("%02x", operand.get(i));
+                ret += String.format("%02x", operand.get(i)) + " ";
+
+            if(REL(mode))
+                ret += "[rel:" + rel + "]";
 
             return ret;
         }
@@ -679,8 +997,14 @@ public class Asm extends PLPAsm {
         }
     }
 
-    public class InvalidAddressingModeUsageException extends Exception {
-        public InvalidAddressingModeUsageException(String message) {
+    public class InvalidDirectiveException extends Exception {
+        public InvalidDirectiveException(String message) {
+            super(message);
+        }
+    }
+
+    public class SymbolAlreadyDefinedException extends Exception {
+        public SymbolAlreadyDefinedException(String message) {
             super(message);
         }
     }

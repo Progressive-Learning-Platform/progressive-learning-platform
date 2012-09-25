@@ -223,6 +223,11 @@ public abstract class PLPArchitecture {
     public void newProject(ProjectDriver plp) {}
 
     /**
+     * Init is called right after the architecture is instantiated
+     */
+    public void init() {}
+
+    /**
      * Cleanup the mess the project might have done. This is called when the
      * user changes the ISA for the project, or the project is closed
      */
