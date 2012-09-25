@@ -834,6 +834,49 @@ public class PLPToolbox {
         return null;
     }
 
+    public static String parseStringReplaceEscapedChars(String str) throws Exception {
+        String out = str;
+        int j;
+
+        // check for escaped characters
+        for(j = 0; j < out.length(); j++) {
+            if(out.charAt(j) == '\\' && j != out.length() - 1) {
+                switch(out.charAt(j + 1)) {
+
+                    // Linefeed (0xA)
+                    case 'n':
+                        out = new StringBuffer(out).replace(j, j + 2, "\n").toString();
+                        break;
+
+                    // Carriage return (0xD)
+                    case 'r':
+                        out = new StringBuffer(out).replace(j, j + 2, "\r").toString();
+                        break;
+
+                    // Tab
+                    case 't':
+                        out = new StringBuffer(out).replace(j, j + 2, "\t").toString();
+                        break;
+
+                    // Backslash
+                    case '\\':
+                        out = new StringBuffer(out).replace(j, j + 2, "\\").toString();
+                        break;
+
+                    // Null
+                    case '0':
+                        out = new StringBuffer(out).replace(j, j + 2, "\0").toString();
+                        break;
+
+                    default:
+                        throw new Exception("Invalid escape character encountered");
+                }
+            }
+        }
+
+        return out;
+    }
+
     /**
      * Copy a string to the system clipboard
      *
@@ -910,6 +953,18 @@ public class PLPToolbox {
             }
 
         return ret;
+    }
+
+    /**
+     * Return a formatted hyperlink to be used by the IDE output
+     *
+     * @param fileName Filename of the source
+     * @param lineNumber Line number of the source
+     * @return Formatted hyperlink as string
+     */
+    public static String formatHyperLink(String fileName, int lineNumber) {
+        return "<font color=blue><u><a href=\"" + fileName + "::" + lineNumber + "\">" +
+                fileName + ":" + lineNumber + "</a></u></font>";
     }
 }
 

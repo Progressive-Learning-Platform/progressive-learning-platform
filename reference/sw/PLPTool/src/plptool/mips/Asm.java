@@ -1497,8 +1497,7 @@ public class Asm extends plptool.PLPAsm {
      * @param lineNumber The line number
      */
     private String formatHyperLink(String fileName, int lineNumber) {
-        return "<font color=blue><u><a href=\"" + fileName + "::" + lineNumber + "\">" +
-                fileName + ":" + lineNumber + "</a></u></font>";
+        return PLPToolbox.formatHyperLink(fileName, lineNumber);
     }
 
     /**

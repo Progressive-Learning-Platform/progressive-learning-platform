@@ -36,8 +36,13 @@ public class Architecture extends PLPArchitecture {
         Msg.M("PLP HC11 ISA Implementation Module");
         Msg.M("***************************************");
         hasAssembler = true;
-        hasSimCore = true;
+        
+    }
 
+    @Override
+    public void init() {
+        menuBuffaloInterface = new JMenuItem("BUFFALO Interface");
+        plp.g_dev.addToolsItem(menuBuffaloInterface);
     }
 
     public PLPAsm createAssembler() {
@@ -49,7 +54,7 @@ public class Architecture extends PLPArchitecture {
     }
 
     public PLPSimCore createSimCore() {
-        return new SimCore();
+        return null;
     }
 
     public PLPSimCoreGUI createSimCoreGUI() {
@@ -64,5 +69,6 @@ public class Architecture extends PLPArchitecture {
     @Override
     public void cleanup() {
         Msg.M("PLP 68HC11 ISA Implementation is cleaning up.");
+        plp.g_dev.removeToolsItem(menuBuffaloInterface);
     }
 }
