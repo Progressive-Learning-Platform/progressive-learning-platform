@@ -19,7 +19,6 @@
 package plptool.hc11;
 
 import plptool.*;
-import plptool.gui.ProjectDriver;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,6 +57,7 @@ public class Asm extends PLPAsm {
     }
 
     public int assemble() {
+        Msg.D("Second pass...", 2, null);
         int errors = 0;
         DataBlob o;
         for(int i = 0; i < modeObj.size(); i++) {
@@ -81,13 +81,19 @@ public class Asm extends PLPAsm {
                             ib.prependOperand((short) (val % 256));
                             if(I16(ib.mode) || EXT(ib.mode))
                                 ib.prependOperand((short) 0);
-                            ib.opr_deferred = null;
+                            ib.opr_deferred = null; // resolved
                         }
                     }
                     if(ib.rel != null) {
+                        short offset = 0;
                         Long val = symTable.get(ib.rel);
                         if(val == null)
-                            throw new Exception("'" + ib.opr_deferred + "' is undefined");
+                            throw new Exception("'" + ib.rel + "' is undefined");
+                        offset = (short)(val - (o.addr + o.getLength()));
+                        if(offset > 127 || offset < -128)
+                            throw new Exception("Offset is too large, must be within signed 1-byte range");
+                        ib.appendOperand(offset);
+                        ib.rel = null; // resolved
                     }
                 }
             } catch(Exception e) {
@@ -101,11 +107,15 @@ public class Asm extends PLPAsm {
             return Msg.E("Assembly failed", Constants.PLP_ASM_ASSEMBLE_FAILED, null);
 
         printListing();
+        Msg.D("Generating S19...", 2, null);
+        Msg.P("--- S19 ---");
+        Msg.P(generateS19());
         setAssembled(true);
         return Constants.PLP_OK;
     }
 
     public int preprocess(int index) {
+        Msg.D("First pass...", 2, null);
         PC = 0x0000;
         modeObj = new ArrayList<DataBlob>();
         DataBlob o;
@@ -195,7 +205,7 @@ public class Asm extends PLPAsm {
 
         Object[][] symTableArray = PLPToolbox.mapToArray(symTable);
 
-        Msg.P("Symbol Table");
+        Msg.P("--- Symbol Table ---");
         for(int i = 0; i < symTableArray.length; i++) {
             String key = (String) symTableArray[i][0];
             long val = (Long) symTableArray[i][1];
@@ -205,13 +215,11 @@ public class Asm extends PLPAsm {
             Msg.P();
         }
 
-        printListing();
-
         return Constants.PLP_OK;
     }
 
     public void printListing() {
-        Msg.P("\nListing");
+        Msg.P("\n--- Listing ---");
         DataBlob t;
         for(int i = 0; i < modeObj.size(); i++) {
             t = modeObj.get(i);
@@ -441,8 +449,6 @@ public class Asm extends PLPAsm {
             d = new DataBlob(); // dummy
 
         } else if(tokens[0].equals("EQU") && tokens.length == 2) {
-            int num = parseGenericNumber(tokens[1], 2);
-
             d = new DataBlob(); // dummy
 
         } else if(tokens[0].equals("FCB") && tokens.length == 2) {
@@ -492,7 +498,7 @@ public class Asm extends PLPAsm {
         InstructionBlob ret = new InstructionBlob(instr);
 
         if(instr == null)
-            throw new InvalidInstructionException("Invalid mnemonic OR invalid directive syntax: " + tokens[0], -1);
+            throw new InvalidInstructionException("Invalid mnemonic -or- invalid directive syntax: " + tokens[0], -1);
 
         // easy one
         if(tokens.length == 1)
@@ -574,12 +580,11 @@ public class Asm extends PLPAsm {
             if((INDX(ret.mode) || INDY(ret.mode)) && oprlen != 1)
                 throw new InvalidInstructionException("Indexed mode only takes a 1-byte offset", -2);
 
-            // parse mask, which only true if we have more than 2 tokens
+            // parse mask, which is only true if we have more than 2 tokens
             // 'OP opr msk' -or- 'OP opr msk rel'
             if(tokens.length > 2) {
                 if(!MASK(instr.addr_modes))
                     throw new InvalidInstructionException("This instruction does not have a mask field", -2);
-
 
                 msk = tokens[2]; // msk is always the 3rd token, and it's 1-byte
                 if(msk.startsWith("$"))
@@ -772,6 +777,45 @@ public class Asm extends PLPAsm {
         return (val / 256 == 0) ? 1 : 2;
     }
 
+    private String generateS19() {
+        String ret = "";
+        int len;
+        int[] addr = new int[2];
+        short[] d;
+        int checksum = 0;
+
+        // naive implementation!
+        for(int i = 0; i < modeObj.size(); i++) {
+            Msg.D("i: " + i + " of " + modeObj.size(), 6, null);
+            DataBlob o = modeObj.get(i);
+            if(o.getLength() != 0) {
+                len = 3 + o.getLength();
+                addr[0] = o.getAddr() / 256;
+                addr[1] = o.getAddr() % 256;
+                Msg.D("Getting data...", 6, null);
+                d = o.getData();
+
+                ret += "S1" + String.format("%02x", len).toUpperCase();
+                ret += String.format("%02x", addr[0]).toUpperCase();
+                ret += String.format("%02x", addr[1]).toUpperCase();
+                checksum = len + addr[0] + addr[1];
+
+                for(int j = 0; j < d.length; j++) {
+                    Msg.D("j: " + j + " of " + d.length, 6, null);
+                    ret += String.format("%02x", d[j]).toUpperCase();
+                    checksum += d[j];
+                }
+
+                checksum = ~checksum & 0xff;
+                ret += String.format("%02x", checksum).toUpperCase() + "\n";
+            }
+        }
+
+        ret += "S9030000FC";
+
+        return ret;
+    }
+
     public class HC11Instr {
         public String mnemonic;
         public int addr_modes;
@@ -917,19 +961,17 @@ public class Asm extends PLPAsm {
                 return null;
 
             short[] ret = new short[getLength()];
-            int i = 1;
-            int start;
+            int start = 1;
 
             if(getOpcodeLength() == 2) {
-                ret[0] = (short) (getOpcode() % 256);
-                ret[1] = (short) (getOpcode() / 256);
-                i = 2;
-            } else
                 ret[0] = (short) (getOpcode() / 256);
+                ret[1] = (short) (getOpcode() % 256);
+                start = 2;
+            } else
+                ret[0] = (short) (getOpcode() % 256);
 
-            start = i;
-            while(i < getLength()) {
-                ret[i] = operand.get(i-start);
+            for(int i = 0; i < operand.size(); i++) {
+                ret[i+start] = operand.get(i);
             }
 
             return ret;
@@ -977,7 +1019,7 @@ public class Asm extends PLPAsm {
             for(int i = 0; i < operand.size(); i++)
                 ret += String.format("%02x", operand.get(i)) + " ";
 
-            if(REL(mode))
+            if(REL(mode) && rel != null)
                 ret += "[rel:" + rel + "]";
 
             return ret;
