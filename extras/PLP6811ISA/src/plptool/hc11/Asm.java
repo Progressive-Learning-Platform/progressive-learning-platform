@@ -777,7 +777,7 @@ public class Asm extends PLPAsm {
         return (val / 256 == 0) ? 1 : 2;
     }
 
-    private String generateS19() {
+    public String generateS19() {
         String ret = "";
         int len;
         int[] addr = new int[2];
@@ -942,7 +942,7 @@ public class Asm extends PLPAsm {
         @Override
         public int getLength() {
             int len = getOpcodeLength() + getOperandLength();
-            if(REL(mode))
+            if(REL(mode) && rel != null)
                 len += 1;
             if(opr_deferred != null) {
                 len += (EXT(mode) || I16(mode)) ? 2 : 1;
