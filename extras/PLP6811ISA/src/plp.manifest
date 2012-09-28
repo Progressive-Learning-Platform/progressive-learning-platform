@@ -3,6 +3,7 @@ author::<enter author here>
 license::<enter module license here>
 description::<enter description here>
 version::<enter version here>
+class::plptool.hc11.Architecture$1
 class::plptool.hc11.Architecture
 class::plptool.hc11.Asm$DataBlob
 class::plptool.hc11.Asm$HC11Instr
@@ -11,5 +12,14 @@ class::plptool.hc11.Asm$InvalidDirectiveException
 class::plptool.hc11.Asm$InvalidInstructionException
 class::plptool.hc11.Asm$SymbolAlreadyDefinedException
 class::plptool.hc11.Asm
+class::plptool.hc11.Buffalo$1
+class::plptool.hc11.Buffalo$2
+class::plptool.hc11.Buffalo$3
+class::plptool.hc11.Buffalo$4
+class::plptool.hc11.Buffalo$5
+class::plptool.hc11.Buffalo$6
+class::plptool.hc11.Buffalo$SerialStreamReader
+class::plptool.hc11.Buffalo
+class::plptool.hc11.BuffaloInterface
 class::plptool.hc11.SimCore
 registerisa::plptool.hc11.Architecture::HC11::6811::bla

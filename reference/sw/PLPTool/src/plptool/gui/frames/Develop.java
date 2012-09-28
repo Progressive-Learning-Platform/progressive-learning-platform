@@ -1487,8 +1487,22 @@ public class Develop extends javax.swing.JFrame {
         return rootmenuTools.add(item);
     }
 
+    public java.awt.Component addToolsItem(java.awt.Component item) {
+        return rootmenuTools.add(item);
+    }
+
     public void removeToolsItem(javax.swing.JMenuItem item) {
         rootmenuTools.remove(item);
+    }
+
+    public void removeToolsItem(java.awt.Component item) {
+        rootmenuTools.remove(item);
+    }
+
+    public javax.swing.JSeparator addToolsSeparator() {
+        javax.swing.JSeparator s = new JSeparator();
+        rootmenuTools.add(s);
+        return s;
     }
 
     public void addSimToolSeparator() {
