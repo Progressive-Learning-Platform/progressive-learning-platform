@@ -29,7 +29,6 @@ import javax.swing.*;
  */
 public class Architecture extends PLPArchitecture {
     JMenuItem menuBuffaloInterface;
-    JMenuItem menuExportListing;
     JMenuItem menuExportS19;
     JSeparator menuSeparator;
     Buffalo b;
@@ -39,13 +38,15 @@ public class Architecture extends PLPArchitecture {
         Msg.M("***************************************");
         Msg.M("PLP HC11 ISA Implementation Module");
         Msg.M("***************************************");
+        Msg.M("You are using an alpha product and there may be bugs...");
+        Msg.M("...you have been warned!");
+
         hasAssembler = true;
     }
 
     @Override
     public void init() {
         menuBuffaloInterface = new JMenuItem("BUFFALO Interface");
-        menuExportListing = new JMenuItem("Export Assembly Listing...");
         menuExportS19 = new JMenuItem("Export S19 File...");
         menuSeparator = new JSeparator();
         menuBuffaloInterface.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F7, 0));
@@ -58,9 +59,20 @@ public class Architecture extends PLPArchitecture {
             }
         });
 
+        menuExportS19.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if(plp.isAssembled()) {
+                    java.io.File f = PLPToolbox.saveFileDialog(Constants.launchPath, null);
+                    if(f != null) {
+                        PLPToolbox.writeFile(((Asm)plp.asm).generateS19(), f.getAbsolutePath());
+                    }
+                } else
+                    Msg.E("Program must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
+            }
+        });
+
         plp.g_dev.addToolsItem(menuSeparator);
         plp.g_dev.addToolsItem(menuBuffaloInterface);
-        plp.g_dev.addToolsItem(menuExportListing);
         plp.g_dev.addToolsItem(menuExportS19);
         b = new Buffalo(plp);
     }
@@ -87,10 +99,20 @@ public class Architecture extends PLPArchitecture {
     }
 
     @Override
+    public void listing() {
+        Msg.W("Not implemented... yet", null);
+    }
+
+    @Override
+    public String getQuickReferenceString() {
+        return "<h1>Wira's PLP 68HC11 Assembler and BUFFALO Interface</h2>" +
+                "<p>BETA Module, <b>use at your own risk!</b></p>";
+    }
+
+    @Override
     public void cleanup() {
         Msg.M("PLP 68HC11 ISA Implementation is cleaning up.");
         plp.g_dev.removeToolsItem(menuExportS19);
-        plp.g_dev.removeToolsItem(menuExportListing);
         plp.g_dev.removeToolsItem(menuBuffaloInterface);
         plp.g_dev.removeToolsItem(menuSeparator);
         b.terminate();

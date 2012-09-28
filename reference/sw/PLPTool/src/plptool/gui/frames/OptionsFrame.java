@@ -85,6 +85,11 @@ public class OptionsFrame extends javax.swing.JFrame {
         sSimSpeed.setValue(Config.simRunnerDelay);
     }
 
+    public void setBuiltInISAOptions(boolean b) {
+        tabsOptions.setEnabledAt(1, b);
+        tabsOptions.setEnabledAt(2, b);
+    }
+
     private void apply() {
         update();
         Config.simAllowExecutionOfArbitraryMem = simNoExecute.isSelected();
