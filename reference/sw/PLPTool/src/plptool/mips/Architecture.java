@@ -48,6 +48,7 @@ public class Architecture extends PLPArchitecture {
         hasSyntaxHighlightSupport = true;
         syntaxHighlightSupport = new SyntaxHighlightSupport();
         informationString = "PLP CPU ISA implementation";
+        plp.g_opts.setBuiltInISAOptions(true);
     }
 
     /**
@@ -517,7 +518,11 @@ public class Architecture extends PLPArchitecture {
 
     @Override
     public void newProject(ProjectDriver plp) {
-        plp.getAsm(0).setAsmString("# main source file\n\n.org 0x10000000");
-        
+        plp.getAsm(0).setAsmString("# main source file\n\n.org 0x10000000");        
+    }
+
+    @Override
+    public void cleanup() {
+        plp.g_opts.setBuiltInISAOptions(false);
     }
 }

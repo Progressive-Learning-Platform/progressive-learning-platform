@@ -26,6 +26,7 @@
 
 package plptool.gui;
 
+import java.awt.Color;
 import plptool.dmf.DynamicModuleFramework;
 import plptool.dmf.CallbackRegistry;
 import plptool.*;
@@ -181,6 +182,7 @@ public final class ProjectDriver {
             this.g_ioreg = new IORegistryFrame(this);
             this.g_about = new AboutBoxDialog(this.g_dev);
             this.g_opts = new OptionsFrame(this);
+            g_opts.setBuiltInISAOptions(false);
             this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
             this.g_fname = new AsmNameDialog(this, this.g_dev, true);
             this.g_find = new FindAndReplace(this);

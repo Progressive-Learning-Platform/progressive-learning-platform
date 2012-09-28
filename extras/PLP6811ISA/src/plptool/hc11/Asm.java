@@ -104,12 +104,14 @@ public class Asm extends PLPAsm {
         }
 
         if(errors > 0)
-            return Msg.E("Assembly failed", Constants.PLP_ASM_ASSEMBLE_FAILED, null);
+            return Msg.E("Assembly failed - " + errors + " errors",
+                    Constants.PLP_ASM_ASSEMBLE_FAILED, null);
 
-        printListing();
-        Msg.D("Generating S19...", 2, null);
-        Msg.P("--- S19 ---");
-        Msg.P(generateS19());
+        if(Constants.debugLevel >= 3)
+            printListing();
+        Msg.D("Generating S19...", 3, null);
+        Msg.D("--- S19 ---", 3, null);
+        Msg.D(generateS19(), 3, null);
         setAssembled(true);
         return Constants.PLP_OK;
     }
@@ -120,7 +122,7 @@ public class Asm extends PLPAsm {
         modeObj = new ArrayList<DataBlob>();
         DataBlob o;
         int errors = 0;
-        boolean equ;
+        boolean skipParseLabel;
         String stripped;
         String[] tokens;
 
@@ -133,7 +135,7 @@ public class Asm extends PLPAsm {
 
             for(int l = 0; l < lines.length; l++) {
                 try {
-                    equ = false;
+                    skipParseLabel = false;
                     o = null;
                     // separate comments
                     stripped = lines[l].split("[;*]", 2)[0];
@@ -146,20 +148,25 @@ public class Asm extends PLPAsm {
                             stripped = tokens[1].trim();
                             // parse directive, in case it manipulates current
                             // assembler PC that the label will be assigned to
-                            if(stripped.startsWith("EQU")) {
-                                equ = true;
-                                String[] equTokens = stripped.split("\\s+", 2);
-                                if(equTokens.length != 2)
-                                    throw new InvalidDirectiveException("Invalid EQU directive syntax");
+                            if(stripped.startsWith("EQU") || stripped.startsWith("RMB")) {
+                                skipParseLabel = true;
+                                String[] dirTokens = stripped.split("\\s+");
+                                if(dirTokens.length != 2)
+                                    throw new InvalidDirectiveException("Invalid " + dirTokens[0] + " directive syntax");
                                 if(symTable.containsKey(tokens[0]))
                                     throw new SymbolAlreadyDefinedException("'" + tokens[0] + "' is already defined");
-                               symTable.put(tokens[0], (long) parseGenericNumber(equTokens[1], 2));
+                                if(dirTokens[0].equals("EQU"))
+                                    symTable.put(tokens[0], (long) parseGenericNumber(dirTokens[1], 2));
+                                else if(dirTokens[0].equals("RMB")) {
+                                    symTable.put(tokens[0], (long) PC);
+                                    PC += parseGenericNumber(dirTokens[1], 2);
+                                }
                             } else {
                                 o = parseDirective(stripped);
                             }
                         } else
                             stripped = "";
-                        if(!equ) {
+                        if(!skipParseLabel) {
                             if(symTable.containsKey(tokens[0]))
                                 throw new SymbolAlreadyDefinedException("'" + tokens[0] + "' is already defined");
                             symTable.put(tokens[0], (long) PC);
@@ -201,7 +208,8 @@ public class Asm extends PLPAsm {
         }
 
         if(errors > 0)
-            return Msg.E("First pass errors: " + errors, Constants.PLP_ASM_PREPROCESS_FAILED, null);
+            return Msg.E("First pass assembly failed - " + errors + " errors",
+                    Constants.PLP_ASM_PREPROCESS_FAILED, null);
 
         Object[][] symTableArray = PLPToolbox.mapToArray(symTable);
 
@@ -449,6 +457,9 @@ public class Asm extends PLPAsm {
             d = new DataBlob(); // dummy
 
         } else if(tokens[0].equals("EQU") && tokens.length == 2) {
+            d = new DataBlob(); // dummy
+
+        } else if(tokens[0].equals("RMB") && tokens.length == 2) {
             d = new DataBlob(); // dummy
 
         } else if(tokens[0].equals("FCB") && tokens.length == 2) {

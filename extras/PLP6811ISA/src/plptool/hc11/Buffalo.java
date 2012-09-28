@@ -95,7 +95,7 @@ public class Buffalo extends javax.swing.JFrame {
         btnProgram = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
         btnCopy = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnImportS19 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PLP HC11 BUFFALO Interface");
@@ -152,10 +152,11 @@ public class Buffalo extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("IMPORT S19");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnImportS19.setText("IMPORT S19");
+        btnImportS19.setEnabled(false);
+        btnImportS19.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnImportS19ActionPerformed(evt);
             }
         });
 
@@ -180,7 +181,7 @@ public class Buffalo extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(btnProgram)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1)
+                        .addComponent(btnImportS19)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 298, Short.MAX_VALUE)
                         .addComponent(btnCopy)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -204,7 +205,7 @@ public class Buffalo extends javax.swing.JFrame {
                     .addComponent(btnProgram)
                     .addComponent(btnClear)
                     .addComponent(btnCopy)
-                    .addComponent(jButton1))
+                    .addComponent(btnImportS19))
                 .addContainerGap())
         );
 
@@ -271,7 +272,7 @@ public class Buffalo extends javax.swing.JFrame {
         txtConsole.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnImportS19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportS19ActionPerformed
         try {
             java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
             if(f != null) {
@@ -280,7 +281,7 @@ public class Buffalo extends javax.swing.JFrame {
         } catch(Exception e) {
             Msg.E("Programming failed", Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, null);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnImportS19ActionPerformed
 
     private void program(String S19) throws java.io.IOException {
         String lines[];
@@ -324,6 +325,7 @@ public class Buffalo extends javax.swing.JFrame {
                     cmbBaud.setEnabled(false);
                     cmbPort.setEnabled(false);
                     btnProgram.setEnabled(true);
+                    btnImportS19.setEnabled(true);
                     txtConsole.setEnabled(true);
                     stop = false;
 
@@ -357,6 +359,7 @@ public class Buffalo extends javax.swing.JFrame {
         cmbPort.setEnabled(true);
         btnProgram.setEnabled(false);
         txtConsole.setEnabled(false);
+        btnImportS19.setEnabled(false);
 
         Msg.M("Port closed.");
 
@@ -419,11 +422,11 @@ public class Buffalo extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnCopy;
+    private javax.swing.JButton btnImportS19;
     private javax.swing.JToggleButton btnOpen;
     private javax.swing.JButton btnProgram;
     private javax.swing.JComboBox cmbBaud;
     private javax.swing.JComboBox cmbPort;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
