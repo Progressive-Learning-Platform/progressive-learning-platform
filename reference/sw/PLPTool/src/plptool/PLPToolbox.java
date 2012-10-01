@@ -956,7 +956,8 @@ public class PLPToolbox {
     }
 
     /**
-     * Return a formatted hyperlink to be used by the IDE output
+     * Return a formatted hyperlink to be used by the IDE output to locate
+     * the source line (file:#, where # is the line number)
      *
      * @param fileName Filename of the source
      * @param lineNumber Line number of the source
@@ -965,6 +966,53 @@ public class PLPToolbox {
     public static String formatHyperLink(String fileName, int lineNumber) {
         return "<font color=blue><u><a href=\"" + fileName + "::" + lineNumber + "\">" +
                 fileName + ":" + lineNumber + "</a></u></font>";
+    }
+
+    /**
+     * A very hacky function to return a sorted list of &lt;String, Long&gt;
+     * by comparing the Long value
+     *
+     * @param map HashMap that contains the key-value pairs
+     * @return Object array that contains the sorted key-value list
+     */
+    public static Object[][] getSortedStringByLongValue(HashMap<String, Long> map) {
+        List<StringLongEntry> entries = new ArrayList<StringLongEntry>();
+        Object[] keys = map.keySet().toArray();
+        for(int i = 0; i < keys.length; i++)
+            entries.add(new StringLongEntry((String) keys[i], map.get(keys[i])));
+
+        Collections.sort(entries, new Comparator<StringLongEntry>() {
+            public int compare(StringLongEntry o1, StringLongEntry o2) {
+                return (int) (o1.getLong() - o2.getLong());
+            }
+        });
+
+        Object[][] ret = new Object[entries.size()][2];
+
+        for(int i = 0; i < ret.length; i++) {
+            ret[i][0] = entries.get(i).getString();
+            ret[i][1] = entries.get(i).getLong();
+        }
+
+        return ret;
+    }
+
+    static class StringLongEntry {
+        private String s;
+        private Long l;
+
+        public StringLongEntry(String s, Long l) {
+            this.s = s;
+            this.l = l;
+        }
+
+        public String getString() {
+            return s;
+        }
+
+        public Long getLong() {
+            return l;
+        }
     }
 }
 

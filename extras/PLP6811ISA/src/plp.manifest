@@ -19,8 +19,8 @@ class::plptool.hc11.Buffalo$3
 class::plptool.hc11.Buffalo$4
 class::plptool.hc11.Buffalo$5
 class::plptool.hc11.Buffalo$6
+class::plptool.hc11.Buffalo$7
 class::plptool.hc11.Buffalo$SerialStreamReader
 class::plptool.hc11.Buffalo
-class::plptool.hc11.BuffaloInterface
 class::plptool.hc11.SimCore
-registerisa::plptool.hc11.Architecture::HC11::6811::BETA PLP68HC11 IMPLEMENTATION
+registerisa::plptool.hc11.Architecture::HC11::6811::Hc11

@@ -54,6 +54,7 @@ public class Asm extends PLPAsm {
     public Asm(ArrayList<PLPAsmSource> asms) {
         super(asms);
         define();
+        entryPoint = -1;
     }
 
     public int assemble() {
@@ -107,11 +108,18 @@ public class Asm extends PLPAsm {
             return Msg.E("Assembly failed - " + errors + " errors",
                     Constants.PLP_ASM_ASSEMBLE_FAILED, null);
 
-        if(Constants.debugLevel >= 3)
-            printListing();
-        Msg.D("Generating S19...", 3, null);
-        Msg.D("--- S19 ---", 3, null);
-        Msg.D(generateS19(), 3, null);
+        if(Constants.debugLevel >= 3) {
+            Msg.D("--- Listing ---", 3, null);
+            String[] listing = getListing().split("\\n");
+            for(int i = 0; i < listing.length; i++)
+                Msg.p(listing[i]);
+            Msg.P();
+
+            Msg.D("--- S19 ---", 3, null);
+            String[] s19 = generateS19().split("\\n");
+            for(int i = 0; i < s19.length; i++)
+                Msg.D(s19[i], 3, null);
+        }
         setAssembled(true);
         return Constants.PLP_OK;
     }
@@ -122,6 +130,7 @@ public class Asm extends PLPAsm {
         modeObj = new ArrayList<DataBlob>();
         DataBlob o;
         int errors = 0;
+        int offset;
         boolean skipParseLabel;
         String stripped;
         String[] tokens;
@@ -144,6 +153,7 @@ public class Asm extends PLPAsm {
                     if(stripped.matches("^[a-zA-Z].*")) {
                         tokens = stripped.split("\\s+", 2);
 
+                        // handle case where we have a label in the first column
                         if(tokens.length > 1) {
                             stripped = tokens[1].trim();
                             // parse directive, in case it manipulates current
@@ -159,7 +169,9 @@ public class Asm extends PLPAsm {
                                     symTable.put(tokens[0], (long) parseGenericNumber(dirTokens[1], 2));
                                 else if(dirTokens[0].equals("RMB")) {
                                     symTable.put(tokens[0], (long) PC);
-                                    PC += parseGenericNumber(dirTokens[1], 2);
+                                    if((offset = parseGenericNumber(dirTokens[1], 2)) < 0)
+                                        throw new Exception("RMB directive can not have negative offset");
+                                    PC += offset;
                                 }
                             } else {
                                 o = parseDirective(stripped);
@@ -170,14 +182,27 @@ public class Asm extends PLPAsm {
                             if(symTable.containsKey(tokens[0]))
                                 throw new SymbolAlreadyDefinedException("'" + tokens[0] + "' is already defined");
                             symTable.put(tokens[0], (long) PC);
+                            if(tokens[0].equals("MAIN"))
+                                entryPoint = PC;
                         }
                     }
                     stripped = stripped.trim();
                     if(!stripped.equals("")) {
-                        if(o == null)
-                            o = parseDirective(stripped);  // parse directive
-                        if(o == null)
-                            o = parseExpression(stripped); // parse instruction
+                        tokens = stripped.split("\\s+", 2);
+                        if(tokens[0].equals("EQU") && !skipParseLabel)
+                            throw new InvalidDirectiveException("Invalid EQU directive syntax");
+                        if(tokens[0].equals("RMB") && !skipParseLabel && tokens.length != 2)
+                            throw new InvalidDirectiveException("Invalid RMB directive syntax");
+                        if(tokens[0].equals("RMB") && !skipParseLabel) {
+                            if((offset = parseGenericNumber(tokens[1], 2)) < 0)
+                                throw new Exception("RMB directive can not have negative offset");
+                            PC += offset;
+                        } else {
+                            if(o == null)
+                                o = parseDirective(stripped);  // parse directive
+                            if(o == null)
+                                o = parseExpression(stripped); // parse instruction
+                        }
                     }
                     if(o != null) {
                         modeObj.add(o);
@@ -185,7 +210,6 @@ public class Asm extends PLPAsm {
                         o.setSource(i, l+1);  // record source location
                         PC += o.getLength();
                     }
-
                 } catch(InvalidInstructionException e) {
                     Msg.E(PLPToolbox.formatHyperLink(sourceList.get(i).getAsmFilePath(), l+1) + ": " +
                             e.getMessage(), Constants.PLP_ASM_PREPROCESS_FAILED, null);
@@ -211,7 +235,7 @@ public class Asm extends PLPAsm {
             return Msg.E("First pass assembly failed - " + errors + " errors",
                     Constants.PLP_ASM_PREPROCESS_FAILED, null);
 
-        Object[][] symTableArray = PLPToolbox.mapToArray(symTable);
+        Object[][] symTableArray = PLPToolbox.getSortedStringByLongValue(symTable);
 
         Msg.P("--- Symbol Table ---");
         for(int i = 0; i < symTableArray.length; i++) {
@@ -226,23 +250,22 @@ public class Asm extends PLPAsm {
         return Constants.PLP_OK;
     }
 
-    public void printListing() {
-        Msg.P("\n--- Listing ---");
+    public String getListing() {
+        String ret = "";
+
         DataBlob t;
         for(int i = 0; i < modeObj.size(); i++) {
             t = modeObj.get(i);
-            if(t instanceof InstructionBlob) {
-                InstructionBlob p = (InstructionBlob) t;
-                Msg.P(String.format("%04x", t.addr) + "\t" + p.getInstr().mnemonic + ":\t" +
-                        p.getFormattedObject());
-            } else if(t.getLength() > 0){
-                Msg.pn(String.format("%04x", t.addr) + "\t&lt;data&gt;:\t");
+            if(t.getLength() > 0){
+                ret += String.format("%04x", t.addr) + "\t";
                 short[] d = t.getData();
                 for(int j = 0; j < d.length; j++)
-                    Msg.pn(String.format("%02x ", d[j]));
-                Msg.P();
+                    ret += String.format("%02x ", d[j]);
+                ret += "\n";
             }
         }
+
+        return ret;
     }
 
     public String[] getLines() {
@@ -456,12 +479,6 @@ public class Asm extends PLPAsm {
             PC = parseGenericNumber(tokens[1], 2);
             d = new DataBlob(); // dummy
 
-        } else if(tokens[0].equals("EQU") && tokens.length == 2) {
-            d = new DataBlob(); // dummy
-
-        } else if(tokens[0].equals("RMB") && tokens.length == 2) {
-            d = new DataBlob(); // dummy
-
         } else if(tokens[0].equals("FCB") && tokens.length == 2) {
             String bytes[] = tokens[1].split(",");
             short[] b = new short[bytes.length];
@@ -503,6 +520,9 @@ public class Asm extends PLPAsm {
     private InstructionBlob parseExpression(String exp) throws InvalidInstructionException, NumberFormatException {
         String tokens[] = exp.split("\\s+");
         String opr, msk;
+
+        if(tokens[0].equals("EQU") || tokens[0].equals("RMB"))
+            return null;
 
         // Map the mnemonic to the instruction
         HC11Instr instr = instrMap.get(tokens[0]);
@@ -739,7 +759,7 @@ public class Asm extends PLPAsm {
         }
 
         if(ret >= (int) Math.pow(2, widthBytes*8))
-            throw new NumberFormatException("Number exceeds allowable width");
+            throw new NumberFormatException("Number exceeds allowable width (" + widthBytes + " bytes)");
 
         return ret;
     }
