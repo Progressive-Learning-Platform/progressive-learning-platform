@@ -96,6 +96,7 @@ public class Buffalo extends javax.swing.JFrame {
         btnClear = new javax.swing.JButton();
         btnCopy = new javax.swing.JButton();
         btnImportS19 = new javax.swing.JButton();
+        btnRun = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PLP HC11 BUFFALO Interface");
@@ -130,6 +131,7 @@ public class Buffalo extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(txtConsole);
 
+        btnProgram.setMnemonic('A');
         btnProgram.setText("PROGRAM");
         btnProgram.setEnabled(false);
         btnProgram.addActionListener(new java.awt.event.ActionListener() {
@@ -160,6 +162,15 @@ public class Buffalo extends javax.swing.JFrame {
             }
         });
 
+        btnRun.setMnemonic('R');
+        btnRun.setText("RUN MAIN");
+        btnRun.setEnabled(false);
+        btnRun.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRunActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -182,7 +193,9 @@ public class Buffalo extends javax.swing.JFrame {
                         .addComponent(btnProgram)
                         .addGap(18, 18, 18)
                         .addComponent(btnImportS19)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 298, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnRun)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 195, Short.MAX_VALUE)
                         .addComponent(btnCopy)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear)))
@@ -205,7 +218,8 @@ public class Buffalo extends javax.swing.JFrame {
                     .addComponent(btnProgram)
                     .addComponent(btnClear)
                     .addComponent(btnCopy)
-                    .addComponent(btnImportS19))
+                    .addComponent(btnImportS19)
+                    .addComponent(btnRun))
                 .addContainerGap())
         );
 
@@ -274,7 +288,8 @@ public class Buffalo extends javax.swing.JFrame {
 
     private void btnImportS19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportS19ActionPerformed
         try {
-            java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
+            java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath,
+                    PLPToolbox.createFileFilter("s19", "Motorola S19 File (.s19)"));
             if(f != null) {
                 program(PLPToolbox.readFileAsString(f.getAbsolutePath()));
             }
@@ -282,6 +297,21 @@ public class Buffalo extends javax.swing.JFrame {
             Msg.E("Programming failed", Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, null);
         }
     }//GEN-LAST:event_btnImportS19ActionPerformed
+
+    private void btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRunActionPerformed
+        try {
+            if(plp.isAssembled() && plp.asm != null) {
+                if(plp.asm.getEntryPoint() != -1) {
+                    out.write(String.format("c %x", plp.asm.getEntryPoint()).getBytes());
+                    out.write(0xd);
+                } else
+                    Msg.E("No 'MAIN' found!", Constants.PLP_GENERIC_ERROR, null);
+            } else
+                Msg.E("Program has to be assembled first", Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, null);
+        } catch(java.io.IOException e) {
+            Msg.E("Run failed", Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, null);
+        }
+    }//GEN-LAST:event_btnRunActionPerformed
 
     private void program(String S19) throws java.io.IOException {
         String lines[];
@@ -327,6 +357,7 @@ public class Buffalo extends javax.swing.JFrame {
                     btnProgram.setEnabled(true);
                     btnImportS19.setEnabled(true);
                     txtConsole.setEnabled(true);
+                    btnRun.setEnabled(true);
                     stop = false;
 
                     (new SerialStreamReader()).start();
@@ -359,6 +390,7 @@ public class Buffalo extends javax.swing.JFrame {
         cmbPort.setEnabled(true);
         btnProgram.setEnabled(false);
         txtConsole.setEnabled(false);
+        btnRun.setEnabled(false);
         btnImportS19.setEnabled(false);
 
         Msg.M("Port closed.");
@@ -425,6 +457,7 @@ public class Buffalo extends javax.swing.JFrame {
     private javax.swing.JButton btnImportS19;
     private javax.swing.JToggleButton btnOpen;
     private javax.swing.JButton btnProgram;
+    private javax.swing.JButton btnRun;
     private javax.swing.JComboBox cmbBaud;
     private javax.swing.JComboBox cmbPort;
     private javax.swing.JLabel jLabel1;

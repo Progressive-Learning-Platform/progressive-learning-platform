@@ -62,7 +62,9 @@ public class Architecture extends PLPArchitecture {
         menuExportS19.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 if(plp.isAssembled()) {
-                    java.io.File f = PLPToolbox.saveFileDialog(Constants.launchPath, null);
+                    java.io.File f =
+                            PLPToolbox.saveFileDialog(Constants.launchPath,
+                                PLPToolbox.createFileFilter("s19", "Motorola S19 File (.s19)"));
                     if(f != null) {
                         PLPToolbox.writeFile(((Asm)plp.asm).generateS19(), f.getAbsolutePath());
                     }
