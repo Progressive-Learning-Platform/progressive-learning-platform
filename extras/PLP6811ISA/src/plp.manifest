@@ -5,6 +5,7 @@ description::<enter description here>
 version::<enter version here>
 class::plptool.hc11.Architecture$1
 class::plptool.hc11.Architecture$2
+class::plptool.hc11.Architecture$3
 class::plptool.hc11.Architecture
 class::plptool.hc11.Asm$DataBlob
 class::plptool.hc11.Asm$HC11Instr
@@ -23,4 +24,4 @@ class::plptool.hc11.Buffalo$7
 class::plptool.hc11.Buffalo$SerialStreamReader
 class::plptool.hc11.Buffalo
 class::plptool.hc11.SimCore
-registerisa::plptool.hc11.Architecture::HC11::6811::Hc11
+registerisa::plptool.hc11.Architecture::HC11::6811::Wira's 68HC11 assembler and buffalo interface for PLPTool 5.0

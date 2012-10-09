@@ -58,73 +58,6 @@ public class Asm extends PLPAsm {
     }
 
     public int assemble() {
-        Msg.D("Second pass...", 2, null);
-        int errors = 0;
-        DataBlob o;
-        for(int i = 0; i < modeObj.size(); i++) {
-            o = modeObj.get(i);
-            try {
-                if(o instanceof InstructionBlob) {
-                    InstructionBlob ib = (InstructionBlob) o;
-                    if(ib.opr_deferred != null) {
-                        Long val = symTable.get(ib.opr_deferred);
-                        if(val == null)
-                            throw new Exception("'" + ib.opr_deferred + "' is undefined");
-                        if(getSymbolLength(val) == 2) {
-                            if(I16(ib.mode) || EXT(ib.mode)) {
-                                ib.prependOperand((short) (val % 256));
-                                ib.prependOperand((short) (val / 256));
-                                ib.opr_deferred = null;
-                            } else
-                                throw new Exception("Symbol resolves into a 2-byte number " +
-                                        "while the instruction only takes a 1-byte number");
-                        } else if(getSymbolLength(val) == 1) {
-                            ib.prependOperand((short) (val % 256));
-                            if(I16(ib.mode) || EXT(ib.mode))
-                                ib.prependOperand((short) 0);
-                            ib.opr_deferred = null; // resolved
-                        }
-                    }
-                    if(ib.rel != null) {
-                        short offset = 0;
-                        Long val = symTable.get(ib.rel);
-                        if(val == null)
-                            throw new Exception("'" + ib.rel + "' is undefined");
-                        offset = (short)(val - (o.addr + o.getLength()));
-                        if(offset > 127 || offset < -128)
-                            throw new Exception("Offset is too large, must be within signed 1-byte range");
-                        ib.appendOperand(offset);
-                        ib.rel = null; // resolved
-                    }
-                }
-            } catch(Exception e) {
-                Msg.E(PLPToolbox.formatHyperLink(sourceList.get(o.getSourceFileIndex()).getAsmFilePath(), o.getSourceLine()) +
-                        ": " + e.getMessage(), Constants.PLP_ASM_ASSEMBLE_FAILED, null);
-                errors++;
-            }
-        }
-
-        if(errors > 0)
-            return Msg.E("Assembly failed - " + errors + " errors",
-                    Constants.PLP_ASM_ASSEMBLE_FAILED, null);
-
-        if(Constants.debugLevel >= 3) {
-            Msg.D("--- Listing ---", 3, null);
-            String[] listing = getListing().split("\\n");
-            for(int i = 0; i < listing.length; i++)
-                Msg.p(listing[i]);
-            Msg.P();
-
-            Msg.D("--- S19 ---", 3, null);
-            String[] s19 = generateS19().split("\\n");
-            for(int i = 0; i < s19.length; i++)
-                Msg.D(s19[i], 3, null);
-        }
-        setAssembled(true);
-        return Constants.PLP_OK;
-    }
-
-    public int preprocess(int index) {
         Msg.D("First pass...", 2, null);
         PC = 0x0000;
         modeObj = new ArrayList<DataBlob>();
@@ -158,16 +91,17 @@ public class Asm extends PLPAsm {
                             stripped = tokens[1].trim();
                             // parse directive, in case it manipulates current
                             // assembler PC that the label will be assigned to
-                            if(stripped.startsWith("EQU") || stripped.startsWith("RMB")) {
+                            if(stripped.toUpperCase().startsWith("EQU") ||
+                                    stripped.toUpperCase().startsWith("RMB")) {
                                 skipParseLabel = true;
                                 String[] dirTokens = stripped.split("\\s+");
                                 if(dirTokens.length != 2)
                                     throw new InvalidDirectiveException("Invalid " + dirTokens[0] + " directive syntax");
                                 if(symTable.containsKey(tokens[0]))
                                     throw new SymbolAlreadyDefinedException("'" + tokens[0] + "' is already defined");
-                                if(dirTokens[0].equals("EQU"))
+                                if(dirTokens[0].toUpperCase().equals("EQU"))
                                     symTable.put(tokens[0], (long) parseGenericNumber(dirTokens[1], 2));
-                                else if(dirTokens[0].equals("RMB")) {
+                                else if(dirTokens[0].toUpperCase().equals("RMB")) {
                                     symTable.put(tokens[0], (long) PC);
                                     if((offset = parseGenericNumber(dirTokens[1], 2)) < 0)
                                         throw new Exception("RMB directive can not have negative offset");
@@ -189,6 +123,7 @@ public class Asm extends PLPAsm {
                     stripped = stripped.trim();
                     if(!stripped.equals("")) {
                         tokens = stripped.split("\\s+", 2);
+                        tokens[0] = tokens[0].toUpperCase();
                         if(tokens[0].equals("EQU") && !skipParseLabel)
                             throw new InvalidDirectiveException("Invalid EQU directive syntax");
                         if(tokens[0].equals("RMB") && !skipParseLabel && tokens.length != 2)
@@ -247,25 +182,80 @@ public class Asm extends PLPAsm {
             Msg.P();
         }
 
-        return Constants.PLP_OK;
-    }
-
-    public String getListing() {
-        String ret = "";
-
-        DataBlob t;
+        Msg.D("Second pass...", 2, null);
+        errors = 0;
         for(int i = 0; i < modeObj.size(); i++) {
-            t = modeObj.get(i);
-            if(t.getLength() > 0){
-                ret += String.format("%04x", t.addr) + "\t";
-                short[] d = t.getData();
-                for(int j = 0; j < d.length; j++)
-                    ret += String.format("%02x ", d[j]);
-                ret += "\n";
+            o = modeObj.get(i);
+            try {
+                if(o instanceof InstructionBlob) {
+                    InstructionBlob ib = (InstructionBlob) o;
+                    if(ib.opr_deferred != null) {
+                        Long val = symTable.get(ib.opr_deferred);
+                        if(val == null)
+                            throw new Exception("'" + ib.opr_deferred + "' is undefined");
+                        if(getSymbolLength(val) == 2) {
+                            if(I16(ib.mode) || EXT(ib.mode)) {
+                                ib.prependOperand((short) (val % 256));
+                                ib.prependOperand((short) (val / 256));
+                                ib.opr_deferred = null;
+                            } else
+                                throw new Exception("Symbol resolves into a 2-byte number " +
+                                        "while the instruction only takes a 1-byte number");
+                        } else if(getSymbolLength(val) == 1) {
+                            ib.prependOperand((short) (val % 256));
+                            if(I16(ib.mode) || EXT(ib.mode))
+                                ib.prependOperand((short) 0);
+                            ib.opr_deferred = null; // resolved
+                        }
+                    }
+                    if(ib.rel != null) {
+                        offset = 0;
+                        Long val = symTable.get(ib.rel);
+                        if(val == null)
+                            throw new Exception("'" + ib.rel + "' is undefined");
+                        offset = (short)(val - (o.addr + o.getLength()));
+                        if(offset > 127 || offset < -128)
+                            throw new Exception("Offset is too large, must be within signed 1-byte range");
+                        ib.appendOperand((short) offset);
+                        ib.rel = null; // resolved
+                    }
+                }
+            } catch(Exception e) {
+                Msg.E(PLPToolbox.formatHyperLink(sourceList.get(o.getSourceFileIndex()).getAsmFilePath(), o.getSourceLine()) +
+                        ": " + e.getMessage(), Constants.PLP_ASM_ASSEMBLE_FAILED, null);
+                errors++;
             }
         }
 
-        return ret;
+        if(errors > 0)
+            return Msg.E("Assembly failed - " + errors + " errors",
+                    Constants.PLP_ASM_ASSEMBLE_FAILED, null);
+
+        if(Constants.debugLevel >= 3) {
+            Msg.D("--- Listing ---", 3, null);
+            String[] listing = generateListing().split("\\n");
+            for(int i = 0; i < listing.length; i++)
+                Msg.p(listing[i]);
+            Msg.P();
+            System.out.println(generateListing());
+
+            Msg.D("--- S19 ---", 3, null);
+            try {
+                String[] s19 = generateS19().split("\\n");
+                for(int i = 0; i < s19.length; i++)
+                    Msg.D(s19[i], 3, null);
+            }
+            catch(Exception e) {
+                Msg.E(e.getMessage(), Constants.PLP_GENERIC_ERROR, null);
+            }
+        }
+        setAssembled(true);
+        return Constants.PLP_OK;
+    }
+
+    public int preprocess(int index) {
+
+        return Constants.PLP_OK;
     }
 
     public String[] getLines() {
@@ -471,12 +461,14 @@ public class Asm extends PLPAsm {
         instructions.add(new HC11Instr(mnemonic, modes, opcodes));
     }
 
-    private DataBlob parseDirective(String exp) throws InvalidDirectiveException, NumberFormatException, Exception {
+    private DataBlob parseDirective(String exp)
+            throws InvalidDirectiveException, NumberFormatException, Exception {
         String tokens[] = exp.split("\\s+", 2);
+        tokens[0] = tokens[0].toUpperCase();
         DataBlob d = null;
 
         if(tokens[0].equals("ORG") && tokens.length == 2) {
-            PC = parseGenericNumber(tokens[1], 2);
+            PC = parseGenericNumber(tokens[1].trim(), 2);
             d = new DataBlob(); // dummy
 
         } else if(tokens[0].equals("FCB") && tokens.length == 2) {
@@ -497,13 +489,22 @@ public class Asm extends PLPAsm {
             }
             d = new DataBlob(b);
 
-        }  else if(tokens[0].equals("FCC") && tokens.length == 2 &&
+        } else if(tokens[0].equals("FCC") && tokens.length == 2 &&
                 tokens[1].startsWith("\"") && tokens[1].endsWith("\"")) {
             tokens[1] = tokens[1].substring(1, tokens[1].length()-1);
             String str = PLPToolbox.parseStringReplaceEscapedChars(tokens[1]);
             short[] b = new short[str.length()];
             for(int i = 0; i < b.length; i++)
                 b[i] = (short) str.charAt(i);
+            d = new DataBlob(b);
+            
+        } else if(tokens[0].equals("FILL") && tokens.length == 2) {
+            String fillTokens[] = tokens[1].split(",", 2);
+            int len = Integer.parseInt(fillTokens[1].trim());
+            short[] b = new short[len];
+            short data = (short) parseGenericNumber(fillTokens[0].trim(), 1);
+            for(int i = 0; i < len; i++)
+                b[i] = data;
             d = new DataBlob(b);
         }
 
@@ -517,8 +518,10 @@ public class Asm extends PLPAsm {
      * @param instr Instruction expression to validate
      * @return parsed mode object, throws exception if invalid literal is provided
      */
-    private InstructionBlob parseExpression(String exp) throws InvalidInstructionException, NumberFormatException {
+    private InstructionBlob parseExpression(String exp)
+            throws InvalidInstructionException, NumberFormatException, Exception {
         String tokens[] = exp.split("\\s+");
+        tokens[0] = tokens[0].toUpperCase();
         String opr, msk;
 
         if(tokens[0].equals("EQU") || tokens[0].equals("RMB"))
@@ -571,7 +574,11 @@ public class Asm extends PLPAsm {
                 oprlen = parseBin(opr, ret, 2);
             } else if(opr.startsWith("'") && opr.endsWith("'") &&
                     (opr.length() == 3 || opr.length() == 4)) {
-                ret.appendOperand((byte) PLPToolbox.parseEscapeCharacter(opr));
+                try {
+                    ret.appendOperand((byte) PLPToolbox.parseEscapeCharacter(opr));
+                } catch(Exception e) {
+                    throw e;
+                }
                 oprlen = 1;
             } else if(opr.matches("^[a-zA-Z].*")) {
                 // deferred opr length is resolved depending if the instruction
@@ -742,7 +749,8 @@ public class Asm extends PLPAsm {
         return bytes;
     }
 
-    public int parseGenericNumber(String exp, int widthBytes) throws NumberFormatException {
+    public int parseGenericNumber(String exp, int widthBytes) 
+            throws NumberFormatException, Exception {
         int ret = -1;
 
         if(exp.startsWith("$")) {
@@ -808,7 +816,60 @@ public class Asm extends PLPAsm {
         return (val / 256 == 0) ? 1 : 2;
     }
 
-    public String generateS19() {
+    public String generateListing() {
+        StringBuilder str = new StringBuilder();
+
+        DataBlob t;
+        str.append("plptool.hc11.Asm - 68HC11 ASM Listing\n");
+        str.append("PLPTool version: ");
+        str.append(Text.versionString);
+        str.append("\n\n");
+        str.append("addr   data                       source\n");
+        str.append("====   =======================    ======\n");
+        for(int i = 0; i < modeObj.size(); i++) {
+            t = modeObj.get(i);
+            if(t.getLength() > 0){
+                str.append(String.format("%04x", t.addr));
+                str.append("   ");
+                short[] d = t.getData();
+                int j = 0;
+                while(j < d.length || j < 8) {
+                    if(j < d.length)
+                        str.append(String.format("%02x", d[j]));
+                    else
+                        str.append("  ");
+                    str.append(" ");
+
+                    if(j == 7) {
+                        str.append("   ");
+                        str.append(sourceList.get(t.getSourceFileIndex()).getAsmLine(t.getSourceLine()));
+                    }
+
+                    if((j+1) % 8 == 0 && j < d.length-1)
+                        str.append("\n       ");
+                    j++;
+                }
+
+                str.append("\n");
+            }
+        }
+
+        Object[][] symTableArray = PLPToolbox.getSortedStringByLongValue(symTable);
+        str.append("\n--- Symbol Table ---\n");
+        for(int i = 0; i < symTableArray.length; i++) {
+            String key = (String) symTableArray[i][0];
+            long val = (Long) symTableArray[i][1];
+            str.append(key);
+            str.append("\t");
+            str.append((getSymbolLength(val) == 2) ?
+                String.format("%02x %02x", val / 256, val % 256) : String.format("%02x", val % 256));
+            str.append("\n");
+        }
+
+        return str.toString();
+    }
+
+    public String generateS19() throws Exception {
         String ret = "";
         int len;
         int[] addr = new int[2];
@@ -825,6 +886,9 @@ public class Asm extends PLPAsm {
                 addr[1] = o.getAddr() % 256;
                 Msg.D("Getting data...", 6, null);
                 d = o.getData();
+
+                if(o.getLength() > 255)
+                    throw new Exception("S19 entry too large!");
 
                 ret += "S1" + String.format("%02x", len).toUpperCase();
                 ret += String.format("%02x", addr[0]).toUpperCase();

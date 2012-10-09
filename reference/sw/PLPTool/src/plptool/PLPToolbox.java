@@ -792,7 +792,7 @@ public class PLPToolbox {
      * @param str The string representing the character
      * @return Character code in long
      */
-    public static long parseEscapeCharacter(String str) {
+    public static long parseEscapeCharacter(String str) throws Exception {
         if (str.startsWith("'") && str.endsWith("'")) {
             if(str.length() == 3)
                 return str.charAt(1);
@@ -809,9 +809,13 @@ public class PLPToolbox {
                             return '\\';
                         case '0':
                             return '\0';
+                        default:
+                            throw new Exception("Invalid escape character");
                     }
-                }
-            }
+                } else
+                    throw new Exception("Invalid character format");
+            } else
+                throw new Exception("Invalid character format");
         }
         return Constants.PLP_NUMBER_ERROR;
     }
