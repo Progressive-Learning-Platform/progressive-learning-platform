@@ -30,6 +30,7 @@ import javax.swing.*;
 public class Architecture extends PLPArchitecture {
     JMenuItem menuBuffaloInterface;
     JMenuItem menuExportS19;
+    JMenuItem menuExportListing;
     JSeparator menuSeparator;
     Buffalo b;
 
@@ -48,6 +49,7 @@ public class Architecture extends PLPArchitecture {
     public void init() {
         menuBuffaloInterface = new JMenuItem("BUFFALO Interface");
         menuExportS19 = new JMenuItem("Export S19 File...");
+        menuExportListing = new JMenuItem("Export Assembly Listing...");
         menuSeparator = new JSeparator();
         menuBuffaloInterface.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F7, 0));
         b = new Buffalo(plp);
@@ -59,6 +61,34 @@ public class Architecture extends PLPArchitecture {
             }
         });
 
+        menuExportListing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if(plp.isAssembled()) {
+                    String str = "";
+                    java.io.File f =
+                            PLPToolbox.saveFileDialog(Constants.launchPath,
+                                PLPToolbox.createFileFilter("lst", "Listing file (.lst)"));
+                    if(f != null) {
+                        try {
+                            str += "Project: " + plp.plpfile.getAbsolutePath() + "\n";
+                            for(int i = 0; i < plp.getAsms().size(); i++) {
+                                str += "===============================================\n";
+                                str += plp.getAsm(i).getAsmFilePath() + "\n";
+                                str += "-----------------------------------------------\n";
+                                str += plp.getAsm(i).getAsmString() + "\n";
+                            }
+                            str += "===============================================\n";
+                            str += ((Asm)plp.asm).generateListing();
+                            PLPToolbox.writeFile(str, f.getAbsolutePath());
+                        } catch(Exception ex) {
+                            PLPToolbox.showErrorDialog(plp.g_dev, ex.getMessage());
+                        }
+                    }
+                } else
+                    Msg.E("Program must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
+            }
+        });
+
         menuExportS19.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 if(plp.isAssembled()) {
@@ -66,7 +96,11 @@ public class Architecture extends PLPArchitecture {
                             PLPToolbox.saveFileDialog(Constants.launchPath,
                                 PLPToolbox.createFileFilter("s19", "Motorola S19 File (.s19)"));
                     if(f != null) {
-                        PLPToolbox.writeFile(((Asm)plp.asm).generateS19(), f.getAbsolutePath());
+                        try {
+                            PLPToolbox.writeFile(((Asm)plp.asm).generateS19(), f.getAbsolutePath());
+                        } catch(Exception ex) {
+                            PLPToolbox.showErrorDialog(plp.g_dev, ex.getMessage());
+                        }
                     }
                 } else
                     Msg.E("Program must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
@@ -75,6 +109,7 @@ public class Architecture extends PLPArchitecture {
 
         plp.g_dev.addToolsItem(menuSeparator);
         plp.g_dev.addToolsItem(menuBuffaloInterface);
+        plp.g_dev.addToolsItem(menuExportListing);
         plp.g_dev.addToolsItem(menuExportS19);
         b = new Buffalo(plp);
     }
@@ -102,7 +137,16 @@ public class Architecture extends PLPArchitecture {
 
     @Override
     public void listing() {
-        Msg.W("Not implemented... yet", null);
+        //Msg.W("Not implemented... yet", null);
+        if(plp.isAssembled()) {
+            Asm asm = (Asm) plp.asm;
+            Msg.D("--- Listing ---", 3, null);
+            String[] listing = asm.generateListing().split("\\n");
+            for(int i = 0; i < listing.length; i++)
+                Msg.p(listing[i]);
+            Msg.P();
+            System.out.println(asm.generateListing());
+        }
     }
 
     @Override
@@ -115,6 +159,7 @@ public class Architecture extends PLPArchitecture {
     public void cleanup() {
         Msg.M("PLP 68HC11 ISA Implementation is cleaning up.");
         plp.g_dev.removeToolsItem(menuExportS19);
+        plp.g_dev.removeToolsItem(menuExportListing);
         plp.g_dev.removeToolsItem(menuBuffaloInterface);
         plp.g_dev.removeToolsItem(menuSeparator);
         b.terminate();

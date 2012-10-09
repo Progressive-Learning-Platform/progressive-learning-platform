@@ -272,6 +272,8 @@ public class Buffalo extends javax.swing.JFrame {
                 Msg.E("Program has to be assembled first", Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, null);
         } catch(java.io.IOException e) {
             Msg.E("Programming failed", Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, null);
+        } catch(Exception e) {
+            Msg.E("Programming failed: " + e.getMessage(), Constants.PLP_GENERIC_ERROR, null);
         }
     }//GEN-LAST:event_btnProgramActionPerformed
 
