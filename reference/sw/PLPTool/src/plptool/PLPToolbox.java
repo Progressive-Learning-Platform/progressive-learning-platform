@@ -807,6 +807,10 @@ public class PLPToolbox {
                             return '\t';
                         case '\\':
                             return '\\';
+                        case '\"':
+                            return '\"';
+                        case '\'':
+                            return '\'';
                         case '0':
                             return '\0';
                         default:
@@ -866,6 +870,14 @@ public class PLPToolbox {
                     case '\\':
                         out = new StringBuffer(out).replace(j, j + 2, "\\").toString();
                         break;
+
+                    // Double quotes
+                    case '\"':
+                        out = new StringBuffer(out).replace(j, j + 2, "\"").toString();
+
+                    // Single quote
+                    case '\'':
+                        out = new StringBuffer(out).replace(j, j + 2, "\'").toString();
 
                     // Null
                     case '0':
