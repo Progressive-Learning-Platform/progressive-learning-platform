@@ -825,7 +825,7 @@ public class Asm extends PLPAsm {
         str.append(Text.versionString);
         str.append("\n\n");
         str.append("addr   data                       source\n");
-        str.append("====   =======================    ======\n");
+        str.append("====   =======================    ==============================================\n");
         for(int i = 0; i < modeObj.size(); i++) {
             t = modeObj.get(i);
             if(t.getLength() > 0){
@@ -841,7 +841,7 @@ public class Asm extends PLPAsm {
                     str.append(" ");
 
                     if(j == 7) {
-                        str.append("   ");
+                        str.append(" | ");
                         str.append(sourceList.get(t.getSourceFileIndex()).getAsmLine(t.getSourceLine()));
                     }
 

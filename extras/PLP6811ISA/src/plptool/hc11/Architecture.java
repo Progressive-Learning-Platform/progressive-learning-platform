@@ -72,12 +72,12 @@ public class Architecture extends PLPArchitecture {
                         try {
                             str += "Project: " + plp.plpfile.getAbsolutePath() + "\n";
                             for(int i = 0; i < plp.getAsms().size(); i++) {
-                                str += "===============================================\n";
+                                str += "===============================================================================\n";
                                 str += plp.getAsm(i).getAsmFilePath() + "\n";
-                                str += "-----------------------------------------------\n";
+                                str += "-------------------------------------------------------------------------------\n";
                                 str += plp.getAsm(i).getAsmString() + "\n";
                             }
-                            str += "===============================================\n";
+                            str += "===============================================================================\n";
                             str += ((Asm)plp.asm).generateListing();
                             PLPToolbox.writeFile(str, f.getAbsolutePath());
                         } catch(Exception ex) {
