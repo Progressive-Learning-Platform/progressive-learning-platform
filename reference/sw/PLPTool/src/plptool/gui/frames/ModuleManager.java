@@ -18,6 +18,7 @@
 
 package plptool.gui.frames;
 
+import plptool.*;
 import plptool.dmf.*;
 import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
@@ -64,13 +65,14 @@ public class ModuleManager extends javax.swing.JDialog {
         }
 
         DefaultTableModel tblLoaded = (DefaultTableModel) tblLoadedMods.getModel();
+        String[] row = new String[4];
         while(tblLoaded.getRowCount() > 0)
             tblLoaded.removeRow(0);
         for(int i = 0; i < DynamicModuleFramework.getNumberOfModuleInstances(); i++) {
             Object temp = DynamicModuleFramework.getModuleInstance(i);
+
             if(temp instanceof ModuleInterface5) {
-                ModuleInterface5 mod = (ModuleInterface5) temp;
-                String[] row = new String[4];
+                ModuleInterface5 mod = (ModuleInterface5) temp;                
                 row[0] = mod.getName();
                 row[1] = "";
                 for(int j = 0; j < mod.getVersion().length; j++)
@@ -78,8 +80,19 @@ public class ModuleManager extends javax.swing.JDialog {
                 row[2] = mod.getDescription();
                 row[3] = mod.getClass().getCanonicalName();
                 tblLoaded.addRow(row);
-            }
+            } 
         }
+
+        Object[][] archs = ArchRegistry.getArchList();
+        for(int i = 0; i < archs.length; i++) {
+            int id = (Integer) archs[i][0];
+            row[0] = ArchRegistry.getStringID(id);
+            row[1] = "ISA Module";
+            row[2] = ArchRegistry.getDescription(id);
+            row[3] = ((Class) archs[i][1]).getCanonicalName();
+            tblLoaded.addRow(row);
+        }
+
         tblLoadedMods.setModel(tblLoaded);
     }
 

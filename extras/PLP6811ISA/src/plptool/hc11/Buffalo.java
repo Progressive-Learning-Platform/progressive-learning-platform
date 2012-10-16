@@ -52,6 +52,12 @@ public class Buffalo extends javax.swing.JFrame {
 
         cmbPort.removeAllItems();
         cmbBaud.removeAllItems();
+
+        Architecture arch = (Architecture) plp.getArch();
+        if(arch.ttyName != null)
+            cmbPort.addItem(arch.ttyName);
+        if(arch.ttyBaud != null)
+            cmbBaud.addItem(arch.ttyBaud);
         
         if(PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_32 ||
            PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_64) {
@@ -70,12 +76,12 @@ public class Buffalo extends javax.swing.JFrame {
         else
             cmbPort.addItem("Specify your serial port here.");
 
-        cmbBaud.addItem(9600);
-        cmbBaud.addItem(57600);
-        cmbBaud.addItem(115200);
+        cmbBaud.addItem("9600");
+        cmbBaud.addItem("57600");
+        cmbBaud.addItem("115200");
         cmbBaud.setSelectedIndex(0);
     }
-
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -335,8 +341,10 @@ public class Buffalo extends javax.swing.JFrame {
         try {
             String portName = (String) cmbPort.getSelectedItem();
             Msg.M("Opening port " + portName + ".");
-            int baudRate = (Integer) cmbBaud.getSelectedItem();
+            int baudRate = Integer.parseInt((String) cmbBaud.getSelectedItem());
             portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+            ((Architecture)plp.getArch()).ttyName = portName;
+            ((Architecture)plp.getArch()).ttyBaud = Integer.toString(baudRate);
 
             if (portIdentifier.isCurrentlyOwned()) {
                 Msg.M("Serial port " + portName + " is in use.");
@@ -371,7 +379,7 @@ public class Buffalo extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             Msg.M("Error opening port.");
-            System.err.println(e);
+            Msg.trace(e);
             return -1;
         }
 

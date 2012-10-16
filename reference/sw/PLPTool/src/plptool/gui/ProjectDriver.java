@@ -61,81 +61,120 @@ import javax.swing.table.DefaultTableModel;
  */
 public final class ProjectDriver {
 
+    /**
+     * Reference to the application handle
+     */
     public PLPToolApp              app;        // App
 
     /*
-     * These variables hold some project file information for this driver.
-     * plpfile      - the path to the plpfile ProjectDriver will work with
+     * These variables hold project status and data for this driver
      * modified     - denotes whether the plpfile is modified since opening
      * open_asm     - current open ASM file in the gui
-     * curdir       - current working directory for the project
      * arch         - active ISA for this project
      * sim_mode	    - denotes whether the project is in simulation mode
      * replay       - denotes whether the project is in replay mode
+     * asm_req      - denotes whether the project needs to be assembled for
+     *                other functions such as simulation or programming
+     * asms         - list of source files
+     * halt         - --unused for now--
      */ // --
 
-    public File                    plpfile;
     private boolean                modified;
     private boolean                dirty;
     private int                    open_asm;
-    public String                  curdir;
     private PLPArchitecture        arch;
     private boolean                sim_mode;
     private boolean                replay;
     private boolean                asm_req;
+    private ArrayList<PLPAsmSource> asms;       // Assembly files
+    private boolean                halt;       // critical error
+
+    /**
+     * Current PLP file that the project driver is working on
+     */
+    public File                    plpfile;
+
+    /**
+     * Current working directory for the project
+     */
+    public String                  curdir;
+    
 
     /*
      * These variables hold data and information loaded from
      * the plp project file.
      */ // --
 
-    public byte[]                  binimage;   // binary image
-    public String                  hexstring;  // hex string
-    public String                  meta;       // Meta String
-    public Preset                  smods;      // Saved mods information
-    public DefaultTableModel       watcher;    // Watcher entries
+    /**
+     * Binary image of the assembled program (if used)
+     */
+    public byte[]                  binimage;
 
-    /*
-     * References to PLP configuration and messaging classes
-     */ // --
+    /**
+     * String of hex image of the assembled program (if used)
+     */
+    public String                  hexstring;
 
-    public Config                  cfg;        // Configuration
-    public Msg                     msg;        // Messaging class
+    /**
+     * Meta information string of the project
+     */
+    public String                  meta;
 
-    private ArrayList<PLPAsmSource> asms;       // Assembly files
+    /**
+     * Saved module set for the project
+     */
+    public Preset                  smods;
 
-    private boolean                halt;       // critical error
-    
-    /*
-     * References to the workflow framework objects
-     */ // --
+    /**
+     * A table model handler for the watcher window entries
+     */
+    public DefaultTableModel       watcher;
 
-    public PLPAsm                  asm;        // Assembler
-    public PLPAsm[]                asm_array;  // Asm array
-    public PLPLinker               lnkr;       // Linker
-    public PLPSerialProgrammer     prg;        // Programmer
+    /**
+     * The assembler attached to the project. This assembler will most likely
+     * be null if the project is not assembled. It is advised to wrap code
+     * segments that access this handle with an if block checking for
+     * isAssembled() method.
+     */
+    public PLPAsm                  asm;
 
-    public PLPSimCore              sim;        // Simulation core
-    public IORegistry              ioreg;      // I/O registry
-    public PLPSimCoreGUI           g_sim;      // Sim Core GUI
+    /**
+     * A handle to the linker. This is currently unused as of PLPTool 5.
+     */
+    public PLPLinker               lnkr;
+
+    /**
+     * Reference to the board programmer.
+     */
+    public PLPSerialProgrammer     prg;
+
+    /**
+     * Reference to the simulator (generic PLPSimCore type)
+     */
+    public PLPSimCore              sim;
+
+    public IORegistry              ioreg;
+
+    public PLPSimCoreGUI           g_sim;
 
     /*
      * PLP GUI Windows
      */ // --
-    public IORegistryFrame         g_ioreg;    // I/O registry GUI
-    public Develop                 g_dev;      // IDE GUI
-    public SimErrorFrame           g_err;      // Error frame
-    public AboutBoxDialog          g_about;    // About frame
-    public OptionsFrame            g_opts;     // Options frame
-    public ProgrammerDialog        g_prg;      // Programming dialog
-    public AsmNameDialog           g_fname;    // ASM Name dialog
-    public SimRunner               g_simrun;   // SimRunner thread
-    public Watcher                 g_watcher;  // Watcher window
-    public SimControl              g_simctrl;  // Simulation Control Frame
-    public ASMSimView              g_asmview;  // ASM Sim viewer
-    public QuickRef                g_qref;     // Quick Reference
-    public ISASelector             g_isaselect;// ISA selector window
-    public FindAndReplace          g_find;     // Find and Replace
+    public IORegistryFrame         g_ioreg;    
+    public Develop                 g_dev;      
+    public SimErrorFrame           g_err;      
+    public AboutBoxDialog          g_about;    
+    public OptionsFrame            g_opts;     
+    public ProgrammerDialog        g_prg;      
+    public AsmNameDialog           g_fname;    
+    public SimRunner               g_simrun;   
+    public Watcher                 g_watcher;  
+    public SimControl              g_simctrl;  
+    public ASMSimView              g_asmview;  
+    public QuickRef                g_qref;     
+    public ISASelector             g_isaselect;
+    public FindAndReplace          g_find;
+
     private boolean                g;          // are we driving a GUI?
     private boolean                applet;     // are we driving an applet?
 
@@ -250,10 +289,11 @@ public final class ProjectDriver {
      */
     public int setArch(int archID) {
         arch.cleanup();
-        this.arch = ArchRegistry.getArchitecture(this, archID);
-
+        arch = ArchRegistry.getArchitecture(this, archID);
+        arch.init();
         if(arch == null) {
             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+            arch.init();
             return Msg.E("Invalid ISA ID: " + archID + ". Defaulting to " +
                          "plpmips (id 0).",
                          Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, this);
@@ -351,6 +391,7 @@ public final class ProjectDriver {
             } catch(Exception e) {
                 Msg.E("Failed to save PLPTool configuration to disk.",
                       Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
+                Msg.trace(e);
             }
         }
 
@@ -387,6 +428,7 @@ public final class ProjectDriver {
             } catch(Exception e) {
                 Msg.E("Failed to save PLPTool configuration to disk.",
                       Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
+                Msg.trace(e);
             }
         }
     }
@@ -417,10 +459,12 @@ public final class ProjectDriver {
 
         try {
             this.arch = ArchRegistry.getArchitecture(this, archID);
+            arch.init();
             if(arch == null) {
                 Msg.W("Invalid architecture ID is specified, reverting to " +
                       "default (PLPCPU).", this);
                 this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+                arch.init();
             }
         } catch(Exception e) {
             Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
@@ -475,10 +519,12 @@ public final class ProjectDriver {
 
         try {
             this.arch = ArchRegistry.getArchitecture(this, archID);
+            arch.init();
             if(arch == null) {
                 Msg.W("Invalid architecture ID is specified, reverting to " +
                       "default (plpmips).", this);
                 this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+                arch.init();
             }
         } catch(Exception e) {
             Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
@@ -807,18 +853,22 @@ public final class ProjectDriver {
                     String temp = metaScanner.nextLine();
                     if(Config.cfgOverrideISA >= 0) { // ISA ID override, ignore the metafile
                         arch = ArchRegistry.getArchitecture(this, Config.cfgOverrideISA);
+                        arch.init();
                     } else if (temp.equals("plpmips")) {
                         Msg.W("This project file is made by PLPTool version 3 or earlier. " +
                               "Meta data for this project will be updated " +
                               "with the default ISA (plpmips) when the project " +
                               "file is saved.", this);
                         arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+                        arch.init();
                     } else {
                         arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
+                        arch.init();
                         if(arch == null) {
                             Msg.W("Invalid ISA ID is specified in the project file: '" + temp +
                                   "'. Assuming PLPCPU.", this);
                             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+                            arch.init();
                         }
                     }
                     arch.hook(this);
@@ -961,6 +1011,7 @@ public final class ProjectDriver {
         if(arch == null) {
             Msg.W("No ISA information specified in the archive, assuming plpmips", this);
             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+            arch.init();
         }
 
         plpfile = new File(path);

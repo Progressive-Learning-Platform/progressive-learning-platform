@@ -69,7 +69,6 @@ public class ArchRegistry {
 
             arch = (PLPArchitecture) getRegisteredArchitectureClass(ID).newInstance();
             arch.setProjectDriver(plp);
-            arch.init();
             return arch;
         } catch(Exception e) {
             Msg.E("Instantiation error for " +
