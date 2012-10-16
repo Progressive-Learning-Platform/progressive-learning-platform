@@ -19,7 +19,9 @@
 package plptool.hc11;
 
 import plptool.*;
+import plptool.dmf.*;
 import plptool.gui.ProjectDriver;
+import plptool.gui.PLPToolApp;
 
 import javax.swing.*;
 
@@ -33,6 +35,8 @@ public class Architecture extends PLPArchitecture {
     JMenuItem menuExportListing;
     JSeparator menuSeparator;
     Buffalo b;
+    public String ttyName;
+    public String ttyBaud;
 
     public Architecture() {
         super(6811, "hc11", null);
@@ -52,6 +56,19 @@ public class Architecture extends PLPArchitecture {
         menuExportListing = new JMenuItem("Export Assembly Listing...");
         menuSeparator = new JSeparator();
         menuBuffaloInterface.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F7, 0));
+        Object[] callbacks = CallbackRegistry.getCallbacks(CallbackRegistry.SAVE_CONFIG);
+        boolean registered = false;
+        for(int i = 0; i < callbacks.length; i++)
+            if(callbacks[i] instanceof SaveConfig)
+                registered = true;
+        if(!registered)
+            CallbackRegistry.register(new SaveConfig(), CallbackRegistry.SAVE_CONFIG);
+        else
+            Msg.D("HC11 Save Config already registered.", 3, null);
+
+        ttyName = PLPToolApp.getAttributes().get("hc11_ttyName");
+        ttyBaud = PLPToolApp.getAttributes().get("hc11_ttyBaud");
+
         b = new Buffalo(plp);
         b.setLocationRelativeTo(plp.g_dev);
 
@@ -164,5 +181,21 @@ public class Architecture extends PLPArchitecture {
         plp.g_dev.removeToolsItem(menuSeparator);
         b.terminate();
         b.dispose();
+    }
+
+    class SaveConfig implements Callback {
+        public boolean callback(int num, Object params) {
+            java.io.FileWriter out = (java.io.FileWriter) params;
+            if(ttyName != null && ttyBaud != null) {
+                try {
+                    out.write("hc11_ttyName::" + ttyName + "\n");
+                    out.write("hc11_ttyBaud::" + ttyBaud + "\n");
+                } catch(java.io.IOException e) {
+                    Msg.E("HC11 save config failed.", Constants.PLP_IO_WRITE_ERROR, null);
+                }
+            }
+
+            return true;
+        }
     }
 }

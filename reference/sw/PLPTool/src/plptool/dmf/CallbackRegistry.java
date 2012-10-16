@@ -141,4 +141,15 @@ public class CallbackRegistry {
             ret = register(callback, callbackNumbers[i]) && ret;
         return ret;
     }
+
+    /**
+     * Get all callbacks for a callback event as an Object array
+     *
+     * @param callbackNum Callback number
+     * @return Array of callbacks as objects
+     */
+    public static Object[] getCallbacks(int callbackNum) {
+        Object[] ret = callbacks[callbackNum].toArray();
+        return ret;
+    }
 }

@@ -77,6 +77,15 @@ public abstract class PLPArchitecture {
     }
 
     /**
+     * Get ISA String ID
+     *
+     * @return ISA string ID specified in the manifest
+     */
+    public String getStringID() {
+        return identifier;
+    }
+
+    /**
      * Does this ISA implement the assembler class
      *
      * @return boolean specifying whether the ISA implements the assembler
