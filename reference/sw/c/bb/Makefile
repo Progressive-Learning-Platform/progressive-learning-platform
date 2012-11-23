@@ -3,7 +3,7 @@ all: clean build nolog
 CC = gcc
 CFLAGS = -O2 -Wall -g -fPIC
 
-LDFLAGS = -larchive
+LDFLAGS = -larchive -static
 
 FILES=\
 	main\

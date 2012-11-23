@@ -49,7 +49,7 @@ nop\n\
 
 char *builtin_metafile = 
 "\
-PLP-4.0\n\
+PLP-5.0\n\
 DIRTY=1\n\
 ARCH=0\n\
 \n";
