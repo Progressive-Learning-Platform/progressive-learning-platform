@@ -48,7 +48,8 @@ public class Architecture extends PLPArchitecture {
         hasSyntaxHighlightSupport = true;
         syntaxHighlightSupport = new SyntaxHighlightSupport();
         informationString = "PLP CPU ISA implementation";
-        plp.g_opts.setBuiltInISAOptions(true);
+        if(plp.g())
+            plp.g_opts.setBuiltInISAOptions(true);
     }
 
     /**
