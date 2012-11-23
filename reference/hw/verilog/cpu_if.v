@@ -1,6 +1,5 @@
 /*
-    Instruction Fetch Stage for Progressive Learning Platform
-    Copyright 2012 David Fritz, Brian Gordon, Wira Mulia, Matthew Gaalswyk
+    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,109 +16,96 @@
 
  */
 
-module cpu_if (
-  input             rst,
-  input             clk,
-  input             cpu_stall,
-  input             stall,
-  input      [31:0] iin,
-  output     [31:0] imem_addr, // basically PC
-  input      [31:0] b_addr,
-  input      [31:0] j_addr,
-  input             pc_b,
-  input             pc_j,
-  output reg [31:0] p_pc,
-  output reg [31:0] p_inst,
-  input             int,
-  input      [31:0] int_pc,
-  output            int_ack,
-  output            int_flush
-);
 
-`include "parameters.v"
+/*
 
-reg  [31:0] pc;
-wire [31:0] next_pc;
+fritz
 
-/// Flush logic (for branches and jumps)
-wire flush = pc_b | pc_j;
+instruction fetch phase
 
-/// Interrupt logic
-// we're guaranteed not to get an interrupt when
-// handling one already, as interrupts disable
-// in the interrupt controller automatically.
-//
-// state machine:
-// 00 - idle, waiting for interrupt
-// 01 - wait 1 cycle for branch delay slot
-// 10 - injecting interrupt
-// 11 - injecting nop (branch delay slot)
+*/
 
-localparam S_INT_IDLE = 2'b00;
-localparam S_INT_WAIT = 2'b01;
-localparam S_INT_IINS = 2'b10;
-localparam S_INT_INOP = 2'b11;
+module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
+		pc_b, b_addr, j_addr, iin, p_inst, stall, int, int_ack, int_flush, int_pc);
+	input 		rst, clk, cpu_stall, int;
+	input 		pc_j;
+	input 		pc_b;
+	input 	[31:0] 	b_addr;
+	input 	[31:0] 	j_addr;
+	input 		stall;
+	output reg [31:0] p_pc;
+	output 	[31:0] 	imem_addr;
+	input	[31:0]	iin;
+	output reg [31:0] p_inst;
+	output int_ack, int_flush;
+	input [31:0] int_pc;
 
-reg  [1:0] int_state;
-wire cycle_wait = (pc - int_pc) != 8;
-wire [1:0] next_int_state =
-  int_state == S_INT_IDLE && int &&  cycle_wait ? S_INT_WAIT : // wait 1
-  int_state == S_INT_IDLE && int && !cycle_wait ? S_INT_IINS : // go!
-  int_state == S_INT_WAIT &&        !cycle_wait ? S_INT_IINS : // ...go
-  int_state == S_INT_IINS                       ? S_INT_INOP :
-  int_state == S_INT_INOP                       ? S_INT_IDLE :
-                                                  int_state;   // invalid
+	reg [31:0] pc;
+	wire [31:0] next_pc;
 
-localparam IV_ADDR = `W_ADDR'h0340d809; // JALR $i1, $i0
-localparam IV_NOP  = `W_ADDR'h0;
-wire [31:0] next_inst =
-  int_state == S_INT_IINS ? IV_ADDR :
-  int_state == S_INT_INOP ? IV_NOP  :
-                            iin;
+	/* flush logic (for branches and jumps) */
+	wire flush = pc_b | pc_j;
 
-assign int_ack = int_state != S_INT_IDLE;
-assign int_flush = next_int_state == S_INT_IINS;
+	/* interrupt logic */
+	/* we're guaranteed not to get an interrupt when 
+	 * handling one already, as interrupts disable
+	 * in the interrupt controller automatically.
+	 *
+	 * state machine:
+	 * 00 - idle, waiting for interrupt
+	 * 01 - wait 1 cycle for branch delay slot
+	 * 10 - injecting interrupt
+	 * 11 - injecting nop (branch delay slot)
+	 */
+	reg  [1:0] int_state = 2'b00;
+	wire cycle_wait = pc - int_pc != 8;
+	wire [1:0] next_int_state = 
+		int_state == 2'b00 && int &&  cycle_wait ? 2'b01 : /* wait 1 cycle */
+		int_state == 2'b00 && int && !cycle_wait ? 2'b10 : /* go! */
+		int_state == 2'b01 && !cycle_wait	 ? 2'b10 : /* ...go */
+		int_state == 2'b10 			 ? 2'b11 :
+		int_state == 2'b11 			 ? 2'b00 : int_state; /* default case is invalid */
+	wire [31:0] next_inst = 
+		int_state == 2'b10 ? 32'h0340d809 : /* jalr $i1, $i0 - 0000_0011_0100_0000_1101_1000_0000_1001 */
+		int_state == 2'b11 ? 32'h00000000 : /* nop */
+				     iin;
+	assign int_ack = int_state != 2'b00;
+	assign int_flush = next_int_state == 2'b10;
 
-assign next_pc =
-  (        next_int_state == S_INT_IINS) ? int_pc - 8 :
-  (pc_b && next_int_state != S_INT_IINS) ? b_addr :
-  (pc_j && next_int_state != S_INT_IINS) ? j_addr :
-                                           pc + 4;
+	always @(posedge clk) begin
+		if (!cpu_stall) begin
+		if (rst) begin
+			p_pc <= 0;
+			pc <= 0;
+			p_inst <= 0;
+			int_state <= 0;
+		end else if (stall && !flush && !rst) begin
+			p_pc <= p_pc;
+			pc <= pc;
+			p_inst <= p_inst;
+			int_state <= next_int_state;
+		end else if ((flush || int_flush) && !rst && !stall) begin
+			p_pc <= 0;
+			p_inst <= 0;
+			pc <= next_pc;
+			int_state <= next_int_state;
+		end else begin
+			p_pc <= pc;
+			pc   <= next_pc;
+			p_inst <= next_inst;
+			int_state <= next_int_state;
+		end
+		
+		/* debug code, not synthesized by Xilinx */
+		$display("IF: PC: %x INST: %x", p_pc, p_inst);
+		end
+	end		
 
-// our instruction memory pointer value is held by PC
-assign imem_addr = pc;
+	assign next_pc =
+		(next_int_state == 2'b10) ? int_pc - 8: 
+		(pc_b & next_int_state != 2'b10) ? b_addr :
+		(pc_j & !pc_b & next_int_state != 2'b10) ? j_addr :
+		pc + 4;
 
-// sync reset
-always @(posedge clk) begin
-  if (rst) begin
-    pc        <= 0;
-    p_pc      <= 0;
-    p_inst    <= 0;
-    int_state <= S_INT_IDLE;
-  end else if (!cpu_stall) begin
-    int_state <= next_int_state;
-
-    if (stall && !flush) begin
-      // stall signal from ID stage
-      // hold up a minute and keep things the same
-      pc     <= pc;
-      p_pc   <= p_pc;
-      p_inst <= p_inst;
-    end else if ((flush || int_flush) && !stall) begin
-      // we branched or jumped or got an interrupt flush signal
-      // so we gotta drop what we were going to do
-      pc     <= next_pc;
-      p_pc   <= 0;
-      p_inst <= 0;
-    end else begin
-      // no stalling or flushing, proceed to next step
-      pc     <= next_pc;
-      p_pc   <= pc;
-      p_inst <= next_inst;
-    end
-
-    //$display("IF: PC: %x INST: %x", p_pc, p_inst);
-  end
-end
-
+	assign imem_addr = pc;
 endmodule
