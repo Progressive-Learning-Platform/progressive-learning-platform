@@ -98,7 +98,7 @@ public class PLPToolConnector implements ModuleInterface5 {
             }
         } catch(Exception ex) {}
 
-        CallbackRegistry.register(new AutosaveCallback(), 
+        CallbackRegistry.register(new AutoSaveCallback(), 
                 CallbackRegistry.PROJECT_NEW,
                 CallbackRegistry.PROJECT_OPEN_SUCCESSFUL,
                 CallbackRegistry.EDITOR_TEXT_SET,
@@ -131,7 +131,14 @@ public class PLPToolConnector implements ModuleInterface5 {
         return ver;
     }    
     
-    class AutosaveCallback implements Callback {
+    @Override
+    public String toString() {
+        return "AutoSaver";
+    }
+    
+    
+    class AutoSaveCallback implements Callback {
+        @Override
         public boolean callback(int num, Object param ) {
             switch(num) {
                 case CallbackRegistry.PROJECT_OPEN_SUCCESSFUL:

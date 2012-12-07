@@ -1046,7 +1046,7 @@ public final class ProjectDriver {
                 g_asmview.dispose();
         }
 
-        CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_SUCCESSFUL, null);
+        CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_SUCCESSFUL, plpFile);
         return Constants.PLP_OK;
     }
 

@@ -525,6 +525,7 @@ public class Architecture extends PLPArchitecture {
 
     @Override
     public void cleanup() {
-        plp.g_opts.setBuiltInISAOptions(false);
+        if(plp.g())
+            plp.g_opts.setBuiltInISAOptions(false);
     }
 }
