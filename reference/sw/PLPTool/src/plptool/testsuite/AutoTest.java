@@ -343,10 +343,10 @@ public class AutoTest {
         System.out.println("");
         System.out.println("The configure method is called immediately after PLPTool starts and before");
         System.out.println("non-autotest command line arguments are parsed. The run method is called");
-        System.out.println("immediately after the ProjectDriver is instantiated. The tester is free to");
-        System.out.println("drive the program in its separate thread with the run method. The tester");
-        System.out.println("class must NOT have subclasses and anonymous classes (it must compile into a");
-        System.out.println("single .class file).");
+        System.out.println("in a separate thread immediately after the ProjectDriver is instantiated.");
+        System.out.println("");
+        System.out.println("The tester class must NOT have subclasses and anonymous classes (it must ");
+        System.out.println("compile into a single .class file).");
         System.out.println("");
         System.out.println("plptool.testsuite.AutoTest members:");
         System.out.println("  p(String s)             Print a message with a timestamp since the program");
