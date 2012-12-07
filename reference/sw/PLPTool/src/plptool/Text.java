@@ -26,6 +26,7 @@ package plptool;
 public class Text {
     public static final int[]  version       = {5, 0};
     public static final String versionString = version[0] + "." + version[1];
+    public static final String projectFileVersionString = "PLP-5.0";
     public static final String copyrightString =
             "PLP Software Tool (PLPTool) version " + versionString + "\n" +
             "Copyright (C) 2010-2012 PLP Contributors.\n" +

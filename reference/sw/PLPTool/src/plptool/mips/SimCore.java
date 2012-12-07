@@ -368,7 +368,7 @@ public class SimCore extends PLPSimCore {
 
         } else if (int_state == 2) {
             Msg.D("IRQ service, int_inject 2->1", 3, this);
-            Asm x = new Asm("jalr $i1, $i0", "inline");
+            Asm x = new Asm("jalr $ir, $iv", "inline");
             x.preprocess(0);
             x.assemble();
             id_stage.i_instruction = x.getObjectCode()[0];
@@ -1413,6 +1413,8 @@ public class SimCore extends PLPSimCore {
                         case 0x02: return b >>> MIPSInstr.sa(instr);
 			case 0x10: return ((long)(int) a * (long)(int)b) & 0xffffffffL;
 			case 0x11: return (((long)(int) a * (long)(int) b) & 0xffffffff00000000L) >> 32;
+                        case 0x04: return a << b;
+                        case 0x06: return a >> b;
                     }
 
                 case 0x04: return (a - b == 0) ? 1 : 0;

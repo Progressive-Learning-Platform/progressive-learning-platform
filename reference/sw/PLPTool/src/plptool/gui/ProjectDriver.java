@@ -288,7 +288,8 @@ public final class ProjectDriver {
      * @return
      */
     public int setArch(int archID) {
-        arch.cleanup();
+        if(arch != null)
+            arch.cleanup();
         arch = ArchRegistry.getArchitecture(this, archID);
         arch.init();
         if(arch == null) {
@@ -597,7 +598,7 @@ public final class ProjectDriver {
 
         File outFile = plpfile;
 
-        meta = "PLP-4.0\n";
+        meta = "PLP-5.0\n";
 
         if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
@@ -839,10 +840,11 @@ public final class ProjectDriver {
                 Scanner metaScanner;
 
                 String lines[] = meta.split("\\r?\\n");
-                if(lines[0].equals("PLP-4.0"))  {
+                if(lines[0].equals(Text.projectFileVersionString))  {
 
                 } else {
-                    Msg.W("This is not a PLP-4.0 project file. Opening anyways.", this);
+                    Msg.W("This is not a " + Text.projectFileVersionString +
+                            " project file. Opening anyways.", this);
                 }
 
                 metaScanner = new Scanner(meta);

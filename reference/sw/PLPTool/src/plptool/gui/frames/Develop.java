@@ -440,6 +440,7 @@ public class Develop extends javax.swing.JFrame {
         undoManager.setLimit(Config.devMaxUndoEntries);
 
         DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.EDITOR_TEXT_SET, -1));
+        CallbackRegistry.callback(CallbackRegistry.EDITOR_TEXT_SET, null);
         txtEditor.getDocument().addUndoableEditListener(new UndoableEditListener() {
 
             @Override

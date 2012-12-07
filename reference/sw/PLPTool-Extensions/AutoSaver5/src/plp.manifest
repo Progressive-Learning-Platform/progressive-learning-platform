@@ -1,0 +1,10 @@
+title::Autosaver
+author::wira
+license::GPLv3
+description::Autosaver module for PLPTool 5
+version::1.0
+class::plptool.extras.autosaver5.PLPToolConnector$AutoSaveThread
+class::plptool.extras.autosaver5.PLPToolConnector$AutosaveCallback
+class::plptool.extras.autosaver5.PLPToolConnector$DevDocListener
+class::plptool.extras.autosaver5.PLPToolConnector
+loadmodule5::plptool.extras.autosaver5.PLPToolConnector

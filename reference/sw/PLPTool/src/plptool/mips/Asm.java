@@ -112,7 +112,7 @@ public class Asm extends plptool.PLPAsm {
      * register mappings.
      */
     private void defineArch() {
-                // R-type Arithmetic and Logical instructions
+        // R-type Arithmetic and Logical instructions
         instrMap.put("addu", new Integer(0));
         instrMap.put("subu", new Integer(0));
         instrMap.put("and",  new Integer(0));
@@ -120,6 +120,8 @@ public class Asm extends plptool.PLPAsm {
         instrMap.put("nor",  new Integer(0));
         instrMap.put("slt",  new Integer(0));
         instrMap.put("sltu", new Integer(0));
+        instrMap.put("sllv", new Integer(0));
+        instrMap.put("srlv", new Integer(0));
 
         // R-type Shift instructions
         instrMap.put("sll",  new Integer(1));
@@ -176,6 +178,8 @@ public class Asm extends plptool.PLPAsm {
         funct.put("sltu"  , new Byte((byte) 0x2B));
         funct.put("sll"   , new Byte((byte) 0x00));
         funct.put("srl"   , new Byte((byte) 0x02));
+        funct.put("sllv"  , new Byte((byte) 0x04));
+        funct.put("srlv"  , new Byte((byte) 0x06));
         //funct.put("sub"   , new Byte((byte) 0x22));
         funct.put("subu"  , new Byte((byte) 0x23));
 	funct.put("mullo" , new Byte((byte) 0x10));
@@ -246,26 +250,22 @@ public class Asm extends plptool.PLPAsm {
         regs.put("$t5"   , new Byte((byte) 13));
         regs.put("$t6"   , new Byte((byte) 14));
         regs.put("$t7"   , new Byte((byte) 15));
-        regs.put("$s0"   , new Byte((byte) 16));
-        regs.put("$s1"   , new Byte((byte) 17));
-        regs.put("$s2"   , new Byte((byte) 18));
-        regs.put("$s3"   , new Byte((byte) 19));
-        regs.put("$s4"   , new Byte((byte) 20));
-        regs.put("$s5"   , new Byte((byte) 21));
-        regs.put("$s6"   , new Byte((byte) 22));
-        regs.put("$s7"   , new Byte((byte) 23));
-        regs.put("$t8"   , new Byte((byte) 24));
-        regs.put("$t9"   , new Byte((byte) 25));
-        regs.put("$k0"   , new Byte((byte) 26));
-        regs.put("$k1"   , new Byte((byte) 27));
-        regs.put("$gp"   , new Byte((byte) 28));
-        regs.put("$sp"   , new Byte((byte) 29));
-        regs.put("$fp"   , new Byte((byte) 30));
-        regs.put("$ra"   , new Byte((byte) 31));
-
-        // Interrupt registers
+        regs.put("$t8"   , new Byte((byte) 16));
+        regs.put("$t9"   , new Byte((byte) 17));
+        regs.put("$s0"   , new Byte((byte) 18));
+        regs.put("$s1"   , new Byte((byte) 19));
+        regs.put("$s2"   , new Byte((byte) 20));
+        regs.put("$s3"   , new Byte((byte) 21));
+        regs.put("$s4"   , new Byte((byte) 22));
+        regs.put("$s5"   , new Byte((byte) 23));
+        regs.put("$s6"   , new Byte((byte) 24));
+        regs.put("$s7"   , new Byte((byte) 25));
         regs.put("$i0"   , new Byte((byte) 26));
         regs.put("$i1"   , new Byte((byte) 27));
+        regs.put("$iv"   , new Byte((byte) 28));
+        regs.put("$sp"   , new Byte((byte) 29));
+        regs.put("$ir"   , new Byte((byte) 30));
+        regs.put("$ra"   , new Byte((byte) 31));
     }
 
     /**
