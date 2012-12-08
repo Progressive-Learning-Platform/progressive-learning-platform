@@ -478,9 +478,9 @@ public class Architecture extends PLPArchitecture {
         data[5][0] = "$18-$25, $s0-$s7";        data[5][1] = "Saved temporaries";
         data[6][0] = "$26-$27, $i0-$i1";        data[6][1] = "Interrupt temporaries";
         data[7][0] = "$28, $iv";                data[7][1] = "Interrupt vector";
-        data[8][0] = "$29, $sp";                data[9][1] = "Stack pointer";
-        data[9][0] = "$30, $ir";               data[10][1] = "Interrupt return address";
-        data[10][0] = "$31, $ra";               data[11][1] = "Return address";
+        data[8][0] = "$29, $sp";                data[8][1] = "Stack pointer";
+        data[9][0] = "$30, $ir";                data[9][1] = "Interrupt return address";
+        data[10][0] = "$31, $ra";               data[10][1] = "Return address";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
