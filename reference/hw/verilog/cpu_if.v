@@ -66,7 +66,7 @@ module cpu_if(rst, clk, cpu_stall, imem_addr, p_pc, pc_j,
 		int_state == 2'b10 			 ? 2'b11 :
 		int_state == 2'b11 			 ? 2'b00 : int_state; /* default case is invalid */
 	wire [31:0] next_inst = 
-		int_state == 2'b10 ? 32'h0340d809 : /* jalr $i1, $i0 - 0000_0011_0100_0000_1101_1000_0000_1001 */
+		int_state == 2'b10 ? 32'h0380f009 : /* jalr $ir, $iv - 0000_0011_1000_0000_1111_0000_0000_1001 */
 		int_state == 2'b11 ? 32'h00000000 : /* nop */
 				     iin;
 	assign int_ack = int_state != 2'b00;
