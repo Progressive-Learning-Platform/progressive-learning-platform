@@ -115,8 +115,8 @@ module cpu_ex(rst, clk, cpu_stall, id_c_rfw, id_c_wbsource, id_c_drw,
 		(alu_func == 6'h2b) ? cmp_unsigned :
 		(alu_func == 6'h00) ? y << shamt :
 		(alu_func == 6'h02) ? y >> shamt :
-		(alu_func == 6'h01) ? y << x[4:0] :
-		(alu_func == 6'h03) ? y >> x[4:0] :
+		(alu_func == 6'h01) ? x << y :
+		(alu_func == 6'h03) ? x >> y :
 		(alu_func == 6'h23) ? x - y :
 		(alu_func == 6'h04) ? x != y :
 		(alu_func == 6'h05) ? x == y :
