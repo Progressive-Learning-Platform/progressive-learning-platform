@@ -74,6 +74,11 @@ public class Architecture extends PLPArchitecture {
 
         menuBuffaloInterface.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
+                if(!plp.isSerialSupported()) {
+                    Msg.E("BUFFALO requires native RXTX library for serial communication.",
+                            Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, null);
+                    return;
+                }
                 b.setVisible(true);
             }
         });

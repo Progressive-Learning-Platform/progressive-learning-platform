@@ -112,7 +112,7 @@ SectionEnd
 
 Section /o "PLPTool Extensions"
   SetOutPath $INSTDIR\resources
-  File "..\..\extras\AutoSaver\store\AutoSaver.jar"
+  File "..\..\reference\sw\PLPTool-Extensions\AutoSaver5\dist\AutoSaver5.jar"
   File "..\..\reference\sw\PLPTool-Extensions\Flowchart\dist\Flowchart.jar"
   SetOutPath $INSTDIR
 SectionEnd
