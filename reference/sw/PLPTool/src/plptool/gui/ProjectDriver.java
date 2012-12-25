@@ -278,6 +278,7 @@ public final class ProjectDriver {
             serial_support = false;
         } catch(NoClassDefFoundError e) {
             Msg.W("Unsatisfied RXTX link.", null);
+            serial_support = false;
         }        
     }
 
@@ -865,13 +866,12 @@ public final class ProjectDriver {
                         arch.init();
                     } else {
                         arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
-                        arch.init();
                         if(arch == null) {
                             Msg.W("Invalid ISA ID is specified in the project file: '" + temp +
                                   "'. Assuming PLPCPU.", this);
                             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
-                            arch.init();
                         }
+                        arch.init();
                     }
                     arch.hook(this);
                 }

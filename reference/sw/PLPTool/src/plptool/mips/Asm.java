@@ -178,8 +178,8 @@ public class Asm extends plptool.PLPAsm {
         funct.put("sltu"  , new Byte((byte) 0x2B));
         funct.put("sll"   , new Byte((byte) 0x00));
         funct.put("srl"   , new Byte((byte) 0x02));
-        funct.put("sllv"  , new Byte((byte) 0x04));
-        funct.put("srlv"  , new Byte((byte) 0x06));
+        funct.put("sllv"  , new Byte((byte) 0x01));
+        funct.put("srlv"  , new Byte((byte) 0x03));
         //funct.put("sub"   , new Byte((byte) 0x22));
         funct.put("subu"  , new Byte((byte) 0x23));
 	funct.put("mullo" , new Byte((byte) 0x10));

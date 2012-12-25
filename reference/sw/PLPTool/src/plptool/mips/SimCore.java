@@ -1413,8 +1413,8 @@ public class SimCore extends PLPSimCore {
                         case 0x02: return b >>> MIPSInstr.sa(instr);
 			case 0x10: return ((long)(int) a * (long)(int)b) & 0xffffffffL;
 			case 0x11: return (((long)(int) a * (long)(int) b) & 0xffffffff00000000L) >> 32;
-                        case 0x04: return a << b;
-                        case 0x06: return a >> b;
+                        case 0x01: return a << b;
+                        case 0x03: return a >> b;
                     }
 
                 case 0x04: return (a - b == 0) ? 1 : 0;
