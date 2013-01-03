@@ -64,7 +64,7 @@ public class DynamicModuleFramework {
     /**
      * Boolean to give warning about loading 3rd party modules once
      */
-    private static boolean warn = false;
+    public static boolean warned = false;
 
     /**
      * Reference to the class loader
@@ -81,10 +81,10 @@ public class DynamicModuleFramework {
      * @return True if class is loaded and attached to the list, false otherwise
      */
     public static boolean loadModuleClass(String path, String className) {
-        if(!warn) {
+        if(!warned) {
             Msg.W("YOU ARE LOADING A DYNAMIC MODULE, THIS COULD POTENTIALLY BE DANGEROUS", null);
             Msg.W("Make sure you only use trusted third party modules!", null);
-            warn = true;
+            warned = true;
         }
         Msg.D("[" + index + "] Loading module class " + className + " from " + path +
               " ... ", 2, null);
@@ -812,7 +812,7 @@ public class DynamicModuleFramework {
      * Turn off first-time module warning
      */
     public static void disableWarning() {
-        warn = true;
+        warned = true;
     }
 }
 
@@ -856,7 +856,7 @@ class ManifestHandlers {
         if(ret > -1)
             cIndex = DynamicModuleFramework.newGenericModuleInstance(ret);
         if(cIndex > -1) {
-            Msg.M("Applying manifest entry: " + entry);
+            Msg.D("Applying manifest entry: " + entry, 2, null);
             DynamicModuleFramework.hook(cIndex, plp);
         }
     }
@@ -869,7 +869,7 @@ class ManifestHandlers {
         if(ret > -1)
             cIndex = DynamicModuleFramework.newModuleInstance(ret);
         if(cIndex > -1) {
-            Msg.M("Applying manifest entry: " + entry);
+            Msg.D("Applying manifest entry: " + entry, 2, null);
             ModuleInterface5 mod = (ModuleInterface5)DynamicModuleFramework.getModuleInstance(cIndex);
             int[] minVersion = mod.getMinimumPLPToolVersion();
             if(Text.version[0] < minVersion[0] ||
@@ -913,7 +913,7 @@ class ManifestHandlers {
         }
         int ret = DynamicModuleFramework.isModuleClassRegistered(tokens[1]);
         if(ret > -1) {
-            Msg.M("Registering ISA: " + tokens[2] + " ID: " + tokens[3]);
+            Msg.D("Registering ISA: " + tokens[2] + " ID: " + tokens[3], 2, null);
             ArchRegistry.registerArchitecture(
                     DynamicModuleFramework.getDynamicModuleClass(ret),
                     Integer.parseInt(tokens[3]), tokens[2], tokens[4]);
@@ -924,7 +924,7 @@ class ManifestHandlers {
         String tokens[] = entry.split("::");
         if(tokens.length != 3)
             return;
-        Msg.M("Applying manifest entry: " + entry);
+        Msg.D("Applying manifest entry: " + entry, 2, null);
         PLPToolbox.checkCreateTempDirectory();
         PLPToolbox.copyFromJar(jar, tokens[1],
                 PLPToolbox.getTmpDir() + "/" + tokens[2]);

@@ -183,6 +183,11 @@ public class PLPToolApp extends SingleFrameApplication {
                 loadModules = false;
                 activeArgIndex++;
 
+            // Disable the warning about loading modules
+            } else if (args.length >= activeArgIndex + 1 && args[i].equals("-W")) {
+                DynamicModuleFramework.warned = true;
+                activeArgIndex++;
+
             // Delete ~/.plp/autoload
             } else if (args.length >= activeArgIndex + 1 && args[i].equals("-R")) {
                 DynamicModuleFramework.removeAutoloadModules();
@@ -417,6 +422,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("   -D <path>              Attempt to load all modules in the directory ");
         System.out.println("                            specified by <path>");
         System.out.println("   -N                     Do NOT autoload modules for this PLPTool session");
+        System.out.println("   -W                     Do not warn about the dangers of loading a module");
         System.out.println("   -S <URL>               Fetch a module's jar file from URL, save it to the");
         System.out.println("                            the autoload directory, and quit. This module will");
         System.out.println("                            be autoloaded the next time PLPTool starts. Module");

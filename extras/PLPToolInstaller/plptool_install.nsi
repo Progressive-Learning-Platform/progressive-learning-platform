@@ -55,7 +55,7 @@ Section "PLPTool Install (required)"
 
   IfFileExists $INSTDIR\PLPToolWin.bat 0 +2
     Delete $INSTDIR\PLPToolWin.bat    
-  Push `cd /D $INSTDIR$\r$\n"$R0" -Djava.library.path=. -jar PLPToolStatic.jar -D .\resources %1 %2 %3 %4 %5 %6 %7 %8 %9$\r$\n`
+  Push `cd /D $INSTDIR$\r$\n"$R0" -Djava.library.path=. -jar PLPToolStatic.jar -W -D .\resources %1 %2 %3 %4 %5 %6 %7 %8 %9$\r$\n`
   Push `$INSTDIR\PLPToolWin.bat`
   Call WriteToFile
   
