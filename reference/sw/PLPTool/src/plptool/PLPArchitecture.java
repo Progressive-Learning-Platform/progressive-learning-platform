@@ -227,7 +227,10 @@ public abstract class PLPArchitecture {
     public void listing() {}
 
     /**
-     * Called when a new project with the specified ISA has been called
+     * Called when a new project with the specified ISA has been called. This
+     * function is NOT called if the user provides a source file to import
+     * while creating a new project, e.g. if the user uses the '-c' command
+     * line from the terminal
      */
     public void newProject(ProjectDriver plp) {}
 
