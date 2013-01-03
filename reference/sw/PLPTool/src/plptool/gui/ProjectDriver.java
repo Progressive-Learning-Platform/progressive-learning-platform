@@ -448,8 +448,10 @@ public final class ProjectDriver {
     }
 
     /**
-     * Initialize plp project data structures
+     * Initialize plp project data structures. This function provides a default
+     * empty source file and calls the architecture newProject() method.
      *
+     * @param archID The ID of the ISA to use
      * @return PLP_OK
      */
     public int create(int archID) {
@@ -481,7 +483,7 @@ public final class ProjectDriver {
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
 
-        meta =  "PLP-4.0\n";
+        meta =  "PLP-5.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
         dirty = true;
@@ -510,6 +512,7 @@ public final class ProjectDriver {
      * assembly source file into the project.
      *
      * @param asmPath Path to ASM file to import
+     * @param archID The ID of the ISA to use
      * @return PLP_OK
      */
     public int create(String asmPath, int archID) {
@@ -545,13 +548,12 @@ public final class ProjectDriver {
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
 
-        meta =  "PLP-4.0\n";
+        meta =  "PLP-5.0\n";
         meta += "START=0x0\n";
         meta += "DIRTY=1\n\n";
         dirty = true;
 
         open_asm = 0;
-        arch.newProject(this);
         hookEvent(new ProjectEvent(ProjectEvent.NEW_PROJECT, -1));
         Msg.I("New project initialized.", null);
 
