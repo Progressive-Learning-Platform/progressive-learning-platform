@@ -1,3 +1,0 @@
-+verbose lfsr32000.v +sdfannotate lfsr.sdf -y lca100kgate +libext+.v
-+printstats
-  
