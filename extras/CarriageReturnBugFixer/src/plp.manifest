@@ -1,7 +1,0 @@
-title::PLPTool 4.0 Carriage Return Bug Fixer
-author::PLP Project
-version::1.0.0
-description::This module fixes the excessive carriage return bug
-class::carriagereturnbugfixer.PLPToolConnector
-class::carriagereturnbugfixer.PLPToolConnector$1
-loadwithproject::carriagereturnbugfixer.PLPToolConnector

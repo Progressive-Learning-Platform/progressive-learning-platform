@@ -1,9 +1,0 @@
-title::PLPTool AutoSaver
-author::PLP Project
-license::GPLv3
-description::Saves the project under .plp/plp.autosave.[project name] every predetermined interval
-version::0.0.1
-class::autosaver.PLPToolConnector
-class::autosaver.PLPToolConnector$AutoSaveThread
-class::autosaver.PLPToolConnector$DevDocListener
-loadwithproject::autosaver.PLPToolConnector
