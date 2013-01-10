@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2012 PLP Contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,21 +16,12 @@
 
  */
 
-package plptimingdiagram.signals;
-
-import java.util.ArrayList;
+package plptool.extras.classroom;
 
 /**
  *
- * @author wira
+ * @author Wira
  */
-public class Clock extends Signal {
-    public Clock() {
-        super();
-    }
+public class Aggregator {
 
-    @Override
-    public ArrayList getEdgesWithinRange(double startTime, double endTime) {
-        return null;
-    }
 }
