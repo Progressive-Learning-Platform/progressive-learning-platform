@@ -51,7 +51,7 @@ Section "PLPTool Install (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "..\..\reference\sw\PLPTool\store\PLPToolStatic.jar"
+  File "..\PLPTool\store\PLPToolStatic.jar"
 
   IfFileExists $INSTDIR\PLPToolWin.bat 0 +2
     Delete $INSTDIR\PLPToolWin.bat    
@@ -66,16 +66,16 @@ Section "PLPTool Install (required)"
   Call WriteToFile
   
   ${If} ${RunningX64}
-	File /oname=rxtxSerial.dll ..\..\reference\sw\PLPTool\store\rxtxSerial64.dll
+	File /oname=rxtxSerial.dll ..\PLPTool\store\rxtxSerial64.dll
   ${Else}
-	File /oname=rxtxSerial.dll ..\..\reference\sw\PLPTool\store\rxtxSerial32.dll
+	File /oname=rxtxSerial.dll ..\PLPTool\store\rxtxSerial32.dll
   ${EndIf}
   
   CreateDirectory "$INSTDIR\resources"
   SetOutPath $INSTDIR\resources
-  File "..\..\misc\art\plptool\appicon.ico"
-  File "..\..\misc\art\plptool\terminal.ico"
-  File "..\..\misc\art\plptool\folder.ico"
+  File "..\..\..\misc\art\plptool\appicon.ico"
+  File "..\..\..\misc\art\plptool\terminal.ico"
+  File "..\..\..\misc\art\plptool\folder.ico"
   SetOutPath $INSTDIR
   
   ; Write the installation path into the registry
@@ -106,14 +106,14 @@ Section "Start Menu Shortcuts"
 SectionEnd
 
 Section "Example Programs and Software Library"
-  File /r "..\..\reference\sw\examples"
-  File /r "..\..\reference\sw\libplp"
+  File /r "..\examples"
+  File /r "..\libplp"
 SectionEnd
 
 Section /o "PLPTool Extensions"
   SetOutPath $INSTDIR\resources
-  File "..\..\reference\sw\PLPTool-Extensions\AutoSaver5\dist\AutoSaver5.jar"
-  File "..\..\reference\sw\PLPTool-Extensions\Flowchart\dist\Flowchart.jar"
+  File "..\PLPTool-Extensions\AutoSaver5\dist\AutoSaver5.jar"
+  File "..\PLPTool-Extensions\Flowchart\dist\Flowchart.jar"
   SetOutPath $INSTDIR
 SectionEnd
 
