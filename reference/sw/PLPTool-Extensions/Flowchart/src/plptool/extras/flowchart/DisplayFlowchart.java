@@ -38,6 +38,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
     private JLabel fLabel;
     private double zoomFactor;
     private BufferedImage img;
+    private final double ZOOM_SCALING = 1.5;
 
     /** Creates new form ExportDOT */
     public DisplayFlowchart(java.awt.Frame parent) {
@@ -224,7 +225,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDisplayActionPerformed
 
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-        zoomFactor /= 2;
+        zoomFactor /= ZOOM_SCALING;
         int lx = originalI.getWidth(null);
         int ly = originalI.getHeight(null);
         i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
@@ -232,7 +233,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
-        zoomFactor *= 2;
+        zoomFactor *= ZOOM_SCALING;
         int lx = originalI.getWidth(null);
         int ly = originalI.getHeight(null);
         i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
