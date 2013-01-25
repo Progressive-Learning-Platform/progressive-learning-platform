@@ -29,8 +29,6 @@ import java.util.ArrayList;
  * @author Wira
  */
 public class CallbackRegistry {
-    public static final int CALLBACKS                   = 36;
-
     public static final int EXIT                        = 0;
     public static final int START                       = 1;
     public static final int COMMAND                     = 2;
@@ -71,8 +69,14 @@ public class CallbackRegistry {
     public static final int BUS_EVAL                    = 32;
     public static final int BUS_ADD                     = 33;
     public static final int BUS_REMOVE                  = 34;
+    public static final int BUS_GUI_EVAL                = 35;
     
-    public static final int EDITOR_TEXT_SET             = 35;
+    public static final int EDITOR_TEXT_SET             = 36;
+    public static final int GUI_UPDATE                  = 37;
+    public static final int GUI_VIEW_REFRESH            = 38;
+    public static final int CRITICAL_ERROR              = 39;
+
+    public static final int CALLBACKS                   = 40;
 
     @SuppressWarnings("unchecked")
     private static final ArrayList<Callback>[] callbacks = new ArrayList[CALLBACKS];

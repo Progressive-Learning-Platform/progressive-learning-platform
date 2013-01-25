@@ -155,6 +155,7 @@ public class DynamicModuleFramework {
     }
       
     /**
+     * --- DEPRECATED ---
      * Instantiate a dynamic module as PLPGenericModule and add a reference
      * to it in the dynamicModuleInstances list.
      *
@@ -182,7 +183,7 @@ public class DynamicModuleFramework {
     }
 
     /**
-     * Instantiate a dynamic module as PLPGenericModule and add a reference
+     * Instantiate a dynamic module and add a reference
      * to it in the dynamicModuleInstances list.
      *
      * @param index Index of the class
@@ -209,6 +210,7 @@ public class DynamicModuleFramework {
     }
 
     /**
+     * --- DEPRECATED ---
      * Return the number of instantiated dynamic PLPTool 4.1 module objects
      *
      * @return Number of instantiated dynamic module objects
@@ -227,6 +229,7 @@ public class DynamicModuleFramework {
     }
 
     /**
+     * --- DEPRECATED ---
      * Return a reference to the specified dynamic module instance (PLPTool
      * version 4.1)
      *

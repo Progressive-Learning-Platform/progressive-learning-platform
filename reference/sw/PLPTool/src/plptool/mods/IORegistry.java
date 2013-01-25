@@ -22,7 +22,7 @@ import plptool.PLPSimBusModule;
 import plptool.Constants;
 import plptool.gui.ProjectDriver;
 import plptool.Msg;
-import plptool.dmf.DynamicModuleFramework;
+import plptool.dmf.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JFrame;
@@ -645,6 +645,8 @@ public class IORegistry {
                 modules.get(index).notify();
                 } catch(Exception e) {}
             }
+
+        CallbackRegistry.callback(CallbackRegistry.BUS_GUI_EVAL, null);
 
         } catch(NullPointerException e) {
             // modules might have been removed when this is called, ignore
