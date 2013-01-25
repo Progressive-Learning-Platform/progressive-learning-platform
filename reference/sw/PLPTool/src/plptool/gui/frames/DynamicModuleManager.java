@@ -59,10 +59,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         txtClassName = new javax.swing.JTextField();
         btnBrowseClass = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
-        btnSaveClass = new javax.swing.JButton();
-        btnRemoveClass = new javax.swing.JButton();
         btnLoadInstance = new javax.swing.JButton();
-        jSeparator2 = new javax.swing.JSeparator();
         btnClassProjectAccess = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -139,15 +136,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
         jSeparator1.setName("jSeparator1"); // NOI18N
 
-        btnSaveClass.setText(resourceMap.getString("btnSaveClass.text")); // NOI18N
-        btnSaveClass.setToolTipText(resourceMap.getString("btnSaveClass.toolTipText")); // NOI18N
-        btnSaveClass.setEnabled(false);
-        btnSaveClass.setName("btnSaveClass"); // NOI18N
-
-        btnRemoveClass.setText(resourceMap.getString("btnRemoveClass.text")); // NOI18N
-        btnRemoveClass.setEnabled(false);
-        btnRemoveClass.setName("btnRemoveClass"); // NOI18N
-
         btnLoadInstance.setText(resourceMap.getString("btnLoadInstance.text")); // NOI18N
         btnLoadInstance.setName("btnLoadInstance"); // NOI18N
         btnLoadInstance.addActionListener(new java.awt.event.ActionListener() {
@@ -155,8 +143,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 btnLoadInstanceActionPerformed(evt);
             }
         });
-
-        jSeparator2.setName("jSeparator2"); // NOI18N
 
         btnClassProjectAccess.setText(resourceMap.getString("btnClassProjectAccess.text")); // NOI18N
         btnClassProjectAccess.setName("btnClassProjectAccess"); // NOI18N
@@ -187,7 +173,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
                     .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                         .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -204,12 +190,12 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnSaveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .addComponent(btnRemoveClass, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .addComponent(jLabel2)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .addComponent(btnClassProjectAccess)
-                            .addComponent(btnLoadInstance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))))
+                            .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
+                                .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnLoadInstance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnClassProjectAccess, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneDynamicModuleClassesLayout.setVerticalGroup(
@@ -230,18 +216,12 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
-                        .addComponent(btnSaveClass)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRemoveClass)
-                        .addGap(18, 18, 18)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClassProjectAccess)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnLoadInstance)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -365,7 +345,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 .addGroup(paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCustomHook, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCall))
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
         tabMain.addTab(resourceMap.getString("paneManageLoadedModules.TabConstraints.tabTitle"), paneManageLoadedModules); // NOI18N
@@ -531,8 +511,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     private javax.swing.JButton btnLoadInstance;
     private javax.swing.JButton btnPassProject;
     private javax.swing.JButton btnRegisterClass;
-    private javax.swing.JButton btnRemoveClass;
-    private javax.swing.JButton btnSaveClass;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -540,7 +518,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPanel paneDynamicModuleClasses;
     private javax.swing.JPanel paneManageLoadedModules;
     private javax.swing.JTabbedPane tabMain;

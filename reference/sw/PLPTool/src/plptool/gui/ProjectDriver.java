@@ -1189,6 +1189,8 @@ public final class ProjectDriver {
 
         g_dev.setCurFile(header);
 
+        CallbackRegistry.callback(CallbackRegistry.GUI_VIEW_REFRESH,
+                commitCurrentAsm);
         Msg.D("Done.", 3, this);
         return Constants.PLP_OK;
     }
@@ -1954,6 +1956,8 @@ public final class ProjectDriver {
         if(g_simctrl != null)
             g_simctrl.update();
 
+        CallbackRegistry.callback(CallbackRegistry.GUI_UPDATE, null);
+
         } catch(Exception e) {
             // GUI update error has occured
             System.out.println("GUI error has occured. Switch to debug level 2 or above to print stack trace.");
@@ -2079,11 +2083,11 @@ public final class ProjectDriver {
         System.err.println("[CRITICAL ERROR] " +
                     "This really, really, really, should not have happened.");
         System.err.println("[CRITICAL ERROR] " +
-                    "PLP Tool is now exiting. Please report this issue. Thanks!");
+                    "PLPTool is now exiting. Please report this issue. Thanks!");
         if(g) {
             javax.swing.JOptionPane.showMessageDialog(g_dev,
                     "This really, really, really, should not have happened. " +
-                    "PLP Tool is now exiting. Please report this issue. Thanks!",
+                    "PLPTool is now exiting. Please report this issue. Thanks!",
                     "CRITICAL ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         
@@ -2093,6 +2097,7 @@ public final class ProjectDriver {
             this.save();
         }
 
+        CallbackRegistry.callback(CallbackRegistry.CRITICAL_ERROR, null);
         System.exit(-1);
     }
 

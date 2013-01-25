@@ -65,7 +65,7 @@ public class ModuleManager extends javax.swing.JDialog {
         }
 
         DefaultTableModel tblLoaded = (DefaultTableModel) tblLoadedMods.getModel();
-        String[] row = new String[4];
+        String[] row = new String[3];
         while(tblLoaded.getRowCount() > 0)
             tblLoaded.removeRow(0);
         for(int i = 0; i < DynamicModuleFramework.getNumberOfModuleInstances(); i++) {
@@ -77,23 +77,28 @@ public class ModuleManager extends javax.swing.JDialog {
                 row[1] = "";
                 for(int j = 0; j < mod.getVersion().length; j++)
                     row[1] += mod.getVersion()[j] + (j != mod.getVersion().length-1 ? "." : "");
-                row[2] = mod.getDescription();
-                row[3] = mod.getClass().getCanonicalName();
+                row[2] = "" + i;
                 tblLoaded.addRow(row);
             } 
         }
+        tblLoadedMods.setModel(tblLoaded);
+
+        DefaultTableModel tblISAsModel = (DefaultTableModel) tblISAs.getModel();
+        row = new String[2];
+        while(tblISAsModel.getRowCount() > 0)
+            tblISAsModel.removeRow(0);
 
         Object[][] archs = ArchRegistry.getArchList();
         for(int i = 0; i < archs.length; i++) {
             int id = (Integer) archs[i][0];
             row[0] = ArchRegistry.getStringID(id);
-            row[1] = "ISA Module";
-            row[2] = ArchRegistry.getDescription(id);
-            row[3] = ((Class) archs[i][1]).getCanonicalName();
-            tblLoaded.addRow(row);
+            row[1] = Integer.toString(id);
+            //row[2] = ArchRegistry.getDescription(id);
+            //row[3] = ((Class) archs[i][1]).getCanonicalName();
+            tblISAsModel.addRow(row);
         }
 
-        tblLoadedMods.setModel(tblLoaded);
+        tblISAs.setModel(tblISAsModel);
     }
 
     /** This method is called from within the constructor to
@@ -109,7 +114,6 @@ public class ModuleManager extends javax.swing.JDialog {
         panelAutoload = new javax.swing.JPanel();
         lblDownload = new javax.swing.JLabel();
         btnLoad = new javax.swing.JButton();
-        btnClose = new javax.swing.JButton();
         scrollerTable = new javax.swing.JScrollPane();
         tblMods = new javax.swing.JTable();
         txtURL = new javax.swing.JTextField();
@@ -117,9 +121,26 @@ public class ModuleManager extends javax.swing.JDialog {
         lblInfo = new javax.swing.JLabel();
         btnDownload = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel3 = new javax.swing.JLabel();
         panelLoadedMods = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblLoadedMods = new javax.swing.JTable();
+        lblModDescription = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtModDescription = new javax.swing.JTextArea();
+        lblConnectorClass = new javax.swing.JLabel();
+        txtConnectorClass = new javax.swing.JTextField();
+        panelArchs = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblISAs = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtISADescription = new javax.swing.JTextArea();
+        jLabel2 = new javax.swing.JLabel();
+        txtISAConnectorClass = new javax.swing.JTextField();
+        btnClose = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(ModuleManager.class);
@@ -134,19 +155,12 @@ public class ModuleManager extends javax.swing.JDialog {
         lblDownload.setText(resourceMap.getString("lblDownload.text")); // NOI18N
         lblDownload.setName("lblDownload"); // NOI18N
 
+        btnLoad.setFont(resourceMap.getFont("btnLoad.font")); // NOI18N
         btnLoad.setText(resourceMap.getString("btnLoad.text")); // NOI18N
         btnLoad.setName("btnLoad"); // NOI18N
         btnLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoadActionPerformed(evt);
-            }
-        });
-
-        btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
-        btnClose.setName("btnClose"); // NOI18N
-        btnClose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCloseActionPerformed(evt);
             }
         });
 
@@ -211,32 +225,34 @@ public class ModuleManager extends javax.swing.JDialog {
             }
         });
 
+        jSeparator1.setName("jSeparator1"); // NOI18N
+
+        jLabel3.setFont(resourceMap.getFont("jLabel3.font")); // NOI18N
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
+
         javax.swing.GroupLayout panelAutoloadLayout = new javax.swing.GroupLayout(panelAutoload);
         panelAutoload.setLayout(panelAutoloadLayout);
         panelAutoloadLayout.setHorizontalGroup(
             panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAutoloadLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollerTable, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
-                    .addComponent(lblInfo, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelAutoloadLayout.createSequentialGroup()
-                        .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelAutoloadLayout.createSequentialGroup()
-                                .addComponent(lblDownload)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtURL, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
-                            .addGroup(panelAutoloadLayout.createSequentialGroup()
-                                .addComponent(btnBrowse)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                                .addComponent(btnLoad, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(4, 4, 4)))
-                        .addGap(12, 12, 12)
-                        .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnDownload, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollerTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                    .addComponent(lblInfo)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAutoloadLayout.createSequentialGroup()
+                        .addComponent(lblDownload)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtURL, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDownload, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAutoloadLayout.createSequentialGroup()
+                        .addComponent(btnLoad, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3)
+                    .addComponent(btnBrowse))
                 .addContainerGap())
         );
         panelAutoloadLayout.setVerticalGroup(
@@ -245,19 +261,23 @@ public class ModuleManager extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(lblInfo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scrollerTable, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(scrollerTable, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnDelete)
+                    .addComponent(btnLoad))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addGap(7, 7, 7)
                 .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDownload)
                     .addComponent(txtURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDownload))
-                .addGap(18, 18, 18)
-                .addGroup(panelAutoloadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBrowse)
-                    .addComponent(btnClose)
-                    .addComponent(btnLoad)
-                    .addComponent(btnDelete))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnBrowse)
+                .addGap(18, 18, 18))
         );
 
         tabbedPane.addTab(resourceMap.getString("panelAutoload.TabConstraints.tabTitle"), panelAutoload); // NOI18N
@@ -268,20 +288,20 @@ public class ModuleManager extends javax.swing.JDialog {
 
         tblLoadedMods.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Name", "Version", "Description", "Connector Class"
+                "Name", "Version", "DMF Order"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -293,30 +313,183 @@ public class ModuleManager extends javax.swing.JDialog {
             }
         });
         tblLoadedMods.setName("tblLoadedMods"); // NOI18N
+        tblLoadedMods.getTableHeader().setReorderingAllowed(false);
+        tblLoadedMods.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblLoadedModsMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblLoadedMods);
         tblLoadedMods.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title0")); // NOI18N
         tblLoadedMods.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title1")); // NOI18N
         tblLoadedMods.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title2")); // NOI18N
-        tblLoadedMods.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblLoadedMods.columnModel.title3")); // NOI18N
+
+        lblModDescription.setText(resourceMap.getString("lblModDescription.text")); // NOI18N
+        lblModDescription.setName("lblModDescription"); // NOI18N
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        txtModDescription.setColumns(20);
+        txtModDescription.setEditable(false);
+        txtModDescription.setFont(resourceMap.getFont("txtModDescription.font")); // NOI18N
+        txtModDescription.setLineWrap(true);
+        txtModDescription.setRows(5);
+        txtModDescription.setWrapStyleWord(true);
+        txtModDescription.setName("txtModDescription"); // NOI18N
+        jScrollPane2.setViewportView(txtModDescription);
+
+        lblConnectorClass.setText(resourceMap.getString("lblConnectorClass.text")); // NOI18N
+        lblConnectorClass.setName("lblConnectorClass"); // NOI18N
+
+        txtConnectorClass.setEditable(false);
+        txtConnectorClass.setText(resourceMap.getString("txtConnectorClass.text")); // NOI18N
+        txtConnectorClass.setName("txtConnectorClass"); // NOI18N
 
         javax.swing.GroupLayout panelLoadedModsLayout = new javax.swing.GroupLayout(panelLoadedMods);
         panelLoadedMods.setLayout(panelLoadedModsLayout);
         panelLoadedModsLayout.setHorizontalGroup(
             panelLoadedModsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelLoadedModsLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLoadedModsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                .addGroup(panelLoadedModsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelLoadedModsLayout.createSequentialGroup()
+                        .addComponent(lblConnectorClass)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtConnectorClass, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE))
+                    .addComponent(lblModDescription, javax.swing.GroupLayout.Alignment.LEADING))
                 .addContainerGap())
         );
         panelLoadedModsLayout.setVerticalGroup(
             panelLoadedModsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelLoadedModsLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLoadedModsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblModDescription)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelLoadedModsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtConnectorClass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblConnectorClass))
                 .addContainerGap())
         );
 
         tabbedPane.addTab(resourceMap.getString("panelLoadedMods.TabConstraints.tabTitle"), panelLoadedMods); // NOI18N
+
+        panelArchs.setName("panelArchs"); // NOI18N
+
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        tblISAs.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title", "Arch ID"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblISAs.setName("tblISAs"); // NOI18N
+        tblISAs.getTableHeader().setReorderingAllowed(false);
+        tblISAs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblISAsMousePressed(evt);
+            }
+        });
+        jScrollPane3.setViewportView(tblISAs);
+        tblISAs.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblISAs.columnModel.title0")); // NOI18N
+        tblISAs.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblISAs.columnModel.title1")); // NOI18N
+
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        txtISADescription.setColumns(20);
+        txtISADescription.setFont(resourceMap.getFont("txtISADescription.font")); // NOI18N
+        txtISADescription.setLineWrap(true);
+        txtISADescription.setRows(5);
+        txtISADescription.setWrapStyleWord(true);
+        txtISADescription.setName("txtISADescription"); // NOI18N
+        jScrollPane4.setViewportView(txtISADescription);
+
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
+
+        txtISAConnectorClass.setEditable(false);
+        txtISAConnectorClass.setText(resourceMap.getString("txtISAConnectorClass.text")); // NOI18N
+        txtISAConnectorClass.setName("txtISAConnectorClass"); // NOI18N
+
+        javax.swing.GroupLayout panelArchsLayout = new javax.swing.GroupLayout(panelArchs);
+        panelArchs.setLayout(panelArchsLayout);
+        panelArchsLayout.setHorizontalGroup(
+            panelArchsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelArchsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelArchsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                    .addGroup(panelArchsLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtISAConnectorClass, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
+                .addContainerGap())
+        );
+        panelArchsLayout.setVerticalGroup(
+            panelArchsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelArchsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelArchsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtISAConnectorClass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab(resourceMap.getString("panelArchs.TabConstraints.tabTitle"), panelArchs); // NOI18N
+
+        btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
+        btnClose.setName("btnClose"); // NOI18N
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+
+        btnRefresh.setText(resourceMap.getString("btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(resourceMap.getString("btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setName("btnRefresh"); // NOI18N
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -324,14 +497,23 @@ public class ModuleManager extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 580, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 580, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnRefresh)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClose)
+                    .addComponent(btnRefresh))
                 .addContainerGap())
         );
 
@@ -403,6 +585,29 @@ public class ModuleManager extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnLoadActionPerformed
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        updateTable();
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void tblLoadedModsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblLoadedModsMousePressed
+        int i;
+        if((i = tblLoadedMods.getSelectedRow()) != -1) {
+            // get DMF order
+            ModuleInterface5 mod = (ModuleInterface5) DynamicModuleFramework.getModuleInstance(Integer.parseInt((String)tblLoadedMods.getValueAt(i, 2)));
+            txtModDescription.setText(mod.getDescription());
+            txtConnectorClass.setText(mod.getClass().getCanonicalName());
+        }
+    }//GEN-LAST:event_tblLoadedModsMousePressed
+
+    private void tblISAsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblISAsMousePressed
+        int i, ID;
+        if((i = tblISAs.getSelectedRow()) != -1) {
+            ID = Integer.parseInt((String)tblISAs.getValueAt(i, 1));
+            txtISADescription.setText(ArchRegistry.getDescription(ID));
+            txtISAConnectorClass.setText(ArchRegistry.getRegisteredArchitectureClass(ID).getCanonicalName());
+        }
+    }//GEN-LAST:event_tblISAsMousePressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowse;
@@ -410,15 +615,31 @@ public class ModuleManager extends javax.swing.JDialog {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDownload;
     private javax.swing.JButton btnLoad;
+    private javax.swing.JButton btnRefresh;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblConnectorClass;
     private javax.swing.JLabel lblDownload;
     private javax.swing.JLabel lblInfo;
+    private javax.swing.JLabel lblModDescription;
+    private javax.swing.JPanel panelArchs;
     private javax.swing.JPanel panelAutoload;
     private javax.swing.JPanel panelLoadedMods;
     private javax.swing.JScrollPane scrollerTable;
     private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable tblISAs;
     private javax.swing.JTable tblLoadedMods;
     private javax.swing.JTable tblMods;
+    private javax.swing.JTextField txtConnectorClass;
+    private javax.swing.JTextField txtISAConnectorClass;
+    private javax.swing.JTextArea txtISADescription;
+    private javax.swing.JTextArea txtModDescription;
     private javax.swing.JTextField txtURL;
     // End of variables declaration//GEN-END:variables
 

@@ -286,7 +286,6 @@ public class PLPSimBus {
             return Constants.PLP_OK;
         }
 
-
         } catch(Exception e) {
             return Msg.E("eval(" + index + "): error: " + e,
                             Constants.PLP_SIM_BUS_ERROR, this);

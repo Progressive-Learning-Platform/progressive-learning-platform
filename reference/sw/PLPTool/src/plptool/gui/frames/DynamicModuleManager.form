@@ -73,7 +73,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jSeparator1" alignment="0" pref="549" max="32767" attributes="0"/>
+                          <Component id="jSeparator1" alignment="0" pref="559" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -94,12 +94,14 @@
                               <Component id="jScrollPane1" min="-2" pref="368" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="btnSaveClass" alignment="1" pref="171" max="32767" attributes="1"/>
-                                  <Component id="btnRemoveClass" alignment="1" pref="171" max="32767" attributes="1"/>
-                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jSeparator2" alignment="0" pref="171" max="32767" attributes="0"/>
-                                  <Component id="btnClassProjectAccess" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="btnLoadInstance" alignment="1" pref="171" max="32767" attributes="1"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="btnLoadInstance" max="32767" attributes="1"/>
+                                          <Component id="btnClassProjectAccess" alignment="0" max="32767" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace pref="30" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Component id="jLabel2" pref="181" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                       </Group>
@@ -127,14 +129,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="btnSaveClass" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnRemoveClass" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnClassProjectAccess" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnLoadInstance" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
@@ -228,21 +224,6 @@
                 <Property name="name" type="java.lang.String" value="jSeparator1" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btnSaveClass">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="btnSaveClass.text"/>
-                <Property name="toolTipText" type="java.lang.String" resourceKey="btnSaveClass.toolTipText"/>
-                <Property name="enabled" type="boolean" value="false"/>
-                <Property name="name" type="java.lang.String" value="btnSaveClass" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="btnRemoveClass">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="btnRemoveClass.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
-                <Property name="name" type="java.lang.String" value="btnRemoveClass" noResource="true"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JButton" name="btnLoadInstance">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="btnLoadInstance.text"/>
@@ -251,11 +232,6 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLoadInstanceActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JSeparator" name="jSeparator2">
-              <Properties>
-                <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="btnClassProjectAccess">
               <Properties>
@@ -301,7 +277,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Manage Loaded Modules">
+              <JTabbedPaneConstraints tabName="Loaded Legacy Modules">
                 <Property name="tabTitle" type="java.lang.String" resourceKey="paneManageLoadedModules.TabConstraints.tabTitle"/>
               </JTabbedPaneConstraints>
             </Constraint>
