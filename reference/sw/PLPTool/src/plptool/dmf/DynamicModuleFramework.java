@@ -174,11 +174,11 @@ public class DynamicModuleFramework {
             Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
                   "Generic modules have to extend plptool.PLPGenericModule class.",
                   Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
-            return Constants.PLP_GENERIC_ERROR;
+            return Constants.PLP_ERROR_RETURN;
         } catch(IllegalAccessException e) {
             Msg.E("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
                   Constants.PLP_DMOD_ILLEGAL_ACCESS, null);
-            return Constants.PLP_GENERIC_ERROR;
+            return Constants.PLP_ERROR_RETURN;
         }
     }
 
