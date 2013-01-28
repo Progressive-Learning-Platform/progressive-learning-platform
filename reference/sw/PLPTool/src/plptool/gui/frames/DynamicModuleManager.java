@@ -18,7 +18,7 @@
 
 package plptool.gui.frames;
 
-import plptool.dmf.DynamicModuleFramework;
+import plptool.dmf.*;
 import plptool.*;
 import plptool.gui.ProjectDriver;
 
@@ -40,6 +40,53 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         updateClassList();
         updateObjectList();
         setLocationRelativeTo(parent);
+
+        cmbCallbackEvent.addItem("EXIT                        = 0");
+        cmbCallbackEvent.addItem("START                       = 1");
+        cmbCallbackEvent.addItem("COMMAND                     = 2");
+        cmbCallbackEvent.addItem("EVENT                       = 3");
+
+        cmbCallbackEvent.addItem("PROJECT_NEW                 = 4");
+        cmbCallbackEvent.addItem("PROJECT_SAVE                = 5");
+        cmbCallbackEvent.addItem("PROJECT_OPEN                = 6");
+        cmbCallbackEvent.addItem("PROJECT_OPEN_SUCCESSFUL     = 7");
+        cmbCallbackEvent.addItem("PROJECT_OPEN_ENTRY          = 8");
+        cmbCallbackEvent.addItem("PROJECT_OPENASM_CHANGE      = 9");
+        cmbCallbackEvent.addItem("PROJECT_NEW_ASM             = 10");
+        cmbCallbackEvent.addItem("PROJECT_REMOVE_ASM          = 11");
+
+        cmbCallbackEvent.addItem("LOAD_CONFIG_LINE            = 12");
+        cmbCallbackEvent.addItem("SAVE_CONFIG                 = 13");
+
+        cmbCallbackEvent.addItem("EVENT_SIMULATE              = 14");
+        cmbCallbackEvent.addItem("EVENT_DESIMULATE            = 15");
+        cmbCallbackEvent.addItem("EVENT_SIM_INIT              = 16");
+        cmbCallbackEvent.addItem("EVENT_SIM_POST_INIT         = 17");
+        cmbCallbackEvent.addItem("EVENT_SIM_POST_UNINIT       = 18");
+        cmbCallbackEvent.addItem("EVENT_ASSEMBLE              = 19");
+        cmbCallbackEvent.addItem("EVENT_POST_ASSEMBLE         = 20");
+        cmbCallbackEvent.addItem("EVENT_PROGRAM               = 21");
+
+        cmbCallbackEvent.addItem("SIM_STEP_AGGREGATE          = 22");
+        cmbCallbackEvent.addItem("SIM_POST_STEP_AGGREGATE     = 23");
+        cmbCallbackEvent.addItem("SIM_RUN_START               = 24");
+        cmbCallbackEvent.addItem("SIM_RUN_STOP                = 25");
+        cmbCallbackEvent.addItem("SIM_STEP                    = 26");
+        cmbCallbackEvent.addItem("SIM_POST_STEP               = 27");
+        cmbCallbackEvent.addItem("SIM_RESET                   = 28");
+
+        cmbCallbackEvent.addItem("BUS_READ                    = 29");
+        cmbCallbackEvent.addItem("BUS_POST_READ               = 30");
+        cmbCallbackEvent.addItem("BUS_WRITE                   = 31");
+        cmbCallbackEvent.addItem("BUS_EVAL                    = 32");
+        cmbCallbackEvent.addItem("BUS_ADD                     = 33");
+        cmbCallbackEvent.addItem("BUS_REMOVE                  = 34");
+        cmbCallbackEvent.addItem("BUS_GUI_EVAL                = 35");
+
+        cmbCallbackEvent.addItem("EDITOR_TEXT_SET             = 36");
+        cmbCallbackEvent.addItem("GUI_UPDATE                  = 37");
+        cmbCallbackEvent.addItem("GUI_VIEW_REFRESH            = 38");
+        cmbCallbackEvent.addItem("CRITICAL_ERROR              = 39");
     }
 
     /** This method is called from within the constructor to
@@ -74,7 +121,14 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         txtCustomHook = new javax.swing.JTextField();
         btnCall = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        cmbCallbackEvent = new javax.swing.JComboBox();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblCallbacks = new javax.swing.JTable();
+        btnShowCallbacks = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(DynamicModuleManager.class);
@@ -93,14 +147,14 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Index", "Name", "Superclass", "Saved"
+                "Index", "Name", "Superclass"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -117,7 +171,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         tblModuleClasses.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title0")); // NOI18N
         tblModuleClasses.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title1")); // NOI18N
         tblModuleClasses.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title2")); // NOI18N
-        tblModuleClasses.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("tblModuleClasses.columnModel.title4")); // NOI18N
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
@@ -221,7 +274,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addComponent(btnLoadInstance)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -345,10 +398,92 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 .addGroup(paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCustomHook, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCall))
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
 
         tabMain.addTab(resourceMap.getString("paneManageLoadedModules.TabConstraints.tabTitle"), paneManageLoadedModules); // NOI18N
+
+        jPanel1.setName("jPanel1"); // NOI18N
+
+        jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
+        jLabel6.setName("jLabel6"); // NOI18N
+
+        cmbCallbackEvent.setFont(resourceMap.getFont("cmbCallbackEvent.font")); // NOI18N
+        cmbCallbackEvent.setName("cmbCallbackEvent"); // NOI18N
+        cmbCallbackEvent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                cmbCallbackEventMousePressed(evt);
+            }
+        });
+
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        tblCallbacks.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Order", "Class"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblCallbacks.setName("tblCallbacks"); // NOI18N
+        jScrollPane3.setViewportView(tblCallbacks);
+        tblCallbacks.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblCallbacks.columnModel.title0")); // NOI18N
+        tblCallbacks.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblCallbacks.columnModel.title1")); // NOI18N
+
+        btnShowCallbacks.setText(resourceMap.getString("btnShowCallbacks.text")); // NOI18N
+        btnShowCallbacks.setName("btnShowCallbacks"); // NOI18N
+        btnShowCallbacks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowCallbacksActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbCallbackEvent, 0, 440, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnShowCallbacks)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(cmbCallbackEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnShowCallbacks))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tabMain.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
@@ -358,6 +493,10 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             }
         });
 
+        jLabel5.setFont(resourceMap.getFont("jLabel5.font")); // NOI18N
+        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setName("jLabel5"); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -365,17 +504,22 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tabMain))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 265, Short.MAX_VALUE)
+                        .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
+                .addComponent(tabMain)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnClose)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClose)
+                    .addComponent(jLabel5))
                 .addContainerGap())
         );
 
@@ -391,8 +535,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
             c = DynamicModuleFramework.getDynamicModuleClass(i);
             sC = c.getSuperclass();
-            Object[] row = {i, c.getName(), sC != null ? c.getSuperclass().getName() : "N/A",
-                            false};
+            Object[] row = {i, c.getName(), sC != null ? c.getSuperclass().getName() : "N/A"};
             tbl.addRow(row);
         }
     }
@@ -436,10 +579,12 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
         if(index > -1) {
             int indexObj = DynamicModuleFramework.newGenericModuleInstance(index);
-            DynamicModuleFramework.getGenericModuleInstance(indexObj).hook("init");
-            if(btnClassProjectAccess.isSelected())
-                DynamicModuleFramework.getGenericModuleInstance(indexObj).hook(plp);
-            updateObjectList();
+            if(indexObj > -1) {
+                DynamicModuleFramework.getGenericModuleInstance(indexObj).hook("init");
+                if(btnClassProjectAccess.isSelected())
+                    DynamicModuleFramework.getGenericModuleInstance(indexObj).hook(plp);
+                updateObjectList();
+            }
         }
     }//GEN-LAST:event_btnLoadInstanceActionPerformed
 
@@ -501,6 +646,24 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             btnCallActionPerformed(null);
     }//GEN-LAST:event_txtCustomHookKeyPressed
 
+    private void cmbCallbackEventMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbCallbackEventMousePressed
+
+    }//GEN-LAST:event_cmbCallbackEventMousePressed
+
+    private void btnShowCallbacksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowCallbacksActionPerformed
+        if(cmbCallbackEvent.getSelectedIndex() > -1) {
+            DefaultTableModel tbl = (DefaultTableModel) tblCallbacks.getModel();
+            while(tbl.getRowCount() > 0)
+                tbl.removeRow(0);
+            Object[] callbacks = CallbackRegistry.getCallbacks(cmbCallbackEvent.getSelectedIndex());
+            for(int i = 0; i < callbacks.length; i++) {
+                String[] row = {"" + i, callbacks[i].getClass().getCanonicalName()};
+                tbl.addRow(row);
+            }
+            tblCallbacks.setModel(tbl);
+        }
+    }//GEN-LAST:event_btnShowCallbacksActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowseClass;
     private javax.swing.JButton btnCall;
@@ -511,16 +674,23 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     private javax.swing.JButton btnLoadInstance;
     private javax.swing.JButton btnPassProject;
     private javax.swing.JButton btnRegisterClass;
+    private javax.swing.JButton btnShowCallbacks;
+    private javax.swing.JComboBox cmbCallbackEvent;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel paneDynamicModuleClasses;
     private javax.swing.JPanel paneManageLoadedModules;
     private javax.swing.JTabbedPane tabMain;
+    private javax.swing.JTable tblCallbacks;
     private javax.swing.JTable tblModuleClasses;
     private javax.swing.JTable tblModuleObjects;
     private javax.swing.JTextField txtClassFile;
