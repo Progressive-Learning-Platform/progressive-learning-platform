@@ -1,0 +1,12 @@
+title::<enter title here>
+author::<enter author here>
+license::<enter module license here>
+description::<enter description here>
+version::<enter version here>
+class::plptool.extras.cachesim.BusReadCallback
+class::plptool.extras.cachesim.BusWriteCallback
+class::plptool.extras.cachesim.Engine
+class::plptool.extras.cachesim.ModeSetCallback
+class::plptool.extras.cachesim.PLPToolConnector
+class::plptool.extras.cachesim.Statistics
+loadmodule5::plptool.extras.cachesim.PLPToolConnector
