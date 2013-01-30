@@ -5,8 +5,12 @@ description::<enter description here>
 version::<enter version here>
 class::plptool.extras.cachesim.BusReadCallback
 class::plptool.extras.cachesim.BusWriteCallback
+class::plptool.extras.cachesim.DebugCallback
 class::plptool.extras.cachesim.Engine
+class::plptool.extras.cachesim.Log
 class::plptool.extras.cachesim.ModeSetCallback
 class::plptool.extras.cachesim.PLPToolConnector
 class::plptool.extras.cachesim.Statistics
+class::plptool.extras.cachesim.TestCache
+class::plptool.extras.cachesim.DefaultCache
 loadmodule5::plptool.extras.cachesim.PLPToolConnector

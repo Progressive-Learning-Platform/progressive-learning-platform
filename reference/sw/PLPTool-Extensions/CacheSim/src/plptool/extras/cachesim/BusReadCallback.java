@@ -26,10 +26,10 @@ import plptool.dmf.Callback;
  */
 public class BusReadCallback implements Callback {
     public boolean callback(int num, Object param) {
-        if(PLPToolConnector.mode != PLPToolConnector.SIMULATION_STEP)
+        if(Log.mode != Log.SIMULATION_STEP)
             return false;
         Object[] p = (Object[]) param;
-        Statistics.logRead((Long) p[0], (Long) p[1]);
+        Log.read((Long) p[0], (Long) p[1]);
         return true;
     }
 }

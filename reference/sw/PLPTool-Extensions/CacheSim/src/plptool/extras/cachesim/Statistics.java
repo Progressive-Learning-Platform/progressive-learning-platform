@@ -18,20 +18,37 @@
 
 package plptool.extras.cachesim;
 
+import plptool.Msg;
+
 /**
  *
  * @author Wira
  */
 public class Statistics {
-    public static void reset() {
-        
+    public int read_hits;
+    public int read_accesses;
+    public int write_hits;
+    public int write_accesses;
+
+    public Statistics() {
+        read_hits = 0;
+        read_accesses = 0;
+        write_hits = 0;
+        write_accesses = 0;
     }
 
-    public static void logRead(long addr, long val) {
-
+    public void reset() {
+        read_hits = 0;
+        read_accesses = 0;
+        write_hits = 0;
+        write_accesses = 0;
     }
 
-    public static void logWrite(long addr, long val) {
-        
+    public void print() {
+        Msg.P("read_hits:      " + read_hits);
+        Msg.P("read_accesses:  " + read_accesses);
+        Msg.P("write_hits:     " + write_hits);
+        Msg.P("write_accesses: " + write_accesses);
     }
 }
+

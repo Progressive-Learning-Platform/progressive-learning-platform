@@ -18,18 +18,29 @@
 
 package plptool.extras.cachesim;
 
-import plptool.dmf.Callback;
+import plptool.dmf.*;
+
+import plptool.*;
 
 /**
  *
  * @author Wira
  */
-public class BusWriteCallback implements Callback {
+public class DebugCallback implements Callback {
     public boolean callback(int num, Object param) {
-        if(Log.mode != Log.SIMULATION_STEP)
-            return false;
-        Object[] p = (Object[]) param;
-        Log.write((Long) p[0], (Long) p[1]);
+        String cmd = (String) param;
+        if(cmd.equals("cachesim_init_default")) {
+            Msg.M("CacheSim: Initializing default test cache");
+            Log.head = new TestCache(null);
+        } else if(cmd.equals("cachesim_reset")) {
+            Msg.M("CacheSim: Resetting memory hierarchy statistics");
+            Log.reset();
+        } else if(cmd.equals("cachesim_dump_head_stats")) {
+            Msg.M("CacheSim: Dump first level statistics");
+            Log.head.stats.print();
+            Msg.P(Log.head.dumpContents());
+        }
+
         return true;
     }
 }

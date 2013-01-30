@@ -126,7 +126,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         cmbCallbackEvent = new javax.swing.JComboBox();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblCallbacks = new javax.swing.JTable();
-        btnShowCallbacks = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
 
@@ -415,6 +414,11 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 cmbCallbackEventMousePressed(evt);
             }
         });
+        cmbCallbackEvent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbCallbackEventActionPerformed(evt);
+            }
+        });
 
         jScrollPane3.setName("jScrollPane3"); // NOI18N
 
@@ -446,14 +450,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         tblCallbacks.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblCallbacks.columnModel.title0")); // NOI18N
         tblCallbacks.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblCallbacks.columnModel.title1")); // NOI18N
 
-        btnShowCallbacks.setText(resourceMap.getString("btnShowCallbacks.text")); // NOI18N
-        btnShowCallbacks.setName("btnShowCallbacks"); // NOI18N
-        btnShowCallbacks.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowCallbacksActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -465,9 +461,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbCallbackEvent, 0, 440, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnShowCallbacks)))
+                        .addComponent(cmbCallbackEvent, 0, 510, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -476,8 +470,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(cmbCallbackEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnShowCallbacks))
+                    .addComponent(cmbCallbackEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -650,7 +643,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
     }//GEN-LAST:event_cmbCallbackEventMousePressed
 
-    private void btnShowCallbacksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowCallbacksActionPerformed
+    private void cmbCallbackEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCallbackEventActionPerformed
         if(cmbCallbackEvent.getSelectedIndex() > -1) {
             DefaultTableModel tbl = (DefaultTableModel) tblCallbacks.getModel();
             while(tbl.getRowCount() > 0)
@@ -662,7 +655,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             }
             tblCallbacks.setModel(tbl);
         }
-    }//GEN-LAST:event_btnShowCallbacksActionPerformed
+    }//GEN-LAST:event_cmbCallbackEventActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowseClass;
@@ -674,7 +667,6 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     private javax.swing.JButton btnLoadInstance;
     private javax.swing.JButton btnPassProject;
     private javax.swing.JButton btnRegisterClass;
-    private javax.swing.JButton btnShowCallbacks;
     private javax.swing.JComboBox cmbCallbackEvent;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

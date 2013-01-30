@@ -18,18 +18,24 @@
 
 package plptool.extras.cachesim;
 
-import plptool.dmf.Callback;
-
 /**
  *
  * @author Wira
  */
-public class BusWriteCallback implements Callback {
-    public boolean callback(int num, Object param) {
-        if(Log.mode != Log.SIMULATION_STEP)
-            return false;
-        Object[] p = (Object[]) param;
-        Log.write((Long) p[0], (Long) p[1]);
-        return true;
+public class DefaultCache extends Engine {
+    public DefaultCache(Engine prev, Engine...engines) {
+        super(prev, engines);
+    }
+
+    public void reset() {
+        
+    }
+    
+    public int read(long addr, long val) {
+        return 0;
+    }
+
+    public int write(long addr, long val) {
+        return 0;
     }
 }
