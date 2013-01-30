@@ -18,10 +18,66 @@
 
 package plptool.extras.cachesim;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  *
  * @author Wira
  */
-public class Engine {
+public abstract class Engine {
+    protected ArrayList<Engine> next;
+    protected Engine prev;
+    protected Statistics stats;
 
+    public abstract int read(long addr, long val);
+    public abstract int write(long addr, long val);
+    abstract void reset();
+
+    public Engine(Engine prev, Engine...engines) {
+        next = new ArrayList<Engine>();
+        next.addAll(Arrays.asList(engines));
+        this.prev = prev;
+        this.stats = new Statistics();
+    }
+
+    public Engine getPrev() {
+        return prev;
+    }
+
+    public ArrayList<Engine> getNext() {
+        return next;
+    }
+
+    public void attachNext(Engine e) {
+        next.add(e);
+    }
+
+    public Statistics getStatistics() {
+        return stats;
+    }
+
+    protected void propagateRead(long addr, long val) {
+        for(Engine e : next) {
+            e.read(addr, val);
+        }
+    }
+
+    protected void propagateWrite(long addr, long val) {
+        for(Engine e : next) {
+            e.write(addr, val);
+        }
+    }
+
+    public void logReset() {
+        stats.reset();
+        for(Engine e : next) {
+            e.reset();
+        }
+        reset();
+    }
+
+    public String dumpContents() {
+        return "";
+    };
 }

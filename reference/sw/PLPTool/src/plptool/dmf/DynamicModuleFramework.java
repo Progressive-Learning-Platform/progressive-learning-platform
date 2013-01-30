@@ -184,7 +184,7 @@ public class DynamicModuleFramework {
 
     /**
      * Instantiate a dynamic module and add a reference
-     * to it in the dynamicModuleInstances list.
+     * to it in the dynamicInstances list.
      *
      * @param index Index of the class
      * @return Index of the new module in the list, -1 if an error occurred

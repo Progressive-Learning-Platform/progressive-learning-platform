@@ -30,18 +30,19 @@ public class ModeSetCallback implements Callback {
             case CallbackRegistry.PROJECT_NEW:
             case CallbackRegistry.PROJECT_OPEN_SUCCESSFUL:
             case CallbackRegistry.EVENT_DESIMULATE:
-                PLPToolConnector.mode = PLPToolConnector.EDITING;
-                Statistics.reset();
+                Log.mode = Log.EDITING;
+                Log.reset();
                 break;
             case CallbackRegistry.EVENT_SIMULATE:
             case CallbackRegistry.SIM_RESET:
-                PLPToolConnector.mode = PLPToolConnector.SIMULATION_RESET;
+                Log.mode = Log.SIMULATION_RESET;
+                Log.reset();
                 break;
             case CallbackRegistry.SIM_STEP:
-                PLPToolConnector.mode = PLPToolConnector.SIMULATION_STEP;
+                Log.mode = Log.SIMULATION_STEP;
                 break;
             case CallbackRegistry.SIM_POST_STEP:
-                PLPToolConnector.mode = PLPToolConnector.SIMULATION_IDLE;
+                Log.mode = Log.SIMULATION_IDLE;
                 break;
         }
 

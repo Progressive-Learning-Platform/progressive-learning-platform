@@ -29,12 +29,6 @@ import plptool.gui.*;
 public class PLPToolConnector implements ModuleInterface5 {
 
     public static ProjectDriver plp;
-    public static int mode;
-
-    public static final int EDITING = 0;
-    public static final int SIMULATION_RESET = 1;
-    public static final int SIMULATION_IDLE = 2;
-    public static final int SIMULATION_STEP = 3;
 
     public String getName() {
         return "PLPTool Cache Simulator Module";
@@ -70,6 +64,7 @@ public class PLPToolConnector implements ModuleInterface5 {
                 CallbackRegistry.SIM_STEP,
                 CallbackRegistry.SIM_POST_STEP
         );
+        CallbackRegistry.register(new DebugCallback(), CallbackRegistry.COMMAND);
         PLPToolConnector.plp = plp;
 
         return Constants.PLP_OK;
