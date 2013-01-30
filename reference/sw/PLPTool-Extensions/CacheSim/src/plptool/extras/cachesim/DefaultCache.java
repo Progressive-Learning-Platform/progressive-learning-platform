@@ -23,12 +23,43 @@ package plptool.extras.cachesim;
  * @author Wira
  */
 public class DefaultCache extends Engine {
+    private boolean cacheInstr;
+    private boolean cacheData;
+    private boolean cacheWrites;
+    
+    private int wordSize;
+    private int blockSize;
+    private int associativity;
+    private int blocks;
+    
+    private long[][] linesBase;
+    private boolean[][] dirty;
+    private int[] lru;
+        
     public DefaultCache(Engine prev, Engine...engines) {
         super(prev, engines);
     }
+    
+    public void setProperties(int wordSize, int blockSize, int associativity, int blocks) {
+        this.wordSize = wordSize;
+        this.blockSize = blockSize;
+        this.associativity = associativity;
+        this.blocks = blocks;
+    }
 
-    public void reset() {
-        
+    public final void reset() {
+        int i, j;
+        int setBlocks = blocks / associativity;
+        linesBase = new long[associativity][];
+        for(i = 0; i < linesBase.length; i++) {
+            linesBase[i] = new long[setBlocks];
+            for(j = 0; j < setBlocks; j++) {
+                linesBase[i][j] = 0;
+                dirty[i][j] = true;
+            }
+        }
+        for(i = 0; i < setBlocks; i++)
+            lru[i] = 0;
     }
     
     public int read(long addr, long val) {
