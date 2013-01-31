@@ -25,7 +25,9 @@ package plptool.extras.cachesim;
 public class DefaultCache extends Engine {
     private boolean cacheInstr;
     private boolean cacheData;
-    private boolean cacheWrites;
+    private boolean cacheWrite;
+    private boolean writeThrough;
+    private boolean writeBack;
     
     private int wordSize;
     private int blockSize;
@@ -34,7 +36,8 @@ public class DefaultCache extends Engine {
     
     private long[][] linesBase;
     private boolean[][] dirty;
-    private int[] lru;
+    private boolean[][] invalid;
+    private int[][] lru;
         
     public DefaultCache(Engine prev, Engine...engines) {
         super(prev, engines);
@@ -50,23 +53,67 @@ public class DefaultCache extends Engine {
     public final void reset() {
         int i, j;
         int setBlocks = blocks / associativity;
-        linesBase = new long[associativity][];
+        linesBase = new long[setBlocks][];
+        lru = new int[setBlocks][];
+        dirty = new boolean[setBlocks][];
+        invalid = new boolean[setBlocks][];
         for(i = 0; i < linesBase.length; i++) {
-            linesBase[i] = new long[setBlocks];
-            for(j = 0; j < setBlocks; j++) {
+            linesBase[i] = new long[associativity];
+            lru[i] = new int[associativity];
+            dirty[i] = new boolean[associativity];
+            for(j = 0; j < associativity; j++) {
                 linesBase[i][j] = 0;
-                dirty[i][j] = true;
+                lru[i][j] = 0;
+                dirty[i][j] = false;
+                invalid[i][j] = true;
             }
         }
-        for(i = 0; i < setBlocks; i++)
-            lru[i] = 0;
     }
     
     public int read(long addr, long val) {
+        int index, i, lruIndex;
+        boolean hit = false;
+        if(!cacheInstr && PLPToolConnector.plp.sim.bus.isInstr(addr))
+            return -1;
+        if(!cacheData && !PLPToolConnector.plp.sim.bus.isInstr(addr))
+            return -1;
+
+        stats.read_accesses++;
+        index = (int) ((addr >> (wordSize / 8 - 1)) >> (blockSize / 8 - 1))
+                % (blocks / associativity);
+        for(i = 0; i < associativity; i++) {
+            if(linesBase[index][i] == addr && !invalid[index][i]) {
+                stats.read_hits++;
+                lru[index][i] = 0;
+                hit = true;
+            } else {
+                lru[index][i]++;
+            }
+        }
+
+        if(!hit) {
+            lruIndex = 0;
+            for(i = 1; i < associativity; i++) {
+                if(lru[index][i] > lru[index][lruIndex])
+                    lruIndex = i;
+            }
+            lru[index][lruIndex] = 0;
+            if(dirty[index][lruIndex]) {
+                // propagate write to flush this line
+            }
+            dirty[index][lruIndex] = false;
+            linesBase[index][lruIndex] = addr;
+            invalid[index][lruIndex] = false;
+            propagateRead(addr, val);
+        }
+
         return 0;
     }
 
     public int write(long addr, long val) {
+        if(!cacheWrite)
+            return -1;
+
         return 0;
     }
 }
