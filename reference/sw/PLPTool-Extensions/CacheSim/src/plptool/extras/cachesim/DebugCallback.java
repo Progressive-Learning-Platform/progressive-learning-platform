@@ -39,6 +39,10 @@ public class DebugCallback implements Callback {
             Msg.M("CacheSim: Dump first level statistics");
             Log.head.stats.print();
             Msg.P(Log.head.dumpContents());
+        } else if(cmd.equals("cachesim_configure")) {
+            Msg.M("CacheSim: Creating configuration window");
+            Log.frame = new DefaultCacheFrame();
+            Log.frame.setVisible(true);
         }
 
         return true;
