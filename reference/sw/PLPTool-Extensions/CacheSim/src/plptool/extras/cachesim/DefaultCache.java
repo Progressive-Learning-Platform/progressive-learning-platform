@@ -29,9 +29,8 @@ public class DefaultCache extends Engine {
     private boolean cacheData;
     private boolean cacheWrite;
     private boolean writeThrough;
-    private boolean writeBack;
+    private boolean writeAllocate;
     
-    private int wordOffset;
     private int blockOffset;
     private int associativity;
     private int blocks;
@@ -45,10 +44,9 @@ public class DefaultCache extends Engine {
         super(prev, engines);
     }
     
-    public void setProperties(int wordOffset, int blockOffset, int associativity, int blocks, 
+    public void setProperties(int blockOffset, int associativity, int blocks, 
             boolean cacheInstr, boolean cacheData,
-            boolean cacheWrite, boolean writeThrough, boolean writeBack) {
-        this.wordOffset = wordOffset;
+            boolean cacheWrite, boolean writeThrough, boolean writeAllocate) {
         this.blockOffset = blockOffset;
         this.associativity = associativity;
         this.blocks = blocks;
@@ -56,7 +54,7 @@ public class DefaultCache extends Engine {
         this.cacheData = cacheData;
         this.cacheWrite = cacheWrite;
         this.writeThrough = writeThrough;
-        this.writeBack = writeBack;
+        this.writeAllocate = writeAllocate;
     }
 
     public final void reset() {
@@ -90,11 +88,11 @@ public class DefaultCache extends Engine {
             return -1;
 
         stats.read_accesses++;
-        index = (int) ((addr >> wordOffset) >> blockOffset)
+        index = (int) (addr >> blockOffset)
                 % (blocks / associativity);
         for(i = 0; i < associativity; i++) {
-            tag = ((linesBase[index][i] >> wordOffset) >> blockOffset);
-            if(tag == ((addr >> wordOffset) >> blockOffset) && !invalid[index][i]) {
+            tag = (linesBase[index][i] >> blockOffset);
+            if(tag == (addr >> blockOffset) && !invalid[index][i]) {
                 stats.read_hits++;
                 lru[index][i] = 0;
                 hit = true;
@@ -112,6 +110,7 @@ public class DefaultCache extends Engine {
             lru[index][lruIndex] = 0;
             if(dirty[index][lruIndex]) {
                 // propagate write to flush this line
+                stats.write_backs++;
             }
             dirty[index][lruIndex] = false;
             linesBase[index][lruIndex] = addr;

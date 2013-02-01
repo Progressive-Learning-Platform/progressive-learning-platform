@@ -29,12 +29,14 @@ public class Statistics {
     public int read_accesses;
     public int write_hits;
     public int write_accesses;
+    public int write_backs;
 
     public Statistics() {
         read_hits = 0;
         read_accesses = 0;
         write_hits = 0;
         write_accesses = 0;
+        write_backs = 0;
     }
 
     public void reset() {
@@ -42,6 +44,7 @@ public class Statistics {
         read_accesses = 0;
         write_hits = 0;
         write_accesses = 0;
+        write_backs = 0;
     }
 
     public String print() {
@@ -50,6 +53,7 @@ public class Statistics {
         str += "read_accesses:  " + read_accesses + "\n";
         str += "write_hits:     " + write_hits + "\n";
         str += "write_accesses: " + write_accesses + "\n";
+        str += "write_backs: " + write_backs + "\n";
         
         return str;
     }

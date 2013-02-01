@@ -22,6 +22,9 @@ import plptool.*;
 import plptool.dmf.*;
 import plptool.gui.*;
 
+import javax.swing.JMenuItem;
+import java.awt.event.*;
+
 /**
  *
  * @author Wira
@@ -64,6 +67,17 @@ public class PLPToolConnector implements ModuleInterface5 {
         );
         CallbackRegistry.register(new DebugCallback(), CallbackRegistry.COMMAND);
         Log.plp = plp;
+        Log.frame = new DefaultCacheFrame();
+
+        JMenuItem menuClient = new JMenuItem("Cache Simulator");
+        menuClient.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Log.frame.setVisible(true);
+            }
+        });
+        if(plp.g()) {
+            plp.g_dev.addToolsItem(menuClient);
+        }
 
         return Constants.PLP_OK;
     }

@@ -16,6 +16,7 @@ class::plptool.extras.cachesim.DefaultCacheFrame
 class::plptool.extras.cachesim.Engine
 class::plptool.extras.cachesim.Log
 class::plptool.extras.cachesim.ModeSetCallback
+class::plptool.extras.cachesim.PLPToolConnector$1
 class::plptool.extras.cachesim.PLPToolConnector
 class::plptool.extras.cachesim.Statistics
 class::plptool.extras.cachesim.TestCache
