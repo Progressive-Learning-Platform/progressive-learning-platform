@@ -6,21 +6,21 @@
 /*
  * DefaultCacheFrame.java
  *
- * Created on Jan 31, 2013, 1:04:36 PM
+ * Created on Jan 31, 2013, 8:12:01 PM
  */
-
 package plptool.extras.cachesim;
+
+import plptool.PLPToolbox;
 
 /**
  *
- * @author Wira
+ * @author wira
  */
 public class DefaultCacheFrame extends javax.swing.JFrame {
 
     /** Creates new form DefaultCacheFrame */
     public DefaultCacheFrame() {
         initComponents();
-
     }
 
     /** This method is called from within the constructor to
@@ -32,105 +32,122 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         btnClose = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         paneConfigure = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        cmbWordSize = new javax.swing.JComboBox();
-        cmbLineSize = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
-        cmbNumberOfLines = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
+        cmbWordOffset = new javax.swing.JComboBox();
+        cmbLineOffset = new javax.swing.JComboBox();
+        cmbNumberOfLines = new javax.swing.JComboBox();
         cmbAssociativity = new javax.swing.JComboBox();
-        jLabel5 = new javax.swing.JLabel();
-        canvasCacheSetup = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        paneAddressSpace = new javax.swing.JPanel();
+        btnCreate = new javax.swing.JButton();
         paneVisualize = new javax.swing.JPanel();
         paneStatistics = new javax.swing.JPanel();
+        paneExtras = new javax.swing.JPanel();
+        btnDumpContents = new javax.swing.JButton();
+        btnDumpStatistics = new javax.swing.JButton();
+        btnResetCache = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtOutput = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(DefaultCacheFrame.class);
-        setTitle(resourceMap.getString("Form.title")); // NOI18N
-        setName("Form"); // NOI18N
+        setTitle("CacheSim");
 
-        jLabel1.setFont(resourceMap.getFont("jLabel1.font")); // NOI18N
-        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
-        jLabel1.setName("jLabel1"); // NOI18N
-
-        btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
+        btnClose.setText("Close");
         btnClose.setName("btnClose"); // NOI18N
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         jTabbedPane1.setName("jTabbedPane1"); // NOI18N
 
         paneConfigure.setName("paneConfigure"); // NOI18N
 
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel1.setText("Word offset bits:");
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel2.setText("Number of Lines :");
         jLabel2.setName("jLabel2"); // NOI18N
 
-        cmbWordSize.setEditable(true);
-        cmbWordSize.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "4", "1", "8" }));
-        cmbWordSize.setName("cmbWordSize"); // NOI18N
-
-        cmbLineSize.setEditable(true);
-        cmbLineSize.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "4", "1", "8", "16", "32", "64", "128", "256", "512" }));
-        cmbLineSize.setName("cmbLineSize"); // NOI18N
-
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel3.setText("Line offset bits:");
         jLabel3.setName("jLabel3"); // NOI18N
 
-        cmbNumberOfLines.setEditable(true);
-        cmbNumberOfLines.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "4", "8", "16", "32", "64", "128", "256", "1024", "4196", "16384" }));
-        cmbNumberOfLines.setName("cmbNumberOfLines"); // NOI18N
-
-        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel4.setText("Associativity :");
         jLabel4.setName("jLabel4"); // NOI18N
 
+        cmbWordOffset.setEditable(true);
+        cmbWordOffset.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        cmbWordOffset.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2", "3", "4" }));
+        cmbWordOffset.setName("cmbWordOffset"); // NOI18N
+
+        cmbLineOffset.setEditable(true);
+        cmbLineOffset.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        cmbLineOffset.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8" }));
+        cmbLineOffset.setName("cmbLineOffset"); // NOI18N
+
+        cmbNumberOfLines.setEditable(true);
+        cmbNumberOfLines.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        cmbNumberOfLines.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "8", "16", "32", "64", "128", "256", "512", "1024", "4096", "8192", "16384", "32768" }));
+        cmbNumberOfLines.setName("cmbNumberOfLines"); // NOI18N
+
         cmbAssociativity.setEditable(true);
-        cmbAssociativity.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "4", "8", "16", "32", "64", "128", "256", "512" }));
+        cmbAssociativity.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        cmbAssociativity.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "4", "8", "16", "32" }));
         cmbAssociativity.setName("cmbAssociativity"); // NOI18N
 
-        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
-        jLabel5.setName("jLabel5"); // NOI18N
+        paneAddressSpace.setName("paneAddressSpace"); // NOI18N
 
-        canvasCacheSetup.setBackground(resourceMap.getColor("canvasCacheSetup.background")); // NOI18N
-        canvasCacheSetup.setName("canvasCacheSetup"); // NOI18N
-
-        javax.swing.GroupLayout canvasCacheSetupLayout = new javax.swing.GroupLayout(canvasCacheSetup);
-        canvasCacheSetup.setLayout(canvasCacheSetupLayout);
-        canvasCacheSetupLayout.setHorizontalGroup(
-            canvasCacheSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 787, Short.MAX_VALUE)
+        javax.swing.GroupLayout paneAddressSpaceLayout = new javax.swing.GroupLayout(paneAddressSpace);
+        paneAddressSpace.setLayout(paneAddressSpaceLayout);
+        paneAddressSpaceLayout.setHorizontalGroup(
+            paneAddressSpaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 735, Short.MAX_VALUE)
         );
-        canvasCacheSetupLayout.setVerticalGroup(
-            canvasCacheSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 289, Short.MAX_VALUE)
+        paneAddressSpaceLayout.setVerticalGroup(
+            paneAddressSpaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 113, Short.MAX_VALUE)
         );
 
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
+        btnCreate.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        btnCreate.setText("Create Cache");
+        btnCreate.setName("btnCreate"); // NOI18N
+        btnCreate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout paneConfigureLayout = new javax.swing.GroupLayout(paneConfigure);
         paneConfigure.setLayout(paneConfigureLayout);
         paneConfigureLayout.setHorizontalGroup(
             paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneConfigureLayout.createSequentialGroup()
+            .addGroup(paneConfigureLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(canvasCacheSetup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, paneConfigureLayout.createSequentialGroup()
+                .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(paneAddressSpace, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCreate, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+                    .addGroup(paneConfigureLayout.createSequentialGroup()
                         .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
+                            .addComponent(jLabel1)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(cmbNumberOfLines, javax.swing.GroupLayout.Alignment.LEADING, 0, 666, Short.MAX_VALUE)
-                            .addComponent(cmbLineSize, javax.swing.GroupLayout.Alignment.LEADING, 0, 666, Short.MAX_VALUE)
-                            .addComponent(cmbWordSize, javax.swing.GroupLayout.Alignment.LEADING, 0, 666, Short.MAX_VALUE)
-                            .addComponent(cmbAssociativity, 0, 666, Short.MAX_VALUE))))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbLineOffset, 0, 480, Short.MAX_VALUE)
+                            .addComponent(cmbWordOffset, 0, 480, Short.MAX_VALUE)
+                            .addComponent(cmbNumberOfLines, 0, 480, Short.MAX_VALUE)
+                            .addComponent(cmbAssociativity, 0, 480, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneConfigureLayout.setVerticalGroup(
@@ -138,28 +155,28 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
             .addGroup(paneConfigureLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(cmbWordOffset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(cmbLineOffset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(cmbWordSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(cmbNumberOfLines, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbLineSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbNumberOfLines, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(paneConfigureLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbAssociativity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel4)
+                    .addComponent(cmbAssociativity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(btnCreate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(canvasCacheSetup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(paneAddressSpace, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(resourceMap.getString("paneConfigure.TabConstraints.tabTitle"), paneConfigure); // NOI18N
+        jTabbedPane1.addTab("Configure", paneConfigure);
 
         paneVisualize.setName("paneVisualize"); // NOI18N
 
@@ -167,14 +184,14 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
         paneVisualize.setLayout(paneVisualizeLayout);
         paneVisualizeLayout.setHorizontalGroup(
             paneVisualizeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 807, Short.MAX_VALUE)
+            .addGap(0, 759, Short.MAX_VALUE)
         );
         paneVisualizeLayout.setVerticalGroup(
             paneVisualizeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 462, Short.MAX_VALUE)
+            .addGap(0, 412, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab(resourceMap.getString("paneVisualize.TabConstraints.tabTitle"), paneVisualize); // NOI18N
+        jTabbedPane1.addTab("Visualize", paneVisualize);
 
         paneStatistics.setName("paneStatistics"); // NOI18N
 
@@ -182,14 +199,80 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
         paneStatistics.setLayout(paneStatisticsLayout);
         paneStatisticsLayout.setHorizontalGroup(
             paneStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 807, Short.MAX_VALUE)
+            .addGap(0, 759, Short.MAX_VALUE)
         );
         paneStatisticsLayout.setVerticalGroup(
             paneStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 462, Short.MAX_VALUE)
+            .addGap(0, 412, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab(resourceMap.getString("paneStatistics.TabConstraints.tabTitle"), paneStatistics); // NOI18N
+        jTabbedPane1.addTab("Statistics", paneStatistics);
+
+        paneExtras.setName("paneExtras"); // NOI18N
+
+        btnDumpContents.setText("Dump Contents");
+        btnDumpContents.setName("btnDumpContents"); // NOI18N
+        btnDumpContents.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDumpContentsActionPerformed(evt);
+            }
+        });
+
+        btnDumpStatistics.setText("Dump Statistics");
+        btnDumpStatistics.setName("btnDumpStatistics"); // NOI18N
+        btnDumpStatistics.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDumpStatisticsActionPerformed(evt);
+            }
+        });
+
+        btnResetCache.setText("Reset Cache");
+        btnResetCache.setName("btnResetCache"); // NOI18N
+        btnResetCache.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetCacheActionPerformed(evt);
+            }
+        });
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        txtOutput.setColumns(20);
+        txtOutput.setEditable(false);
+        txtOutput.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        txtOutput.setRows(5);
+        txtOutput.setName("txtOutput"); // NOI18N
+        jScrollPane1.setViewportView(txtOutput);
+
+        javax.swing.GroupLayout paneExtrasLayout = new javax.swing.GroupLayout(paneExtras);
+        paneExtras.setLayout(paneExtrasLayout);
+        paneExtrasLayout.setHorizontalGroup(
+            paneExtrasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneExtrasLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneExtrasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+                    .addGroup(paneExtrasLayout.createSequentialGroup()
+                        .addComponent(btnDumpContents)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDumpStatistics)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
+                        .addComponent(btnResetCache)))
+                .addContainerGap())
+        );
+        paneExtrasLayout.setVerticalGroup(
+            paneExtrasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneExtrasLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneExtrasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnDumpContents)
+                    .addComponent(btnDumpStatistics)
+                    .addComponent(btnResetCache))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Extras", paneExtras);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -198,19 +281,16 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
                     .addComponent(btnClose, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 812, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnClose)
                 .addContainerGap())
         );
@@ -218,34 +298,80 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DefaultCacheFrame().setVisible(true);
-            }
-        });
+private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+    dispose();
+}//GEN-LAST:event_btnCloseActionPerformed
+
+private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
+    try {
+        int wordOffset = Integer.parseInt((String) cmbWordOffset.getSelectedItem());
+        int lineOffset = Integer.parseInt((String) cmbLineOffset.getSelectedItem());
+        int numberOfLines = Integer.parseInt((String) cmbNumberOfLines.getSelectedItem());
+        int associativity = Integer.parseInt((String) cmbAssociativity.getSelectedItem());
+        int cacheSize;
+        
+        if(numberOfLines < associativity) {
+            PLPToolbox.showErrorDialog(this, "Associativity can not be greater than the number of lines.");
+            return;
+        }
+        
+        if(numberOfLines <= 0 | associativity <= 0 |
+                (numberOfLines & (numberOfLines - 1)) != 0 |
+                (associativity & (associativity - 1)) != 0) {
+            PLPToolbox.showErrorDialog(this, "Number of lines and associativity must be powers of two.");
+            return;
+        }
+        
+        
+        DefaultCache c = new DefaultCache(null);
+        c.setProperties(wordOffset, lineOffset, associativity, numberOfLines,
+                false, true, false, false, false);
+        c.reset();
+        Log.head = c;
+        
+        cacheSize = numberOfLines * 8 * (int) Math.pow(2, wordOffset) * (int) Math.pow(2, lineOffset);
+        plptool.Msg.M("CacheSim: total cache size is " + cacheSize + " bytes");
+        
+    } catch(NumberFormatException e) {
+        PLPToolbox.showErrorDialog(this, "Failed to parse cache parameters.");
     }
+}//GEN-LAST:event_btnCreateActionPerformed
+
+private void btnDumpContentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDumpContentsActionPerformed
+    if(Log.head != null)
+        txtOutput.setText(Log.head.dumpContents());
+}//GEN-LAST:event_btnDumpContentsActionPerformed
+
+private void btnDumpStatisticsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDumpStatisticsActionPerformed
+    if(Log.head != null)
+        txtOutput.setText(Log.head.stats.print());
+}//GEN-LAST:event_btnDumpStatisticsActionPerformed
+
+private void btnResetCacheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetCacheActionPerformed
+    Log.head.logReset();
+}//GEN-LAST:event_btnResetCacheActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
-    private javax.swing.JPanel canvasCacheSetup;
+    private javax.swing.JButton btnCreate;
+    private javax.swing.JButton btnDumpContents;
+    private javax.swing.JButton btnDumpStatistics;
+    private javax.swing.JButton btnResetCache;
     private javax.swing.JComboBox cmbAssociativity;
-    private javax.swing.JComboBox cmbLineSize;
+    private javax.swing.JComboBox cmbLineOffset;
     private javax.swing.JComboBox cmbNumberOfLines;
-    private javax.swing.JComboBox cmbWordSize;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox cmbWordOffset;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel paneAddressSpace;
     private javax.swing.JPanel paneConfigure;
+    private javax.swing.JPanel paneExtras;
     private javax.swing.JPanel paneStatistics;
     private javax.swing.JPanel paneVisualize;
+    private javax.swing.JTextArea txtOutput;
     // End of variables declaration//GEN-END:variables
-
 }

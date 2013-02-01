@@ -72,7 +72,7 @@ public abstract class Engine {
     public void logReset() {
         stats.reset();
         for(Engine e : next) {
-            e.reset();
+            e.logReset();
         }
         reset();
     }

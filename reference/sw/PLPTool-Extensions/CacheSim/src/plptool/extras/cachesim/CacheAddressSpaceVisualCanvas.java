@@ -15,39 +15,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-
 package plptool.extras.cachesim;
 
-import plptool.gui.ProjectDriver;
+import javax.swing.*;
+import java.awt.Graphics;
 
 /**
  *
- * @author Wira
+ * @author wira
  */
-public class Log {
-    public static int mode;
-
-    public static final int EDITING = 0;
-    public static final int SIMULATION_RESET = 1;
-    public static final int SIMULATION_IDLE = 2;
-    public static final int SIMULATION_STEP = 3;
-
-    public static Engine head;
-    public static ProjectDriver plp;
-    public static DefaultCacheFrame frame;
-
-    public static void reset() {
-        if(head != null)
-            head.logReset();
-    }
-
-    public static void read(long addr, long val) {
-        if(head != null)
-            head.read(addr, val);
-    }
-
-    public static void write(long addr, long val) {
-        if(head != null)
-            head.write(addr, val);
+public class CacheAddressSpaceVisualCanvas extends JPanel {
+    @Override
+    public void paint(Graphics g) {
+        
     }
 }

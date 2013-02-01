@@ -36,7 +36,7 @@ public class TestCache extends Engine {
     
     public int read(long addr, long val) {
         // ignore instruction fetches
-        if(PLPToolConnector.plp.sim.bus.isInstr(addr))
+        if(Log.plp.sim.bus.isInstr(addr))
             return 0;
 
         Msg.M("CacheSim: TestCache non-instruction read " + PLPToolbox.format32Hex(addr));

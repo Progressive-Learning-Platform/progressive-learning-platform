@@ -18,6 +18,8 @@
 
 package plptool.extras.cachesim;
 
+import plptool.*;
+
 /**
  *
  * @author Wira
@@ -29,8 +31,8 @@ public class DefaultCache extends Engine {
     private boolean writeThrough;
     private boolean writeBack;
     
-    private int wordSize;
-    private int blockSize;
+    private int wordOffset;
+    private int blockOffset;
     private int associativity;
     private int blocks;
     
@@ -43,11 +45,18 @@ public class DefaultCache extends Engine {
         super(prev, engines);
     }
     
-    public void setProperties(int wordSize, int blockSize, int associativity, int blocks) {
-        this.wordSize = wordSize;
-        this.blockSize = blockSize;
+    public void setProperties(int wordOffset, int blockOffset, int associativity, int blocks, 
+            boolean cacheInstr, boolean cacheData,
+            boolean cacheWrite, boolean writeThrough, boolean writeBack) {
+        this.wordOffset = wordOffset;
+        this.blockOffset = blockOffset;
         this.associativity = associativity;
         this.blocks = blocks;
+        this.cacheInstr = cacheInstr;
+        this.cacheData = cacheData;
+        this.cacheWrite = cacheWrite;
+        this.writeThrough = writeThrough;
+        this.writeBack = writeBack;
     }
 
     public final void reset() {
@@ -61,6 +70,7 @@ public class DefaultCache extends Engine {
             linesBase[i] = new long[associativity];
             lru[i] = new int[associativity];
             dirty[i] = new boolean[associativity];
+            invalid[i] = new boolean[associativity];
             for(j = 0; j < associativity; j++) {
                 linesBase[i][j] = 0;
                 lru[i][j] = 0;
@@ -72,17 +82,19 @@ public class DefaultCache extends Engine {
     
     public int read(long addr, long val) {
         int index, i, lruIndex;
+        long tag;
         boolean hit = false;
-        if(!cacheInstr && PLPToolConnector.plp.sim.bus.isInstr(addr))
+        if(!cacheInstr && Log.plp.sim.bus.isInstr(addr))
             return -1;
-        if(!cacheData && !PLPToolConnector.plp.sim.bus.isInstr(addr))
+        if(!cacheData && !Log.plp.sim.bus.isInstr(addr))
             return -1;
 
         stats.read_accesses++;
-        index = (int) ((addr >> (wordSize / 8 - 1)) >> (blockSize / 8 - 1))
+        index = (int) ((addr >> wordOffset) >> blockOffset)
                 % (blocks / associativity);
         for(i = 0; i < associativity; i++) {
-            if(linesBase[index][i] == addr && !invalid[index][i]) {
+            tag = ((linesBase[index][i] >> wordOffset) >> blockOffset);
+            if(tag == ((addr >> wordOffset) >> blockOffset) && !invalid[index][i]) {
                 stats.read_hits++;
                 lru[index][i] = 0;
                 hit = true;
@@ -115,5 +127,21 @@ public class DefaultCache extends Engine {
             return -1;
 
         return 0;
+    }
+    
+    @Override
+    public String dumpContents() {
+        int i, j;
+        String str = "";
+        for(i = 0; i < linesBase.length; i++) {
+            str += "set " +  i + "\t";
+            for(j = 0; j < associativity;j ++) {
+                str += PLPToolbox.format32Hex(linesBase[i][j]) + ":" + (dirty[i][j] ? "d" : "_") + 
+                        (invalid[i][j] ? "i" : "_") + " ";
+            }
+            str += "\n";
+        }
+
+        return str;
     }
 }

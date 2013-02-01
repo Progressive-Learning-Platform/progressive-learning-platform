@@ -44,11 +44,14 @@ public class Statistics {
         write_accesses = 0;
     }
 
-    public void print() {
-        Msg.P("read_hits:      " + read_hits);
-        Msg.P("read_accesses:  " + read_accesses);
-        Msg.P("write_hits:     " + write_hits);
-        Msg.P("write_accesses: " + write_accesses);
+    public String print() {
+        String str = "";
+        str += "read_hits:      " + read_hits + "\n";
+        str += "read_accesses:  " + read_accesses + "\n";
+        str += "write_hits:     " + write_hits + "\n";
+        str += "write_accesses: " + write_accesses + "\n";
+        
+        return str;
     }
 }
 
