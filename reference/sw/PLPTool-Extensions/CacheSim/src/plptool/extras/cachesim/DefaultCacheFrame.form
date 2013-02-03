@@ -8,6 +8,9 @@
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
@@ -80,14 +83,9 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="chkWrites" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="chkWriteAllocate" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="chkWriteThrough" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="chkWriteThrough" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkWriteAllocate" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkInstructions" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -96,17 +94,14 @@
                               </Group>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="cmbAssociativity" alignment="1" pref="536" max="32767" attributes="0"/>
-                                  <Component id="cmbWordOffset" alignment="1" pref="536" max="32767" attributes="0"/>
-                                  <Component id="cmbNumberOfLines" alignment="0" pref="536" max="32767" attributes="0"/>
+                                  <Component id="cmbAssociativity" alignment="1" pref="494" max="32767" attributes="0"/>
+                                  <Component id="cmbWordOffset" alignment="1" pref="494" max="32767" attributes="0"/>
+                                  <Component id="cmbNumberOfLines" alignment="0" pref="494" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="btnCreate" alignment="1" pref="762" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="chkData" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="chkInstructions" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="chkData" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkWrites" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnCreate" alignment="0" pref="758" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -131,21 +126,18 @@
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="chkData" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkInstructions" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="chkData" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="chkWrites" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkWriteAllocate" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkWriteThrough" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnCreate" min="-2" max="-2" attributes="0"/>
+                      <Component id="chkInstructions" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jPanel1" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="chkWrites" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="chkWriteAllocate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="chkWriteThrough" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="btnCreate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="32" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -165,13 +157,13 @@
                 <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="24" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Number of Lines :"/>
+                <Property name="text" type="java.lang.String" value="Number of blocks :"/>
                 <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
               <Properties>
-                <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="24" style="1"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Associativity :"/>
@@ -181,7 +173,7 @@
             <Component class="javax.swing.JComboBox" name="cmbWordOffset">
               <Properties>
                 <Property name="editable" type="boolean" value="true"/>
-                <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="24" style="1"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
@@ -201,7 +193,7 @@
             <Component class="javax.swing.JComboBox" name="cmbNumberOfLines">
               <Properties>
                 <Property name="editable" type="boolean" value="true"/>
-                <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="24" style="1"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
@@ -226,7 +218,7 @@
             <Component class="javax.swing.JComboBox" name="cmbAssociativity">
               <Properties>
                 <Property name="editable" type="boolean" value="true"/>
-                <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="24" style="1"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
@@ -292,31 +284,13 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="chkData">
               <Properties>
-                <Property name="font" type="java.awt.Font" noResource="true" editor="org.netbeans.beaninfo.editors.FontEditor">
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="24" style="1"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Cache Data"/>
                 <Property name="name" type="java.lang.String" value="chkData" noResource="true"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JPanel" name="jPanel1">
-              <Properties>
-                <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
-              </Properties>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="762" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="151" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
-            </Container>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="paneVisualize">
@@ -339,7 +313,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="486" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="484" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -364,7 +338,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="486" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="484" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -387,12 +361,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="762" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="758" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btnDumpContents" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnDumpStatistics" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="445" max="32767" attributes="0"/>
+                              <EmptySpace pref="342" max="32767" attributes="0"/>
                               <Component id="btnResetCache" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -410,7 +384,7 @@
                           <Component id="btnResetCache" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="430" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="423" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

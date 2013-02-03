@@ -34,9 +34,9 @@ public abstract class Engine {
     public abstract int write(long addr, long val);
     abstract void reset();
 
-    public Engine(Engine prev, Engine...engines) {
-        next = new ArrayList<Engine>();
-        next.addAll(Arrays.asList(engines));
+    public Engine(Engine prev, Engine...next) {
+        this.next = new ArrayList<Engine>();
+        this.next.addAll(Arrays.asList(next));
         this.prev = prev;
         this.stats = new Statistics();
     }

@@ -53,7 +53,7 @@ public class Statistics {
         str += "read_accesses:  " + read_accesses + "\n";
         str += "write_hits:     " + write_hits + "\n";
         str += "write_accesses: " + write_accesses + "\n";
-        str += "write_backs: " + write_backs + "\n";
+        str += "write_backs:    " + write_backs + "\n";
         
         return str;
     }

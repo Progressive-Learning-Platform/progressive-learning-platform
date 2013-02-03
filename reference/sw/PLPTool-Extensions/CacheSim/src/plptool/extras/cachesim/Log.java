@@ -19,6 +19,7 @@
 package plptool.extras.cachesim;
 
 import plptool.gui.ProjectDriver;
+import java.util.ArrayList;
 
 /**
  *
@@ -32,22 +33,25 @@ public class Log {
     public static final int SIMULATION_IDLE = 2;
     public static final int SIMULATION_STEP = 3;
 
-    public static Engine head;
+    public static ArrayList<Engine> head = new ArrayList<Engine>();
     public static ProjectDriver plp;
     public static DefaultCacheFrame frame;
 
-    public static void reset() {
-        if(head != null)
-            head.logReset();
+    public static void reset() {       
+        for(Engine e : head) {
+            e.logReset();
+        }
     }
 
     public static void read(long addr, long val) {
-        if(head != null)
-            head.read(addr, val);
+        for(Engine e : head) {
+            e.read(addr, val);
+        }
     }
 
     public static void write(long addr, long val) {
-        if(head != null)
-            head.write(addr, val);
+        for(Engine e : head) {
+            e.write(addr, val);
+        }
     }
 }

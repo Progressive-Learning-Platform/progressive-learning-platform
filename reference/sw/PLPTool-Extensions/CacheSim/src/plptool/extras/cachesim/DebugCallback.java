@@ -29,20 +29,8 @@ import plptool.*;
 public class DebugCallback implements Callback {
     public boolean callback(int num, Object param) {
         String cmd = (String) param;
-        if(cmd.equals("cachesim_init_default")) {
-            Msg.M("CacheSim: Initializing default test cache");
-            Log.head = new TestCache(null);
-        } else if(cmd.equals("cachesim_reset")) {
-            Msg.M("CacheSim: Resetting memory hierarchy statistics");
-            Log.reset();
-        } else if(cmd.equals("cachesim_dump_head_stats")) {
-            Msg.M("CacheSim: Dump first level statistics");
-            Log.head.stats.print();
-            Msg.P(Log.head.dumpContents());
-        } else if(cmd.equals("cachesim_configure")) {
-            Msg.M("CacheSim: Creating configuration window");
-            Log.frame = new DefaultCacheFrame();
-            Log.frame.setVisible(true);
+        if(cmd.equals("cachesim_about")) {
+            Msg.M("CacheSim by Wira for PLPTool 5.x");
         }
 
         return true;

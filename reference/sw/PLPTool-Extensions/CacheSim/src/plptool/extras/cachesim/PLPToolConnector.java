@@ -67,12 +67,11 @@ public class PLPToolConnector implements ModuleInterface5 {
         );
         CallbackRegistry.register(new DebugCallback(), CallbackRegistry.COMMAND);
         Log.plp = plp;
-        Log.frame = new DefaultCacheFrame();
 
-        JMenuItem menuClient = new JMenuItem("Cache Simulator");
+        JMenuItem menuClient = new JMenuItem("Create a Cache Simulator...");
         menuClient.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Log.frame.setVisible(true);
+                (new DefaultCacheFrame()).setVisible(true);
             }
         });
         if(plp.g()) {
