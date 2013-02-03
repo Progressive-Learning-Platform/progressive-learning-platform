@@ -34,14 +34,15 @@ public class DefaultCache extends Engine {
     private int blockOffset;
     private int associativity;
     private int blocks;
+    public int indexBits;
     
     private long[][] linesBase;
     private boolean[][] dirty;
     private boolean[][] invalid;
     private int[][] lru;
         
-    public DefaultCache(Engine prev, Engine...engines) {
-        super(prev, engines);
+    public DefaultCache(Engine prev, Engine...next) {
+        super(prev, next);
     }
     
     public void setProperties(int blockOffset, int associativity, int blocks, 
@@ -55,6 +56,7 @@ public class DefaultCache extends Engine {
         this.cacheWrite = cacheWrite;
         this.writeThrough = writeThrough;
         this.writeAllocate = writeAllocate;
+        indexBits = (int) (Math.log(blocks / associativity) / Math.log(2));
     }
 
     public final void reset() {
@@ -79,13 +81,14 @@ public class DefaultCache extends Engine {
     }
     
     public int read(long addr, long val) {
-        int index, i, lruIndex;
-        long tag;
-        boolean hit = false;
         if(!cacheInstr && Log.plp.sim.bus.isInstr(addr))
             return -1;
         if(!cacheData && !Log.plp.sim.bus.isInstr(addr))
             return -1;
+        
+        int index, lruIndex, i;
+        long tag;
+        boolean hit = false;        
 
         stats.read_accesses++;
         index = (int) (addr >> blockOffset)
@@ -110,6 +113,7 @@ public class DefaultCache extends Engine {
             lru[index][lruIndex] = 0;
             if(dirty[index][lruIndex]) {
                 // propagate write to flush this line
+                propagateWrite(linesBase[index][lruIndex], val); // TODO: store value
                 stats.write_backs++;
             }
             dirty[index][lruIndex] = false;
@@ -124,6 +128,55 @@ public class DefaultCache extends Engine {
     public int write(long addr, long val) {
         if(!cacheWrite)
             return -1;
+        
+        int index, lruIndex, i;
+        long tag;
+        boolean hit = false;
+        
+        stats.write_accesses++;
+        index = (int) (addr >> blockOffset)
+                % (blocks / associativity);
+        for(i = 0; i < associativity; i++) {
+            tag = (linesBase[index][i] >> blockOffset);
+            if(tag == (addr >> blockOffset) && !invalid[index][i]) {
+                stats.write_hits++;
+                lru[index][i] = 0;
+                hit = true;
+                if(writeThrough)
+                    propagateWrite(addr, val);
+                else
+                    dirty[index][i] = true;                    
+            } else {
+                lru[index][i]++;
+            }
+        }
+        
+        if(!hit && writeAllocate) {
+            lruIndex = 0;
+            for(i = 1; i < associativity; i++) {
+                if(lru[index][i] > lru[index][lruIndex])
+                    lruIndex = i;
+            }
+            lru[index][lruIndex] = 0;
+            if(dirty[index][lruIndex]) {
+                // propagate write to flush this line
+                propagateWrite(linesBase[index][lruIndex], val); // TODO: store value
+                stats.write_backs++;
+            }
+            
+            // replace cache line with new data            
+            linesBase[index][lruIndex] = addr;
+            invalid[index][lruIndex] = false;
+            if(writeThrough) {
+                dirty[index][lruIndex] = false;
+                propagateWrite(addr, val);
+            } else {
+                dirty[index][lruIndex] = true;                
+            }
+        }
+        
+        if(!hit && !writeAllocate)
+            propagateWrite(addr, val);
 
         return 0;
     }
