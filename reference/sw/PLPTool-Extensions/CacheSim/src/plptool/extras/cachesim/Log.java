@@ -18,6 +18,7 @@
 
 package plptool.extras.cachesim;
 
+import plptool.*;
 import plptool.gui.ProjectDriver;
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public class Log {
 
     public static ArrayList<Engine> head = new ArrayList<Engine>();
     public static ProjectDriver plp;
-    public static DefaultCacheFrame frame;
+    public static ArrayList<DefaultCacheFrame> frames = new ArrayList<DefaultCacheFrame>();
 
     public static void reset() {       
         for(Engine e : head) {
@@ -52,6 +53,41 @@ public class Log {
     public static void write(long addr, long val) {
         for(Engine e : head) {
             e.write(addr, val);
+        }
+    }
+    
+    public static void spawnCacheFrame() {
+        DefaultCacheFrame f = new DefaultCacheFrame();
+        frames.add(f);
+        f.setVisible(true);
+        Msg.M("CacheSim Log: Creating a cache simulator");
+    }
+    
+    public static void destroyCacheFrame(DefaultCacheFrame f) {        
+        DefaultCacheFrame frame;
+        for(int i = 0; i < frames.size(); i++) {
+            frame = frames.get(i);
+            if(frame.equals(f)) {
+                frames.remove(f);
+                Msg.M("CacheSim Log: Destroying a cache simulator");
+            }
+        }
+        
+        if(f.e != null) {
+            for(int i = 0; i < Log.head.size(); i++) {
+                if(Log.head.get(i).equals(f.e)) {
+                    Log.head.remove(i);
+                    Msg.M("CacheSim: Removing cache engine from the list...");
+                }
+            }
+        }
+        
+        f.dispose();
+    }
+    
+    public static void updateFrames() {
+        for(DefaultCacheFrame frame : frames) {
+            frame.update();
         }
     }
 }

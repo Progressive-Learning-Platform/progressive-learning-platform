@@ -5,7 +5,7 @@ description::<enter description here>
 version::<enter version here>
 class::plptool.extras.cachesim.BusReadCallback
 class::plptool.extras.cachesim.BusWriteCallback
-class::plptool.extras.cachesim.CacheAddressSpaceVisualCanvas
+class::plptool.extras.cachesim.CacheVisualizerCanvas
 class::plptool.extras.cachesim.DebugCallback
 class::plptool.extras.cachesim.DefaultCacheFrame$1
 class::plptool.extras.cachesim.DefaultCacheFrame$2
@@ -15,11 +15,11 @@ class::plptool.extras.cachesim.DefaultCacheFrame$5
 class::plptool.extras.cachesim.DefaultCacheFrame$6
 class::plptool.extras.cachesim.DefaultCacheFrame
 class::plptool.extras.cachesim.Engine
+class::plptool.extras.cachesim.GUIUpdateCallback
 class::plptool.extras.cachesim.Log
 class::plptool.extras.cachesim.ModeSetCallback
 class::plptool.extras.cachesim.PLPToolConnector$1
 class::plptool.extras.cachesim.PLPToolConnector
 class::plptool.extras.cachesim.Statistics
-class::plptool.extras.cachesim.TestCache
 class::plptool.extras.cachesim.DefaultCache
 loadmodule5::plptool.extras.cachesim.PLPToolConnector

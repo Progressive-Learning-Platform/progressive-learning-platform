@@ -31,15 +31,19 @@ public class DefaultCache extends Engine {
     private boolean writeThrough;
     private boolean writeAllocate;
     
-    private int blockOffset;
-    private int associativity;
-    private int blocks;
+    public int blockOffset;
+    public int associativity;
+    public int blocks;
     public int indexBits;
     
-    private long[][] linesBase;
-    private boolean[][] dirty;
-    private boolean[][] invalid;
-    private int[][] lru;
+    public long[][] linesBase;
+    public boolean[][] dirty;
+    public boolean[][] invalid;
+    public int[][] lru;
+    
+    public long lastAccess;
+    public int lastAccessType;
+    public boolean lastHit;
         
     public DefaultCache(Engine prev, Engine...next) {
         super(prev, next);
@@ -78,6 +82,10 @@ public class DefaultCache extends Engine {
                 invalid[i][j] = true;
             }
         }
+        
+        lastAccess = -1;
+        lastAccessType = -1;
+        lastHit = false;
     }
     
     public int read(long addr, long val) {
@@ -89,7 +97,10 @@ public class DefaultCache extends Engine {
         int index, lruIndex, i;
         long tag;
         boolean hit = false;        
-
+        lastHit = false;
+        
+        lastAccess = addr;
+        lastAccessType = 1;
         stats.read_accesses++;
         index = (int) (addr >> blockOffset)
                 % (blocks / associativity);
@@ -99,6 +110,7 @@ public class DefaultCache extends Engine {
                 stats.read_hits++;
                 lru[index][i] = 0;
                 hit = true;
+                lastHit = true;
             } else {
                 lru[index][i]++;
             }
@@ -132,7 +144,10 @@ public class DefaultCache extends Engine {
         int index, lruIndex, i;
         long tag;
         boolean hit = false;
+        lastHit = false;
         
+        lastAccess = addr;
+        lastAccessType = 2;
         stats.write_accesses++;
         index = (int) (addr >> blockOffset)
                 % (blocks / associativity);
@@ -142,6 +157,7 @@ public class DefaultCache extends Engine {
                 stats.write_hits++;
                 lru[index][i] = 0;
                 hit = true;
+                lastHit = true;
                 if(writeThrough)
                     propagateWrite(addr, val);
                 else
