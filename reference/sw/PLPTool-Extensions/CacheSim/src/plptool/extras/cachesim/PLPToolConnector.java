@@ -55,6 +55,7 @@ public class PLPToolConnector implements ModuleInterface5 {
     public int initialize(ProjectDriver plp) {
         CallbackRegistry.register(new BusReadCallback(), CallbackRegistry.BUS_POST_READ);
         CallbackRegistry.register(new BusWriteCallback(), CallbackRegistry.BUS_WRITE);
+        CallbackRegistry.register(new GUIUpdateCallback(), CallbackRegistry.GUI_UPDATE);
         CallbackRegistry.register(new ModeSetCallback(),
                 CallbackRegistry.PROJECT_NEW,
                 CallbackRegistry.PROJECT_OPEN_SUCCESSFUL,
@@ -71,7 +72,7 @@ public class PLPToolConnector implements ModuleInterface5 {
         JMenuItem menuClient = new JMenuItem("Create a Cache Simulator...");
         menuClient.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                (new DefaultCacheFrame()).setVisible(true);
+                Log.spawnCacheFrame();
             }
         });
         if(plp.g()) {

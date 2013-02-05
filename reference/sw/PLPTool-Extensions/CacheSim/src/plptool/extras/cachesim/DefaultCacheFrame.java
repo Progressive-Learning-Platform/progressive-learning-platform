@@ -1,12 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+    Copyright 2013 Wira Mulia
 
-/*
- * DefaultCacheFrame.java
- *
- * Created on Jan 31, 2013, 8:12:01 PM
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 package plptool.extras.cachesim;
 
@@ -19,19 +26,29 @@ import plptool.PLPToolbox;
 public class DefaultCacheFrame extends javax.swing.JFrame {
 
     DefaultCache e;
+    CacheVisualizerCanvas c;
     
     /** Creates new form DefaultCacheFrame */
     public DefaultCacheFrame() {
         initComponents();
+        c = new CacheVisualizerCanvas(this);
+        paneVisualizeContainer.add(c);
+        c.setSize(paneVisualizeContainer.getSize());
+        paneVisualizeContainer.revalidate();
+        update();
     }
     
     private void removeCacheFromLog() {
-        for(int i = 0; i < Log.head.size(); i++) {
-        if(Log.head.get(i).equals(e)) {
-            Log.head.remove(i);
-            plptool.Msg.M("Removing my cache engine from the list...");
-        }
+        Log.destroyCacheFrame(this);       
     }
+    
+    public final void update() {
+        if(e != null && e.lastAccess != -1) {
+            c.highlightSet((int) (e.lastAccess >> e.blockOffset) % (e.blocks / e.associativity));
+        }
+        if(e != null && e.lastAccess == -1)
+            c.highlightSet(-1);
+        c.repaint();
     }
 
     /** This method is called from within the constructor to
@@ -59,6 +76,7 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
         chkWriteThrough = new javax.swing.JCheckBox();
         chkData = new javax.swing.JCheckBox();
         paneVisualize = new javax.swing.JPanel();
+        paneVisualizeContainer = new javax.swing.JPanel();
         paneStatistics = new javax.swing.JPanel();
         paneExtras = new javax.swing.JPanel();
         btnDumpContents = new javax.swing.JButton();
@@ -87,11 +105,11 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
 
         paneConfigure.setName("paneConfigure"); // NOI18N
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Dialog", 1, 24));
         jLabel1.setText("Block size (bytes) :");
         jLabel1.setName("jLabel1"); // NOI18N
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 24));
         jLabel2.setText("Number of blocks :");
         jLabel2.setName("jLabel2"); // NOI18N
 
@@ -114,7 +132,7 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
         cmbAssociativity.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "4", "8", "16", "32" }));
         cmbAssociativity.setName("cmbAssociativity"); // NOI18N
 
-        btnCreate.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        btnCreate.setFont(new java.awt.Font("Dialog", 1, 24));
         btnCreate.setText("Create Cache");
         btnCreate.setName("btnCreate"); // NOI18N
         btnCreate.addActionListener(new java.awt.event.ActionListener() {
@@ -123,19 +141,19 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
             }
         });
 
-        chkInstructions.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        chkInstructions.setFont(new java.awt.Font("Tahoma", 1, 24));
         chkInstructions.setText("Cache Instructions");
         chkInstructions.setName("chkInstructions"); // NOI18N
 
-        chkWrites.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        chkWrites.setFont(new java.awt.Font("Tahoma", 1, 24));
         chkWrites.setText("Cache Writes");
         chkWrites.setName("chkWrites"); // NOI18N
 
-        chkWriteAllocate.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        chkWriteAllocate.setFont(new java.awt.Font("Tahoma", 1, 24));
         chkWriteAllocate.setText("Write-allocate");
         chkWriteAllocate.setName("chkWriteAllocate"); // NOI18N
 
-        chkWriteThrough.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        chkWriteThrough.setFont(new java.awt.Font("Tahoma", 1, 24));
         chkWriteThrough.setText("Write-through");
         chkWriteThrough.setName("chkWriteThrough"); // NOI18N
 
@@ -202,15 +220,29 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
 
         paneVisualize.setName("paneVisualize"); // NOI18N
 
+        paneVisualizeContainer.setBackground(new java.awt.Color(0, 0, 0));
+        paneVisualizeContainer.setName("paneVisualizeContainer"); // NOI18N
+
+        javax.swing.GroupLayout paneVisualizeContainerLayout = new javax.swing.GroupLayout(paneVisualizeContainer);
+        paneVisualizeContainer.setLayout(paneVisualizeContainerLayout);
+        paneVisualizeContainerLayout.setHorizontalGroup(
+            paneVisualizeContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 782, Short.MAX_VALUE)
+        );
+        paneVisualizeContainerLayout.setVerticalGroup(
+            paneVisualizeContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 484, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout paneVisualizeLayout = new javax.swing.GroupLayout(paneVisualize);
         paneVisualize.setLayout(paneVisualizeLayout);
         paneVisualizeLayout.setHorizontalGroup(
             paneVisualizeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 782, Short.MAX_VALUE)
+            .addComponent(paneVisualizeContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         paneVisualizeLayout.setVerticalGroup(
             paneVisualizeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 484, Short.MAX_VALUE)
+            .addComponent(paneVisualizeContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Visualize", paneVisualize);
@@ -322,7 +354,6 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
 
 private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
     removeCacheFromLog();
-    dispose();
 }//GEN-LAST:event_btnCloseActionPerformed
 
 private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
@@ -375,22 +406,21 @@ private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_btnCreateActionPerformed
 
 private void btnDumpContentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDumpContentsActionPerformed
-    if(Log.head != null)
+    if(e != null)
         txtOutput.setText(e.dumpContents());
 }//GEN-LAST:event_btnDumpContentsActionPerformed
 
 private void btnDumpStatisticsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDumpStatisticsActionPerformed
-    if(Log.head != null)
+    if(e != null)
         txtOutput.setText(e.stats.print());
 }//GEN-LAST:event_btnDumpStatisticsActionPerformed
 
 private void btnResetCacheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetCacheActionPerformed
-    e.logReset();
+    if(e != null)
+        e.logReset();
 }//GEN-LAST:event_btnResetCacheActionPerformed
 
 private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-    if(e == null)
-        return;
     removeCacheFromLog();
 }//GEN-LAST:event_formWindowClosing
 
@@ -417,6 +447,7 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
     private javax.swing.JPanel paneExtras;
     private javax.swing.JPanel paneStatistics;
     private javax.swing.JPanel paneVisualize;
+    private javax.swing.JPanel paneVisualizeContainer;
     private javax.swing.JTextArea txtOutput;
     // End of variables declaration//GEN-END:variables
 }

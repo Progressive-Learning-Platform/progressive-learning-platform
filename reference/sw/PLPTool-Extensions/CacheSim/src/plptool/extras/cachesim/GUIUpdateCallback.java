@@ -15,18 +15,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
+
 package plptool.extras.cachesim;
 
-import javax.swing.*;
-import java.awt.Graphics;
+import plptool.dmf.Callback;
 
 /**
  *
- * @author wira
+ * @author Wira
  */
-public class CacheAddressSpaceVisualCanvas extends JPanel {
-    @Override
-    public void paint(Graphics g) {
-        
+public class GUIUpdateCallback implements Callback {
+    public boolean callback(int num, Object param) {
+        if(Log.mode == Log.EDITING)
+            return false;
+        Log.updateFrames();
+        return true;
     }
 }
