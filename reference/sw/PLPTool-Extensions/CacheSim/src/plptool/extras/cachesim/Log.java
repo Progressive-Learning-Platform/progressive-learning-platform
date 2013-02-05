@@ -28,6 +28,7 @@ import java.util.ArrayList;
  */
 public class Log {
     public static int mode;
+    public static int cycle;
 
     public static final int EDITING = 0;
     public static final int SIMULATION_RESET = 1;
@@ -42,6 +43,7 @@ public class Log {
         for(Engine e : head) {
             e.logReset();
         }
+        cycle = 0;
     }
 
     public static void read(long addr, long val) {

@@ -20,6 +20,8 @@ package plptool.extras.cachesim;
 
 import plptool.*;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Wira
@@ -44,6 +46,9 @@ public class DefaultCache extends Engine {
     public long lastAccess;
     public int lastAccessType;
     public boolean lastHit;
+    public ArrayList<Long> trace;
+
+    public final int TRACE_SIZE = 5;
         
     public DefaultCache(Engine prev, Engine...next) {
         super(prev, next);
@@ -61,6 +66,7 @@ public class DefaultCache extends Engine {
         this.writeThrough = writeThrough;
         this.writeAllocate = writeAllocate;
         indexBits = (int) (Math.log(blocks / associativity) / Math.log(2));
+        trace = new ArrayList<Long>();
     }
 
     public final void reset() {
@@ -86,6 +92,7 @@ public class DefaultCache extends Engine {
         lastAccess = -1;
         lastAccessType = -1;
         lastHit = false;
+        trace = new ArrayList<Long>();
     }
     
     public int read(long addr, long val) {
@@ -102,6 +109,7 @@ public class DefaultCache extends Engine {
         lastAccess = addr;
         lastAccessType = 1;
         stats.read_accesses++;
+        trace(addr);
         index = (int) (addr >> blockOffset)
                 % (blocks / associativity);
         for(i = 0; i < associativity; i++) {
@@ -149,6 +157,7 @@ public class DefaultCache extends Engine {
         lastAccess = addr;
         lastAccessType = 2;
         stats.write_accesses++;
+        trace(addr);
         index = (int) (addr >> blockOffset)
                 % (blocks / associativity);
         for(i = 0; i < associativity; i++) {
@@ -211,5 +220,15 @@ public class DefaultCache extends Engine {
         }
 
         return str;
+    }
+
+    private synchronized void trace(long addr) {
+        trace.add(addr);
+        if(trace.size() > TRACE_SIZE)
+            trace.remove(0);
+    }
+
+    public synchronized Long[] getTrace() {
+        return (Long[]) trace.toArray();
     }
 }
