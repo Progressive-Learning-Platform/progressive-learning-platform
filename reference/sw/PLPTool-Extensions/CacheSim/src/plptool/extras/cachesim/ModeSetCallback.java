@@ -39,6 +39,7 @@ public class ModeSetCallback implements Callback {
                 Log.reset();
                 break;
             case CallbackRegistry.SIM_STEP:
+                Log.cycle++;
                 Log.mode = Log.SIMULATION_STEP;
                 break;
             case CallbackRegistry.SIM_POST_STEP:
