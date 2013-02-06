@@ -46,12 +46,14 @@ public class DefaultCache extends Engine {
     public long lastAccess;
     public int lastAccessType;
     public boolean lastHit;
-    public ArrayList<Long> trace;
+    public int lastSlot;
+    public final ArrayList<Long> trace;
 
     public final int TRACE_SIZE = 5;
         
     public DefaultCache(Engine prev, Engine...next) {
         super(prev, next);
+        trace = new ArrayList<Long>();
     }
     
     public void setProperties(int blockOffset, int associativity, int blocks, 
@@ -66,7 +68,7 @@ public class DefaultCache extends Engine {
         this.writeThrough = writeThrough;
         this.writeAllocate = writeAllocate;
         indexBits = (int) (Math.log(blocks / associativity) / Math.log(2));
-        trace = new ArrayList<Long>();
+        trace.clear();
     }
 
     public final void reset() {
@@ -91,8 +93,9 @@ public class DefaultCache extends Engine {
         
         lastAccess = -1;
         lastAccessType = -1;
+        lastSlot = -1;
         lastHit = false;
-        trace = new ArrayList<Long>();
+        trace.clear();
     }
     
     public int read(long addr, long val) {
@@ -119,6 +122,7 @@ public class DefaultCache extends Engine {
                 lru[index][i] = 0;
                 hit = true;
                 lastHit = true;
+                lastSlot = i;
             } else {
                 lru[index][i]++;
             }
@@ -136,6 +140,7 @@ public class DefaultCache extends Engine {
                 propagateWrite(linesBase[index][lruIndex], val); // TODO: store value
                 stats.write_backs++;
             }
+            lastSlot = lruIndex;
             dirty[index][lruIndex] = false;
             linesBase[index][lruIndex] = addr;
             invalid[index][lruIndex] = false;
@@ -167,6 +172,7 @@ public class DefaultCache extends Engine {
                 lru[index][i] = 0;
                 hit = true;
                 lastHit = true;
+                lastSlot = i;
                 if(writeThrough)
                     propagateWrite(addr, val);
                 else
@@ -190,6 +196,7 @@ public class DefaultCache extends Engine {
             }
             
             // replace cache line with new data            
+            lastSlot = lruIndex;
             linesBase[index][lruIndex] = addr;
             invalid[index][lruIndex] = false;
             if(writeThrough) {
@@ -222,13 +229,23 @@ public class DefaultCache extends Engine {
         return str;
     }
 
-    private synchronized void trace(long addr) {
-        trace.add(addr);
-        if(trace.size() > TRACE_SIZE)
-            trace.remove(0);
+    private void trace(long addr) {
+        synchronized(trace) {
+            trace.add(addr);
+            if(trace.size() > TRACE_SIZE)
+                trace.remove(0);
+        }
     }
 
-    public synchronized Long[] getTrace() {
-        return (Long[]) trace.toArray();
+    public int getTraceSize() {
+        synchronized(trace) {
+            return trace.size();
+        }
+    }
+    
+    public Long getTraceItem(int i) {
+        synchronized(trace) {
+            return trace.get(i);
+        }
     }
 }

@@ -27,14 +27,19 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
 
     DefaultCache e;
     CacheVisualizerCanvas c;
+    CacheStatisticsCanvas s;
     
     /** Creates new form DefaultCacheFrame */
     public DefaultCacheFrame() {
         initComponents();
         c = new CacheVisualizerCanvas(this);
+        s = new CacheStatisticsCanvas(this);
         paneVisualizeContainer.add(c);
+        paneStatisticsContainer.add(s);
         c.setSize(paneVisualizeContainer.getSize());
+        s.setSize(paneStatisticsContainer.getSize());
         paneVisualizeContainer.revalidate();
+        paneStatisticsContainer.revalidate();
         update();
     }
     
@@ -49,6 +54,7 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
         if(e != null && e.lastAccess == -1)
             c.highlightSet(-1);
         c.repaint();
+        s.repaint();
     }
 
     /** This method is called from within the constructor to
@@ -78,6 +84,7 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
         paneVisualize = new javax.swing.JPanel();
         paneVisualizeContainer = new javax.swing.JPanel();
         paneStatistics = new javax.swing.JPanel();
+        paneStatisticsContainer = new javax.swing.JPanel();
         paneExtras = new javax.swing.JPanel();
         btnDumpContents = new javax.swing.JButton();
         btnDumpStatistics = new javax.swing.JButton();
@@ -249,15 +256,29 @@ public class DefaultCacheFrame extends javax.swing.JFrame {
 
         paneStatistics.setName("paneStatistics"); // NOI18N
 
+        paneStatisticsContainer.setBackground(new java.awt.Color(0, 0, 0));
+        paneStatisticsContainer.setName("paneStatisticsContainer"); // NOI18N
+
+        javax.swing.GroupLayout paneStatisticsContainerLayout = new javax.swing.GroupLayout(paneStatisticsContainer);
+        paneStatisticsContainer.setLayout(paneStatisticsContainerLayout);
+        paneStatisticsContainerLayout.setHorizontalGroup(
+            paneStatisticsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 782, Short.MAX_VALUE)
+        );
+        paneStatisticsContainerLayout.setVerticalGroup(
+            paneStatisticsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 484, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout paneStatisticsLayout = new javax.swing.GroupLayout(paneStatistics);
         paneStatistics.setLayout(paneStatisticsLayout);
         paneStatisticsLayout.setHorizontalGroup(
             paneStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 782, Short.MAX_VALUE)
+            .addComponent(paneStatisticsContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         paneStatisticsLayout.setVerticalGroup(
             paneStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 484, Short.MAX_VALUE)
+            .addComponent(paneStatisticsContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Statistics", paneStatistics);
@@ -446,6 +467,7 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
     private javax.swing.JPanel paneConfigure;
     private javax.swing.JPanel paneExtras;
     private javax.swing.JPanel paneStatistics;
+    private javax.swing.JPanel paneStatisticsContainer;
     private javax.swing.JPanel paneVisualize;
     private javax.swing.JPanel paneVisualizeContainer;
     private javax.swing.JTextArea txtOutput;

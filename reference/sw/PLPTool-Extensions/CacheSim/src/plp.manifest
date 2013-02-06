@@ -5,6 +5,7 @@ description::<enter description here>
 version::<enter version here>
 class::plptool.extras.cachesim.BusReadCallback
 class::plptool.extras.cachesim.BusWriteCallback
+class::plptool.extras.cachesim.CacheStatisticsCanvas
 class::plptool.extras.cachesim.CacheVisualizerCanvas
 class::plptool.extras.cachesim.DebugCallback
 class::plptool.extras.cachesim.DefaultCacheFrame$1
