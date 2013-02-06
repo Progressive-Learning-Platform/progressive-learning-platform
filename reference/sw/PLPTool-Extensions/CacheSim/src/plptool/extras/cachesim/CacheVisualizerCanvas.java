@@ -146,7 +146,7 @@ public class CacheVisualizerCanvas extends JPanel {
     }
     
     private int getTotalHeight(Graphics2D g, String str, Font f) {
-        return (int) (getMetrics(g, str, f).getHeight());
+        return (int) (getMetrics(g, str, f).getAscent()-getMetrics(g, str, f).getLeading()-getMetrics(g, str, f).getDescent());
     }
     private int getTextWidth(Graphics2D g, String str) {
         return (int) (g.getFontMetrics().stringWidth(str));
