@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,11 +19,14 @@
 package plptool.mips;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JMenuItem;
 import plptool.*;
 import plptool.gui.ProjectDriver;
+import java.io.File;
 
 /**
- * This is the plpmips implementation of the ISA meta class.
+ * This is the PLP CPU implementation of the ISA meta class.
  *
  * @author wira
  */
@@ -38,6 +41,7 @@ public class Architecture extends PLPArchitecture {
     private plptool.mips.visualizer.ProgramVisualization.programGraph progGraph;
     private plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame;
     private SyntaxHighlightSupport syntaxHighlightSupport;
+    private javax.swing.JMenuItem menuExportVerilogHex;
 
     public Architecture(int archID, ProjectDriver plp) {
         super(archID, "plpmips", plp);
@@ -50,6 +54,42 @@ public class Architecture extends PLPArchitecture {
         informationString = "PLP CPU ISA implementation";
         if(plp.g())
             plp.g_opts.setBuiltInISAOptions(true);
+    }
+
+    @Override
+    /**
+     * Add our specific menu items
+     */
+    public void init() {
+        if(plp.g()) {
+            menuExportVerilogHex = new JMenuItem("Export PLP CPU boot ROM Verilog Hex...");
+            menuExportVerilogHex.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String lines[];
+                    String out = "";
+                    String hex;
+                    File path;
+                    if(!plp.isAssembled()) {
+                        Msg.E("Project needs to be assembled.", Constants.PLP_GENERIC_ERROR, null);
+                    } else {
+                        Msg.I("Generating Verilog hex-format...", null);
+                        hex = plptool.mips.Formatter.writeVerilogHex(plp.asm.getObjectCode());
+                        lines = hex.split("\n");
+                        for(int i = 0; i < lines.length; i++) {
+                            lines[i] = "ram[" + i + "] = " + lines[i] + ";";
+                            out += lines[i] + "\n";
+                        }
+                        path = PLPToolbox.saveFileDialog(Constants.launchPath, null);
+                        if(path != null) {
+                            if(PLPToolbox.writeFile(out, path.getAbsolutePath()) == Constants.PLP_OK) {
+                                Msg.I(path + " written.", null);
+                            }
+                        }
+                    }
+                }
+            });
+            plp.g_dev.addToolsItem(menuExportVerilogHex);
+        }
     }
 
     /**
@@ -525,7 +565,9 @@ public class Architecture extends PLPArchitecture {
 
     @Override
     public void cleanup() {
-        if(plp.g())
+        if(plp.g()) {
             plp.g_opts.setBuiltInISAOptions(false);
+            plp.g_dev.removeToolsItem(menuExportVerilogHex);
+        }
     }
 }

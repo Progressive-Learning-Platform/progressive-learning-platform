@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Joshua Holland, Wira Mulia
+    Copyright 2010-2013 David Fritz, Brian Gordon, Joshua Holland, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -91,6 +91,7 @@ public class Develop extends javax.swing.JFrame {
         catchyPLP();
         txtOutput.setEditorKit(new HTMLEditorKit());
         txtOutput.setDocument(new HTMLDocument());
+        menuModules.setText("Modules");
 
         Msg.setOutput(txtOutput);
         scroller.setEnabled(false);
@@ -916,7 +917,7 @@ public class Develop extends javax.swing.JFrame {
             plp.getArch().getSyntaxHighlightSupport().newStyle();
     }
 
-    public void catchyPLP() {
+    public final void catchyPLP() {
         String catchyStr;
 
         catchyStr =  "Progressive Learning Platform\n\n";
@@ -2513,7 +2514,6 @@ public class Develop extends javax.swing.JFrame {
         });
         rootmenuTools.add(menuOptions);
 
-        menuModules.setText(resourceMap.getString("menuModules.text")); // NOI18N
         menuModules.setName("menuModules"); // NOI18N
 
         menuModuleManager.setText(resourceMap.getString("menuModuleManager.text")); // NOI18N
