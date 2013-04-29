@@ -385,11 +385,10 @@ public class Architecture extends PLPArchitecture {
         str += "<a name=\"r\" /><h1>R-type Instructions</h1>";
         str += "<table border=1 width=\"100%\">";
 
-        String[][] data = new String[13][2];
+        String[][] data = new String[15][2];
 
         data[0][0] = "<font color=blue><b>addu</b></font> $rd, $rs, $rt";      data[0][1] = "rd = rs + rt";
         data[1][0] = "<font color=blue><b>subu</b></font> $rd, $rs, $rt";      data[1][1] = "rd = rs - rt";
-
         data[2][0] = "<font color=blue><b>and</b></font>  $rd, $rs, $rt";      data[2][1] = "rd = rs &amp; rt";
         data[3][0] = "<font color=blue><b>or</b></font>   $rd, $rs, $rt";      data[3][1] = "rd = rs | rt";
         data[4][0] = "<font color=blue><b>nor</b></font>  $rd, $rs, $rt";      data[4][1] = "rd = ~(rs | rt)";
@@ -399,10 +398,10 @@ public class Architecture extends PLPArchitecture {
         data[8][0] = "<font color=blue><b>sltu</b></font> $rd, $rs, $rt";      data[8][1] = "rd = (rs &lt; rt) ? 1 : 0";
         data[9][0] = "<font color=blue><b>sll</b></font>  $rd, $rt, shamt";    data[9][1] = "rd = rt &lt;&lt; shamt";
         data[10][0] = "<font color=blue><b>srl</b></font>  $rd, $rt, shamt";   data[10][1] = "rd = rt &gt;&gt; shamt";
-        data[9][0] = "<font color=blue><b>sllv</b></font>  $rd, $rs, $rt";    data[9][1] = "rd = rs &lt;&lt; rt";
-        data[10][0] = "<font color=blue><b>srlv</b></font>  $rd, $rs, $rt";   data[10][1] = "rd = rs &gt;&gt; rt";
-        data[11][0] = "<font color=blue><b>jr</b></font> $rs";                 data[11][1] = "PC = rs";
-        data[12][0] = "<font color=blue><b>jalr</b></font> $rd, $rs";          data[12][1] = "rd = PC + 4; PC = rs";
+        data[11][0] = "<font color=blue><b>sllv</b></font>  $rd, $rs, $rt";    data[11][1] = "rd = rs &lt;&lt; rt";
+        data[12][0] = "<font color=blue><b>srlv</b></font>  $rd, $rs, $rt";    data[12][1] = "rd = rs &gt;&gt; rt";
+        data[13][0] = "<font color=blue><b>jr</b></font> $rs";                 data[13][1] = "PC = rs";
+        data[14][0] = "<font color=blue><b>jalr</b></font> $rd, $rs";          data[14][1] = "rd = PC + 4; PC = rs";
 
         for(int i = 0; i < data.length; i++) {
             str += "<tr>";
@@ -486,15 +485,16 @@ public class Architecture extends PLPArchitecture {
         str += "<a name=\"d\" /><h1>Assembler Directives</h1>";
         str += "<table border=1 width=\"100%\"";
 
-        data = new String[7][2];
+        data = new String[8][2];
 
-        data[0][0] = ".org <i>address</i>";                data[0][1] = "Place subsequent statements starting from <i>address</i>";
-        data[1][0] = "<i>label</i>:";                data[1][1] = "Label current memory location as <i>label</i>";
-        data[2][0] = ".word <i>value</i>";           data[2][1] = "Write 32-bit <i>value</i> to the current address";
-        data[3][0] = ".ascii \"<i>string</i>\"";     data[3][1] = "Place <i>string</i> starting from the current address";
-        data[4][0] = ".asciiz \"<i>string</i>\"";    data[4][1] = "Place null-terminated <i>string</i> starting from the current address";
-        data[5][0] = ".space <i>value</i>";          data[5][1] = "Reserve <i>value</i> words starting from the current address";
-        data[6][0] = ".equ <i>symbol</i> <i>value</i>";          data[6][1] = "Add a symbol and its associated value to the symbol table (a constant)";
+        data[0][0] = ".org <i>address</i>";                     data[0][1] = "Place subsequent statements starting from <i>address</i>";
+        data[1][0] = "<i>label</i>:";                           data[1][1] = "Label current memory location as <i>label</i>";
+        data[2][0] = ".word <i>value</i>";                      data[2][1] = "Write 32-bit <i>value</i> to the current address";
+        data[3][0] = ".ascii \"<i>string</i>\"";                data[3][1] = "Place <i>string</i> starting from the current address";
+        data[4][0] = ".asciiz \"<i>string</i>\"";               data[4][1] = "Place null-terminated <i>string</i> starting from the current address";
+        data[5][0] = ".asciiw \"<i>string</i>\"";               data[5][1] = "Place word-aligned <i>string</i> starting from the current address";
+        data[6][0] = ".space <i>value</i>";                     data[6][1] = "Reserve <i>value</i> words starting from the current address";
+        data[7][0] = ".equ <i>symbol</i> <i>value</i>";         data[7][1] = "Add a symbol and its associated value to the symbol table (a constant)";
 
 
         for(int i = 0; i < data.length; i++) {
