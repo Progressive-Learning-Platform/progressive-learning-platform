@@ -453,6 +453,7 @@
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="menuModules">
               <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="menuModules.text"/>
                 <Property name="name" type="java.lang.String" value="menuModules" noResource="true"/>
               </Properties>
               <SubComponents>
