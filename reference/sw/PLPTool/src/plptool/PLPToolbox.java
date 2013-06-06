@@ -1,5 +1,5 @@
 /*
-    Copyright 2012 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2012-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -591,7 +591,7 @@ public class PLPToolbox {
         }
 
         return Constants.PLP_OK;
-    }
+    }        
 
     /**
      * Helper method for the createJar method. This method will recurse into
@@ -638,6 +638,44 @@ public class PLPToolbox {
                 }
             }
         }
+        return Constants.PLP_OK;
+    }
+    
+    /**
+     * Add an entry to a jar file
+     * 
+     * @param jar Jar file to add entry to (will be created if it doesn't exist)
+     * @param entryPath Path of the new entry
+     * @param data Data to be written
+     * @return PLP_OK on successful operation, error code otherwise (I/O error)
+     */
+    public static int addToJar(String jar, String entryPath, byte[] data) {        
+        FileOutputStream fOut;
+        JarOutputStream out;
+               
+        try {            
+            fOut = new FileOutputStream(new File(jar));                      
+            out = new JarOutputStream(fOut);            
+        } catch(IOException e) {
+            Msg.trace(e);
+            return Msg.E("Failed to open output stream (I/O error)",
+                                Constants.PLP_GENERAL_IO_ERROR, null);
+        }
+        
+        try {
+            JarEntry entry = new JarEntry(entryPath);
+            entry.setSize(data.length);
+            out.putNextEntry(entry);
+            out.write(data);
+            out.flush();
+            out.closeEntry();
+            out.close();            
+        } catch(IOException e) {
+            Msg.trace(e);
+            return Msg.E("Failed to add \"" + entryPath + "\" (I/O error)",
+                                Constants.PLP_GENERAL_IO_ERROR, null);
+        }              
+        
         return Constants.PLP_OK;
     }
 
