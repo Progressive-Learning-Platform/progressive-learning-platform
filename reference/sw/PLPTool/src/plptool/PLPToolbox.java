@@ -650,18 +650,57 @@ public class PLPToolbox {
      * @return PLP_OK on successful operation, error code otherwise (I/O error)
      */
     public static int addToJar(String jar, String entryPath, byte[] data) {        
-        FileOutputStream fOut;
         JarOutputStream out;
-               
-        try {            
-            fOut = new FileOutputStream(new File(jar));                      
-            out = new JarOutputStream(fOut);            
-        } catch(IOException e) {
-            Msg.trace(e);
-            return Msg.E("Failed to open output stream (I/O error)",
-                                Constants.PLP_GENERAL_IO_ERROR, null);
+        JarInputStream in;
+        File tJar = null;
+        JarEntry t;
+        File fJar = new File(jar);
+        byte buf[] = new byte[Constants.DEFAULT_IO_BUFFER_SIZE];
+        int readBytes;
+
+
+        if(fJar.exists()) {
+            // First we need to read the JAR file entirely, we cannot just add
+            // entries (it will overwrite the file)
+            try {
+                tJar = new File (getTmpDir() + "/tmp.jar");
+                out = new JarOutputStream(new FileOutputStream(tJar));
+            } catch(IOException e) {
+                Msg.trace(e);
+                return Msg.E("Failed to open output stream (I/O error)",
+                                    Constants.PLP_GENERAL_IO_ERROR, null);
+            }
+            try {
+                in = new JarInputStream(new FileInputStream(fJar));
+                while((t = in.getNextJarEntry()) != null) {
+                    if(!t.getName().equals(entryPath)) {
+                        out.putNextEntry(t);
+                        while((readBytes = in.read(buf)) != -1)
+                            out.write(buf, 0, readBytes);
+                        out.flush();
+                        out.closeEntry();
+                    }
+                }
+                in.close();
+            } catch(IOException e) {
+                Msg.trace(e);
+                return Msg.E("Failed to open input stream (I/O error)",
+                                    Constants.PLP_GENERAL_IO_ERROR, null);
+            } catch(Exception e) {
+                Msg.trace(e);
+                return Msg.E("Failed to open input stream (general exception)",
+                                    Constants.PLP_GENERAL_IO_ERROR, null);
+            }
+        } else {
+            try {
+                out = new JarOutputStream(new FileOutputStream(fJar));
+            } catch(IOException e) {
+                Msg.trace(e);
+                return Msg.E("Failed to open output stream (I/O error)",
+                                    Constants.PLP_GENERAL_IO_ERROR, null);
+            }
         }
-        
+                      
         try {
             JarEntry entry = new JarEntry(entryPath);
             entry.setSize(data.length);
@@ -669,12 +708,27 @@ public class PLPToolbox {
             out.write(data);
             out.flush();
             out.closeEntry();
-            out.close();            
+            out.close();
+            if(tJar != null) {
+                fJar.delete();
+                tJar.renameTo(fJar);
+            }
+        } catch(java.util.zip.ZipException e) {
+            Msg.trace(e);
+            return Msg.E("Zip Exception: " + e.getMessage(), Constants.PLP_GENERAL_IO_ERROR, null);
         } catch(IOException e) {
             Msg.trace(e);
             return Msg.E("Failed to add \"" + entryPath + "\" (I/O error)",
                                 Constants.PLP_GENERAL_IO_ERROR, null);
-        }              
+        }
+
+        try {
+            (new File(getTmpDir() + "/tmp.jar")).delete();
+        } catch(Exception e) {
+            Msg.trace(e);
+            return Msg.E("Failed to delete temporary JAR file",
+                                Constants.PLP_GENERAL_IO_ERROR, null);
+        }
         
         return Constants.PLP_OK;
     }

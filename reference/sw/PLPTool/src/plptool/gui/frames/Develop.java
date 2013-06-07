@@ -62,7 +62,8 @@ public class Develop extends javax.swing.JFrame {
     private TextLineNumber tln;
     private TextLineHighlighter tlh;
 
-    private CodeEditorPane txtEditor;
+    // caret position
+    private int line;
 
     private double hPaneSavedProportion = -1;
     private double vPaneSavedProportion = -1;
@@ -73,30 +74,27 @@ public class Develop extends javax.swing.JFrame {
 
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
-        Msg.D("Initializing IDE...", 2, null);
         this.plp = plp;
         initComponents();
+        line = 0;
 
         DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("No PLP Project Open");
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
         treeProject.setModel(treeModel);
         
         splitterH.setDividerLocation(0.25);
-        txtEditor = new CodeEditorPane();
-        //tlh = new TextLineHighlighter(txtEditor);
-        //tln = new TextLineNumber(txtEditor, tlh, plp);
-        //scroller.setRowHeaderView(tln);        
-        //scroller.add(txtEditor);        
-        //txtEditor.setSize(scroller.getSize());
-        paneContainer.add(txtEditor.getContainerWithLines());
-        txtEditor.getContainerWithLines().setSize(paneContainer.getSize());
+
+        tlh = new TextLineHighlighter(txtEditor);
+        tln = new TextLineNumber(txtEditor, tlh, plp);
+        scroller.setRowHeaderView(tln);
+
         catchyPLP();
         txtOutput.setEditorKit(new HTMLEditorKit());
         txtOutput.setDocument(new HTMLDocument());
         //menuModules.setText("Modules");
 
         Msg.setOutput(txtOutput);
-        //scroller.setEnabled(false);
+        scroller.setEnabled(false);
         txtOutput.setEditable(false);
         rootmenuProject.setEnabled(false);
         menuPrint.setEnabled(false);
@@ -142,7 +140,6 @@ public class Develop extends javax.swing.JFrame {
 
         Msg.P(Text.copyrightString);
         Msg.M("");
-        Msg.D("IDE Ready.", 2, null);
     }
 
     /*
@@ -292,10 +289,10 @@ public class Develop extends javax.swing.JFrame {
                         int fileNum = plp.asm.getFileMapper()[pc_index];
 
                         int yPos = (lineNum - 1) * txtEditor.getFontMetrics(txtEditor.getFont()).getHeight();
-                        //int viewPortY = scroller.getViewport().getViewPosition().y;
+                        int viewPortY = scroller.getViewport().getViewPosition().y;
 
-                        //if(yPos > (viewPortY + scroller.getHeight()) || yPos < viewPortY)
-                        //    scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
+                        if(yPos > (viewPortY + scroller.getHeight()) || yPos < viewPortY)
+                            scroller.getViewport().setViewPosition(new Point(0, yPos - scroller.getSize().height / 2));
 
                         if(plp.getOpenAsm() != fileNum) {
                             plp.setOpenAsm(fileNum);
@@ -338,8 +335,8 @@ public class Develop extends javax.swing.JFrame {
         SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //tlh.repaint();
-                        //tln.repaint();
+                        tlh.repaint();
+                        tln.repaint();
                     }
                 });
     }
@@ -348,8 +345,8 @@ public class Develop extends javax.swing.JFrame {
      * Repaint text ornaments NOW (DANGEROUS)
      */
     private void repaintNow() {
-        //tlh.repaint();
-        //tln.repaint();
+        tlh.repaint();
+        tln.repaint();
     }
 
     /**
@@ -404,16 +401,16 @@ public class Develop extends javax.swing.JFrame {
      *
      * @return Reference to the editor pane scroller
      */
-    //public javax.swing.JScrollPane getScroller() {
-    //    return scroller;
-    //}
+    public javax.swing.JScrollPane getScroller() {
+        return scroller;
+    }
 
     /**
      * Get the editor pane
      *
      * @return Reference to the main editor pane
      */
-    public CodeEditorPane getEditor() {
+    public javax.swing.JTextPane getEditor() {
         return txtEditor;
     }
 
@@ -1031,8 +1028,8 @@ public class Develop extends javax.swing.JFrame {
         menuSimControl.setSelected(false);
         menuSimIO.setSelected(false);
         menuSimView.setVisible(true);
-        //tln.setHighlight(-1);
-        //tlh.setY(-1);
+        tln.setHighlight(-1);
+        tlh.setY(-1);
         repaintLater();
         if(plp.isSimulating()) {
             plp.stopSimulation();
@@ -1588,9 +1585,10 @@ public class Develop extends javax.swing.JFrame {
         treeProject = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
         txtCurFile = new javax.swing.JLabel();
+        scroller = new javax.swing.JScrollPane();
+        txtEditor = new javax.swing.JTextPane();
         lblPosition = new javax.swing.JLabel();
         lblSimStat = new javax.swing.JLabel();
-        paneContainer = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtOutput = new javax.swing.JTextPane();
         toolbar = new javax.swing.JToolBar();
@@ -1751,6 +1749,36 @@ public class Develop extends javax.swing.JFrame {
         txtCurFile.setText(resourceMap.getString("txtCurFile.text")); // NOI18N
         txtCurFile.setName("txtCurFile"); // NOI18N
 
+        scroller.setName("scroller"); // NOI18N
+
+        txtEditor.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        txtEditor.setFont(resourceMap.getFont("txtEditor.font")); // NOI18N
+        txtEditor.setEnabled(false);
+        txtEditor.setName("txtEditor"); // NOI18N
+        txtEditor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                txtEditorMousePressed(evt);
+            }
+        });
+        txtEditor.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txtEditorCaretUpdate(evt);
+            }
+        });
+        txtEditor.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+                txtEditorCaretPositionChanged(evt);
+            }
+        });
+        txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtEditorKeyTyped(evt);
+            }
+        });
+        scroller.setViewportView(txtEditor);
+
         lblPosition.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblPosition.setText(resourceMap.getString("lblPosition.text")); // NOI18N
         lblPosition.setName("lblPosition"); // NOI18N
@@ -1758,32 +1786,19 @@ public class Develop extends javax.swing.JFrame {
         lblSimStat.setText(resourceMap.getString("lblSimStat.text")); // NOI18N
         lblSimStat.setName("lblSimStat"); // NOI18N
 
-        paneContainer.setName("paneContainer"); // NOI18N
-
-        javax.swing.GroupLayout paneContainerLayout = new javax.swing.GroupLayout(paneContainer);
-        paneContainer.setLayout(paneContainerLayout);
-        paneContainerLayout.setHorizontalGroup(
-            paneContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 827, Short.MAX_VALUE)
-        );
-        paneContainerLayout.setVerticalGroup(
-            paneContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 297, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCurFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 609, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 625, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSimStat))
                 .addContainerGap())
-            .addComponent(paneContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1793,7 +1808,7 @@ public class Develop extends javax.swing.JFrame {
                     .addComponent(lblPosition)
                     .addComponent(lblSimStat))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(paneContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(scroller, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE))
         );
 
         splitterH.setRightComponent(jPanel1);
@@ -1816,7 +1831,7 @@ public class Develop extends javax.swing.JFrame {
         );
         devMainPaneLayout.setVerticalGroup(
             devMainPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+            .addComponent(splitterV, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
         );
 
         getContentPane().add(devMainPane, java.awt.BorderLayout.CENTER);
@@ -3027,6 +3042,10 @@ public class Develop extends javax.swing.JFrame {
         redo();
     }//GEN-LAST:event_menuRedoActionPerformed
 
+    private void txtEditorCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtEditorCaretPositionChanged
+        
+    }//GEN-LAST:event_txtEditorCaretPositionChanged
+
     private void treeProjectMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMousePressed
         if(evt.getClickCount() == 2) { // user double clicked the project tree
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeProject.getLastSelectedPathComponent();
@@ -3062,12 +3081,35 @@ public class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_treeProjectMousePressed
 
+    private void txtEditorCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtEditorCaretUpdate
+        if(plp.getAsms() != null && plp.getAsms().size() > 0) {
+            int caretPos = txtEditor.getCaretPosition();
+            Element root = txtEditor.getDocument().getDefaultRootElement();
+            line = root.getElementIndex(caretPos)+1;
+
+            String fName = plp.getAsm(plp.getOpenAsm()).getAsmFilePath();
+            txtCurFile.setText(fName + ":" + line + (plp.getOpenAsm() == 0 ? " <main program>" : ""));
+
+            if(plp.isSimulating()) {
+                long addr = plp.asm.getAddrFromFileMetadata(plp.getOpenAsm(), line);
+                if(addr != -1)
+                    txtCurFile.setText(txtCurFile.getText() + " " + String.format("0x%02x", addr));
+            }
+        }
+    }//GEN-LAST:event_txtEditorCaretUpdate
+
     private void treeProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeProjectMouseClicked
 
     }//GEN-LAST:event_treeProjectMouseClicked
 
     private void rootmenuProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rootmenuProjectMouseClicked
     }//GEN-LAST:event_rootmenuProjectMouseClicked
+
+    private void txtEditorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEditorMousePressed
+        if(plp.plpfile != null && evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {
+            popupEdit.show(txtEditor, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_txtEditorMousePressed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         menuNewActionPerformed(evt);
@@ -3082,6 +3124,66 @@ public class Develop extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private boolean deleteOccured;
+
+    private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
+        if(Config.devNewSyntaxHighlightStrategy) return;
+        deleteOccured = false;
+        boolean modified = false;
+
+        if(evt.isAltDown())
+            return;
+
+        if(evt.isControlDown() && evt.getKeyChar() == 'y' ) {
+            Msg.D("redo.", 10, this);
+        } else if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
+            deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
+            modified = true;
+        } else if (evt.getKeyCode() == evt.VK_DELETE || evt.getKeyCode() == evt.VK_BACK_SPACE) {
+            modified = true;
+        } else if ((int)evt.getKeyChar() == 127) {
+            //deleteOccured = true;
+            modified = true;
+        } else if ((int)evt.getKeyChar() == 8) {
+            //deleteOccured = true;
+            modified = true;
+        } else if ((int)evt.getKeyChar() == 24) {
+            deleteOccured = true;
+            modified = true;
+        } else if ((int)evt.getKeyChar() == 22) {
+            deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
+            Config.devSyntaxHighlightOnAssemble = true;
+            
+            /*** highlight now ***/
+            Config.nothighlighting = false;
+            syntaxHighlight();
+            Config.nothighlighting = true;
+            Config.devSyntaxHighlightOnAssemble = false;
+            /*********************/
+            
+            modified = true;
+        }
+
+        if(modified && plp.plpfile != null) {
+            Msg.D("Text has been modified.", 9, this);
+            plp.setModified();
+
+            if(txtEditor.isEditable()) {
+                disableSimControls();
+            }
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if(Config.devSyntaxHighlighting && !deleteOccured) {
+                        Config.nothighlighting = false;
+                        int caretPos = txtEditor.getCaretPosition();
+                        syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
+                        txtEditor.setCaretPosition(caretPos);
+                        Config.nothighlighting = true;
+                    }
+                }
+            });
+        }
+    }//GEN-LAST:event_txtEditorKeyTyped
 
     private void menuQuickProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuickProgramActionPerformed
         plp.g_prg.program();
@@ -3678,7 +3780,6 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu menuStepSize;
     private javax.swing.JCheckBoxMenuItem menuToolbar;
     private javax.swing.JMenuItem menuUndo;
-    private javax.swing.JPanel paneContainer;
     private javax.swing.JMenu rootmenuEdit;
     private javax.swing.JMenu rootmenuFile;
     private javax.swing.JMenu rootmenuHelp;
@@ -3686,6 +3787,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JMenu rootmenuSim;
     private javax.swing.JMenu rootmenuTools;
     private javax.swing.JMenu rootmenuView;
+    private javax.swing.JScrollPane scroller;
     private javax.swing.JToolBar.Separator separatorSim;
     private javax.swing.JToolBar.Separator separatorSimControl;
     private javax.swing.JSplitPane splitterH;
@@ -3693,6 +3795,7 @@ public class Develop extends javax.swing.JFrame {
     private javax.swing.JToolBar toolbar;
     private javax.swing.JTree treeProject;
     private javax.swing.JLabel txtCurFile;
+    private javax.swing.JTextPane txtEditor;
     private javax.swing.JTextPane txtOutput;
     // End of variables declaration//GEN-END:variables
 

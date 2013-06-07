@@ -552,8 +552,7 @@ public class TextLineNumber extends JPanel
             
             try {
 
-            //Rectangle clip = plp.g_dev.getScroller().getViewport().getBounds();
-            Rectangle clip = null;
+            Rectangle clip = plp.g_dev.getScroller().getViewport().getBounds();
 
             int rowStartOffset = component.viewToModel( new Point(0, 0) );
             int endOffset = component.viewToModel( new Point(0, component.getHeight()) );

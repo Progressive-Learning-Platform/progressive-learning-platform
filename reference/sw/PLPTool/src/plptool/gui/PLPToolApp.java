@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2012 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -289,9 +289,25 @@ public class PLPToolApp extends SingleFrameApplication {
             // Generate a plp.manifest file from a directory of Java classes
             } else if(args.length >= activeArgIndex + 3 && args[i].equals("--generate-manifest")) {
                 Msg.M("Generating manifest for '" + args[i+1] + "'...");
-                String manifest = DynamicModuleFramework.generateManifest(args[i+1]);
+                String manifest = DynamicModuleFramework.generateManifest(args[i+1],
+                        "", "", "", "", "");
                 if(manifest != null)
                     PLPToolbox.writeFile(manifest, args[i+2] + "/plp.manifest");
+                return;
+
+            // Generate and embed a plp.manifest file for a JAR file
+            } else if(args.length >= activeArgIndex + 7 && args[i].equals("--embed-manifest")) {
+                Msg.M("Generating manifest for '" + args[i+1] + "'...");
+                String manifest = DynamicModuleFramework.generateManifest(args[i+1],
+                        args[i+2], args[i+3], args[i+4], args[i+5], args[i+6]);
+                if(manifest != null) {
+                    if(PLPToolbox.addToJar(args[i+1], "plp.manifest", manifest.getBytes()) != Constants.PLP_OK) {
+                        Msg.M("\nMANIFEST GENERATION FAILED");
+                    } else {
+                        Msg.M("\nplp.manifest has been embedded into the archive");
+                    }
+                } else
+                    Msg.M("\nMANIFEST GENERATION FAILED, '" + args[i+1] + "' is unmodified.");
                 return;
 
             // Pack a directory into a JAR file
@@ -416,7 +432,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  --autotest-help         Unit test / automation framework information");
         System.out.println();
         System.out.println("Dynamic modules / extensions controls:");
-        System.out.println("   -L <jar file>          Load a PLPTool module JAR file, locate the manifest,");
+        System.out.println("   -L <jar>               Load a PLPTool module JAR file, locate the manifest,");
         System.out.println("                            and interpret the file accordingly. PLPTool will");
         System.out.println("                            ONLY launch if the module is successfully loaded");
         System.out.println("   -D <path>              Attempt to load all modules in the directory ");
@@ -438,12 +454,16 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("Module debugging commands:");
         System.out.println("  --load-class <canonical class name> <Java class file>");
         System.out.println("                          Load Java class file with the ClassLoader");
-        System.out.println("  --load-jar <jar file>   Load all Java classes inside the specified jar file");
-        System.out.println("  --generate-manifest <path or jar file> <destination directory>");
+        System.out.println("  --load-jar <jar>        Load all Java classes inside the specified jar file");
+        System.out.println("  --generate-manifest <path or jar> <destination directory>");
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified path. This manifest file will be");
         System.out.println("                            written in the destination directory");
-        System.out.println("  --pack <directory> <jar file>");
+        System.out.println("  --embed-manifest <jar> <title> <author> <license> <description> <version>");
+        System.out.println("                          Generate plp.manifest of Java classes that are in");
+        System.out.println("                            the specified JAR file and embed the manifest in");
+        System.out.println("                            the JAR file");
+        System.out.println("  --pack <directory> <jar>");
         System.out.println("                          Pack a directory into a JAR file");
         System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application");
         System.out.println();

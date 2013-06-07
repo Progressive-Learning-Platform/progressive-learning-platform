@@ -640,7 +640,8 @@ public class DynamicModuleFramework {
      * loaded by PLPTool when the module is loaded
      * @return String of the plp.manifest file
      */
-    public static String generateManifest(String path) {
+    public static String generateManifest(String path, String title,
+            String author, String license, String description, String version) {
         String manifest = "";
         ArrayList<File> classes = new ArrayList<File>();
         ArrayList<String> classNames = new ArrayList<String>();
@@ -683,11 +684,11 @@ public class DynamicModuleFramework {
                     classes, classNames);
 
         // Write out header information
-        manifest += "title::<enter title here>\n";
-        manifest += "author::<enter author here>\n";
-        manifest += "license::<enter module license here>\n";
-        manifest += "description::<enter description here>\n";
-        manifest += "version::<enter version here>\n";
+        manifest += "title::" + title + "\n";
+        manifest += "author::" + author + "\n";
+        manifest += "license::" + license + "\n";
+        manifest += "description::" + description + "\n";
+        manifest += "version::" + version + "\n";
 
         // Resolve dependencies. We'll do it in the most naive way possible:
         // try to load all classes, if some of them failed due to interfaces
@@ -776,7 +777,7 @@ public class DynamicModuleFramework {
         Msg.M("-------------------------------------------------------------------------------");
         if(!found)
             Msg.W("No connector module for this package was found.\n", null);
-        Msg.M("Manifest generation complete! You can include the plp.manifest file in the ");
+        Msg.M("Manifest generation completed! You can include the plp.manifest file in the ");
         Msg.M("package jar file to allow PLPTool to load the module into a PLPTool session. If");
         Msg.M("no class implementing the connector interface was found, PLPTool will load the");
         Msg.M("classes, but the module functionality will only be able to be accessed through");
