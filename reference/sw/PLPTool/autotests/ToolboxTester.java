@@ -21,7 +21,6 @@ import plptool.gui.*;
 import plptool.testsuite.*;
 
 import java.io.*;
-import java.awt.event.*;
 import java.awt.*;
 
 /**
@@ -45,26 +44,30 @@ public class ToolboxTester implements Tester {
 		String text;
 		String text2;
         int ret;
+		
         AutoTest.p("Testing PLPToolbox.getTmpDir method");
         try {
-            tmp = PLPToolbox.getTmpDir();
+		tmp = PLPToolbox.getTmpDir();
         } catch(SecurityException e) {
-            AutoTest.p("[E] Failed to create temporary directory");
-            e.printStackTrace();
-            System.exit(-1);
+		AutoTest.p("[E] Failed to create temporary directory");
+		e.printStackTrace();
+		System.exit(-1);
         }
         if(tmp == null) {
-            AutoTest.p("[E] PLPToolbox.getTmpDir returned null");
-            System.exit(-1);
+		AutoTest.p("[E] PLPToolbox.getTmpDir returned null");
+		System.exit(-1);
         }
 	
         AutoTest.p("Testing PLPToolbox.addToJar method");
-		text = "Test with a newline\nCurrent time: " + System.currentTimeMillis() + "\n";
-        ret = PLPToolbox.addToJar(tmp + "/autotest.1.jar", "test.txt", text.getBytes());
+		text = "Test with a newline\nCurrent time: " +
+				System.currentTimeMillis() + "\n";
+        ret = PLPToolbox.addToJar(tmp + "/autotest.1.jar", "test.txt",
+				text.getBytes());
 		if(ret != Constants.PLP_OK) {
 			AutoTest.p("[E] FAILED");
 			System.exit(-1);    
 		}
+		
         AutoTest.p("Testing PLPToolbox.copyFromJar method");
 		File f = new File(tmp + "/test.txt");
 		if(f.exists())
@@ -75,12 +78,44 @@ public class ToolboxTester implements Tester {
 			AutoTest.p("[E] FAILED");
 			System.exit(-1);    
 		}
+		
         AutoTest.p("Testing PLPToolbox.readFileAsString method");
 		text2 = PLPToolbox.readFileAsString(tmp + "/test.txt");
 		if(!text.equals(text2)) {
 			AutoTest.p("[E] Text is different! FAILED");
 			System.exit(-1);
 		}	
+		
+		AutoTest.p("Adding a second file to the JAR file");
+		AutoTest.p("- Writing");
+		text = "Second file test with a newline\nCurrent time: " +
+				System.currentTimeMillis() + "\n";
+        ret = PLPToolbox.addToJar(tmp + "/autotest.1.jar", "test2.txt",
+				text.getBytes());
+		if(ret != Constants.PLP_OK) {
+			AutoTest.p("[E] FAILED");
+			System.exit(-1);    
+		}
+		
+		AutoTest.p("- Extracting");
+		f = new File(tmp + "/test2.txt");
+		if(f.exists())
+			f.delete();
+		ret = PLPToolbox.copyFromJar(tmp + "/autotest.1.jar", "test2.txt",
+				tmp + "/test2.txt");
+		if(ret != Constants.PLP_OK) {
+			AutoTest.p("[E] FAILED");
+			System.exit(-1);    
+		}
+		
+		AutoTest.p("- Comparing");
+		text2 = PLPToolbox.readFileAsString(tmp + "/test2.txt");
+		if(!text.equals(text2)) {
+			AutoTest.p("[E] Text is different! FAILED");
+			System.exit(-1);
+		}	
+		
+		AutoTest.p("SUCCESS");
     }
 }
 
