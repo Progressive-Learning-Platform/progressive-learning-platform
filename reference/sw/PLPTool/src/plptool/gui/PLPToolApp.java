@@ -19,6 +19,7 @@
 package plptool.gui;
 
 import plptool.gui.frames.ConsoleFrame;
+import plptool.gui.frames.DynamicModuleManager;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.Msg;
@@ -48,10 +49,13 @@ public class PLPToolApp extends SingleFrameApplication {
     
     private static String plpFilePath = null;
     private static boolean newProject = false;
+
     private static boolean serialTerminal = false;
+    private static boolean embedManifestGUI = false;
     private static boolean simulateCLI = false;
     private static boolean simulateScripted = false;
     private static boolean loadModules = true;
+
     private static ArrayList<String> moduleLoadDirs;
     private static ArrayList<String> moduleLoadJars;
     private static HashMap<String, String> attributes;
@@ -75,7 +79,10 @@ public class PLPToolApp extends SingleFrameApplication {
             if(serialTerminal) {
                 plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
                 term.setVisible(true);
-
+            } else if(embedManifestGUI) {
+                DynamicModuleManager dmm = new DynamicModuleManager(null, true, null);
+                dmm.setEmbedOnly();
+                dmm.setVisible(true);
             } else {
                 // Launch the ProjectDriver
                 ProjectDriver.loadConfig();
@@ -94,13 +101,14 @@ public class PLPToolApp extends SingleFrameApplication {
                                             PLPToolbox.getConfDir() + "/usermods");
 
                 Msg.setOutput(plp.g_dev.getOutput());
-                if(plpFilePath != null)
+                if(plpFilePath != null) {
                     if(newProject) {
                         plp.create(startingArchID);
                         plp.plpfile = new File(plpFilePath);
                         plp.refreshProjectView(false);
                     } else
                         plp.open(plpFilePath, true);
+                }
             }
         } catch(Exception e) {
             System.err.println("=====================================");
@@ -310,6 +318,10 @@ public class PLPToolApp extends SingleFrameApplication {
                     Msg.M("\nMANIFEST GENERATION FAILED, '" + args[i+1] + "' is unmodified.");
                 return;
 
+            // Bring up the embed manifest GUI
+            } else if(args.length >= activeArgIndex + 1 && args[i].equals("--embed-manifest-gui")) {
+                embedManifestGUI = true;
+
             // Pack a directory into a JAR file
             } else if(args.length >= activeArgIndex + 3 && args[i].equals("--pack")) {
                 Msg.M("Packing '" + args[i+1] + "' to '" + args[i+2] + "'...");
@@ -463,6 +475,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("                          Generate plp.manifest of Java classes that are in");
         System.out.println("                            the specified JAR file and embed the manifest in");
         System.out.println("                            the JAR file");
+        System.out.println("  --embed-manifest-gui    Likewise, but with a GUI window");
         System.out.println("  --pack <directory> <jar>");
         System.out.println("                          Pack a directory into a JAR file");
         System.out.println("   -P<key>::<value>       Pass a key-value property pair to the application");

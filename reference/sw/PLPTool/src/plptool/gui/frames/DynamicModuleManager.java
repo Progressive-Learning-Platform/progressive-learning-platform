@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 public class DynamicModuleManager extends javax.swing.JDialog {
 
     private ProjectDriver plp;
+    private boolean embedOnly = false;
 
     /** Creates new form DynamicModuleManager */
     public DynamicModuleManager(java.awt.Frame parent, boolean modal, ProjectDriver plp) {
@@ -89,6 +90,14 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         cmbCallbackEvent.addItem("CRITICAL_ERROR              = 39");
     }
 
+    public void setEmbedOnly() {
+        tabMain.setSelectedIndex(3);
+        tabMain.setEnabledAt(0, false);
+        tabMain.setEnabledAt(1, false);
+        tabMain.setEnabledAt(2, false);
+        embedOnly = true;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -121,11 +130,28 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         txtCustomHook = new javax.swing.JTextField();
         btnCall = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
+        paneRegisteredCallbacks = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         cmbCallbackEvent = new javax.swing.JComboBox();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblCallbacks = new javax.swing.JTable();
+        paneEmbedManifest = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        txtEmbedManifestJAR = new javax.swing.JTextField();
+        btnEmbedManifestBrowse = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        txtEmbedManifestLicense = new javax.swing.JTextField();
+        txtEmbedManifestAuthor = new javax.swing.JTextField();
+        txtEmbedManifestTitle = new javax.swing.JTextField();
+        txtEmbedManifestVersion = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        btnEmbedManifest = new javax.swing.JButton();
+        txtEmbedManifestDescription = new javax.swing.JTextField();
         btnClose = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
 
@@ -402,7 +428,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
 
         tabMain.addTab(resourceMap.getString("paneManageLoadedModules.TabConstraints.tabTitle"), paneManageLoadedModules); // NOI18N
 
-        jPanel1.setName("jPanel1"); // NOI18N
+        paneRegisteredCallbacks.setName("paneRegisteredCallbacks"); // NOI18N
 
         jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
         jLabel6.setName("jLabel6"); // NOI18N
@@ -450,25 +476,25 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         tblCallbacks.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("tblCallbacks.columnModel.title0")); // NOI18N
         tblCallbacks.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("tblCallbacks.columnModel.title1")); // NOI18N
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout paneRegisteredCallbacksLayout = new javax.swing.GroupLayout(paneRegisteredCallbacks);
+        paneRegisteredCallbacks.setLayout(paneRegisteredCallbacksLayout);
+        paneRegisteredCallbacksLayout.setHorizontalGroup(
+            paneRegisteredCallbacksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneRegisteredCallbacksLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(paneRegisteredCallbacksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(paneRegisteredCallbacksLayout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbCallbackEvent, 0, 510, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        paneRegisteredCallbacksLayout.setVerticalGroup(
+            paneRegisteredCallbacksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneRegisteredCallbacksLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(paneRegisteredCallbacksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(cmbCallbackEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -476,7 +502,140 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tabMain.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+        tabMain.addTab(resourceMap.getString("paneRegisteredCallbacks.TabConstraints.tabTitle"), paneRegisteredCallbacks); // NOI18N
+
+        paneEmbedManifest.setName("paneEmbedManifest"); // NOI18N
+
+        jLabel7.setText(resourceMap.getString("jLabel7.text")); // NOI18N
+        jLabel7.setName("jLabel7"); // NOI18N
+
+        txtEmbedManifestJAR.setText(resourceMap.getString("txtEmbedManifestJAR.text")); // NOI18N
+        txtEmbedManifestJAR.setName("txtEmbedManifestJAR"); // NOI18N
+
+        btnEmbedManifestBrowse.setText(resourceMap.getString("btnEmbedManifestBrowse.text")); // NOI18N
+        btnEmbedManifestBrowse.setName("btnEmbedManifestBrowse"); // NOI18N
+        btnEmbedManifestBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmbedManifestBrowseActionPerformed(evt);
+            }
+        });
+
+        jSeparator2.setName("jSeparator2"); // NOI18N
+
+        jLabel8.setFont(resourceMap.getFont("jLabel8.font")); // NOI18N
+        jLabel8.setText(resourceMap.getString("jLabel8.text")); // NOI18N
+        jLabel8.setName("jLabel8"); // NOI18N
+
+        jLabel9.setText(resourceMap.getString("jLabel9.text")); // NOI18N
+        jLabel9.setName("jLabel9"); // NOI18N
+
+        jLabel10.setText(resourceMap.getString("jLabel10.text")); // NOI18N
+        jLabel10.setName("jLabel10"); // NOI18N
+
+        jLabel11.setText(resourceMap.getString("jLabel11.text")); // NOI18N
+        jLabel11.setName("jLabel11"); // NOI18N
+
+        jLabel12.setText(resourceMap.getString("jLabel12.text")); // NOI18N
+        jLabel12.setName("jLabel12"); // NOI18N
+
+        txtEmbedManifestLicense.setText(resourceMap.getString("txtEmbedManifestLicense.text")); // NOI18N
+        txtEmbedManifestLicense.setName("txtEmbedManifestLicense"); // NOI18N
+
+        txtEmbedManifestAuthor.setText(resourceMap.getString("txtEmbedManifestAuthor.text")); // NOI18N
+        txtEmbedManifestAuthor.setName("txtEmbedManifestAuthor"); // NOI18N
+
+        txtEmbedManifestTitle.setText(resourceMap.getString("txtEmbedManifestTitle.text")); // NOI18N
+        txtEmbedManifestTitle.setName("txtEmbedManifestTitle"); // NOI18N
+
+        txtEmbedManifestVersion.setText(resourceMap.getString("txtEmbedManifestVersion.text")); // NOI18N
+        txtEmbedManifestVersion.setName("txtEmbedManifestVersion"); // NOI18N
+
+        jLabel13.setText(resourceMap.getString("jLabel13.text")); // NOI18N
+        jLabel13.setName("jLabel13"); // NOI18N
+
+        btnEmbedManifest.setText(resourceMap.getString("btnEmbedManifest.text")); // NOI18N
+        btnEmbedManifest.setName("btnEmbedManifest"); // NOI18N
+        btnEmbedManifest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmbedManifestActionPerformed(evt);
+            }
+        });
+
+        txtEmbedManifestDescription.setText(resourceMap.getString("txtEmbedManifestDescription.text")); // NOI18N
+        txtEmbedManifestDescription.setName("txtEmbedManifestDescription"); // NOI18N
+
+        javax.swing.GroupLayout paneEmbedManifestLayout = new javax.swing.GroupLayout(paneEmbedManifest);
+        paneEmbedManifest.setLayout(paneEmbedManifestLayout);
+        paneEmbedManifestLayout.setHorizontalGroup(
+            paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneEmbedManifestLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addGroup(paneEmbedManifestLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtEmbedManifestJAR, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEmbedManifestBrowse, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel8)
+                    .addGroup(paneEmbedManifestLayout.createSequentialGroup()
+                        .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel12))
+                        .addGap(10, 10, 10)
+                        .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtEmbedManifestLicense, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                            .addComponent(txtEmbedManifestAuthor, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                            .addComponent(txtEmbedManifestTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                            .addComponent(txtEmbedManifestDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneEmbedManifestLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addGap(28, 28, 28)
+                        .addComponent(txtEmbedManifestVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
+                    .addComponent(btnEmbedManifest, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        paneEmbedManifestLayout.setVerticalGroup(
+            paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneEmbedManifestLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtEmbedManifestJAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEmbedManifestBrowse))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(txtEmbedManifestTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(txtEmbedManifestAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(txtEmbedManifestLicense, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtEmbedManifestDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtEmbedManifestVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
+                .addGap(18, 18, 18)
+                .addComponent(btnEmbedManifest)
+                .addContainerGap(235, Short.MAX_VALUE))
+        );
+
+        tabMain.addTab(resourceMap.getString("paneEmbedManifest.TabConstraints.tabTitle"), paneEmbedManifest); // NOI18N
 
         btnClose.setText(resourceMap.getString("btnClose.text")); // NOI18N
         btnClose.setName("btnClose"); // NOI18N
@@ -508,7 +667,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabMain)
+                .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClose)
@@ -563,8 +722,12 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     }//GEN-LAST:event_btnRegisterClassActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        this.setVisible(false);
-        this.dispose();
+        if(!embedOnly) {
+            this.setVisible(false);
+            this.dispose();
+        } else {
+            System.exit(0);
+        }
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnLoadInstanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadInstanceActionPerformed
@@ -657,11 +820,36 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_cmbCallbackEventActionPerformed
 
+    private void btnEmbedManifestBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmbedManifestBrowseActionPerformed
+        java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
+        if(f != null)
+            txtEmbedManifestJAR.setText(f.getAbsolutePath());
+    }//GEN-LAST:event_btnEmbedManifestBrowseActionPerformed
+
+    private void btnEmbedManifestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmbedManifestActionPerformed
+        int ret;
+        String manifest = DynamicModuleFramework.generateManifest(
+                txtEmbedManifestJAR.getText(), txtEmbedManifestTitle.getText(),
+                txtEmbedManifestAuthor.getText(), txtEmbedManifestLicense.getText(),
+                txtEmbedManifestDescription.getText(), txtEmbedManifestVersion.getText());
+        if(manifest != null) {
+            ret = PLPToolbox.addToJar(txtEmbedManifestJAR.getText(), "plp.manifest", manifest.getBytes());
+            if(ret != Constants.PLP_OK)
+                PLPToolbox.showErrorDialog(null, "Failed to embed manifest!");
+            else
+                Msg.M("Done!");
+        } else
+            PLPToolbox.showErrorDialog(null, "Failed to generate manifest!");
+        System.exit(0);
+    }//GEN-LAST:event_btnEmbedManifestActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowseClass;
     private javax.swing.JButton btnCall;
     private javax.swing.JCheckBox btnClassProjectAccess;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnEmbedManifest;
+    private javax.swing.JButton btnEmbedManifestBrowse;
     private javax.swing.JButton btnHelp;
     private javax.swing.JButton btnInit;
     private javax.swing.JButton btnLoadInstance;
@@ -669,18 +857,27 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     private javax.swing.JButton btnRegisterClass;
     private javax.swing.JComboBox cmbCallbackEvent;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPanel paneDynamicModuleClasses;
+    private javax.swing.JPanel paneEmbedManifest;
     private javax.swing.JPanel paneManageLoadedModules;
+    private javax.swing.JPanel paneRegisteredCallbacks;
     private javax.swing.JTabbedPane tabMain;
     private javax.swing.JTable tblCallbacks;
     private javax.swing.JTable tblModuleClasses;
@@ -688,6 +885,12 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     private javax.swing.JTextField txtClassFile;
     private javax.swing.JTextField txtClassName;
     private javax.swing.JTextField txtCustomHook;
+    private javax.swing.JTextField txtEmbedManifestAuthor;
+    private javax.swing.JTextField txtEmbedManifestDescription;
+    private javax.swing.JTextField txtEmbedManifestJAR;
+    private javax.swing.JTextField txtEmbedManifestLicense;
+    private javax.swing.JTextField txtEmbedManifestTitle;
+    private javax.swing.JTextField txtEmbedManifestVersion;
     // End of variables declaration//GEN-END:variables
 
 }
