@@ -179,9 +179,9 @@ public class OptionsFrame extends javax.swing.JFrame {
         paneEditor = new javax.swing.JPanel();
         editorSyntaxHighlighting = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
-        cmbFontSize = new javax.swing.JComboBox();
+        cmbFontSize = new javax.swing.JComboBox<Integer>();
         jLabel3 = new javax.swing.JLabel();
-        cmbFontName = new javax.swing.JComboBox();
+        cmbFontName = new javax.swing.JComboBox<String>();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtFontPreview = new javax.swing.JTextArea();
         paneSim = new javax.swing.JPanel();
@@ -267,7 +267,7 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(paneEditorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                     .addComponent(editorSyntaxHighlighting)
                     .addGroup(paneEditorLayout.createSequentialGroup()
                         .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,8 +275,8 @@ public class OptionsFrame extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(paneEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cmbFontSize, 0, 394, Short.MAX_VALUE)
-                            .addComponent(cmbFontName, 0, 394, Short.MAX_VALUE))))
+                            .addComponent(cmbFontSize, 0, 358, Short.MAX_VALUE)
+                            .addComponent(cmbFontName, 0, 358, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneEditorLayout.setVerticalGroup(
@@ -294,7 +294,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(144, Short.MAX_VALUE))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneEditor.TabConstraints.tabTitle"), paneEditor); // NOI18N
@@ -378,7 +378,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(simHighlightLine)
                     .addComponent(simDumpTraceOnFailedEval)
                     .addComponent(simNoExecute)
-                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                    .addComponent(sSimSpeed, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(simBusReadDefaultZero)
                     .addComponent(simRefreshDev)
@@ -404,7 +404,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(simHighlightLine)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(simFunctional)
-                .addContainerGap(158, Short.MAX_VALUE))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneSim.TabConstraints.tabTitle"), paneSim); // NOI18N
@@ -461,8 +461,8 @@ public class OptionsFrame extends javax.swing.JFrame {
                             .addComponent(lblMaxChunkSize))
                         .addGap(18, 18, 18)
                         .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                            .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE))))
+                            .addComponent(prgMaxChunkSize, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                            .addComponent(prgReadTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneProgrammerLayout.setVerticalGroup(
@@ -480,7 +480,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(prgReadTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lblPrgWarning)
-                .addContainerGap(286, Short.MAX_VALUE))
+                .addContainerGap(282, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
@@ -512,7 +512,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addGroup(paneExtensionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(askBeforeAutoloadingModules)
                     .addComponent(askForISAForNewProjects))
-                .addContainerGap(213, Short.MAX_VALUE))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
         paneExtensionsLayout.setVerticalGroup(
             paneExtensionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -521,7 +521,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(askBeforeAutoloadingModules)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(askForISAForNewProjects)
-                .addContainerGap(353, Short.MAX_VALUE))
+                .addContainerGap(350, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneExtensions.TabConstraints.tabTitle"), paneExtensions); // NOI18N
@@ -654,8 +654,8 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox askForISAForNewProjects;
     private javax.swing.JButton btnApply;
     private javax.swing.JButton btnClose;
-    private javax.swing.JComboBox cmbFontName;
-    private javax.swing.JComboBox cmbFontSize;
+    private javax.swing.JComboBox<String> cmbFontName;
+    private javax.swing.JComboBox<Integer> cmbFontSize;
     private javax.swing.JCheckBox editorSyntaxHighlighting;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

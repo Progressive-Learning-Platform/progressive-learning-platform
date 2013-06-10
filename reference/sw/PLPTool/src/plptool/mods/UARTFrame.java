@@ -51,7 +51,7 @@ public class UARTFrame extends javax.swing.JFrame {
         lblRawByte = new javax.swing.JLabel();
         txtInput = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
-        cmbFormat = new javax.swing.JComboBox();
+        cmbFormat = new javax.swing.JComboBox<String>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(UARTFrame.class);
@@ -208,7 +208,7 @@ public class UARTFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnSend;
-    private javax.swing.JComboBox cmbFormat;
+    private javax.swing.JComboBox<String> cmbFormat;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblRawByte;
     private javax.swing.JTextField txtInput;

@@ -79,7 +79,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="448" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="444" max="32767" attributes="0"/>
                           <Component id="editorSyntaxHighlighting" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -88,8 +88,8 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="cmbFontSize" pref="394" max="32767" attributes="0"/>
-                                  <Component id="cmbFontName" alignment="0" pref="394" max="32767" attributes="0"/>
+                                  <Component id="cmbFontSize" pref="358" max="32767" attributes="0"/>
+                                  <Component id="cmbFontName" alignment="0" pref="358" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -114,7 +114,7 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="148" max="-2" attributes="0"/>
-                      <EmptySpace pref="144" max="32767" attributes="0"/>
+                      <EmptySpace pref="135" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -147,6 +147,9 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbFontSizeActionPerformed"/>
                 <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="cmbFontSizePropertyChange"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Integer&gt;"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel3">
               <Properties>
@@ -169,6 +172,9 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbFontNameActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+              </AuxValues>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane1">
               <Properties>
@@ -214,7 +220,7 @@
                           <Component id="simHighlightLine" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simDumpTraceOnFailedEval" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simNoExecute" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="sSimSpeed" alignment="0" pref="448" max="32767" attributes="0"/>
+                          <Component id="sSimSpeed" alignment="0" pref="459" max="32767" attributes="0"/>
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simBusReadDefaultZero" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="simRefreshDev" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -243,7 +249,7 @@
                       <Component id="simHighlightLine" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="simFunctional" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="158" max="32767" attributes="0"/>
+                      <EmptySpace pref="153" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -355,8 +361,8 @@
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="prgMaxChunkSize" alignment="0" pref="325" max="32767" attributes="0"/>
-                                  <Component id="prgReadTimeout" alignment="0" pref="325" max="32767" attributes="0"/>
+                                  <Component id="prgMaxChunkSize" alignment="0" pref="274" max="32767" attributes="0"/>
+                                  <Component id="prgReadTimeout" alignment="0" pref="274" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -381,7 +387,7 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="lblPrgWarning" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="286" max="32767" attributes="0"/>
+                      <EmptySpace pref="282" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -457,7 +463,7 @@
                           <Component id="askBeforeAutoloadingModules" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="askForISAForNewProjects" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="213" max="32767" attributes="0"/>
+                      <EmptySpace pref="98" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -468,7 +474,7 @@
                       <Component id="askBeforeAutoloadingModules" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="askForISAForNewProjects" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="353" max="32767" attributes="0"/>
+                      <EmptySpace pref="350" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

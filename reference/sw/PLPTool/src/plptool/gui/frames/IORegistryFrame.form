@@ -136,6 +136,9 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbModuleSelectActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="lblAddr">
               <Properties>
@@ -386,6 +389,9 @@
                 </Property>
                 <Property name="name" type="java.lang.String" value="cmbPresets" noResource="true"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="btnLoadPreset">
               <Properties>
@@ -502,6 +508,9 @@
                     </Property>
                     <Property name="name" type="java.lang.String" value="listDynamicModuleClasses" noResource="true"/>
                   </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -541,6 +550,9 @@
                 </Property>
                 <Property name="name" type="java.lang.String" value="cmbDModFrameClass" noResource="true"/>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
               <Properties>

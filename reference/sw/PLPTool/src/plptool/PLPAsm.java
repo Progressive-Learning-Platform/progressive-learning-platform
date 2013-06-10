@@ -79,7 +79,7 @@ public abstract class PLPAsm implements PLPGenericModule {
         sourceList.add(plpAsmObj);
         pass1Str = new StringBuilder();
         preprocessedAsm = new String();
-        symTable = new HashMap();
+        symTable = new HashMap<String, Long>();
 
         asmIndex = 0;
         mapperIndex = 0;
@@ -96,7 +96,7 @@ public abstract class PLPAsm implements PLPGenericModule {
         sourceList = asms;
         pass1Str = new StringBuilder();
         preprocessedAsm = new String();
-        symTable = new HashMap();
+        symTable = new HashMap<String, Long>();
 
         asmIndex = 0;
         mapperIndex = 0;

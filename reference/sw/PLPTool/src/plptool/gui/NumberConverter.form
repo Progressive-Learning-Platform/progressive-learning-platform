@@ -39,8 +39,8 @@
                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel2" pref="77" max="32767" attributes="0"/>
-                          <Component id="jLabel3" alignment="1" pref="77" max="32767" attributes="0"/>
+                          <Component id="jLabel2" pref="84" max="32767" attributes="0"/>
+                          <Component id="jLabel3" alignment="1" pref="84" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -51,11 +51,11 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="jSeparator1" alignment="1" pref="608" max="32767" attributes="0"/>
+          <Component id="jSeparator1" alignment="1" pref="615" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="546" max="32767" attributes="0"/>
+              <EmptySpace pref="553" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
@@ -77,7 +77,7 @@
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="360" max="32767" attributes="0"/>
+              <EmptySpace pref="367" max="32767" attributes="0"/>
               <Component id="btnConvert" min="-2" pref="112" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnClose" min="-2" pref="118" max="-2" attributes="0"/>
@@ -176,6 +176,9 @@
         </Property>
         <Property name="name" type="java.lang.String" value="cmbBase" noResource="true"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="txtInput">
       <Properties>

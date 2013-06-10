@@ -286,17 +286,17 @@ public class SerialTerminal extends javax.swing.JFrame {
     private void initComponents() {
 
         lblPort = new javax.swing.JLabel();
-        cmbPort = new javax.swing.JComboBox();
+        cmbPort = new javax.swing.JComboBox<String>();
         lblBaud = new javax.swing.JLabel();
-        cmbBaud = new javax.swing.JComboBox();
+        cmbBaud = new javax.swing.JComboBox<Integer>();
         lblOpts = new javax.swing.JLabel();
-        cmbOpts = new javax.swing.JComboBox();
+        cmbOpts = new javax.swing.JComboBox<String>();
         txtInput = new javax.swing.JTextField();
         btnOpen = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
         btnSend = new javax.swing.JButton();
-        cmbFormat = new javax.swing.JComboBox();
+        cmbFormat = new javax.swing.JComboBox<String>();
         jScrollPane1 = new javax.swing.JScrollPane();
         console = new javax.swing.JTextPane();
         chkHEX = new javax.swing.JCheckBox();
@@ -305,7 +305,7 @@ public class SerialTerminal extends javax.swing.JFrame {
         btnCopySelection = new javax.swing.JButton();
         chkUnprintable = new javax.swing.JCheckBox();
         chkEnter = new javax.swing.JCheckBox();
-        cmbEnter = new javax.swing.JComboBox();
+        cmbEnter = new javax.swing.JComboBox<String>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnSave = new javax.swing.JButton();
@@ -455,7 +455,7 @@ public class SerialTerminal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 748, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 945, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(chkHEX)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -466,7 +466,7 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addComponent(chkEnter)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbEnter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 226, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 263, Short.MAX_VALUE)
                         .addComponent(btnSave))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(lblPort)
@@ -479,7 +479,7 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblOpts)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbOpts, 0, 394, Short.MAX_VALUE))
+                        .addComponent(cmbOpts, 0, 468, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(btnOpen)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -497,7 +497,7 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbFormat, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                        .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSend)))
                 .addContainerGap())
@@ -733,11 +733,11 @@ public class SerialTerminal extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkEnter;
     private javax.swing.JCheckBox chkHEX;
     private javax.swing.JCheckBox chkUnprintable;
-    private javax.swing.JComboBox cmbBaud;
-    private javax.swing.JComboBox cmbEnter;
-    private javax.swing.JComboBox cmbFormat;
-    private javax.swing.JComboBox cmbOpts;
-    private javax.swing.JComboBox cmbPort;
+    private javax.swing.JComboBox<Integer> cmbBaud;
+    private javax.swing.JComboBox<String> cmbEnter;
+    private javax.swing.JComboBox<String> cmbFormat;
+    private javax.swing.JComboBox<String> cmbOpts;
+    private javax.swing.JComboBox<String> cmbPort;
     private javax.swing.JTextPane console;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
