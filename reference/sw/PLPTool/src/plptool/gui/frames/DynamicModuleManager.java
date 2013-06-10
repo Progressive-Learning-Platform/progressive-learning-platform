@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         btnCall = new javax.swing.JButton();
         paneRegisteredCallbacks = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        cmbCallbackEvent = new javax.swing.JComboBox();
+        cmbCallbackEvent = new javax.swing.JComboBox<String>();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblCallbacks = new javax.swing.JTable();
         paneEmbedManifest = new javax.swing.JPanel();
@@ -251,7 +251,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
                     .addGroup(paneDynamicModuleClassesLayout.createSequentialGroup()
                         .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -272,8 +272,8 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                                 .addGroup(paneDynamicModuleClassesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(btnLoadInstance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(btnClassProjectAccess, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, Short.MAX_VALUE))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         paneDynamicModuleClassesLayout.setVerticalGroup(
@@ -299,7 +299,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addComponent(btnLoadInstance)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -399,12 +399,12 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addComponent(btnInit, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                     .addComponent(jLabel4)
                     .addGroup(paneManageLoadedModulesLayout.createSequentialGroup()
                         .addComponent(txtCustomHook, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnCall, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)))
+                        .addComponent(btnCall, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         paneManageLoadedModulesLayout.setVerticalGroup(
@@ -423,7 +423,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                 .addGroup(paneManageLoadedModulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCustomHook, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCall))
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         tabMain.addTab(resourceMap.getString("paneManageLoadedModules.TabConstraints.tabTitle"), paneManageLoadedModules); // NOI18N
@@ -483,11 +483,11 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             .addGroup(paneRegisteredCallbacksLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneRegisteredCallbacksLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                     .addGroup(paneRegisteredCallbacksLayout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbCallbackEvent, 0, 510, Short.MAX_VALUE)))
+                        .addComponent(cmbCallbackEvent, 0, 516, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         paneRegisteredCallbacksLayout.setVerticalGroup(
@@ -571,11 +571,11 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             .addGroup(paneEmbedManifestLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                     .addGroup(paneEmbedManifestLayout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtEmbedManifestJAR, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
+                        .addComponent(txtEmbedManifestJAR, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnEmbedManifestBrowse, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel8)
@@ -587,14 +587,14 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                             .addComponent(jLabel12))
                         .addGap(10, 10, 10)
                         .addGroup(paneEmbedManifestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtEmbedManifestLicense, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
-                            .addComponent(txtEmbedManifestAuthor, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
-                            .addComponent(txtEmbedManifestTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
-                            .addComponent(txtEmbedManifestDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)))
+                            .addComponent(txtEmbedManifestLicense, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                            .addComponent(txtEmbedManifestAuthor, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                            .addComponent(txtEmbedManifestTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                            .addComponent(txtEmbedManifestDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneEmbedManifestLayout.createSequentialGroup()
                         .addComponent(jLabel13)
                         .addGap(28, 28, 28)
-                        .addComponent(txtEmbedManifestVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
+                        .addComponent(txtEmbedManifestVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE))
                     .addComponent(btnEmbedManifest, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
@@ -632,7 +632,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                     .addComponent(jLabel13))
                 .addGap(18, 18, 18)
                 .addComponent(btnEmbedManifest)
-                .addContainerGap(235, Short.MAX_VALUE))
+                .addContainerGap(215, Short.MAX_VALUE))
         );
 
         tabMain.addTab(resourceMap.getString("paneEmbedManifest.TabConstraints.tabTitle"), paneEmbedManifest); // NOI18N
@@ -660,7 +660,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 265, Short.MAX_VALUE)
                         .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE))
+                    .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -855,7 +855,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     private javax.swing.JButton btnLoadInstance;
     private javax.swing.JButton btnPassProject;
     private javax.swing.JButton btnRegisterClass;
-    private javax.swing.JComboBox cmbCallbackEvent;
+    private javax.swing.JComboBox<String> cmbCallbackEvent;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

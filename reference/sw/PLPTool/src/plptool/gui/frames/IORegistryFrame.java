@@ -66,7 +66,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++)
             cmbDModFrameClass.addItem(i + ":" + DynamicModuleFramework.getDynamicModuleClass(i).getName());
 
-        DefaultListModel list = new DefaultListModel();
+        DefaultListModel<String> list = new DefaultListModel<String>();
         list.clear();
         for(int i = 0; i < DynamicModuleFramework.getNumberOfClasses(); i++) {
             cName = null;
@@ -91,7 +91,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         paneAdd = new javax.swing.JPanel();
         lblModule = new javax.swing.JLabel();
-        cmbModuleSelect = new javax.swing.JComboBox();
+        cmbModuleSelect = new javax.swing.JComboBox<Object>();
         lblAddr = new javax.swing.JLabel();
         txtModuleAddress = new javax.swing.JTextField();
         lblRegfileSize = new javax.swing.JLabel();
@@ -106,17 +106,17 @@ public class IORegistryFrame extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         paneIOConfig = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        cmbPresets = new javax.swing.JComboBox();
+        cmbPresets = new javax.swing.JComboBox<Object>();
         btnLoadPreset = new javax.swing.JButton();
         paneDynamicModules = new javax.swing.JPanel();
         btnReloadDModList = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        listDynamicModuleClasses = new javax.swing.JList();
+        listDynamicModuleClasses = new javax.swing.JList<String>();
         txtDModStartAddr = new javax.swing.JTextField();
         txtDModEndAddr = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        cmbDModFrameClass = new javax.swing.JComboBox();
+        cmbDModFrameClass = new javax.swing.JComboBox<String>();
         jLabel4 = new javax.swing.JLabel();
         btnAttachDMod = new javax.swing.JButton();
         chkDModWordAligned = new javax.swing.JCheckBox();
@@ -624,9 +624,9 @@ public class IORegistryFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnReloadDModList;
     private javax.swing.JButton btnRemove;
     private javax.swing.JCheckBox chkDModWordAligned;
-    private javax.swing.JComboBox cmbDModFrameClass;
-    private javax.swing.JComboBox cmbModuleSelect;
-    private javax.swing.JComboBox cmbPresets;
+    private javax.swing.JComboBox<String> cmbDModFrameClass;
+    private javax.swing.JComboBox<Object> cmbModuleSelect;
+    private javax.swing.JComboBox<Object> cmbPresets;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -638,7 +638,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblAddr;
     private javax.swing.JLabel lblModule;
     private javax.swing.JLabel lblRegfileSize;
-    private javax.swing.JList listDynamicModuleClasses;
+    private javax.swing.JList<String> listDynamicModuleClasses;
     private javax.swing.JPanel paneAdd;
     private javax.swing.JPanel paneDynamicModules;
     private javax.swing.JPanel paneIOConfig;

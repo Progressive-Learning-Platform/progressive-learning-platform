@@ -100,7 +100,7 @@ public class Watcher extends javax.swing.JFrame {
     private void initComponents() {
 
         lblAdd = new javax.swing.JLabel();
-        cmbType = new javax.swing.JComboBox();
+        cmbType = new javax.swing.JComboBox<String>();
         lblAddr = new javax.swing.JLabel();
         txtAddr = new javax.swing.JTextField();
         btnAdd = new javax.swing.JButton();
@@ -193,7 +193,7 @@ public class Watcher extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -206,7 +206,7 @@ public class Watcher extends javax.swing.JFrame {
                                 .addComponent(txtAddr, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAdd)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnRemoveAll)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
@@ -344,7 +344,7 @@ public class Watcher extends javax.swing.JFrame {
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnRemoveAll;
     private javax.swing.JButton btnRemoveSelected;
-    private javax.swing.JComboBox cmbType;
+    private javax.swing.JComboBox<String> cmbType;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblAdd;
     private javax.swing.JLabel lblAddr;
