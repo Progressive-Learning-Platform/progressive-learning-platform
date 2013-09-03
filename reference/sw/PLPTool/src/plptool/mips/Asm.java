@@ -1281,7 +1281,15 @@ public class Asm extends plptool.PLPAsm {
         }
 
         Msg.D("assemble(): Assembly completed.", 1, this);
-        Msg.D("assemble(): Programmer preamble: " + PLPToolbox.format32Hex(SerialProgrammer.getPreamble()), 2, this);
+
+        boolean preambleEnabled = false;
+        long[] preamble = SerialProgrammer.getPreamble();
+        for(int l = 0; l < preamble.length; l++) {
+            preambleEnabled |= (preamble[l] > 0);
+            Msg.D("assemble(): Programmer preamble[" + l + "]: " + PLPToolbox.format32Hex(preamble[l]), 2, this);
+        }
+        if(preambleEnabled)
+            Msg.I("FYI: Board-specific preamble is enabled.", this);
         
         } catch(NumberFormatException e) {
             error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Failed to parse literal: " + e.getMessage(),
