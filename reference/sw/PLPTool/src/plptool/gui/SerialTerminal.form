@@ -58,8 +58,8 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnClose" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="93" max="32767" attributes="0"/>
+                      <Component id="lblClickNotice" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="68" max="32767" attributes="0"/>
                       <Component id="btnCopySelection" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnCopyAll" min="-2" max="-2" attributes="0"/>
@@ -99,7 +99,7 @@
                   <Component id="btnClear" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnCopyAll" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnCopySelection" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblClickNotice" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="285" max="32767" attributes="0"/>
@@ -275,8 +275,10 @@
             <Property name="name" type="java.lang.String" value="console" noResource="true"/>
           </Properties>
           <Events>
-            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="consoleKeyPressed"/>
+            <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="consoleFocusGained"/>
+            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="consoleFocusLost"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="consoleKeyTyped"/>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="consoleKeyPressed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -352,10 +354,11 @@
         <Property name="name" type="java.lang.String" value="jLabel1" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="lblClickNotice">
       <Properties>
-        <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
-        <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
+        <Property name="foreground" type="java.awt.Color" resourceKey="lblClickNotice.foreground"/>
+        <Property name="text" type="java.lang.String" resourceKey="lblClickNotice.text"/>
+        <Property name="name" type="java.lang.String" value="lblClickNotice" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnSave">

@@ -79,7 +79,7 @@ public class Architecture extends PLPArchitecture {
                             lines[i] = "ram[" + i + "] = " + lines[i] + ";";
                             out += lines[i] + "\n";
                         }
-                        path = PLPToolbox.saveFileDialog(Constants.launchPath, null);
+                        path = PLPToolbox.saveFileDialog(Constants.launchPath);
                         if(path != null) {
                             if(PLPToolbox.writeFile(out, path.getAbsolutePath()) == Constants.PLP_OK) {
                                 Msg.I(path + " written.", null);

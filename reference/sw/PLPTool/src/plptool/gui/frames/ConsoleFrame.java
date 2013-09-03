@@ -154,12 +154,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("sysinfo")) {
                 systemInfo();
             } else if(command.equals("openfiletest")) {
-                java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
+                java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath);
                 if(f != null)
                     System.out.println("**OPENFILETEST**\n" +
                             PLPToolbox.readFileAsString(f.getAbsolutePath()));
             } else if(command.equals("openfileasbytestest")) {
-                java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
+                java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath);
                 if(f != null) {
                     String str = new String(PLPToolbox.readFile(f.getAbsolutePath()));
                     System.out.println("**OPENFILEBYTETEST**\n" + str);
