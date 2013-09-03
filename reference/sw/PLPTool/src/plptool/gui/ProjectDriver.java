@@ -367,6 +367,8 @@ public final class ProjectDriver {
                         Config.cfgAskBeforeAutoloadingModules = Boolean.parseBoolean(tokens[1]);
                     } else if(tokens[0].equals("cfgAskForISAForNewProjects")) {
                         Config.cfgAskForISAForNewProjects = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("prgAutoDetectPorts")) {
+                        Config.prgAutoDetectPorts = Boolean.parseBoolean(tokens[1]);
                     } else
                         PLPToolApp.getAttributes().put(tokens[0], tokens.length==2 ? tokens[1] : null);
                 }
@@ -413,6 +415,7 @@ public final class ProjectDriver {
                 out.write("devWindowHeight::" + Config.devWindowHeight + "\n");
                 out.write("cfgAskBeforeAutoloadingModules::" + Config.cfgAskBeforeAutoloadingModules + "\n");
                 out.write("cfgAskForISAForNewProjects::" + Config.cfgAskForISAForNewProjects + "\n");
+                out.write("prgAutoDetectPorts::" + Config.prgAutoDetectPorts + "\n");
                 for(int i = 0; i < 5; i++) {
                     String key = "develop_recent_" + i;
                     if(PLPToolApp.getAttributes().containsKey(key))
@@ -860,7 +863,7 @@ public final class ProjectDriver {
                         arch = ArchRegistry.getArchitecture(this, Config.cfgOverrideISA);
                         arch.init();
                     } else if (temp.equals("plpmips")) {
-                        Msg.W("This project file is made by PLPTool version 3 or earlier. " +
+                        Msg.W("This project file was created by PLPTool version 3 or earlier. " +
                               "Meta data for this project will be updated " +
                               "with the default ISA (plpmips) when the project " +
                               "file is saved.", this);

@@ -115,6 +115,8 @@ public class OptionsFrame extends javax.swing.JFrame {
         Config.cfgAskBeforeAutoloadingModules = askBeforeAutoloadingModules.isSelected();
         Config.cfgAskForISAForNewProjects = askForISAForNewProjects.isSelected();
 
+        Config.prgAutoDetectPorts = prgAutoDetectPorts.isSelected();
+
         if(plp.g_simctrl != null)
             plp.g_simctrl.updateSlider();
 
@@ -163,6 +165,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         simFunctional.setSelected(Config.simFunctional);
         askBeforeAutoloadingModules.setSelected(Config.cfgAskBeforeAutoloadingModules);
         askForISAForNewProjects.setSelected(Config.cfgAskForISAForNewProjects);
+        prgAutoDetectPorts.setSelected(Config.prgAutoDetectPorts);
         update();
     }
 
@@ -200,6 +203,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         lblReadTimeout = new javax.swing.JLabel();
         prgReadTimeout = new javax.swing.JTextField();
         lblPrgWarning = new javax.swing.JLabel();
+        prgAutoDetectPorts = new javax.swing.JCheckBox();
         paneExtensions = new javax.swing.JPanel();
         askBeforeAutoloadingModules = new javax.swing.JCheckBox();
         askForISAForNewProjects = new javax.swing.JCheckBox();
@@ -446,6 +450,14 @@ public class OptionsFrame extends javax.swing.JFrame {
         lblPrgWarning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblPrgWarning.setName("lblPrgWarning"); // NOI18N
 
+        prgAutoDetectPorts.setText(resourceMap.getString("prgAutoDetectPorts.text")); // NOI18N
+        prgAutoDetectPorts.setName("prgAutoDetectPorts"); // NOI18N
+        prgAutoDetectPorts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prgAutoDetectPortsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout paneProgrammerLayout = new javax.swing.GroupLayout(paneProgrammer);
         paneProgrammer.setLayout(paneProgrammerLayout);
         paneProgrammerLayout.setHorizontalGroup(
@@ -453,6 +465,7 @@ public class OptionsFrame extends javax.swing.JFrame {
             .addGroup(paneProgrammerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(paneProgrammerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(prgAutoDetectPorts)
                     .addComponent(lblPrgWarning)
                     .addComponent(prgProgramInChunks)
                     .addGroup(paneProgrammerLayout.createSequentialGroup()
@@ -480,7 +493,9 @@ public class OptionsFrame extends javax.swing.JFrame {
                     .addComponent(prgReadTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lblPrgWarning)
-                .addContainerGap(282, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(prgAutoDetectPorts)
+                .addContainerGap(241, Short.MAX_VALUE))
         );
 
         tabsOptions.addTab(resourceMap.getString("paneProgrammer.TabConstraints.tabTitle"), paneProgrammer); // NOI18N
@@ -649,6 +664,10 @@ public class OptionsFrame extends javax.swing.JFrame {
         triggerChange();
     }//GEN-LAST:event_askForISAForNewProjectsActionPerformed
 
+    private void prgAutoDetectPortsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prgAutoDetectPortsActionPerformed
+        triggerChange();
+    }//GEN-LAST:event_prgAutoDetectPortsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox askBeforeAutoloadingModules;
     private javax.swing.JCheckBox askForISAForNewProjects;
@@ -668,6 +687,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JPanel paneExtensions;
     private javax.swing.JPanel paneProgrammer;
     private javax.swing.JPanel paneSim;
+    private javax.swing.JCheckBox prgAutoDetectPorts;
     private javax.swing.JTextField prgMaxChunkSize;
     private javax.swing.JCheckBox prgProgramInChunks;
     private javax.swing.JTextField prgReadTimeout;
