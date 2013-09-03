@@ -821,7 +821,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     }//GEN-LAST:event_cmbCallbackEventActionPerformed
 
     private void btnEmbedManifestBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmbedManifestBrowseActionPerformed
-        java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
+        java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath);
         if(f != null)
             txtEmbedManifestJAR.setText(f.getAbsolutePath());
     }//GEN-LAST:event_btnEmbedManifestBrowseActionPerformed

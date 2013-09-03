@@ -317,7 +317,7 @@ public class SerialTerminal extends javax.swing.JFrame {
         chkEnter = new javax.swing.JCheckBox();
         cmbEnter = new javax.swing.JComboBox<String>();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblClickNotice = new javax.swing.JLabel();
         btnSave = new javax.swing.JButton();
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(SerialTerminal.class);
@@ -396,12 +396,20 @@ public class SerialTerminal extends javax.swing.JFrame {
         console.setEditable(false);
         console.setFont(resourceMap.getFont("console.font")); // NOI18N
         console.setName("console"); // NOI18N
-        console.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                consoleKeyPressed(evt);
+        console.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                consoleFocusGained(evt);
             }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                consoleFocusLost(evt);
+            }
+        });
+        console.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 consoleKeyTyped(evt);
+            }
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                consoleKeyPressed(evt);
             }
         });
         jScrollPane1.setViewportView(console);
@@ -447,8 +455,9 @@ public class SerialTerminal extends javax.swing.JFrame {
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
-        jLabel2.setName("jLabel2"); // NOI18N
+        lblClickNotice.setForeground(resourceMap.getColor("lblClickNotice.foreground")); // NOI18N
+        lblClickNotice.setText(resourceMap.getString("lblClickNotice.text")); // NOI18N
+        lblClickNotice.setName("lblClickNotice"); // NOI18N
 
         btnSave.setText(resourceMap.getString("btnSave.text")); // NOI18N
         btnSave.setName("btnSave"); // NOI18N
@@ -495,8 +504,8 @@ public class SerialTerminal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnClose)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                        .addComponent(lblClickNotice)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                         .addComponent(btnCopySelection)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCopyAll)
@@ -530,7 +539,7 @@ public class SerialTerminal extends javax.swing.JFrame {
                     .addComponent(btnClear)
                     .addComponent(btnCopyAll)
                     .addComponent(btnCopySelection)
-                    .addComponent(jLabel2))
+                    .addComponent(lblClickNotice))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -715,10 +724,18 @@ public class SerialTerminal extends javax.swing.JFrame {
     }//GEN-LAST:event_consoleKeyPressed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        java.io.File f = PLPToolbox.saveFileDialog(Constants.launchPath, null);
+        java.io.File f = PLPToolbox.saveFileDialog(Constants.launchPath);
         if(f != null)
             PLPToolbox.writeFile(console.getText(), f.getAbsolutePath());
     }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void consoleFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_consoleFocusGained
+        lblClickNotice.setVisible(false);
+    }//GEN-LAST:event_consoleFocusGained
+
+    private void consoleFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_consoleFocusLost
+        lblClickNotice.setVisible(true);        
+    }//GEN-LAST:event_consoleFocusLost
 
     /**
     * @param args the command line arguments
@@ -750,9 +767,9 @@ public class SerialTerminal extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cmbPort;
     private javax.swing.JTextPane console;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblBaud;
+    private javax.swing.JLabel lblClickNotice;
     private javax.swing.JLabel lblOpts;
     private javax.swing.JLabel lblPort;
     private javax.swing.JTextField txtInput;

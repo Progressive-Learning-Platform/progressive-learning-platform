@@ -787,13 +787,20 @@ public class PLPToolbox {
      * Bring up the file save dialog
      *
      * @param startPath Starting path to browse from
-     * @param filter Filter to be used with the dialog
+     * @param filters Filters to be used with the dialog
      * @return The file object on successful browsing, null otherwise
      */
-    public static File saveFileDialog(String startPath, javax.swing.filechooser.FileFilter filter) {
+    public static File saveFileDialog(String startPath, javax.swing.filechooser.FileFilter...filters) {
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-        fc.setFileFilter(filter);
         fc.setAcceptAllFileFilterUsed(false);
+        if(filters.length == 1)
+            fc.setFileFilter(filters[0]);
+        else if(filters.length > 1) {
+            for(int i = 0; i < filters.length; i++) {
+                fc.addChoosableFileFilter(filters[i]);
+            }
+        } else
+            fc.setAcceptAllFileFilterUsed(true);
         fc.setCurrentDirectory(new File(startPath));
 
         int retVal = fc.showSaveDialog(null);
@@ -807,13 +814,20 @@ public class PLPToolbox {
      * Bring up the file open dialog
      *
      * @param startPath Starting path to browse from
-     * @param filter Filter to be used with the dialog
+     * @param filters Filters to be used with the dialog
      * @return The file object on successful browsing, null otherwise
      */
-    public static File openFileDialog(String startPath, javax.swing.filechooser.FileFilter filter) {
+    public static File openFileDialog(String startPath, javax.swing.filechooser.FileFilter...filters) {
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-        fc.setFileFilter(filter);
-        fc.setAcceptAllFileFilterUsed(true);
+        fc.setAcceptAllFileFilterUsed(false);
+        if(filters.length == 1)
+            fc.setFileFilter(filters[0]);
+        else if(filters.length > 1) {
+            for(int i = 0; i < filters.length; i++) {
+                fc.addChoosableFileFilter(filters[i]);
+            }
+        } else
+            fc.setAcceptAllFileFilterUsed(true);
         fc.setCurrentDirectory(new File(startPath));
 
         int retVal = fc.showOpenDialog(null);

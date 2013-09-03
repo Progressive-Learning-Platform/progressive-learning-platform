@@ -53,6 +53,17 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private int chunkIndex = 0;
     private long chunkStartAddr;
 
+    // Serial programmer preambles
+    private static boolean PRG_G02;
+    private static boolean PRG_G02_NONVOLATILE;
+    private static boolean PRG_G02_UART1_DEBUG;
+    private static boolean PRG_G02_UART2_PRIMARY;
+    private static boolean PRG_G02_UART2_DISABLE_I2C2_ENABLE;
+    private static boolean PRG_G02_MCC_SPI_ENABLE;
+    private static boolean PRG_G02_MCC_SSEG;
+    private static boolean PRG_G02_MCC_GPS;
+    private static boolean PRG_G02_MCC_I2C_DIRECT;
+
     public int connect(String portName, int baudRate) throws Exception {
         Msg.D("Connecting to " + portName, 2, this);
         
@@ -128,6 +139,14 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             plp.p_port.enableReceiveTimeout(Config.prgReadTimeout);
 
             long startTime = System.currentTimeMillis();
+
+            Msg.I("Preambles:", this);
+            if(PRG_G02_NONVOLATILE) {
+                Msg.I("- Program to FLASH", this);
+            }
+            if(PRG_G02_UART1_DEBUG) {
+                Msg.I("- UART1 will be used for debugging", this);
+            }
 
             Msg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
             buff[0] = (byte) 'a';
@@ -313,7 +332,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     private int sendChunk(byte[] chunk, int size, int i) throws IOException {
-        int len = size / 4;
+        int len = size / 4; // per chunk protocol, len is in WORDS
         
         Msg.D("Sending chunk of size " + size + " bytes.", 3, this);
 
@@ -329,7 +348,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     " (" + chunkIndex +" bytes)", this);
 
         byte buff[] = new byte[5];
-        buff[0] = 'c';
+        buff[0] = 'c'; 
         buff[1] = (byte) (len >> 24);
         buff[2] = (byte) (len >> 16);
         buff[3] = (byte) (len >> 8);
@@ -343,6 +362,34 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
         return Constants.PLP_OK;
+    }
+
+    public static void resetPreamble() {
+        PRG_G02 = false;
+        PRG_G02_NONVOLATILE = false;
+        PRG_G02_UART1_DEBUG = false;
+        PRG_G02_UART2_PRIMARY = false;
+        PRG_G02_UART2_DISABLE_I2C2_ENABLE = false;
+        PRG_G02_MCC_SPI_ENABLE = false;
+        PRG_G02_MCC_SSEG = false;
+        PRG_G02_MCC_GPS = false;
+        PRG_G02_MCC_I2C_DIRECT = false;
+    }
+
+    public static void parsePragma(String str) {
+        if(str.equals("!PRG_G02"))                                   PRG_G02 = true;
+        else if(str.equals("!PRG_G02_NONVOLATILE"))                  PRG_G02_NONVOLATILE = true;
+        else if(str.equals("!PRG_G02_UART1_DEBUG"))                  PRG_G02_UART1_DEBUG = true;
+        else if(str.equals("!PRG_G02_UART2_PRIMARY"))                PRG_G02_UART2_PRIMARY = true;
+        else if(str.equals("!PRG_G02_UART2_DISABLE_I2C2_ENABLE"))    PRG_G02_UART2_DISABLE_I2C2_ENABLE = true;
+        else if(str.equals("!PRG_G02_MCC_SPI_ENABLE"))               PRG_G02_MCC_SPI_ENABLE = true;
+        else if(str.equals("!PRG_G02_MCC_SSEG"))                     PRG_G02_MCC_SSEG = true;
+        else if(str.equals("!PRG_G02_MCC_GPS"))                      PRG_G02_MCC_GPS = true;
+        else if(str.equals("!PRG_G02_MCC_I2C_DIRECT"))               PRG_G02_MCC_I2C_DIRECT = true;
+
+        else {
+            Msg.W("Unknown programmer pragma: " + str + ". Ignoring.", null);
+        }
     }
 
     @Override
