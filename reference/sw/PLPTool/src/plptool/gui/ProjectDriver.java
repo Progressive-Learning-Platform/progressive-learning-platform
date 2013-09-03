@@ -209,6 +209,23 @@ public final class ProjectDriver {
         replay = false;
         asm_req = false;
 
+        // check for rxtx native libaries
+        serial_support = true;
+        try {
+            if(!applet) gnu.io.RXTXVersion.getVersion();
+        } catch(UnsatisfiedLinkError e) {
+            Msg.W("Failed to detect native RXTX library. " +
+                  "Functionality requiring serial communication will fail.", null);
+            Msg.W(" - If you are running Linux, make sure that RXTX library is installed.", null);
+            Msg.W(" - If you are running Windows, make sure that the .dll files are in the " +
+                  "same directory and you run the batch file associated with " +
+                  "your version of Windows (32- or 64-bit)", null);
+            serial_support = false;
+        } catch(NoClassDefFoundError e) {
+            Msg.W("Unsatisfied RXTX link.", null);
+            serial_support = false;
+        }
+
         if(applet) asms = new ArrayList<PLPAsmSource>();
         pAttrSet = new HashMap<String, Object>();
 
@@ -261,25 +278,7 @@ public final class ProjectDriver {
             Msg.W("You are running an older Java Runtime Environment version." +
                   " Some functionalities may not work as intended. " +
                   "Please upgrade to at least JRE version 1.5", null);
-        }
-
-        // check for rxtx native libaries
-        serial_support = true;
-
-        try {
-            if(!applet) gnu.io.RXTXVersion.getVersion();
-        } catch(UnsatisfiedLinkError e) {
-            Msg.W("Failed to detect native RXTX library. " +
-                  "Functionality requiring serial communication will fail.", null);
-            Msg.W(" - If you are running Linux, make sure that RXTX library is installed.", null);
-            Msg.W(" - If you are running Windows, make sure that the .dll files are in the " +
-                  "same directory and you run the batch file associated with " +
-                  "your version of Windows (32- or 64-bit)", null);
-            serial_support = false;
-        } catch(NoClassDefFoundError e) {
-            Msg.W("Unsatisfied RXTX link.", null);
-            serial_support = false;
-        }        
+        }             
     }
 
     /**

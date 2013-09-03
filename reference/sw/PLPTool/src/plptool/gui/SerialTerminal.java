@@ -49,6 +49,7 @@ public class SerialTerminal extends javax.swing.JFrame {
     private SerialPort port;
     private boolean streamReaderRunning;
     private String lastCommand;
+    private boolean serialSupport;
 
     protected boolean stop;
 
@@ -96,8 +97,20 @@ public class SerialTerminal extends javax.swing.JFrame {
         cmbBaud.addItem(115200);
         cmbBaud.setSelectedIndex(1);
 
+        serialSupport = false;
+        try {
+            gnu.io.RXTXVersion.getVersion();
+            serialSupport = true;
+        } catch(UnsatisfiedLinkError e) {
+            appendString("Failed to link with RXTX native library.");
+            btnOpen.setEnabled(false);
+        } catch(NoClassDefFoundError e) {
+            appendString("Failed to link with RXTX native library.");
+            btnOpen.setEnabled(false);
+        }
+
         cmbPort.removeAllItems();
-        if(Config.serialTerminalAutoDetectPorts) {
+        if(serialSupport && Config.serialTerminalAutoDetectPorts) {
             Enumeration portList = CommPortIdentifier.getPortIdentifiers();
             while (portList.hasMoreElements()) {
                 CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
@@ -113,8 +126,7 @@ public class SerialTerminal extends javax.swing.JFrame {
                 cmbPort.addItem("/dev/ttyUSB1");
                 cmbPort.addItem("/dev/ttyS0");
                 cmbPort.addItem("/dev/ttyS1");
-            }
-            if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
+            } else if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
                PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
                 cmbPort.addItem("COM1");
                 cmbPort.addItem("COM2");
@@ -142,16 +154,6 @@ public class SerialTerminal extends javax.swing.JFrame {
         console.setBackground(Color.BLACK);
 
         this.setLocationRelativeTo(null);
-
-        try {
-            gnu.io.RXTXVersion.getVersion();
-        } catch(UnsatisfiedLinkError e) {
-            appendString("Failed to link with RXTX native library.");
-            btnOpen.setEnabled(false);
-        } catch(NoClassDefFoundError e) {
-            appendString("Failed to link with RXTX native library.");
-            btnOpen.setEnabled(false);
-        }
     }
 
     protected void appendByte(char data, Color color) throws Exception {

@@ -28,7 +28,6 @@ public class ProgrammerDialog extends javax.swing.JDialog {
 
     ProjectDriver plp;
 
-    /** Creates new form PLPSerialProgrammer */
     public ProgrammerDialog(ProjectDriver plp, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -38,7 +37,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
         plptool.PLPToolbox.attachHideOnEscapeListener(this);
 
         cmbPort.removeAllItems();
-        if(Config.prgAutoDetectPorts) {
+        if(plp.isSerialSupported() && Config.prgAutoDetectPorts) {
             Enumeration portList = CommPortIdentifier.getPortIdentifiers();
             while (portList.hasMoreElements()) {
                 CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
@@ -54,8 +53,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
                 cmbPort.addItem("/dev/ttyUSB1");
                 cmbPort.addItem("/dev/ttyS0");
                 cmbPort.addItem("/dev/ttyS1");
-            }
-            if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
+            } else if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
                PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
                 cmbPort.addItem("COM1");
                 cmbPort.addItem("COM2");
