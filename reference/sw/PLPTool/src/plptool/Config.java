@@ -62,6 +62,7 @@ public class Config {
     public static int     prgMaxChunkSize                  = 2048; //16384;
     public static int     prgReadTimeout                   = 500;
     public static boolean prgNexys3ProgramWorkaround       = true;
+    public static boolean prgAutoDetectPorts               = true;
 
     public static boolean devNewSyntaxHighlightStrategy    = true;
     public static long    devHihglighterThreadRefreshMsecs = 1000;
@@ -85,9 +86,9 @@ public class Config {
     public static int     devWindowWidth                   = -1;
     public static int     devWindowHeight                  = -1;
 
-
     public static int     serialTerminalReadDelayMs        = 10;
     public static int     serialTerminalBufferSize         = 64;
+    public static boolean serialTerminalAutoDetectPorts    = true;
    
     public static void resetConfig() {
         cfgInstrPretty                   = true;
@@ -123,6 +124,7 @@ public class Config {
         prgMaxChunkSize                  = 2048; //16384;
         prgReadTimeout                   = 500;
         prgNexys3ProgramWorkaround       = true;
+        prgAutoDetectPorts               = true;
 
         devNewSyntaxHighlightStrategy    = true;
         devHihglighterThreadRefreshMsecs = 1000;
@@ -139,5 +141,9 @@ public class Config {
         devForeground                    = Color.BLACK;
 
         devMaxUndoEntries                = 64000;
+
+        serialTerminalReadDelayMs        = 10;
+        serialTerminalBufferSize         = 64;
+        serialTerminalAutoDetectPorts    = true;
     }
 }

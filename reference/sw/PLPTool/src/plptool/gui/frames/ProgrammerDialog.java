@@ -11,9 +11,14 @@
 
 package plptool.gui.frames;
 
+import plptool.Config;
+import plptool.Msg;
 import plptool.Constants;
 import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
+
+import java.util.Enumeration;
+import gnu.io.CommPortIdentifier;
 
 /**
  *
@@ -33,22 +38,32 @@ public class ProgrammerDialog extends javax.swing.JDialog {
         plptool.PLPToolbox.attachHideOnEscapeListener(this);
 
         cmbPort.removeAllItems();
-        if(PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_32 ||
-           PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_64) {
-            cmbPort.addItem("/dev/ttyUSB0");
-            cmbPort.addItem("/dev/ttyUSB1");
-            cmbPort.addItem("/dev/ttyS0");
-            cmbPort.addItem("/dev/ttyS1");
+        if(Config.prgAutoDetectPorts) {
+            Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+            while (portList.hasMoreElements()) {
+                CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
+                Msg.D("rxtx portId name: " + portId.getName() + " type: " + portId.getPortType(), 2 , null);
+                if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                    cmbPort.addItem(portId.getName());
+                }
+            }
+        } else {
+            if(PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_32 ||
+               PLPToolbox.getOS(false) == Constants.PLP_OS_LINUX_64) {
+                cmbPort.addItem("/dev/ttyUSB0");
+                cmbPort.addItem("/dev/ttyUSB1");
+                cmbPort.addItem("/dev/ttyS0");
+                cmbPort.addItem("/dev/ttyS1");
+            }
+            if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
+               PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
+                cmbPort.addItem("COM1");
+                cmbPort.addItem("COM2");
+                cmbPort.addItem("COM3");
+                cmbPort.addItem("COM4");
+            } else
+                cmbPort.addItem("Specify your serial port here.");
         }
-        if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
-           PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
-            cmbPort.addItem("COM1");
-            cmbPort.addItem("COM2");
-            cmbPort.addItem("COM3");
-            cmbPort.addItem("COM4");
-        }
-        else
-            cmbPort.addItem("Specify your serial port here.");
 
         javax.swing.KeyStroke escapeKeyStroke = javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0, false);
         javax.swing.Action escapeAction = new javax.swing.AbstractAction() {

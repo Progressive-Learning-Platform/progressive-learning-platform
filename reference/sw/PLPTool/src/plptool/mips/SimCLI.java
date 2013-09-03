@@ -727,7 +727,7 @@ public class SimCLI {
                 Msg.P("\n addmod <mod ID> <address> <regfile size>\n\tAttach module with <mod ID> starting at <address> with <regfile size> to the registry and the bus.");
                 Msg.P("\n rmmod <index in the REGISTRY>\n\tRemove the module with <index in the REGISTRY> from the registry and the bus.");
                 Msg.P("\n attachedmods\n\tList all modules attached to the simulation.");
-                Msg.P("\n listpresets\n\tList all available modulep resets.");
+                Msg.P("\n listpresets\n\tList all available module presets.");
                 Msg.P("\n loadpreset <index>\n\tLoad a module preset as specified by <index>");
 
                 break;
