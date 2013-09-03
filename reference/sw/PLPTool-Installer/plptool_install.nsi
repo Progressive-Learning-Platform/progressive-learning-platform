@@ -46,6 +46,8 @@ UninstPage instfiles
 Section "PLPTool Install (required)"
   Call DetectJREandFail
   SectionIn RO
+
+  SetShellVarContext all
   
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
