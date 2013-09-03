@@ -59,6 +59,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     // Serial programmer preamble
     private static long preamble = 0;
 
+    // PLP Board 1-byte IDs
+    private static byte PLP_ISA_EMU_G02 = 0x02;
+
     public int connect(String portName) throws Exception {
         Msg.D("Connecting to " + portName, 2, this);
         
@@ -379,18 +382,18 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     public static void parsePragma(String str) {
-        if(str.equals("!PRG_PREAMBLE")) {
-            preamble |= 1;
-            Msg.I("FYI: Programmer preamble for board-specific configuration is set", null);
+        if(str.equals("!PRG_G02_PREAMBLE")) {
+            preamble |= PLP_ISA_EMU_G02 << 24;
+            Msg.I("FYI: PLP ISA Emulator Board-specific preamble is set", null);
         }
-        else if(str.equals("!PRG_G02_NONVOLATILE"))                  preamble |= (1L << 1);
-        else if(str.equals("!PRG_G02_UART1_DEBUG"))                  preamble |= (1L << 2);
-        else if(str.equals("!PRG_G02_UART2_PRIMARY"))                preamble |= (1L << 3);
-        else if(str.equals("!PRG_G02_UART2_DISABLE_I2C2_ENABLE"))    preamble |= (1L << 4);
-        else if(str.equals("!PRG_G02_MCC_SPI_ENABLE"))               preamble |= (1L << 5);
-        else if(str.equals("!PRG_G02_MCC_SSEG"))                     preamble |= (1L << 6);
-        else if(str.equals("!PRG_G02_MCC_GPS"))                      preamble |= (1L << 7);
-        else if(str.equals("!PRG_G02_MCC_I2C_DIRECT"))               preamble |= (1L << 8);
+        else if(str.equals("!PRG_G02_NONVOLATILE"))                  preamble |= (1L     );
+        else if(str.equals("!PRG_G02_UART1_DEBUG"))                  preamble |= (1L << 1);
+        else if(str.equals("!PRG_G02_UART2_PRIMARY"))                preamble |= (1L << 2);
+        else if(str.equals("!PRG_G02_UART2_DISABLE_I2C2_ENABLE"))    preamble |= (1L << 3);
+        else if(str.equals("!PRG_G02_MCC_SPI_ENABLE"))               preamble |= (1L << 4);
+        else if(str.equals("!PRG_G02_MCC_SSEG"))                     preamble |= (1L << 5);
+        else if(str.equals("!PRG_G02_MCC_GPS"))                      preamble |= (1L << 6);
+        else if(str.equals("!PRG_G02_MCC_I2C_DIRECT"))               preamble |= (1L << 7);
 
         else {
             Msg.W("Unknown programmer pragma: " + str + ". Ignoring.", null);
