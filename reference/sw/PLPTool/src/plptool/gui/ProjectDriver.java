@@ -1515,17 +1515,17 @@ public final class ProjectDriver {
                              "programmer implemented.",
                              Constants.PLP_ISA_NO_PROGRAMMER, this);
 
-            int ret = prg.connect(port, Constants.PLP_BAUDRATE);
+            int ret = prg.connect(port);
             if(ret != Constants.PLP_OK)
                 return ret;
             p_progress = 0;
 
             /*** RXTX Linux hack for the Nexys3 board ***/
-            if(Config.prgNexys3ProgramWorkaround && PLPToolbox.isHostLinux()) {
+            if(arch.equals("plpmips") && Config.prgNexys3ProgramWorkaround && PLPToolbox.isHostLinux()) {
                 Msg.D("program: Nexys 3 Linux RXTX workaround engaging...", 2, this);
                 prg.close();
                 prg = arch.createProgrammer();
-                prg.connect(port, Constants.PLP_BAUDRATE);
+                prg.connect(port);
             }
             
             if(g) {

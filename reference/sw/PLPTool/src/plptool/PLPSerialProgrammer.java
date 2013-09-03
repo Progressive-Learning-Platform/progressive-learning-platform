@@ -73,7 +73,7 @@ public abstract class PLPSerialProgrammer extends Thread implements PLPGenericMo
      */
     public Object hook(Object param) {return null;};
 
-    abstract public int connect(String portName, int baudRate) throws Exception;
+    abstract public int connect(String portName) throws Exception;
     abstract public int close();
     abstract public int programWithAsm() throws Exception;
 }

@@ -42,7 +42,7 @@ public class Architecture extends PLPArchitecture {
     private plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame;
     private SyntaxHighlightSupport syntaxHighlightSupport;
     private javax.swing.JMenuItem menuExportVerilogHex;
-
+    
     public Architecture(int archID, ProjectDriver plp) {
         super(archID, "plpmips", plp);
         hasAssembler = true;
