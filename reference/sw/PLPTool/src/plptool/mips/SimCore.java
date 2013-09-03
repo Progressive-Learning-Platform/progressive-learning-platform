@@ -541,7 +541,7 @@ public class SimCore extends PLPSimCore {
     }
 
     @Override public String toString() {
-        return "mips.SimCore(asm: " + asm.toString() + ")";
+        return "SimCore";
     }
 
     /**

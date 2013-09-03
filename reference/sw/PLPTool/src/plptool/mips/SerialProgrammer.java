@@ -53,8 +53,11 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private int chunkIndex = 0;
     private long chunkStartAddr;
 
+    // Serial programmer baudrate
+    private static int     BAUDRATE = 57600;
+
     // Serial programmer preambles
-    private static boolean PRG_G02;
+    private static boolean PRG_PREAMBLE;
     private static boolean PRG_G02_NONVOLATILE;
     private static boolean PRG_G02_UART1_DEBUG;
     private static boolean PRG_G02_UART2_PRIMARY;
@@ -64,7 +67,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private static boolean PRG_G02_MCC_GPS;
     private static boolean PRG_G02_MCC_I2C_DIRECT;
 
-    public int connect(String portName, int baudRate) throws Exception {
+    public int connect(String portName) throws Exception {
         Msg.D("Connecting to " + portName, 2, this);
         
         try {
@@ -75,7 +78,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         } catch(UnsatisfiedLinkError e) {
             return Msg.E("Failed to link with native RXTX library.",
                             Constants.PLP_GENERIC_ERROR, this);
-        } catch(gnu.io.NoSuchPortException e) {
+        } catch(NoSuchPortException e) {
             return Msg.E(portName + " is not found.",
                             Constants.PLP_GENERIC_ERROR, this);
         }
@@ -90,7 +93,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             if ( commPort instanceof SerialPort ) {
                 plp.p_port = (SerialPort) commPort;
-                plp.p_port.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
+                plp.p_port.setSerialPortParams(BAUDRATE, SerialPort.DATABITS_8,
                                                SerialPort.STOPBITS_1,
                                                SerialPort.PARITY_NONE);
 
@@ -140,13 +143,9 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             long startTime = System.currentTimeMillis();
 
-            Msg.I("Preambles:", this);
-            if(PRG_G02_NONVOLATILE) {
-                Msg.I("- Program to FLASH", this);
-            }
-            if(PRG_G02_UART1_DEBUG) {
-                Msg.I("- UART1 will be used for debugging", this);
-            }
+            ret = PRG_PREAMBLE ? sendPreamble(in, out) : 0;
+            if(ret != Constants.PLP_OK)
+                return ret;
 
             Msg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
             buff[0] = (byte) 'a';
@@ -211,31 +210,31 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 }
 
                 if((i < objCode.length - 1) && (addrTable[i + 1] != addrTable[i] + 4)) {
-                        // address jump, send chunk now
-                        if(Config.prgProgramInChunks) {
-                            ret = sendChunk(chunk, chunkIndex, i);
-                            chunk = new byte[Constants.PLP_PRG_CHUNK_BUFFER_SIZE];
-                            chunkIndex = 0;
-                            chunkStartAddr = addrTable[i + 1];
+                    // address jump, send chunk now
+                    if(Config.prgProgramInChunks) {
+                        ret = sendChunk(chunk, chunkIndex, i);
+                        chunk = new byte[Constants.PLP_PRG_CHUNK_BUFFER_SIZE];
+                        chunkIndex = 0;
+                        chunkStartAddr = addrTable[i + 1];
 
-                            if(ret != Constants.PLP_OK)
-                                return ret;
-                        }
+                        if(ret != Constants.PLP_OK)
+                            return ret;
+                    }
 
-                        Msg.D(String.format("Address jump: %08x to %08x",
-                                   addrTable[i], addrTable[i + 1]), 3, this);
+                    Msg.D(String.format("Address jump: %08x to %08x",
+                               addrTable[i], addrTable[i + 1]), 3, this);
 
-                        // and send new address
-                        buff[0] = (byte) 'a';
-                        buff[1] = (byte) (addrTable[i + 1] >> 24);
-                        buff[2] = (byte) (addrTable[i + 1] >> 16);
-                        buff[3] = (byte) (addrTable[i + 1] >> 8);
-                        buff[4] = (byte) (addrTable[i + 1]);
-                        out.write(buff, 0, 5);
-                        if(busy) inData = (byte) in.read();
-                        if(inData != 'f')
-                            return Msg.E("Programming failed, no acknowledgement received.",
-                                            Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
+                    // and send new address
+                    buff[0] = (byte) 'a';
+                    buff[1] = (byte) (addrTable[i + 1] >> 24);
+                    buff[2] = (byte) (addrTable[i + 1] >> 16);
+                    buff[3] = (byte) (addrTable[i + 1] >> 8);
+                    buff[4] = (byte) (addrTable[i + 1]);
+                    out.write(buff, 0, 5);
+                    if(busy) inData = (byte) in.read();
+                    if(inData != 'f')
+                        return Msg.E("Programming failed, no acknowledgement received.",
+                                        Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                     
                 // if we buffered up to maximum chunk size, send data
                 } else if(Config.prgProgramInChunks &&
@@ -365,7 +364,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     public static void resetPreamble() {
-        PRG_G02 = false;
+        PRG_PREAMBLE = false;
         PRG_G02_NONVOLATILE = false;
         PRG_G02_UART1_DEBUG = false;
         PRG_G02_UART2_PRIMARY = false;
@@ -376,8 +375,40 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         PRG_G02_MCC_I2C_DIRECT = false;
     }
 
+    public static int sendPreamble(InputStream in, OutputStream out) throws IOException {
+        byte buff[] = new byte[5];
+        byte inData;
+
+        long preamble = 0;
+        preamble |= (PRG_G02_NONVOLATILE                ? 0x00000001L : 0);
+        preamble |= (PRG_G02_UART1_DEBUG                ? 0x00000002L : 0);
+        preamble |= (PRG_G02_UART2_PRIMARY              ? 0x00000004L : 0);
+        preamble |= (PRG_G02_UART2_DISABLE_I2C2_ENABLE  ? 0x00000008L : 0);
+        preamble |= (PRG_G02_MCC_SPI_ENABLE             ? 0x00000010L : 0);
+        preamble |= (PRG_G02_MCC_SSEG                   ? 0x00000020L : 0);
+        preamble |= (PRG_G02_MCC_GPS                    ? 0x00000040L : 0);
+        preamble |= (PRG_G02_MCC_I2C_DIRECT             ? 0x00000080L : 0);
+
+        buff[0] = (byte) 'p';
+        buff[1] = (byte) (preamble >> 24);
+        buff[2] = (byte) (preamble >> 16);
+        buff[3] = (byte) (preamble >> 8);
+        buff[4] = (byte) (preamble);
+
+        out.write(buff, 0, 5);
+        inData = (byte) in.read();
+        if(inData != 'f')
+            return Msg.E("Failed to send preamble, no acknowledgement received.",
+                            Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, null);
+
+        return Constants.PLP_OK;
+    }
+
     public static void parsePragma(String str) {
-        if(str.equals("!PRG_G02"))                                   PRG_G02 = true;
+        if(str.equals("!PRG_PREAMBLE")) {
+            PRG_PREAMBLE = true;
+            Msg.I("FYI: Programmer preamble for board-specific configuration is set", null);
+        }
         else if(str.equals("!PRG_G02_NONVOLATILE"))                  PRG_G02_NONVOLATILE = true;
         else if(str.equals("!PRG_G02_UART1_DEBUG"))                  PRG_G02_UART1_DEBUG = true;
         else if(str.equals("!PRG_G02_UART2_PRIMARY"))                PRG_G02_UART2_PRIMARY = true;
@@ -394,6 +425,6 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
     @Override
     public String toString() {
-        return "plptool.mips.SerialProgrammer";
+        return "SerialProgrammer";
     }
 }
