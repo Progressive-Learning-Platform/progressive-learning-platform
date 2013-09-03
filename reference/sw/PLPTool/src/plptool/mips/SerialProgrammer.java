@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,18 +54,10 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private long chunkStartAddr;
 
     // Serial programmer baudrate
-    private static int     BAUDRATE = 57600;
+    private static int BAUDRATE = 57600;
 
-    // Serial programmer preambles
-    private static boolean PRG_PREAMBLE;
-    private static boolean PRG_G02_NONVOLATILE;
-    private static boolean PRG_G02_UART1_DEBUG;
-    private static boolean PRG_G02_UART2_PRIMARY;
-    private static boolean PRG_G02_UART2_DISABLE_I2C2_ENABLE;
-    private static boolean PRG_G02_MCC_SPI_ENABLE;
-    private static boolean PRG_G02_MCC_SSEG;
-    private static boolean PRG_G02_MCC_GPS;
-    private static boolean PRG_G02_MCC_I2C_DIRECT;
+    // Serial programmer preamble
+    private static long preamble = 0;
 
     public int connect(String portName) throws Exception {
         Msg.D("Connecting to " + portName, 2, this);
@@ -143,7 +135,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             long startTime = System.currentTimeMillis();
 
-            ret = PRG_PREAMBLE ? sendPreamble(in, out) : 0;
+            ret = (preamble != 0) ? sendPreamble(in, out) : 0;
             if(ret != Constants.PLP_OK)
                 return ret;
 
@@ -364,30 +356,12 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     public static void resetPreamble() {
-        PRG_PREAMBLE = false;
-        PRG_G02_NONVOLATILE = false;
-        PRG_G02_UART1_DEBUG = false;
-        PRG_G02_UART2_PRIMARY = false;
-        PRG_G02_UART2_DISABLE_I2C2_ENABLE = false;
-        PRG_G02_MCC_SPI_ENABLE = false;
-        PRG_G02_MCC_SSEG = false;
-        PRG_G02_MCC_GPS = false;
-        PRG_G02_MCC_I2C_DIRECT = false;
+        preamble = 0;
     }
 
     public static int sendPreamble(InputStream in, OutputStream out) throws IOException {
         byte buff[] = new byte[5];
         byte inData;
-
-        long preamble = 0;
-        preamble |= (PRG_G02_NONVOLATILE                ? 0x00000001L : 0);
-        preamble |= (PRG_G02_UART1_DEBUG                ? 0x00000002L : 0);
-        preamble |= (PRG_G02_UART2_PRIMARY              ? 0x00000004L : 0);
-        preamble |= (PRG_G02_UART2_DISABLE_I2C2_ENABLE  ? 0x00000008L : 0);
-        preamble |= (PRG_G02_MCC_SPI_ENABLE             ? 0x00000010L : 0);
-        preamble |= (PRG_G02_MCC_SSEG                   ? 0x00000020L : 0);
-        preamble |= (PRG_G02_MCC_GPS                    ? 0x00000040L : 0);
-        preamble |= (PRG_G02_MCC_I2C_DIRECT             ? 0x00000080L : 0);
 
         buff[0] = (byte) 'p';
         buff[1] = (byte) (preamble >> 24);
@@ -406,21 +380,25 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
     public static void parsePragma(String str) {
         if(str.equals("!PRG_PREAMBLE")) {
-            PRG_PREAMBLE = true;
+            preamble |= 1;
             Msg.I("FYI: Programmer preamble for board-specific configuration is set", null);
         }
-        else if(str.equals("!PRG_G02_NONVOLATILE"))                  PRG_G02_NONVOLATILE = true;
-        else if(str.equals("!PRG_G02_UART1_DEBUG"))                  PRG_G02_UART1_DEBUG = true;
-        else if(str.equals("!PRG_G02_UART2_PRIMARY"))                PRG_G02_UART2_PRIMARY = true;
-        else if(str.equals("!PRG_G02_UART2_DISABLE_I2C2_ENABLE"))    PRG_G02_UART2_DISABLE_I2C2_ENABLE = true;
-        else if(str.equals("!PRG_G02_MCC_SPI_ENABLE"))               PRG_G02_MCC_SPI_ENABLE = true;
-        else if(str.equals("!PRG_G02_MCC_SSEG"))                     PRG_G02_MCC_SSEG = true;
-        else if(str.equals("!PRG_G02_MCC_GPS"))                      PRG_G02_MCC_GPS = true;
-        else if(str.equals("!PRG_G02_MCC_I2C_DIRECT"))               PRG_G02_MCC_I2C_DIRECT = true;
+        else if(str.equals("!PRG_G02_NONVOLATILE"))                  preamble |= (1L << 1);
+        else if(str.equals("!PRG_G02_UART1_DEBUG"))                  preamble |= (1L << 2);
+        else if(str.equals("!PRG_G02_UART2_PRIMARY"))                preamble |= (1L << 3);
+        else if(str.equals("!PRG_G02_UART2_DISABLE_I2C2_ENABLE"))    preamble |= (1L << 4);
+        else if(str.equals("!PRG_G02_MCC_SPI_ENABLE"))               preamble |= (1L << 5);
+        else if(str.equals("!PRG_G02_MCC_SSEG"))                     preamble |= (1L << 6);
+        else if(str.equals("!PRG_G02_MCC_GPS"))                      preamble |= (1L << 7);
+        else if(str.equals("!PRG_G02_MCC_I2C_DIRECT"))               preamble |= (1L << 8);
 
         else {
             Msg.W("Unknown programmer pragma: " + str + ". Ignoring.", null);
         }
+    }
+
+    public static long getPreamble() {
+        return preamble;
     }
 
     @Override

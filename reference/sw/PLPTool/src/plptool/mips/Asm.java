@@ -42,6 +42,7 @@ public class Asm extends plptool.PLPAsm {
     private long        curAddr;
     private long        curTextAddr;
     private long        curDataAddr;
+    private long        bytesSpace;
     private int         directiveOffset;
     private String      curActiveFile;
     private String      topLevelFile;
@@ -82,7 +83,7 @@ public class Asm extends plptool.PLPAsm {
 
         directiveOffset = 0;
         topLevelFile = strFilePath;
-
+        bytesSpace = 0;
 
         defineArch();
     }
@@ -103,6 +104,7 @@ public class Asm extends plptool.PLPAsm {
 
         directiveOffset = 0;
         topLevelFile = asms.get(0).getAsmFilePath();
+        bytesSpace = 0;
 
         defineArch();
     }
@@ -310,7 +312,6 @@ public class Asm extends plptool.PLPAsm {
 
         try {
 
-        SerialProgrammer.resetPreamble();
         Msg.D("pp(" + asmIndex + ") begin loop...", 4, this);
         Msg.D("lines: " + asmLines.length, 4, this);
 
@@ -500,6 +501,7 @@ public class Asm extends plptool.PLPAsm {
                     long size = Asm.sanitize32bits(asmTokens[1]);
 
                     curAddr += 4 * size;
+                    bytesSpace += 4 * size;
                     appendPreprocessedAsm("ASM__ORG__ " + curAddr, i, true);
                     directiveOffset++;
                     regionMap.add(curRegion);
@@ -976,14 +978,6 @@ public class Asm extends plptool.PLPAsm {
 
         }
 
-        int ret;
-        // Now append the rest of the files in sourceFiles
-        for(int k = 1; index == 0 && k < sourceList.size(); k++) {
-            ret = this.preprocess(k);
-            if(ret != Constants.PLP_OK)
-                return ret;
-        }
-
         } catch(Exception e) {
             error++; Msg.E("preprocess(" + formatHyperLink(curActiveFile, i) + "): " + e,
                               Constants.PLP_GENERIC_ERROR, this);
@@ -995,7 +989,15 @@ public class Asm extends plptool.PLPAsm {
             Msg.E("preprocess: " +
                      error + " error(s).", Constants.PLP_ASM_PREPROCESS_FAILED, this);
         
-        Msg.D("preprocess(" + curActiveFile + "): First pass completed.", 2, this);
+        Msg.D("preprocess(" + sourceList.get(index).getAsmFilePath() + "): First pass completed.", 2, this);
+
+        int ret;
+        // Now append the rest of the files in sourceFiles
+        for(int k = 1; index == 0 && k < sourceList.size(); k++) {
+            ret = this.preprocess(k);
+            if(ret != Constants.PLP_OK)
+                return ret;
+        }
 
         return (error == 0) ? 0 : Constants.PLP_ASM_PREPROCESS_FAILED;
     }
@@ -1094,7 +1096,7 @@ public class Asm extends plptool.PLPAsm {
                 // 3-op R-type (includes multiply, case 8)
                 case 0:
 		case 8:
-                    if(!checkNumberOfOperands(asmTokens, 4, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 4, i)) {
                         error++;
                     } else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2]) ||
@@ -1111,7 +1113,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // Shift R-type
                 case 1:
-                    if(!checkNumberOfOperands(asmTokens, 4, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 4, i)) {
                         error++;
                     } else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
@@ -1127,7 +1129,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // Jump R-type
                 case 2:
-                    if(!checkNumberOfOperands(asmTokens, 2, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 2, i)) {
                         error++;
                     } else if(!regs.containsKey(asmTokens[1]))  {
                         error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Invalid register(s)",
@@ -1140,7 +1142,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // Branch I-type
                 case 3:
-                    if(!checkNumberOfOperands(asmTokens, 4, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 4, i)) {
                         error++;
                     } else if(!regs.containsKey(asmTokens[1]))  {
                         error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Invalid register(s)",
@@ -1160,7 +1162,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // Arithmetic and Logic I-type
                 case 4:
-                    if(!checkNumberOfOperands(asmTokens, 4, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 4, i)) {
                         error++;
                     } else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
@@ -1176,7 +1178,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // Load upper immediate I-type
                 case 5:
-                    if(!checkNumberOfOperands(asmTokens, 3, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 3, i)) {
                         error++;
                     } else if(!regs.containsKey(asmTokens[1]))  {
                         error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Invalid register(s)",
@@ -1190,7 +1192,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // Load/Store Word I-type
                 case 6:
-                    if(!checkNumberOfOperands(asmTokens, 4, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 4, i)) {
                         error++;
                     }  else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[3])) {
@@ -1206,7 +1208,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // J-type
                 case 7:
-                    if(!checkNumberOfOperands(asmTokens, 2, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 2, i)) {
                         error++;
                     } else if(!symTable.containsKey(asmTokens[1]))  {
                         error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Invalid jump target \"" + asmTokens[1] + "\"",
@@ -1219,7 +1221,7 @@ public class Asm extends plptool.PLPAsm {
 
                 // jalr Instruction
                 case 9:
-                    if(!checkNumberOfOperands(asmTokens, 3, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                    if(!checkNumberOfOperands(asmTokens, 3, i)) {
                         error++;
                     } else if(!regs.containsKey(asmTokens[1]) ||
                        !regs.containsKey(asmTokens[2])) {
@@ -1235,14 +1237,14 @@ public class Asm extends plptool.PLPAsm {
                 // 2nd pass directives
                 case 10:
                     if(asmTokens[0].equals("ASM__WORD__")) {
-                        if(!checkNumberOfOperands(asmTokens, 2, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                        if(!checkNumberOfOperands(asmTokens, 2, i)) {
                             error++;
                         } else {
                         entryType[i - s] = 1;
                         objectCode[i - s] = sanitize32bits(asmTokens[1]);
                         }
                     } else if(asmTokens[0].equals("ASM__ORG__")) {
-                        if(!checkNumberOfOperands(asmTokens, 2, sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i])) {
+                        if(!checkNumberOfOperands(asmTokens, 2, i)) {
                             error++;
                         } else {
                             asmPC = sanitize32bits(asmTokens[1]);
@@ -1279,11 +1281,12 @@ public class Asm extends plptool.PLPAsm {
         }
 
         Msg.D("assemble(): Assembly completed.", 1, this);
+        Msg.D("assemble(): Programmer preamble: " + PLPToolbox.format32Hex(SerialProgrammer.getPreamble()), 2, this);
         
         } catch(NumberFormatException e) {
             error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Failed to parse literal: " + e.getMessage(),
                               Constants.PLP_GENERIC_ERROR, this);
-        }catch(Exception e) {
+        } catch(Exception e) {
             error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Unhandled exception: " + e,
                               Constants.PLP_GENERIC_ERROR, this);
         }
@@ -1291,8 +1294,12 @@ public class Asm extends plptool.PLPAsm {
         if(error > 0)
             Msg.E("assemble: " +
                      error + " error(s).", Constants.PLP_ASM_ASSEMBLE_FAILED, this);
-        else
+        else {
+            Msg.I("Statically allocated memory: " + (objectCode.length*4 + bytesSpace) +
+                    " bytes / " + (objectCode.length + bytesSpace / 4) +
+                    " words (" + objectCode.length + " words of object code and initialized variables)", this);
             assembled = true;
+        }
 
         return (error == 0) ? Constants.PLP_OK : Constants.PLP_ASM_ASSEMBLE_FAILED;
     }
@@ -1439,9 +1446,11 @@ public class Asm extends plptool.PLPAsm {
      * @param length assertion
      * @param lineNum line number in asm source where this function is called
      */
-    private boolean checkNumberOfOperands(Object iObj[], int length, String file, int lineNum) {
+    private boolean checkNumberOfOperands(Object iObj[], int length, int asmLineNum) {
         if(iObj.length != length) {
-            Msg.E("checkNumberOfOperands(" + formatHyperLink(file, lineNum )+ "): Invalid number of operands",
+            Msg.E("checkNumberOfOperands(" + formatHyperLink(
+                    sourceList.get(asmFileMap[asmLineNum]).getAsmFilePath(), lineNumMap[asmLineNum])
+                    + "): Invalid number of operands",
                             Constants.PLP_ASM_INVALID_NUMBER_OF_OPERANDS, this);
             return false;
         }

@@ -99,6 +99,7 @@ public class Architecture extends PLPArchitecture {
      * @return the assembler instance
      */
     public PLPAsm createAssembler() {
+        SerialProgrammer.resetPreamble();
         return new plptool.mips.Asm(plp.getAsms());
     }
 
