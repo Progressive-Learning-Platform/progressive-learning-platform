@@ -26,7 +26,7 @@ package plptool;
 public abstract class PLPSerialProgrammer extends Thread implements PLPGenericModule {
     protected plptool.gui.ProjectDriver plp;
 
-    public boolean      busy = false;
+    protected boolean   programming = false;
     public int          progress = 0;
     protected String    portName;
 
@@ -47,7 +47,7 @@ public abstract class PLPSerialProgrammer extends Thread implements PLPGenericMo
         int ret;
         try {
 
-        busy = true;
+        setProgramming();
         if(plp.p_port != null) {
             ret = programWithAsm();
             close();
@@ -63,6 +63,18 @@ public abstract class PLPSerialProgrammer extends Thread implements PLPGenericMo
         } catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private synchronized void setProgramming() {
+        programming = true;
+    }
+
+    public synchronized boolean isProgramming() {
+        return programming;
+    }
+
+    public synchronized void cancelProgramming() {
+        programming = false;
     }
 
     /**

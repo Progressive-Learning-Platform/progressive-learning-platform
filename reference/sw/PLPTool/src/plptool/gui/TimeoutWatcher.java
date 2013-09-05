@@ -58,7 +58,7 @@ public class TimeoutWatcher extends Thread {
             //plp.p_port.getInputStream().close();
             //plp.prg.interrupt();
             //plp.p_port.close();
-            plp.prg.busy = false;
+            plp.prg.cancelProgramming();
             plp.prg.stop();
             Msg.I("Watchdog quitting.", this);
         }

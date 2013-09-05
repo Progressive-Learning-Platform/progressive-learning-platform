@@ -26,7 +26,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="scroller" alignment="0" pref="587" max="32767" attributes="0"/>
+                  <Component id="scroller" alignment="0" pref="640" max="32767" attributes="0"/>
                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="btnZoomOut" min="-2" max="-2" attributes="0"/>
@@ -39,9 +39,9 @@
                       <EmptySpace pref="205" max="32767" attributes="0"/>
                       <Component id="btnCancel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator1" alignment="0" pref="587" max="32767" attributes="0"/>
+                  <Component id="jSeparator1" alignment="0" pref="640" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="cmbRoutines" pref="419" max="32767" attributes="0"/>
+                      <Component id="cmbRoutines" pref="446" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkColors" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>

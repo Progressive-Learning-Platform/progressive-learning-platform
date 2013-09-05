@@ -101,7 +101,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
 
     private void close() {
          if(plp.prg != null) {
-            plp.prg.busy = false;
+            plp.prg.cancelProgramming();
             plp.prg.close();
         }
         progressBar.setValue(0);

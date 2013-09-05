@@ -1050,9 +1050,11 @@ public class PLPToolbox {
      * @param dirStr Directory to search
      * @param fileStr File name to be searched
      * @param recurse Recurse into subdirectories
+     * @param stop Boolean object to check if the find operation needs to be
+     * stopped. Useful when using this method in a thread
      * @return Absolute path of the file if found, null otherwise
      */
-    public static String findFileInDirectory(String dirStr, String fileStr, boolean recurse) {
+    public static String findFileInDirectory(String dirStr, String fileStr, boolean recurse, Boolean stop) {
         String ret = null;
         File dir = new File(dirStr);
         ArrayList<File> dirs = new ArrayList<File>();
@@ -1061,15 +1063,15 @@ public class PLPToolbox {
         File[] files = dir.listFiles();
         if(files == null)
             return ret;
-        for(int i = 0; i < files.length; i++) {
+        for(int i = 0; i < files.length && !stop; i++) {
             if(files[i].getName().equals(fileStr))
                 return files[i].getAbsolutePath();
             if(files[i].isDirectory())
                 dirs.add(files[i]);
         }
         if(recurse)
-            for(int i = 0; i < dirs.size(); i++) {
-                ret = findFileInDirectory(dirs.get(i).getAbsolutePath(), fileStr, true);
+            for(int i = 0; i < dirs.size() && !stop; i++) {
+                ret = findFileInDirectory(dirs.get(i).getAbsolutePath(), fileStr, true, stop);
                 if(ret != null)
                     return ret;
             }

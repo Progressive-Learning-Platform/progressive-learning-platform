@@ -1,5 +1,5 @@
 /*
-    Copyright 2012 PLP Contributors
+    Copyright 2012-2013 PLP Contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,12 +39,14 @@ public class DisplayFlowchart extends javax.swing.JFrame {
     private double zoomFactor;
     private BufferedImage img;
     private final double ZOOM_SCALING = 1.5;
+    private generateDiagram generateDiagramThread;
 
     /** Creates new form ExportDOT */
     public DisplayFlowchart(java.awt.Frame parent) {
         initComponents();
         init();
         this.setLocationRelativeTo(parent);
+        this.generateDiagramThread = null;
     }
 
     private void init() {
@@ -199,45 +201,24 @@ public class DisplayFlowchart extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisplayActionPerformed
-        int routineIndex = cmbRoutines.getSelectedIndex();
-        if(routineIndex > -1) {
-            String tempDOTPath = PLPToolbox.getTmpDir() + "/flowchart_temp.dot";
-            String tempPNGPath = PLPToolbox.getTmpDir() + "/flowchart_temp.png";
-            String dotPath = PLPToolApp.getAttributes().get("flowchart_dotpath");
-            PLPToolbox.writeFile(p.generateDOT(routineIndex,
-                    chkColors.isSelected()), tempDOTPath);
-            if(dotPath != null) {
-                PLPToolbox.execute(dotPath + " -Tpng " + tempDOTPath +
-                        " -o " + tempPNGPath);
-                try {
-                    img = ImageIO.read(new File(tempPNGPath));
-                    i = java.awt.Toolkit.getDefaultToolkit().createImage(img.getSource());
-                    originalI = i;
-                    zoomFactor = 1;
-                    fLabel.setIcon(new ImageIcon(i));
-                } catch(IOException e) {
-                    Msg.E("Unable to read DOT output.", Constants.PLP_GENERAL_IO_ERROR,
-                            null);
-                }
-            }
+        if(generateDiagramThread == null) {
+            generateDiagramThread = new generateDiagram(0);
+            generateDiagramThread.start();
         }
-
     }//GEN-LAST:event_btnDisplayActionPerformed
 
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-        zoomFactor /= ZOOM_SCALING;
-        int lx = originalI.getWidth(null);
-        int ly = originalI.getHeight(null);
-        i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
-        fLabel.setIcon(new ImageIcon(i));
+        if(generateDiagramThread == null) {
+            generateDiagramThread = new generateDiagram(1);
+            generateDiagramThread.start();
+        }
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
-        zoomFactor *= ZOOM_SCALING;
-        int lx = originalI.getWidth(null);
-        int ly = originalI.getHeight(null);
-        i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
-        fLabel.setIcon(new ImageIcon(i));
+        if(generateDiagramThread == null) {
+            generateDiagramThread = new generateDiagram(2);
+            generateDiagramThread.start();
+        }
     }//GEN-LAST:event_btnZoomInActionPerformed
 
     private void btnOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOriginalActionPerformed
@@ -258,6 +239,59 @@ public class DisplayFlowchart extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
+    class generateDiagram extends Thread {
+        private int function;
+
+        public generateDiagram(int function) {
+            this.function = function;
+        }
+
+        @Override
+        public void run() {
+            int lx, ly;
+            switch(function) {
+                case 0:
+                    int routineIndex = cmbRoutines.getSelectedIndex();
+                    if(routineIndex > -1) {
+                        String tempDOTPath = PLPToolbox.getTmpDir() + "/flowchart_temp.dot";
+                        String tempPNGPath = PLPToolbox.getTmpDir() + "/flowchart_temp.png";
+                        String dotPath = PLPToolApp.getAttributes().get("flowchart_dotpath");
+                        PLPToolbox.writeFile(p.generateDOT(routineIndex,
+                                chkColors.isSelected()), tempDOTPath);
+                        if(dotPath != null) {
+                            PLPToolbox.execute(dotPath + " -Tpng " + tempDOTPath +
+                                    " -o " + tempPNGPath);
+                            try {
+                                img = ImageIO.read(new File(tempPNGPath));
+                                i = java.awt.Toolkit.getDefaultToolkit().createImage(img.getSource());
+                                originalI = i;
+                                zoomFactor = 1;
+                                fLabel.setIcon(new ImageIcon(i));
+                            } catch(IOException e) {
+                                Msg.E("Unable to read DOT output.", Constants.PLP_GENERAL_IO_ERROR,
+                                        null);
+                            }
+                        }
+                    }
+                    break;
+                case 1:
+                    zoomFactor /= ZOOM_SCALING;
+                    lx = originalI.getWidth(null);
+                    ly = originalI.getHeight(null);
+                    i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
+                    fLabel.setIcon(new ImageIcon(i));
+                    break;
+                case 2:
+                    zoomFactor *= ZOOM_SCALING;
+                    lx = originalI.getWidth(null);
+                    ly = originalI.getHeight(null);
+                    i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
+                    fLabel.setIcon(new ImageIcon(i));
+                    break;
+            }
+            generateDiagramThread = null;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

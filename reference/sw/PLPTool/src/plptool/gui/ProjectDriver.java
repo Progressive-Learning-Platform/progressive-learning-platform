@@ -1534,7 +1534,7 @@ public final class ProjectDriver {
                 g_prg.getProgressBar().setMaximum(asm.getObjectCode().length - 1);
             }
 
-            Msg.D("Starting worker threads", 2, this);
+            Msg.D("Starting PLPSerialProgrammer thread", 2, this);
             prg.start();
             return Constants.PLP_OK;
 
@@ -1543,7 +1543,7 @@ public final class ProjectDriver {
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
 
         } catch(Exception e) {
-            e.printStackTrace();
+            Msg.trace(e);
             return Msg.E("Programming failed.\n" + e,
                             Constants.PLP_GENERIC_ERROR, this);
         }

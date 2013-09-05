@@ -20,6 +20,7 @@ import plptool.gui.PLPToolApp;
  */
 public class SetupDOT extends javax.swing.JDialog {
     private PLPToolConnector connector;
+    private fileFinder fileFinderThread;
 
     /** Creates new form SetupDOT */
     public SetupDOT(java.awt.Frame parent, PLPToolConnector connector) {
@@ -27,6 +28,7 @@ public class SetupDOT extends javax.swing.JDialog {
         initComponents();
         this.setLocationRelativeTo(parent);
         this.connector = connector;
+        this.fileFinderThread = null;
         init();
     }
 
@@ -140,7 +142,7 @@ public class SetupDOT extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseActionPerformed
-        java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath, null);
+        java.io.File f = PLPToolbox.openFileDialog(Constants.launchPath);
         if(f != null)
             txtPath.setText(f.getAbsolutePath());
     }//GEN-LAST:event_btnBrowseActionPerformed
@@ -150,6 +152,10 @@ public class SetupDOT extends javax.swing.JDialog {
         if(dotPath != null) {
             connector.setDotPath(dotPath);
             txtPath.setText(dotPath);
+        }
+        if(fileFinderThread != null) {
+            fileFinderThread.cancel();
+            fileFinderThread = null;
         }
         this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
@@ -167,19 +173,55 @@ public class SetupDOT extends javax.swing.JDialog {
     }//GEN-LAST:event_btnApplyActionPerformed
 
     private void btnFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindActionPerformed
-        String f = null;
-        if(PLPToolbox.isHostLinux()) {
-            f = PLPToolbox.findFileInDirectory("/usr", "dot", true);
-        } else if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
-                  PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
-            f = PLPToolbox.findFileInDirectory("C:\\", "dot.exe", true);
+        if(fileFinderThread == null) {
+            btnFind.setText("Cancel find");
+            btnApply.setEnabled(false);
+            btnBrowse.setEnabled(false);
+            txtPath.setEnabled(false);
+            fileFinderThread = new fileFinder();
+            fileFinderThread.start();            
         } else {
+            fileFinderThread.cancel();
+            fileFinderThread = null;
+            btnFind.setText("Try to find it for me");
+            btnApply.setEnabled(true);
+            btnBrowse.setEnabled(true);
+            txtPath.setEnabled(true);
+        }
+    }//GEN-LAST:event_btnFindActionPerformed
 
+    class fileFinder extends Thread {
+
+        private Boolean cancel;
+
+        @Override
+        public void run() {
+            String f = null;
+            cancel = false;
+
+            if(PLPToolbox.isHostLinux()) {
+                f = PLPToolbox.findFileInDirectory("/usr", "dot", true, cancel);
+            } else if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
+                      PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
+                f = PLPToolbox.findFileInDirectory("C:\\", "dot.exe", true, cancel);
+            } else {
+
+            }
+
+            if(f != null)
+                txtPath.setText(f);
+
+            fileFinderThread = null;
+            btnFind.setText("Try to find it for me");
+            btnApply.setEnabled(true);
+            btnBrowse.setEnabled(true);
+            txtPath.setEnabled(true);
         }
 
-        if(f != null)
-            txtPath.setText(f);
-    }//GEN-LAST:event_btnFindActionPerformed
+        public synchronized void cancel() {
+            cancel = true;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApply;
