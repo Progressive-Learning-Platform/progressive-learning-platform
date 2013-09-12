@@ -24,6 +24,7 @@ import plptool.gui.PLPToolApp;
 import plptool.gui.ProjectDriver;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
+import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -74,6 +75,7 @@ public class PLPToolConnector implements ModuleInterface5 {
         setupFrame = new SetupDOT(plp.g_dev, this);
         displayFrame = new DisplayFlowchart(plp.g_dev);
         JMenu menuFlowchart = new JMenu("Flowchart Generator");
+        menuFlowchart.setIcon(new ImageIcon(PLPToolbox.getTmpDir() + "/plptool.extras.flowchart.icon.png"));
         JMenuItem menuFlowchartDisplay = new JMenuItem("Display flowchart for the project");
         menuFlowchartDisplay.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

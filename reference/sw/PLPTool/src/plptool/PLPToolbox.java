@@ -540,12 +540,10 @@ public class PLPToolbox {
             if(destFile.exists())
                 return Msg.E("copyFromJar: " + "'" + dest + "' exists.",
                         Constants.PLP_GENERAL_IO_ERROR, null);
-            InputStreamReader in = new InputStreamReader(jarFile.getInputStream(jarEntry));
-            FileWriter out = new FileWriter(dest);
-            char[] buf = new char[Constants.DEFAULT_IO_BUFFER_SIZE];
-            int readLen;
-            while((readLen = in.read(buf)) >= 0)
-                out.write(buf, 0, readLen);
+            InputStream in = jarFile.getInputStream(jarEntry);
+            FileOutputStream out = new FileOutputStream(dest);
+            while(in.available() > 0)
+                out.write(in.read());
             out.close();
             in.close();
             jarFile.close();

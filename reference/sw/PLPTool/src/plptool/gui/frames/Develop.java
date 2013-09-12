@@ -68,6 +68,7 @@ public class Develop extends javax.swing.JFrame {
     private double hPaneSavedProportion = -1;
     private double vPaneSavedProportion = -1;
     private DevEditorDocListener currentEditorListener;
+    private boolean extraToolsItems;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -108,6 +109,8 @@ public class Develop extends javax.swing.JFrame {
         menuFindAndReplace.setEnabled(false);
         rootmenuEdit.setEnabled(false);
         btnSave.setEnabled(false);
+
+        extraToolsItems = false;
 
         treeProject.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -1486,6 +1489,10 @@ public class Develop extends javax.swing.JFrame {
     }
 
     public javax.swing.JMenuItem addToolsItem(javax.swing.JMenuItem item) {
+        if(!extraToolsItems) {
+            extraToolsItems = true;
+            rootmenuTools.addSeparator();
+        }
         return rootmenuTools.add(item);
     }
 
