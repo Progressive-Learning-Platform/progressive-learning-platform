@@ -645,6 +645,7 @@ public class DynamicModuleFramework {
         String manifest = "";
         ArrayList<File> classes = new ArrayList<File>();
         ArrayList<String> classNames = new ArrayList<String>();
+        ArrayList<String> resources = new ArrayList<String>();
         File packageDir = new File(path);
         Msg.M("*******************************************************************************");
         Msg.M("Attempting to enumerate classes...");
@@ -662,7 +663,8 @@ public class DynamicModuleFramework {
                         className = className.substring(0, className.length() - 6);
                         classNames.add(className);
                         classes.add(packageDir);
-                    }
+                    } else if(checkValidResource(entry.getName()))
+                        resources.add(entry.getName());
                 }
 
                 jar.close();
@@ -681,7 +683,7 @@ public class DynamicModuleFramework {
             return null;
         } else
             generateManifestTraverseDirectory(packageDir, packageDir,
-                    classes, classNames);
+                    classes, classNames, resources);
 
         // Write out header information
         manifest += "title::" + title + "\n";
@@ -689,6 +691,12 @@ public class DynamicModuleFramework {
         manifest += "license::" + license + "\n";
         manifest += "description::" + description + "\n";
         manifest += "version::" + version + "\n";
+
+        // Write out miscellaneous resources
+        for(String s : resources) {
+            Msg.M("Adding resource: " + s);
+            manifest += "unpack::" + s + "\n";
+        }
 
         // Resolve dependencies. We'll do it in the most naive way possible:
         // try to load all classes, if some of them failed due to interfaces
@@ -794,13 +802,14 @@ public class DynamicModuleFramework {
      * @param classes Array list of classes
      */
     private static void generateManifestTraverseDirectory(File path,
-            File rootPath, ArrayList<File> classes, ArrayList<String> classNames) {
+            File rootPath, ArrayList<File> classes, ArrayList<String> classNames,
+            ArrayList<String> resources) {
         String className;
 
         File[] list = path.listFiles();
         for(int i = 0; i < list.length; i++) {
             if(list[i].isDirectory())
-                generateManifestTraverseDirectory(list[i], rootPath, classes, classNames);
+                generateManifestTraverseDirectory(list[i], rootPath, classes, classNames, resources);
             else if(list[i].isFile() && list[i].getName().endsWith(".class")) {
                 Msg.D("- Enumerating " + list[i].getAbsolutePath(), 3, null);
                 classes.add(list[i]);
@@ -808,8 +817,29 @@ public class DynamicModuleFramework {
                 className = className.replaceAll("/|\\\\", ".");
                 className = className.substring(0, className.length() - 6);
                 classNames.add(className);
-            }
+            } else
+                resources.add(list[i].getName());
         }
+    }
+
+    /**
+     * Check what kind of files are to be unpacked as resources for the module
+     *
+     * @param extension File extension (with period, e.g. ".png")
+     * @return
+     */
+    private static boolean checkValidResource(String file) {
+        ArrayList<String> str = new ArrayList<String>();
+        str.add(".png");
+        str.add(".jpg");
+        str.add(".txt");
+
+        for(String s : str) {
+            if(file.endsWith(s))
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -851,6 +881,10 @@ class ManifestHandlers {
         // Extract a file from a JAR file to temporary directory
         else if(e.startsWith("extracttotemp::"))
             m_extracttotemp();
+
+        // Unpack module resource
+        else if(e.startsWith("unpack::"))
+            m_unpack();
     }
     
     public static void m_loadwithproject() {
@@ -934,8 +968,16 @@ class ManifestHandlers {
                 PLPToolbox.getTmpDir() + "/" + tokens[2]);
     }
 
-    public static void m_extract() {
-
+    public static void m_unpack() {
+        String tokens[] = entry.split("::");
+        if(tokens.length != 2)
+            return;
+        Msg.D("Applying manifest entry: " + entry, 2, null);
+        PLPToolbox.checkCreateTempDirectory();
+        File f = new File(PLPToolbox.getTmpDir() + "/" + tokens[1].replace('/', '.'));
+        if(f.exists())
+            f.delete();
+        PLPToolbox.copyFromJar(jar, tokens[1], f.getAbsolutePath());
     }
 }
 
