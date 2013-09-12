@@ -128,6 +128,7 @@ SectionEnd
 ; Uninstaller
 
 Section "Uninstall"
+  SetShellVarContext all
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\PLPTool5"

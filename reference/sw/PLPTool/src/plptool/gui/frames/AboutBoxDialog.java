@@ -21,7 +21,9 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         this.setTitle("About: PLPTool " + plptool.Text.versionString + " (" + plptool.Version.stamp + ")");
         this.setLocationRelativeTo(null);
         txtContact.setText(Text.contactString);
-        txtAbout.setText(Text.copyrightString + "\n\n" + PLPToolApp.getBuildInfo());
+        txtAbout.setText(Text.copyrightString + "\n\n" + PLPToolApp.getBuildInfo() +
+                "\n\nCommand line arguments: " + plptool.PLPToolbox.getCommandLineArgs() +
+                "\nJVM arguments: " + plptool.PLPToolbox.getJVMCommandLineArgs());
         txtThirdParty.setText(Text.thirdPartyCopyrightString);
         txtGPL.setText(Text.GPL);
         txtContact.setCaretPosition(0);

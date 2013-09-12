@@ -62,6 +62,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static int startingArchID = ArchRegistry.ISA_PLPMIPS;
     private static String plpFileToSimulate;
     private static String scriptFileToRun;
+    public static String[] commandLineArgs;
     public static ConsoleFrame con;
 
     /**
@@ -142,6 +143,7 @@ public class PLPToolApp extends SingleFrameApplication {
         args = ArchRegistry.setup(args);                   // Setup ISA registry
         args = CallbackRegistry.setup(args);               // Setup callback registry
         args = AutoTest.setup(args);                       // Run unit tests
+        commandLineArgs = args;
 
 /******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 
