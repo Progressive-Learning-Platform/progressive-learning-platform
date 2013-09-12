@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.jar.*;
 import java.util.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 
 /**
  *
@@ -1050,31 +1052,34 @@ public class PLPToolbox {
      * @param dirStr Directory to search
      * @param fileStr File name to be searched
      * @param recurse Recurse into subdirectories
-     * @param stop Boolean object to check if the find operation needs to be
-     * stopped. Useful when using this method in a thread
+     * @param t Thread synchronization object. Useful for canceling the
+     * search before it is completed via a thread and to display the current
+     * path being searched
      * @return Absolute path of the file if found, null otherwise
      */
-    public static String findFileInDirectory(String dirStr, String fileStr, boolean recurse, Boolean stop) {
+    public static String findFileInDirectory(String dirStr, String fileStr, boolean recurse, ThreadSync t) {
         String ret = null;
         File dir = new File(dirStr);
         ArrayList<File> dirs = new ArrayList<File>();
+        t.setString(dirStr);
         if(!dir.isDirectory())
             return ret;
         File[] files = dir.listFiles();
         if(files == null)
             return ret;
-        for(int i = 0; i < files.length && !stop; i++) {
+        for(int i = 0; i < files.length && !t.isStopped(); i++) {
             if(files[i].getName().equals(fileStr))
                 return files[i].getAbsolutePath();
             if(files[i].isDirectory())
                 dirs.add(files[i]);
         }
-        if(recurse)
-            for(int i = 0; i < dirs.size() && !stop; i++) {
-                ret = findFileInDirectory(dirs.get(i).getAbsolutePath(), fileStr, true, stop);
+        if(recurse) {
+            for(int i = 0; i < dirs.size() && !t.isStopped(); i++) {
+                ret = findFileInDirectory(dirs.get(i).getAbsolutePath(), fileStr, true, t);
                 if(ret != null)
                     return ret;
             }
+        }
 
         return ret;
     }
@@ -1116,6 +1121,33 @@ public class PLPToolbox {
         for(int i = 0; i < ret.length; i++) {
             ret[i][0] = entries.get(i).getString();
             ret[i][1] = entries.get(i).getLong();
+        }
+
+        return ret;
+    }
+
+    /**
+     * Get the command line arguments PLPTool was launched with
+     *
+     * @return Command line arguments as string
+     */
+    public static String getCommandLineArgs() {
+        return System.getProperty("sun.java.command");
+    }
+
+    /**
+     * Get the command line arguments passed to the JVM when PLPTool was
+     * launched
+     *
+     * @return JVM command line arguments as string
+     */
+    public static String getJVMCommandLineArgs() {
+        String ret = "";
+        RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+        List<String> aList = bean.getInputArguments();
+
+        for (int i = 0; i < aList.size(); i++) {
+            ret += aList.get(i) + (i == aList.size()-1 ? "" : " ");
         }
 
         return ret;

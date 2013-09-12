@@ -21,6 +21,8 @@ import plptool.gui.PLPToolApp;
 public class SetupDOT extends javax.swing.JDialog {
     private PLPToolConnector connector;
     private fileFinder fileFinderThread;
+    private titleUpdater titleUpdaterThread;
+    private ThreadSync threadSync;
 
     /** Creates new form SetupDOT */
     public SetupDOT(java.awt.Frame parent, PLPToolConnector connector) {
@@ -29,6 +31,8 @@ public class SetupDOT extends javax.swing.JDialog {
         this.setLocationRelativeTo(parent);
         this.connector = connector;
         this.fileFinderThread = null;
+        this.titleUpdaterThread = null;
+        threadSync = new ThreadSync();
         init();
     }
 
@@ -154,8 +158,13 @@ public class SetupDOT extends javax.swing.JDialog {
             txtPath.setText(dotPath);
         }
         if(fileFinderThread != null) {
-            fileFinderThread.cancel();
+            threadSync.stop();
             fileFinderThread = null;
+            titleUpdaterThread = null;
+            btnFind.setText("Try to find it for me");
+            btnApply.setEnabled(true);
+            btnBrowse.setEnabled(true);
+            txtPath.setEnabled(true);
         }
         this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
@@ -178,32 +187,40 @@ public class SetupDOT extends javax.swing.JDialog {
             btnApply.setEnabled(false);
             btnBrowse.setEnabled(false);
             txtPath.setEnabled(false);
+            threadSync.start();
             fileFinderThread = new fileFinder();
-            fileFinderThread.start();            
+            fileFinderThread.start();
+            titleUpdaterThread = new titleUpdater(this);
+            titleUpdaterThread.start();
+
         } else {
-            fileFinderThread.cancel();
+            threadSync.stop();
             fileFinderThread = null;
+            titleUpdaterThread = null;
             btnFind.setText("Try to find it for me");
             btnApply.setEnabled(true);
             btnBrowse.setEnabled(true);
             txtPath.setEnabled(true);
+            setTitle("Setup GraphViz / DOT");
         }
     }//GEN-LAST:event_btnFindActionPerformed
 
     class fileFinder extends Thread {
 
-        private Boolean cancel;
-
         @Override
         public void run() {
             String f = null;
-            cancel = false;
 
             if(PLPToolbox.isHostLinux()) {
-                f = PLPToolbox.findFileInDirectory("/usr", "dot", true, cancel);
+                f = PLPToolbox.findFileInDirectory("/usr", "dot", true, threadSync);
+                if(f == null) {
+                    PLPToolbox.findFileInDirectory("/", "dot", true, threadSync);
+                }
             } else if(PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_32 ||
                       PLPToolbox.getOS(false) == Constants.PLP_OS_WIN_64) {
-                f = PLPToolbox.findFileInDirectory("C:\\", "dot.exe", true, cancel);
+                f = PLPToolbox.findFileInDirectory("C:\\Program Files (x86)", "dot.exe", true, threadSync);
+                f = (f == null ? PLPToolbox.findFileInDirectory("C:\\Program Files", "dot.exe", true, threadSync) : f);
+                f = (f == null ? PLPToolbox.findFileInDirectory("C:\\", "dot.exe", true, threadSync) : f);
             } else {
 
             }
@@ -216,10 +233,30 @@ public class SetupDOT extends javax.swing.JDialog {
             btnApply.setEnabled(true);
             btnBrowse.setEnabled(true);
             txtPath.setEnabled(true);
+            setTitle("Setup GraphViz / DOT");
+            threadSync.stop();
+        }
+    }
+
+    class titleUpdater extends Thread {
+        private Boolean cancel;
+        private SetupDOT f;
+
+        public titleUpdater(SetupDOT f) {
+            this.f = f;
         }
 
-        public synchronized void cancel() {
-            cancel = true;
+        @Override
+        public void run() {
+            while(!threadSync.isStopped()) {
+                f.setTitle("Searching in " + threadSync.getString() + "...");
+                try {
+                    Thread.sleep(50);
+                } catch(Exception e) {
+                    Msg.trace(e);
+                }
+            }
+            f.setTitle("Setup GraphViz / DOT");
         }
     }
 
