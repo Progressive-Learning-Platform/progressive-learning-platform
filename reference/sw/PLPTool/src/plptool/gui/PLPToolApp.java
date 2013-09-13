@@ -273,7 +273,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 Msg.M("Creating default ProjectDriver for debugging...");
                 AutoTest.plp = new ProjectDriver(Constants.PLP_DEFAULT);
                 CallbackRegistry.callback(CallbackRegistry.START, AutoTest.plp);
-                quit(Constants.PLP_OK);
+				return; // do not exit, leave it to the autotest thread
 
             // Print GPL license text and quit
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
