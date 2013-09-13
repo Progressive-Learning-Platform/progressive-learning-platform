@@ -585,7 +585,7 @@ public class Develop extends javax.swing.JFrame {
                 ProjectDriver.saveConfig();
                 plp.hookEvent(new ProjectEvent(ProjectEvent.EXIT, -1));
                 CallbackRegistry.callback(CallbackRegistry.EXIT, null);
-                System.exit(0);
+                PLPToolApp.quit(Constants.PLP_OK);
         }
     }
 

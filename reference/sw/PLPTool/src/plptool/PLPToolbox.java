@@ -1151,6 +1151,29 @@ public class PLPToolbox {
         return ret;
     }
 
+     /**
+      * By default File#delete fails for non-empty directories, it works like "rm".
+      * We need something a little more brutual - this does the equivalent of "rm -r"
+      *
+      * http://stackoverflow.com/a/4026761
+      * Paulitex
+      *
+      * @param path Root File Path
+      * @return true iff the file and all sub files/directories have been removed
+      * @throws FileNotFoundException
+      */
+    public static boolean deleteRecursive(File path) throws FileNotFoundException {
+        if (!path.exists())
+            throw new FileNotFoundException(path.getAbsolutePath());
+        boolean ret = true;
+        if (path.isDirectory()) {
+            for (File f : path.listFiles()){
+                ret = ret && deleteRecursive(f);
+            }
+        }
+        return ret && path.delete();
+    }
+
     static class StringLongEntry {
         private String s;
         private Long l;
