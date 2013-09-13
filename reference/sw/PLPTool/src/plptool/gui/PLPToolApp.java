@@ -73,7 +73,7 @@ public class PLPToolApp extends SingleFrameApplication {
         if(java.awt.GraphicsEnvironment.isHeadless()) {
             Msg.E("Can not launch GUI in a headless environment!",
                   Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV, null);
-            System.exit(-1);
+            quit(Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV);
         }
 
         try {
@@ -85,7 +85,9 @@ public class PLPToolApp extends SingleFrameApplication {
                 dmm.setEmbedOnly();
                 dmm.setVisible(true);
             } else {
-                // Launch the ProjectDriver
+                Msg.D("Creating temporary directory (" + PLPToolbox.getTmpDir() + ")...", 2, null);
+                PLPToolbox.checkCreateTempDirectory();
+                // Launch the ProjectDriver                
                 ProjectDriver.loadConfig();
                 ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
                 CallbackRegistry.callback(CallbackRegistry.START, plp);
@@ -116,7 +118,7 @@ public class PLPToolApp extends SingleFrameApplication {
             System.err.println("FATAL ERROR: Failed to initialize GUI");
             System.err.println("=====================================");
             Msg.trace(e);
-            System.exit(-1);
+            quit(-1);
         }
     }
 
@@ -206,14 +208,14 @@ public class PLPToolApp extends SingleFrameApplication {
             // Dynamic module load
             } else if (args.length >= activeArgIndex + 3 && args[i].equals("--load-class")) {
                 if(!DynamicModuleFramework.loadModuleClass(args[i+2], args[i+1]))
-                    System.exit(-1);
+                    quit(-1);
                 activeArgIndex += 3;
                 i+=2;
 
             // Load all classes from a jar
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("--load-jar")) {
                 if(!DynamicModuleFramework.loadAllFromJar(args[i+1]))
-                    System.exit(-1);
+                    quit(-1);
                 activeArgIndex += 2;
                 i++;
 
@@ -264,37 +266,37 @@ public class PLPToolApp extends SingleFrameApplication {
             // PLPTool will immediately quit when it encounters this option
             // can be used for debugging arguments
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("-q")) {
-                return;
+                quit(Constants.PLP_OK);
 
             // Instantiate project driver and exit. Used by autotest
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--debug-projectdriver")) {
                 Msg.M("Creating default ProjectDriver for debugging...");
                 AutoTest.plp = new ProjectDriver(Constants.PLP_DEFAULT);
                 CallbackRegistry.callback(CallbackRegistry.START, AutoTest.plp);
-                return;
+                quit(Constants.PLP_OK);
 
             // Print GPL license text and quit
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
                 Msg.M("\n" + Text.GPL + "\n");
-                return;
+                quit(Constants.PLP_OK);
 
             // Print third party licensing information and quit
             } else if (args.length >= activeArgIndex + 1 && args[i].equals("--about")) {
                 Msg.M(Text.licenseBanner + "\n");
                 Msg.M(Text.thirdPartyCopyrightString + "\n");
                 Msg.M(Text.contactString + "\n");
-                return;
+                quit(Constants.PLP_OK);
 
             // Print buildinfo and quit
             } else if (args.length >= activeArgIndex + 1 && args[i].equals("--buildinfo")) {
                 Msg.M(plptool.Version.stamp);
                 Msg.M(getBuildInfo());
-                return;
+                quit(Constants.PLP_OK);
 
             // Download a JAR file for autoloading
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-S")) {
                 plptool.PLPToolbox.downloadJARForAutoload(args[i+1], null, false);
-                return;
+                quit(Constants.PLP_OK);
 
             // Generate a plp.manifest file from a directory of Java classes
             } else if(args.length >= activeArgIndex + 3 && args[i].equals("--generate-manifest")) {
@@ -303,7 +305,7 @@ public class PLPToolApp extends SingleFrameApplication {
                         "", "", "", "", "");
                 if(manifest != null)
                     PLPToolbox.writeFile(manifest, args[i+2] + "/plp.manifest");
-                return;
+                quit(Constants.PLP_OK);
 
             // Generate and embed a plp.manifest file for a JAR file
             } else if(args.length >= activeArgIndex + 7 && args[i].equals("--embed-manifest")) {
@@ -318,7 +320,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     }
                 } else
                     Msg.M("\nMANIFEST GENERATION FAILED, '" + args[i+1] + "' is unmodified.");
-                return;
+                quit(Constants.PLP_OK);
 
             // Bring up the embed manifest GUI
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--embed-manifest-gui")) {
@@ -328,15 +330,14 @@ public class PLPToolApp extends SingleFrameApplication {
             } else if(args.length >= activeArgIndex + 3 && args[i].equals("--pack")) {
                 Msg.M("Packing '" + args[i+1] + "' to '" + args[i+2] + "'...");
                 PLPToolbox.createJar(args[i+2], args[i+1]);
-                return;
+                quit(Constants.PLP_OK);
 
             // If we encounter '-plp', pass the rest of the arguments to the
             // project file manipulator
             } else if(args[i].equals("-plp")) {
                 String[] newargs = new String[args.length - activeArgIndex];
                 System.arraycopy(args, activeArgIndex, newargs, 0, newargs.length);
-                ProjectFileManipulator.CLI(newargs, startingArchID, loadModules);
-                return;
+                quit(ProjectFileManipulator.CLI(newargs, startingArchID, loadModules));
 
             // Interactive command-line simulator
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-s")) {
@@ -356,12 +357,12 @@ public class PLPToolApp extends SingleFrameApplication {
             } else if(args[i].equals("--help")) {
                 printTerseHelpMessage();
                 System.out.println("\nRun with '--full-help' option for complete listing of options.");
-                return;
+                quit(Constants.PLP_OK);
 
             } else if(args[i].equals("--module-debugging")) {
                 printModuleDebuggingHelpMessage();
                 System.out.println(Text.contactString);
-                return;
+                quit(Constants.PLP_OK);
 
             } else if(args[i].equals("--full-help")) {
                 printTerseHelpMessage();
@@ -369,7 +370,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 ProjectFileManipulator.helpMessage();
                 printFullHelpMessage();
                 System.out.println(Text.contactString);
-                return;
+                quit(Constants.PLP_OK);
 
 /****************** FILE TO OPEN / CREATE *************************************/
 
@@ -388,7 +389,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println();
                 printTerseHelpMessage();
                 System.out.println("\nRun with '--full-help' option for complete listing of options.");
-                return;
+                quit(Constants.PLP_OK);
 
             } else {
                 fileToOpen = new java.io.File(args[i]);
@@ -533,17 +534,17 @@ public class PLPToolApp extends SingleFrameApplication {
                 Msg.D("Loading module from " + jarPath + "...", 2, null);
                 String[] manifest = DynamicModuleFramework.loadJarWithManifest(jarPath);
                 if(manifest == null)
-                    System.exit(Constants.PLP_DMOD_GENERAL_ERROR);
+                    quit(Constants.PLP_DMOD_GENERAL_ERROR);
                 try {
                     DynamicModuleFramework.applyManifestEntries(jarPath, manifest, plp);
                 } catch(Exception e) {
                     System.err.println("Module load routine failed for " + jarPath);
                     System.err.println(e.getMessage());
-                    System.exit(Constants.PLP_DMOD_GENERAL_ERROR);
+                    quit(Constants.PLP_DMOD_GENERAL_ERROR);
                 } catch(java.lang.NoClassDefFoundError e) {
                     System.err.println("Module load routine failed for " + jarPath);
                     System.err.println("error: " + e.getMessage());
-                    System.exit(Constants.PLP_DMOD_GENERAL_ERROR);
+                    quit(Constants.PLP_DMOD_GENERAL_ERROR);
                 }
             }
         }
@@ -566,10 +567,10 @@ public class PLPToolApp extends SingleFrameApplication {
                 loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
                                         PLPToolbox.getConfDir() + "/usermods");
             if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK))
-                System.exit(Constants.PLP_GENERIC_ERROR);
+                quit(Constants.PLP_GENERIC_ERROR);
             plp.simulate();
             plp.getArch().launchSimulatorCLI();
-            System.exit(Constants.PLP_OK);
+            quit(Constants.PLP_OK);
 
         } else if(simulateScripted) {
             ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
@@ -582,7 +583,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 FileInputStream in = new FileInputStream(new File(scriptFileToRun));
                 Scanner sIn = new Scanner(in);
                 if(!(plp.open(plpFileToSimulate, true) == Constants.PLP_OK))
-                    System.exit(Constants.PLP_GENERIC_ERROR);
+                    quit(Constants.PLP_GENERIC_ERROR);
                 plp.simulate();
                 Msg.silent = false;
                 while(sIn.hasNext())
@@ -591,9 +592,9 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.print("Unable to open/run the script '" + scriptFileToRun + "'. ");
                 System.out.println("Set debug level to 2 or greater for stack trace.");
                 Msg.trace(e);
-                System.exit(Constants.PLP_GENERIC_ERROR);
+                quit(Constants.PLP_GENERIC_ERROR);
             }
-            System.exit(Constants.PLP_OK);
+            quit(Constants.PLP_OK);
         }
     }
 
@@ -617,6 +618,20 @@ public class PLPToolApp extends SingleFrameApplication {
         ret += "ant: " + prop.getProperty("antinfo") +"\n";
         ret += "Built on: " + prop.getProperty("osinfo");
         return ret;
+    }
+
+    /**
+     * Clean-up and quit
+     */
+    public static void quit(int status) {
+        try {
+            Msg.D("Removing temporary directory...", 2, null);
+            PLPToolbox.deleteRecursive(new File(PLPToolbox.getTmpDir()));
+        } catch(java.io.FileNotFoundException e) {
+
+        }
+        Msg.D("Exit(" + status + ")", 1, null);
+        System.exit(status);
     }
 }
 

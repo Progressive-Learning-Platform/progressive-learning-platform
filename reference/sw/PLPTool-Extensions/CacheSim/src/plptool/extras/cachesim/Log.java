@@ -60,6 +60,7 @@ public class Log {
     
     public static void spawnCacheFrame() {
         DefaultCacheFrame f = new DefaultCacheFrame();
+        f.setIconImage(new javax.swing.ImageIcon(PLPToolbox.getTmpDir() + "/plptool.extras.cachesim.icon.png").getImage());
         frames.add(f);
         f.setVisible(true);
         Msg.M("CacheSim Log: Creating a cache simulator");

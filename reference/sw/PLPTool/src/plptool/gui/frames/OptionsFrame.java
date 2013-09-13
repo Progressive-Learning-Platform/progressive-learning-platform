@@ -57,7 +57,7 @@ public class OptionsFrame extends javax.swing.JFrame {
         prgProgramInChunks.setSelected(Config.prgProgramInChunks);
         prgReadTimeout.setText("" + Config.prgReadTimeout);
 
-        Msg.D("Loading system fonts...", 2, null);
+        Msg.D("Getting font list...", 2, null);
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 
         int presetFont = -1;

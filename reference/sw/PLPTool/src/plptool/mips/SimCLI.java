@@ -666,7 +666,6 @@ public class SimCLI {
         }
 
         plp.ioreg.removeAllModules();
-        Msg.P("See ya!");
 
         } catch(Exception e) {
             System.err.println(e);
