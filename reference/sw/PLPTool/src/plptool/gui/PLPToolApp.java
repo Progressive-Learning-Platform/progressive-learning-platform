@@ -337,7 +337,8 @@ public class PLPToolApp extends SingleFrameApplication {
             } else if(args[i].equals("-plp")) {
                 String[] newargs = new String[args.length - activeArgIndex];
                 System.arraycopy(args, activeArgIndex, newargs, 0, newargs.length);
-                quit(ProjectFileManipulator.CLI(newargs, startingArchID, loadModules));
+                ProjectFileManipulator.CLI(newargs, startingArchID, loadModules);
+				return;
 
             // Interactive command-line simulator
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-s")) {
