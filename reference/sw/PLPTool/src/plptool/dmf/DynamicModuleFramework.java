@@ -1,5 +1,5 @@
 /*
-    Copyright 2011-2012 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.*;
 import javax.swing.JOptionPane;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import plptool.*;
 
 /**
@@ -643,12 +645,13 @@ public class DynamicModuleFramework {
     public static String generateManifest(String path, String title,
             String author, String license, String description, String version) {
         String manifest = "";
+        String t;
         ArrayList<File> classes = new ArrayList<File>();
         ArrayList<String> classNames = new ArrayList<String>();
         ArrayList<String> resources = new ArrayList<String>();
         File packageDir = new File(path);
         Msg.M("*******************************************************************************");
-        Msg.M("Attempting to enumerate classes...");
+        Msg.M("Enumerating JAR entries...");
         if(packageDir.getName().endsWith(".jar")) {
             try {
                 JarFile jar = new JarFile(path);
@@ -663,8 +666,11 @@ public class DynamicModuleFramework {
                         className = className.substring(0, className.length() - 6);
                         classNames.add(className);
                         classes.add(packageDir);
-                    } else if(checkValidResource(entry.getName()))
-                        resources.add(entry.getName());
+                    } else {
+                        t = checkValidResource(entry.getName());
+                        if(t != null)
+                            resources.add(t + "::" + entry.getName());
+                    }
                 }
 
                 jar.close();
@@ -694,9 +700,11 @@ public class DynamicModuleFramework {
 
         // Write out miscellaneous resources
         for(String s : resources) {
-            Msg.M("Adding resource: " + s);
-            manifest += "unpack::" + s + "\n";
+            Msg.M("- Adding resource: " + s);
+            manifest += s + "\n";
         }
+        Msg.M("...done.");
+        Msg.M(resources.size() + " resource entries added.");
 
         // Resolve dependencies. We'll do it in the most naive way possible:
         // try to load all classes, if some of them failed due to interfaces
@@ -710,7 +718,8 @@ public class DynamicModuleFramework {
         int i;
         int iteration = 0;
         int iterationLimit = classes.size();
-        Msg.m("Determining loading order (disregard loadClass warnings and ");
+        Msg.M(classNames.size() + " Java classes were enumerated.");
+        Msg.m("Determining loading order (disregard class warnings and ");
         Msg.M("errors)...");
         Msg.M("-------------------------------------------------------------------------------");
         do {
@@ -826,20 +835,16 @@ public class DynamicModuleFramework {
      * Check what kind of files are to be unpacked as resources for the module
      *
      * @param extension File extension (with period, e.g. ".png")
-     * @return
+     * @return Manifest entry for the filetype, null if it is not recognizable
      */
-    private static boolean checkValidResource(String file) {
-        ArrayList<String> str = new ArrayList<String>();
-        str.add(".png");
-        str.add(".jpg");
-        str.add(".txt");
+    private static String checkValidResource(String file) {
+        String ret = null;
 
-        for(String s : str) {
-            if(file.endsWith(s))
-                return true;
-        }
+        if(file.endsWith(".png"))       return "image";
+        else if(file.endsWith(".jpg"))  return "image";
+        else if(file.endsWith(".jpeg")) return "image";        
 
-        return false;
+        return ret;
     }
 
     /**
@@ -882,9 +887,13 @@ class ManifestHandlers {
         else if(e.startsWith("extracttotemp::"))
             m_extracttotemp();
 
-        // Unpack module resource
+        // Unpack module resource to temporary directory
         else if(e.startsWith("unpack::"))
             m_unpack();
+
+        // Add an image to PLPToolApp image map
+        else if(e.startsWith("image::"))
+            m_image();
     }
     
     public static void m_loadwithproject() {
@@ -978,6 +987,25 @@ class ManifestHandlers {
         if(f.exists())
             f.delete();
         PLPToolbox.copyFromJar(jar, tokens[1], f.getAbsolutePath());
+    }
+
+    public static void m_image() {
+        String tokens[] = entry.split("::");
+        if(tokens.length != 2)
+            return;
+        Msg.D("Applying manifest entry: " + entry, 2, null);
+        PLPToolbox.checkCreateTempDirectory();
+        File f = new File(PLPToolbox.getTmpDir() + "/" + tokens[1].replace('/', '.'));
+        if(f.exists())
+            f.delete();
+        PLPToolbox.copyFromJar(jar, tokens[1], f.getAbsolutePath());
+        try {
+            BufferedImage img = ImageIO.read(f.getAbsoluteFile());
+            plptool.gui.PLPToolApp.putImage(f.getName(), img);
+        } catch(IOException e) {
+            Msg.E("Failed to load image from archive: " + tokens[1],
+                    Constants.PLP_GENERAL_IO_ERROR, null);
+        }
     }
 }
 

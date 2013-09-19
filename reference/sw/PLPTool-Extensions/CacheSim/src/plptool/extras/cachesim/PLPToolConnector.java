@@ -70,7 +70,7 @@ public class PLPToolConnector implements ModuleInterface5 {
         Log.plp = plp;
 
         JMenuItem menuClient = new JMenuItem("Create a Cache Simulator...");
-        menuClient.setIcon(new javax.swing.ImageIcon(PLPToolbox.getTmpDir() + "/plptool.extras.cachesim.icon.png"));
+        menuClient.setIcon(new javax.swing.ImageIcon(PLPToolApp.getImage("plptool.extras.cachesim.icon.png")));
         menuClient.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Log.spawnCacheFrame();

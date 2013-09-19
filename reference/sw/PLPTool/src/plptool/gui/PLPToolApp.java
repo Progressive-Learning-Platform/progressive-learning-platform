@@ -37,6 +37,8 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 /**
  * This is the main class of PLPTool. This class handles command line arguments
@@ -64,6 +66,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static String scriptFileToRun;
     public static String[] commandLineArgs;
     public static ConsoleFrame con;
+    private static HashMap<String, BufferedImage> images;
 
     /**
      * At startup create and show the main frame of the application.
@@ -76,6 +79,8 @@ public class PLPToolApp extends SingleFrameApplication {
             quit(Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV);
         }
 
+        images = new HashMap<String, BufferedImage>();
+
         try {
             if(serialTerminal) {
                 plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
@@ -85,6 +90,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 dmm.setEmbedOnly();
                 dmm.setVisible(true);
             } else {
+                images.put("__NOT_FOUND__", ImageIO.read(this.getClass().getResource("resources/invalid.png")));
                 Msg.D("Creating temporary directory (" + PLPToolbox.getTmpDir() + ")...", 2, null);
                 PLPToolbox.checkCreateTempDirectory();
                 // Launch the ProjectDriver                
@@ -316,7 +322,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     if(PLPToolbox.addToJar(args[i+1], "plp.manifest", manifest.getBytes()) != Constants.PLP_OK) {
                         Msg.M("\nMANIFEST GENERATION FAILED");
                     } else {
-                        Msg.M("\nplp.manifest has been embedded into the archive");
+                        Msg.M("\nplp.manifest has been embedded into the archive '" + args[i+1] + "'");
                     }
                 } else
                     Msg.M("\nMANIFEST GENERATION FAILED, '" + args[i+1] + "' is unmodified.");
@@ -619,6 +625,31 @@ public class PLPToolApp extends SingleFrameApplication {
         ret += "ant: " + prop.getProperty("antinfo") +"\n";
         ret += "Built on: " + prop.getProperty("osinfo");
         return ret;
+    }
+
+    /**
+     * Get an image from the image collection loaded in PLPToolApp
+     *
+     * @param key Image key (filename in JAR with slashes replaced by periods)
+     * @return BufferedImage object of the image, or null if the key was not
+     * found
+     */
+    public static BufferedImage getImage(String key) {
+        BufferedImage ret = images.get(key);
+        if(ret == null)
+            return images.get("__NOT_FOUND__");
+        else
+            return ret;
+    }
+
+    /**
+     * Put an image to our image collection
+     *
+     * @param key String key to find the image
+     * @param img The image as BufferedImage class
+     */
+    public static void putImage(String key, BufferedImage img) {
+        images.put(key, img);
     }
 
     /**

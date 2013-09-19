@@ -74,9 +74,9 @@ public class PLPToolConnector implements ModuleInterface5 {
         exportFrame = new ExportDOT(plp.g_dev);
         setupFrame = new SetupDOT(plp.g_dev, this);
         displayFrame = new DisplayFlowchart(plp.g_dev);
-        displayFrame.setIconImage(new ImageIcon(PLPToolbox.getTmpDir() + "/plptool.extras.flowchart.icon.png").getImage());
+        displayFrame.setIconImage(PLPToolApp.getImage("plptool.extras.flowchart.icon.png"));
         JMenu menuFlowchart = new JMenu("Flowchart Generator");
-        menuFlowchart.setIcon(new ImageIcon(PLPToolbox.getTmpDir() + "/plptool.extras.flowchart.icon.png"));
+        menuFlowchart.setIcon(new ImageIcon(PLPToolApp.getImage("plptool.extras.flowchart.icon.png")));
         JMenuItem menuFlowchartDisplay = new JMenuItem("Display flowchart for the project");
         menuFlowchartDisplay.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
