@@ -37,9 +37,6 @@ public class Architecture extends PLPArchitecture {
     private plptool.mods.BusMonitor busMonitor;
     private plptool.mods.BusMonitorFrame busMonitorFrame;
     private plptool.mips.visualizer.CPUVisualization cpuVis;
-    private plptool.mips.visualizer.ProgramVisualization progVis;
-    private plptool.mips.visualizer.ProgramVisualization.programGraph progGraph;
-    private plptool.mips.visualizer.ProgramVisualizationFrame progVisFrame;
     private SyntaxHighlightSupport syntaxHighlightSupport;
     private javax.swing.JMenuItem menuExportVerilogHex;
     
@@ -178,26 +175,6 @@ public class Architecture extends PLPArchitecture {
                 }
             });
 
-            // Add program visualizer menu item
-            final javax.swing.JMenuItem menuProgramVisualizer = new javax.swing.JMenuItem();
-            menuProgramVisualizer.setText("Display Program Call Graph");
-            menuProgramVisualizer.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    if(progVis == null) {
-                        progVis = new plptool.mips.visualizer.ProgramVisualization(plp);
-                        progGraph = progVis.new programGraph();
-                        progVis.printProgram();
-                        progVisFrame = new plptool.mips.visualizer.ProgramVisualizationFrame(progVis, progGraph, plp);
-                        ((plptool.mips.SimCoreGUI) plp.g_sim).attachProgramVisualizationFrame(progVisFrame);
-                    }
-                    progVisFrame.setVisible(true);
-                    // test for paint functions
-                    //progVisFrame.repaint("Begin");
-                    //progVisFrame.unpaint("End");
-                    //progVisFrame.unpaint("Begin");
-                }
-            });
-
             // Add bus monitor checkbox menu
             final javax.swing.JCheckBoxMenuItem menuBusMonitor = new javax.swing.JCheckBoxMenuItem();
             menuBusMonitor.setText("Display Bus Monitor Timing Diagram");
@@ -259,7 +236,6 @@ public class Architecture extends PLPArchitecture {
             
             //Disable for 4.1 release
             if(Constants.debugLevel >= 2) {
-                plp.g_dev.addSimToolItem(menuProgramVisualizer);
                 plp.g_dev.addSimToolItem(menuCpuVis);
             }
         }
@@ -293,11 +269,6 @@ public class Architecture extends PLPArchitecture {
                 busMonitor = null;
             }
 
-            if(progVis != null) {
-                progVisFrame.stopUpdateThread();
-                progVisFrame.dispose();
-                progVis = null;
-            }
             cpuVis.dispose();
             cpuVis = null;
             g_sim.disposeMemoryVisualizers();

@@ -677,6 +677,7 @@ public class DynamicModuleFramework {
             } catch(IOException e) {
                 Msg.E("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
                     null);
+                Msg.trace(e);
                 return null;
             }
         } else if(!packageDir.exists()) {

@@ -71,4 +71,16 @@
     nbproject/build-impl.xml file. 
 
     -->
+	<target name="-post-jar">	
+		<taskdef name="embedmanifest" classname="EmbedManifestTask" classpath="../../PLPTool/modtools:../../PLPTool/store/PLPToolStatic.jar" />
+		<property location="${build.classes.dir}" name="build.classes.dir.resolved"/>
+        <property location="${dist.jar}" name="dist.jar.resolved"/>
+        <pathconvert property="run.classpath.with.dist.jar">
+            <path path="${run.classpath}"/>
+            <map from="${build.classes.dir.resolved}" to="${dist.jar.resolved}"/>
+        </pathconvert>
+		<embedmanifest jar="${dist.jar.resolved}" title="Flowchart Generator" authors="PLP Contributors" license="GPLv3" descr="Flowchart generator for PLPTool 5. Requires GraphViz to be installed on the host system." version="1.0" />
+	</target>
 </project>
+
+
