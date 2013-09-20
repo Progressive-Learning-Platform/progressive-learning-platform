@@ -79,8 +79,6 @@ public class PLPToolApp extends SingleFrameApplication {
             quit(Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV);
         }
 
-        images = new HashMap<String, BufferedImage>();
-
         try {
             if(serialTerminal) {
                 plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
@@ -408,6 +406,8 @@ public class PLPToolApp extends SingleFrameApplication {
 
         if(Constants.debugLevel >= 1)
             plptool.PLPToolbox.getOS(true);
+
+        images = new HashMap<String, BufferedImage>();
 
         // Command line simulator handlers
         simulateCLI();
