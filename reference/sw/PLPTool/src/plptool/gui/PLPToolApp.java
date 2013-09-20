@@ -631,13 +631,15 @@ public class PLPToolApp extends SingleFrameApplication {
      * Get an image from the image collection loaded in PLPToolApp
      *
      * @param key Image key (filename in JAR with slashes replaced by periods)
-     * @return BufferedImage object of the image, or null if the key was not
-     * found
+     * @return BufferedImage object of the image. A default image will be
+     * returned if the key was not found
      */
     public static BufferedImage getImage(String key) {
         BufferedImage ret = images.get(key);
-        if(ret == null)
+        if(ret == null) {
+            Msg.W("PLPToolApp.getImage: '" + key + "' was not found.", null);
             return images.get("__NOT_FOUND__");
+        }
         else
             return ret;
     }
