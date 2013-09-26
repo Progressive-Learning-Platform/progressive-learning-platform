@@ -1,7 +1,7 @@
 This directory contains PLPTool module development tools. There is currently
 only one tool: EmbedManifestTask, an ant task that can be used to embed a
 PLPTool manifest file to a module JAR archive. ant is required to compile this
-taks.
+task.
 
 * Compiling EmbedManifestTask
 

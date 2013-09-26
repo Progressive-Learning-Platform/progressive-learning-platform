@@ -278,7 +278,10 @@ public final class ProjectDriver {
             Msg.W("You are running an older Java Runtime Environment version." +
                   " Some functionalities may not work as intended. " +
                   "Please upgrade to at least JRE version 1.5", null);
-        }             
+        }
+
+        if(!CallbackRegistry.INITIALIZED)
+            CallbackRegistry.setup(null);
     }
 
     /**
