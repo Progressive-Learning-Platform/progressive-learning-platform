@@ -657,21 +657,28 @@ public class PLPToolbox {
         File fJar = new File(jar);
         byte buf[] = new byte[Constants.DEFAULT_IO_BUFFER_SIZE];
         int readBytes;
+        Manifest m = null;
 
-
-        if(fJar.exists()) {
+        if(fJar.exists()) {           
             // First we need to read the JAR file entirely, we cannot just add
             // entries (it will overwrite the file)
             try {
-                tJar = new File (getTmpDir() + "/tmp.jar");
-                out = new JarOutputStream(new FileOutputStream(tJar));
+                in = new JarInputStream(new FileInputStream(fJar));
+                m = in.getManifest();
             } catch(IOException e) {
                 Msg.trace(e);
-                return Msg.E("Failed to open output stream (I/O error)",
+                return Msg.E("Failed to open input stream (I/O error)",
+                                    Constants.PLP_GENERAL_IO_ERROR, null);
+            } catch(Exception e) {
+                Msg.trace(e);
+                return Msg.E("Failed to open input stream (general exception)",
                                     Constants.PLP_GENERAL_IO_ERROR, null);
             }
+
             try {
-                in = new JarInputStream(new FileInputStream(fJar));
+                tJar = new File (getTmpDir() + "/tmp.jar");
+                out = new JarOutputStream(new FileOutputStream(tJar), m);
+
                 while((t = in.getNextJarEntry()) != null) {
                     if(!t.getName().equals(entryPath)) {
                         out.putNextEntry(t);
@@ -684,13 +691,9 @@ public class PLPToolbox {
                 in.close();
             } catch(IOException e) {
                 Msg.trace(e);
-                return Msg.E("Failed to open input stream (I/O error)",
+                return Msg.E("Failed to open output stream (I/O error)",
                                     Constants.PLP_GENERAL_IO_ERROR, null);
-            } catch(Exception e) {
-                Msg.trace(e);
-                return Msg.E("Failed to open input stream (general exception)",
-                                    Constants.PLP_GENERAL_IO_ERROR, null);
-            }
+            }                        
         } else {
             try {
                 out = new JarOutputStream(new FileOutputStream(fJar));
@@ -702,7 +705,8 @@ public class PLPToolbox {
         }
                       
         try {
-            JarEntry entry = new JarEntry(entryPath);
+            JarEntry entry;
+            entry = new JarEntry(entryPath);
             entry.setSize(data.length);
             out.putNextEntry(entry);
             out.write(data);

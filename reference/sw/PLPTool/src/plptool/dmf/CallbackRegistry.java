@@ -78,6 +78,8 @@ public class CallbackRegistry {
 
     public static final int CALLBACKS                   = 40;
 
+    public static boolean INITIALIZED                   = false;
+
     @SuppressWarnings("unchecked")
     private static final ArrayList<Callback>[] callbacks = new ArrayList[CALLBACKS];
 
@@ -92,6 +94,8 @@ public class CallbackRegistry {
 
         for(int i = 0; i < CALLBACKS; i++)
             callbacks[i] = new ArrayList<Callback>();
+
+        INITIALIZED = true;
 
         return ret;
     }

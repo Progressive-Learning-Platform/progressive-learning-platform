@@ -666,6 +666,8 @@ public class DynamicModuleFramework {
                         className = className.substring(0, className.length() - 6);
                         classNames.add(className);
                         classes.add(packageDir);
+                        if(className.endsWith("Main"))
+                            resources.add("main::" + className);
                     } else {
                         t = checkValidResource(entry.getName());
                         if(t != null)
