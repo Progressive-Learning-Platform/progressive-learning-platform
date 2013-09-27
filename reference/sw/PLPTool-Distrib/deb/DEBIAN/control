@@ -1,0 +1,8 @@
+Package: plptool5
+Version: 5.0
+Depends: java-runtime-headless (>= 1.6) | openjdk-6-jre (>= 1.6) | openjdk-7-jre (>= 1.7)
+Section: education
+Priority: optional
+Architecture: all
+Maintainer: Wira Mulia
+Description: PLPTool 5 distribution from the PLP project.
