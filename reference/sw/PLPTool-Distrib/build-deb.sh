@@ -36,8 +36,11 @@ then
     echo Adding autosaver extension...
     cp -v $EXT_AUTOSAVER5 $EXT_DEST
   fi
-  echo "java -jar /usr/lib/plptool5/PLPToolStatic.jar -W -D /usr/lib/plptool5/extensions \$1 \$2 \$3 \$4 \$5 \$6 \$7 \$8 \$9" > ./deb/usr/bin/plptool5
+  echo "#!/bin/sh" > ./deb/usr/bin/plptool5
+  echo "java -jar /usr/lib/plptool5/PLPToolStatic.jar -W -D /usr/lib/plptool5/extensions \$@" >> ./deb/usr/bin/plptool5
   chmod a+x ./deb/usr/bin/plptool5
+  cp -vr ../examples ./deb/usr/lib/plptool5
+  cp -vr ../libplp ./deb/usr/lib/plptool5
   dpkg --build deb
   mv -v deb.deb plptool5.deb
 fi
