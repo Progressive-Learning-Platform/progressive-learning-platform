@@ -12,7 +12,7 @@
 Name "PLPTool"
 
 ; The file to write
-OutFile "plptoolsetup.exe"
+OutFile "plptool5.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\PLPTool5

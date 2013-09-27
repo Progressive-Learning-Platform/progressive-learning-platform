@@ -67,6 +67,8 @@ public class PLPToolConnector implements ModuleInterface5 {
     }
 
     private int init() {
+		if(!plp.g())
+			return Constants.PLP_OK;
         Msg.I("<em>Flowchart Generator</em> is ready &mdash; This module can be accessed through the <b>Tools" +
                 "</b>&rarr;<b>Flowchart Generator</b> menu",
                 null);

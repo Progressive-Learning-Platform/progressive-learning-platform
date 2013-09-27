@@ -18,7 +18,6 @@
 
 package plptool.mips;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -27,6 +26,7 @@ import java.util.Iterator;
 
 import plptool.Msg;
 import plptool.Constants;
+import plptool.PLPToolbox;
 
 /**
  * Utility class to package / display object codes produces by PLPAsm
@@ -187,11 +187,11 @@ public class Formatter {
 
         Msg.M("\nSymbol Table" +
                            "\n============");
-        Iterator iterator = symTable.keySet().iterator();
+        Object[][] sortedTbl = PLPToolbox.getSortedStringByLongValue(symTable);
 
-        while(iterator.hasNext()) {
-            key = iterator.next().toString();
-            value = String.format("0x%08x", symTable.get(key));
+        for(int i = 0; i < sortedTbl.length; i++) {
+            key = (String) sortedTbl[i][0];
+            value = String.format("0x%08x", (Long) sortedTbl[i][1]);
 
             Msg.M(value + "\t:\t" + key);
         }

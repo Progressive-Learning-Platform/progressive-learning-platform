@@ -146,6 +146,7 @@ public class PLPToolApp extends SingleFrameApplication {
      * Main method launching the application.
      */
     public static void main(String[] args) {        
+        images = new HashMap<String, BufferedImage>();
         args = ArchRegistry.setup(args);                   // Setup ISA registry
         args = CallbackRegistry.setup(args);               // Setup callback registry
         args = AutoTest.setup(args);                       // Run unit tests
@@ -406,8 +407,6 @@ public class PLPToolApp extends SingleFrameApplication {
 
         if(Constants.debugLevel >= 1)
             plptool.PLPToolbox.getOS(true);
-
-        images = new HashMap<String, BufferedImage>();
 
         // Command line simulator handlers
         simulateCLI();
