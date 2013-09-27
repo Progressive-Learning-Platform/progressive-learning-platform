@@ -1,2 +1,2 @@
 makensis windows/plptool_install.nsi
-mv -v windows/plptoolsetup.exe ./plptoolsetup.exe
+mv -v windows/plptool5.exe ./plptool5.exe

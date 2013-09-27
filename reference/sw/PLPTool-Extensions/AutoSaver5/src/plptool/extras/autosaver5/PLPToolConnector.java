@@ -45,6 +45,8 @@ public class PLPToolConnector implements ModuleInterface5 {
     @Override
     public int initialize(ProjectDriver plp) {
         this.plp = plp;
+		if(!plp.g())
+			return Constants.PLP_OK;
         Msg.D("Initializing autosaver...", 2, this);
         temporaryProject = new ProjectDriver(Constants.PLP_DEFAULT);
         editorDocListener = new DevDocListener();
