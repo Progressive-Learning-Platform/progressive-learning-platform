@@ -1246,6 +1246,7 @@ public final class ProjectDriver {
 
         // ...assemble asm objects... //
         asm = arch.createAssembler();
+        CallbackRegistry.callback(CallbackRegistry.EVENT_ASSEMBLE_INIT, asm);
 
         int ret = 0;
 
@@ -1537,6 +1538,7 @@ public final class ProjectDriver {
                 g_prg.getProgressBar().setMaximum(asm.getObjectCode().length - 1);
             }
 
+            CallbackRegistry.callback(CallbackRegistry.EVENT_PROGRAM_INIT, prg);
             Msg.D("Starting PLPSerialProgrammer thread", 2, this);
             prg.start();
             return Constants.PLP_OK;

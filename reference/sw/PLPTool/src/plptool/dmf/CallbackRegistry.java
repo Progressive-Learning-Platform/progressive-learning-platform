@@ -52,8 +52,10 @@ public class CallbackRegistry {
     public static final int EVENT_SIM_POST_INIT         = 17;
     public static final int EVENT_SIM_POST_UNINIT       = 18;
     public static final int EVENT_ASSEMBLE              = 19;
+    public static final int EVENT_ASSEMBLE_INIT         = 40;
     public static final int EVENT_POST_ASSEMBLE         = 20;
     public static final int EVENT_PROGRAM               = 21;
+    public static final int EVENT_PROGRAM_INIT          = 41;
 
     public static final int SIM_STEP_AGGREGATE          = 22;
     public static final int SIM_POST_STEP_AGGREGATE     = 23;
@@ -76,7 +78,7 @@ public class CallbackRegistry {
     public static final int GUI_VIEW_REFRESH            = 38;
     public static final int CRITICAL_ERROR              = 39;
 
-    public static final int CALLBACKS                   = 40;
+    public static final int CALLBACKS                   = 42;
 
     public static boolean INITIALIZED                   = false;
 
