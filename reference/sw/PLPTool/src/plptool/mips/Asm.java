@@ -322,18 +322,11 @@ public class Asm extends plptool.PLPAsm {
             commentSplit = asmLines[i].split("#");
                 
             if(commentSplit.length > 0) {
+                asmTokens = commentSplit[0].split(delimiters);
 
-// *************************** Programmer pragmas ******************************
-                if(asmLines[i].startsWith("!")) {
-                    SerialProgrammer.parsePragma(commentSplit[0].trim());
-                    asmTokens = null;
-                } else {
-                    asmTokens = commentSplit[0].split(delimiters);
-
-                    Msg.D(i + ": " + asmLines[i] + " tl: " +
-                         asmTokens.length, 5, this);
-                    Msg.D("<<<" + asmTokens[0] + ">>>", 5, this);
-                }
+                Msg.D(i + ": " + asmLines[i] + " tl: " +
+                     asmTokens.length, 5, this);
+                Msg.D("<<<" + asmTokens[0] + ">>>", 5, this);
             } else
                 asmTokens = null;
 
@@ -1281,16 +1274,7 @@ public class Asm extends plptool.PLPAsm {
         }
 
         Msg.D("assemble(): Assembly completed.", 1, this);
-
-        boolean preambleEnabled = false;
-        long[] preamble = SerialProgrammer.getPreamble();
-        for(int l = 0; l < preamble.length; l++) {
-            preambleEnabled |= (preamble[l] > 0);
-            Msg.D("assemble(): Programmer preamble[" + l + "]: " + PLPToolbox.format32Hex(preamble[l]), 2, this);
-        }
-        if(preambleEnabled)
-            Msg.I("FYI: Board-specific preamble is enabled.", this);
-        
+      
         } catch(NumberFormatException e) {
             error++; Msg.E("assemble(" + formatHyperLink(sourceList.get(asmFileMap[i]).getAsmFilePath(), lineNumMap[i]) + "): Failed to parse literal: " + e.getMessage(),
                               Constants.PLP_GENERIC_ERROR, this);

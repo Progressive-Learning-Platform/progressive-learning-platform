@@ -139,11 +139,6 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             long startTime = System.currentTimeMillis();
 
             ret = Constants.PLP_OK;
-            for(int i = 0; i < preamble.length; i++) {
-                ret += (preamble[i] != 0) ? sendPreamble(preamble[i], in, out) : 0;
-                if(ret != Constants.PLP_OK)
-                    return ret;
-            }
 
             Msg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
             buff[0] = (byte) 'a';
@@ -385,27 +380,12 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         return Constants.PLP_OK;
     }
 
-    public static void parsePragma(String str) {
-
-        // Global preamble bits
-        if(str.equals("!PRG_NONVOLATILE"))                           preamble[0] |= (1L     );
-        else if(str.equals("!PRG_UART_DEBUG"))                       preamble[0] |= (1L << 1);
-
-        // G02 ISA Emulation board preamble bits
-        else if(str.equals("!PRG_G02_UART2_PRIMARY"))                preamble[1] |= (1L     ) | PLP_ISA_EMU_G02;
-        else if(str.equals("!PRG_G02_UART2_DISABLE_I2C2_ENABLE"))    preamble[1] |= (1L << 1) | PLP_ISA_EMU_G02;
-        else if(str.equals("!PRG_G02_MCC_SPI_ENABLE"))               preamble[1] |= (1L << 2) | PLP_ISA_EMU_G02;
-        else if(str.equals("!PRG_G02_MCC_SSEG"))                     preamble[1] |= (1L << 3) | PLP_ISA_EMU_G02;
-        else if(str.equals("!PRG_G02_MCC_GPS"))                      preamble[1] |= (1L << 4) | PLP_ISA_EMU_G02;
-        else if(str.equals("!PRG_G02_MCC_I2C_DIRECT"))               preamble[1] |= (1L << 5) | PLP_ISA_EMU_G02;
-
-        else {
-            Msg.W("Unknown programmer pragma: " + str + ". Ignoring.", null);
-        }
+    public OutputStream getOutputStream() {
+        return out;
     }
 
-    public static long[] getPreamble() {
-        return preamble;
+    public InputStream getInputStream() {
+        return in;
     }
 
     @Override
