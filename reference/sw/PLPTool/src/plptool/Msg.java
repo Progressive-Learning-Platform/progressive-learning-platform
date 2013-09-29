@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ public class Msg {
         try {   
             if(objIdentifier != null) {
                 if(output == null || errorCode >= 1024)
-                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr);
+                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr.replaceAll("<[^>]*>", ""));
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
                             (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n"
@@ -111,7 +111,7 @@ public class Msg {
                 }
             } else {
                 if(output == null || errorCode >= 1024)
-                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr);
+                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr.replaceAll("<[^>]*>", ""));
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
                             (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n"
@@ -143,7 +143,7 @@ public class Msg {
 
         if(objIdentifier != null)
             if(output == null)
-                System.out.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr);
+                System.out.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
                         + objIdentifier.toString() + ": " + warningStr + "<br />", 0, 0, null);
@@ -151,7 +151,7 @@ public class Msg {
             }
         else
             if(output == null)
-                System.out.println("[WARNING] " + warningStr);
+                System.out.println("[WARNING] " + warningStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
                         + warningStr + "<br />", 0, 0, null);
@@ -175,7 +175,7 @@ public class Msg {
 
         if(objIdentifier != null)
             if(output == null)
-                System.out.println(objIdentifier.toString() + ": " + infoStr);
+                System.out.println(objIdentifier.toString() + ": " + infoStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(),
                         "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + objIdentifier.toString() + ": " + infoStr + "</font><br />", 0, 0, null);
@@ -183,7 +183,7 @@ public class Msg {
             }
         else
             if(output == null)
-                System.out.println(infoStr);
+                System.out.println(infoStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(),
                         "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + infoStr + "</font><br />", 0, 0, null);
@@ -241,7 +241,7 @@ public class Msg {
         try {
 
         if(output == null)
-            System.out.println(msgStr);
+            System.out.println(msgStr.replaceAll("<[^>]*>", ""));
         else {
             kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
                         msgStr.replace(" ", "&nbsp;") + "</font><br />", 0, 0, null);
@@ -264,7 +264,7 @@ public class Msg {
         try {
 
         if(output == null)
-            System.out.print(msgStr);
+            System.out.print(msgStr.replaceAll("<[^>]*>", ""));
         else {
             kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
                         msgStr.replace(" ", "&nbsp;") + "</font>", 0, 0, null);
