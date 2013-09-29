@@ -1287,9 +1287,9 @@ public class Asm extends plptool.PLPAsm {
             Msg.E("assemble: " +
                      error + " error(s).", Constants.PLP_ASM_ASSEMBLE_FAILED, this);
         else {
-            Msg.I("Total statically allocated memory: " + (objectCode.length + bytesSpace / 4) +
-                    " words", this);
-            Msg.I("Object code and initialized variables: " + objectCode.length + " words", this);
+            Msg.I("Total statically allocated memory: <b>" + (objectCode.length + bytesSpace / 4) +
+                    "</b> words", this);
+            Msg.I("Object code and initialized variables: <b>" + objectCode.length + "</b> words", this);
             assembled = true;
         }
 
