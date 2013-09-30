@@ -72,6 +72,8 @@
 
     -->
 
+    <property name="libs.CopyLibs.classpath" value="lib/CopyLibs/org-netbeans-modules-java-j2seproject-copylibstask.jar" />
+
     <target name="-pre-jar" depends="generate-buildinfo">
         <copy file="native-libs/rxtxSerial32.dll" todir="dist" />
         <copy file="native-libs/rxtxSerial64.dll" todir="dist" />
