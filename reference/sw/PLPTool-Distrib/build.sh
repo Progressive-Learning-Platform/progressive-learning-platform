@@ -1,6 +1,10 @@
 #!/bin/bash
 ROOT=`pwd`
 command -v ant  >/dev/null 2>&1 || { echo >&2 "'ant' is not installed.  Aborting."; exit 1; }
+if [ ! -z "$ANT_HOME" ]
+then
+  ANT_LOCATION=$ANT_HOME/lib/ant.jar 
+fi
 if [ ! -e /usr/share/ant/lib/ant.jar ] && [ -z "$ANT_LOCATION" ]
 then
   echo Can not find /usr/share/ant/lib/ant.jar. Please set ANT_LOCATION for manual location
