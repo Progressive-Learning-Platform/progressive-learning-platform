@@ -47,15 +47,15 @@ public class ToolboxTester implements Tester {
 		
         AutoTest.p("Testing PLPToolbox.getTmpDir method");
         try {
-		tmp = PLPToolbox.getTmpDir();
+			tmp = PLPToolbox.getTmpDir();
         } catch(SecurityException e) {
-		AutoTest.p("[E] Failed to create temporary directory");
-		e.printStackTrace();
-		System.exit(-1);
+			AutoTest.p("[E] Failed to create temporary directory");
+			e.printStackTrace();
+			System.exit(-1);
         }
         if(tmp == null) {
-		AutoTest.p("[E] PLPToolbox.getTmpDir returned null");
-		System.exit(-1);
+			AutoTest.p("[E] PLPToolbox.getTmpDir returned null");
+			System.exit(-1);
         }
 	
         AutoTest.p("Testing PLPToolbox.addToJar method");
@@ -116,6 +116,7 @@ public class ToolboxTester implements Tester {
 		}	
 		
 		AutoTest.p("SUCCESS");
+		System.exit(0);
     }
 }
 

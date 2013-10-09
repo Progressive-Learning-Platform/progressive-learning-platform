@@ -577,8 +577,10 @@ public class PLPToolbox {
                     Constants.PLP_IO_IS_NOT_A_DIRECTORY, null);
 
         try {
+			Manifest m = new Manifest();
+			m.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
             FileOutputStream fOut = new FileOutputStream(new File(jar));
-            JarOutputStream out = new JarOutputStream(fOut);
+            JarOutputStream out = new JarOutputStream(fOut, m);
             ret = addDirToJar(out, dir, dir);
             out.close();
             fOut.close();
@@ -665,6 +667,10 @@ public class PLPToolbox {
             try {
                 in = new JarInputStream(new FileInputStream(fJar));
                 m = in.getManifest();
+				if(m == null) {
+					m = new Manifest();
+					m.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+				}
             } catch(IOException e) {
                 Msg.trace(e);
                 return Msg.E("Failed to open input stream (I/O error)",
