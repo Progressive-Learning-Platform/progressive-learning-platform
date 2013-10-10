@@ -395,7 +395,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 System.out.println();
                 printTerseHelpMessage();
                 System.out.println("\nRun with '--full-help' option for complete listing of options.");
-                quit(Constants.PLP_OK);
+                quit(Constants.PLP_TOOLAPP_ERROR);
 
             } else {
                 fileToOpen = new java.io.File(args[i]);
