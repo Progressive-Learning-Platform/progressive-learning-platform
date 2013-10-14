@@ -13,6 +13,8 @@ cd ..\PLPTool
 ECHO Building PLPTool...
 ECHO - clean
 call %ANT_HOME%\bin\ant clean > %WORKDIR%\winbuild.log
+ECHO - generate-buildinfo
+call %ANT_HOME%\bin\ant generate-buildinfo >> %WORKDIR%\winbuild.log
 ECHO - package-for-store
 call %ANT_HOME%\bin\ant package-for-store >> %WORKDIR%\winbuild.log
 echo Building PLPTool modtools...

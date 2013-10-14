@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "--- PLPTool deb package builder ---"
+echo "- PLPTool deb package builder"
 if [ "$(id -u)" != "0" ] && [ -z "$(command -v fakeroot)" ]
 then
   echo "fakeroot must be installed or this script must be run as root" 1>&2
@@ -7,7 +7,7 @@ then
 fi
 if [ ! -z "$(command -v fakeroot)" ]
 then
-  echo "--- using fakeroot ---"
+  echo "- using fakeroot"
   FAKEROOT=1
 fi
 
@@ -19,7 +19,7 @@ EXT_DEST="./deb/usr/lib/plptool5/extensions"
 
 if [ ! -e ../PLPTool/store/PLPToolStatic.jar ]
 then
-  echo "--- PLPTool static package not found, building ---"
+  echo "- PLPTool static package not found, building"
   cd ../PLPTool
   ant package-for-store
   cd ../PLPTool-Distrib
@@ -27,7 +27,7 @@ fi
 
 if [ -e ../PLPTool/store/PLPToolStatic.jar ]
 then
-  echo "--- copying files to include in the package ---"
+  echo "- copying files to include in the package"
   rm -rf ./deb/usr
   mkdir ./deb/usr
   mkdir ./deb/usr/bin
@@ -51,11 +51,11 @@ then
   fi
   cp -vr ../examples ./deb/usr/share/plptool5
   cp -vr ../libplp ./deb/usr/share/plptool5
-  echo "--- generating run script ---"
+  echo "- generating run script"
   echo "#!/bin/sh" > ./deb/usr/bin/plptool5
   echo "java -jar /usr/lib/plptool5/PLPToolStatic.jar -W -D /usr/lib/plptool5/extensions \$@" >> ./deb/usr/bin/plptool5
   chmod a+x ./deb/usr/bin/plptool5
-  echo "--- building .deb ---"
+  echo "- building .deb"
   if [ -z $FAKEROOT ]
   then
     chown -R root:root ./deb/usr
@@ -64,6 +64,6 @@ then
     fakeroot dpkg --build deb
   fi
   mv -v deb.deb plptool5.deb
-  echo "--- done ---"
+  echo "- done"
 fi
 
