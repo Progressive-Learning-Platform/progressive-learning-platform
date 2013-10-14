@@ -22,6 +22,8 @@ echo Building PLPTool...
 cd ../PLPTool
 echo - clean
 ant clean &> $ROOT/build.log
+echo - generate-buildinfo
+ant generate-buildinfo &> $ROOT/build.log
 echo - package-for-store
 ant package-for-store &>> $ROOT/build.log
 if [ $? -ne 0 ]
