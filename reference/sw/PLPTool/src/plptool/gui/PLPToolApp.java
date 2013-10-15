@@ -362,7 +362,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             } else if(args[i].equals("--help")) {
                 printTerseHelpMessage();
-                System.out.println("\nRun with '--full-help' option for complete listing of options.");
+                System.out.println("\nRun with '--full-help' for a complete listing of options.");
                 quit(Constants.PLP_OK);
 
             } else if(args[i].equals("--module-debugging")) {
@@ -392,9 +392,7 @@ public class PLPToolApp extends SingleFrameApplication {
             } else if(args[i].startsWith("-")) {
                 Msg.E("Invalid argument: '" + args[i] + "'"
                         , Constants.PLP_TOOLAPP_ERROR, null);
-                System.out.println();
-                printTerseHelpMessage();
-                System.out.println("\nRun with '--full-help' option for complete listing of options.");
+                System.out.println("\nRun with '--full-help' for a complete listing of options.");
                 quit(Constants.PLP_TOOLAPP_ERROR);
 
             } else {
@@ -458,7 +456,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("                            ONLY launch if the module is successfully loaded");
         System.out.println("   -D <path>              Attempt to load all modules in the directory ");
         System.out.println("                            specified by <path>");
-        System.out.println("   -N                     Do NOT autoload modules for this PLPTool session");
+        System.out.println("   -N                     Do not load any modules at startup");
         System.out.println("   -W                     Do not warn about the dangers of loading a module");
         System.out.println("   -S <URL>               Fetch a module's jar file from URL, save it to the");
         System.out.println("                            the autoload directory, and quit. This module will");
@@ -527,7 +525,8 @@ public class PLPToolApp extends SingleFrameApplication {
         if(moduleLoadDirs != null && moduleLoadDirs.size() > 0) {
             String dirPath;
             for(int i = 0; i < moduleLoadDirs.size(); i++) {
-                dirPath = moduleLoadDirs.get(i);
+                dirPath = moduleLoadDirs.get(0);
+                moduleLoadDirs.remove(0);
                 Msg.D("Loading modules from " + dirPath + "...", 2, null);
                 DynamicModuleFramework.autoloadModules(dirPath, plp, false);
             }
@@ -536,7 +535,8 @@ public class PLPToolApp extends SingleFrameApplication {
         if(moduleLoadJars != null && moduleLoadJars.size() > 0) {
             String jarPath;
             for(int i = 0; i < moduleLoadJars.size(); i++) {
-                jarPath = moduleLoadJars.get(i);
+                jarPath = moduleLoadJars.get(0);
+                moduleLoadJars.remove(0);
                 Msg.D("Loading module from " + jarPath + "...", 2, null);
                 String[] manifest = DynamicModuleFramework.loadJarWithManifest(jarPath);
                 if(manifest == null)
