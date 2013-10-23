@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2012 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 
 package plptool.gui;
 
-import java.awt.Color;
 import plptool.dmf.DynamicModuleFramework;
 import plptool.dmf.CallbackRegistry;
 import plptool.*;
@@ -264,7 +263,12 @@ public final class ProjectDriver {
             this.g_find.setLocationRelativeTo(null);
 
             this.g_dev.setTitle("PLP Software Tool " + Text.versionString);
-            this.g_dev.setVisible(true);
+            if(PLPToolApp.getAttributes().containsKey("new_ide")) {
+                IDE ide = new IDE(this);
+                ide.setVisible(true);
+            } else {
+                this.g_dev.setVisible(true);
+            }
         }
 
         // check for JRE version
