@@ -47,7 +47,7 @@ import javax.imageio.ImageIO;
  * specified in command line arguments, initiating module autoload procedure,
  * and determining next phase of execution (GUI or command line).
  */
-public class PLPToolApp {
+public class PLPToolApp extends SingleFrameApplication {
     
     private static String plpFilePath = null;
     private static boolean newProject = false;
@@ -69,9 +69,9 @@ public class PLPToolApp {
     public static ConsoleFrame con;
     private static HashMap<String, BufferedImage> images;
 
-    private static void launch() {
+    @Override protected void startup() {
 
-        if(!headless && java.awt.GraphicsEnvironment.isHeadless()) {
+        if(java.awt.GraphicsEnvironment.isHeadless()) {
             Msg.E("Can not launch GUI in a headless environment!",
                   Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV, null);
             quit(Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV);
@@ -93,7 +93,7 @@ public class PLPToolApp {
                 ProjectDriver.loadConfig();
                 ProjectDriver plp = new ProjectDriver(headless ? Constants.PLP_DEFAULT : Constants.PLP_GUI_START_IDE);
                 CallbackRegistry.callback(CallbackRegistry.START, plp);
-                if(!headless && Constants.debugLevel > 0) {
+                if(Constants.debugLevel > 0) {
                     con = new ConsoleFrame(plp);
                     con.setVisible(true);
                 }
@@ -104,8 +104,7 @@ public class PLPToolApp {
                     loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
                                             PLPToolbox.getConfDir() + "/usermods");
 
-                if(!headless)
-                    Msg.setOutput(plp.g_dev.getOutput());
+                Msg.setOutput(plp.g_dev.getOutput());
 
                 if(plpFilePath != null) {
                     if(newProject) {
@@ -114,13 +113,6 @@ public class PLPToolApp {
                         if(!headless) plp.refreshProjectView(false);
                     } else
                         plp.open(plpFilePath, true);
-                }
-
-                if(headless && CallbackRegistry.getCallbacks(CallbackRegistry.EVENT_HEADLESS_START).length > 0) {
-                    Msg.I("Running in headless mode.", null);
-                    CallbackRegistry.callback(CallbackRegistry.EVENT_HEADLESS_START, plp);
-                } else if(headless) {
-                    Msg.I("No headless callbacks are registered, exiting.", null);
                 }
             }
         } catch(Exception e) {
@@ -403,8 +395,12 @@ public class PLPToolApp {
         // Command line simulator handlers
         simulateCLI();
 
-        // here we go!
-        launch();
+        // Headless execution handler
+        if(headless)
+            headless();
+        else
+            // here we go!
+            launch(PLPToolApp.class, null);
     }
 
     /**
@@ -548,6 +544,23 @@ public class PLPToolApp {
                     quit(Constants.PLP_DMOD_GENERAL_ERROR);
                 }
             }
+        }
+    }
+
+    /**
+     * Handle headless execution. Note: modules have to be explicitly included
+     * in the command line via -L or -D. Saved modules and usermods will NOT
+     * be automatically loaded!
+     */
+    private static void headless() {
+        ProjectDriver.loadConfig();
+        ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
+        loadDynamicModules(plp);
+        if(CallbackRegistry.getCallbacks(CallbackRegistry.EVENT_HEADLESS_START).length > 0) {
+            Msg.I("Running in headless mode.", null);
+            CallbackRegistry.callback(CallbackRegistry.EVENT_HEADLESS_START, plp);
+        } else if(headless) {
+            Msg.I("No headless callbacks are registered, exiting.", null);
         }
     }
 
