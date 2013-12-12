@@ -57,6 +57,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static boolean simulateCLI = false;
     private static boolean simulateScripted = false;
     private static boolean loadModules = true;
+    private static boolean headless = false;
 
     private static ArrayList<String> moduleLoadDirs;
     private static ArrayList<String> moduleLoadJars;
@@ -93,9 +94,9 @@ public class PLPToolApp extends SingleFrameApplication {
                 PLPToolbox.checkCreateTempDirectory();
                 // Launch the ProjectDriver                
                 ProjectDriver.loadConfig();
-                ProjectDriver plp = new ProjectDriver(Constants.PLP_GUI_START_IDE);
+                ProjectDriver plp = new ProjectDriver(headless ? Constants.PLP_DEFAULT : Constants.PLP_GUI_START_IDE);
                 CallbackRegistry.callback(CallbackRegistry.START, plp);
-                if(Constants.debugLevel > 0) {
+                if(!headless && Constants.debugLevel > 0) {
                     con = new ConsoleFrame(plp);
                     con.setVisible(true);
                 }
@@ -107,7 +108,16 @@ public class PLPToolApp extends SingleFrameApplication {
                     loadDynamicModules(plp, PLPToolbox.getConfDir() + "/autoload",
                                             PLPToolbox.getConfDir() + "/usermods");
 
-                Msg.setOutput(plp.g_dev.getOutput());
+                if(!headless)
+                    Msg.setOutput(plp.g_dev.getOutput());
+                else if(CallbackRegistry.getCallbacks(CallbackRegistry.EVENT_HEADLESS_START).length > 0) {
+                    Msg.I("Running in headless mode.", null);
+                    CallbackRegistry.callback(CallbackRegistry.EVENT_HEADLESS_START, plp);
+                } else {
+                    Msg.I("No headless callbacks are registered, exiting.", null);
+                    System.exit(-1);
+                }
+
                 if(plpFilePath != null) {
                     if(newProject) {
                         plp.create(startingArchID);
@@ -262,7 +272,11 @@ public class PLPToolApp extends SingleFrameApplication {
             // Launch serial terminal instead of the IDE
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--serialterminal")) {
                 serialTerminal = true;
-                activeArgIndex++;            
+                activeArgIndex++;
+
+            } else if(args.length >= activeArgIndex + 1 && args[i].equals("--headless")) {
+                headless = true;
+                activeArgIndex++;
 
 /****************** EXCLUSIVE ARGUMENTS ***************************************/
 /* These options will exit after it's executed (whichever comes first)        */
@@ -431,6 +445,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  -s <plpfile>            Launch the command line simulator to simulate");
         System.out.println("                            <plpfile>");
         System.out.println("  -r <plpfile> <script>   Run the simulator in non-interactive mode");
+        System.out.println(" --headless               Run in headless mode for non-GUI extensions");
     }
 
     /**
