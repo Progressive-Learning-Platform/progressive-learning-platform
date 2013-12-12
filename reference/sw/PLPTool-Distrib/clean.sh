@@ -14,3 +14,5 @@ rm -rf ../PLPTool-Extensions/CacheSim/build
 rm -rf ../PLPTool-Extensions/CacheSim/dist
 rm -rf ../PLPTool-Extensions/Flowchart/build
 rm -rf ../PLPTool-Extensions/Flowchart/dist
+rm -rf ../PLPTool-Extensions/SocketInterface/build
+rm -rf ../PLPTool-Extensions/SocketInterface/dist

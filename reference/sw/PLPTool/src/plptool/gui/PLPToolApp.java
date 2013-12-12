@@ -47,7 +47,7 @@ import javax.imageio.ImageIO;
  * specified in command line arguments, initiating module autoload procedure,
  * and determining next phase of execution (GUI or command line).
  */
-public class PLPToolApp extends SingleFrameApplication {
+public class PLPToolApp {
     
     private static String plpFilePath = null;
     private static boolean newProject = false;
@@ -69,27 +69,24 @@ public class PLPToolApp extends SingleFrameApplication {
     public static ConsoleFrame con;
     private static HashMap<String, BufferedImage> images;
 
-    /**
-     * At startup create and show the main frame of the application.
-     */
-    @Override protected void startup() {
+    private static void launch() {
 
-        if(java.awt.GraphicsEnvironment.isHeadless()) {
+        if(!headless && java.awt.GraphicsEnvironment.isHeadless()) {
             Msg.E("Can not launch GUI in a headless environment!",
                   Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV, null);
             quit(Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV);
         }
 
         try {
-            if(serialTerminal) {
+            if(!headless && serialTerminal) {
                 plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
                 term.setVisible(true);
-            } else if(embedManifestGUI) {
+            } else if(!headless && embedManifestGUI) {
                 DynamicModuleManager dmm = new DynamicModuleManager(null, true, null);
                 dmm.setEmbedOnly();
                 dmm.setVisible(true);
             } else {
-                images.put("__NOT_FOUND__", ImageIO.read(this.getClass().getResource("resources/invalid.png")));
+                images.put("__NOT_FOUND__", ImageIO.read(PLPToolApp.class.getResource("resources/invalid.png")));
                 Msg.D("Creating temporary directory (" + PLPToolbox.getTmpDir() + ")...", 2, null);
                 PLPToolbox.checkCreateTempDirectory();
                 // Launch the ProjectDriver                
@@ -100,7 +97,6 @@ public class PLPToolApp extends SingleFrameApplication {
                     con = new ConsoleFrame(plp);
                     con.setVisible(true);
                 }
-                plp.app = this;
 
                 // Load modules from .plp/autoload, .plp/usermods, -D and -L, in
                 // that order
@@ -110,21 +106,21 @@ public class PLPToolApp extends SingleFrameApplication {
 
                 if(!headless)
                     Msg.setOutput(plp.g_dev.getOutput());
-                else if(CallbackRegistry.getCallbacks(CallbackRegistry.EVENT_HEADLESS_START).length > 0) {
-                    Msg.I("Running in headless mode.", null);
-                    CallbackRegistry.callback(CallbackRegistry.EVENT_HEADLESS_START, plp);
-                } else {
-                    Msg.I("No headless callbacks are registered, exiting.", null);
-                    System.exit(-1);
-                }
 
                 if(plpFilePath != null) {
                     if(newProject) {
                         plp.create(startingArchID);
                         plp.plpfile = new File(plpFilePath);
-                        plp.refreshProjectView(false);
+                        if(!headless) plp.refreshProjectView(false);
                     } else
                         plp.open(plpFilePath, true);
+                }
+
+                if(headless && CallbackRegistry.getCallbacks(CallbackRegistry.EVENT_HEADLESS_START).length > 0) {
+                    Msg.I("Running in headless mode.", null);
+                    CallbackRegistry.callback(CallbackRegistry.EVENT_HEADLESS_START, plp);
+                } else if(headless) {
+                    Msg.I("No headless callbacks are registered, exiting.", null);
                 }
             }
         } catch(Exception e) {
@@ -134,22 +130,6 @@ public class PLPToolApp extends SingleFrameApplication {
             Msg.trace(e);
             quit(-1);
         }
-    }
-
-    /**
-     * This method is to initialize the specified window by injecting resources.
-     * Windows shown in our application come fully initialized from the GUI
-     * builder, so this additional configuration is not needed.
-     */
-    @Override protected void configureWindow(java.awt.Window root) {
-    }
-
-    /**
-     * A convenient static getter for the application instance.
-     * @return the instance of PLPToolApp
-     */
-    public static PLPToolApp getApplication() {
-        return Application.getInstance(PLPToolApp.class);
     }
 
     /**
@@ -424,7 +404,7 @@ public class PLPToolApp extends SingleFrameApplication {
         simulateCLI();
 
         // here we go!
-        launch(PLPToolApp.class, args);
+        launch();
     }
 
     /**
