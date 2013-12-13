@@ -18,17 +18,26 @@
 
 package plptool.extras.socket;
 
-import plptool.Msg;
-import plptool.dmf.Callback;
+import java.net.*;
+import java.io.*;
+import plptool.*;
+import plptool.gui.ProjectDriver;
 
 /**
  *
  * @author Wira
  */
-public class HeadlessCallback implements Callback {
-    public boolean callback(int num, Object param) {
-        Msg.M("SocketInterface: initializing...");
-        SocketInterface.init();
-        return true;
+public class ClientHandler {
+    private InputStreamReader in;
+    private OutputStreamWriter out;
+
+    public ClientHandler(Socket socket) {
+        try {
+            in = new InputStreamReader(socket.getInputStream());
+            out = new OutputStreamWriter(socket.getOutputStream());
+        } catch(IOException ioe) {
+            Msg.E("SocketInterface: ClientHandler: failed to open streams",
+                    Constants.PLP_GENERAL_IO_ERROR, null);
+        }
     }
 }

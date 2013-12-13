@@ -46,7 +46,25 @@ public class PLPToolConnector implements ModuleInterface5 {
     }
 
     public int initialize(ProjectDriver plp) {
+        int port = 12800;
+        String attr;
         CallbackRegistry.register(new HeadlessCallback(), CallbackRegistry.EVENT_HEADLESS_START);
+        attr = PLPToolApp.getAttributes().get("SocketInterfacePort");
+        if(attr != null) {
+            try {
+                port = Integer.parseInt(attr);
+            } catch (NumberFormatException nfe) {
+                Msg.W("SocketInterface: Failed to parse port '" + attr + "', reverting to default port 12800", null);
+                port = 12800;
+            }
+        }
+        SocketInterface.setPort(port);
+        attr = PLPToolApp.getAttributes().get("OutputLogFile");
+        if(attr != null)
+            Msg.setLogOutStreamFile(attr);
+        attr = PLPToolApp.getAttributes().get("ErrorLogFile");
+        if(attr != null)
+            Msg.setLogErrStreamFile(attr);
 
         return Constants.PLP_OK;
     }

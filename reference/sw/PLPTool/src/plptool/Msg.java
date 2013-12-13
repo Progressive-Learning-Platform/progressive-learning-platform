@@ -22,7 +22,9 @@ import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLDocument;
 import java.awt.Font;
-import java.util.ArrayList;
+import java.io.PrintStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * PLPTool messaging utility class.
@@ -77,6 +79,16 @@ public class Msg {
     public static boolean silent = false;
 
     /**
+     * Log output stream
+     */
+    private static PrintStream LogOutStream = System.out;
+
+    /**
+     * Log error stream
+     */
+    private static PrintStream LogErrStream = System.err;
+
+    /**
      * Suppress warnings.
      */
     public static boolean suppressWarnings = false;
@@ -98,11 +110,13 @@ public class Msg {
      * @param objIdentifier A reference to the offending object.
      * @return The error code for further handling.
      */
-    public static int E(String errStr, int errorCode, Object objIdentifier) {           
+    public static int E(String errStr, int errorCode, Object objIdentifier) {
+        if(LogErrStream == null) return errorCode;
+
         try {   
             if(objIdentifier != null) {
                 if(output == null || errorCode >= 1024)
-                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr.replaceAll("<[^>]*>", ""));
+                    LogErrStream.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr.replaceAll("<[^>]*>", ""));
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
                             (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n"
@@ -111,7 +125,7 @@ public class Msg {
                 }
             } else {
                 if(output == null || errorCode >= 1024)
-                    System.err.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr.replaceAll("<[^>]*>", ""));
+                    LogErrStream.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr.replaceAll("<[^>]*>", ""));
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
                             (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n"
@@ -137,13 +151,13 @@ public class Msg {
      * @param objIdentifier A reference to the offending object.
      */
     public static void W(String warningStr, Object objIdentifier) {
-        if(suppressWarnings) return;
+        if(suppressWarnings || LogOutStream == null) return;
 
         try {
 
         if(objIdentifier != null)
             if(output == null)
-                System.out.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr.replaceAll("<[^>]*>", ""));
+                LogOutStream.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
                         + objIdentifier.toString() + ": " + warningStr + "<br />", 0, 0, null);
@@ -151,7 +165,7 @@ public class Msg {
             }
         else
             if(output == null)
-                System.out.println("[WARNING] " + warningStr.replaceAll("<[^>]*>", ""));
+                LogOutStream.println("[WARNING] " + warningStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
                         + warningStr + "<br />", 0, 0, null);
@@ -169,13 +183,13 @@ public class Msg {
      * @param objIdentifier The object invoking this call.
      */
     public static void I(String infoStr, Object objIdentifier) {
-        if(silent) return;
+        if(silent || LogOutStream == null) return;
 
         try {
 
         if(objIdentifier != null)
             if(output == null)
-                System.out.println(objIdentifier.toString() + ": " + infoStr.replaceAll("<[^>]*>", ""));
+                LogOutStream.println(objIdentifier.toString() + ": " + infoStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(),
                         "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + objIdentifier.toString() + ": " + infoStr + "</font><br />", 0, 0, null);
@@ -183,7 +197,7 @@ public class Msg {
             }
         else
             if(output == null)
-                System.out.println(infoStr.replaceAll("<[^>]*>", ""));
+                LogOutStream.println(infoStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(),
                         "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + infoStr + "</font><br />", 0, 0, null);
@@ -204,11 +218,13 @@ public class Msg {
      * @param objIdentifier The object invoking this call.
      */
     public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
+        if(LogOutStream == null) return;
+
         if(requestedDebugLevel <= Constants.debugLevel) {
             try {
 
             if(objIdentifier != null) {
-                System.out.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
+                LogOutStream.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
                         + objIdentifier.toString() + ": <font color=\"#444444\">" + debugStr + "</font><br />", 0, 0, null);
@@ -216,7 +232,7 @@ public class Msg {
                 }
             }
             else {
-                System.out.println("[DEBUG] " + debugStr);
+                LogOutStream.println("[DEBUG] " + debugStr);
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
                         + "<font color=\"#444444\">" + debugStr + "</font><br />", 0, 0, null);
@@ -236,12 +252,12 @@ public class Msg {
      * @param msgStr Message string
      */
     public static void M(String msgStr) {
-        if(silent) return;
+        if(silent || LogOutStream == null) return;
 
         try {
 
         if(output == null)
-            System.out.println(msgStr.replaceAll("<[^>]*>", ""));
+            LogOutStream.println(msgStr.replaceAll("<[^>]*>", ""));
         else {
             kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
                         msgStr.replace(" ", "&nbsp;") + "</font><br />", 0, 0, null);
@@ -259,12 +275,12 @@ public class Msg {
      * @param msgStr Message string
      */
     public static void m(String msgStr) {
-        if(silent) return;
+        if(silent || LogOutStream == null) return;
 
         try {
 
         if(output == null)
-            System.out.print(msgStr.replaceAll("<[^>]*>", ""));
+            LogOutStream.print(msgStr.replaceAll("<[^>]*>", ""));
         else {
             kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
                         msgStr.replace(" ", "&nbsp;") + "</font>", 0, 0, null);
@@ -282,12 +298,12 @@ public class Msg {
      * @param printStr Preformatted string
      */
     public static void P(String printStr) {
-        if(silent) return;
+        if(silent || LogOutStream == null) return;
 
         try {
 
         if(output == null)
-            System.out.println(printStr);
+            LogOutStream.println(printStr);
         else {
             kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
                         printStr + "</font></pre>", 0, 0, null);
@@ -322,12 +338,12 @@ public class Msg {
      * Print out buffered preformatted string
      */
     public static void P() {
-        if(silent) return;
+        if(silent || LogOutStream == null) return;
 
         try {
 
         if(output == null)
-            System.out.print(p);
+            LogOutStream.print(p);
         else {
             kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
                         p + "</font></pre>", 0, 0, null);
@@ -344,10 +360,12 @@ public class Msg {
      * Debug marking.
      */
     public static void mark() {
+        if(LogOutStream == null) return;
+        
         try {
 
         if(output == null)
-            System.out.println("[DEBUG] " + markCounter + " We're here!");
+            LogOutStream.println("[DEBUG] " + markCounter + " We're here!");
         else {
             kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
                         + ": <font color=darkgray>mark: " + markCounter + "</font><br />", 0, 0, null);
@@ -397,6 +415,46 @@ public class Msg {
     public static void trace(Exception e) {
         if(Constants.debugLevel >= 2)
             e.printStackTrace();
+    }
+
+    /**
+     * Redirect output stream to a file
+     *
+     * @param path Path to output file
+     */
+    public static void setLogOutStreamFile(String path) {
+        File f = new File(path);
+        try {
+            LogOutStream = new PrintStream(new FileOutputStream(f));
+        } catch(Exception e) {
+            System.err.println("Failed to open '" + f.getAbsolutePath() +
+                    "' for writing, reverting to standard out.");
+            LogOutStream = System.out;
+        }
+    }
+
+    /**
+     * Redirect error stream to a file
+     *
+     * @param path Path to output file
+     */
+    public static void setLogErrStreamFile(String path) {
+        File f = new File(path);
+        try {
+            LogErrStream = new PrintStream(new FileOutputStream(f));
+        } catch(Exception e) {
+            System.err.println("Failed to open '" + f.getAbsolutePath() +
+                    "' for writing, reverting to standard err.");
+            LogErrStream = System.err;
+        }
+    }
+
+    /**
+     * Reset output streams to standard output and error streams
+     */
+    public static void resetStreams() {
+        LogOutStream = System.out;
+        LogErrStream = System.err;
     }
 }
 
