@@ -20,7 +20,6 @@ package plptool.gui;
 
 import plptool.gui.frames.ConsoleFrame;
 import plptool.gui.frames.DynamicModuleManager;
-import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import plptool.Msg;
 import plptool.Constants;
@@ -78,10 +77,10 @@ public class PLPToolApp extends SingleFrameApplication {
         }
 
         try {
-            if(!headless && serialTerminal) {
+            if(serialTerminal) {
                 plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
                 term.setVisible(true);
-            } else if(!headless && embedManifestGUI) {
+            } else if(embedManifestGUI) {
                 DynamicModuleManager dmm = new DynamicModuleManager(null, true, null);
                 dmm.setEmbedOnly();
                 dmm.setVisible(true);
@@ -110,7 +109,7 @@ public class PLPToolApp extends SingleFrameApplication {
                     if(newProject) {
                         plp.create(startingArchID);
                         plp.plpfile = new File(plpFilePath);
-                        if(!headless) plp.refreshProjectView(false);
+                        plp.refreshProjectView(false);
                     } else
                         plp.open(plpFilePath, true);
                 }
@@ -421,7 +420,7 @@ public class PLPToolApp extends SingleFrameApplication {
         System.out.println("  -s <plpfile>            Launch the command line simulator to simulate");
         System.out.println("                            <plpfile>");
         System.out.println("  -r <plpfile> <script>   Run the simulator in non-interactive mode");
-        System.out.println(" --headless               Run in headless mode for non-GUI extensions");
+        System.out.println(" --headless               Run in headless mode for non-GUI modules");
     }
 
     /**
@@ -515,7 +514,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
         if(moduleLoadDirs != null && moduleLoadDirs.size() > 0) {
             String dirPath;
-            for(int i = 0; i < moduleLoadDirs.size(); i++) {
+            while(moduleLoadDirs.size() > 0) {
                 dirPath = moduleLoadDirs.get(0);
                 moduleLoadDirs.remove(0);
                 Msg.D("Loading modules from " + dirPath + "...", 2, null);
@@ -525,7 +524,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
         if(moduleLoadJars != null && moduleLoadJars.size() > 0) {
             String jarPath;
-            for(int i = 0; i < moduleLoadJars.size(); i++) {
+            while(moduleLoadJars.size() > 0) {
                 jarPath = moduleLoadJars.get(0);
                 moduleLoadJars.remove(0);
                 Msg.D("Loading module from " + jarPath + "...", 2, null);
@@ -553,6 +552,10 @@ public class PLPToolApp extends SingleFrameApplication {
      * be automatically loaded!
      */
     private static void headless() {
+        if(!loadModules) {
+            Msg.E("'-N' can not be used with '--headless'", Constants.PLP_TOOLAPP_ERROR, null);
+            quit(Constants.PLP_TOOLAPP_ERROR);
+        }
         ProjectDriver.loadConfig();
         ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
         loadDynamicModules(plp);

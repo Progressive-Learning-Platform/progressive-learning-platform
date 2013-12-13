@@ -116,6 +116,8 @@ Section /o "PLPTool Extensions"
   SetOutPath $INSTDIR\resources
   File "..\..\PLPTool-Extensions\AutoSaver5\dist\AutoSaver5.jar"
   File "..\..\PLPTool-Extensions\Flowchart\dist\Flowchart.jar"
+  File "..\..\PLPTool-Extensions\CacheSim\dist\CacheSim.jar"
+  File "..\..\PLPTool-Extensions\SocketInterface\dist\SocketInterface.jar"
   SetOutPath $INSTDIR
 SectionEnd
 
