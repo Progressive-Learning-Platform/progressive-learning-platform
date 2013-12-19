@@ -27,7 +27,7 @@ import plptool.PLPSimCore;
 import plptool.PLPSimRegModule;
 
 /**
- * mips.SimCore is the PLP MIPS Architecture Simulator. This class
+ * mips.SimCore is the PLP CPU Architecture Simulator. This class
  * contains core functionality of the simulator: the CPU itself, memory
  * elements, pipeline registers, and I/O devices. Users can interact with the
  * simulation core by using typical procedures such as stepping and I/O. It's
@@ -436,7 +436,7 @@ public class SimCore extends PLPSimCore {
 
     /**
      * Perform an instruction fetch and warm up the decode stage. This function
-     * represents the instruction fetch phase of the MIPS core. The only
+     * represents the instruction fetch phase of the PLP CPU core. The only
      * memory element in this stage is the program counter (and the instruction
      * memory, but that is external).
      *
@@ -656,7 +656,7 @@ public class SimCore extends PLPSimCore {
 
     /**
      * This is the instruction decode (ID) / register file (RF) stage of the
-     * MIPS core. The execute module and the register file are attached to
+     * PLP CPU core. The execute module and the register file are attached to
      * this class.
      */
     public class id {
@@ -858,7 +858,7 @@ public class SimCore extends PLPSimCore {
     }
 
     /**
-     * This is the execute (EX) stage of the MIPS pipeline. The memory and
+     * This is the execute (EX) stage of the PLP CPU pipeline. The memory and
      * ALU modules are attached to this class.
      */
     public class ex {
@@ -1100,9 +1100,9 @@ public class SimCore extends PLPSimCore {
     }
 
     /**
-     * This is the memory (MEM) stage of the MIPS pipeline. Writeback module
+     * This is the memory (MEM) stage of the PLP CPU pipeline. Writeback module
      * is attached to this class. The bus module is also attached to this
-     * class, and it is the only place where the MIPS simulation core interacts
+     * class, and it is the only place where the PLP CPU simulation core interacts
      * with the outside world aside from fetching instructions in IF stage.
      */
     public class mem {
@@ -1277,7 +1277,7 @@ public class SimCore extends PLPSimCore {
     }
 
     /**
-     * This is the writeback (WB) and final stage of the MIPS pipeline.
+     * This is the writeback (WB) and final stage of the PLP CPU pipeline.
      * Instructions are retired and register file is written to in this
      * stage.
      */
@@ -1465,7 +1465,7 @@ public class SimCore extends PLPSimCore {
     }
 
     /**
-     * The MIPS forwarding module scans the pipeline stages when evaluated
+     * The PLP CPU forwarding module scans the pipeline stages when evaluated
      * and will overwrite signals to avoid hazards.
      */
     public class mod_forwarding {
