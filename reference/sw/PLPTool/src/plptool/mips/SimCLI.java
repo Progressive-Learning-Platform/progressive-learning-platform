@@ -98,6 +98,7 @@ public class SimCLI {
         else if(tokens[0].equals("echo"))           cmd_echo();
         else if(tokens[0].equals("modhook"))        cmd_modhook();
         else if(input.equals("flags"))              cmd_flags();
+        else if(input.equals("pflags"))             cmd_pflags();
         else if(input.equals("fwd"))                cmd_fwd();
         else if(input.equals("jvm"))                cmd_jvm();
         else if(input.equals("help"))               simCLHelp(0);
@@ -166,10 +167,11 @@ public class SimCLI {
                 if(core.breakpoints.isBreakpoint(core.visibleAddr))
                     Msg.P("--- stopping at breakpoint: " + PLPToolbox.format32Hex(core.visibleAddr));
             }
-            if(steps > Constants.PLP_LONG_SIM)
+            if(steps > Constants.PLP_LONG_SIM) {
                 startCount = core.getInstrCount() - startCount;
                 Msg.P("--- executed " + startCount + " instructions in " +
                       (System.currentTimeMillis() - time) + " milliseconds.");
+            }
         }
     }
 
@@ -212,16 +214,60 @@ public class SimCLI {
 
     public static void cmd_flags() {
         long f = core.getFlags();
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE)
-            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE");
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE)
-            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE)
-            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE)
-            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW) == SimCore.PLP_SIM_FWD_MEM_EX_LW)
-            Msg.P("PLP_SIM_FWD_MEM_EX_LW");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT)
+            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS)
+            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT)
+            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS)
+            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RT) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_LW_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RS) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_LW_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_MEM) == SimCore.PLP_SIM_FWD_MEM_MEM)
+            Msg.P("PLP_SIM_FWD_MEM_MEM");
+        if((f & SimCore.PLP_SIM_IF_STALL_SET) == SimCore.PLP_SIM_IF_STALL_SET)
+            Msg.P("PLP_SIM_IF_STALL_SET");
+        if((f & SimCore.PLP_SIM_ID_STALL_SET) == SimCore.PLP_SIM_ID_STALL_SET)
+            Msg.P("PLP_SIM_ID_STALL_SET");
+        if((f & SimCore.PLP_SIM_EX_STALL_SET) == SimCore.PLP_SIM_EX_STALL_SET)
+            Msg.P("PLP_SIM_EX_STALL_SET");
+        if((f & SimCore.PLP_SIM_MEM_STALL_SET) == SimCore.PLP_SIM_MEM_STALL_SET)
+            Msg.P("PLP_SIM_MEM_STALL_SET");
+    }
+
+    public static void cmd_pflags() {
+        long f = core.getPreviousFlags();
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT)
+            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS)
+            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT)
+            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS)
+            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RT) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_LW_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RS) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_LW_RS");
         if((f & SimCore.PLP_SIM_FWD_MEM_MEM) == SimCore.PLP_SIM_FWD_MEM_MEM)
             Msg.P("PLP_SIM_FWD_MEM_MEM");
         if((f & SimCore.PLP_SIM_IF_STALL_SET) == SimCore.PLP_SIM_IF_STALL_SET)
@@ -675,7 +721,7 @@ public class SimCLI {
     public static void simCLHelp(int commandGroup) {
         switch(commandGroup) {
             case 0:
-                Msg.P("\nPLPTool MIPS Command Line Interface Help.");
+                Msg.P("\nPLP CPU Simulator Command Line Interface Help.");
                 Msg.P("\n help sim\n\tList general simulator commands.");
                 Msg.P("\n help print\n\tList commands to print various simulator information to screen.");
                 Msg.P("\n help bus\n\tList I/O bus commands.");
@@ -693,6 +739,7 @@ public class SimCLI {
                 Msg.P("\n j <address>\n\tJump to <address>.");
                 Msg.P("\n w <address> <value>\n\tWrite <value> to memory at <address>.");
                 Msg.P("\n flags\n\tPrint out simulation flags that are set.");
+                Msg.P("\n pflags\n\tPrint out simulation flags that were set in the previous step.");
 
                 break;
 
