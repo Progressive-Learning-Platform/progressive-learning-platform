@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ public class SimCore extends PLPSimCore {
      *
      * @see plptool.PLPAsm
      */
-    Asm asm;
+    private Asm asm;
 
     /**
      * Interrupt request state machine variable
@@ -121,6 +121,10 @@ public class SimCore extends PLPSimCore {
      */
     public long IRQAck;
 
+    /**
+     * Flags from previous step
+     */
+    private long previous_flags;
 
     /**
      * Functional mode return address for interrupts
@@ -128,14 +132,18 @@ public class SimCore extends PLPSimCore {
     private long functional_ret;
 
      // Simulator flags
-    public static final long PLP_SIM_FWD_NO_EVENTS               = 0xFFFFFF80;
-    public static final long PLP_SIM_FWD_EX_EX_RTYPE             = 0x00000001;
-    public static final long PLP_SIM_FWD_EX_EX_ITYPE             = 0x00000002;
-    public static final long PLP_SIM_FWD_EX_RF                   = 0x00000004;
-    public static final long PLP_SIM_FWD_MEM_MEM                 = 0x00000008;
-    public static final long PLP_SIM_FWD_MEM_EX_RTYPE            = 0x00000010;
-    public static final long PLP_SIM_FWD_MEM_EX_ITYPE            = 0x00000020;
-    public static final long PLP_SIM_FWD_MEM_EX_LW               = 0x00000040;
+    public static final long PLP_SIM_FWD_NO_EVENTS               = 0xF000FFFF;
+    public static final long PLP_SIM_FWD_EX_EX_RTYPE_RT          = 0x00010000;
+    public static final long PLP_SIM_FWD_EX_EX_RTYPE_RS          = 0x00020000;
+    public static final long PLP_SIM_FWD_EX_EX_ITYPE_RT          = 0x00040000;
+    public static final long PLP_SIM_FWD_EX_EX_ITYPE_RS          = 0x00080000;
+    public static final long PLP_SIM_FWD_MEM_MEM                 = 0x04000000;
+    public static final long PLP_SIM_FWD_MEM_EX_RTYPE_RT         = 0x00100000;
+    public static final long PLP_SIM_FWD_MEM_EX_RTYPE_RS         = 0x00200000;
+    public static final long PLP_SIM_FWD_MEM_EX_ITYPE_RT         = 0x00400000;
+    public static final long PLP_SIM_FWD_MEM_EX_ITYPE_RS         = 0x00800000;
+    public static final long PLP_SIM_FWD_MEM_EX_LW_RT            = 0x01000000;
+    public static final long PLP_SIM_FWD_MEM_EX_LW_RS            = 0x02000000;
     public static final long PLP_SIM_IF_STALL_SET                = 0x00000100;
     public static final long PLP_SIM_ID_STALL_SET                = 0x00000200;
     public static final long PLP_SIM_EX_STALL_SET                = 0x00000400;
@@ -202,6 +210,7 @@ public class SimCore extends PLPSimCore {
         visibleAddr = startAddr;
         instructionCount = 0;
         sim_flags = (long) 0;
+        previous_flags = 0;
         ex_continue = false;
         ex_stall = false;
         if_stall = false;
@@ -270,6 +279,7 @@ public class SimCore extends PLPSimCore {
      * @return Returns 0 on successful completion. Error code otherwise.
      */
     public int step () {
+        previous_flags = sim_flags;
         sim_flags = (long) 0;
         instructionCount++;
         wb_stage.instr_retired = false;
@@ -528,6 +538,15 @@ public class SimCore extends PLPSimCore {
      */
     public boolean isStalled() {
         return if_stall;
+    }
+
+    /**
+     * Return flags from previous cycle
+     *
+     * @return Flags in long type
+     */
+    public long getPreviousFlags() {
+        return previous_flags;
     }
 
     /**
@@ -915,6 +934,13 @@ public class SimCore extends PLPSimCore {
         }
 
         public void printvars() {
+            String rt_forwarded = (previous_flags & (PLP_SIM_FWD_EX_EX_RTYPE_RT | PLP_SIM_FWD_EX_EX_ITYPE_RT |
+                                                     PLP_SIM_FWD_MEM_EX_RTYPE_RT | PLP_SIM_FWD_MEM_EX_ITYPE_RT))
+                                  == 0 ? "" : " (forwarded)";
+            String rs_forwarded = (previous_flags & (PLP_SIM_FWD_EX_EX_RTYPE_RS | PLP_SIM_FWD_EX_EX_ITYPE_RS |
+                                                     PLP_SIM_FWD_MEM_EX_RTYPE_RS | PLP_SIM_FWD_MEM_EX_ITYPE_RS))
+                                  == 0 ? "" : " (forwarded)";
+
             Msg.p("EX vars");
             Msg.p("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
             Msg.p("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
@@ -938,8 +964,8 @@ public class SimCore extends PLPSimCore {
             Msg.p("\tctl_branch: " + ctl_branch);
 
             Msg.p("\tdata_imm_signExtended: " + String.format("%08x",data_imm_signExtended));
-            Msg.p("\tdata_alu_in: " + String.format("%08x",data_alu_in));
-            Msg.p("\tdata_rt: " + String.format("%08x",data_rt));
+            Msg.p("\tdata_alu_in: " + String.format("%08x",data_alu_in) + rs_forwarded);
+            Msg.p("\tdata_rt: " + String.format("%08x",data_rt) + rt_forwarded);
 
             Msg.p("\tinternal_alu_out: " + String.format("%08x",internal_alu_out));
             Msg.P();
@@ -1472,15 +1498,13 @@ public class SimCore extends PLPSimCore {
             long ex_rt =        MIPSInstr.rt(ex_stage.instruction);
             long ex_rd =        MIPSInstr.rd(ex_stage.instruction);
 
-            boolean mem_instr_is_branch = (mem_instrType == 3) ? true : false;
-            boolean ex_instr_is_branch = (ex_instrType == 3) ? true : false;
-            boolean id_instr_is_branch = (id_instrType == 3) ? true : false;
-            boolean mem_instr_is_itype =
-                    (mem_instrType >= 3 && mem_instrType <= 6) ? true : false;
-            boolean ex_instr_is_itype =
-                    (ex_instrType >= 3 && ex_instrType <= 6) ? true : false;
-            boolean id_instr_is_itype =
-                    (id_instrType >= 3 && id_instrType <= 6) ? true : false;
+            boolean mem_instr_is_branch = (mem_instrType == 3);
+            boolean ex_instr_is_branch = (ex_instrType == 3);
+            boolean ex_instr_is_lw = (ex_opcode == 0x23);
+            boolean id_instr_is_branch = (id_instrType == 3);
+            boolean mem_instr_is_itype = (mem_instrType >= 3 && mem_instrType <= 6);
+            boolean ex_instr_is_itype = (ex_instrType >= 3 && ex_instrType <= 6);
+            boolean id_instr_is_itype = (id_instrType >= 3 && id_instrType <= 6);
 
             if(wb_stage.hot && mem_stage.fwd_ctl_regwrite == 1) {
                 // MEM->MEM
@@ -1497,12 +1521,12 @@ public class SimCore extends PLPSimCore {
                             !id_instr_is_itype || id_instr_is_branch)) {
                         ex_stage.i_data_rt = (mem_stage.ctl_memread == 0) ?
                             mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                        sim_flags |= PLP_SIM_FWD_MEM_EX_RTYPE;
+                        sim_flags |= PLP_SIM_FWD_MEM_EX_RTYPE_RT;
                     }
                     if(mem_rd == id_rs && mem_rd != 0 && id_rs != 0) {
                         ex_stage.i_data_alu_in = (mem_stage.ctl_memread == 0) ?
                             mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                        sim_flags |= PLP_SIM_FWD_MEM_EX_RTYPE;
+                        sim_flags |= PLP_SIM_FWD_MEM_EX_RTYPE_RS;
                     }
                 }
                 if(mem_ex_itype && mem_instr_is_itype && !mem_instr_is_branch) {
@@ -1511,12 +1535,12 @@ public class SimCore extends PLPSimCore {
                             !id_instr_is_itype || id_instr_is_branch)) {
                         ex_stage.i_data_rt = (mem_stage.ctl_memread == 0) ?
                             mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                        sim_flags |= PLP_SIM_FWD_MEM_EX_ITYPE;
+                        sim_flags |= PLP_SIM_FWD_MEM_EX_ITYPE_RT;
                     }
                     if(mem_rt == id_rs && mem_rt != 0 && id_rs != 0) {
                         ex_stage.i_data_alu_in = (mem_stage.ctl_memread == 0) ?
                             mem_stage.fwd_data_alu_result : wb_stage.i_data_memreaddata;
-                        sim_flags |= PLP_SIM_FWD_MEM_EX_ITYPE;
+                        sim_flags |= PLP_SIM_FWD_MEM_EX_ITYPE_RS;
                     }
                 }
             }
@@ -1526,11 +1550,11 @@ public class SimCore extends PLPSimCore {
                 if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.fwd_ctl_memread == 1
                         && (id_opcode == 0x2B || !id_instr_is_itype || id_instr_is_branch)) {
                     ex_stall = true;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_LW;
+                    sim_flags |= PLP_SIM_FWD_MEM_EX_LW_RT;
                 }
                 if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.fwd_ctl_memread == 1) {
                     ex_stall = true;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_LW;
+                    sim_flags |= PLP_SIM_FWD_MEM_EX_LW_RS;
                 }
             }
 
@@ -1539,26 +1563,27 @@ public class SimCore extends PLPSimCore {
                 if(ex_ex_rtype && !ex_instr_is_itype) {
                     if(ex_rd == id_rs && ex_rd != 0 && id_rs != 0) {
                         ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
-                        sim_flags |= PLP_SIM_FWD_EX_EX_RTYPE;
+                        sim_flags |= PLP_SIM_FWD_EX_EX_RTYPE_RS;
                     }
                     if(ex_rd == id_rt && ex_rd != 0 && id_rt != 0 &&
                             (id_opcode == 0x2B || // rt in SW is source reg.
                             !id_instr_is_itype || id_instr_is_branch)) {
                         ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
-                        sim_flags |= PLP_SIM_FWD_EX_EX_RTYPE;
+                        sim_flags |= PLP_SIM_FWD_EX_EX_RTYPE_RT;
                     }
                 }
-                if(mem_ex_itype && ex_instr_is_itype && !ex_instr_is_branch) {
+                if(mem_ex_itype && ex_instr_is_itype && !ex_instr_is_branch &&
+                        !ex_instr_is_lw) {
                     if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 &&
                             ex_stage.fwd_ctl_memwrite != 1) {
                         ex_stage.i_data_alu_in = mem_stage.i_fwd_data_alu_result;
-                        sim_flags |= PLP_SIM_FWD_EX_EX_ITYPE;
+                        sim_flags |= PLP_SIM_FWD_EX_EX_ITYPE_RS;
                     }
                     if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 &&
                             (id_opcode == 0x2B || // rt in SW is source reg.
                             !id_instr_is_itype || id_instr_is_branch)) {
                         ex_stage.i_data_rt = mem_stage.i_fwd_data_alu_result;
-                        sim_flags |= PLP_SIM_FWD_EX_EX_ITYPE;
+                        sim_flags |= PLP_SIM_FWD_EX_EX_ITYPE_RT;
                     }
                 }
             }

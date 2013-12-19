@@ -228,15 +228,25 @@ public class CPULevel1Canvas extends JPanel implements MouseListener, MouseMotio
         }
 
         long f = sim.getFlags();
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE)
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT)
             ;
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE)
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS)
             ;
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE)
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT)
             ;
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE)
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS)
             ;
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW) == SimCore.PLP_SIM_FWD_MEM_EX_LW)
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT)
+            ;
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS)
+            ;
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT)
+            ;
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS)
+            ;
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RT) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RT)
+            ;
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RS) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RS)
             ;
         if((f & SimCore.PLP_SIM_FWD_MEM_MEM) == SimCore.PLP_SIM_FWD_MEM_MEM)
             ;
