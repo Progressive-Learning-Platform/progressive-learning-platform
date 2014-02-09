@@ -430,9 +430,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="chkMEMEXFwdLW" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkMEMEXFwdI" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkMEMEXFwdR" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkEXEXFwdI" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lblArchOpts" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkEXEXFwdR" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="rdioBrRandom" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -453,14 +451,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkEXEXFwdR" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="chkEXEXFwdI" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkMEMEXFwdR" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="chkMEMEXFwdI" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkMEMEXFwdLW" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="lblBranchPrdction" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rdioBrAlways" min="-2" max="-2" attributes="0"/>
@@ -470,7 +464,7 @@
                       <Component id="rdioBrLast" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rdioBrRandom" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="197" max="32767" attributes="0"/>
+                      <EmptySpace pref="233" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -536,26 +530,6 @@
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="rdioBrRandom" noResource="true"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="chkEXEXFwdI">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" resourceKey="chkEXEXFwdI.text"/>
-                <Property name="name" type="java.lang.String" value="chkEXEXFwdI" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="chkEXEXFwdIStateChanged"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="chkMEMEXFwdI">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" resourceKey="chkMEMEXFwdI.text"/>
-                <Property name="name" type="java.lang.String" value="chkMEMEXFwdI" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="chkMEMEXFwdIStateChanged"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="chkMEMEXFwdLW">
               <Properties>

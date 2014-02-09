@@ -131,23 +131,17 @@ public class SimCore extends PLPSimCore {
      * Forwarding flags
      */
     public boolean mem_mem = true;
-    public boolean mem_ex_rtype = true;
-    public boolean mem_ex_itype = true;
+    public boolean mem_ex = true;
     public boolean mem_ex_lw = true;
-    public boolean ex_ex_rtype = true;
-    public boolean ex_ex_itype = true;
+    public boolean ex_ex = true;
 
      // Simulator flags
     public static final long PLP_SIM_FWD_NO_EVENTS               = 0xF000FFFF;
-    public static final long PLP_SIM_FWD_EX_EX_RTYPE_RT          = 0x00010000;
-    public static final long PLP_SIM_FWD_EX_EX_RTYPE_RS          = 0x00020000;
-    public static final long PLP_SIM_FWD_EX_EX_ITYPE_RT          = 0x00040000;
-    public static final long PLP_SIM_FWD_EX_EX_ITYPE_RS          = 0x00080000;
+    public static final long PLP_SIM_FWD_EX_EX_RT                = 0x00010000;
+    public static final long PLP_SIM_FWD_EX_EX_RS                = 0x00020000;
     public static final long PLP_SIM_FWD_MEM_MEM                 = 0x04000000;
-    public static final long PLP_SIM_FWD_MEM_EX_RTYPE_RT         = 0x00100000;
-    public static final long PLP_SIM_FWD_MEM_EX_RTYPE_RS         = 0x00200000;
-    public static final long PLP_SIM_FWD_MEM_EX_ITYPE_RT         = 0x00400000;
-    public static final long PLP_SIM_FWD_MEM_EX_ITYPE_RS         = 0x00800000;
+    public static final long PLP_SIM_FWD_MEM_EX_RT               = 0x00100000;
+    public static final long PLP_SIM_FWD_MEM_EX_RS               = 0x00200000;
     public static final long PLP_SIM_FWD_MEM_EX_LW_RT            = 0x01000000;
     public static final long PLP_SIM_FWD_MEM_EX_LW_RS            = 0x02000000;
     public static final long PLP_SIM_IF_STALL_SET                = 0x00000100;
@@ -315,8 +309,6 @@ public class SimCore extends PLPSimCore {
             ret += mem_stage.eval();
             ret += ex_stage.eval();
             ret += id_stage.eval();
-
-            checkLoadUseStall(id_stage, ex_stage);
         }
 
         // pc update logic (input side IF)
@@ -357,6 +349,7 @@ public class SimCore extends PLPSimCore {
         } else if(ex_stall) { // ex_stall, clear id/ex register
             ex_stall = false;
             ex_continue = true;
+            // Insert bubble for EX stage in the next cycle
             ex_stage.i_instruction = 0;
             ex_stage.i_instrAddr = -1;
             ex_stage.i_fwd_ctl_memwrite = 0;
@@ -365,7 +358,7 @@ public class SimCore extends PLPSimCore {
             ex_stage.i_ctl_jump = 0;
             ex_stage.hot = true;
             ex_stage.i_bubble = true;
-            ret = fetch();
+            ret = fetch(); // make sure IF stage is filled
             id_stage.hot = false;
             pc.write(old_pc + 4);
 
@@ -414,7 +407,13 @@ public class SimCore extends PLPSimCore {
                 // flush 3 stages
                 id_stage.i_instruction = 0;
                 ex_stage.i_instruction = 0;
+                ex_stage.i_fwd_ctl_regwrite = 0;
+                ex_stage.i_fwd_ctl_memwrite = 0;
+                ex_stage.i_ctl_branch = 0;
+                ex_stage.i_ctl_jump = 0;
                 mem_stage.i_instruction = 0;
+                mem_stage.i_fwd_ctl_regwrite = 0;
+                mem_stage.i_ctl_memwrite = 0;
                 id_stage.i_instrAddr = -1;
                 ex_stage.i_instrAddr = -1;
                 mem_stage.i_instrAddr = -1;              
@@ -715,15 +714,31 @@ public class SimCore extends PLPSimCore {
                 ex_reg.hot = true;
             }
 
-            if(instrAddr == -1) return Constants.PLP_OK; // cleared
-
             if(!bubble) id_count++;
 
             byte opcode      = (byte) MIPSInstr.opcode(instruction);
             byte funct       = (byte) MIPSInstr.funct(instruction);
 
             long addr_rt = MIPSInstr.rt(instruction); // rt
-            long addr_rs = MIPSInstr.rs(instruction); // rs            
+            long addr_rs = MIPSInstr.rs(instruction); // rs
+
+
+            // Load-use hazard detection logic
+
+            // The register being written to by load word
+            long ex_rt =        MIPSInstr.rt(ex_stage.instruction);
+
+            if(mem_stage.hot && mem_ex_lw) {
+                if(ex_rt == addr_rt && addr_rt != 0 && ex_stage.fwd_ctl_memread == 1
+                        && (MIPSInstr.opcode(instruction) != 0x2B)) { // lw->sw is mem->mem if it's rt
+                    ex_stall = true;
+                    sim_flags |= PLP_SIM_FWD_MEM_EX_LW_RT;
+                }
+                if(ex_rt == addr_rs && addr_rs != 0 && ex_stage.fwd_ctl_memread == 1) {
+                    ex_stall = true;
+                    sim_flags |= PLP_SIM_FWD_MEM_EX_LW_RS;
+                }
+            }
 
             // rt
             ex_reg.i_data_rt = (addr_rt == 0) ?
@@ -932,11 +947,11 @@ public class SimCore extends PLPSimCore {
         }
 
         public void printvars() {
-            String rt_forwarded = (sim_flags & (PLP_SIM_FWD_EX_EX_RTYPE_RT | PLP_SIM_FWD_EX_EX_ITYPE_RT |
-                                                     PLP_SIM_FWD_MEM_EX_RTYPE_RT | PLP_SIM_FWD_MEM_EX_ITYPE_RT))
+            String rt_forwarded = (sim_flags & (PLP_SIM_FWD_EX_EX_RT |
+                                                     PLP_SIM_FWD_MEM_EX_RT))
                                   == 0 ? "" : " (forwarded)";
-            String rs_forwarded = (sim_flags & (PLP_SIM_FWD_EX_EX_RTYPE_RS | PLP_SIM_FWD_EX_EX_ITYPE_RS |
-                                                     PLP_SIM_FWD_MEM_EX_RTYPE_RS | PLP_SIM_FWD_MEM_EX_ITYPE_RS))
+            String rs_forwarded = (sim_flags & (PLP_SIM_FWD_EX_EX_RS |
+                                                     PLP_SIM_FWD_MEM_EX_RS))
                                   == 0 ? "" : " (forwarded)";
 
             Msg.p("EX vars");
@@ -1014,61 +1029,23 @@ public class SimCore extends PLPSimCore {
                 mem_reg.hot = true;
             }
 
-            if(instrAddr == -1) return Constants.PLP_OK; // cleared
-
             if(!bubble) count++;
             
-            byte wb_opcode = MIPSInstr.opcode(wb_stage.instruction);
-            long wb_instrType = Asm.lookupInstrType(Asm.lookupInstrOpcode(wb_opcode));
-            boolean wb_instr_is_itype = (wb_instrType >= 3 && wb_instrType <= 6);
-            boolean wb_instr_is_lw = (wb_opcode == 0x23);
-            boolean wb_instr_is_branch = (wb_instrType == 3);
+            boolean wb_ctl_regwrite = (wb_stage.ctl_regwrite == 1);
+            boolean mem_ctl_regwrite = (mem_stage.fwd_ctl_regwrite == 1);
 
-            byte mem_opcode = MIPSInstr.opcode(mem_stage.instruction);
-            long mem_instrType = Asm.lookupInstrType(Asm.lookupInstrOpcode(mem_opcode));
-            boolean mem_instr_is_itype = (mem_instrType >= 3 && mem_instrType <= 6);
-            boolean mem_instr_is_lw = (mem_opcode == 0x23);
-            boolean mem_instr_is_branch = (mem_instrType == 3);
-
-            byte ex_opcode = MIPSInstr.opcode(instruction);
-            long ex_instrType = Asm.lookupInstrType(Asm.lookupInstrOpcode(ex_opcode));
-            boolean ex_instr_is_itype = (ex_instrType >= 3 && ex_instrType <= 6);
-            boolean ex_instr_is_branch = (ex_instrType == 3);
-
-            long wb_rd = MIPSInstr.rd(wb_stage.instruction);
-            long wb_rt = MIPSInstr.rt(wb_stage.instruction);
-            long mem_rd = MIPSInstr.rd(mem_stage.instruction);
-            long mem_rt = MIPSInstr.rt(mem_stage.instruction);
             long ex_rs = MIPSInstr.rs(instruction);
             long ex_rt = MIPSInstr.rt(instruction);
 
             // MEM->EX forward (source data is already in WB, we need it now in EX)
-            if(mem_ex_rtype && !wb_instr_is_itype) {
-                if(wb_rd == ex_rt && wb_rd != 0 && ex_rt != 0 &&
-                        (ex_opcode == 0x2B || // rt in SW is a source reg.
-                        !ex_instr_is_itype || ex_instr_is_branch)) {
-                    data_rt = (wb_instr_is_lw) ?
-                        wb_stage.data_memreaddata : wb_stage.data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_RTYPE_RT;
+            if(mem_ex && wb_ctl_regwrite) {
+                if(wb_stage.ctl_dest_reg_addr == ex_rs && ex_rs != 0) {
+                    data_rs = wb_stage.data_regwrite;
+                    sim_flags |= PLP_SIM_FWD_MEM_EX_RS;
                 }
-                if(wb_rd == ex_rs && wb_rd != 0 && ex_rs != 0) {
-                    data_rs = (wb_instr_is_lw) ?
-                        wb_stage.data_memreaddata : wb_stage.data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_RTYPE_RS;
-                }
-            }
-            if(mem_ex_itype && wb_instr_is_itype && !wb_instr_is_branch) {
-                if(wb_rt == ex_rt && wb_rt != 0 && ex_rt != 0 &&
-                        (ex_opcode == 0x2B || // rt in SW is a source reg.
-                        !ex_instr_is_itype || ex_instr_is_branch)) {
-                    data_rt = (wb_instr_is_lw) ?
-                        wb_stage.data_memreaddata : wb_stage.data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_ITYPE_RT;
-                }
-                if(wb_rt == ex_rs && wb_rt != 0 && ex_rs != 0) {
-                    data_rs = (wb_instr_is_lw) ?
-                        wb_stage.data_memreaddata : wb_stage.data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_ITYPE_RS;
+                if(wb_stage.ctl_dest_reg_addr == ex_rt && ex_rt != 0) {
+                    data_rt = wb_stage.data_regwrite;
+                    sim_flags |= PLP_SIM_FWD_MEM_EX_RT;
                 }
             }
 
@@ -1076,30 +1053,14 @@ public class SimCore extends PLPSimCore {
             // our MEM->EX handlers
 
             // EX->EX forward (source data is already in MEM, we need it now in EX)
-            if(ex_ex_rtype && !mem_instr_is_itype) {
-                if(mem_rd == ex_rs && mem_rd != 0 && ex_rs != 0) {
+            if(ex_ex && mem_ctl_regwrite) {
+                if(mem_stage.fwd_ctl_dest_reg_addr == ex_rs && ex_rs != 0) {
                     data_rs = mem_stage.fwd_data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_EX_EX_RTYPE_RS;
+                    sim_flags |= PLP_SIM_FWD_EX_EX_RS;
                 }
-                if(mem_rd == ex_rt && mem_rd != 0 && ex_rt != 0 &&
-                        (ex_opcode == 0x2B || // rt in SW is source reg.
-                        !ex_instr_is_itype || ex_instr_is_branch)) {
+                if(mem_stage.fwd_ctl_dest_reg_addr == ex_rt && ex_rt != 0) {
                     data_rt = mem_stage.fwd_data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_EX_EX_RTYPE_RT;
-                }
-            }
-            if(ex_ex_itype && mem_instr_is_itype && !mem_instr_is_branch &&
-                    !mem_instr_is_lw) {
-                if(mem_rt == ex_rs && mem_rt != 0 && ex_rs != 0 &&
-                        mem_stage.ctl_memwrite != 1) {
-                    data_rs = mem_stage.fwd_data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_EX_EX_ITYPE_RS;
-                }
-                if(mem_rt == ex_rt && mem_rt != 0 && ex_rt != 0 &&
-                        (ex_opcode == 0x2B || // rt in SW is source reg.
-                        !ex_instr_is_itype || ex_instr_is_branch)) {
-                    data_rt = mem_stage.fwd_data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_EX_EX_ITYPE_RT;
+                    sim_flags |= PLP_SIM_FWD_EX_EX_RT;
                 }
             }
 
@@ -1211,8 +1172,6 @@ public class SimCore extends PLPSimCore {
 
         public long data_memwritedata;
 
-        public long ctl_regwrite;
-
         public long i_instruction;
         public long i_instrAddr;
 
@@ -1228,8 +1187,6 @@ public class SimCore extends PLPSimCore {
 
         public long i_data_memwritedata;
 
-        public long i_ctl_regwrite;
-
         private wb   wb_reg;
         private PLPSimBus bus;
 
@@ -1239,6 +1196,9 @@ public class SimCore extends PLPSimCore {
         }
 
         public void printvars() {
+            String writedata_forwarded = (sim_flags & (PLP_SIM_FWD_MEM_MEM))
+                      == 0 ? "" : " (forwarded)";
+            
             Msg.p("MEM vars");
             Msg.p("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
             Msg.p("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
@@ -1251,11 +1211,10 @@ public class SimCore extends PLPSimCore {
             Msg.p("\tfwd_ctl_jal: " + fwd_ctl_jal);
             Msg.p("\tfwd_data_alu_result: " + String.format("%08x",fwd_data_alu_result));
 
-            Msg.p("\tctl_regwrite: " + ctl_regwrite);
             Msg.p("\tctl_memwrite: " + ctl_memwrite);
             Msg.p("\tctl_memread: " + ctl_memread);
 
-            Msg.p("\tdata_memwritedata: " + String.format("%08x",data_memwritedata));
+            Msg.p("\tdata_memwritedata: " + String.format("%08x",data_memwritedata) + writedata_forwarded);
             Msg.P();
         }
 
@@ -1272,7 +1231,6 @@ public class SimCore extends PLPSimCore {
             Msg.p("\ti_fwd_ctl_jal: " + i_fwd_ctl_jal);
             Msg.p("\ti_fwd_data_alu_result: " + String.format("%08x",i_fwd_data_alu_result));
 
-            Msg.p("\ti_ctl_regwrite: " + i_ctl_regwrite);
             Msg.p("\ti_ctl_memwrite: " + i_ctl_memwrite);
             Msg.p("\ti_ctl_memread: " + i_ctl_memread);
 
@@ -1298,18 +1256,13 @@ public class SimCore extends PLPSimCore {
                 wb_reg.hot = true;
             }
 
-            if(instrAddr == -1) return Constants.PLP_OK; // cleared
-
             if(!bubble) count++;
 
             // Check for MEM->MEM data dependency
-            long prev_rt = MIPSInstr.rt(wb_stage.instruction);
-            long next_rt = MIPSInstr.rt(instruction);
-            if(prev_rt == next_rt && prev_rt != 0 && next_rt != 0 &&
-                        MIPSInstr.opcode(wb_stage.instruction) == 0x23 && // wb instruction is a lw
-                        MIPSInstr.opcode(instruction) == 0x2B &&          // mem instruction is sw
-                        mem_mem) {
-                    data_memwritedata = wb_stage.data_memreaddata; // wb has been clocked
+            if(wb_stage.ctl_memtoreg == 1 && ctl_memwrite == 1 &&
+                    wb_stage.ctl_dest_reg_addr == MIPSInstr.rt(instruction) &&
+                    MIPSInstr.rt(instruction) != 0 && mem_mem) {
+                    data_memwritedata = wb_stage.data_regwrite; // wb has been clocked
                     sim_flags |= PLP_SIM_FWD_MEM_MEM;
             }
 
@@ -1360,8 +1313,6 @@ public class SimCore extends PLPSimCore {
             ctl_memwrite = i_ctl_memwrite;
             ctl_memread = i_ctl_memread;
             data_memwritedata = i_data_memwritedata;
-
-            ctl_regwrite = i_ctl_regwrite;
         }
 
         @Override public String toString() {
@@ -1395,6 +1346,7 @@ public class SimCore extends PLPSimCore {
 
         public long data_memreaddata;
         public long data_alu_result;
+        public long data_regwrite;
 
         public long i_instruction;
         public long i_instrAddr;
@@ -1428,6 +1380,7 @@ public class SimCore extends PLPSimCore {
 
             Msg.p("\tdata_memreaddata: " + String.format("%08x",data_memreaddata));
             Msg.p("\tdata_alu_result: " + String.format("%08x",data_alu_result));
+            Msg.p("\tdata_regwrite: " + String.format("%08x",data_regwrite));
             Msg.P();
         }
 
@@ -1462,16 +1415,15 @@ public class SimCore extends PLPSimCore {
                 instr_retired = true;
             }
 
-            if(instrAddr == -1) return Constants.PLP_OK; // cleared
-
             if(!bubble) count++;
 
             long internal_2x1 = (ctl_jal == 0) ?
                                  data_alu_result : ctl_linkaddr;
 
+            data_regwrite = (ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata;
+
             if(ctl_regwrite == 1 && ctl_dest_reg_addr != 0)
-                regfile.write(ctl_dest_reg_addr,
-                    (Long) ((ctl_memtoreg == 0) ? internal_2x1 : data_memreaddata), false);
+                regfile.write(ctl_dest_reg_addr, data_regwrite, false);
 
             return Constants.PLP_OK;
 
@@ -1557,39 +1509,6 @@ public class SimCore extends PLPSimCore {
             return 0;
         }
     }
-
-    /**
-     * This function checks whether the CPU needs to stall due to load-use
-     * data-dependency hazard
-     */
-    public int checkLoadUseStall(SimCore.id id_stage, SimCore.ex ex_stage) {
-
-        byte id_opcode =   MIPSInstr.opcode(id_stage.instruction);
-        int id_instrType = Asm.lookupInstrType(Asm.lookupInstrOpcode(id_opcode));
-
-        long id_rt =        MIPSInstr.rt(id_stage.instruction);
-        long id_rs =        MIPSInstr.rs(id_stage.instruction);
-        long ex_rt =        MIPSInstr.rt(ex_stage.instruction);
-
-        boolean id_instr_is_branch = (id_instrType == 3);
-        boolean id_instr_is_itype = (id_instrType >= 3 && id_instrType <= 6);
-
-        if(mem_stage.hot && mem_ex_lw) {
-            // MEM->EX Load Word, stall
-            if(ex_rt == id_rt && ex_rt != 0 && id_rt != 0 && ex_stage.fwd_ctl_memread == 1
-                    && (!(id_opcode == 0x2B) || !id_instr_is_itype || id_instr_is_branch)) {
-                ex_stall = true;
-                sim_flags |= PLP_SIM_FWD_MEM_EX_LW_RT;
-            }
-            if(ex_rt == id_rs && ex_rt != 0 && id_rs != 0 && ex_stage.fwd_ctl_memread == 1) {
-                ex_stall = true;
-                sim_flags |= PLP_SIM_FWD_MEM_EX_LW_RS;
-            }
-        }
-
-        return Constants.PLP_OK;
-    }
-   
 }
 
 
