@@ -214,22 +214,14 @@ public class SimCLI {
 
     public static void cmd_flags() {
         long f = core.getFlags();
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT)
-            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS)
-            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RS");
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT)
-            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS)
-            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RS");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT)
-            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS)
-            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RS");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT)
-            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS)
-            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RT) == SimCore.PLP_SIM_FWD_EX_EX_RT)
+            Msg.P("PLP_SIM_FWD_EX_EX_RT");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RS) == SimCore.PLP_SIM_FWD_EX_EX_RS)
+            Msg.P("PLP_SIM_FWD_EX_EX_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RT) == SimCore.PLP_SIM_FWD_MEM_EX_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RS) == SimCore.PLP_SIM_FWD_MEM_EX_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RS");
         if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RT) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RT)
             Msg.P("PLP_SIM_FWD_MEM_EX_LW_RT");
         if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RS) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RS)
@@ -248,22 +240,14 @@ public class SimCLI {
 
     public static void cmd_pflags() {
         long f = core.getPreviousFlags();
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RT)
-            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_ITYPE_RS)
-            Msg.P("PLP_SIM_FWD_EX_EX_ITYPE_RS");
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RT)
-            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_EX_EX_RTYPE_RS)
-            Msg.P("PLP_SIM_FWD_EX_EX_RTYPE_RS");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RT)
-            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_RTYPE_RS)
-            Msg.P("PLP_SIM_FWD_MEM_EX_RTYPE_RS");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RT)
-            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RT");
-        if((f & SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS) == SimCore.PLP_SIM_FWD_MEM_EX_ITYPE_RS)
-            Msg.P("PLP_SIM_FWD_MEM_EX_ITYPE_RS");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RT) == SimCore.PLP_SIM_FWD_EX_EX_RT)
+            Msg.P("PLP_SIM_FWD_EX_EX_RT");
+        if((f & SimCore.PLP_SIM_FWD_EX_EX_RS) == SimCore.PLP_SIM_FWD_EX_EX_RS)
+            Msg.P("PLP_SIM_FWD_EX_EX_RS");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RT) == SimCore.PLP_SIM_FWD_MEM_EX_RT)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RT");
+        if((f & SimCore.PLP_SIM_FWD_MEM_EX_RS) == SimCore.PLP_SIM_FWD_MEM_EX_RS)
+            Msg.P("PLP_SIM_FWD_MEM_EX_RS");
         if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RT) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RT)
             Msg.P("PLP_SIM_FWD_MEM_EX_LW_RT");
         if((f & SimCore.PLP_SIM_FWD_MEM_EX_LW_RS) == SimCore.PLP_SIM_FWD_MEM_EX_LW_RS)
@@ -281,10 +265,8 @@ public class SimCLI {
     }
 
     public static void cmd_fwd() {
-        Msg.P("EX->EX R-type: " + core.ex_ex_rtype);
-        Msg.P("EX->EX I-type: " + core.ex_ex_itype);
-        Msg.P("MEM->EX R-type: " + core.mem_ex_rtype);
-        Msg.P("MEM->EX I-type: " + core.mem_ex_itype);
+        Msg.P("EX->EX: " + core.ex_ex);
+        Msg.P("MEM->EX: " + core.mem_ex);
         Msg.P("MEM->EX LW-use: " + core.mem_ex_lw);
     }
 
