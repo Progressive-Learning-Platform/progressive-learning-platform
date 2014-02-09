@@ -281,11 +281,11 @@ public class SimCLI {
     }
 
     public static void cmd_fwd() {
-        Msg.P("EX->EX R-type: " + core.forwarding.ex_ex_rtype);
-        Msg.P("EX->EX I-type: " + core.forwarding.ex_ex_itype);
-        Msg.P("MEM->EX R-type: " + core.forwarding.mem_ex_rtype);
-        Msg.P("MEM->EX I-type: " + core.forwarding.mem_ex_itype);
-        Msg.P("MEM->EX LW-use: " + core.forwarding.mem_ex_lw);
+        Msg.P("EX->EX R-type: " + core.ex_ex_rtype);
+        Msg.P("EX->EX I-type: " + core.ex_ex_itype);
+        Msg.P("MEM->EX R-type: " + core.mem_ex_rtype);
+        Msg.P("MEM->EX I-type: " + core.mem_ex_itype);
+        Msg.P("MEM->EX LW-use: " + core.mem_ex_lw);
     }
 
     public static void cmd_pinstr() {
