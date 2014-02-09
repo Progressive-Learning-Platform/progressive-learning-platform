@@ -551,7 +551,7 @@ public class SimCore extends PLPSimCore {
      * Print front end states.
      */
     public void printfrontend() {
-        Msg.p("if:   " + ((id_stage.i_instrAddr == -1) ? "--------" : String.format("%08x", id_stage.i_instrAddr)) +
+        Msg.p("if:   " + ((id_stage.i_instrAddr == -1 || id_stage.i_bubble) ? "--------" : String.format("%08x", id_stage.i_instrAddr)) +
             " instr: " + String.format("%08x", id_stage.i_instruction) +
             " : " + MIPSInstr.format(id_stage.i_instruction) +
             "\ni_pc: "  + String.format("%08x", pc.input()));
