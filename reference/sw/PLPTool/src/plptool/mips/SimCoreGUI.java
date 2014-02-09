@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -716,37 +716,37 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     private void chkEXEXFwdRStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkEXEXFwdRStateChanged
         if(chkEXEXFwdR.isSelected())
-            ((SimCore) plp.sim).forwarding.ex_ex_rtype = true;
+            ((SimCore) plp.sim).ex_ex_rtype = true;
         else
-            ((SimCore) plp.sim).forwarding.ex_ex_rtype = false;
+            ((SimCore) plp.sim).ex_ex_rtype = false;
     }//GEN-LAST:event_chkEXEXFwdRStateChanged
 
     private void chkEXEXFwdIStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkEXEXFwdIStateChanged
         if(chkEXEXFwdI.isSelected())
-            ((SimCore) plp.sim).forwarding.ex_ex_itype = true;
+            ((SimCore) plp.sim).ex_ex_itype = true;
         else
-            ((SimCore) plp.sim).forwarding.ex_ex_itype = false;
+            ((SimCore) plp.sim).ex_ex_itype = false;
     }//GEN-LAST:event_chkEXEXFwdIStateChanged
 
     private void chkMEMEXFwdRStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkMEMEXFwdRStateChanged
         if(chkMEMEXFwdR.isSelected())
-            ((SimCore) plp.sim).forwarding.mem_ex_rtype = true;
+            ((SimCore) plp.sim).mem_ex_rtype = true;
         else
-            ((SimCore) plp.sim).forwarding.mem_ex_rtype = false;
+            ((SimCore) plp.sim).mem_ex_rtype = false;
     }//GEN-LAST:event_chkMEMEXFwdRStateChanged
 
     private void chkMEMEXFwdIStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkMEMEXFwdIStateChanged
         if(chkMEMEXFwdI.isSelected())
-            ((SimCore) plp.sim).forwarding.mem_ex_itype = true;
+            ((SimCore) plp.sim).mem_ex_itype = true;
         else
-            ((SimCore) plp.sim).forwarding.mem_ex_itype = false;
+            ((SimCore) plp.sim).mem_ex_itype = false;
     }//GEN-LAST:event_chkMEMEXFwdIStateChanged
 
     private void chkMEMEXFwdLWStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_chkMEMEXFwdLWStateChanged
         if(chkMEMEXFwdLW.isSelected())
-            ((SimCore) plp.sim).forwarding.mem_ex_lw = true;
+            ((SimCore) plp.sim).mem_ex_lw = true;
         else
-            ((SimCore) plp.sim).forwarding.mem_ex_lw = false;
+            ((SimCore) plp.sim).mem_ex_lw = false;
     }//GEN-LAST:event_chkMEMEXFwdLWStateChanged
 
     private void updateRegisters() {
