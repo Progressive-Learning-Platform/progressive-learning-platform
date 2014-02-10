@@ -16,3 +16,5 @@ rm -rf ../PLPTool-Extensions/Flowchart/build
 rm -rf ../PLPTool-Extensions/Flowchart/dist
 rm -rf ../PLPTool-Extensions/SocketInterface/build
 rm -rf ../PLPTool-Extensions/SocketInterface/dist
+rm -rf ../PLPTool-Extensions/WebService/build
+rm -rf ../PLPTool-Extensions/WebService/dist

@@ -450,6 +450,24 @@ public class Msg {
     }
 
     /**
+     * Redirect output stream to an alternative print stream
+     *
+     * @param str
+     */
+    public static void setLogOutStream(PrintStream str) {
+        LogOutStream = str;
+    }
+
+    /**
+     * Redirect error stream to an alternative print stream
+     *
+     * @param str
+     */
+    public static void setLogErrStream(PrintStream str) {
+        LogErrStream = str;
+    }
+
+    /**
      * Reset output streams to standard output and error streams
      */
     public static void resetStreams() {
