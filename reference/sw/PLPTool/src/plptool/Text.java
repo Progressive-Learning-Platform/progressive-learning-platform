@@ -1,5 +1,5 @@
 /*
-    Copyright 2012 PLP Contributors
+    Copyright 2012-2014 PLP Contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ public class Text {
     public static final String projectFileVersionString = "PLP-5.0";
     public static final String copyrightString =
             "PLP Software Tool (PLPTool) version " + versionString + "\n" +
-            "Copyright (C) 2010-2013 PLP Contributors.\n" +
+            "Copyright (C) 2010-2014 PLP Contributors.\n" +
             "This program comes with ABSOLUTELY NO WARRANTY.\n" +
             "This is free software, and you are welcome to redistribute it under certain\n" +
             "conditions; run with '--about' for details."
