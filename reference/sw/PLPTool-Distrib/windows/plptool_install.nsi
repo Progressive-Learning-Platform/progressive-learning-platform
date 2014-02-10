@@ -74,6 +74,7 @@ Section "PLPTool Install (required)"
   ${EndIf}
   
   CreateDirectory "$INSTDIR\resources"
+  CreateDirectory "$INSTDIR\resources\web"
   SetOutPath $INSTDIR\resources
   File "..\..\..\..\misc\art\plptool\appicon.ico"
   File "..\..\..\..\misc\art\plptool\terminal.ico"
@@ -117,7 +118,9 @@ Section /o "PLPTool Extensions"
   File "..\..\PLPTool-Extensions\AutoSaver5\dist\AutoSaver5.jar"
   File "..\..\PLPTool-Extensions\Flowchart\dist\Flowchart.jar"
   File "..\..\PLPTool-Extensions\CacheSim\dist\CacheSim.jar"
+  SetOutPath $INSTDIR\resources\web
   File "..\..\PLPTool-Extensions\SocketInterface\dist\SocketInterface.jar"
+  File "..\..\PLPTool-Extensions\WebService\dist\WebService.jar"
   SetOutPath $INSTDIR
 SectionEnd
 

@@ -37,6 +37,12 @@ public class Formatter {
 
     // Print to stdout, prettily.
     public static int prettyPrint(plptool.PLPAsm asm) {
+        Msg.P(prettyString(asm));
+
+        return Constants.PLP_OK;
+    }
+
+    public static String prettyString(plptool.PLPAsm asm) {
         String label;
         String out = "";
         long addrTable[] = asm.getAddrTable();
@@ -68,9 +74,8 @@ public class Formatter {
 
             out += "\n";
         }
-        Msg.P(out);
 
-        return Constants.PLP_OK;
+        return out;
     }
 
     // Output packed binary file
