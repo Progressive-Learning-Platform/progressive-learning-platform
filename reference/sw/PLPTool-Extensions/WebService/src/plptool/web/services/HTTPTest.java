@@ -36,6 +36,19 @@ import com.sun.net.httpserver.*;
 public class HTTPTest {
     protected static HttpServer srv;
 
+    private static String defaultPage =
+            "<html>\n"
+            + "<head><title>PLP Web Service - HTTP Test</title></head>\n"
+            + "<body>\n"
+            + "<h1>PLP Web Service</h1>\n"
+            + "<a href=\"./ide\">Try the IDE</a><br /><br /><br />\n"
+            + "<h2>Powered by:</h2>\n"
+            + "<pre>" + Text.copyrightString + "\n\n" + Text.licenseBanner
+            + "\n\n" + Text.contactString 
+            + "\n\n" + PLPToolApp.getBuildInfo() + "</pre><br />"
+            + "</body>\n"
+            + "</html>";
+
     public static void start() {
 
         int port = 8080;
@@ -45,8 +58,7 @@ public class HTTPTest {
         Msg.M("WebService HTTP Test: running HTTP test server on port " + port);
         try {
             srv = HttpServer.create(new InetSocketAddress(port), 0);
-            srv.createContext("/about", new PlainMessage(Text.copyrightString +
-                    "\n\n" + Text.licenseBanner + "\n\n" + Text.contactString));
+            srv.createContext("/", new PlainMessage(defaultPage));
             srv.createContext("/buildinfo", new PlainMessage(PLPToolApp.getBuildInfo()));
             srv.createContext("/ide", new SimpleIDE());
             srv.setExecutor(null);
@@ -65,9 +77,7 @@ public class HTTPTest {
         }
 
         public void handle(HttpExchange t) throws IOException {
-            Msg.M(t.getRequestMethod() + " " + t.getProtocol());
-            String out = "";
-            out = "Request Path: " + t.getHttpContext().getPath() + "\n\n" + r;
+            String out = r;
             t.sendResponseHeaders(200, out.getBytes().length);
             OutputStream os = t.getResponseBody();
             os.write(out.getBytes());
