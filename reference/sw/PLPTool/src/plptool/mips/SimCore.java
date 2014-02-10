@@ -284,7 +284,6 @@ public class SimCore extends PLPSimCore {
         int ret = 0;
         long old_pc = pc.eval();
 
-
         if(Config.simFunctional)
             ret += stepFunctional();
 
@@ -293,6 +292,7 @@ public class SimCore extends PLPSimCore {
             /****************** RISING EDGE OF THE CLOCK **********************/
 
             // Propagate values
+            // move i_* values to the output side of the pipeline registers
             if(wb_stage.hot)  wb_stage.clock();
             if(mem_stage.hot) mem_stage.clock();
             if(ex_stage.hot)  ex_stage.clock();
@@ -305,13 +305,15 @@ public class SimCore extends PLPSimCore {
             /****************** FALLING EDGE OF THE CLOCK *********************/
 
             // Evaluate stages
+            // produce i_* values for the input side of the pipeline registers
+            // that will be used in the next cycle
             ret += wb_stage.eval();
             ret += mem_stage.eval();
             ret += ex_stage.eval();
             ret += id_stage.eval();
         }
 
-        // pc update logic (input side IF)
+        // Program counter update logic (input side IF)
         if(ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_pcsrc == 1) {
             pc.write(ex_stage.ctl_branchtarget);
             functional_ret = pc.input();
@@ -336,7 +338,47 @@ public class SimCore extends PLPSimCore {
             if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
         }
 
-        // We're stalled in this cycle, do not fetch new instruction
+        /* 
+         * STALL ROUTINES
+         *
+         * By default, the CPU here will just get the next instruction as
+         * determined by the current value of PC. This is done by updating
+         * the input side of the IF/ID pipeline register (id_stage.i_* values)
+         * by calling the fetch() function.
+         *
+         * There are three conditions where this is not true:
+         *
+         * 1. IF stall due to jumps (id_stage.i_* values will take a bubble and
+         *    no new instruction will be fetched, i.e. fetch() function will not
+         *    be called in this case).
+         *
+         * 2. Stall on EX stage due to load-use hazard. Insert bubble for EX
+         *    in the next cycle by making sure ex_stage.i_* values will not
+         *    change the CPU state (no write to memory and register, no branch
+         *    and jump). Then, the IF/ID pipeline is turned off by making
+         *    id_stage.hot = false. This will keep the instruction being decoded
+         *    to stay in that stage. fetch() will be called to fill the IF stage
+         *    or the id_stage.i_* values. Finally we rewrite PC so we don't
+         *    skip an instruction since PC is already clocked due to the
+         *    procedural nature of our simulation engine. In a real machine,
+         *    the PC would have held its value.
+         *
+         * 3. An interrupt service is requested. The interrupt service is a
+         *    3-step process. First, when a request is detected in the end of
+         *    a clock cycle, the CPU checks whether a jump or a branch has been
+         *    executed in the EX stage. If yes, the CPU will wait another cycle
+         *    before servicing (the next instruction is fetched in the IF stage
+         *    as usual). If a jump or branch is not in the EX stage, the CPU
+         *    will go ahead and flush the IF, ID, and EX stages for the next
+         *    cycle.and record the address of the instruction that was in the
+         *    EX stage. In the next cycle, a jalr $ir, $iv instruction is
+         *    injected in the IF stage (id_stage.i_*) with the return value
+         *    being the recorded address minus 4 to offset the plus 4 of the
+         *    PC logic. During the third cycle, the CPU injects a bubble for the
+         *    jump and resumes normal operation in the ISR space.
+         */
+
+        // We're stalled in the NEXT cycle, do not fetch new instruction
         if(if_stall && !ex_continue) {
             if_stall = false;
             id_stage.i_instruction = 0;
@@ -722,7 +764,6 @@ public class SimCore extends PLPSimCore {
             long addr_rt = MIPSInstr.rt(instruction); // rt
             long addr_rs = MIPSInstr.rs(instruction); // rs
 
-
             // Load-use hazard detection logic
 
             // The register being written to by load word
@@ -903,8 +944,15 @@ public class SimCore extends PLPSimCore {
         public long ctl_branchtarget;
         public long ctl_jumptarget;
 
+        public long ctl_forwardX;
+        public long ctl_forwardY;
+
         public long data_rs;
         public long data_rt;
+
+        public long data_x;
+        public long data_eff_y;
+        public long data_y;
 
         public long data_imm_signExtended;
         public long ctl_rt_addr;
@@ -975,10 +1023,15 @@ public class SimCore extends PLPSimCore {
             Msg.p("\tctl_pcsrc: " + ctl_pcsrc);
             Msg.p("\tctl_jump: " + ctl_jump);
             Msg.p("\tctl_branch: " + ctl_branch);
+            Msg.p("\tctl_forwardX: " + ctl_forwardX);
+            Msg.p("\tctl_forwardY: " + ctl_forwardY);
 
             Msg.p("\tdata_imm_signExtended: " + String.format("%08x",data_imm_signExtended));
-            Msg.p("\tdata_rs: " + String.format("%08x",data_rs) + rs_forwarded);
-            Msg.p("\tdata_rt: " + String.format("%08x",data_rt) + rt_forwarded);
+            Msg.p("\tdata_rs: " + String.format("%08x",data_rs));
+            Msg.p("\tdata_rt: " + String.format("%08x",data_rt));
+            Msg.p("\tdata_x (ALU0): " + String.format("%08x",data_x) + rs_forwarded);
+            Msg.p("\tdata_eff_y: " + String.format("%08x",data_eff_y) + rt_forwarded);
+            Msg.p("\tdata_y (ALU1): " + String.format("%08x",data_y));
 
             Msg.p("\tinternal_alu_out: " + String.format("%08x",internal_alu_out));
             Msg.P();
@@ -1037,32 +1090,29 @@ public class SimCore extends PLPSimCore {
             long ex_rs = MIPSInstr.rs(instruction);
             long ex_rt = MIPSInstr.rt(instruction);
 
-            // MEM->EX forward (source data is already in WB, we need it now in EX)
-            if(mem_ex && wb_ctl_regwrite) {
-                if(wb_stage.ctl_dest_reg_addr == ex_rs && ex_rs != 0) {
-                    data_rs = wb_stage.data_regwrite;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_RS;
-                }
-                if(wb_stage.ctl_dest_reg_addr == ex_rt && ex_rt != 0) {
-                    data_rt = wb_stage.data_regwrite;
-                    sim_flags |= PLP_SIM_FWD_MEM_EX_RT;
-                }
-            }
+            // Forward logic for rs source, 1 for EX->EX, 2 for MEM->EX
+            ctl_forwardX = (ex_ex && mem_ctl_regwrite && mem_stage.fwd_ctl_dest_reg_addr == ex_rs && ex_rs != 0) ? 1 :
+                           (mem_ex && wb_ctl_regwrite && wb_stage.ctl_dest_reg_addr == ex_rs && ex_rs != 0)      ? 2 :
+                           0;
 
-            // EX->EX takes precedence, that's why we have this here AFTER
-            // our MEM->EX handlers
+            sim_flags |= ((ctl_forwardX == 1) ? PLP_SIM_FWD_EX_EX_RS :
+                          (ctl_forwardX == 2) ? PLP_SIM_FWD_MEM_EX_RS : 0);
 
-            // EX->EX forward (source data is already in MEM, we need it now in EX)
-            if(ex_ex && mem_ctl_regwrite) {
-                if(mem_stage.fwd_ctl_dest_reg_addr == ex_rs && ex_rs != 0) {
-                    data_rs = mem_stage.fwd_data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_EX_EX_RS;
-                }
-                if(mem_stage.fwd_ctl_dest_reg_addr == ex_rt && ex_rt != 0) {
-                    data_rt = mem_stage.fwd_data_alu_result;
-                    sim_flags |= PLP_SIM_FWD_EX_EX_RT;
-                }
-            }
+            // Forward logic for rt source, 1 for EX->EX, 2 for MEM->EX
+            ctl_forwardY = (ex_ex && mem_ctl_regwrite && mem_stage.fwd_ctl_dest_reg_addr == ex_rt && ex_rt != 0) ? 1 :
+                           (mem_ex && wb_ctl_regwrite && wb_stage.ctl_dest_reg_addr == ex_rt && ex_rt != 0)      ? 2 :
+                           0;
+
+            sim_flags |= ((ctl_forwardY == 1) ? PLP_SIM_FWD_EX_EX_RT :
+                          (ctl_forwardY == 2) ? PLP_SIM_FWD_MEM_EX_RT : 0);
+
+            data_x = (ctl_forwardX == 0) ? data_rs :
+                     (ctl_forwardX == 1) ? mem_stage.fwd_data_alu_result :
+                     (ctl_forwardX == 2) ? wb_stage.data_regwrite : 0;
+
+            data_eff_y = (ctl_forwardY == 0) ? data_rt :
+                         (ctl_forwardY == 1) ? mem_stage.fwd_data_alu_result :
+                         (ctl_forwardY == 2) ? wb_stage.data_regwrite : 0;
 
             mem_reg.i_fwd_ctl_memtoreg = fwd_ctl_memtoreg;
             mem_reg.i_fwd_ctl_regwrite = fwd_ctl_regwrite;
@@ -1074,11 +1124,12 @@ public class SimCore extends PLPSimCore {
 
             mem_reg.i_fwd_ctl_jal = fwd_ctl_jal;
 
-            mem_reg.i_data_memwritedata = data_rt;
+            mem_reg.i_data_memwritedata = data_eff_y;
+
+            data_y = (ctl_aluSrc == 1) ? data_imm_signExtended : data_eff_y;
 
             internal_alu_out =
-                exAlu.eval(data_rs,
-                           ((ctl_aluSrc == 1) ? data_imm_signExtended : data_rt),
+                exAlu.eval(data_x, data_y,
                            ctl_aluOp) & (((long) 0xfffffff << 4) | 0xf);
             
             mem_reg.i_fwd_data_alu_result = internal_alu_out;
@@ -1169,8 +1220,10 @@ public class SimCore extends PLPSimCore {
 
         public long ctl_memwrite;
         public long ctl_memread;
+        public long ctl_fwd_mem_mem;
 
         public long data_memwritedata;
+        public long data_mem_store;
 
         public long i_instruction;
         public long i_instrAddr;
@@ -1213,8 +1266,10 @@ public class SimCore extends PLPSimCore {
 
             Msg.p("\tctl_memwrite: " + ctl_memwrite);
             Msg.p("\tctl_memread: " + ctl_memread);
+            Msg.p("\tctl_fwd_mem_mem: " + ctl_fwd_mem_mem);
 
-            Msg.p("\tdata_memwritedata: " + String.format("%08x",data_memwritedata) + writedata_forwarded);
+            Msg.p("\tdata_memwritedata: " + String.format("%08x",data_memwritedata));
+            Msg.p("\tdata_mem_store: " + String.format("%08x",data_mem_store) + writedata_forwarded);
             Msg.P();
         }
 
@@ -1259,12 +1314,11 @@ public class SimCore extends PLPSimCore {
             if(!bubble) count++;
 
             // Check for MEM->MEM data dependency
-            if(wb_stage.ctl_memtoreg == 1 && ctl_memwrite == 1 &&
+            ctl_fwd_mem_mem = (wb_stage.ctl_memtoreg == 1 && ctl_memwrite == 1 &&
                     wb_stage.ctl_dest_reg_addr == MIPSInstr.rt(instruction) &&
-                    MIPSInstr.rt(instruction) != 0 && mem_mem) {
-                    data_memwritedata = wb_stage.data_regwrite; // wb has been clocked
-                    sim_flags |= PLP_SIM_FWD_MEM_MEM;
-            }
+                    MIPSInstr.rt(instruction) != 0 && mem_mem) ? 1 : 0;
+            sim_flags |= (ctl_fwd_mem_mem == 1 ? PLP_SIM_FWD_MEM_MEM : 0);
+            data_mem_store = (ctl_fwd_mem_mem == 1) ? wb_stage.data_regwrite : data_memwritedata;
 
             wb_reg.i_instruction = instruction;
             wb_reg.i_instrAddr = instrAddr;
@@ -1286,7 +1340,7 @@ public class SimCore extends PLPSimCore {
             }
 
             if(ctl_memwrite == 1)
-                if(bus.write(fwd_data_alu_result, data_memwritedata, false) != Constants.PLP_OK)
+                if(bus.write(fwd_data_alu_result, data_mem_store, false) != Constants.PLP_OK)
                     return Msg.E("Write failed, check previous error.",
                                     Constants.PLP_SIM_BUS_ERROR, this);
 
