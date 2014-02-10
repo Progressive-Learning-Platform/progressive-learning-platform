@@ -724,17 +724,17 @@ public class SimCore extends PLPSimCore {
 
         public void printvars() {
             Msg.p("ID vars");
-            Msg.p("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            Msg.p("\tinstrAddr: " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
-            Msg.p("\tctl_pcplus4: " + String.format("%08x", ctl_pcplus4));
+            Msg.p("\tinstruction:             " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
+            Msg.p("\tinstrAddr:               " + ((instrAddr == -1) ? "--------" : String.format("%08x", instrAddr)));
+            Msg.p("\tctl_pcplus4:             " + String.format("%08x", ctl_pcplus4));
             Msg.P();
         }
 
         public void printnextvars() {
             Msg.p("ID next vars");
-            Msg.p("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            Msg.p("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
-            Msg.p("\ti_ctl_pcplus4: " + String.format("%08x", i_ctl_pcplus4));
+            Msg.p("\ti_instruction:           " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
+            Msg.p("\ti_instrAddr:             " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
+            Msg.p("\ti_ctl_pcplus4:           " + String.format("%08x", i_ctl_pcplus4));
             Msg.P();
         }
 
@@ -1003,64 +1003,68 @@ public class SimCore extends PLPSimCore {
                                   == 0 ? "" : " (forwarded)";
 
             Msg.p("EX vars");
-            Msg.p("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            Msg.p("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
+            Msg.p("\tinstruction:             " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
+            Msg.p("\tinstrAddr:               " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
 
             // EX stage pipeline registers
-            Msg.p("\tfwd_ctl_memtoreg: " + fwd_ctl_memtoreg);
-            Msg.p("\tfwd_ctl_regwrite: " + fwd_ctl_regwrite);
-            Msg.p("\tfwd_ctl_memwrite: " + fwd_ctl_memwrite);
-            Msg.p("\tfwd_ctl_memread: " + fwd_ctl_memread);
-            Msg.p("\tfwd_ctl_linkaddr: " + String.format("%08x",fwd_ctl_linkaddr));
-            Msg.p("\tfwd_ctl_jal: " + fwd_ctl_jal);
+            Msg.p("\tfwd_ctl_memtoreg:        " + fwd_ctl_memtoreg);
+            Msg.p("\tfwd_ctl_regwrite:        " + fwd_ctl_regwrite);
+            Msg.p("\tfwd_ctl_memwrite:        " + fwd_ctl_memwrite);
+            Msg.p("\tfwd_ctl_memread:         " + fwd_ctl_memread);
+            Msg.p("\tfwd_ctl_linkaddr:        " + String.format("%08x",fwd_ctl_linkaddr));
+            Msg.p("\tfwd_ctl_jal:             " + fwd_ctl_jal);
 
-            Msg.p("\tctl_aluSrc: " + ctl_aluSrc);
-            Msg.p("\tctl_aluOp: " + String.format("%08x",ctl_aluOp));
-            Msg.p("\tctl_regDst: " + ctl_regDst);
+            Msg.p("\tctl_aluSrc:              " + ctl_aluSrc);
+            Msg.p("\tctl_aluOp:               " + String.format("%08x",ctl_aluOp));
+            Msg.p("\tctl_regDst:              " + ctl_regDst);
+            Msg.p("\tctl_addr_rt:             " + ctl_rt_addr);
+            Msg.p("\tctl_addr_rd:             " + ctl_rd_addr);
 
-            Msg.p("\tctl_branchtarget: " + String.format("%08x", ctl_branchtarget));
-            Msg.p("\tctl_jumptarget: " + String.format("%08x", ctl_jumptarget));
-            Msg.p("\tctl_pcsrc: " + ctl_pcsrc);
-            Msg.p("\tctl_jump: " + ctl_jump);
-            Msg.p("\tctl_branch: " + ctl_branch);
-            Msg.p("\tctl_forwardX: " + ctl_forwardX);
-            Msg.p("\tctl_forwardY: " + ctl_forwardY);
+            Msg.p("\tctl_branchtarget:        " + String.format("%08x", ctl_branchtarget));
+            Msg.p("\tctl_jump:                " + ctl_jump);
+            Msg.p("\tctl_branch:              " + ctl_branch);
+            Msg.p("\tctl_jumptarget*:         " + String.format("%08x", ctl_jumptarget));
+            Msg.p("\tctl_pcsrc*:              " + ctl_pcsrc);
+            Msg.p("\tctl_forwardX*:           " + ctl_forwardX);
+            Msg.p("\tctl_forwardY*:           " + ctl_forwardY);
 
-            Msg.p("\tdata_imm_signExtended: " + String.format("%08x",data_imm_signExtended));
-            Msg.p("\tdata_rs: " + String.format("%08x",data_rs));
-            Msg.p("\tdata_rt: " + String.format("%08x",data_rt));
-            Msg.p("\tdata_x (ALU0): " + String.format("%08x",data_x) + rs_forwarded);
-            Msg.p("\tdata_eff_y: " + String.format("%08x",data_eff_y) + rt_forwarded);
-            Msg.p("\tdata_y (ALU1): " + String.format("%08x",data_y));
+            Msg.p("\tdata_imm_signExtended:   " + String.format("%08x",data_imm_signExtended));
+            Msg.p("\tdata_rs:                 " + String.format("%08x",data_rs));
+            Msg.p("\tdata_rt:                 " + String.format("%08x",data_rt));
+            Msg.p("\tdata_x (ALU0)*:          " + String.format("%08x",data_x) + rs_forwarded);
+            Msg.p("\tdata_eff_y*:             " + String.format("%08x",data_eff_y) + rt_forwarded);
+            Msg.p("\tdata_y (ALU1)*:          " + String.format("%08x",data_y));
 
-            Msg.p("\tinternal_alu_out: " + String.format("%08x",internal_alu_out));
+            Msg.p("\tinternal_alu_out*:       " + String.format("%08x",internal_alu_out));
             Msg.P();
         }
 
         public void printnextvars() {
             Msg.p("EX next vars");
-            Msg.p("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            Msg.p("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
+            Msg.p("\ti_instruction:           " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
+            Msg.p("\ti_instrAddr:             " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
 
             // EX stage pipeline registers
-            Msg.p("\ti_fwd_ctl_memtoreg: " + i_fwd_ctl_memtoreg);
-            Msg.p("\ti_fwd_ctl_regwrite: " + i_fwd_ctl_regwrite);
-            Msg.p("\ti_fwd_ctl_memwrite: " + i_fwd_ctl_memwrite);
-            Msg.p("\ti_fwd_ctl_memread: " + i_fwd_ctl_memread);
-            Msg.p("\ti_fwd_ctl_linkaddr: " + String.format("%08x",i_fwd_ctl_linkaddr));
-            Msg.p("\ti_fwd_ctl_jal: " + i_fwd_ctl_jal);
+            Msg.p("\ti_fwd_ctl_memtoreg:      " + i_fwd_ctl_memtoreg);
+            Msg.p("\ti_fwd_ctl_regwrite:      " + i_fwd_ctl_regwrite);
+            Msg.p("\ti_fwd_ctl_memwrite:      " + i_fwd_ctl_memwrite);
+            Msg.p("\ti_fwd_ctl_memread:       " + i_fwd_ctl_memread);
+            Msg.p("\ti_fwd_ctl_linkaddr:      " + String.format("%08x",i_fwd_ctl_linkaddr));
+            Msg.p("\ti_fwd_ctl_jal:           " + i_fwd_ctl_jal);
 
-            Msg.p("\ti_ctl_aluSrc: " + i_ctl_aluSrc);
-            Msg.p("\ti_ctl_aluOp: " + String.format("%08x",i_ctl_aluOp));
-            Msg.p("\ti_ctl_regDst: " + i_ctl_regDst);
+            Msg.p("\ti_ctl_aluSrc:            " + i_ctl_aluSrc);
+            Msg.p("\ti_ctl_aluOp:             " + String.format("%08x",i_ctl_aluOp));
+            Msg.p("\ti_ctl_regDst:            " + i_ctl_regDst);
+            Msg.p("\ti_ctl_addr_rt:           " + i_ctl_rt_addr);
+            Msg.p("\ti_ctl_addr_rd:           " + i_ctl_rd_addr);
 
-            Msg.p("\ti_ctl_branchtarget: " + String.format("%08x", i_ctl_branchtarget));
-            Msg.p("\ti_ctl_jump: " + i_ctl_jump);
-            Msg.p("\ti_ctl_branch: " + i_ctl_branch);
+            Msg.p("\ti_ctl_branchtarget:      " + String.format("%08x", i_ctl_branchtarget));
+            Msg.p("\ti_ctl_jump:              " + i_ctl_jump);
+            Msg.p("\ti_ctl_branch:            " + i_ctl_branch);
 
             Msg.p("\ti_data_imm_signExtended: " + String.format("%08x",i_data_imm_signExtended));
-            Msg.p("\ti_data_rs: " + String.format("%08x",i_data_rs));
-            Msg.p("\ti_data_rt: " + String.format("%08x",i_data_rt));
+            Msg.p("\ti_data_rs:               " + String.format("%08x",i_data_rs));
+            Msg.p("\ti_data_rt:               " + String.format("%08x",i_data_rt));
             Msg.P();
         }
 
@@ -1114,6 +1118,14 @@ public class SimCore extends PLPSimCore {
                          (ctl_forwardY == 1) ? mem_stage.fwd_data_alu_result :
                          (ctl_forwardY == 2) ? wb_stage.data_regwrite : 0;
 
+            data_y = (ctl_aluSrc == 1) ? data_imm_signExtended : data_eff_y;
+
+            internal_alu_out =
+                exAlu.eval(data_x, data_y,
+                           ctl_aluOp) & (((long) 0xfffffff << 4) | 0xf);
+
+            mem_reg.i_fwd_data_alu_result = internal_alu_out;
+
             mem_reg.i_fwd_ctl_memtoreg = fwd_ctl_memtoreg;
             mem_reg.i_fwd_ctl_regwrite = fwd_ctl_regwrite;
             mem_reg.i_fwd_ctl_dest_reg_addr = (ctl_regDst == 1) ? ctl_rd_addr : ctl_rt_addr;
@@ -1125,15 +1137,7 @@ public class SimCore extends PLPSimCore {
             mem_reg.i_fwd_ctl_jal = fwd_ctl_jal;
 
             mem_reg.i_data_memwritedata = data_eff_y;
-
-            data_y = (ctl_aluSrc == 1) ? data_imm_signExtended : data_eff_y;
-
-            internal_alu_out =
-                exAlu.eval(data_x, data_y,
-                           ctl_aluOp) & (((long) 0xfffffff << 4) | 0xf);
-            
-            mem_reg.i_fwd_data_alu_result = internal_alu_out;
-
+           
             ctl_pcsrc = (internal_alu_out == 1) ? 1 : 0;
             ctl_pcsrc &= ctl_branch;
 
@@ -1223,6 +1227,7 @@ public class SimCore extends PLPSimCore {
         public long ctl_fwd_mem_mem;
 
         public long data_memwritedata;
+        public Long data_mem_load;
         public long data_mem_store;
 
         public long i_instruction;
@@ -1253,43 +1258,44 @@ public class SimCore extends PLPSimCore {
                       == 0 ? "" : " (forwarded)";
             
             Msg.p("MEM vars");
-            Msg.p("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            Msg.p("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
+            Msg.p("\tinstruction:             " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
+            Msg.p("\tinstrAddr: :             " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
 
             // MEM stage pipeline registers
-            Msg.p("\tfwd_ctl_memtoreg: " + fwd_ctl_memtoreg);
-            Msg.p("\tfwd_ctl_regwrite: " + fwd_ctl_regwrite);
-            Msg.p("\tfwd_ctl_dest_reg_addr: " + fwd_ctl_dest_reg_addr);
-            Msg.p("\tfwd_ctl_linkaddr: " + String.format("%08x",fwd_ctl_linkaddr));
-            Msg.p("\tfwd_ctl_jal: " + fwd_ctl_jal);
-            Msg.p("\tfwd_data_alu_result: " + String.format("%08x",fwd_data_alu_result));
+            Msg.p("\tfwd_ctl_memtoreg:        " + fwd_ctl_memtoreg);
+            Msg.p("\tfwd_ctl_regwrite:        " + fwd_ctl_regwrite);
+            Msg.p("\tfwd_ctl_dest_reg_addr:   " + fwd_ctl_dest_reg_addr);
+            Msg.p("\tfwd_ctl_linkaddr:        " + String.format("%08x",fwd_ctl_linkaddr));
+            Msg.p("\tfwd_ctl_jal:             " + fwd_ctl_jal);
+            Msg.p("\tfwd_data_alu_result:     " + String.format("%08x",fwd_data_alu_result));
 
-            Msg.p("\tctl_memwrite: " + ctl_memwrite);
-            Msg.p("\tctl_memread: " + ctl_memread);
-            Msg.p("\tctl_fwd_mem_mem: " + ctl_fwd_mem_mem);
+            Msg.p("\tctl_memwrite:            " + ctl_memwrite);
+            Msg.p("\tctl_memread:             " + ctl_memread);
+            Msg.p("\tctl_fwd_mem_mem*:        " + ctl_fwd_mem_mem);
 
-            Msg.p("\tdata_memwritedata: " + String.format("%08x",data_memwritedata));
-            Msg.p("\tdata_mem_store: " + String.format("%08x",data_mem_store) + writedata_forwarded);
+            Msg.p("\tdata_memwritedata:       " + String.format("%08x",data_memwritedata));
+            Msg.p("\tdata_mem_load*:          " + String.format("%08x",data_mem_load));
+            Msg.p("\tdata_mem_store*:         " + String.format("%08x",data_mem_store) + writedata_forwarded);
             Msg.P();
         }
 
         public void printnextvars() {
             Msg.p("MEM next vars");
-            Msg.p("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            Msg.p("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
+            Msg.p("\ti_instruction:           " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
+            Msg.p("\ti_instrAddr:             " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
 
             // MEM stage pipeline registers
-            Msg.p("\ti_fwd_ctl_memtoreg: " + i_fwd_ctl_memtoreg);
-            Msg.p("\ti_fwd_ctl_regwrite: " + i_fwd_ctl_regwrite);
+            Msg.p("\ti_fwd_ctl_memtoreg:      " + i_fwd_ctl_memtoreg);
+            Msg.p("\ti_fwd_ctl_regwrite:      " + i_fwd_ctl_regwrite);
             Msg.p("\ti_fwd_ctl_dest_reg_addr: " + i_fwd_ctl_dest_reg_addr);
-            Msg.p("\ti_fwd_ctl_linkaddr: " + String.format("%08x",i_fwd_ctl_linkaddr));
-            Msg.p("\ti_fwd_ctl_jal: " + i_fwd_ctl_jal);
-            Msg.p("\ti_fwd_data_alu_result: " + String.format("%08x",i_fwd_data_alu_result));
+            Msg.p("\ti_fwd_ctl_linkaddr:      " + String.format("%08x",i_fwd_ctl_linkaddr));
+            Msg.p("\ti_fwd_ctl_jal:           " + i_fwd_ctl_jal);
+            Msg.p("\ti_fwd_data_alu_result:   " + String.format("%08x",i_fwd_data_alu_result));
 
-            Msg.p("\ti_ctl_memwrite: " + i_ctl_memwrite);
-            Msg.p("\ti_ctl_memread: " + i_ctl_memread);
+            Msg.p("\ti_ctl_memwrite:          " + i_ctl_memwrite);
+            Msg.p("\ti_ctl_memread:           " + i_ctl_memread);
 
-            Msg.p("\ti_data_memwritedata: " + String.format("%08x",i_data_memwritedata));
+            Msg.p("\ti_data_memwritedata:     " + String.format("%08x",i_data_memwritedata));
             Msg.P();
         }
 
@@ -1331,13 +1337,11 @@ public class SimCore extends PLPSimCore {
         
             wb_reg.i_data_alu_result = fwd_data_alu_result;
 
-            if(ctl_memread == 1) {
-                Long data = (Long) bus.read(fwd_data_alu_result);
-                if(data == null)
-                    return Msg.E("The bus returned no data, check previous error.",
-                                    Constants.PLP_SIM_BUS_ERROR, this);
-                wb_reg.i_data_memreaddata = data;
-            }
+            data_mem_load = (ctl_memread == 1) ? (Long) bus.read(fwd_data_alu_result) : 0;
+            if(data_mem_load == null)
+                return Msg.E("The bus returned no data, check previous error.",
+                                Constants.PLP_SIM_BUS_ERROR, this);
+            wb_reg.i_data_memreaddata = data_mem_load;
 
             if(ctl_memwrite == 1)
                 if(bus.write(fwd_data_alu_result, data_mem_store, false) != Constants.PLP_OK)
@@ -1422,36 +1426,36 @@ public class SimCore extends PLPSimCore {
 
         public void printvars() {
             Msg.p("WB vars");
-            Msg.p("\tinstruction: " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
-            Msg.p("\tinstrAddr: " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
+            Msg.p("\tinstruction:             " + String.format("%08x", instruction) + " " + MIPSInstr.format(instruction));
+            Msg.p("\tinstrAddr:               " + ((instrAddr == -1 || bubble) ? "--------" : String.format("%08x", instrAddr)));
 
             // WB stage pipeline registers
-            Msg.p("\tctl_memtoreg: " + ctl_memtoreg);
-            Msg.p("\tctl_regwrite: " + ctl_regwrite);
-            Msg.p("\tctl_dest_reg_addr: " + ctl_dest_reg_addr);
-            Msg.p("\tctl_linkaddr: " + String.format("%08x",ctl_linkaddr));
-            Msg.p("\tctl_jal: " + ctl_jal);
+            Msg.p("\tctl_memtoreg:            " + ctl_memtoreg);
+            Msg.p("\tctl_regwrite:            " + ctl_regwrite);
+            Msg.p("\tctl_dest_reg_addr:       " + ctl_dest_reg_addr);
+            Msg.p("\tctl_linkaddr:            " + String.format("%08x",ctl_linkaddr));
+            Msg.p("\tctl_jal:                 " + ctl_jal);
 
-            Msg.p("\tdata_memreaddata: " + String.format("%08x",data_memreaddata));
-            Msg.p("\tdata_alu_result: " + String.format("%08x",data_alu_result));
-            Msg.p("\tdata_regwrite: " + String.format("%08x",data_regwrite));
+            Msg.p("\tdata_memreaddata:        " + String.format("%08x",data_memreaddata));
+            Msg.p("\tdata_alu_result:         " + String.format("%08x",data_alu_result));
+            Msg.p("\tdata_regwrite*:          " + String.format("%08x",data_regwrite));
             Msg.P();
         }
 
         public void printnextvars() {
             Msg.p("WB next vars");
-            Msg.p("\ti_instruction: " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
-            Msg.p("\ti_instrAddr: " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
+            Msg.p("\ti_instruction:           " + String.format("%08x", i_instruction) + " " + MIPSInstr.format(i_instruction));
+            Msg.p("\ti_instrAddr:             " + ((i_instrAddr == -1) ? "--------" : String.format("%08x", i_instrAddr)));
 
             // WB stage pipeline registers
-            Msg.p("\ti_ctl_memtoreg: " + i_ctl_memtoreg);
-            Msg.p("\ti_ctl_regwrite: " + i_ctl_regwrite);
-            Msg.p("\ti_ctl_dest_reg_addr: " + i_ctl_dest_reg_addr);
-            Msg.p("\ti_ctl_linkaddr: " + String.format("%08x",i_ctl_linkaddr));
-            Msg.p("\ti_ctl_jal: " + i_ctl_jal);
+            Msg.p("\ti_ctl_memtoreg:          " + i_ctl_memtoreg);
+            Msg.p("\ti_ctl_regwrite:          " + i_ctl_regwrite);
+            Msg.p("\ti_ctl_dest_reg_addr:     " + i_ctl_dest_reg_addr);
+            Msg.p("\ti_ctl_linkaddr:          " + String.format("%08x",i_ctl_linkaddr));
+            Msg.p("\ti_ctl_jal:               " + i_ctl_jal);
 
-            Msg.p("\ti_data_memreaddata: " + String.format("%08x",i_data_memreaddata));
-            Msg.p("\ti_data_alu_result: " + String.format("%08x",i_data_alu_result));
+            Msg.p("\ti_data_memreaddata:      " + String.format("%08x",i_data_memreaddata));
+            Msg.p("\ti_data_alu_result:       " + String.format("%08x",i_data_alu_result));
             Msg.P();
         }
 
