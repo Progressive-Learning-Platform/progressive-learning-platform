@@ -582,12 +582,10 @@ public class TextLineNumber extends JPanel
                                      String.format("0x%02x", addr));
                             plp.sim.breakpoints.add(addr, plp.getOpenAsm(), lineNumber);
                             Object[] eParams = {addr, plp.getOpenAsm(), lineNumber};
-                            plp.hookEvent(new ProjectEvent(ProjectEvent.BREAKPOINT_SET, -1, eParams));
 
                         } else {
                             plptool.Msg.M("Removing breakpoint.");
                             plp.sim.breakpoints.remove(addr);
-                            plp.hookEvent(new ProjectEvent(ProjectEvent.BREAKPOINT_REMOVED, -1, addr));
                         }
                         this.repaint();
                     }

@@ -582,9 +582,6 @@ public class Develop extends javax.swing.JFrame {
                 Config.devWindowPositionY = getY();
                 Config.devWindowWidth = getWidth();
                 Config.devWindowHeight = getHeight();
-                ProjectDriver.saveConfig();
-                plp.hookEvent(new ProjectEvent(ProjectEvent.EXIT, -1));
-                CallbackRegistry.callback(CallbackRegistry.EXIT, null);
                 PLPToolApp.quit(Constants.PLP_OK);
         }
     }
@@ -1232,28 +1229,16 @@ public class Develop extends javax.swing.JFrame {
                 menuSimView.setSelected(v);
                 btnCPU.setSelected(v);
                 plp.g_sim.setVisible(v);
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMCPU));
                 break;
             case Constants.PLP_TOOLFRAME_WATCHER:
                 menuSimWatcher.setSelected(v);
                 btnWatcher.setSelected(v);
                 plp.g_watcher.setVisible(v);
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_WATCHER));
                 break;
             case Constants.PLP_TOOLFRAME_SIMCTRL:
                 menuSimControl.setSelected(v);
                 btnSimControl.setSelected(v);
                 plp.g_simctrl.setVisible(v);
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMCTRL));
                 break;
         }
     }
@@ -1268,10 +1253,6 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.LEDArray) {
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMLEDS));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimLEDs.setSelected(v);
                 btnSimLEDs.setSelected(v);
@@ -1290,10 +1271,6 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.Switches) {
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMSWITCHES));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimSwitches.setSelected(v);
                 btnSimSwitches.setSelected(v);
@@ -1312,10 +1289,6 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.SevenSegments) {
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMSEVENSEGMENTS));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimSevenSegments.setSelected(v);
                 btnSimSevenSegments.setSelected(v);
@@ -1334,10 +1307,6 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.UART) {
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMUART));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimUART.setSelected(v);
                 btnSimUART.setSelected(v);
@@ -1356,10 +1325,6 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.VGA) {
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMVGA));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimVGA.setSelected(v);
                 btnSimVGA.setSelected(v);
@@ -1378,10 +1343,6 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.PLPID) {
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMPLPID));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimPLPID.setSelected(v);
                 btnSimPLPID.setSelected(v);
@@ -1400,10 +1361,6 @@ public class Develop extends javax.swing.JFrame {
             plptool.PLPSimBusModule module = plp.ioreg.getModule(i);
 
             if(module instanceof plptool.mods.GPIO) {
-                if(!plp.isReplaying())
-                    plp.hookEvent(new ProjectEvent(
-                            v ? ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE : ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE,
-                            -1, Constants.PLP_TOOLFRAME_SIMGPIO));
                 ((JFrame)plp.ioreg.getModuleFrame(i)).setVisible(v);
                 menuSimGPIO.setSelected(v);
                 btnSimGPIO.setSelected(v);
@@ -1419,14 +1376,12 @@ public class Develop extends javax.swing.JFrame {
         boolean breakpoint = false;
         CallbackRegistry.callback(CallbackRegistry.SIM_STEP_AGGREGATE, Config.simCyclesPerStep);
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
-            plp.hookEvent(new ProjectEvent(ProjectEvent.SINGLE_STEP, -1));            
             plp.sim.stepW();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                 Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }
-        plp.hookEvent(new ProjectEvent(ProjectEvent.AGGREGATE_STEP, -1, Config.simCyclesPerStep));
         CallbackRegistry.callback(CallbackRegistry.SIM_POST_STEP_AGGREGATE, null);
         plp.updateComponents(true);
     }
@@ -4038,7 +3993,7 @@ class DevEditorDocListener implements DocumentListener {
     public void removeUpdate(final javax.swing.event.DocumentEvent e) {
        if(!enable || !Config.nothighlighting) return;
 
-        if(plp.plpfile != null && !plp.isReplaying()) {
+        if(plp.plpfile != null) {
             plp.setModified();
             plp.requireAssemble();
         }
@@ -4048,7 +4003,7 @@ class DevEditorDocListener implements DocumentListener {
     public void insertUpdate(final javax.swing.event.DocumentEvent e) {
         if(!enable || !Config.nothighlighting) return;
 
-        if(plp.plpfile != null && !plp.isReplaying()) {
+        if(plp.plpfile != null) {
             plp.setModified();
             plp.requireAssemble();
         }

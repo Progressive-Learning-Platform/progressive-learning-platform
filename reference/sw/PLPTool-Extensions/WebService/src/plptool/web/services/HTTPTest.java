@@ -52,7 +52,7 @@ public class HTTPTest {
     public static void start() {
 
         int port = 8080;
-        String userPort = PLPToolApp.getAttributes().get("Web_HTTP_Port");
+        String userPort = PLPToolApp.getAttributes().get("Web_Port");
         if(userPort != null)
             port = Integer.parseInt(userPort);
         Msg.M("WebService HTTP Test: running HTTP test server on port " + port);
@@ -88,9 +88,9 @@ public class HTTPTest {
     static class SimpleIDE implements HttpHandler {
         public void handle(HttpExchange t) throws IOException {
             String uri = t.getRequestURI().toString();
-            Msg.M(t.getRequestMethod() + " " + t.getProtocol() + " path: " +
+            Msg.D(t.getRequestMethod() + " " + t.getProtocol() + " path: " +
                     t.getHttpContext().getPath() +
-                    " reqURI: " + uri);
+                    " reqURI: " + uri, 2, null);
             String tokens[];
             String source = null;
             plptool.mips.Asm asm = null;
@@ -113,14 +113,14 @@ public class HTTPTest {
                     in.close();
                 }
                 
-                Msg.M("Query: " + qry);
+                Msg.D("Query: " + qry, 2, null);
                 source = qry;
                 tokens = source.split("source=", 2);
 
                 if(tokens.length > 1) {
                     source = tokens[1].split("&", 2)[0];
                     source = URLDecoder.decode(source, "UTF-8");
-                    Msg.M("Parsed source: " + source);
+                    Msg.D("Parsed source: " + source, 2, null);
                     asm = new plptool.mips.Asm(source, "$");
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     PrintStream ps = new PrintStream(baos);
