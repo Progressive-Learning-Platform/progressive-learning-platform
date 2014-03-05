@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static boolean simulateScripted = false;
     private static boolean loadModules = true;
     private static boolean headless = false;
+	private static boolean exiting = false;
 
     private static ArrayList<String> moduleLoadDirs;
     private static ArrayList<String> moduleLoadJars;
@@ -133,6 +134,21 @@ public class PLPToolApp extends SingleFrameApplication {
         args = AutoTest.setup(args);                       // Run unit tests
         commandLineArgs = args;
 
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+            public void run() {
+				ProjectDriver.saveConfig();
+        		Msg.D("Exit callback", 2, null);
+        		CallbackRegistry.callback(CallbackRegistry.EXIT, null);
+                try {
+                    Msg.D("Removing temporary directory...", 2, null);
+                    PLPToolbox.deleteRecursive(new File(PLPToolbox.getTmpDir()));
+                } catch(java.io.FileNotFoundException e) {
+		        	Msg.D("Failed to remove temporary directory: " + e, 2, null);
+                }
+            }
+        });
+
 /******************* PARSE COMMAND LINE ARGUMENTS *****************************/
 
         int activeArgIndex = 0;
@@ -207,12 +223,11 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Load classes from a jar with a manifest file
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-L")) {
-		if(moduleLoadJars == null)
+                if(moduleLoadJars == null)
                     moduleLoadJars = new ArrayList<String>();
                 moduleLoadJars.add(args[i+1]);
                 activeArgIndex += 2;
                 i++;
-
 
             // Load all classes from a jar within a the specified directory
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-D")) {
@@ -224,7 +239,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Override ISA for new projects
             } else if(args.length >= activeArgIndex + 2 && args[i].equals("--isa-id")) {
-		Integer archID = Integer.parseInt(args[i+1]);
+                Integer archID = Integer.parseInt(args[i+1]);
                 startingArchID = archID;
                 activeArgIndex += 2;
                 i++;
@@ -667,13 +682,10 @@ public class PLPToolApp extends SingleFrameApplication {
     /**
      * Clean-up and quit
      */
-    public static void quit(int status) {
-        try {
-            Msg.D("Removing temporary directory...", 2, null);
-            PLPToolbox.deleteRecursive(new File(PLPToolbox.getTmpDir()));
-        } catch(java.io.FileNotFoundException e) {
-
-        }
+    public static synchronized void quit(int status) {
+		if(exiting)
+			return;
+		exiting = true;
         Msg.D("Exit(" + status + ")", 1, null);
         System.exit(status);
     }

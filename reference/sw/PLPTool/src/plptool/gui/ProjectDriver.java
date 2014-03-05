@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -499,7 +499,6 @@ public final class ProjectDriver {
         asms.add(new PLPAsmSource("", "main.asm", 0));
         open_asm = 0;
         arch.newProject(this);    
-        hookEvent(new ProjectEvent(ProjectEvent.NEW_PROJECT, -1));
         Msg.I("New project initialized.", null);
 
         if(g) {
@@ -563,7 +562,6 @@ public final class ProjectDriver {
         dirty = true;
 
         open_asm = 0;
-        hookEvent(new ProjectEvent(ProjectEvent.NEW_PROJECT, -1));
         Msg.I("New project initialized.", null);
 
         if(g) {
@@ -810,7 +808,6 @@ public final class ProjectDriver {
      */
     public int open(String path, boolean assemble) {
         File plpFile = new File(path);
-        hookEvent(new ProjectEvent(ProjectEvent.PROJECT_OPEN, -1, plpFile));
         CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN, plpFile);
         
         if(!plpFile.exists())
@@ -930,7 +927,6 @@ public final class ProjectDriver {
                           "is saved.", this);
                 else {
                     asms.set(order, new PLPAsmSource(metaStr, entry.getName(), order));
-                    hookEvent(new ProjectEvent(ProjectEvent.OPEN_ASM_ENTRY, -1, order));
                 }
 
             } else if(entry.getName().equals("plp.metafile")) {
@@ -1221,7 +1217,6 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int assemble() {
-        hookEvent(new ProjectEvent(ProjectEvent.ASSEMBLE, -1));
         CallbackRegistry.callback(CallbackRegistry.EVENT_ASSEMBLE, null);
         if(!arch.hasAssembler())
             return Msg.E("This ISA does not implement an assembler.",
@@ -1274,7 +1269,6 @@ public final class ProjectDriver {
 
         if(g && asm != null && g_asmview != null)
             g_asmview.updateTable();
-        hookEvent(new ProjectEvent(ProjectEvent.POST_ASSEMBLE, -1));
         CallbackRegistry.callback(CallbackRegistry.EVENT_POST_ASSEMBLE, null);
         return Constants.PLP_OK;
     }
@@ -1293,13 +1287,12 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int simulate() {
-        hookEvent(new ProjectEvent(ProjectEvent.SIMULATE, -1));
         CallbackRegistry.callback(CallbackRegistry.EVENT_SIMULATE, null);
         if(!arch.hasSimCore())
             return Msg.E("simulate: This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
 
-        if(asm_req && !isReplaying()) {
+        if(asm_req) {
             int ret = assemble();
             if(ret != Constants.PLP_OK) return Constants.PLP_ASM_ASSEMBLE_FAILED;
         }
@@ -1376,7 +1369,6 @@ public final class ProjectDriver {
         }
 
         arch.simulatorInitializationFinal();
-        hookEvent(new ProjectEvent(ProjectEvent.SIM_POST_INIT, -1));
         CallbackRegistry.callback(CallbackRegistry.EVENT_SIM_POST_INIT, null);
         return Constants.PLP_OK;
     }
@@ -1387,7 +1379,6 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int desimulate() {
-        hookEvent(new ProjectEvent(ProjectEvent.DESIMULATE, -1));
         CallbackRegistry.callback(CallbackRegistry.EVENT_DESIMULATE, null);
         if(!sim_mode)
             return Constants.PLP_OK;
@@ -1429,7 +1420,6 @@ public final class ProjectDriver {
         sim_mode = false;
         updateWindowTitle();
 
-        hookEvent(new ProjectEvent(ProjectEvent.SIM_POST_UNINIT, -1));
         CallbackRegistry.callback(CallbackRegistry.EVENT_SIM_POST_UNINIT, null);
         return Constants.PLP_OK;
     }
@@ -1440,7 +1430,6 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int runSimulation() {
-        hookEvent(new ProjectEvent(ProjectEvent.RUN_START, -1));
         CallbackRegistry.callback(CallbackRegistry.SIM_RUN_START, null);
         g_simrun = new plptool.gui.SimRunner(this);
         g_simrun.start();
@@ -1459,7 +1448,6 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int stopSimulation() {
-        hookEvent(new ProjectEvent(ProjectEvent.RUN_END, -1));
         CallbackRegistry.callback(CallbackRegistry.SIM_RUN_STOP, null);
         if(g_simrun != null) {
             try {
@@ -1607,7 +1595,6 @@ public final class ProjectDriver {
     public void setOpenAsm(int index) {
         if(index >= 0 && index < asms.size()) {
             open_asm = index;
-            hookEvent(new ProjectEvent(ProjectEvent.OPENASM_CHANGE, -1, open_asm));
             CallbackRegistry.callback(CallbackRegistry.PROJECT_OPENASM_CHANGE, open_asm);
         }
     }
@@ -1974,116 +1961,6 @@ public final class ProjectDriver {
             System.out.println("GUI error has occured. Switch to debug level 2 or above to print stack trace.");
             Msg.trace(e);
         }
-    }
-
-    /**
-     * Pass a project event to the hook function of dynamic modules
-     *
-     * @param e ProjectEvent to be passed on
-     */
-    public void hookEvent(ProjectEvent e) {
-        if(!replay) DynamicModuleFramework.hook(e);
-    }
-
-    /**
-     * Replay action as specified by the ProjectEvent instance passed to
-     * this function
-     *
-     * @param e ProjectEvent to be replayed
-     */
-    public void replay(ProjectEvent e) {
-        replay = true;
-        switch(e.getIdentifier()) {
-            
-            case ProjectEvent.ASSEMBLE:
-                g_dev.assemble();
-                break;
-                
-            case ProjectEvent.SIMULATE:
-                g_dev.simBegin();
-                break;
-
-            case ProjectEvent.DESIMULATE:
-                g_dev.simEnd();
-                break;
-
-            case ProjectEvent.SINGLE_STEP:
-                g_dev.simStep();
-                break;
-
-            case ProjectEvent.EDITOR_INSERT:
-                try {
-                    g_dev.getEditor().getDocument().insertString(
-                            (Integer)((Object[])e.getParameters())[0],  //off
-                            (String)((Object[])e.getParameters())[1],   //str
-                            null);
-                } catch(javax.swing.text.BadLocationException ble) {
-                    ble.printStackTrace();
-                }
-                break;
-
-            case ProjectEvent.EDITOR_REMOVE:
-                try {
-                    g_dev.getEditor().getDocument().remove(
-                            (Integer)((Object[])e.getParameters())[0],  //off
-                            (Integer)((Object[])e.getParameters())[1]); //len
-                } catch(javax.swing.text.BadLocationException ble) {
-                    ble.printStackTrace();
-                }
-                break;
-
-            case ProjectEvent.RUN_START:
-                runSimulation();
-                break;
-
-            case ProjectEvent.RUN_END:
-                stopSimulation();
-                break;
-
-            case ProjectEvent.SIM_SPEED_CHANGED:
-                int newDelay = (Integer) e.getParameters();
-                Config.simRunnerDelay = newDelay;
-                break;
-
-            case ProjectEvent.SIM_STEPSIZE_CHANGED:
-                int newStepsize = (Integer) e.getParameters();
-                Config.simCyclesPerStep = newStepsize;
-                break;
-
-            case ProjectEvent.EDITOR_CHANGE:
-
-                break;
-
-            case ProjectEvent.OPENASM_CHANGE:
-                updateAsm(open_asm, g_dev.getEditorText());
-                open_asm = (Integer) e.getParameters();
-                refreshProjectView(false);
-                break;
-
-            case ProjectEvent.SIM_WINDOW_VISIBILITY_TRUE:
-                g_dev.setSimWindowVisibility((Integer) e.getParameters(), true);
-                break;
-
-            case ProjectEvent.SIM_WINDOW_VISIBILITY_FALSE:
-                g_dev.setSimWindowVisibility((Integer) e.getParameters(), false);
-                break;
-
-            case ProjectEvent.GENERIC:
-                break;
-
-            default:
-                Msg.D("Unknown event ID: " + e.getIdentifier(), 3, this);
-        }
-        replay = false;
-    }
-
-    /**
-     * Return whether the project is replaying project events
-     *
-     * @return True if project is being replayed, false otherwise
-     */
-    public boolean isReplaying() {
-        return replay;
     }
 
     /**
