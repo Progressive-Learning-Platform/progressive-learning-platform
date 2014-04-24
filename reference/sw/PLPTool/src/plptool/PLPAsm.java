@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2013 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,6 +56,13 @@ public abstract class PLPAsm implements PLPGenericModule {
      * Optional preprocessed assembly string to be used by assemble()
      */
     protected String        preprocessedAsm;
+
+    /**
+     * An array list of build error objects that can be used to relate back
+     * to the source file index and the line number where the source of the
+     * error is
+     */
+    protected ArrayList<PLPBuildError> errorList;
 
     /**
      * PLPAsm defaults to returning the current version of PLPTool.
@@ -138,8 +145,19 @@ public abstract class PLPAsm implements PLPGenericModule {
      */
     protected HashMap<String, Long> symTable;
 
+    /**
+     * Call the preprocess routine of the assembler
+     *
+     * @param index Source file index to start preprocess with
+     * @return PLP_OK or error code
+     */
     abstract public int preprocess(int index);
-    
+
+    /**
+     * Call the assemble routine of the assembler
+     *
+     * @return PLP_OK or error code
+     */
     abstract public int assemble();
 
     /**
@@ -412,6 +430,15 @@ public abstract class PLPAsm implements PLPGenericModule {
      * @return ProjectDriver expects PLP_OK to continue with the simulation
      */
     public int preSimulationCheck() { return Constants.PLP_OK; }
+
+    /**
+     * Get the build error list from this assembler object
+     *
+     * @return An array list of the build error objects
+     */
+    public final ArrayList<PLPBuildError> getErrorList() {
+        return errorList;
+    }
 
     /**
      * Overridable developer-specified generic hook.

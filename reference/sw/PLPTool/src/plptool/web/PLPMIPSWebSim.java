@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import plptool.*;
 import plptool.mips.*;
 import plptool.gui.ProjectDriver;
 import javax.swing.text.html.*;
+import javax.swing.text.*;
 
 /**
  * Java applet interface for the PLP MIPS simulation.
@@ -34,6 +35,9 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
     ProjectDriver plp;
     Runner runner;
 
+    EditorKit startingEditorKit;
+    Document startingDocument;
+
     /** Initializes the applet PLPMIPSWebSim */
     public void init() {
         try {
@@ -44,6 +48,8 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                     btnExec.setEnabled(false);
                     tglRun.setEnabled(false);
                     txtCLI.setEnabled(false);
+                    startingEditorKit = txtEditor.getEditorKit();
+                    startingDocument = txtEditor.getDocument();
                     lblStatus.setText("Assemble whenever you're ready!");
                     txtEditor.setText(".org 0x10000000\n" +
                                       "\n" +
@@ -52,6 +58,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
                                       "\n\tj loop" +
                                       "\n\taddiu $t0, $t0, 1\t\t# increment $t0 by one");
                     Config.simRunnerDelay = 100;
+                    Config.simFunctional = false;
 
                     // Instantiate a new projectdriver and attach a source object
                     plp = new ProjectDriver(Constants.PLP_GUI_APPLET);
@@ -66,14 +73,18 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
 
     private void assemble() {
         if(btnAssemble.getText().equals("Back to Editor")) {
-            txtEditor.setEditable(true);
+            txtEditor.setText("");
+            txtEditor.setEditorKit(startingEditorKit);
+            txtEditor.setDocument(startingDocument);
             txtEditor.setText(oldStr);
+            txtEditor.setEditable(true);
             btnAssemble.setText("Assemble");
             btnStep.setEnabled(false);
             lblStatus.setText("Assemble whenever you're ready!");
             txtCLI.setEnabled(false);
             btnExec.setEnabled(false);
-            runner.stepCount = 0;
+            if(runner != null)
+                runner.stepCount = 0;
             tglRun.setSelected(false);
             tglRun.setEnabled(false);
             return;
@@ -116,25 +127,26 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         ret = plp.sim.stepW();
         SimCore sc = (SimCore) plp.sim;
 
-        Msg.M("Register File Contents");
-        Msg.M("======================");
+        Msg.p("Register File Contents");
+        Msg.p("======================");
 
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 4; j++)
-                Msg.m((i+8*j) + ((i+8*j < 10) ? "  " : " ") + String.format("%08x", sc.regfile.read(i+8*j)) + "  ");
+                Msg.pn((i+8*j) + ((i+8*j < 10) ? "  " : " ") + String.format("%08x", sc.regfile.read(i+8*j)) + "  ");
 
-            Msg.M("");
+            Msg.p("");
         }
 
-        Msg.M("");
-        Msg.M("Instructions in-flight");
-        Msg.M("======================");
+        Msg.p("");
+        Msg.p("Instructions in-flight");
+        Msg.p("======================");
 
-        sc.wb_stage.printinstr();
-        sc.mem_stage.printinstr();
-        sc.ex_stage.printinstr();
-        sc.id_stage.printinstr();
+        Msg.p(sc.wb_stage.printinstr());
+        Msg.p(sc.mem_stage.printinstr());
+        Msg.p(sc.ex_stage.printinstr());
+        Msg.p(sc.id_stage.printinstr());
         sc.printfrontend();
+        Msg.P();
 
         return ret;
     }

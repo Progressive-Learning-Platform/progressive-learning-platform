@@ -156,6 +156,11 @@ public final class ProjectDriver {
 
     public PLPSimCoreGUI           g_sim;
 
+    /**
+     * Build error list from the previous failed build process
+     */
+    private ArrayList<PLPBuildError> buildErrorList;
+
     /*
      * PLP GUI Windows
      */ // --
@@ -1224,6 +1229,7 @@ public final class ProjectDriver {
 
         Msg.I("Assembling...", null);
         Msg.errorCounter = 0;
+        buildErrorList = null;
 
         boolean wasAssembled = false;
         int caretPos = -1;
@@ -1259,8 +1265,10 @@ public final class ProjectDriver {
             if(g) g_dev.enableSimControls();
             asm_req = false;
         }
-        else
+        else {
+            buildErrorList = asm.getErrorList();
             asm = null;
+        }
 
         if(g) { 
             refreshProjectView(false);
@@ -1905,6 +1913,15 @@ public final class ProjectDriver {
         }
 
         return Constants.PLP_OK;
+    }
+
+    /**
+     * Get the build error list from the previous failed build
+     *
+     * @return An arraylist of PLPBuildError objects
+     */
+    public ArrayList<PLPBuildError> getBuildErrorList() {
+        return buildErrorList;
     }
 
     /**

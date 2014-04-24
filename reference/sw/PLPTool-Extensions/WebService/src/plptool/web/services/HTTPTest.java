@@ -40,7 +40,7 @@ public class HTTPTest {
             "<html>\n"
             + "<head><title>PLP Web Service - HTTP Test</title></head>\n"
             + "<body>\n"
-            + "<h1>PLP Web Service</h1>\n"
+            + "<h1>PLP Web Service - HTTP Test</h1>\n"
             + "<a href=\"./ide\">Try the IDE</a><br /><br /><br />\n"
             + "<h2>Powered by:</h2>\n"
             + "<pre>" + Text.copyrightString + "\n\n" + Text.licenseBanner
