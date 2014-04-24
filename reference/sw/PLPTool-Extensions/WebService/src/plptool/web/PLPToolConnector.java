@@ -47,27 +47,27 @@ public class PLPToolConnector implements ModuleInterface5 {
     }
 
     public int initialize(ProjectDriver plp) {
-		if(PLPToolApp.getAttributes().containsKey("Web_Help")) {
-			Msg.M("");
-			Msg.M("PLPTool WebService Usage:");
-			Msg.M("   -PWeb_HTTP_Test        Run test web service");
-			Msg.M("   -PWeb_Frontend         Run HTML5 PLPTool frontend ONLY");
-            Msg.M("   -PWeb_Classroom        Run PLP Classroom Web Backend");
-            Msg.M("   -PWeb_Db::[address]:[port]");
-            Msg.M("                          PostgreSQL backend server to use for persistent store");
-            Msg.M("   -PWeb_Db_Cfg::[file]   Load database configuration from [file]");
-            Msg.M("   -PWeb_Db_User::[user]  Use [user] to connect to the database");
-            Msg.M("   -PWeb_Db_Password::[password]");
-            Msg.M("                          Use [password] to connect to the database");
-            Msg.M("   -PWeb_Db_Init          (Re-)initialize the backend database");
-            Msg.M("   -PWeb_Db_Dump::[file]  Dump database contents to a zip [file]");
-            Msg.M("   -PWeb_Db_Import::[file]");
-            Msg.M("                          Import data from [file] to the database");
-			Msg.M("   -PWeb_Port::[port]     Listen to [port] instead of the default 8080");
-			Msg.M("");
-		} else {
-	        CallbackRegistry.register(new HeadlessCallback(), CallbackRegistry.EVENT_HEADLESS_START);
-		}
+        if(PLPToolApp.getAttributes().containsKey("Web_Help")) {
+            Msg.P("");
+            Msg.P("PLPTool WebService Usage:");
+            Msg.P("   -PWeb_HTTP_Test        Run test web service");
+            Msg.P("   -PWeb_Frontend         Run HTML5 PLPTool frontend ONLY");
+            Msg.P("   -PWeb_Classroom        Run PLP Classroom Web Backend");
+            Msg.P("   -PWeb_Db::<address>:<port>");
+            Msg.P("                          PostgreSQL backend server to use for persistent store");
+            Msg.P("   -PWeb_Db_Cfg::<file>   Load database configuration from <file>");
+            Msg.P("   -PWeb_Db_User::<user>  Use <user> to connect to the database");
+            Msg.P("   -PWeb_Db_Password::<password>");
+            Msg.P("                          Use <password> to connect to the database");
+            Msg.P("   -PWeb_Db_Init          (Re-)initialize the backend database");
+            Msg.P("   -PWeb_Db_Dump::<file>  Dump database contents to a zip <file>");
+            Msg.P("   -PWeb_Db_Import::<file>");
+            Msg.P("                          Import data from <file> to the database");
+            Msg.P("   -PWeb_Port::<port>     Listen to <port> instead of the default 8080");
+            Msg.P("");
+        } else {
+            CallbackRegistry.register(new HeadlessCallback(), CallbackRegistry.EVENT_HEADLESS_START);
+        }
         return Constants.PLP_OK;
     }
 }

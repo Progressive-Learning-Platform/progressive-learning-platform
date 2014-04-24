@@ -37,7 +37,6 @@ call  "%ANT_HOME%"\bin\ant jar >> %WORKDIR%\winbuild.log
 ECHO - SocketInterface
 cd ..\SocketInterface
 call  "%ANT_HOME%"\bin\ant jar >> %WORKDIR%\winbuild.log
-cd %WORKDIR%
 ECHO - WebService
 cd ..\WebService
 call  "%ANT_HOME%"\bin\ant jar >> %WORKDIR%\winbuild.log

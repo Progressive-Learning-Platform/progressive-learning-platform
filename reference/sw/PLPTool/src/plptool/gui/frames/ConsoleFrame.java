@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -225,6 +225,15 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     Msg.p(entry.getKey() + "::" + entry.getValue());
                 }
                 Msg.P();
+            } else if(command.equals("dumpbuilderrors")) {
+                java.util.ArrayList<PLPBuildError> errorList;
+                Msg.P("Errors from last build:");
+                if((errorList = plp.getBuildErrorList()) != null) {
+                    for (PLPBuildError e : errorList) {
+                        Msg.P(plp.getAsm(e.getSourceIndex()).getAsmFilePath() + ":" +
+                                e.getLineNumber() + " " + e.getErrorMessage());
+                    }
+                }
             } else if(command.equals("errordialog")) {
                 Config.cfgErrorDialog ^= true;
                 Msg.P("cfgErrorDialog=" + Config.cfgErrorDialog);
