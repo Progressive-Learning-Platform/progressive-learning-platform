@@ -123,11 +123,6 @@ public class SimCore extends PLPSimCore {
     private long previous_flags;
 
     /**
-     * Functional mode return address for interrupts
-     */
-    private long functional_ret;
-
-    /**
      * Forwarding flags
      */
     public boolean mem_mem = true;
@@ -285,7 +280,7 @@ public class SimCore extends PLPSimCore {
         long old_pc = pc.eval();
 
         if(Config.simFunctional)
-            ret += stepFunctional();
+            return stepFunctional();
 
         else {
 
@@ -311,166 +306,163 @@ public class SimCore extends PLPSimCore {
             ret += mem_stage.eval();
             ret += ex_stage.eval();
             ret += id_stage.eval();
-        }
 
-        // Program counter update logic (input side IF)
-        if(ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_pcsrc == 1) {
-            pc.write(ex_stage.ctl_branchtarget);
-            functional_ret = pc.input();
-        } else if (ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_jump == 1) {
-            pc.write(ex_stage.ctl_jumptarget);
-            functional_ret = pc.input();
-        } else if (!if_stall) {
-            pc.write(pc.eval() + 4);
-            functional_ret = pc.eval();
-        }
+            // Program counter update logic (input side IF)
+            if(ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_pcsrc == 1) {
+                pc.write(ex_stage.ctl_branchtarget);
+            } else if (ex_stage.hot && ex_stage.instrAddr != -1 && ex_stage.ctl_jump == 1) {
+                pc.write(ex_stage.ctl_jumptarget);
+            } else if (!if_stall) {
+                pc.write(pc.eval() + 4);
+            }
 
-        // Evaluate modules attached to the bus
-        ret += bus.eval();
-        // Evalulate interrupt controller again to see if anything raised an IRQ
-        // (PLPSimBus evaluates modules from index 0 upwards)
-        ret += bus.eval(0);
+            // Evaluate modules attached to the bus
+            ret += bus.eval();
+            // Evalulate interrupt controller again to see if anything raised an IRQ
+            // (PLPSimBus evaluates modules from index 0 upwards)
+            ret += bus.eval(0);
 
-        if(ret != 0) {
-            Msg.E("Evaluation failed. This simulation is stale.",
-                  Constants.PLP_SIM_EVALUATION_FAILED, this);
+            if(ret != 0) {
+                Msg.E("Evaluation failed. This simulation is stale.",
+                      Constants.PLP_SIM_EVALUATION_FAILED, this);
 
-            if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
-        }
+                if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
+            }
 
-        /* 
-         * STALL ROUTINES
-         *
-         * By default, the CPU here will just get the next instruction as
-         * determined by the current value of PC. This is done by updating
-         * the input side of the IF/ID pipeline register (id_stage.i_* values)
-         * by calling the fetch() function.
-         *
-         * There are three conditions where this is not true:
-         *
-         * 1. IF stall due to jumps (id_stage.i_* values will take a bubble and
-         *    no new instruction will be fetched, i.e. fetch() function will not
-         *    be called in this case).
-         *
-         * 2. Stall on EX stage due to load-use hazard. Insert bubble for EX
-         *    in the next cycle by making sure ex_stage.i_* values will not
-         *    change the CPU state (no write to memory and register, no branch
-         *    and jump). Then, the IF/ID pipeline is turned off by making
-         *    id_stage.hot = false. This will keep the instruction being decoded
-         *    to stay in that stage. fetch() will be called to fill the IF stage
-         *    or the id_stage.i_* values. Finally we rewrite PC so we don't
-         *    skip an instruction since PC is already clocked due to the
-         *    procedural nature of our simulation engine. In a real machine,
-         *    the PC would have held its value.
-         *
-         * 3. An interrupt service is requested. The interrupt service is a
-         *    3-step process. First, when a request is detected in the end of
-         *    a clock cycle, the CPU checks whether a jump or a branch has been
-         *    executed in the EX stage. If yes, the CPU will wait another cycle
-         *    before servicing (the next instruction is fetched in the IF stage
-         *    as usual). If a jump or branch is not in the EX stage, the CPU
-         *    will go ahead and flush the IF, ID, and EX stages for the next
-         *    cycle.and record the address of the instruction that was in the
-         *    EX stage. In the next cycle, a jalr $ir, $iv instruction is
-         *    injected in the IF stage (id_stage.i_*) with the return value
-         *    being the recorded address minus 4 to offset the plus 4 of the
-         *    PC logic. During the third cycle, the CPU injects a bubble for the
-         *    jump and resumes normal operation in the ISR space.
-         */
+            /*
+             * STALL ROUTINES
+             *
+             * By default, the CPU here will just get the next instruction as
+             * determined by the current value of PC. This is done by updating
+             * the input side of the IF/ID pipeline register (id_stage.i_* values)
+             * by calling the fetch() function.
+             *
+             * There are three conditions where this is not true:
+             *
+             * 1. IF stall due to jumps (id_stage.i_* values will take a bubble and
+             *    no new instruction will be fetched, i.e. fetch() function will not
+             *    be called in this case).
+             *
+             * 2. Stall on EX stage due to load-use hazard. Insert bubble for EX
+             *    in the next cycle by making sure ex_stage.i_* values will not
+             *    change the CPU state (no write to memory and register, no branch
+             *    and jump). Then, the IF/ID pipeline is turned off by making
+             *    id_stage.hot = false. This will keep the instruction being decoded
+             *    to stay in that stage. fetch() will be called to fill the IF stage
+             *    or the id_stage.i_* values. Finally we rewrite PC so we don't
+             *    skip an instruction since PC is already clocked due to the
+             *    procedural nature of our simulation engine. In a real machine,
+             *    the PC would have held its value.
+             *
+             * 3. An interrupt service is requested. The interrupt service is a
+             *    3-step process. First, when a request is detected in the end of
+             *    a clock cycle, the CPU checks whether a jump or a branch has been
+             *    executed in the EX stage. If yes, the CPU will wait another cycle
+             *    before servicing (the next instruction is fetched in the IF stage
+             *    as usual). If a jump or branch is not in the EX stage, the CPU
+             *    will go ahead and flush the IF, ID, and EX stages for the next
+             *    cycle.and record the address of the instruction that was in the
+             *    EX stage. In the next cycle, a jalr $ir, $iv instruction is
+             *    injected in the IF stage (id_stage.i_*) with the return value
+             *    being the recorded address minus 4 to offset the plus 4 of the
+             *    PC logic. During the third cycle, the CPU injects a bubble for the
+             *    jump and resumes normal operation in the ISR space.
+             */
 
-        // We're stalled in the NEXT cycle, do not fetch new instruction
-        if(if_stall && !ex_continue) {
-            if_stall = false;
-            id_stage.i_instruction = 0;
-            id_stage.i_instrAddr = pc.input();
-            id_stage.hot = true;
-            id_stage.i_bubble = true;
-
-            return Constants.PLP_OK;
-
-        } else if(ex_stall) { // ex_stall, clear id/ex register
-            ex_stall = false;
-            ex_continue = true;
-            // Insert bubble for EX stage in the next cycle
-            ex_stage.i_instruction = 0;
-            ex_stage.i_instrAddr = -1;
-            ex_stage.i_fwd_ctl_memwrite = 0;
-            ex_stage.i_fwd_ctl_regwrite = 0;
-            ex_stage.i_ctl_branch = 0;
-            ex_stage.i_ctl_jump = 0;
-            ex_stage.hot = true;
-            ex_stage.i_bubble = true;
-            ret = fetch(); // make sure IF stage is filled
-            id_stage.hot = false;
-            pc.write(old_pc + 4);
-
-            return ret;
-
-        } else if(ex_continue) { // resume from ex_stall, turn on id/ex register
-            ex_stage.hot = true;
-            ex_continue = false;
-
-            return fetch();
-
-        } else if (int_state == 2) {
-            Msg.D("IRQ service, int_inject 2->1", 3, this);
-            id_stage.i_instruction = 0x0380f009L; // jalr $ir, $iv
-            id_stage.i_instrAddr = 0;
-            id_stage.i_ctl_pcplus4 = irq_ret - 4;
-            id_stage.hot = true;
-
-            int_state--;
-            return Constants.PLP_OK;
-
-        } else if (int_state == 1) {
-            Msg.D("IRQ service, int_inject 1->0", 3, this);
-            id_stage.i_instruction = 0;
-            id_stage.i_instrAddr = -1;
-            id_stage.hot = true;
-
-            int_state--;
-            IRQAck = 0;
-            return Constants.PLP_OK;
-
-        // Interrupt request
-        } else if(int_state == 3) {
-            Msg.D("IRQ Triggered.", 3, this);
-            long diff = pc.input() - ex_stage.i_instrAddr;
-            Msg.D("instrAddr diff: " + diff, 3, this);
-            sim_flags |= PLP_SIM_IRQ;
-           
-            if(diff == 8 || Config.simFunctional) {
-                sim_flags |= PLP_SIM_IRQ_SERVICED;
-                irq_ret = (Config.simFunctional ? functional_ret : mem_stage.i_instrAddr); // address to return to
-                int_state--;
-                IRQAck = 1;
-                Msg.D("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret), 3, this);
-
-                // flush 3 stages
+            // We're stalled in the NEXT cycle, do not fetch new instruction
+            if(if_stall && !ex_continue) {
+                if_stall = false;
                 id_stage.i_instruction = 0;
-                ex_stage.i_instruction = 0;
-                ex_stage.i_fwd_ctl_regwrite = 0;
-                ex_stage.i_fwd_ctl_memwrite = 0;
-                ex_stage.i_ctl_branch = 0;
-                ex_stage.i_ctl_jump = 0;
-                mem_stage.i_instruction = 0;
-                mem_stage.i_fwd_ctl_regwrite = 0;
-                mem_stage.i_ctl_memwrite = 0;
-                id_stage.i_instrAddr = -1;
-                ex_stage.i_instrAddr = -1;
-                mem_stage.i_instrAddr = -1;              
+                id_stage.i_instrAddr = pc.input();
                 id_stage.hot = true;
-                ex_stage.hot = true;
-                mem_stage.hot = true;
+                id_stage.i_bubble = true;
 
                 return Constants.PLP_OK;
 
-            // can't service yet due to jump/branch
-            } else
+            } else if(ex_stall) { // ex_stall, clear id/ex register
+                ex_stall = false;
+                ex_continue = true;
+                // Insert bubble for EX stage in the next cycle
+                ex_stage.i_instruction = 0;
+                ex_stage.i_instrAddr = -1;
+                ex_stage.i_fwd_ctl_memwrite = 0;
+                ex_stage.i_fwd_ctl_regwrite = 0;
+                ex_stage.i_ctl_branch = 0;
+                ex_stage.i_ctl_jump = 0;
+                ex_stage.hot = true;
+                ex_stage.i_bubble = true;
+                ret = fetch(); // make sure IF stage is filled
+                id_stage.hot = false;
+                pc.write(old_pc + 4);
+
+                return ret;
+
+            } else if(ex_continue) { // resume from ex_stall, turn on id/ex register
+                ex_stage.hot = true;
+                ex_continue = false;
+
                 return fetch();
 
-        } else
-            return fetch();
+            } else if (int_state == 2) {
+                Msg.D("IRQ service, int_inject 2->1", 3, this);
+                id_stage.i_instruction = 0x0380f009L; // jalr $ir, $iv
+                id_stage.i_instrAddr = 0;
+                id_stage.i_ctl_pcplus4 = irq_ret - 4;
+                id_stage.hot = true;
+
+                int_state--;
+                return Constants.PLP_OK;
+
+            } else if (int_state == 1) {
+                Msg.D("IRQ service, int_inject 1->0", 3, this);
+                id_stage.i_instruction = 0;
+                id_stage.i_instrAddr = -1;
+                id_stage.hot = true;
+
+                int_state--;
+                IRQAck = 0;
+                return Constants.PLP_OK;
+
+            // Interrupt request
+            } else if(int_state == 3) {
+                Msg.D("IRQ Triggered.", 3, this);
+                long diff = pc.input() - ex_stage.i_instrAddr;
+                Msg.D("instrAddr diff: " + diff, 3, this);
+                sim_flags |= PLP_SIM_IRQ;
+
+                if(diff == 8 || Config.simFunctional) {
+                    sim_flags |= PLP_SIM_IRQ_SERVICED;
+                    irq_ret = mem_stage.i_instrAddr; // address to return to
+                    int_state--;
+                    IRQAck = 1;
+                    Msg.D("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret), 3, this);
+
+                    // flush 3 stages
+                    id_stage.i_instruction = 0;
+                    ex_stage.i_instruction = 0;
+                    ex_stage.i_fwd_ctl_regwrite = 0;
+                    ex_stage.i_fwd_ctl_memwrite = 0;
+                    ex_stage.i_ctl_branch = 0;
+                    ex_stage.i_ctl_jump = 0;
+                    mem_stage.i_instruction = 0;
+                    mem_stage.i_fwd_ctl_regwrite = 0;
+                    mem_stage.i_ctl_memwrite = 0;
+                    id_stage.i_instrAddr = -1;
+                    ex_stage.i_instrAddr = -1;
+                    mem_stage.i_instrAddr = -1;
+                    id_stage.hot = true;
+                    ex_stage.hot = true;
+                    mem_stage.hot = true;
+
+                    return Constants.PLP_OK;
+
+                // can't service yet due to jump/branch
+                } else
+                    return fetch();
+
+            } else
+                return fetch();
+        }
     }
 
     /**
@@ -522,9 +514,11 @@ public class SimCore extends PLPSimCore {
         return Constants.PLP_OK;
     }
 
+    private boolean branch;
+    private long branch_destination = 0;
     /**
-     * Non-cycle accurate stepping. Lets the instruction through the pipeline
-     * before fetching the next one (functional mode)
+     * Non-cycle accurate stepping. This step function is a lot faster than
+     * the cycle-accurate stepping function.
      *
      * @return Returns 0 on successful completion. Error code otherwise.
      */
@@ -532,17 +526,194 @@ public class SimCore extends PLPSimCore {
         int ret = 0;
 
         pc.clock();
-        id_stage.clock();
-        ret += id_stage.eval();
-        ex_stage.clock();
-        ret += ex_stage.eval();
-        mem_stage.clock();
-        ret += mem_stage.eval();
-        wb_stage.clock();
-        ret += wb_stage.eval();
-        ex_stage.hot = true;
-        if_stall = false;
-        ex_stall = false;
+        ret += fetch(); // get the instruction
+
+        long instr = (int_state == 1) ? 0 : id_stage.i_instruction;
+        int_state = (int_state == 1) ? 0 : int_state;
+
+        int opcode;
+        byte rs, rd, rt, funct, sa;
+        long imm, jaddr;
+
+        opcode = MIPSInstr.opcode(instr);
+        rs = MIPSInstr.rs(instr);
+        rd = MIPSInstr.rd(instr);
+        rt = MIPSInstr.rt(instr);
+        funct = MIPSInstr.funct(instr);
+        sa = MIPSInstr.sa(instr);
+        imm = MIPSInstr.imm(instr);
+        jaddr = MIPSInstr.jaddr(instr);
+
+        long pcplus4 = pc.eval()+4;
+        long s = (rs == 0) ? 0 : regfile.read(rs);
+        long t = (rt == 0) ? 0 : regfile.read(rt);
+        long s_imm =  (short) imm & ((long) 0xfffffff << 4 | 0xf);
+
+        if(IRQAck == 1) {
+            IRQAck = 0;
+        }
+
+        // pcplus4, default execution
+        if(!branch && int_state != 3)
+            pc.write(pcplus4);
+        
+        // are we interrupted
+        else if(!branch && int_state == 3) {
+            Msg.M("INT REQ");
+            sim_flags |= PLP_SIM_IRQ;
+            // rewrite instruction to jalr $iv, $ir
+            opcode = 0;
+            funct = 0x09;
+            s = regfile.read(28);
+            rd = 30;
+            pcplus4 -= 4; // replay the discarded instruction after return from IRQ
+            IRQAck = 1;
+            int_state = 1;
+        }
+
+        // are we branching / jumping
+        else {
+            pc.write(branch_destination);
+            branch = false;
+        }
+
+        // execute instruction
+        switch(opcode) {
+            case 0: // r-type instructions
+                switch(funct) {
+                    case 0x21:
+                        regfile.write(rd, s+t, false);
+                        break;
+
+                    case 0x23:
+                        regfile.write(rd, s-t, false);
+                        break;
+
+                    case 0x24:
+                        regfile.write(rd, s&t, false);
+                        break;
+
+                    case 0x25:
+                        regfile.write(rd, s|t, false);
+                        break;
+
+                    case 0x27:
+                        regfile.write(rd, ~(s|t), false);
+                        break;
+
+                    case 0x2A:
+                        int s_signed = (int) s;
+                        int t_signed = (int) t;
+                        regfile.write(rd, (s_signed < t_signed) ? 1L : 0L, false);
+                        break;
+
+                    case 0x2B:
+                        regfile.write(rd, (s < t) ? 1L : 0L, false);
+                        break;
+
+                    case 0x10:
+                        regfile.write(rd, ((long)(int) s * (long)(int)t) & 0xffffffffL, false);
+                        break;
+
+                    case 0x11:
+                        regfile.write(rd, (((long)(int) s * (long)(int) t) & 0xffffffff00000000L) >> 32, false);
+                        break;
+
+                    case 0x00:
+                        regfile.write(rd, t << sa, false);
+                        break;
+
+                    case 0x02:
+                        regfile.write(rd, t >>> sa, false);                        
+                        break;
+
+                    case 0x08:
+                        branch = true;
+                        branch_destination = s;
+                        break;
+
+                    case 0x09:
+                        branch = true;
+                        branch_destination = s;
+                        regfile.write(rd, pcplus4+4, false);
+                        break;
+
+                    default:
+                        return Msg.E("Unhandled instruction: invalid function field: " +
+                            plptool.PLPToolbox.format32Hex(funct),
+                            Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
+                }
+                break;
+
+            case 0x04: // beq
+                if(s == t) {
+                    branch = true;
+                    branch_destination = (pcplus4 + (s_imm<<2)) & 0xffffffffL;
+                }
+                break;
+
+            case 0x05: // bne
+                if(s != t) {
+                    branch = true;
+                    branch_destination = (pcplus4 + (s_imm<<2)) & 0xffffffffL;
+                }
+                break;
+
+            case 0x09: // addiu
+                regfile.write(rt, s + s_imm, false);
+                break;
+
+            case 0x0C: // andi
+                regfile.write(rt, s & s_imm, false);
+                break;
+
+            case 0x0D: // ori
+                regfile.write(rt, s | s_imm, false);
+                break;
+
+            case 0x0A: // slti
+                int s_signed = (int) s;
+                regfile.write(rt, (s_signed < s_imm) ? 1L : 0L, false);
+                break;
+
+            case 0x0B: // sltiu
+                regfile.write(rt, (s < s_imm) ? 1L : 0L, false);
+                break;
+
+            case 0x0F: // lui
+                regfile.write(rt, imm << 16, false);
+                break;
+
+            case 0x23: // lw
+                Long data = (Long) bus.read(s + s_imm);
+                if(data == null)
+                    return Msg.E("Bus read error.", Constants.PLP_SIM_BUS_ERROR, this);
+                regfile.write(rt, data, false);
+                break;
+
+            case 0x2B: // sw
+                ret = bus.write(s + s_imm, regfile.read(rt), false);
+                if(ret > 0)
+                    return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
+                break;
+
+            case 0x03: // jal
+                regfile.write(31, pcplus4+4, false);
+            case 0x02: // j
+                branch = true;
+                branch_destination = jaddr<<2 | (pcplus4 & 0xf0000000L);
+                break;
+
+            default:
+                return Msg.E("Unhandled instruction: invalid op-code",
+                        Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
+        }
+
+        // Evaluate modules attached to the bus
+        ret += bus.eval();
+        // Evalulate interrupt controller again to see if anything raised an IRQ
+        // (PLPSimBus evaluates modules from index 0 upwards)
+        ret += bus.eval(0);
 
         return ret;
     }
