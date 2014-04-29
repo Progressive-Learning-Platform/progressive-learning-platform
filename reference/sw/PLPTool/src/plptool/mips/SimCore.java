@@ -430,7 +430,7 @@ public class SimCore extends PLPSimCore {
                 Msg.D("instrAddr diff: " + diff, 3, this);
                 sim_flags |= PLP_SIM_IRQ;
 
-                if(diff == 8 || Config.simFunctional) {
+                if(diff == 8) {
                     sim_flags |= PLP_SIM_IRQ_SERVICED;
                     irq_ret = mem_stage.i_instrAddr; // address to return to
                     int_state--;
@@ -517,8 +517,8 @@ public class SimCore extends PLPSimCore {
     private boolean branch;
     private long branch_destination = 0;
     /**
-     * Non-cycle accurate stepping. This step function is a lot faster than
-     * the cycle-accurate stepping function.
+     * Non-cycle accurate stepping. One instruction is fetched and executed
+     * every cycle. Branch delay slots are simulated.
      *
      * @return Returns 0 on successful completion. Error code otherwise.
      */
@@ -527,31 +527,19 @@ public class SimCore extends PLPSimCore {
 
         pc.clock();
         ret += fetch(); // get the instruction
+        
+        long instr = id_stage.i_instruction;
 
-        long instr = (int_state == 1) ? 0 : id_stage.i_instruction;
-        int_state = (int_state == 1) ? 0 : int_state;
-
-        int opcode;
-        byte rs, rd, rt, funct, sa;
-        long imm, jaddr;
-
-        opcode = MIPSInstr.opcode(instr);
-        rs = MIPSInstr.rs(instr);
-        rd = MIPSInstr.rd(instr);
-        rt = MIPSInstr.rt(instr);
-        funct = MIPSInstr.funct(instr);
-        sa = MIPSInstr.sa(instr);
-        imm = MIPSInstr.imm(instr);
-        jaddr = MIPSInstr.jaddr(instr);
+        // fill a nop for our interrupt's jalr branch delay slot
+        if(int_state == 1) {
+            instr = 0;
+            int_state = 0;
+            IRQAck = 0; // we are ready to handle interrupt requests again
+        }
 
         long pcplus4 = pc.eval()+4;
-        long s = (rs == 0) ? 0 : regfile.read(rs);
-        long t = (rt == 0) ? 0 : regfile.read(rt);
-        long s_imm =  (short) imm & ((long) 0xfffffff << 4 | 0xf);
 
-        if(IRQAck == 1) {
-            IRQAck = 0;
-        }
+        // control flow handler
 
         // pcplus4, default execution
         if(!branch && int_state != 3)
@@ -559,154 +547,95 @@ public class SimCore extends PLPSimCore {
         
         // are we interrupted
         else if(!branch && int_state == 3) {
-            Msg.M("INT REQ");
+            Msg.D("INT REQ - ret_addr(pcplus4-4) = " + plptool.PLPToolbox.format32Hex(pcplus4-4), 4, this);
             sim_flags |= PLP_SIM_IRQ;
             // rewrite instruction to jalr $iv, $ir
-            opcode = 0;
-            funct = 0x09;
-            s = regfile.read(28);
-            rd = 30;
-            pcplus4 -= 4; // replay the discarded instruction after return from IRQ
-            IRQAck = 1;
+            instr = 0x0380f009L; 
+            id_stage.i_instrAddr = 0;
+            pcplus4 -= 8; // replay the discarded instruction after return from IRQ (jalr adds 4)
             int_state = 1;
         }
 
-        // are we branching / jumping
+        // we are branching / jumping - simulate a brand delay slot
         else {
+            Msg.D("DELAY SLOT - branching to = " + plptool.PLPToolbox.format32Hex(branch_destination), 4, this);
             pc.write(branch_destination);
             branch = false;
         }
 
-        // execute instruction
-        switch(opcode) {
-            case 0: // r-type instructions
-                switch(funct) {
-                    case 0x21:
-                        regfile.write(rd, s+t, false);
-                        break;
+        // decode instruction
+        int opcode = MIPSInstr.opcode(instr);
+        byte rs = MIPSInstr.rs(instr);
+        byte rd = MIPSInstr.rd(instr);
+        byte rt = MIPSInstr.rt(instr);
+        byte funct = MIPSInstr.funct(instr);
+        long imm = MIPSInstr.imm(instr);
+        long jaddr = MIPSInstr.jaddr(instr);
 
-                    case 0x23:
-                        regfile.write(rd, s-t, false);
-                        break;
+        long s = regfile.read(rs);
+        long t = regfile.read(rt);
+        long s_imm =  (short) imm & 0xffffffffL;
+        long alu_result;
 
-                    case 0x24:
-                        regfile.write(rd, s&t, false);
-                        break;
+        // execute
+        if(opcode == 0) {            
+            if(funct == 0x08 || funct == 0x09) {        // jr
+                branch = true;
+                branch_destination = s;
 
-                    case 0x25:
-                        regfile.write(rd, s|t, false);
-                        break;
-
-                    case 0x27:
-                        regfile.write(rd, ~(s|t), false);
-                        break;
-
-                    case 0x2A:
-                        int s_signed = (int) s;
-                        int t_signed = (int) t;
-                        regfile.write(rd, (s_signed < t_signed) ? 1L : 0L, false);
-                        break;
-
-                    case 0x2B:
-                        regfile.write(rd, (s < t) ? 1L : 0L, false);
-                        break;
-
-                    case 0x10:
-                        regfile.write(rd, ((long)(int) s * (long)(int)t) & 0xffffffffL, false);
-                        break;
-
-                    case 0x11:
-                        regfile.write(rd, (((long)(int) s * (long)(int) t) & 0xffffffff00000000L) >> 32, false);
-                        break;
-
-                    case 0x00:
-                        regfile.write(rd, t << sa, false);
-                        break;
-
-                    case 0x02:
-                        regfile.write(rd, t >>> sa, false);                        
-                        break;
-
-                    case 0x08:
-                        branch = true;
-                        branch_destination = s;
-                        break;
-
-                    case 0x09:
-                        branch = true;
-                        branch_destination = s;
-                        regfile.write(rd, pcplus4+4, false);
-                        break;
-
-                    default:
-                        return Msg.E("Unhandled instruction: invalid function field: " +
+                if(funct == 0x09) {                     // jalr
+                    regfile.write(rd, pcplus4+4, false);
+                }
+            } else {
+                alu_result = ex_stage.exAlu.eval(s, t, instr);
+                if(alu_result == -1) {
+                    return Msg.E("Unhandled instruction: invalid function field: " +
                             plptool.PLPToolbox.format32Hex(funct),
                             Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
                 }
-                break;
-
-            case 0x04: // beq
-                if(s == t) {
-                    branch = true;
-                    branch_destination = (pcplus4 + (s_imm<<2)) & 0xffffffffL;
-                }
-                break;
-
-            case 0x05: // bne
-                if(s != t) {
-                    branch = true;
-                    branch_destination = (pcplus4 + (s_imm<<2)) & 0xffffffffL;
-                }
-                break;
-
-            case 0x09: // addiu
-                regfile.write(rt, s + s_imm, false);
-                break;
-
-            case 0x0C: // andi
-                regfile.write(rt, s & s_imm, false);
-                break;
-
-            case 0x0D: // ori
-                regfile.write(rt, s | s_imm, false);
-                break;
-
-            case 0x0A: // slti
-                int s_signed = (int) s;
-                regfile.write(rt, (s_signed < s_imm) ? 1L : 0L, false);
-                break;
-
-            case 0x0B: // sltiu
-                regfile.write(rt, (s < s_imm) ? 1L : 0L, false);
-                break;
-
-            case 0x0F: // lui
-                regfile.write(rt, imm << 16, false);
-                break;
-
-            case 0x23: // lw
-                Long data = (Long) bus.read(s + s_imm);
-                if(data == null)
-                    return Msg.E("Bus read error.", Constants.PLP_SIM_BUS_ERROR, this);
-                regfile.write(rt, data, false);
-                break;
-
-            case 0x2B: // sw
-                ret = bus.write(s + s_imm, regfile.read(rt), false);
-                if(ret > 0)
-                    return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
-                break;
-
-            case 0x03: // jal
-                regfile.write(31, pcplus4+4, false);
-            case 0x02: // j
+                alu_result &= 0xffffffffL;
+                regfile.write(rd, alu_result, false);
+            }
+        } else if (opcode == 0x04) {                    // beq
+            if(s == t) {
                 branch = true;
-                branch_destination = jaddr<<2 | (pcplus4 & 0xf0000000L);
-                break;
+                branch_destination = (pcplus4 + (s_imm<<2)) & 0xffffffffL;
+            }
+        } else if (opcode == 0x05) {                    // bne
+            if(s != t) {
+                branch = true;
+                branch_destination = (pcplus4 + (s_imm<<2)) & 0xffffffffL;
+            }
+        } else if (opcode == 0x23) {                    // lw
+            Long data = (Long) bus.read(s + s_imm);
+            if(data == null)
+                return Msg.E("Bus read error.", Constants.PLP_SIM_BUS_ERROR, this);
+            regfile.write(rt, data, false);
 
-            default:
+        } else if (opcode == 0x2B) {                    // sw
+            ret = bus.write(s + s_imm, regfile.read(rt), false);
+            if(ret > 0) {
+                return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
+            }
+        } else if (opcode == 0x02 || opcode == 0x03) {  // j
+            branch = true;
+            branch_destination = jaddr<<2 | (pcplus4 & 0xf0000000L);
+
+            if (opcode == 0x03) {                       // jal
+                regfile.write(31, pcplus4+4, false);
+            }
+        } else if(opcode == 0x0C || opcode == 0x0D) {   // ori, andi
+            alu_result = ex_stage.exAlu.eval(s, imm, instr) & 0xffffffffL;
+            regfile.write(rt, alu_result, false);
+
+        } else {                                        // other i-type
+            alu_result = ex_stage.exAlu.eval(s, s_imm, instr);
+            if(alu_result == -1) {
                 return Msg.E("Unhandled instruction: invalid op-code",
                         Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
+            }
+            alu_result &= 0xffffffffL;
+            regfile.write(rt, alu_result, false);
         }
 
         // Evaluate modules attached to the bus
@@ -714,6 +643,12 @@ public class SimCore extends PLPSimCore {
         // Evalulate interrupt controller again to see if anything raised an IRQ
         // (PLPSimBus evaluates modules from index 0 upwards)
         ret += bus.eval(0);
+
+        // we have an IRQ waiting, set ack so the controller won't set another
+        // request while we process this one
+        if(int_state == 3) {
+            IRQAck = 1;
+        }
 
         return ret;
     }
@@ -1735,7 +1670,7 @@ public class SimCore extends PLPSimCore {
                 case 0x2B: return a + b;
             }
 
-            return 0;
+            return -1;
         }
     }
 }

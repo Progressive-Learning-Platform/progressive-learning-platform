@@ -16,23 +16,12 @@
 
  */
 
-package plptool.web;
-
-import plptool.Msg;
-import plptool.dmf.Callback;
-import plptool.gui.*;
+package org.plp.web;
 
 /**
  *
- * @author Wira
+ * @author wira
  */
-public class HeadlessCallback implements Callback {
-    public boolean callback(int num, Object param) {
-        Msg.M("WebService: initializing...");
-        if(PLPToolApp.getAttributes().containsKey("Web_HTTP_Test")) {
-            plptool.web.services.HTTPTest.start();
-        }
-        
-        return true;
-    }
+public class Constants {
+    public static final int PLPWEB_UNABLE_TO_LOAD_JDBC_DRIVER = 0x0001;
 }
