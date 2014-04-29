@@ -16,25 +16,24 @@
 
  */
 
-package plptool.web;
+package org.plp.web;
 
-import java.util.regex.*;
+import plptool.*;
 
 /**
  *
  * @author wira
  */
-public class Utils {
-    public static String resolveEscapedChars(String in) {
-        String ret = "";
-        ret = in.replaceAll(Pattern.quote("%3A"), ":");
-        ret = ret.replaceAll(Pattern.quote("%0D%0A"), "\n");
-        ret = ret.replaceAll(Pattern.quote("+"), " ");
-        ret = ret.replaceAll(Pattern.quote("%22"), "\"");
-        ret = ret.replaceAll(Pattern.quote("%25"), "%");
-        ret = ret.replaceAll(Pattern.quote("%2C"), Pattern.quote(","));
-        ret = ret.replaceAll(Pattern.quote("%24"), Pattern.quote("$"));        
+public class DatabaseConnector {
 
-        return ret;
+    public static int init() {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch(ClassNotFoundException e) {
+            return Msg.E("Unable to load PostgreSQL JDBC Driver",
+                    org.plp.web.Constants.PLPWEB_UNABLE_TO_LOAD_JDBC_DRIVER, null);
+        }
+
+        return plptool.Constants.PLP_OK;
     }
 }

@@ -67,12 +67,5 @@ if [ $? -ne 0 ]
 then
   echo BUILD FAILED
 fi
-echo - WebService
-cd ../WebService
-ant jar &>> $ROOT/build.log
-if [ $? -ne 0 ]
-then
-  echo BUILD FAILED
-fi
 cd $ROOT
 echo Build done.

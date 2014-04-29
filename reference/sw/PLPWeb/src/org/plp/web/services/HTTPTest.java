@@ -16,16 +16,17 @@
 
  */
 
-package plptool.web.services;
+package org.plp.web.services;
 
-import plptool.web.*;
+import org.plp.web.*;
 
 import plptool.*;
 import plptool.gui.*;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+
+import com.json.parsers.*;
 
 import com.sun.net.httpserver.*;
 
@@ -35,6 +36,7 @@ import com.sun.net.httpserver.*;
  */
 public class HTTPTest {
     protected static HttpServer srv;
+    protected static JSONParser jsonParser;
 
     private static String defaultPage =
             "<html>\n"
@@ -42,14 +44,17 @@ public class HTTPTest {
             + "<body>\n"
             + "<h1>PLP Web Service - HTTP Test</h1>\n"
             + "<a href=\"./ide\">Try the IDE</a><br /><br /><br />\n"
-            + "<h2>Powered by:</h2>\n"
-            + "<pre>" + Text.copyrightString + "\n\n" + Text.licenseBanner
-            + "\n\n" + Text.contactString 
+            + "<pre>" + org.plp.web.Text.copyrightString + "</pre>"
+            + "<h2>PLPTool information:</h2>\n"
+            + "<pre>" + plptool.Text.copyrightString + "\n\n" + plptool.Text.licenseBanner
+            + "\n\n" + plptool.Text.contactString
             + "\n\n" + PLPToolApp.getBuildInfo() + "</pre><br />"
             + "</body>\n"
             + "</html>";
 
     public static void start() {
+
+        jsonParser = new JSONParser();
 
         int port = 8080;
         String userPort = PLPToolApp.getAttributes().get("Web_Port");
@@ -64,7 +69,8 @@ public class HTTPTest {
             srv.setExecutor(null);
             srv.start();
         } catch(IOException e) {
-            Msg.E("WebService HTTP Test: I/O Exception", Constants.PLP_GENERAL_IO_ERROR, null);
+            Msg.E("WebService HTTP Test: I/O Exception",
+                    plptool.Constants.PLP_GENERAL_IO_ERROR, null);
             Msg.trace(e);
         }
     }
@@ -112,7 +118,7 @@ public class HTTPTest {
                 } finally {
                     in.close();
                 }
-                
+
                 Msg.D("Query: " + qry, 2, null);
                 source = qry;
                 tokens = source.split("source=", 2);
@@ -125,13 +131,13 @@ public class HTTPTest {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     PrintStream ps = new PrintStream(baos);
                     Msg.setLogErrStream(ps);
-                    if(asm.preprocess(0) == Constants.PLP_OK)
+                    if(asm.preprocess(0) == plptool.Constants.PLP_OK)
                         asm.assemble();
                     Msg.setLogErrStream(System.err);
                     err = baos.toString();
                 }
             }
-            
+
             String out =
                     "<html>"
                     + "<head><title>PLP Web IDE Test</title></head>"
