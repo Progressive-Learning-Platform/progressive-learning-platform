@@ -23,5 +23,7 @@ package org.plp.web;
  * @author wira
  */
 public class Constants {
-    public static final int PLPWEB_UNABLE_TO_LOAD_JDBC_DRIVER = 0x0001;
+    public static final int PLPWEB_UNABLE_TO_LOAD_JDBC_DRIVER   = 0x0001;
+    public static final int PLPWEB_INVALID_POST_REQUEST         = 0x0002;
+    public static final int PLPWEB_MISSING_COMMAND_FIELD        = 0x0003;
 }

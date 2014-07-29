@@ -29,9 +29,11 @@ import plptool.dmf.DynamicModuleFramework;
 import plptool.dmf.CallbackRegistry;
 import plptool.testsuite.AutoTest;
 import plptool.PLPToolbox;
+import plptool.Config;
 
 import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +59,8 @@ public class PLPToolApp extends SingleFrameApplication {
     private static boolean simulateScripted = false;
     private static boolean loadModules = true;
     private static boolean headless = false;
-	private static boolean exiting = false;
+    private static boolean exiting = false;
+    private static boolean preserveConfig = false;
 
     private static ArrayList<String> moduleLoadDirs;
     private static ArrayList<String> moduleLoadJars;
@@ -65,6 +68,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static int startingArchID = ArchRegistry.ISA_PLPMIPS;
     private static String plpFileToSimulate;
     private static String scriptFileToRun;
+    
     public static String[] commandLineArgs;
     public static ConsoleFrame con;
     private static HashMap<String, BufferedImage> images;
@@ -79,9 +83,11 @@ public class PLPToolApp extends SingleFrameApplication {
 
         try {
             if(serialTerminal) {
+                preserveConfig = true;
                 plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
                 term.setVisible(true);
             } else if(embedManifestGUI) {
+                preserveConfig = true;
                 DynamicModuleManager dmm = new DynamicModuleManager(null, true, null);
                 dmm.setEmbedOnly();
                 dmm.setVisible(true);
@@ -90,7 +96,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 Msg.D("Creating temporary directory (" + PLPToolbox.getTmpDir() + ")...", 2, null);
                 PLPToolbox.checkCreateTempDirectory();
                 // Launch the ProjectDriver                
-                ProjectDriver.loadConfig();
+                loadConfig();
                 ProjectDriver plp = new ProjectDriver(headless ? Constants.PLP_DEFAULT : Constants.PLP_GUI_START_IDE);
                 CallbackRegistry.callback(CallbackRegistry.START, plp);
                 if(Constants.debugLevel > 0) {
@@ -137,9 +143,11 @@ public class PLPToolApp extends SingleFrameApplication {
         Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
             public void run() {
-				ProjectDriver.saveConfig();
-        		Msg.D("Exit callback", 2, null);
-        		CallbackRegistry.callback(CallbackRegistry.EXIT, null);
+                if(!preserveConfig) {
+                    saveConfig();
+                }
+                Msg.D("Exit callback", 2, null);
+                CallbackRegistry.callback(CallbackRegistry.EXIT, null);
                 try {
                     Msg.D("Removing temporary directory...", 2, null);
                     PLPToolbox.deleteRecursive(new File(PLPToolbox.getTmpDir()));
@@ -189,7 +197,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Remove config file / reset config
             } else if (args.length >= activeArgIndex + 1 && args[i].equals("--remove-config")) {
-                ProjectDriver.removeConfig();
+                removeConfig();
                 activeArgIndex++;
 
              // Disable dynamic module autoload from ~/.plp/autoload
@@ -571,7 +579,7 @@ public class PLPToolApp extends SingleFrameApplication {
             Msg.E("'-N' can not be used with '--headless'", Constants.PLP_TOOLAPP_ERROR, null);
             quit(Constants.PLP_TOOLAPP_ERROR);
         }
-        ProjectDriver.loadConfig();
+        loadConfig();
         ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
         loadDynamicModules(plp);
         if(CallbackRegistry.getCallbacks(CallbackRegistry.EVENT_HEADLESS_START).length > 0) {
@@ -688,6 +696,144 @@ public class PLPToolApp extends SingleFrameApplication {
 		exiting = true;
         Msg.D("Exit(" + status + ")", 1, null);
         System.exit(status);
+    }
+
+/**
+     * Attempt to load configuration from ~/.plp/config. Also checks whether
+     * we have access to a user configuration directory (~/.plp)
+     */
+    public static void loadConfig() {
+        File confDir = new File(PLPToolbox.getConfDir());
+        if(!confDir.exists() && !confDir.mkdir()) {
+            Msg.W("Unable to create configuration directory. User settings " +
+                  "will not be saved and module functionality will fail!",
+                  null);
+        }
+
+        if(confDir.exists() &&
+                (!confDir.isDirectory() || !confDir.canWrite())) {
+            Msg.W("Configuration directory is either a file or is not " +
+                  "writable. User settings will not be saved and module " +
+                  "functionality will fail!", null);
+        }
+
+        File config = new File(System.getProperty("user.home") + "/.plp/config");
+
+        if(config.exists() && !config.isDirectory()) {
+            Msg.D("Loading config from " + config.getAbsolutePath(), 2, null);
+            try {
+                FileInputStream in = new FileInputStream(config);
+
+                String tokens[];
+                byte[] str = new byte[(int) config.length()];
+                in.read(str);
+                in.close();
+                String lines[] = new String(str).toString().split("\\r?\\n");
+
+                for(int i = 0; i < lines.length; i++) {
+                    tokens = lines[i].split("::", 2);
+                    CallbackRegistry.callback(CallbackRegistry.LOAD_CONFIG_LINE, tokens);
+                    if(tokens[0].equals("devFont")) {
+                        Config.devFont = tokens[1];
+                    } else if(tokens[0].equals("devFontSize")) {
+                        Config.devFontSize = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devSyntaxHighlighting")) {
+                        Config.devSyntaxHighlighting = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("simFunctional")) {
+                        Config.simFunctional = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("devWindowPositionX")) {
+                        Config.devWindowPositionX = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowPositionY")) {
+                        Config.devWindowPositionY = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowWidth")) {
+                        Config.devWindowWidth = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("devWindowHeight")) {
+                        Config.devWindowHeight = Integer.parseInt(tokens[1]);
+                    } else if(tokens[0].equals("cfgAskBeforeAutoloadingModules")) {
+                        Config.cfgAskBeforeAutoloadingModules = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("cfgAskForISAForNewProjects")) {
+                        Config.cfgAskForISAForNewProjects = Boolean.parseBoolean(tokens[1]);
+                    } else if(tokens[0].equals("prgAutoDetectPorts")) {
+                        Config.prgAutoDetectPorts = Boolean.parseBoolean(tokens[1]);
+                    } else
+                        PLPToolApp.getAttributes().put(tokens[0], tokens.length==2 ? tokens[1] : null);
+                }
+
+            } catch(Exception e) {
+                Msg.E("Failed to load PLPTool configuration from disk.",
+                      Constants.PLP_BACKEND_LOAD_CONFIG_FAILED, null);
+            }
+        }
+    }
+
+    /**
+     * Save PLPTool configuration to ~/.plp/config
+     */
+    public static void saveConfig() {
+        File configDir = new File(System.getProperty("user.home") + "/.plp");
+
+        if(!configDir.exists()) {
+            try {
+                if(!configDir.mkdir()) {
+                    Msg.W("Failed to save PLPTool configuration: " +
+                          "Unable to create directory $[USER]/.plp", null);
+                }
+            } catch(Exception e) {
+                Msg.E("Failed to save PLPTool configuration to disk.",
+                      Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
+                Msg.trace(e);
+            }
+        }
+
+        File config = new File(System.getProperty("user.home") + "/.plp/config");
+
+        if(config != null) {
+            Msg.D("Saving config to " + config.getAbsolutePath(), 2, null);
+            try {
+                FileWriter out = new FileWriter(config);
+                out.write("devFont::" + Config.devFont + "\n");
+                out.write("devFontSize::" + Config.devFontSize + "\n");
+                out.write("devSyntaxHighlighting::" + Config.devSyntaxHighlighting + "\n");
+                out.write("simFunctional::" + Config.simFunctional + "\n");
+                out.write("devWindowPositionX::" + Config.devWindowPositionX + "\n");
+                out.write("devWindowPositionY::" + Config.devWindowPositionY + "\n");
+                out.write("devWindowWidth::" + Config.devWindowWidth + "\n");
+                out.write("devWindowHeight::" + Config.devWindowHeight + "\n");
+                out.write("cfgAskBeforeAutoloadingModules::" + Config.cfgAskBeforeAutoloadingModules + "\n");
+                out.write("cfgAskForISAForNewProjects::" + Config.cfgAskForISAForNewProjects + "\n");
+                out.write("prgAutoDetectPorts::" + Config.prgAutoDetectPorts + "\n");
+                for(int i = 0; i < 5; i++) {
+                    String key = "develop_recent_" + i;
+                    if(PLPToolApp.getAttributes().containsKey(key))
+                        out.write(key + "::" + PLPToolApp.getAttributes().get(key) + "\n");
+                }
+                // see if any modules want to save out their configuration
+                // --- any configuration saved will be loaded by loadConfig to
+                //     the application attributes, so no hook on loading is
+                //     necessary. The converse is not true, the module will have
+                //     to use this hook to keep its configuration
+                DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.CONFIG_SAVE, -1, out));
+                CallbackRegistry.callback(CallbackRegistry.SAVE_CONFIG, out);
+                out.close();
+
+            } catch(Exception e) {
+                Msg.E("Failed to save PLPTool configuration to disk.",
+                      Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
+                Msg.trace(e);
+            }
+        }
+    }
+
+    /**
+     * Delete ~/.plp/config
+     */
+    public static void removeConfig() {
+        File config = new File(System.getProperty("user.home") + "/.plp/config");
+
+        if(config.exists()) {
+            Msg.M("Removing " + config.getAbsolutePath());
+            config.delete();
+        }
     }
 }
 

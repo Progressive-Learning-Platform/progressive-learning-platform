@@ -19,6 +19,7 @@
 package org.plp.web;
 
 import plptool.*;
+import org.plp.web.services.*;
 
 /**
  *
@@ -59,6 +60,10 @@ public class Main {
                 Msg.M(plptool.Text.thirdPartyCopyrightString + "\n");
                 Msg.M(plptool.Text.contactString + "\n");
                 System.exit(plptool.Constants.PLP_OK);
+            } else if(args.length >= activeArgIndex + 2 && args[i].equals("--root")) {
+                Handlers.root = args[i+1];
+                activeArgIndex += 2;
+                i++;
             }
         }
     }
@@ -68,6 +73,7 @@ public class Main {
         Msg.P("   --test                 Run test web service");
         Msg.P("   --ide                  Run HTML5 PLPTool frontend ONLY");
         Msg.P("   --backend              Run PLP Classroom Web Backend");
+        Msg.P("   --root <path>          Path to HTML root (default current directory)");
         Msg.P("   --port <port>          Listen to <port> instead of the default 8080");
         Msg.P("   --db <address> <port>  PostgreSQL backend server to use for persistent store");
         Msg.P("   --dbconfig <file>      Load database configuration from <file>");
