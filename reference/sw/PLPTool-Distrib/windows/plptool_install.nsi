@@ -120,7 +120,6 @@ Section /o "PLPTool Extensions"
   File "..\..\PLPTool-Extensions\CacheSim\dist\CacheSim.jar"
   SetOutPath $INSTDIR\resources\web
   File "..\..\PLPTool-Extensions\SocketInterface\dist\SocketInterface.jar"
-  File "..\..\PLPTool-Extensions\WebService\dist\WebService.jar"
   SetOutPath $INSTDIR
 SectionEnd
 

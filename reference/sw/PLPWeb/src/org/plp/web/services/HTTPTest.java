@@ -66,6 +66,7 @@ public class HTTPTest {
             srv.createContext("/", new PlainMessage(defaultPage));
             srv.createContext("/buildinfo", new PlainMessage(PLPToolApp.getBuildInfo()));
             srv.createContext("/ide", new SimpleIDE());
+            srv.createContext("/asm", new Handlers.PLPAsmHandler());
             srv.setExecutor(null);
             srv.start();
         } catch(IOException e) {
@@ -102,22 +103,7 @@ public class HTTPTest {
             plptool.mips.Asm asm = null;
             String err = "";
             if(t.getRequestMethod().equals("POST")) {
-                // http://stackoverflow.com/questions/3409348/read-post-request-values-httphandler
-                String encoding = "ISO-8859-1";
-
-                // read the query string from the request body
-                String qry;
-                InputStream in = t.getRequestBody();
-                try {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    byte buf[] = new byte[4096];
-                    for (int n = in.read(buf); n > 0; n = in.read(buf)) {
-                        out.write(buf, 0, n);
-                    }
-                    qry = new String(out.toByteArray(), encoding);
-                } finally {
-                    in.close();
-                }
+                String qry = Utils.getQueryFromExchange(t);
 
                 Msg.D("Query: " + qry, 2, null);
                 source = qry;
