@@ -192,6 +192,8 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 if(plp.g_sim != null) {
                     plp.updateComponents(true);
                     plp.g_ioreg.refreshModulesTable();
+                    if(plp.g_watcher != null)
+                        plp.g_watcher.updateFontSize();
                 }
             } else if(command.equals("triggercriterror")) {
                 plp.triggerCriticalError();

@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2013 David Fritz, Brian Gordon, Joshua Holland, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Joshua Holland, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -69,6 +69,9 @@ public class Develop extends javax.swing.JFrame {
     private double vPaneSavedProportion = -1;
     private DevEditorDocListener currentEditorListener;
     private boolean extraToolsItems;
+
+    private String previousOpenFile = null;
+    private int previousLineNumber;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -1503,8 +1506,16 @@ public class Develop extends javax.swing.JFrame {
         plp.updateAsm(plp.getOpenAsm(), plp.g_dev.getEditorText());
         plp.setOpenAsm(index);
         plp.refreshProjectView(false);
-        String lines[] = plp.getAsm(index).getAsmString().split("\\r?\\n");
+        gotoLine(line);
+    }
 
+    /**
+     * Go to the specified line in the currently open file
+     *
+     * @param line Line number to go to
+     */
+    public void gotoLine(int line) {
+        String lines[] = plp.getAsm(plp.getOpenAsm()).getAsmString().split("\\r?\\n");
         if(line-1 > lines.length) {
             Msg.E("Unable to go to the specified location. Has the file been" +
                     " modified?", Constants.PLP_DEV_INVALID_GOTO_LOCATION, this);
@@ -1529,6 +1540,24 @@ public class Develop extends javax.swing.JFrame {
         plp.g_dev.getEditor().requestFocus();
     }
 
+    /**
+     * Get the current line number / row of the caret
+     *
+     * @return Line number as int
+     */
+    public int getCurrentLineNumber() {
+        int caretPos = txtEditor.getCaretPosition();
+        int lineNumber = (caretPos == 0) ? 1 : 0;
+        try {
+            for (int offset = caretPos; offset > 0;) {
+                offset = Utilities.getRowStart(txtEditor, offset) - 1;
+                lineNumber++;
+            }
+        } catch(BadLocationException e) {
+            
+        }
+        return lineNumber;
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -3023,10 +3052,13 @@ public class Develop extends javax.swing.JFrame {
                     String[] tokens = nodeStr.split(": ");
 
                     Msg.I("Opening " + nodeStr, null);
+                    plp.getAsm(plp.getOpenAsm()).setLastLine(getCurrentLineNumber());
                     plp.updateAsm(plp.getOpenAsm(), txtEditor.getText());
                     plp.setOpenAsm(Integer.parseInt(tokens[0]));
-                    //plp.refreshProjectView(false);
+                    plp.refreshProjectView(false);
                     safeRefresh(false);
+                    //Msg.M("Going back to line #" + plp.getAsm(plp.getOpenAsm()).getLastLine());
+                    //gotoLine(plp.getAsm(plp.getOpenAsm()).getLastLine());
                     repaintNow();
                     if (Config.devSyntaxHighlighting) {
                         SwingUtilities.invokeLater(new Runnable() {

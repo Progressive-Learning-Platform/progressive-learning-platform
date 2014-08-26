@@ -18,7 +18,7 @@
 
 package plptool.gui.frames;
 
-import plptool.Constants;
+import plptool.Config;
 import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
 import javax.swing.table.DefaultTableModel;
@@ -47,6 +47,8 @@ public class Watcher extends javax.swing.JFrame {
 
         cmbType.addItem("Bus");
         cmbType.addItem("Register");
+
+        updateFontSize();
 
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/toolbar_watcher.png")));
         //plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_WATCHER);
@@ -248,7 +250,8 @@ public class Watcher extends javax.swing.JFrame {
 
                 if(plp.sim.bus.isMapped(addr)) {
                     Long data = (Long) plp.sim.bus.read(addr);
-                    Object[] row = {"Bus", String.format("0x%08x", addr),
+                    String label = plp.asm.lookupLabel(addr);
+                    Object[] row = {"Bus", String.format("0x%08x", addr) + ((label != null) ? " [" + label + "]" : ""),
                                     (data != null) ? String.format("0x%08x", data) : "Uninitialized",
                                     (data != null) ? String.format("%d", data) : "Uninitialized"};
                     entries.addRow(row);
@@ -304,28 +307,39 @@ public class Watcher extends javax.swing.JFrame {
             btnAddActionPerformed(null);
     }//GEN-LAST:event_txtAddrKeyPressed
 
+    public final void updateFontSize() {
+        tblEntries.setFont(tblEntries.getFont().deriveFont(Config.devFontSize + 0.0f));
+        tblEntries.setRowHeight(tblEntries.getFontMetrics(tblEntries.getFont()).getHeight() + 5);
+    }
+
     public void updateWatcher() {
         DefaultTableModel entries = getTblValues();
 
         for(int i = 0; i < entries.getRowCount(); i++) {
-            if(entries.getValueAt(i, 0).equals("Bus") && plp.sim.bus.isInitialized(PLPToolbox.parseNum((String) entries.getValueAt(i, 1)))) {
-                Long data = (Long) plp.sim.bus.read(PLPToolbox.parseNum((String) entries.getValueAt(i, 1)));
+            String addr = (String) entries.getValueAt(i, 1);
+            if(addr.startsWith("0x")) {
+                addr = addr.substring(0, 10);
+            }            
+            if(entries.getValueAt(i, 0).equals("Bus") && plp.sim.bus.isInitialized(PLPToolbox.parseNum(addr))) {
+                String label = plp.asm.lookupLabel(PLPToolbox.parseNum(addr));
+                entries.setValueAt(String.format("0x%08x", PLPToolbox.parseNum(addr)) + ((label != null) ? " [" + label + "]" : ""), i, 1);
+                Long data = (Long) plp.sim.bus.read(PLPToolbox.parseNum(addr));
                 entries.setValueAt((data != null) ? String.format("0x%08x", data) : "Uninitialized", i, 2);
                 entries.setValueAt((data != null) ? String.format("%d", data) : "Uninitialized", i, 3);
             }
-            else if(entries.getValueAt(i, 0).equals("Register") && plp.getArch().equals("plpmips")) {
+            else if(entries.getValueAt(i, 0).equals("Register") && plp.getArch().getStringID().equals("plpmips")) {
                 plptool.mips.SimCore mipsSim = (plptool.mips.SimCore) plp.sim;
 
-                long addr;
+                long regAddr;
 
                 String entry = (String)entries.getValueAt(i, 1);
 
                 if(entry.startsWith("$")) {
-                    addr = ((plptool.mips.Asm) plp.asm).getRegisterNumberFromName(entry);
+                    regAddr = ((plptool.mips.Asm) plp.asm).getRegisterNumberFromName(entry);
                 } else
-                    addr = PLPToolbox.parseNum((String) entries.getValueAt(i, 1));
+                    regAddr = PLPToolbox.parseNum((String) entries.getValueAt(i, 1));
 
-                Long data = (Long) mipsSim.regfile.read(addr);
+                Long data = (Long) mipsSim.regfile.read(regAddr);
                 entries.setValueAt((data != null) ? String.format("0x%08x", data) : "Uninitialized", i, 2);
                 entries.setValueAt((data != null) ? String.format("%d", data) : "Uninitialized", i, 3);
             }

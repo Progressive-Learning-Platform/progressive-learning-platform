@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
 
 package plptool.gui.frames;
 
-import plptool.Constants;
+import plptool.Config;
 import plptool.PLPToolbox;
+import plptool.Constants;
 import javax.swing.table.DefaultTableModel;
 import plptool.gui.ProjectDriver;
 
@@ -38,6 +39,12 @@ public class ASMSimView extends javax.swing.JFrame {
         this.plp = plp;
         //plp.g_simsh.attachOptionSynchronizer(this, Constants.PLP_TOOLFRAME_ASMVIEW);
         updateTable();
+        updateFontSize();
+    }
+
+    public final void updateFontSize() {
+        tblASM.setFont(tblASM.getFont().deriveFont(Config.devFontSize + 0.0f));
+        tblASM.setRowHeight(tblASM.getFontMetrics(tblASM.getFont()).getHeight() + 5);
     }
 
     public final void updateTable() {
