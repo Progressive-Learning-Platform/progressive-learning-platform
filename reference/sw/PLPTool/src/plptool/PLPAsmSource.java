@@ -33,11 +33,13 @@ public class PLPAsmSource {
     private String          asmString;
     private String[]        asmLines;
     private String          asmFilePath;
+    private int             lastLineOpen;
 
     int             recursionLevel;
 
     public PLPAsmSource(String strAsm, String strFilePath, int intLevel) {
         asmFilePath = strFilePath;
+        lastLineOpen = 0;
 
         try {
         if(strAsm == null) {
@@ -96,6 +98,14 @@ public class PLPAsmSource {
         }
 
         return asmLines[lineNum - 1];
+    }
+
+    public void setLastLine(int lineNumber) {
+        lastLineOpen = lineNumber;
+    }
+
+    public int getLastLine() {
+        return lastLineOpen;
     }
 
     @Override public String toString() {

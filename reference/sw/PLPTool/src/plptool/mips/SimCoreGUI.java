@@ -35,6 +35,7 @@ import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import plptool.PLPToolbox;
 import plptool.mips.visualizer.*;
+import plptool.Config;
 
 /**
  *
@@ -128,6 +129,8 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
        simCLOutput.setDocument(new HTMLDocument());
        simCLOutput.setEditorKit(new HTMLEditorKit());
+
+       updateFontSize();
 
         /*** 4.0 RELEASE ***/
         //coreMainPane.setSelectedIndex(2);
@@ -709,6 +712,15 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
             ((SimCore) plp.sim).mem_ex_lw = false;
     }//GEN-LAST:event_chkMEMEXFwdLWStateChanged
 
+    public final void updateFontSize() {
+        tblRegFile.setFont(tblRegFile.getFont().deriveFont(Config.devFontSize + 0.0f));
+        tblRegFile.setRowHeight(tblRegFile.getFontMetrics(tblRegFile.getFont()).getHeight() + 5);
+        tblProgram.setFont(tblProgram.getFont().deriveFont(Config.devFontSize + 0.0f));
+        tblProgram.setRowHeight(tblProgram.getFontMetrics(tblProgram.getFont()).getHeight() + 5);
+        tblMemMap.setFont(tblMemMap.getFont().deriveFont(Config.devFontSize + 0.0f));
+        tblMemMap.setRowHeight(tblMemMap.getFontMetrics(tblMemMap.getFont()).getHeight() + 5);
+    }
+    
     private void updateRegisters() {
 
         for(int regIndex = 0; regIndex < 32; regIndex++) {

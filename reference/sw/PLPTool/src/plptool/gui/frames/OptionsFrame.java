@@ -112,6 +112,18 @@ public class OptionsFrame extends javax.swing.JFrame {
             //plp.refreshProjectView(false);
         }
 
+        if(plp.g_watcher != null) {
+            plp.g_watcher.updateFontSize();
+        }
+
+        if(plp.g_sim != null && plp.getArch().getStringID().equals("plpmips")) {
+            ((plptool.mips.SimCoreGUI)plp.g_sim).updateFontSize();
+        }
+
+        if(plp.g_asmview != null) {
+            plp.g_asmview.updateFontSize();
+        }
+
         Config.cfgAskBeforeAutoloadingModules = askBeforeAutoloadingModules.isSelected();
         Config.cfgAskForISAForNewProjects = askForISAForNewProjects.isSelected();
 
