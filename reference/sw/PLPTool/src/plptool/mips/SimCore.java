@@ -588,11 +588,6 @@ public class SimCore extends PLPSimCore {
                 }
             } else {
                 alu_result = ex_stage.exAlu.eval(s, t, instr);
-                if(alu_result == -1) {
-                    return Msg.E("Unhandled instruction: invalid function field: " +
-                            plptool.PLPToolbox.format32Hex(funct),
-                            Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
-                }
                 alu_result &= 0xffffffffL;
                 regfile.write(rd, alu_result, false);
             }
