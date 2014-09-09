@@ -3,6 +3,9 @@ rm -f *.log
 rm -f *.deb
 rm -rf deb/usr
 rm -f *.exe
+rm -f *.zip
+rm windows/plptool5.exe
+rm -rf ./plptool5
 rm -rf ../PLPTool/build
 rm -rf ../PLPTool/dist
 rm -rf ../PLPTool/store
