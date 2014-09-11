@@ -60,7 +60,7 @@ then
   chmod a+x ./plptool5/run.sh
   echo "java -Djava.library.path=. -jar PLPToolStatic.jar -W -D .\\extensions %1 %2 %3 %4 %5 %6 %7 %8 %9" > ./plptool5/run-windows.bat
   echo "- packing into zip file"
-  zip -r plptool5-64bit.zip plptool5
+  zip -r plptool5-32bit.zip plptool5
   echo "- done"
 fi
 
