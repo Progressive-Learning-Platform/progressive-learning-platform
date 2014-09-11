@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -265,7 +265,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
 
         @Override
         public void paint(Graphics g) {
-            g.setFont(new Font("Monospaced", Font.BOLD, 12));
+            g.setFont(new Font(plptool.Config.devFont, Font.BOLD, plptool.Config.devFontSize));
             FontMetrics fm = g.getFontMetrics();
             int addrStrOffset = fm.stringWidth("0x00000000");
             this.setSize(this.getParent().getWidth(), this.getParent().getHeight());
@@ -276,14 +276,14 @@ public class MemoryVisualization extends javax.swing.JFrame {
             int topOffset = fm.getHeight() + 10;
             int rightOffset = 50;
 
-            g.setColor(Color.black);
+            g.setColor(Color.white);
             g.fillRect(0, 0, W, H);
             g.setColor(new Color(240, 240, 240));
             g.fillRect(0, 1, W, topOffset - 1);
             g.setColor(Color.black);
             g.drawString("Contents", W - 10 - addrStrOffset - rightOffset, 4 + fm.getHeight());
             g.drawString("Address", W - 30 - 2*addrStrOffset - rightOffset, 4 + fm.getHeight());
-            g.drawString("$sp", W - 40 - 2*addrStrOffset - 30 - rightOffset, 4 + fm.getHeight());
+            g.drawString("$sp", W - 40 - 2*addrStrOffset - 30 - rightOffset - fm.stringWidth("$sp"), 4 + fm.getHeight());
 
 
             if(img != null) {
@@ -337,7 +337,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
                     g.setColor(cData);
 
                 g.fillRect(W - 20 - addrStrOffset - rightOffset, topOffset + i * rowH, 20 + addrStrOffset, rowH);
-                g.setColor(new Color(25, 25, 25));
+                g.setColor(new Color(220, 220, 220));
                 g.drawLine(0, topOffset + (i+1) * rowH, W, topOffset + (i+1) * rowH);
 
                 if(drawStr) {
@@ -345,12 +345,12 @@ public class MemoryVisualization extends javax.swing.JFrame {
                         g.setColor(Color.black);
                         g.drawString(String.format("0x%08x", plp.sim.bus.read(startAddr + addrOffset*i)), W - 10 - addrStrOffset - rightOffset, topOffset + i*rowH + stringYOffset);
                     }
-                    g.setColor(plp.sim.visibleAddr == startAddr + addrOffset*i ? Color.red : Color.white);
+                    g.setColor(plp.sim.visibleAddr == startAddr + addrOffset*i ? Color.red : Color.black);
                     g.drawString(String.format("0x%08x", startAddr + addrOffset*i), W - 10 - 2*addrStrOffset - 20 - rightOffset, topOffset + i*rowH + stringYOffset);
                 }
             }
 
-            g.setColor(Color.white);
+            g.setColor(Color.red);
             if(yScaleFactor >= 23)
                 g.drawString((int) (Math.pow(2, (yScaleFactor - 23))) + " Mbytes / div", 5, topOffset + fm.getDescent() + 10);
             else if(yScaleFactor >= 13)
