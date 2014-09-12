@@ -58,6 +58,9 @@
       <Properties>
         <Property name="name" type="java.lang.String" value="tabsOptions" noResource="true"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" resourceKey="tabsOptions.AccessibleContext.accessibleName"/>
+      </AccessibilityProperties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
@@ -67,7 +70,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Editor">
+              <JTabbedPaneConstraints tabName="Font">
                 <Property name="tabTitle" type="java.lang.String" resourceKey="paneEditor.TabConstraints.tabTitle"/>
               </JTabbedPaneConstraints>
             </Constraint>

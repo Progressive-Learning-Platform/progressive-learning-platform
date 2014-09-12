@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,11 +34,27 @@ public class SimRunner extends Thread {
     public int stepCount;
     private int startInstr;
     private long startTime;
+    private boolean done;
+    private boolean quit;
 
     public SimRunner(ProjectDriver plp) {
         this.sim = plp.sim;
         this.plp = plp;
         stepCount = 1;
+        setDone(false);
+        quit = false;
+    }
+
+    private synchronized void setDone(boolean val) {
+        done = val;
+    }
+
+    public synchronized boolean isDone() {
+        return done;
+    }
+
+    public synchronized void gracefullyQuit() {
+        quit = true;
     }
 
     @Override
@@ -91,10 +107,15 @@ public class SimRunner extends Thread {
         long time = System.currentTimeMillis() - startTime;
         Msg.m("--- stop: " + (sim.getInstrCount() - startInstr) + " instructions fetched ");
         Msg.M("in " + time + " milliseconds of real time.");
-        
-        if(plp.g()) {
-            plp.stopSimulation();
-            plp.updateComponents(true);
+
+        setDone(true);
+        while(!quit) {
+            try {
+                Thread.sleep(50);
+            } catch(Exception e) {
+
+            }
         }
+        Msg.D("SimRunner exiting", 8, null);
     }
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,10 +65,10 @@ public class Config {
     public static boolean prgAutoDetectPorts               = true;
 
     public static boolean devNewSyntaxHighlightStrategy    = true;
-    public static long    devHihglighterThreadRefreshMsecs = 1000;
+    public static long    devHighlighterThreadRefreshMsecs = 1000;
     public static boolean devSyntaxHighlighting            = true;
     public static boolean devSyntaxHighlightOnAssemble     = false;
-    public static boolean nothighlighting                  = true;
+    public static boolean highlighting                     = false;
     public static int     filetoolarge                     = 10000;
 
     public static int     maxUndoLength                    = 20;
@@ -127,10 +127,10 @@ public class Config {
         prgAutoDetectPorts               = true;
 
         devNewSyntaxHighlightStrategy    = true;
-        devHihglighterThreadRefreshMsecs = 1000;
+        devHighlighterThreadRefreshMsecs = 1000;
         devSyntaxHighlighting            = true;
         devSyntaxHighlightOnAssemble     = false;
-        nothighlighting                  = true;
+        highlighting                     = false;
         filetoolarge                     = 10000;
 
         maxUndoLength                    = 20;

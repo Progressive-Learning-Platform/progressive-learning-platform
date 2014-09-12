@@ -1322,6 +1322,10 @@ public final class ProjectDriver {
         if(g_simrun != null) {
             try {
                 g_simrun.stepCount = 0;
+                while(!g_simrun.isDone()) {
+                    // wait for the thread to clean up
+                }
+                g_simrun.gracefullyQuit();
             } catch(Exception e) {}
         }
 
@@ -1329,7 +1333,7 @@ public final class ProjectDriver {
             g_dev.stopSimState();
             g_simctrl.stopSimState();
         }
-
+        updateComponents(true);
         return Constants.PLP_OK;
     }
 
