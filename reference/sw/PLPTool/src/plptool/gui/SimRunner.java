@@ -60,6 +60,8 @@ public class SimRunner extends Thread {
     @Override
     public void run() {
         Msg.lastError = 0;
+        boolean breakEncountered = false;
+        int quitCount = 600;
         if(plp.g())
             plp.g_err.clearError();
         startInstr = sim.getInstrCount();
@@ -76,6 +78,7 @@ public class SimRunner extends Thread {
                     if(plp.sim.breakpoints.hasBreakpoint()) {
                         if(plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
                             stepCount = 0;
+                            breakEncountered = true;
                             Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                         }
                     }
@@ -92,7 +95,8 @@ public class SimRunner extends Thread {
             if(Msg.lastError != 0) {
                 if(plp.g()) {
                     plp.g_err.setError(Msg.lastError);
-                    plp.stopSimulation();
+                    stepCount = 0;
+                    breakEncountered = true;
                 }
                 break;
             }
@@ -108,14 +112,22 @@ public class SimRunner extends Thread {
         Msg.m("--- stop: " + (sim.getInstrCount() - startInstr) + " instructions fetched ");
         Msg.M("in " + time + " milliseconds of real time.");
 
+        if(breakEncountered) {
+            plp.g_dev.stopSimState();
+            if(plp.g_simctrl != null)
+                plp.g_simctrl.stopSimState();
+            plp.updateComponents(true);
+        }
+
         setDone(true);
-        while(!quit) {
+        while(!quit && !breakEncountered) {
             try {
                 Thread.sleep(50);
             } catch(Exception e) {
 
             }
+            quitCount--;
         }
-        Msg.D("SimRunner exiting", 8, null);
+        Msg.D("SimRunner exiting", 4, null);
     }
 }

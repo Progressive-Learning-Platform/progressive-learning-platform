@@ -283,7 +283,7 @@ public final class Develop extends javax.swing.JFrame {
             SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if(plp.asm == null || plp.sim == null)
+                        if(plp.asm == null || plp.sim == null || !plp.isSimulating())
                             return;
                         int pc_index = plp.asm.lookupAddrIndex(plp.sim.visibleAddr);
                         if(pc_index < 0) {
@@ -1048,7 +1048,7 @@ public final class Develop extends javax.swing.JFrame {
      * ProjectDriver's desimulate method.
      */
     public void simEnd() {
-
+        Msg.D("Develop: simEnd started", 4, null);
         txtEditor.setEditable(true);
         txtEditor.getCaret().setVisible(true);
         menuSimulate.setSelected(false);
@@ -1087,6 +1087,7 @@ public final class Develop extends javax.swing.JFrame {
         btnSimGPIO.setVisible(false);
         separatorSimControl.setVisible(false);
         lblSimStat.setText("Editor Mode");
+        Msg.D("Develop: simEnd finished", 4, null);
     }
 
     /**
