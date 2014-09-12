@@ -258,7 +258,6 @@ public class Architecture extends PLPArchitecture {
             //Disable for 4.1 release
             if(Constants.debugLevel >= 2) {
                 plp.g_dev.removeLastSimToolItem();
-                plp.g_dev.removeLastSimToolItem();
             }
 
             if(busMonitor != null && busMonitorAttached) {
