@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,6 +47,12 @@ public class Watcher extends javax.swing.JFrame {
 
         cmbType.addItem("Bus");
         cmbType.addItem("Register");
+        cmbValueFormat.removeAllItems();
+        cmbValueFormat.addItem("Unsigned Integer - Decimal");
+        cmbValueFormat.addItem("Signed Integer - Decimal");
+        cmbValueFormat.addItem("Binary");
+        cmbValueFormat.addItem("Binary - Least Significant 8 bits");
+        cmbValueFormat.addItem("Unicode");
 
         updateFontSize();
 
@@ -69,7 +75,7 @@ public class Watcher extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Type", "Address", "Hex Value", "Dec Value"
+                "Type", "Address", "Hex Value", "Value"
             }
         ) {
             Class[] types = new Class [] {
@@ -110,6 +116,8 @@ public class Watcher extends javax.swing.JFrame {
         tblEntries = new javax.swing.JTable();
         btnRemoveSelected = new javax.swing.JButton();
         btnRemoveAll = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        cmbValueFormat = new javax.swing.JComboBox<String>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Watcher.class);
@@ -147,7 +155,7 @@ public class Watcher extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Type", "Address", "Hex Value", "Dec Value"
+                "Type", "Address", "Hex Value", "Value"
             }
         ) {
             Class[] types = new Class [] {
@@ -188,14 +196,25 @@ public class Watcher extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        cmbValueFormat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbValueFormat.setName("cmbValueFormat"); // NOI18N
+        cmbValueFormat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbValueFormatActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -208,11 +227,15 @@ public class Watcher extends javax.swing.JFrame {
                                 .addComponent(txtAddr, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAdd)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnRemoveAll)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addComponent(btnRemoveSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnRemoveSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbValueFormat, 0, 650, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -226,8 +249,12 @@ public class Watcher extends javax.swing.JFrame {
                     .addComponent(txtAddr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAdd))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbValueFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemoveSelected)
                     .addComponent(btnRemoveAll))
@@ -252,8 +279,8 @@ public class Watcher extends javax.swing.JFrame {
                     Long data = (Long) plp.sim.bus.read(addr);
                     String label = plp.asm.lookupLabel(addr);
                     Object[] row = {"Bus", String.format("0x%08x", addr) + ((label != null) ? " [" + label + "]" : ""),
-                                    (data != null) ? String.format("0x%08x", data) : "Uninitialized",
-                                    (data != null) ? String.format("%d", data) : "Uninitialized"};
+                                    (data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized",
+                                    (data != null) ? convertValue(data) : "Uninitialized"};
                     entries.addRow(row);
                     tblEntries.setModel(entries);
                     plp.setModified();
@@ -273,8 +300,8 @@ public class Watcher extends javax.swing.JFrame {
                     if(addr >= 0 && addr <= mipsSim.regfile.endAddr()) {
                         Long data = (Long) mipsSim.regfile.read(addr);
                         Object[] row = {"Register", (reg != null ? txtAddr.getText() : String.format("0x%08x", addr)),
-                                        (data != null) ? String.format("0x%08x", data) : "Uninitialized",
-                                        (data != null) ? String.format("%d", data) : "Uninitialized"};
+                                        (data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized",
+                                        (data != null) ? convertValue(data) : "Uninitialized"};
                         entries.addRow(row);
                         tblEntries.setModel(entries);
                         plp.setModified();
@@ -307,8 +334,12 @@ public class Watcher extends javax.swing.JFrame {
             btnAddActionPerformed(null);
     }//GEN-LAST:event_txtAddrKeyPressed
 
+    private void cmbValueFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbValueFormatActionPerformed
+        updateWatcher();
+    }//GEN-LAST:event_cmbValueFormatActionPerformed
+
     public final void updateFontSize() {
-        tblEntries.setFont(tblEntries.getFont().deriveFont(Config.devFontSize + 0.0f));
+        tblEntries.setFont(new java.awt.Font(plptool.Config.devFont, java.awt.Font.PLAIN, plptool.Config.devFontSize));
         tblEntries.setRowHeight(tblEntries.getFontMetrics(tblEntries.getFont()).getHeight() + 5);
     }
 
@@ -324,8 +355,8 @@ public class Watcher extends javax.swing.JFrame {
                 String label = plp.asm.lookupLabel(PLPToolbox.parseNum(addr));
                 entries.setValueAt(String.format("0x%08x", PLPToolbox.parseNum(addr)) + ((label != null) ? " [" + label + "]" : ""), i, 1);
                 Long data = (Long) plp.sim.bus.read(PLPToolbox.parseNum(addr));
-                entries.setValueAt((data != null) ? String.format("0x%08x", data) : "Uninitialized", i, 2);
-                entries.setValueAt((data != null) ? String.format("%d", data) : "Uninitialized", i, 3);
+                entries.setValueAt((data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized", i, 2);
+                entries.setValueAt((data != null) ? convertValue(data) : "Uninitialized", i, 3);
             }
             else if(entries.getValueAt(i, 0).equals("Register") && plp.getArch().getStringID().equals("plpmips")) {
                 plptool.mips.SimCore mipsSim = (plptool.mips.SimCore) plp.sim;
@@ -340,8 +371,8 @@ public class Watcher extends javax.swing.JFrame {
                     regAddr = PLPToolbox.parseNum((String) entries.getValueAt(i, 1));
 
                 Long data = (Long) mipsSim.regfile.read(regAddr);
-                entries.setValueAt((data != null) ? String.format("0x%08x", data) : "Uninitialized", i, 2);
-                entries.setValueAt((data != null) ? String.format("%d", data) : "Uninitialized", i, 3);
+                entries.setValueAt((data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized", i, 2);
+                entries.setValueAt((data != null) ? convertValue(data) : "Uninitialized", i, 3);
             }
         }
     }
@@ -354,11 +385,30 @@ public class Watcher extends javax.swing.JFrame {
         return tblEntries;
     }
 
+    private String convertValue(long data) {
+        switch(cmbValueFormat.getSelectedIndex()) {
+            case 0:
+                return String.valueOf(data & 0xffffffffL);
+            case 1:
+                return String.valueOf((int) data);
+            case 2:
+                return String.format("%32s", Long.toBinaryString(data & 0xffffffffL)).replace(' ', '0');
+            case 3:
+                return String.format("%8s", Long.toBinaryString(data & 0xffL)).replace(' ', '0');
+            case 4:
+                return "" + (char) data;
+            default:
+                return "null";
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnRemoveAll;
     private javax.swing.JButton btnRemoveSelected;
     private javax.swing.JComboBox<String> cmbType;
+    private javax.swing.JComboBox<String> cmbValueFormat;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblAdd;
     private javax.swing.JLabel lblAddr;
@@ -422,7 +472,7 @@ public class Watcher extends javax.swing.JFrame {
 
             }  else {
                 if(type.equals("Bus")) {
-                    address = PLPToolbox.parseNum(addr);
+                    address = PLPToolbox.parseNum(addr.substring(0, 10));
                     plp.sim.bus.write(address, newVal, false);
                 } else if(type.equals("Register")) {
                     if(plp.getArch().equals("plpmips")) {

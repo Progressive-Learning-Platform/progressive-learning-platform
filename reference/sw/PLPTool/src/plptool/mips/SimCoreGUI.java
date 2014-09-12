@@ -766,7 +766,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
         for(int i = 0; i < 32; i++) {
             tblRegFile.setValueAt(((SimCore)sim).regfile.read(i).toString(), i, 2);
-            tblRegFile.setValueAt(String.format("0x%08x", ((SimCore)sim).regfile.read(i)), i, 1);
+            tblRegFile.setValueAt(String.format("0x%08x", ((SimCore)sim).regfile.read(i) & 0xffffffffL), i, 1);
         }
 
         for(int i = 0; i < memoryVisualizers.size(); i++)

@@ -273,6 +273,16 @@ public class ConsoleFrame extends javax.swing.JFrame {
 
                 asmexplorer.setVisible(true);
                 asmexplorer.updateTable();
+            } else if(command.equals("devchangeformatting")) {
+                plp.g_dev.changeFormatting();
+            } else if(command.equals("refreshprojectview")) {
+                plp.refreshProjectView(true);
+            } else if(command.equals("updatecomponentswithdev")) {
+                plp.updateComponents(true);
+            } else if(command.equals("updatecomponents")) {
+                plp.updateComponents(false);
+            } else if(command.equals("debugrepaint")) {
+                plp.g_dev.forceRevalidate();
             } else if(command.equals("simmode") && plp.sim != null) {
                 if(!simmode) {
                     simmode = true;
