@@ -48,11 +48,12 @@ public class Watcher extends javax.swing.JFrame {
         cmbType.addItem("Bus");
         cmbType.addItem("Register");
         cmbValueFormat.removeAllItems();
-        cmbValueFormat.addItem("Unsigned Integer - Decimal");
-        cmbValueFormat.addItem("Signed Integer - Decimal");
+        cmbValueFormat.addItem("Unsigned Decimal");
+        cmbValueFormat.addItem("Signed Decimal");
         cmbValueFormat.addItem("Binary");
         cmbValueFormat.addItem("Binary - Least Significant 8 bits");
         cmbValueFormat.addItem("Unicode");
+        cmbValueFormat.addItem("Packed 4 ASCII characters");
 
         updateFontSize();
 
@@ -397,6 +398,8 @@ public class Watcher extends javax.swing.JFrame {
                 return String.format("%8s", Long.toBinaryString(data & 0xffL)).replace(' ', '0');
             case 4:
                 return "" + (char) data;
+            case 5:
+                return PLPToolbox.asciiWord(data);
             default:
                 return "null";
         }
