@@ -271,8 +271,10 @@ public class Watcher extends javax.swing.JFrame {
                 
         switch(cmbType.getSelectedIndex()) {
             case 0:
-                if(plp.isAssembled() && (tempAddr = plp.asm.resolveAddress(txtAddr.getText())) != -1)
-                    addr = tempAddr;
+                //if(plp.isAssembled() && (tempAddr = plp.asm.resolveAddress(txtAddr.getText())) != -1)
+                if(plp.isAssembled())
+                    addr = PLPToolbox.resolveBaseOffset(plp.asm, txtAddr.getText());
+                //    addr = tempAddr;
                 else
                     addr = PLPToolbox.parseNum(txtAddr.getText());
 

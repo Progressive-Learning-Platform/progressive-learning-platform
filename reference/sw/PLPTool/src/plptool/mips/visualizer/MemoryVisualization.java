@@ -200,7 +200,8 @@ public class MemoryVisualization extends javax.swing.JFrame {
 
     private void btnVisualizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisualizeActionPerformed
         try {
-            long base = PLPToolbox.parseNum(txtStartAddr.getText());
+            long addr = plp.asm.resolveAddress(txtStartAddr.getText());
+            long base = (addr == -1) ? PLPToolbox.parseNum(txtStartAddr.getText()) : addr;
             long offset = PLPToolbox.parseNum(txtOffset.getText());
 
             if(offset < 0) {
