@@ -134,6 +134,7 @@ public class Watcher extends javax.swing.JFrame {
         lblAddr.setName("lblAddr"); // NOI18N
 
         txtAddr.setText(resourceMap.getString("txtAddr.text")); // NOI18N
+        txtAddr.setToolTipText(resourceMap.getString("txtAddr.toolTipText")); // NOI18N
         txtAddr.setName("txtAddr"); // NOI18N
         txtAddr.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -282,7 +283,7 @@ public class Watcher extends javax.swing.JFrame {
                     Long data = (Long) plp.sim.bus.read(addr);
                     String label = plp.asm.lookupLabel(addr);
                     Object[] row = {"Bus", String.format("0x%08x", addr) + ((label != null) ? " [" + label + "]" : ""),
-                                    (data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized",
+                                    (data != null) ? String.format("%08x", data & 0xffffffffL) : "Uninitialized",
                                     (data != null) ? convertValue(data) : "Uninitialized"};
                     entries.addRow(row);
                     tblEntries.setModel(entries);
@@ -303,7 +304,7 @@ public class Watcher extends javax.swing.JFrame {
                     if(addr >= 0 && addr <= mipsSim.regfile.endAddr()) {
                         Long data = (Long) mipsSim.regfile.read(addr);
                         Object[] row = {"Register", (reg != null ? txtAddr.getText() : String.format("0x%08x", addr)),
-                                        (data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized",
+                                        (data != null) ? String.format("%08x", data & 0xffffffffL) : "Uninitialized",
                                         (data != null) ? convertValue(data) : "Uninitialized"};
                         entries.addRow(row);
                         tblEntries.setModel(entries);
@@ -317,10 +318,9 @@ public class Watcher extends javax.swing.JFrame {
 
     private void btnRemoveSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveSelectedActionPerformed
         DefaultTableModel entries = getTblValues();
-        int rowToDelete = tblEntries.getSelectedRow();
-        if(rowToDelete > -1) {
-            entries.removeRow(rowToDelete);
-            plp.setModified();
+        int[] rowsToDelete = tblEntries.getSelectedRows();
+        for(int i = rowsToDelete.length-1; i >= 0; i--) {
+            entries.removeRow(rowsToDelete[i]);
         }
     }//GEN-LAST:event_btnRemoveSelectedActionPerformed
 
@@ -358,7 +358,7 @@ public class Watcher extends javax.swing.JFrame {
                 String label = plp.asm.lookupLabel(PLPToolbox.parseNum(addr));
                 entries.setValueAt(String.format("0x%08x", PLPToolbox.parseNum(addr)) + ((label != null) ? " [" + label + "]" : ""), i, 1);
                 Long data = (Long) plp.sim.bus.read(PLPToolbox.parseNum(addr));
-                entries.setValueAt((data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized", i, 2);
+                entries.setValueAt((data != null) ? String.format("%08x", data & 0xffffffffL) : "Uninitialized", i, 2);
                 entries.setValueAt((data != null) ? convertValue(data) : "Uninitialized", i, 3);
             }
             else if(entries.getValueAt(i, 0).equals("Register") && plp.getArch().getStringID().equals("plpmips")) {
@@ -374,7 +374,7 @@ public class Watcher extends javax.swing.JFrame {
                     regAddr = PLPToolbox.parseNum((String) entries.getValueAt(i, 1));
 
                 Long data = (Long) mipsSim.regfile.read(regAddr);
-                entries.setValueAt((data != null) ? String.format("0x%08x", data & 0xffffffffL) : "Uninitialized", i, 2);
+                entries.setValueAt((data != null) ? String.format("%08x", data & 0xffffffffL) : "Uninitialized", i, 2);
                 entries.setValueAt((data != null) ? convertValue(data) : "Uninitialized", i, 3);
             }
         }
