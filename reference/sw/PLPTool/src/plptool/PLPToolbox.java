@@ -1184,6 +1184,43 @@ public class PLPToolbox {
         return ret && path.delete();
     }
 
+    /**
+     * Return resolved address of addresses in (base+offset) or (base-offset)
+     * format
+     *
+     * @param location base+offset address in string
+     * @return resolved address in long, -1 if can not be resolved
+     */
+    public static long resolveBaseOffset(PLPAsm asm, String location) {
+        long ret = -1;
+        StringTokenizer tokens = new StringTokenizer(location, "+-", true);
+        int tokenCount = tokens.countTokens();
+        if(!tokens.hasMoreTokens()) {
+            return Msg.E("resolveBaseOffset: empty expression", Constants.PLP_NUMBER_ERROR, null);
+        }
+        String base = tokens.nextToken();        
+        long addr = asm.resolveAddress(base);
+        ret = (addr == -1) ? parseNum(base) : addr;
+        Msg.D("resolveBaseOffset: base=" + base + " asmresolved=" + format32Hex(ret) + " tokens=" + tokenCount, 4, null);
+        if(ret != -1 && tokenCount == 3) {
+            String offsetOperator = tokens.nextToken();
+            long offset = parseNum(tokens.nextToken());
+            if(offset == -1) {
+                return ret;
+            }
+            if(offsetOperator.equals("+")) {
+                ret = addr + offset;
+            } else if(offsetOperator.equals("-")) {
+                ret = addr - offset;
+            } else {
+                Msg.E("resolveBaseOffset: invalid offset operator: '" + offsetOperator + "'", Constants.PLP_NUMBER_ERROR, null);
+            }
+        } else if(ret == -1) {
+            Msg.E("resolveBaseOffset: invalid address expression", Constants.PLP_NUMBER_ERROR, null);
+        }
+        return ret;
+    }
+
     static class StringLongEntry {
         private String s;
         private Long l;
