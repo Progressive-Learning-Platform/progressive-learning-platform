@@ -1185,15 +1185,16 @@ public class PLPToolbox {
     }
 
     /**
-     * Return resolved address of addresses in (base+offset) or (base-offset)
-     * format
+     * Return the effective address of addresses in (base+offset) or
+     * (base-offset) format
      *
-     * @param location base+offset address in string
-     * @return resolved address in long, -1 if can not be resolved
+     * @param location base+offset address in String
+     * @return resolved address in long, -1 if the address is failed to be
+     * resolved
      */
     public static long resolveBaseOffset(PLPAsm asm, String location) {
         long ret = -1;
-        StringTokenizer tokens = new StringTokenizer(location, "+-", true);
+        StringTokenizer tokens = new StringTokenizer(location.replaceAll("\\s",""), "+-", true);
         int tokenCount = tokens.countTokens();
         if(!tokens.hasMoreTokens()) {
             return Msg.E("resolveBaseOffset: empty expression", Constants.PLP_NUMBER_ERROR, null);
@@ -1209,14 +1210,12 @@ public class PLPToolbox {
                 return ret;
             }
             if(offsetOperator.equals("+")) {
-                ret = addr + offset;
+                ret = ret + offset;
             } else if(offsetOperator.equals("-")) {
-                ret = addr - offset;
-            } else {
-                Msg.E("resolveBaseOffset: invalid offset operator: '" + offsetOperator + "'", Constants.PLP_NUMBER_ERROR, null);
+                ret = ret - offset;
             }
-        } else if(ret == -1) {
-            Msg.E("resolveBaseOffset: invalid address expression", Constants.PLP_NUMBER_ERROR, null);
+        } else if(ret == -1 || tokenCount != 1) {
+            return Msg.E("resolveBaseOffset: invalid address expression", Constants.PLP_NUMBER_ERROR, null);
         }
         return ret;
     }

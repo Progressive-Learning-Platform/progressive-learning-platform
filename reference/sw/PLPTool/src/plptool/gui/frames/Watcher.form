@@ -114,6 +114,7 @@
     <Component class="javax.swing.JTextField" name="txtAddr">
       <Properties>
         <Property name="text" type="java.lang.String" resourceKey="txtAddr.text"/>
+        <Property name="toolTipText" type="java.lang.String" resourceKey="txtAddr.toolTipText"/>
         <Property name="name" type="java.lang.String" value="txtAddr" noResource="true"/>
       </Properties>
       <Events>
