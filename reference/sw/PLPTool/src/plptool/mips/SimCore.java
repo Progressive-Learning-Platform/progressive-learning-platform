@@ -212,6 +212,7 @@ public class SimCore extends PLPSimCore {
         ex_stage.count = 0;
         mem_stage.count = 0;
         wb_stage.count = 0;
+        branch = false;
         flushpipeline();
 
         Msg.P("core: reset");
