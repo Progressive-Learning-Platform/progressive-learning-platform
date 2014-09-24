@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
  
-                       File Association
+                       File Association, modified by WIRA
 _____________________________________________________________________________
  
  Based on code taken from http://nsis.sourceforge.net/File_Association 
@@ -16,13 +16,15 @@ _____________________________________________________________________________
  
 _____________________________________________________________________________
  
- ${RegisterExtension} "[executable]" "[extension]" "[description]"
+ ${RegisterExtension} "[executable]" "[extension]" "[description]" "[icon]"
  
 "[executable]"     ; executable which opens the file format
                    ;
 "[extension]"      ; extension, which represents the file format to open
                    ;
 "[description]"    ; description for the extension. This will be display in Windows Explorer.
+                   ;
+"[icon]"    	   ; Icon for the extension.
                    ;
  
  
@@ -73,9 +75,10 @@ _____________________________________________________________________________
  
  
  
-!macro RegisterExtensionCall _EXECUTABLE _EXTENSION _DESCRIPTION
+!macro RegisterExtensionCall _EXECUTABLE _EXTENSION _DESCRIPTION _ICON
   !verbose push
   !verbose ${_FileAssociation_VERBOSE}
+  Push `${_ICON}`
   Push `${_DESCRIPTION}`
   Push `${_EXTENSION}`
   Push `${_EXECUTABLE}`
@@ -114,6 +117,9 @@ _____________________________________________________________________________
   Exch 2
   Exch $R0 ;desc
   Exch 2
+  Exch 3
+  Exch $R4 ;icon
+  Exch 3
   Push $0
   Push $1
  
@@ -128,10 +134,17 @@ NoBackup:
   StrCmp $0 "" 0 Skip
     WriteRegStr HKCR "$R0" "" "$R0"
     WriteRegStr HKCR "$R0\shell" "" "open"
-    WriteRegStr HKCR "$R0\DefaultIcon" "" "$R2,0"
+    WriteRegStr HKCR "$R0\DefaultIcon" "" '"$R4"'
+    !define SHCNE_ASSOCCHANGED 0x8000000
+
+    !define SHCNF_IDLIST 0
+	
+    System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
+    
+    
 Skip:
   WriteRegStr HKCR "$R0\shell\open\command" "" '"$R2" "%1"'
-  WriteRegStr HKCR "$R0\shell\edit" "" "Edit $R0"
+  WriteRegStr HKCR "$R0\shell\edit" "" "Edit with $R0"
   WriteRegStr HKCR "$R0\shell\edit\command" "" '"$R2" "%1"'
  
   Pop $1
@@ -139,6 +152,7 @@ Skip:
   Pop $R2
   Pop $R1
   Pop $R0
+  Pop $R4
  
   !verbose pop
 !macroend
