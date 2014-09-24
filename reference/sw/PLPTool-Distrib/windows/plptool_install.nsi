@@ -79,6 +79,7 @@ Section "PLPTool Install (required)"
   File "..\..\..\..\misc\art\plptool\appicon.ico"
   File "..\..\..\..\misc\art\plptool\terminal.ico"
   File "..\..\..\..\misc\art\plptool\folder.ico"
+  File "..\..\..\..\misc\art\plptool\project.ico"
   SetOutPath $INSTDIR
   
   ; Write the installation path into the registry
@@ -94,7 +95,11 @@ Section "PLPTool Install (required)"
 SectionEnd
 
 Section "Associate PLP projects with PLPTool"
-  ${registerExtension} "$INSTDIR\PLPToolWin.bat" ".plp" "PLP project"
+  ${unregisterExtension} ".plp" "PLPTool"
+  ${unregisterExtension} ".plp" "PLP Project"
+  ${unregisterExtension} ".plp" "with PLPTool"
+  ${unregisterExtension} ".plp" "Edit with PLPTool"
+  ${registerExtension} "$INSTDIR\PLPToolWin.bat" ".plp" "PLPTool" "$INSTDIR\resources\project.ico"
 SectionEnd
 
 ; Optional section (can be disabled by the user)
@@ -113,7 +118,7 @@ Section "Example Programs and Software Library"
   File /r "..\..\libplp"
 SectionEnd
 
-Section /o "PLPTool Extensions"
+Section "PLPTool Extensions"
   SetOutPath $INSTDIR\resources
   File "..\..\PLPTool-Extensions\AutoSaver5\dist\AutoSaver5.jar"
   File "..\..\PLPTool-Extensions\Flowchart\dist\Flowchart.jar"
@@ -139,7 +144,10 @@ Section "Uninstall"
   DeleteRegKey HKLM SOFTWARE\PLPTool5
 
   ; Remove file association
-  ${unregisterExtension} ".plp" "PLP project"
+  ${unregisterExtension} ".plp" "PLPTool"
+  ${unregisterExtension} ".plp" "PLP Project"
+  ${unregisterExtension} ".plp" "with PLPTool"
+  ${unregisterExtension} ".plp" "Edit with PLPTool"
   
   ; Remove files and uninstaller
   Delete $INSTDIR\PLPToolStatic.jar
