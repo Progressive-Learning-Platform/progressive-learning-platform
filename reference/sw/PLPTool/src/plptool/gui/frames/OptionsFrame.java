@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package plptool.gui.frames;
 import plptool.Config;
 import plptool.gui.ProjectDriver;
 import plptool.Msg;
+import plptool.dmf.CallbackRegistry;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -153,6 +154,8 @@ public class OptionsFrame extends javax.swing.JFrame {
         } catch(Exception e) {
             prgReadTimeout.setText("" + Config.prgReadTimeout);
         }
+
+        CallbackRegistry.callback(CallbackRegistry.OPTIONS_UPDATE, null);
     }
 
     private void triggerChange() {

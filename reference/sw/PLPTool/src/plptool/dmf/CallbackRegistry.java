@@ -1,5 +1,5 @@
 /*
-    Copyright 2012 PLP Contributors
+    Copyright 2012-2014 PLP Contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -78,8 +78,9 @@ public class CallbackRegistry {
     public static final int GUI_UPDATE                  = 37;
     public static final int GUI_VIEW_REFRESH            = 38;
     public static final int CRITICAL_ERROR              = 39;
+    public static final int OPTIONS_UPDATE              = 43;
 
-    public static final int CALLBACKS                   = 43;
+    public static final int CALLBACKS                   = 44;
 
     public static boolean INITIALIZED                   = false;
 

@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 /*
@@ -10,6 +23,10 @@
  */
 
 package plptool.mods;
+
+import plptool.Config;
+import java.awt.Font;
+import plptool.dmf.*;
 
 /**
  *
@@ -24,17 +41,23 @@ public class UARTFrame extends javax.swing.JFrame {
         initComponents();
         cmbFormat.removeAllItems();
         cmbFormat.addItem("ASCII String");
-        cmbFormat.addItem("1-byte raw");
-        cmbFormat.addItem("Space-delimited raw");
-        
+        cmbFormat.addItem("1-byte value");
+        cmbFormat.addItem("Space-delimited values");
+        txtUART.setFont(new Font(Config.devFont, Font.PLAIN, Config.devFontSize));
+        CallbackRegistry.register(new FontUpdateCallback(), CallbackRegistry.OPTIONS_UPDATE);
     }
 
     public void setUART(UART f) {
         u = f;
     }
+
     public void addText(long d) {
         txtUART.append(String.format("%c",(char)d));
         txtUART.setCaretPosition(txtUART.getText().length() - 1);
+    }
+
+    public void clearText() {
+        txtUART.setText("");
     }
     /** This method is called from within the constructor to
      * initialize the form.
@@ -215,4 +238,10 @@ public class UARTFrame extends javax.swing.JFrame {
     private javax.swing.JTextArea txtUART;
     // End of variables declaration//GEN-END:variables
 
+    class FontUpdateCallback implements Callback {
+        public boolean callback(int num, Object param) {
+            txtUART.setFont(new Font(Config.devFont, Font.PLAIN, Config.devFontSize));
+            return true;
+        }
+    }
 }

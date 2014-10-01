@@ -65,8 +65,11 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         cmbCallbackEvent.addItem("EVENT_SIM_POST_INIT         = 17");
         cmbCallbackEvent.addItem("EVENT_SIM_POST_UNINIT       = 18");
         cmbCallbackEvent.addItem("EVENT_ASSEMBLE              = 19");
+        cmbCallbackEvent.addItem("EVENT_ASSEMBLE_INIT         = 40");
         cmbCallbackEvent.addItem("EVENT_POST_ASSEMBLE         = 20");
         cmbCallbackEvent.addItem("EVENT_PROGRAM               = 21");
+        cmbCallbackEvent.addItem("EVENT_PROGRAM_INIT          = 41");
+        cmbCallbackEvent.addItem("EVENT_HEADLESS_START        = 42");
 
         cmbCallbackEvent.addItem("SIM_STEP_AGGREGATE          = 22");
         cmbCallbackEvent.addItem("SIM_POST_STEP_AGGREGATE     = 23");
@@ -88,6 +91,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
         cmbCallbackEvent.addItem("GUI_UPDATE                  = 37");
         cmbCallbackEvent.addItem("GUI_VIEW_REFRESH            = 38");
         cmbCallbackEvent.addItem("CRITICAL_ERROR              = 39");
+        cmbCallbackEvent.addItem("OPTIONS_UPDATE              = 43");
     }
 
     public void setEmbedOnly() {
