@@ -131,5 +131,6 @@ public class UART extends PLPSimBusModule {
         rb = new LinkedList<Long>();
         super.writeReg(startAddr+4, new Long(0L), false);
         super.writeReg(startAddr+12, new Long(0L), false);
+        frame.clearText();
     }
 }
