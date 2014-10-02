@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,11 +131,13 @@ public class UART extends PLPSimBusModule {
         rb = new LinkedList<Long>();
         super.writeReg(startAddr+4, new Long(0L), false);
         super.writeReg(startAddr+12, new Long(0L), false);
-        frame.clearText();
+        if(frame != null)
+            frame.clearText();
     }
 
     // Let's remove our callback
     @Override public void remove() {
-        frame.removeCallback();
+        if(frame != null)
+            frame.removeCallback();
     }
 }
