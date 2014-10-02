@@ -113,7 +113,6 @@ public class PLPSimBus {
      * @return Data with successful read, -1 otherwise
      */
     public synchronized Object read(long addr) {
-        DynamicModuleFramework.hook(new BusEvent(BusEvent.READ, addr));
         CallbackRegistry.callback(CallbackRegistry.BUS_READ, addr);
         Object value = null;
         PLPSimBusModule module;
@@ -123,9 +122,6 @@ public class PLPSimBus {
                addr <= module.endAddr()) {
                 if(!module.phantom) {                    
                     value = module.read(addr);
-                    DynamicModuleFramework.hook(new BusEvent(
-                        module.isInstr(addr) ? BusEvent.READ_INSTR : BusEvent.READ_DATA,
-                        value));
                 } else
                     module.read(addr);
             }
@@ -160,7 +156,6 @@ public class PLPSimBus {
      */
     public synchronized int write(long addr, Object data, boolean isInstr) {
         Object[] params = {addr, data, isInstr};
-        DynamicModuleFramework.hook(new BusEvent(BusEvent.WRITE, params));
         CallbackRegistry.callback(CallbackRegistry.BUS_WRITE, params);
         Msg.D("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
         boolean noMapping = true;

@@ -642,7 +642,6 @@ public final class ProjectDriver {
         }
 
         // Hook for project save
-        DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.PROJECT_SAVE, -1, tOut));
         CallbackRegistry.callback(CallbackRegistry.PROJECT_SAVE, tOut);
 
         Msg.D("Closing tar archive...", 2, this);
@@ -779,11 +778,6 @@ public final class ProjectDriver {
 
             // Hook for project open for each entry
             Object[] eParams = {entry.getName(), image, plpFile};
-            for(int i = 0; i < DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
-                Object ret = DynamicModuleFramework.hook(i, new ProjectEvent(ProjectEvent.PROJECT_OPEN_ENTRY, -1, eParams));
-                if(ret != null && ret instanceof Boolean)
-                    handled = (Boolean) ret;
-            }
             handled = CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_ENTRY, eParams) || handled;
 
             if(entry.getName().endsWith("asm") && !entry.getName().startsWith("plp.")) {

@@ -133,4 +133,9 @@ public class UART extends PLPSimBusModule {
         super.writeReg(startAddr+12, new Long(0L), false);
         frame.clearText();
     }
+
+    // Let's remove our callback
+    @Override public void remove() {
+        frame.removeCallback();
+    }
 }

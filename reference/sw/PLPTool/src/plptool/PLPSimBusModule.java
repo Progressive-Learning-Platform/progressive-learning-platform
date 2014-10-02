@@ -1,7 +1,7 @@
 package plptool;
 
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import java.util.Iterator;
  * @see PLPSimBus
  * @author wira
  */
-public abstract class PLPSimBusModule extends Thread implements PLPGenericModule {
+public abstract class PLPSimBusModule extends Thread {
     /**
      * Denotes whether this module should run on its own thread. Defaults
      * to false.
@@ -277,6 +277,13 @@ public abstract class PLPSimBusModule extends Thread implements PLPGenericModule
     }
 
     /**
+     * Removal routine
+     */
+    public synchronized void remove() {
+
+    }
+
+    /**
      * Return whether the module is enabled
      *
      * @return Status of module in (boolean)
@@ -329,14 +336,6 @@ public abstract class PLPSimBusModule extends Thread implements PLPGenericModule
     public synchronized final boolean isInitialized(long addr) {
         return values.containsKey(addr);
     }
-
-    /**
-     * Overridable module developer-specified generic hook.
-     *
-     * @param param An object to pass to the hook
-     * @return A reference to an object returned from the hook function
-     */
-    public Object hook(Object param) {return null;};
 
     /**
      * Reset attributes for dynamically loaded modules

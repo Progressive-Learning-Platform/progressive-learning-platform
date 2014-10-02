@@ -96,7 +96,6 @@ public class SimCLI {
         else if(tokens[0].equals("assert"))         cmd_assert();
         else if(tokens[0].equals("assertreg"))      cmd_assertreg();
         else if(tokens[0].equals("echo"))           cmd_echo();
-        else if(tokens[0].equals("modhook"))        cmd_modhook();
         else if(input.equals("flags"))              cmd_flags();
         else if(input.equals("pflags"))             cmd_pflags();
         else if(input.equals("fwd"))                cmd_fwd();
@@ -610,24 +609,6 @@ public class SimCLI {
             Msg.P("Usage: assertreg <register address> <value>");
     }
 
-    public static void cmd_modhook() {
-        if(tokens.length < 2) {
-            Msg.P("Usage: modhook <module bus index> <params>");
-        } else {
-            try {
-                int index = PLPToolbox.parseNumInt(tokens[1]);
-                String param = "";
-                for(int i = 2; i < tokens.length; i++)
-                    param += (i==2 ? "" : " ") + tokens[i];
-                if(index > -1 && index < core.bus.getNumOfMods())
-                    core.bus.getRefMod(index).hook(param);
-            } catch(Exception e) {
-                Msg.E("Module hook exception",
-                      Constants.PLP_SIM_MODHOOK_ERROR, null);
-            }
-        }
-    }
-
     public static void cmd_echo() {
         if(tokens.length == 1)
             Msg.P("");
@@ -767,7 +748,6 @@ public class SimCLI {
                 Msg.P("\n cycleaccurate\n\tToggle cycle-accurate simulation mode (default off).");
                 Msg.P("\n assert <module index in the BUS> <address/label> <value>\n\tAssert the contents of an address to be the specified value.");
                 Msg.P("\n assertreg <register address> <value>\n\tAssert a register's contents to be the specified value.");
-                Msg.P("\n modhook <module bus index> <params>\n\tPass <params> to the module's hook function.");
 
                 break;
 

@@ -27,7 +27,7 @@ import java.util.Iterator;
  *
  * @author wira
  */
-public abstract class PLPAsm implements PLPGenericModule {
+public abstract class PLPAsm {
 
     /**
      * Assembly source files attached to this assembler

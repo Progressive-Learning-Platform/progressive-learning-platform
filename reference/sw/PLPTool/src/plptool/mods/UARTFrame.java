@@ -25,6 +25,7 @@
 package plptool.mods;
 
 import plptool.Config;
+import plptool.PLPToolbox;
 import java.awt.Font;
 import plptool.dmf.*;
 
@@ -34,6 +35,7 @@ import plptool.dmf.*;
  */
 public class UARTFrame extends javax.swing.JFrame {
     UART u;
+    FontUpdateCallback fontUpdateCallback;
     
     /** Creates new form UARTFrame */
     public UARTFrame() {
@@ -44,16 +46,22 @@ public class UARTFrame extends javax.swing.JFrame {
         cmbFormat.addItem("1-byte value");
         cmbFormat.addItem("Space-delimited values");
         txtUART.setFont(new Font(Config.devFont, Font.PLAIN, Config.devFontSize));
-        CallbackRegistry.register(new FontUpdateCallback(), CallbackRegistry.OPTIONS_UPDATE);
+        fontUpdateCallback = new FontUpdateCallback();
+        CallbackRegistry.register(fontUpdateCallback, CallbackRegistry.OPTIONS_UPDATE);
     }
 
     public void setUART(UART f) {
         u = f;
+        setTitle("UART at " + PLPToolbox.format32Hex(u.startAddr()));
     }
 
     public void addText(long d) {
         txtUART.append(String.format("%c",(char)d));
         txtUART.setCaretPosition(txtUART.getText().length() - 1);
+    }
+
+    public void removeCallback() {
+        CallbackRegistry.unregister(fontUpdateCallback, CallbackRegistry.OPTIONS_UPDATE);
     }
 
     public void clearText() {

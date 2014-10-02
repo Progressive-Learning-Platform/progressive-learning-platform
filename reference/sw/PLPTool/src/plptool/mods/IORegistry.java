@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -450,7 +450,6 @@ public class IORegistry {
             return Constants.PLP_DMOD_INSTANTIATION_ERROR;
 
         module.setNewParameters(startAddr, endAddr, isWordAligned);
-        module.hook(frame);
         modules.add(module);
         type.add(-1); // -1 for dynamic module
         regSize.add(isWordAligned ? (endAddr-startAddr)/4+1 : endAddr-startAddr+1);
@@ -571,6 +570,7 @@ public class IORegistry {
             if(modules.get(0).threaded && modules.get(0).isAlive()) {
                 modules.get(0).stop = true;
             }
+            modules.get(0).remove();
             modules.remove(0);
             regSize.remove(0);
             type.remove(0);
@@ -598,6 +598,7 @@ public class IORegistry {
             modules.get(index).stop = true;
         }
 
+        modules.get(index).remove();
         modules.remove(index);
         regSize.remove(index);
         type.remove(index);

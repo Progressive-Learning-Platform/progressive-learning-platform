@@ -60,7 +60,7 @@ public class PLPToolApp extends SingleFrameApplication {
     private static boolean loadModules = true;
     private static boolean headless = false;
     private static boolean exiting = false;
-    private static boolean preserveConfig = false;
+    private static boolean preserveConfig = true;
 
     private static ArrayList<String> moduleLoadDirs;
     private static ArrayList<String> moduleLoadJars;
@@ -83,15 +83,14 @@ public class PLPToolApp extends SingleFrameApplication {
 
         try {
             if(serialTerminal) {
-                preserveConfig = true;
                 plptool.gui.SerialTerminal term = new plptool.gui.SerialTerminal(true);
                 term.setVisible(true);
             } else if(embedManifestGUI) {
-                preserveConfig = true;
                 DynamicModuleManager dmm = new DynamicModuleManager(null, true, null);
                 dmm.setEmbedOnly();
                 dmm.setVisible(true);
             } else {
+                preserveConfig = false;
                 images.put("__NOT_FOUND__", ImageIO.read(PLPToolApp.class.getResource("resources/invalid.png")));
                 Msg.D("Creating temporary directory (" + PLPToolbox.getTmpDir() + ")...", 2, null);
                 PLPToolbox.checkCreateTempDirectory();
@@ -143,6 +142,7 @@ public class PLPToolApp extends SingleFrameApplication {
         Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
             public void run() {
+                Msg.D("Shutdown hook", 2, null);
                 if(!preserveConfig) {
                     saveConfig();
                 }
@@ -286,7 +286,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 Msg.M("Creating default ProjectDriver for debugging...");
                 AutoTest.plp = new ProjectDriver(Constants.PLP_DEFAULT);
                 CallbackRegistry.callback(CallbackRegistry.START, AutoTest.plp);
-				return; // do not exit, leave it to the autotest thread
+		return; // do not exit, leave it to the autotest thread
 
             // Print GPL license text and quit
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
@@ -807,14 +807,16 @@ public class PLPToolApp extends SingleFrameApplication {
                     if(PLPToolApp.getAttributes().containsKey(key))
                         out.write(key + "::" + PLPToolApp.getAttributes().get(key) + "\n");
                 }
+                Msg.D("Calling SAVE_CONFIG callback", 4, null);
                 // see if any modules want to save out their configuration
                 // --- any configuration saved will be loaded by loadConfig to
                 //     the application attributes, so no hook on loading is
                 //     necessary. The converse is not true, the module will have
                 //     to use this hook to keep its configuration
-                DynamicModuleFramework.hook(new ProjectEvent(ProjectEvent.CONFIG_SAVE, -1, out));
                 CallbackRegistry.callback(CallbackRegistry.SAVE_CONFIG, out);
+                Msg.D("Closing config file", 4, null);
                 out.close();
+                Msg.D("Save config done", 4, null);
 
             } catch(Exception e) {
                 Msg.E("Failed to save PLPTool configuration to disk.",
