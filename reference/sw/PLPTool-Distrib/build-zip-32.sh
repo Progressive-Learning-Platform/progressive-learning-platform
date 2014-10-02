@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "- PLPTool deb package builder"
+echo "- PLPTool 32-bit zip package builder"
 if [ "$(id -u)" != "0" ] && [ -z "$(command -v fakeroot)" ]
 then
   echo "fakeroot must be installed or this script must be run as root" 1>&2

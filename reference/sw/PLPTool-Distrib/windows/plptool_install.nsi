@@ -114,8 +114,10 @@ Section "Start Menu Shortcuts"
 SectionEnd
 
 Section "Example Programs and Software Library"
-  File /r "..\..\examples"
-  File /r "..\..\libplp"
+  SetOutPath $INSTDIR\examples
+  File /r "..\..\examples\*.plp"
+  SetOutPath $INSTDIR\libplp
+  File /r "..\..\libplp\*.asm"
 SectionEnd
 
 Section "PLPTool Extensions"
