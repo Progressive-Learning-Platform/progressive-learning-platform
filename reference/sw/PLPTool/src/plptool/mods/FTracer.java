@@ -94,35 +94,6 @@ public class FTracer extends PLPSimBusModule {
 
     }
 
-    /**
-     * Add hooks for the command line simulator.
-     *
-     * @param param String passed by the CLI simulator
-     * @return null
-     */
-    @Override
-    public Object hook(Object param) {
-        String args = (String) param;
-        args = args.trim();
-        String tokens[] = args.split("\\s+");
-        
-        if(args.equals("record")) {
-            record = true;
-        } else if (args.equals("stop")) {
-            record = false;
-        } else if(args.equals("stdout on")) {
-            stdout = true;
-        } else if(args.equals("stdout off")) {
-            stdout = false;
-        } else if(args.equals("print")) {
-            Msg.M(recordStr.toString());
-        } else if(args.equals("clear")) {
-            recordStr = new StringBuilder();
-        }
-
-        return null;
-    }
-
     @Override
     public String toString() {
         return "Tracer";

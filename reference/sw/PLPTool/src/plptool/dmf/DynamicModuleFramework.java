@@ -49,11 +49,6 @@ public class DynamicModuleFramework {
     private static ArrayList<Class> dynamicModuleClasses = new ArrayList<Class>();
 
     /**
-     * Dynamic module instances holder
-     */
-    private static ArrayList<PLPGenericModule> dynamicModuleInstances = new ArrayList<PLPGenericModule>();
-
-    /**
      * Dynamic PLPTool >= 5.x module instances holder
      */
     private static ArrayList<Object> dynamicInstances = new ArrayList<Object>();
@@ -157,34 +152,6 @@ public class DynamicModuleFramework {
     }
       
     /**
-     * --- DEPRECATED ---
-     * Instantiate a dynamic module as PLPGenericModule and add a reference
-     * to it in the dynamicModuleInstances list.
-     *
-     * @param index Index of the class
-     * @return Index of the new module in the list, -1 if an error occurred
-     */
-    public static int newGenericModuleInstance(int index) {
-        try {
-            Class moduleClass = getDynamicModuleClass(index);
-            if(moduleClass == null)
-                return Constants.PLP_GENERIC_ERROR;
-            dynamicModuleInstances.add((PLPGenericModule) moduleClass.newInstance());
-            return dynamicModuleInstances.size() - 1;
-
-        } catch (InstantiationException e) {
-            Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
-                  "Generic modules have to extend plptool.PLPGenericModule class.",
-                  Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
-            return Constants.PLP_ERROR_RETURN;
-        } catch(IllegalAccessException e) {
-            Msg.E("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
-                  Constants.PLP_DMOD_ILLEGAL_ACCESS, null);
-            return Constants.PLP_ERROR_RETURN;
-        }
-    }
-
-    /**
      * Instantiate a dynamic module and add a reference
      * to it in the dynamicInstances list.
      *
@@ -212,40 +179,12 @@ public class DynamicModuleFramework {
     }
 
     /**
-     * --- DEPRECATED ---
-     * Return the number of instantiated dynamic PLPTool 4.1 module objects
-     *
-     * @return Number of instantiated dynamic module objects
-     */
-    public static int getNumberOfGenericModuleInstances() {
-        return dynamicModuleInstances.size();
-    }
-
-    /**
      * Return the number of instantiated dynamic module objects
      *
      * @return Number of instantiated dynamic module objects
      */
     public static int getNumberOfModuleInstances() {
         return dynamicInstances.size();
-    }
-
-    /**
-     * --- DEPRECATED ---
-     * Return a reference to the specified dynamic module instance (PLPTool
-     * version 4.1)
-     *
-     * @param index Index of the module object to return
-     * @return Reference to the specified object
-     */
-    public static PLPGenericModule getGenericModuleInstance(int index) {
-        if(index < 0 || index >= dynamicModuleInstances.size()) {
-            Msg.E("Invalid index.",
-                  Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
-            return null;
-        }
-
-        return dynamicModuleInstances.get(index);
     }
 
     /**
@@ -276,28 +215,8 @@ public class DynamicModuleFramework {
             if(getModuleInstance(i).getClass().getCanonicalName().equals(className))
                 return true;
         }
-        for(int i = 0; i < getNumberOfGenericModuleInstances(); i++) {
-            if(getGenericModuleInstance(i).getClass().getCanonicalName().equals(className))
-                return true;
-        }
 
         return false;
-    }
-
-    /**
-     * Remove the reference to the specified generic PLPTool 4.1 module instance
-     *
-     * @param index Index of the object reference in the list
-     * @return The reference to object if found, null otherwise
-     */
-    public static PLPGenericModule removeGenericModuleInstance(int index) {
-        if(index < 0 || index >= dynamicModuleInstances.size()) {
-            Msg.E("Invalid index.",
-                  Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
-            return null;
-        }
-
-        return dynamicModuleInstances.remove(index);
     }
 
     /**
@@ -314,59 +233,6 @@ public class DynamicModuleFramework {
         }
 
         return dynamicInstances.remove(index);
-    }
-
-    /**
-     * Call the hook function to the specified dynamic module instance
-     *
-     * @param index Index of the generic module instance
-     * @param param Parameters to pass to the hook function
-     * @return Object reference returned by the hook function
-     */
-    public static Object hook(int index, Object param) {
-        Object ret = null;
-
-        if(index < 0 || index >= dynamicModuleInstances.size()) {
-            Msg.E("Invalid index.",
-                  Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
-            return null;
-        }
-
-        try {
-            ret = dynamicModuleInstances.get(index).hook(param);
-        } catch(Exception e) {
-            PLPGenericModule mod = dynamicModuleInstances.get(index);
-            Msg.E("Hook exception [" + index + "]\n" +
-                      " class: " + mod.getClass().getCanonicalName() + "\n" +
-                      " param: " + param.toString(),
-                      Constants.PLP_DMOD_HOOK_EXCEPTION, mod);
-            if(Constants.debugLevel >= 2)
-                e.printStackTrace();
-        }
-
-        return ret;
-    }
-
-    /**
-     * Call the hook function of all module instances and pass the same
-     * parameters
-     *
-     * @param param Parameter to pass to all modules
-     */
-    public static void hook(Object param) {
-        for(int i = 0; i < dynamicModuleInstances.size(); i++) {
-            try {
-                dynamicModuleInstances.get(i).hook(param);
-            } catch(Exception e) {
-                PLPGenericModule mod = dynamicModuleInstances.get(i);
-                Msg.E("Hook exception [" + i + "]\n" +
-                      " class: " + mod.getClass().getCanonicalName() + "\n" +
-                      " param: " + param.toString(),
-                      Constants.PLP_DMOD_HOOK_EXCEPTION, mod);
-                if(Constants.debugLevel >= 2)
-                    e.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -761,19 +627,13 @@ public class DynamicModuleFramework {
             return null;
         }
 
-        // Find classes that implement the PLPGenericModule or ModuleInterface5
-        // interface. This class will be loaded when the module is loaded in
-        // PLPTool
+        // Find classes that implement the ModuleInterface5 interface.
+        // This class will be loaded when the module is loaded in PLPTool
         boolean found = false;
         for(i = 0; i < dynamicModuleClasses.size(); i++) {
             Class[] interfaces = dynamicModuleClasses.get(i).getInterfaces();
             for(int j = 0; j < interfaces.length; j++) {
-                if(interfaces[j].getCanonicalName().equals("plptool.PLPGenericModule")) {
-                    Msg.M("PLPTool 4.1 module interface found!");
-                    manifest += "loadwithproject::" +
-                            dynamicModuleClasses.get(i).getCanonicalName() + "\n";
-                    found = true;
-                } else if(interfaces[j].getCanonicalName().equals("plptool.dmf.ModuleInterface5")) {
+                if(interfaces[j].getCanonicalName().equals("plptool.dmf.ModuleInterface5")) {
                     Msg.M("PLPTool 5 module interface found!");
                     manifest += "loadmodule5::" +
                             dynamicModuleClasses.get(i).getCanonicalName() + "\n";
@@ -874,12 +734,8 @@ class ManifestHandlers {
         plp = p;
         jar = j;
 
-        // Load connector object and pass a reference to the ProjectDriver
-        if(e.startsWith("loadwithproject::"))
-            m_loadwithproject();
-
         // Load PLPTool 5.x module interface class
-        else if(e.startsWith("loadmodule5::"))
+        if(e.startsWith("loadmodule5::"))
             m_loadmodule5();
 
         // Register an ISA metaclass
@@ -899,18 +755,6 @@ class ManifestHandlers {
             m_image();
     }
     
-    public static void m_loadwithproject() {
-        String className = entry.replace("loadwithproject::", "");
-        int cIndex = -1;
-        int ret = DynamicModuleFramework.isModuleClassRegistered(className);
-        if(ret > -1)
-            cIndex = DynamicModuleFramework.newGenericModuleInstance(ret);
-        if(cIndex > -1) {
-            Msg.D("Applying manifest entry: " + entry, 2, null);
-            DynamicModuleFramework.hook(cIndex, plp);
-        }
-    }
-
     public static void m_loadmodule5() {
         int retLoad;
         String className = entry.replace("loadmodule5::", "");

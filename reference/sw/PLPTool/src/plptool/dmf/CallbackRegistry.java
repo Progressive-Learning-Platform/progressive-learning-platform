@@ -157,6 +157,20 @@ public class CallbackRegistry {
     }
 
     /**
+     * Unregister ONE instance of the callback (lowest index)
+     *
+     * @param callback Callback class to unregister
+     * @param callbackNum Callback number
+     * @return
+     */
+    public static boolean unregister(Callback callback, int callbackNum) {
+        if(callbackNum < 0 || callbackNum >= CALLBACKS)
+            return false;
+
+        return callbacks[callbackNum].remove(callback);
+    }
+
+    /**
      * Get all callbacks for a callback event as an Object array
      *
      * @param callbackNum Callback number

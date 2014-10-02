@@ -19,7 +19,6 @@ package plptool.extras.autosaver5;
 
 import plptool.Constants;
 import plptool.Msg;
-import plptool.PLPGenericModule;
 import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
 import plptool.gui.PLPToolApp;

@@ -584,7 +584,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
         if(cmbDModFrameClass.getSelectedIndex() != 0) {
             String[] modFrameEntry = ((String) cmbDModFrameClass.getSelectedItem()).split(":");
             modFrameClassIndex = Integer.parseInt(modFrameEntry[0]);
-            frame = DynamicModuleFramework.newGenericModuleInstance(modFrameClassIndex);
+            frame = DynamicModuleFramework.newModuleInstance(modFrameClassIndex);
         }
 
         plp.ioreg.attachDynamicModule(modClassIndex, startAddr, endAddr, chkDModWordAligned.isSelected(), frame);

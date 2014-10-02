@@ -308,9 +308,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("listdmods")) {
                 out.setText("");
                 String prev = "";
-                for(int i = 0; i < plptool.dmf.DynamicModuleFramework.getNumberOfGenericModuleInstances(); i++) {
+                for(int i = 0; i < plptool.dmf.DynamicModuleFramework.getNumberOfModuleInstances(); i++) {
                     prev = out.getText();
-                    out.setText(prev + i + ":\t" + plptool.dmf.DynamicModuleFramework.getGenericModuleInstance(i).getClass().getName() +"\n");
+                    out.setText(prev + i + ":\t" + plptool.dmf.DynamicModuleFramework.getModuleInstance(i).getClass().getName() +"\n");
                 }
             } else if(command.equals("getarchlist")) {
                 out.setText("");
@@ -346,22 +346,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     out.setText("dmodclass index: " + plptool.dmf.DynamicModuleFramework.isModuleClassRegistered(tokens[1]) + "\n");
                 } else if(tokens[0].equals("newdmod") && tokens.length == 2) {
                     out.setText("Instantiating new object for " + plptool.dmf.DynamicModuleFramework.getDynamicModuleClass(PLPToolbox.parseNumInt(tokens[1])).getName() +"\n");
-                    plptool.dmf.DynamicModuleFramework.newGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                    plptool.dmf.DynamicModuleFramework.newModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
                 } else if(tokens[0].equals("rmdmod") && tokens.length == 2) {
-                    plptool.dmf.DynamicModuleFramework.removeGenericModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
+                    plptool.dmf.DynamicModuleFramework.removeModuleInstance(PLPToolbox.parseNumInt(tokens[1]));
                 } else if(tokens[0].equals("setnewarch") && tokens.length == 2) {
                     int archid = Integer.parseInt(tokens[1]);
                     plp.setArch(archid);
-                } else if(tokens[0].equals("h") && tokens.length == 2) {
-                    String[] temp = tokens[1].split(" ", 2);
-                    out.setText("hook: " + temp[0] + "-" + temp[1] + "\n");
-                    plptool.dmf.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(temp[0]), temp[1]);
-                } else if(tokens[0].equals("hplp") && tokens.length == 2) {
-                    Object ret = plptool.dmf.DynamicModuleFramework.hook(PLPToolbox.parseNumInt(tokens[1]), plp);
-                    if(ret != null)
-                        out.setText("Module seems to have ProjectDriver hook.");
-                    else
-                        out.setText("null was returned");
                 } else if(tokens[0].equals("opencloseport") && tokens.length == 2) {
                    opencloseport(tokens[1]);
                 } else if(tokens[0].equals("loadjarurlload") && tokens.length == 2) {

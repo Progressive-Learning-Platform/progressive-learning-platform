@@ -27,7 +27,7 @@ import plptool.dmf.CallbackRegistry;
  * @see PLPMIPSSim
  * @author wira
  */
-public abstract class PLPSimCore implements PLPGenericModule {
+public abstract class PLPSimCore {
 
     /**
      * Start address for reset.

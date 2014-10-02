@@ -23,7 +23,7 @@ package plptool;
  *
  * @author wira
  */
-public abstract class PLPSerialProgrammer extends Thread implements PLPGenericModule {
+public abstract class PLPSerialProgrammer extends Thread {
     protected plptool.gui.ProjectDriver plp;
 
     protected boolean   programming = false;
