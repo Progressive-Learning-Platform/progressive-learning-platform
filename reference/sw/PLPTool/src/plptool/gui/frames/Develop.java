@@ -874,6 +874,8 @@ public final class Develop extends javax.swing.JFrame {
         Msg.D("redo()", 10, this);
 
         if(undoManager.canRedo()) {
+            plp.setModified();
+            plp.requireAssemble();
             undoManager.safeRedo();
         }
     }
@@ -883,6 +885,8 @@ public final class Develop extends javax.swing.JFrame {
      */
     private void undo() {
         if(undoManager.canUndo()) {
+            plp.setModified();
+            plp.requireAssemble();
             undoManager.safeUndo();
         }
     }
