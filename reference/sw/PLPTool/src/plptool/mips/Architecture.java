@@ -1,5 +1,5 @@
 /*
-    Copyright 2011-2013 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2011-2014 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -440,7 +440,7 @@ public class Architecture extends PLPArchitecture {
                                                                                data[6][1] += "addiu $sp, $sp, 4";
         data[7][0] = "<font color=blue><b>call</b></font>  label";             data[7][1] = "Save $aX, $tX, and $ra to stack and call function";
         data[8][0] = "<font color=blue><b>return</b></font>";                  data[8][1] = "Restore $aX, $tX, and $ra from stack and return";
-        data[9][0] = "<font color=blue><b>save</b></font>";                    data[9][1] = "Save all registers except for $zero and $ra to stack";
+        data[9][0] = "<font color=blue><b>save</b></font>";                    data[9][1] = "Save all registers except for $zero to stack";
         data[10][0] = "<font color=blue><b>restore</b></font>";                data[10][1] = "Restore all registers saved by 'save' in reverse order";
         data[11][0] = "<font color=blue><b>lwm</b></font> $rt, imm32/label";         data[11][1] = "Load the value from a memory location into $rt";
         data[12][0] = "<font color=blue><b>swm</b></font> $rt, imm32/label";         data[12][1] = "Store the value in $rt to a memory location";
