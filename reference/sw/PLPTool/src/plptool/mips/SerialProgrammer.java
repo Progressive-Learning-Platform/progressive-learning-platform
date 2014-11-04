@@ -87,6 +87,8 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             commPort = portIdentifier.open(this.getClass().getName(),2000);
 
             if ( commPort instanceof SerialPort ) {
+                BAUDRATE = ((plptool.mips.Architecture)plp.getArch()).isUsingNexysBoard() ? 57600 : 115200;
+                Msg.D("Baudrate=" + BAUDRATE, 2, this);
                 plp.p_port = (SerialPort) commPort;
                 plp.p_port.setSerialPortParams(BAUDRATE, SerialPort.DATABITS_8,
                                                SerialPort.STOPBITS_1,
