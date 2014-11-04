@@ -39,6 +39,7 @@ public class Architecture extends PLPArchitecture {
     private plptool.mips.visualizer.CPUVisualization cpuVis;
     private SyntaxHighlightSupport syntaxHighlightSupport;
     private javax.swing.JMenuItem menuExportVerilogHex;
+    private javax.swing.JCheckBoxMenuItem menuNexysBoard;
     
     public Architecture(int archID, ProjectDriver plp) {
         super(archID, "plpmips", plp);
@@ -85,6 +86,11 @@ public class Architecture extends PLPArchitecture {
                     }
                 }
             });
+            
+            menuNexysBoard = new javax.swing.JCheckBoxMenuItem("Use 57600 baud for programming (Nexys 2/3 board)");
+
+            menuNexysBoard.setState(true);
+            plp.g_dev.addToolsItem(menuNexysBoard);
             plp.g_dev.addToolsItem(menuExportVerilogHex);
         }
     }
@@ -529,6 +535,14 @@ public class Architecture extends PLPArchitecture {
         return str;
     }
 
+    public boolean isUsingNexysBoard() {
+        if(plp.g() && menuNexysBoard != null) {
+            return menuNexysBoard.getState();
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void newProject(ProjectDriver plp) {
         plp.getAsm(0).setAsmString("# main source file\n\n.org 0x10000000");
@@ -539,6 +553,7 @@ public class Architecture extends PLPArchitecture {
         if(plp.g()) {
             plp.g_opts.setBuiltInISAOptions(false);
             plp.g_dev.removeToolsItem(menuExportVerilogHex);
+            plp.g_dev.removeToolsItem(menuNexysBoard);
         }
     }
 }
