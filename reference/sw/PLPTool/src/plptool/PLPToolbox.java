@@ -1092,6 +1092,11 @@ public class PLPToolbox {
         return ret;
     }
 
+    public static boolean isFileReadable(String file) {
+        File f = new File(file);
+        return f.exists() && f.canRead();
+    }
+
     /**
      * Return a formatted hyperlink to be used by the IDE output to locate
      * the source line (file:#, where # is the line number)
@@ -1135,6 +1140,53 @@ public class PLPToolbox {
     }
 
     /**
+     * Parse a config file and return a hashmap with key-value pairs. The
+     * delimiter is "::"
+     *
+     * @param file File to parse
+     * @return HashMap with configuration key-value pairs
+     */
+    public static HashMap<String, String> parseConfig(String file) {
+        HashMap<String, String> config = new HashMap<String, String>();
+        String[] tokens;
+
+        String lines[] = readFileAsString(file).split("\\r?\\n");
+
+        if(lines == null)
+            return null;
+
+        for(int i = 0; i < lines.length; i++) {
+            
+            tokens = lines[i].split("::", 2);
+            if(tokens.length == 2) {
+                Msg.D("config parse (" + file + "): " + tokens[0] + "::" + tokens[1], 3, null);
+                config.put(tokens[0], tokens[1]);
+            } else {
+                Msg.D("config parse (" + file + "): " + tokens[0] + "::[null]", 3, null);
+                config.put(tokens[0], null);
+            }
+        }
+        return config;
+    }
+
+    /**
+     * Write out a hashmap of configuration to a file
+     *
+     * @param config A HashMap with key-value config pairs
+     * @param file File to write configuration to
+     */
+    public static void writeConfig(HashMap<String, String> config, String file) {
+        String out = "";
+        java.util.Map.Entry<String, String> e;
+        java.util.Iterator<java.util.Map.Entry<String, String>> i = config.entrySet().iterator();
+        while(i.hasNext()) {
+            e = i.next();
+            out += e.getKey() + "::" + e.getValue() + "\n";
+        }
+        writeFile(out, file);
+    }
+
+    /**
      * Get the command line arguments PLPTool was launched with
      *
      * @return Command line arguments as string
@@ -1159,6 +1211,11 @@ public class PLPToolbox {
         }
 
         return ret;
+    }
+
+    public static boolean deleteFile(String path) {
+        File f = new File(path);
+        return f.delete();
     }
 
      /**

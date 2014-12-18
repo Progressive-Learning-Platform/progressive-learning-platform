@@ -72,7 +72,19 @@ public class PLPToolConnector implements ModuleInterface5 {
         Msg.I("<em>Flowchart Generator</em> is ready &mdash; This module can be accessed through the <b>Tools" +
                 "</b>&rarr;<b>Flowchart Generator</b> menu",
                 null);
-        this.dotPath = PLPToolApp.getAttributes().get("flowchart_dotpath");
+
+        // Load config
+        if(PLPToolbox.isFileReadable(PLPToolbox.getConfDir() + "/flowchart")) {
+            Msg.D("flowchart generator: loading from config", 3, null);
+            java.util.HashMap<String, String> config = PLPToolbox.parseConfig(PLPToolbox.getConfDir() + "/flowchart");
+            if(config != null)
+                dotPath = config.get("flowchart_dotpath");
+                Msg.D("flowchart generator: saved dotpath is " + dotPath, 3, null);
+        } else {
+            dotPath = "";
+        }
+        PLPToolApp.getAttributes().put("flowchart_dotpath", dotPath);
+
         exportFrame = new ExportDOT(plp.g_dev);
         setupFrame = new SetupDOT(plp.g_dev, this);
         displayFrame = new DisplayFlowchart(plp.g_dev);
@@ -156,17 +168,10 @@ public class PLPToolConnector implements ModuleInterface5 {
 
     class Callback_Save_Config implements Callback {
         public boolean callback(int callbackNum, Object param) {
-            java.io.FileWriter out = (java.io.FileWriter) param;
-            try {
-                Msg.I("Saving configuration.", null);
-                out.write("flowchart_dotpath::" + dotPath + "\n");
-                return true;
-            } catch(java.io.IOException e) {
-                Msg.E("Unable to save configuration.",
-                        Constants.PLP_GENERAL_IO_ERROR, this);
-            }
-
-            return false;
+            Msg.I("Saving configuration.", null);
+            PLPToolbox.writeFile("flowchart_dotpath::" + dotPath + "\n",
+                    PLPToolbox.getConfDir() + "/flowchart");
+            return true;
         }
     }
 
