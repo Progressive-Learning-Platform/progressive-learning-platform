@@ -38,11 +38,7 @@ public class SetupDOT extends javax.swing.JDialog {
 
     private void init() {
         PLPToolbox.attachHideOnEscapeListener(this);
-        String dotPath = PLPToolApp.getAttributes().get("flowchart_dotpath");
-        if(dotPath != null) {
-            connector.setDotPath(dotPath);
-            txtPath.setText(dotPath);
-        }
+        txtPath.setText(connector.getDotPath());
     }
 
     /** This method is called from within the constructor to
