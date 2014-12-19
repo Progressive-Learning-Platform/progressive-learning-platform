@@ -94,10 +94,9 @@ public class DynamicModuleManager extends javax.swing.JDialog {
     }
 
     public void setEmbedOnly() {
-        tabMain.setSelectedIndex(3);
+        tabMain.setSelectedIndex(2);
         tabMain.setEnabledAt(0, false);
         tabMain.setEnabledAt(1, false);
-        tabMain.setEnabledAt(2, false);
         embedOnly = true;
     }
 

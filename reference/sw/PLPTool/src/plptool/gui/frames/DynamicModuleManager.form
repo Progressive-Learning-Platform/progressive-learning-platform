@@ -33,7 +33,7 @@
                       <EmptySpace pref="296" max="32767" attributes="0"/>
                       <Component id="btnClose" min="-2" pref="108" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="tabMain" alignment="1" pref="605" max="32767" attributes="0"/>
+                  <Component id="tabMain" alignment="1" pref="636" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -43,7 +43,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="tabMain" pref="501" max="32767" attributes="0"/>
+              <Component id="tabMain" pref="503" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnClose" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -80,7 +80,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jSeparator1" alignment="0" pref="580" max="32767" attributes="0"/>
+                          <Component id="jSeparator1" alignment="0" pref="607" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -97,7 +97,7 @@
                                   <Component id="btnBrowseClass" alignment="0" pref="120" max="32767" attributes="1"/>
                               </Group>
                           </Group>
-                          <Component id="jScrollPane1" alignment="0" pref="580" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="607" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -121,7 +121,7 @@
                       <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                       <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="370" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="365" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -244,11 +244,11 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" alignment="0" pref="580" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" alignment="0" pref="607" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cmbCallbackEvent" pref="541" max="32767" attributes="0"/>
+                              <Component id="cmbCallbackEvent" pref="547" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -354,11 +354,11 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jSeparator2" alignment="0" pref="580" max="32767" attributes="0"/>
+                          <Component id="jSeparator2" alignment="0" pref="607" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="txtEmbedManifestJAR" pref="439" max="32767" attributes="0"/>
+                              <Component id="txtEmbedManifestJAR" pref="451" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnEmbedManifestBrowse" min="-2" pref="101" max="-2" attributes="0"/>
                           </Group>
@@ -372,16 +372,16 @@
                               </Group>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtEmbedManifestLicense" pref="510" max="32767" attributes="0"/>
-                                  <Component id="txtEmbedManifestAuthor" alignment="0" pref="510" max="32767" attributes="0"/>
-                                  <Component id="txtEmbedManifestTitle" alignment="0" pref="510" max="32767" attributes="0"/>
-                                  <Component id="txtEmbedManifestDescription" alignment="0" pref="510" max="32767" attributes="0"/>
+                                  <Component id="txtEmbedManifestLicense" pref="507" max="32767" attributes="0"/>
+                                  <Component id="txtEmbedManifestAuthor" alignment="0" pref="507" max="32767" attributes="0"/>
+                                  <Component id="txtEmbedManifestTitle" alignment="0" pref="507" max="32767" attributes="0"/>
+                                  <Component id="txtEmbedManifestDescription" alignment="0" pref="507" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="txtEmbedManifestVersion" pref="510" max="32767" attributes="0"/>
+                              <Component id="txtEmbedManifestVersion" pref="516" max="32767" attributes="0"/>
                           </Group>
                           <Component id="btnEmbedManifest" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
