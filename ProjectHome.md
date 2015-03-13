@@ -1,0 +1,9 @@
+The progressive learning platform is an FPGA based computer architecture learning platform. It is intended to expose students to the a wider scope of computer architecture design principles beyond the usual topics covered in an undergraduate course. This includes the typical core concepts - data path, control, pipelining, etc., with other additional, critical concepts such as full system integration, programmability, and other design trade-offs on a wider scope than the core architecture.
+
+This is accomplished with a problem-based curriculum that takes teams of students through a complete system on a chip (SoC) design. The included reference design includes a MIPS-like cpu with surrounding system components including a VGA controller with framebuffer, UART, gpio/switches/buttons/leds, interrupt controller, memory controller, and more all connected through a standard front side bus. The system is designed to be used in conjunction with student designs. Additionally, software tools, including a simple 2-pass assembler, board communication tools, and a cycle accurate simulator are included. All host software tools are written in Java to be OS agnostic.
+
+The reference design is implemented in Verilog and is fully synthesizable in Xilinx Webpack ISE. The reference board is the [Digilent Nexys 2](http://digilentinc.com/Products/Detail.cfm?NavPath=2,400,789&Prod=NEXYS2)
+
+Please view the site [Project Portal](http://code.google.com/p/progressive-learning-platform/wiki/Summary?tm=6)
+
+Also view the [PLP Discussion Group](http://groups.google.com/group/progressive-learning-platform)
