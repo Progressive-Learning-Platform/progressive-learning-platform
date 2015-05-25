@@ -79,7 +79,7 @@ public class PLPToolConnector implements ModuleInterface5 {
             java.util.HashMap<String, String> config = PLPToolbox.parseConfig(PLPToolbox.getConfDir() + "/flowchart");
             if(config != null)
                 dotPath = config.get("flowchart_dotpath");
-                Msg.D("flowchart generator: saved dotpath is " + dotPath, 3, null);
+            Msg.D("flowchart generator: saved dotpath is " + dotPath, 3, null);
         } else {
             dotPath = "";
         }

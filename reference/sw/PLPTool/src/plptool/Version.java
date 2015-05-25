@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2012 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2015 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,5 +23,5 @@ package plptool;
  * @author wira
  */
 public class Version {
-    public final static String stamp = "5.0-dev";
+    public final static String stamp = "5.1";
 }

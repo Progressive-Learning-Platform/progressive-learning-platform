@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2014 David Fritz, Brian Gordon, Wira Mulia
+    Copyright 2010-2015 David Fritz, Brian Gordon, Wira Mulia
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -603,13 +603,13 @@ public class SimCore extends PLPSimCore {
                 branch_destination = (pcplus4 + (s_imm<<2)) & 0xffffffffL;
             }
         } else if (opcode == 0x23) {                    // lw
-            Long data = (Long) bus.read(s + s_imm);
+            Long data = (Long) bus.read((s + s_imm) & 0xffffffffL);
             if(data == null)
                 return Msg.E("Bus read error.", Constants.PLP_SIM_BUS_ERROR, this);
             regfile.write(rt, data, false);
 
         } else if (opcode == 0x2B) {                    // sw
-            ret = bus.write(s + s_imm, regfile.read(rt), false);
+            ret = bus.write((s + s_imm) & 0xffffffffL, regfile.read(rt), false);
             if(ret > 0) {
                 return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
             }

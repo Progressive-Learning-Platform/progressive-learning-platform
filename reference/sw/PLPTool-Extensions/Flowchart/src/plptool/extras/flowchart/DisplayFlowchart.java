@@ -26,6 +26,7 @@ import javax.imageio.*;
 import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
+import java.awt.*;
 
 /**
  *
@@ -248,7 +249,9 @@ public class DisplayFlowchart extends javax.swing.JFrame {
 
         @Override
         public void run() {
-            int lx, ly;
+            int lx, ly, nx, ny;
+            BufferedImage resized;
+            Graphics2D g2;
             switch(function) {
                 case 0:
                     int routineIndex = cmbRoutines.getSelectedIndex();
@@ -278,15 +281,27 @@ public class DisplayFlowchart extends javax.swing.JFrame {
                     zoomFactor /= ZOOM_SCALING;
                     lx = originalI.getWidth(null);
                     ly = originalI.getHeight(null);
-                    i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
-                    fLabel.setIcon(new ImageIcon(i));
+                    nx = (int)(zoomFactor * lx);
+                    ny = (int)(zoomFactor * ly);
+                    resized = new BufferedImage(nx, ny, img.getType());
+                    g2 = resized.createGraphics();
+                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    g2.drawImage(img, 0, 0, nx, ny, 0, 0, img.getWidth(), img.getHeight(), null);
+                    //i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
+                    fLabel.setIcon(new ImageIcon(resized));
                     break;
                 case 2:
                     zoomFactor *= ZOOM_SCALING;
                     lx = originalI.getWidth(null);
                     ly = originalI.getHeight(null);
-                    i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
-                    fLabel.setIcon(new ImageIcon(i));
+                    nx = (int)(zoomFactor * lx);
+                    ny = (int)(zoomFactor * ly);
+                    resized = new BufferedImage(nx, ny, img.getType());
+                    g2 = resized.createGraphics();
+                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    g2.drawImage(img, 0, 0, nx, ny, 0, 0, img.getWidth(), img.getHeight(), null);
+                    //i = originalI.getScaledInstance((int)(lx*zoomFactor), (int)(ly*zoomFactor), Image.SCALE_SMOOTH);
+                    fLabel.setIcon(new ImageIcon(resized));
                     break;
             }
             generateDiagramThread = null;
