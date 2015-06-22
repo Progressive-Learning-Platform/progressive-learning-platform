@@ -138,7 +138,7 @@ L?\"(\\.|[^\\"])*\"	{ yylval = str((char*)yytext); count(); return(STRING_LITERA
 "|"			{ count(); return('|'); }
 "?"			{ count(); return('?'); }
 
-[ \t\v\n\f]		{ count_no_log(); }
+[ \t\v\r\n\f]		{ count_no_log(); }\
 .			{ printf("[e] %d: bad input '%s'\n", yylineno, yytext); }
 
 %%
