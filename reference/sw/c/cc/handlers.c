@@ -56,7 +56,7 @@ int locals = 0;
 symbol *last_symbol = NULL;
 
 void epilogue(node *n) {
-	e("addiu $sp, $sp, %d\n", locals);
+	e("addiu $sp, $sp, %d\t# Epilogue\n", locals);
 	e("return\n");
 }
 
@@ -404,11 +404,25 @@ void handle_greater_than(node *n) {
 }
 
 void handle_less_equal_than(node *n) {
-	lerr(n->line, "[code_gen] handle_less_equal_than not implemented\n");
+	//lerr(n->line, "[code_gen] handle_less_equal_than not implemented\n");
+    handle(n->children[0]);
+    push("$t0");
+    handle(n->children[1]);
+    pop("$t1");
+    e("slt $t0, $t0, $t1\n");           	// Determine if greater than
+    e("nor $t0, $t0, $t0\t# $t0 = !$t0\n");	// Invert
+    e("andi $t0, $t0, 1\t# Mask LSB\n")		// Mask LSB
 }
 
 void handle_greater_equal_than(node *n) {
-	lerr(n->line, "[code_gen] handle_greater_equal_than not implemented\n");
+	//lerr(n->line, "[code_gen] handle_greater_equal_than not implemented\n");
+    handle(n->children[0]);
+    push("$t0");
+    handle(n->children[1]);
+    pop("$t1");
+    e("slt $t0, $t1, $t0\n");           	// Determine if less than
+    e("nor $t0, $t0, $t0\t# $t0 = !$t0\n");	// Invert
+    e("andi $t0, $t0, 1\t# Mask LSB\n")		// Mask LSB
 }
 
 void handle_equality(node *n) {
