@@ -114,6 +114,9 @@ public class CallbackRegistry {
      * true, false otherwise
      */
     public static boolean callback(int callbackNum, Object param) {
+        if(!INITIALIZED)
+            return false;
+
         boolean ret = false;
         for(int i = 0; i < callbacks[callbackNum].size(); i++) {
             Callback c = callbacks[callbackNum].get(i);
@@ -134,7 +137,7 @@ public class CallbackRegistry {
      * @return False if the callback number is invalid, true otherwise
      */
     public static boolean register(Callback callback, int callbackNum) {
-        if(callbackNum < 0 || callbackNum >= CALLBACKS)
+        if(!INITIALIZED || callbackNum < 0 || callbackNum >= CALLBACKS)
             return false;
 
         callbacks[callbackNum].add(callback);
