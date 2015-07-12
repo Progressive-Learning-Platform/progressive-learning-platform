@@ -281,7 +281,7 @@ public abstract class PLPSimCore {
          * @return Breakpoint reference, or null if the index is out of bounds
          */
         public long getBreakpointAddress(int index) {
-            if(index < 0 || index > breakpoints.size())
+            if(index < 0 || index >= breakpoints.size())
                 return Constants.PLP_NUMBER_ERROR;
 
             return breakpoints.get(index).getAddr();
@@ -294,7 +294,7 @@ public abstract class PLPSimCore {
          * @return boolean True if successful, false otherwise
          */
         public boolean removeBreakpoint(int index) {
-            if(index < 0 || index > breakpoints.size())
+            if(index < 0 || index >= breakpoints.size())
                 return false;
 
             breakpoints.remove(index);
