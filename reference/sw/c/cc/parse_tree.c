@@ -166,7 +166,7 @@ void print_tree_graph(node *n, FILE *o) {
 	/* Print Graphviz digraph declaration */
 	fprintf(o, "digraph ParseTree {\n");
 	fprintf(o, "\tnode [shape=box];\n");
-	fprintf(o, "\tgraph [splines=ortho];\n");
+	//fprintf(o, "\tgraph [splines=ortho];\n"); // non-orthogonal lines seem to be slightly easier to see on large graphs
 	fprintf(o, "\t0[label=\"program\"]\n");
 	
 	/* print children */

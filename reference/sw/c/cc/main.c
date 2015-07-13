@@ -44,6 +44,7 @@ static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
 static char *S_PARSE_OUTPUT = NULL;
 static char *S_GRAPH_OUTPUT = NULL;
+static char *S_GRAPH_COMMAND = NULL;
 static char *S_SYMBOL_OUTPUT = NULL;
 static FILE *FILE_INPUT = NULL;
 static FILE *FILE_OUTPUT = NULL;
@@ -162,7 +163,7 @@ void handle_opts(int argc, char *argv[]) {
 	}
 	
 	if (pgraph) {
-		S_GRAPH_OUTPUT = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) + 7));
+		S_GRAPH_OUTPUT = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) + 5));
 		sprintf(S_GRAPH_OUTPUT, "%s.dot", S_FILE_OUTPUT);
 		log("[plpcc] parse tree output: %s\n", S_GRAPH_OUTPUT);
 	}
@@ -226,6 +227,14 @@ int main(int argc, char *argv[]) {
 	if (GRAPH_OUTPUT != NULL) {
 		vlog("[plpcc] printing parse tree graph\n");
 		print_tree_graph(parse_tree_head, GRAPH_OUTPUT);
+		
+		/* close output file*/
+		fclose(GRAPH_OUTPUT);
+		
+		/* Run Graphviz command to generate PNG of parse tree */
+		S_GRAPH_COMMAND = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) * 2 + 22));
+		sprintf(S_GRAPH_COMMAND, "dot -Tpng %s.dot > %s.png", S_FILE_OUTPUT, S_FILE_OUTPUT);
+		system(S_GRAPH_COMMAND);
 	}
 	
 	/* print the symbol table */
