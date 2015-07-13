@@ -154,10 +154,7 @@ void print_tree(node *n, FILE *o, int depth) {
 		print_tree(n->children[i], o, depth+1);
 }
 
-// TODO: modify for Graphviz format
-// write helper that returns int for last used node number
-// takes current node number as input and increments it uses it to call on children
-// primary function sets current node to 0
+
 void print_tree_graph(node *n, FILE *o) {
 	/* depth first traversal */
 	int i;
@@ -167,7 +164,7 @@ void print_tree_graph(node *n, FILE *o) {
 	fprintf(o, "digraph ParseTree {\n");
 	fprintf(o, "\tnode [shape=box];\n");
 	//fprintf(o, "\tgraph [splines=ortho];\n"); // non-orthogonal lines seem to be slightly easier to see on large graphs
-	fprintf(o, "\t0[label=\"program\"]\n");
+	fprintf(o, "\t0[label=\"Program\",style=\"bold\"];\n");
 	
 	/* print children */
 	for (i=0; i<n->num_children; i++)
@@ -180,47 +177,29 @@ void print_tree_graph(node *n, FILE *o) {
 int graph_helper(node *n, FILE *o, int parent, int current) {
 	int i;
 	int next = current + 1;
-	int is_id = 0;
-	int is_type = 0;
 	
-	/* print ourselves */
-	fprintf(o, "\t%d[label=\"", current);
+	/* print current node */
+	fprintf(o, "\t%d[", current);
 	switch (n->type) {
 		case type_con:
-			fprintf(o, "constant:");
+			fprintf(o, "color=\"orange\",label=\"constant:");
 			break;
 		case type_id:
-			fprintf(o, "id:");
-			is_id = 1;
+			fprintf(o, "color=\"red\",label=\"id:");
 			break;
 		case type_op:
-			fprintf(o, "op:");
+			fprintf(o, "label=\"op:");
 			break;
 		case type_type:
-			fprintf(o, "type:");
-			is_type = 1;
+			fprintf(o, "color=\"blue\",label=\"type:");
 			break;
 		case type_string:
-			fprintf(o, "string:");
+			fprintf(o, "color=\"green\",label=\"string:");
 			break;
 	}
 	
-	/* End of node declaration without setting unique color */
-	//fprintf(o, "%s\"];\n", n->id); // all nodes have same color
-	
-	
 	/* Set unique color for specific nodes */
-	fprintf(o, "%s\"", n->id);
-	if(is_id)
-	{
-		fprintf(o, ",color=\"red\"");
-	}
-	else if(is_type)
-	{
-		fprintf(o, ",color=\"blue\"");
-	}
-	fprintf(o, "];\n");
-	
+	fprintf(o, "%s\"];\n", n->id);
 	
 	/* indicate parent of current node */
 	fprintf(o, "\t%d -> %d;\n", parent, current);
