@@ -29,6 +29,8 @@ node *op(char *t, int num_ops, ...);
 node *add_child(node *, node *); /* add a child node to this node */
 
 void print_tree(node *, FILE *, int);
+void print_tree_graph(node *, FILE *);
+int graph_helper(node *, FILE *, int, int);
 
 #endif
 

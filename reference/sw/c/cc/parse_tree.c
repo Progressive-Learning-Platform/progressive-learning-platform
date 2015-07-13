@@ -153,3 +153,59 @@ void print_tree(node *n, FILE *o, int depth) {
 	for (i=0; i<n->num_children; i++)
 		print_tree(n->children[i], o, depth+1);
 }
+
+// TODO: modify for Graphviz format
+// write helper that returns int for last used node number
+// takes current node number as input and increments it uses it to call on children
+// primary function sets current node to 0
+void print_tree_graph(node *n, FILE *o) {
+	/* depth first traversal */
+	int i;
+	int next = 1;
+
+	/* Print Graphviz digraph declaration */
+	fprintf(o, "digraph ParseTree {\n");
+	fprintf(o, "\tnode [shape=box];\n");
+	fprintf(o, "\tgraph [splines=ortho];\n");
+	fprintf(o, "\t0[label=\"program\"]\n");
+	
+	/* print children */
+	for (i=0; i<n->num_children; i++)
+		next = graph_helper(n->children[i], o, 0, next);
+	
+	/* close Graphviz block */
+	fprintf(o, "}");
+}
+
+int graph_helper(node *n, FILE *o, int parent, int current) {
+	int i;
+	int next = current + 1;
+	
+	/* print ourselves */
+	fprintf(o, "\t%d[label=\"", current);
+	switch (n->type) {
+		case type_con:
+			fprintf(o, "constant:");
+			break;
+		case type_id:
+			fprintf(o, "id:");
+			break;
+		case type_op:
+			fprintf(o, "op:");
+			break;
+		case type_type:
+			fprintf(o, "type:");
+			break;
+		case type_string:
+			fprintf(o, "string:");
+			break;
+	}
+	fprintf(o, "%s\"];\n", n->id);
+	fprintf(o, "\t%d -> %d;\n", parent, current);
+	
+	/* print children */
+	for (i=0; i<n->num_children; i++)
+		next = graph_helper(n->children[i], o, current, next);
+	
+	return next;
+}

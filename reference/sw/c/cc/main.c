@@ -43,10 +43,12 @@ int ANNOTATE_SOURCE = 1;
 static char *S_FILE_INPUT = NULL;
 static char *S_FILE_OUTPUT = NULL;
 static char *S_PARSE_OUTPUT = NULL;
+static char *S_GRAPH_OUTPUT = NULL;
 static char *S_SYMBOL_OUTPUT = NULL;
 static FILE *FILE_INPUT = NULL;
 static FILE *FILE_OUTPUT = NULL;
 static FILE *PARSE_OUTPUT = NULL;
+static FILE *GRAPH_OUTPUT = NULL;
 static FILE *SYMBOL_OUTPUT = NULL;
 
 symbol_table *sym = NULL;	/* scoped symbol tables */
@@ -60,9 +62,12 @@ void print_usage(void) {
 	printf("plpcc - plp c compiler\n\n");
 	printf("usage: plpcc <options> <input file(s)>\n");
 	printf("options:\n");
-	printf("-o <filename>	output filename\n");
+	printf("-o 		<output filename> <input filename>\n");
 	printf("-d [0,1,2]	debug level (0=off (default), 1=on, 2=verbose)\n");
 	printf("-s		print symbol table to <output name>.symbol\n");
+	// adding Graphviz formatted output of symbol table
+	// also uses static char *S_GRAPH_OUTPUT, FILE *GRAPH_OUTPUT, pgraph, parse_tree_head
+	printf("-g		print p formatted for Graphviz to <output name>.dot\n");
 	printf("-p		print parse tree to <output name>.parse\n");
 	printf("-e		do not stop compiling on errors\n");
 	printf("-f		run the front end only, do not call handle() on the parse tree\n");
@@ -75,13 +80,15 @@ void handle_opts(int argc, char *argv[]) {
 	char *ovalue = NULL;
 
 	int pparse = 0;
+	int pgraph = 0;
 	int psymbol = 0;
+	
 
 	int c;
 
 	opterr = 0;
 	
-	while ((c = getopt(argc, argv, "d:o:spefa")) != -1)
+	while ((c = getopt(argc, argv, "d:o:sgpefa")) != -1)
 		switch (c) {
 			case 'd':
 				dvalue = optarg;
@@ -91,6 +98,9 @@ void handle_opts(int argc, char *argv[]) {
 				break;
 			case 's':
 				psymbol = 1;
+				break;
+			case 'g':
+				pgraph = 1;
 				break;
 			case 'p':
 				pparse = 1;
@@ -105,6 +115,7 @@ void handle_opts(int argc, char *argv[]) {
 				ANNOTATE_SOURCE = 0;
 				break;
 			default:
+				printf("\n  *** Unrecognised option flag \n\n");
 				print_usage();
 				exit(-1);
 		}
@@ -150,6 +161,12 @@ void handle_opts(int argc, char *argv[]) {
 		log("[plpcc] parse tree output: %s\n", S_PARSE_OUTPUT);
 	}
 	
+	if (pgraph) {
+		S_GRAPH_OUTPUT = malloc(sizeof(char) * (strlen(S_FILE_OUTPUT) + 7));
+		sprintf(S_GRAPH_OUTPUT, "%s.dot", S_FILE_OUTPUT);
+		log("[plpcc] parse tree output: %s\n", S_GRAPH_OUTPUT);
+	}
+	
 }
 
 int main(int argc, char *argv[]) {
@@ -182,6 +199,13 @@ int main(int argc, char *argv[]) {
 			err("[plpcc] cannot open parse tree output file: %s\n", S_PARSE_OUTPUT);
 		}
 	}
+	
+	if (S_GRAPH_OUTPUT != NULL) {
+		GRAPH_OUTPUT = fopen(S_GRAPH_OUTPUT, "w");
+		if (GRAPH_OUTPUT == NULL) {
+			err("[plpcc] cannot open parse tree graph output file: %s\n", S_GRAPH_OUTPUT);
+		}
+	}
 
 	/* grab the lines from the source for error handling and annotation */
 	build_lines(S_FILE_INPUT);
@@ -198,6 +222,12 @@ int main(int argc, char *argv[]) {
 		print_tree(parse_tree_head, PARSE_OUTPUT, 0);
 	}
 
+	/* print the parse tree graph formatted for Graphviz*/
+	if (GRAPH_OUTPUT != NULL) {
+		vlog("[plpcc] printing parse tree graph\n");
+		print_tree_graph(parse_tree_head, GRAPH_OUTPUT);
+	}
+	
 	/* print the symbol table */
 	if (SYMBOL_OUTPUT != NULL) {
 		vlog("[plpcc] printing symbol table\n");
