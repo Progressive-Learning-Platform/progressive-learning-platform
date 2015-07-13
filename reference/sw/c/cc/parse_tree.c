@@ -180,6 +180,8 @@ void print_tree_graph(node *n, FILE *o) {
 int graph_helper(node *n, FILE *o, int parent, int current) {
 	int i;
 	int next = current + 1;
+	int is_id = 0;
+	int is_type = 0;
 	
 	/* print ourselves */
 	fprintf(o, "\t%d[label=\"", current);
@@ -189,18 +191,38 @@ int graph_helper(node *n, FILE *o, int parent, int current) {
 			break;
 		case type_id:
 			fprintf(o, "id:");
+			is_id = 1;
 			break;
 		case type_op:
 			fprintf(o, "op:");
 			break;
 		case type_type:
 			fprintf(o, "type:");
+			is_type = 1;
 			break;
 		case type_string:
 			fprintf(o, "string:");
 			break;
 	}
-	fprintf(o, "%s\"];\n", n->id);
+	
+	/* End of node declaration without setting unique color */
+	//fprintf(o, "%s\"];\n", n->id); // all nodes have same color
+	
+	
+	/* Set unique color for specific nodes */
+	fprintf(o, "%s\"", n->id);
+	if(is_id)
+	{
+		fprintf(o, ",color=\"red\"");
+	}
+	else if(is_type)
+	{
+		fprintf(o, ",color=\"blue\"");
+	}
+	fprintf(o, "];\n");
+	
+	
+	/* indicate parent of current node */
 	fprintf(o, "\t%d -> %d;\n", parent, current);
 	
 	/* print children */
