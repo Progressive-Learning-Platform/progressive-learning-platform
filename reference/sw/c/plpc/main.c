@@ -35,6 +35,7 @@ int STOP_ERRORS = 1;
 int PSYMBOL = 0;
 int PDEFINE = 0;
 int PPARSE = 0;
+int PGRAPH = 0;
 int FRONT_ONLY = 0;
 int NOANNOTATE = 0;
 int PBUILTIN = 0;
@@ -56,6 +57,7 @@ void print_usage(void) {
 	printf("compiler options:\n");
 	printf("--symbol		print symbol table to <output name>.symbol\n");
 	printf("--parse			print parse tree to <output name>.parse\n");
+	printf("--graph			create a visual graph of the parse tree to <output name>.png\n");
 	printf("--front			run the front end only, do not call handle() on the parse tree\n");
 	printf("--noannotate		do not annotate output with original source\n");
 	printf("\n");
@@ -81,11 +83,12 @@ void handle_opts(int argc, char *argv[]) {
 			{"metafile", required_argument, 0, 'i'}, 
 			{"builtin", no_argument, 0, 'j'},
 			{"nocleanup", no_argument, 0, 'k'},
+			{"graph", no_argument, 0, 'v'},
 			{0,0,0,0}
 		};
 
 		int option_index = 0;
-		c = getopt_long(argc, argv, "o:d:eabcfgh:i:jk", long_options, &option_index);
+		c = getopt_long(argc, argv, "o:d:eabcfghv:i:jk", long_options, &option_index);
 		if (c == -1)
 			break;
 	
@@ -101,6 +104,9 @@ void handle_opts(int argc, char *argv[]) {
 				break;
 			case 'c':
 				PPARSE = 1;;
+				break;
+			case 'v':
+				PGRAPH = 1;
 				break;
 			case 'd':
 				dvalue = optarg;
@@ -155,6 +161,7 @@ void handle_opts(int argc, char *argv[]) {
 	vlog("[plpc] print defines        : %s\n", PDEFINE ? "true" : "false");
 	vlog("[plpc] print symbol table   : %s\n", PSYMBOL ? "true" : "false");
 	vlog("[plpc] print parse tree     : %s\n", PPARSE ? "true" : "false");
+	vlog("[plpc] graph parse tree     : %s\n", PGRAPH ? "true" : "false");
 	vlog("[plpc] run front end only   : %s\n", FRONT_ONLY ? "true" : "false");
 	vlog("[plpc] no source annotation : %s\n", NOANNOTATE ? "true" : "false");
 	vlog("[plpc] print builtins       : %s\n", PBUILTIN ? "true" : "false");
@@ -210,11 +217,12 @@ int main(int argc, char *argv[]) {
 	log("[plpc] c compiler\n");
 	
 	/* build compiler options */
-	sprintf(command, "plpcc -o %s.asm -d %d	%s %s %s %s %s %s.pp",
+	sprintf(command, "plpcc -o %s.asm -d %d	%s %s %s %s %s %s %s.pp",
 		S_FILE_OUTPUT,			/* output file name */
 		LOG_LEVEL,			/* debug level */
 		PSYMBOL ? "-s" : "",		/* print symbol table */
 		PPARSE ? "-p" : "", 		/* print parse tree */
+		PGRAPH ? "-g" : "", 		/* generate parse tree graph */
 		STOP_ERRORS ? "" : "-e",	/* stop on errors */
 		FRONT_ONLY ? "-f" : "", 	/* run front end only */
 		NOANNOTATE ? "-a" : "", 	/* no c annotation */
