@@ -155,7 +155,7 @@ void print_tree(node *n, FILE *o, int depth) {
 }
 
 
-void print_tree_graph(node *n, FILE *o) {
+void print_tree_graph(node *n, FILE *o, char *program_name) {
 	/* depth first traversal */
 	int i;
 	int next = 1;
@@ -164,7 +164,7 @@ void print_tree_graph(node *n, FILE *o) {
 	fprintf(o, "digraph ParseTree {\n");
 	fprintf(o, "\tnode [shape=box];\n");
 	//fprintf(o, "\tgraph [splines=ortho];\n"); // non-orthogonal lines seem to be slightly easier to see on large graphs
-	fprintf(o, "\t0[label=\"Program\",style=\"bold\"];\n");
+	fprintf(o, "\t0[label=\"%s\",style=\"bold\"];\n", program_name);
 	
 	/* print children */
 	for (i=0; i<n->num_children; i++)
@@ -177,6 +177,7 @@ void print_tree_graph(node *n, FILE *o) {
 int graph_helper(node *n, FILE *o, int parent, int current) {
 	int i;
 	int next = current + 1;
+    int is_string = 0;
 	
 	/* print current node */
 	fprintf(o, "\t%d[", current);
@@ -194,12 +195,27 @@ int graph_helper(node *n, FILE *o, int parent, int current) {
 			fprintf(o, "color=\"blue\",label=\"type:");
 			break;
 		case type_string:
-			fprintf(o, "color=\"green\",label=\"string:");
+			fprintf(o, "color=\"green\",label=\"string:\\");
+            is_string = 1;
 			break;
 	}
 	
-	/* Set unique color for specific nodes */
-	fprintf(o, "%s\"];\n", n->id);
+	/* Close node statement and include id if not a string */
+    if(!is_string)
+    {
+        fprintf(o, "%s\"];\n", n->id);
+    }
+    /* Escape quotation marks around string for Graphviz */
+    else
+    {
+        //TODO add escape character before and \" at the end of n->id
+        int str_size = strlen(n->id);
+        char* str_id = malloc(sizeof(char) * (str_size + 1));
+        strncpy(str_id, (n->id), str_size);
+        str_id[str_size - 1] = '\\';
+        fprintf(o, "%s\"\"];\n", str_id);
+        free(str_id);
+    }
 	
 	/* indicate parent of current node */
 	fprintf(o, "\t%d -> %d;\n", parent, current);

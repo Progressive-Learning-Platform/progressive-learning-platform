@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
 	/* print the parse tree graph formatted for Graphviz*/
 	if (GRAPH_OUTPUT != NULL) {
 		vlog("[plpcc] printing parse tree graph\n");
-		print_tree_graph(parse_tree_head, GRAPH_OUTPUT);
+		print_tree_graph(parse_tree_head, GRAPH_OUTPUT, S_FILE_INPUT);
 		
 		/* close output file*/
 		fclose(GRAPH_OUTPUT);
