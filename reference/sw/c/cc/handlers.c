@@ -671,20 +671,22 @@ void handle_init_declarator(node *n) {
 		/* init declarators may or may not have an initializer, if not, set the value to 0 */
 		if (n->num_children == 2) { /* we have an initializer */
 			 /* this gets ugly...
-                         * nodes are either initializer->constant or
-                         * initializer->initializer_list->initializer->constant (with multiple initializers
-                         */
-                        if (strcmp(n->children[1]->children[0]->id, "initializer_list") == 0) { /* mutliple initializers {1,2,3,4...} */
+			 * nodes are either initializer->constant or
+			 * initializer->initializer_list->initializer->constant (with multiple initializers
+			 */
+			if (strcmp(n->children[1]->children[0]->id, "initializer_list") == 0) { /* mutliple initializers {1,2,3,4...} */
 				int i;
 				for (i=0; i<n->children[1]->children[0]->num_children; i++) {
 					handle(n->children[1]->children[0]->children[i]);
 					e("sw $t0, %d($sp)\n", o(x)+(WORD*i));
 				}
-			} else {
+			} 
+			else {
 				handle(n->children[1]);
 				e("sw $t0, %d($sp)\n", o(x));
 			}
-		} else {
+		}
+		else {
 			/* we could initialize values to zero here, but we won't. */
 			/*e("move $t0, $zero\n");
 			e("sw $t0, %d($sp)\n", o(x));*/

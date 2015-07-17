@@ -208,7 +208,6 @@ int graph_helper(node *n, FILE *o, int parent, int current) {
     /* Escape quotation marks around string for Graphviz */
     else
     {
-        //TODO add escape character before and \" at the end of n->id
         int str_size = strlen(n->id);
         char* str_id = malloc(sizeof(char) * (str_size + 1));
         strncpy(str_id, (n->id), str_size);
