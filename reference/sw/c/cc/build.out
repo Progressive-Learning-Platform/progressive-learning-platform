@@ -1,0 +1,21 @@
+symbol.c: In function ‘print_frames’:
+symbol.c:361:10: warning: unused variable ‘curr’ [-Wunused-variable]
+symbol.c: In function ‘install_symbol’:
+symbol.c:293:1: warning: control reaches end of non-void function [-Wreturn-type]
+line.c: In function ‘build_lines’:
+line.c:48:2: warning: pointer targets in passing argument 2 of ‘getline’ differ in signedness [-Wpointer-sign]
+/usr/include/stdio.h:675:20: note: expected ‘size_t * __restrict__’ but argument is of type ‘ssize_t *’
+lexer.lex: In function ‘yylex’:
+lexer.lex:81:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:83:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:84:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:85:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:86:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:88:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:89:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:90:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex:92:10: warning: assignment makes integer from pointer without a cast [enabled by default]
+lexer.lex: At top level:
+lex.yy.c:1764:17: warning: ‘yyunput’ defined but not used [-Wunused-function]
+main.c: In function ‘main’:
+main.c:237:9: warning: ignoring return value of ‘system’, declared with attribute warn_unused_result [-Wunused-result]

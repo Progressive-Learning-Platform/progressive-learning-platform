@@ -258,7 +258,8 @@ node* install_symbol(symbol_table *t, node *n) {
 					s->attr |= ATTR_POINTER;
 				if (parent_struct != NULL)
 				{
-					s->attr |= ATTR_STRUCT; 
+					s->attr |= ATTR_STRUCT;
+					s -> type = parent_struct;
 					parent_struct = NULL;
 				}
 				else
