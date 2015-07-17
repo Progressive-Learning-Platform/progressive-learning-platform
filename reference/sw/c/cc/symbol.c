@@ -24,9 +24,10 @@
 #include "log.h"
 #include "parse_tree.h"
 #include "line.h"
-
+#include "struct.h"
 extern symbol_table *sym;
-
+extern symbol_table *struct_temp;
+extern struct_table *structs;
 typedef struct id_chain_t {
 	struct id_chain_t *up;
 	char *id;
@@ -34,6 +35,7 @@ typedef struct id_chain_t {
 	int pointer;
 } id_chain;
 
+char *parent_struct = NULL;
 /* return the size of the declaration, in words */
 int get_size(node *n) {
 	/* n should always be a direct_declarator */
@@ -129,6 +131,8 @@ char* match_type(char *t) {
 node* install_symbol(symbol_table *t, node *n) {
 	symbol *s = malloc(sizeof(symbol));
 	symbol *end;
+	struct_table *temp;
+	vlog("Inside install_symbol \n");
 	if (s == NULL) {
 		err("[symbol] could not allocate symbol\n");
 	}
@@ -144,27 +148,92 @@ node* install_symbol(symbol_table *t, node *n) {
 	s->type = NULL;
 	s->value = NULL;
 	
-	//print_tree(n, stdout, 0); /* leave for debugging */
+	print_tree(n, stdout, 0); /* leave for debugging */
 
 	/* get the id and all attributes for this symbol */
 	
 	/* the first child node should be the types and attributes */
-	if (strcmp(n->children[0]->id,"declaration_specifier") != 0 && strcmp(n->children[0]->id,"specifier_qualifier_list") != 0) {
+	if (strcmp(n->children[0]->id,"declaration_specifier") != 0 && 
+	    strcmp(n->children[0]->id,"specifier_qualifier_list") != 0 &&
+	    strcmp(n->children[0]->id,"struct_union") != 0 && 
+	    strcmp(n->children[0]->id,"struct_declaration") != 0) 
+	{
 		lerr(n->line, "[symbol] cannot extract type/attr information\n");
-	} else {
+	} 
+	else 
+	{
+		node *decs, *types;
 		/* all children of declaration_specifiers should be type:id */
-		node *types = n->children[0];
-		node *decs  = n->num_children > 1 ? n->children[1] : NULL;
+		 if (strcmp (n -> children[0] -> id, "struct_declaration") == 0)
+		{
+			types = n;
+			decs = n;
+		}
+		else 
+		{
+			types = n->children[0];
+			decs  = n->num_children > 1 ? n->children[1] : NULL;
+		}
+		if (strcmp(n -> children[0] -> id, "struct_union") == 0)
+		{
+			if (types -> num_children == 3)
+			{	
+				decs = types -> children [2];
+			}
+		}
 		int i;
-		for (i=0; i<types->num_children; i++) {
-			if (types->children[i]->type != type_type) {
+		for (i=0; i<types->num_children; i++) 
+		{
+			if (types ->children[i] -> type != type_type)
+			{
+				if(types -> children[i] -> num_children > i) /* Condition check */
+				{
+					//if (types ->children[i] -> children[0] -> type == type_type)
+					{
+						if(strcmp(types ->children[i] -> children[0] -> id,  "struct") == 0) /* Found structs */
+						{	
+							//Check if the struct ID is already in symbol table, if not proceed further, else create an instance
+							if (find_struct(types -> children[i] -> children [1] -> id) == NULL)
+							{	
+								install_struct(types -> children[i] -> children[1]); //Check this when typedef comes up	
+								install_struct_symbol(n->children[0] -> children[0] -> children[2]); //Send the struct_declaration_list
+								temp = find_struct(types -> children [i] ->children[1] -> id);
+								temp -> s = struct_temp;
+								return n;
+							}
+							else //Found the struct and hence create an instance
+							{
+								//Either this has to be a duplicate struct or create an instance
+								print_structs(stdout, 0);
+								if (decs != NULL)
+								{
+									parent_struct = types -> children[i] -> children[1] -> id;
+								}
+								else
+								{
+									lerr(n->line, "[struct] Structure already present with the same name\n");
+								} 
+							}
+						}
+						else //case hits incase of struct element
+						{
+							install_symbol(t,types -> children[i]);
+						}
+					}
+				}
+			}
+			else if (types->children[i]->type != type_type )
+			{
 				lerr(n->line, "[symbol] found non-type in type specifiers\n");
-			} else {
+			} 
+			else 
+			{
 				char *type = match_type(types->children[i]->id);
 				if (type == NULL)
+				{
 					s->attr |= match_attr(types->children[i]->id);
-				else
-					s->type = type;
+				}
+				else s->type = type;
 			}
 		}
 		/* now we get the id of the symbol */
@@ -174,41 +243,54 @@ node* install_symbol(symbol_table *t, node *n) {
 		if (ids == NULL && strcmp(n->id, "parameter_declaration") != 0) {
 			lerr(n->line, "[symbol] no declarators found\n");
 		}
-		while (ids != NULL) {
-			id_chain *d = ids;
-			if (lookup(t, ids->id)) {
-				lerr(n->line, "[symbol] symbol %s already declared in this scope\n", ids->id);
-			}
-			if (strcmp(n->id, "parameter_declaration") == 0)
-				s->attr |= ATTR_PARAM;
-			if (ids->pointer)
-				s->attr |= ATTR_POINTER; 
-			s->value = ids->id;
-			s->size  = ids->size;
-			if (end == NULL) /* first node */
-				t->s = s;
-			else
-				end->up = s;
-			vlog("[symbol] created symbol: %s, type %s, attr 0x%08x\n", s->value, s->type, s->attr);
-			if (ids->up != NULL) {
-				end = s;
-				s = malloc(sizeof(symbol));
-				if (s == NULL) {
-					err("[symbol] cannot allocate symbol\n");
+		if(decs != NULL && strcmp (decs -> id, "struct_declaration_list" ) != 0)
+		{
+			while (ids != NULL) 
+			{
+				id_chain *d = ids;
+				if (lookup(t, ids->id)) 
+				{
+					lerr(n->line, "[symbol] symbol %s already declared in this scope\n", ids->id);
 				}
-				s->up = NULL;
-				s->attr = t->s->attr;
-				s->type = t->s->type;
-				s->value = NULL;
+				if (strcmp(n->id, "parameter_declaration") == 0)
+					s->attr |= ATTR_PARAM;
+				if (ids->pointer)
+					s->attr |= ATTR_POINTER;
+				if (parent_struct != NULL)
+				{
+					s->attr |= ATTR_STRUCT; 
+					parent_struct = NULL;
+				}
+				else
+				{
+					s->size  = ids->size;
+				}
+				s->value = ids->id;
+				if (end == NULL) /* first node */
+					t->s = s;
+				else
+					end->up = s;
+				vlog("[symbol] created symbol: %s, type %s, attr 0x%08x\n", s->value, s->type, s->attr);
+				if (ids->up != NULL)
+				{
+					end = s;
+					s = malloc(sizeof(symbol));
+					if (s == NULL) 
+					{
+						err("[symbol] cannot allocate symbol\n");
+					}
+					s->up = NULL;
+					s->attr = t->s->attr;
+					s->type = t->s->type;
+					s->value = NULL;
+				}
+				ids = ids->up;
+				free(d);
 			}
-			ids = ids->up;
-			free(d);
-		}
-	}	
-		
-	return n;
+		}	
+			return n;
+	}
 }
-
 symbol* find_symbol(symbol_table *t, char *v) {
 	symbol *curr;
 	if (t == NULL)

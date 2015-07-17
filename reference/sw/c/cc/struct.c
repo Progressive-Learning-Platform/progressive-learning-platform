@@ -71,5 +71,6 @@ void print_structs(FILE* f, int d) {
 	while (curr != NULL) {
 		fprintf(f, "struct: %s\n", curr->name);
 		print_symbols(curr->s, f, 1);
+		curr = curr -> next;
 	}
 }

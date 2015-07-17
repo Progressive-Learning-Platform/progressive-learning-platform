@@ -35,7 +35,14 @@
 #define WORD 4
 
 #define e(...) { v(n); sprintf(buffer, __VA_ARGS__); program = emit(program, buffer); }
-#define v(x) { if (!is_visited(n->line) && ANNOTATE_SOURCE) { visit(n->line); sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line)); program = emit(program, buffer); }}
+#define v(x) {\
+		 if (!is_visited(n->line) && ANNOTATE_SOURCE)\
+		 {\
+			 visit(n->line);\
+			 sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line));\
+			 program = emit(program, buffer);\
+		 }\
+	     }
 #define o(x) (get_offset(x->t, x->id) + (adjust * WORD))
 #define g(x) (is_global(x->t, x->id))
 #define push(x) { e("push %s\n", x); adjust++; }
@@ -216,7 +223,13 @@ void handle_postfix_expr(node *n) {
 		if (!LVALUE) { /* dereference it */
 			e("lw $t0, 0($t0)\n");
 		}
-	} else {
+	} 
+	else if (strcmp (n -> children[1] -> id, "dot")) //Handlers for struct 
+	{
+		
+	}
+	else
+	{
 		lerr(n->line, "[code_gen] postfix expressions not fully implemented\n");
 	}	
 }
