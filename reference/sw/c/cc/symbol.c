@@ -182,7 +182,7 @@ node* install_symbol(symbol_table *t, node *n) {
 		{
 			if (types ->children[i] -> type != type_type)
 			{
-				if(types -> children[i] -> num_children > i) /* Condition check */
+				if(types -> num_children > i  )  /* Condition check */
 				{
 					//if (types ->children[i] -> children[0] -> type == type_type)
 					{
@@ -193,8 +193,15 @@ node* install_symbol(symbol_table *t, node *n) {
 							{	
 								install_struct(types -> children[i] -> children[1]); //Check this when typedef comes up	
 								install_struct_symbol(n->children[0] -> children[0] -> children[2]); //Send the struct_declaration_list
+								
 								temp = find_struct(types -> children [i] ->children[1] -> id);
 								temp -> s = struct_temp;
+								if(types -> children[1]  == NULL)
+									temp -> is_typedef = 0;
+								else if (strcmp (types -> children[1] -> id, "typedef") == 0)
+									temp -> is_typedef = 1;
+								else
+									temp -> is_typedef = 0;
 								temp -> size = number_of_members(temp);
 								return n;
 							}

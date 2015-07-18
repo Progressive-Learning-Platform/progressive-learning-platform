@@ -72,7 +72,7 @@ int is_global(symbol_table *t, char *s) {
 	symbol *curr;
 
 	if (t == NULL) {
-		err("[code_gen] %s undeclared\n", s);
+		err("[code_gen] undeclared variable: %s\n", s);
 		return 0;
 	}
 
@@ -98,7 +98,7 @@ int get_offset(symbol_table *t, char *s) {
 	symbol *curr;
 
 	if (t == NULL) {
-		err("code_gen] %s undeclared\n", s);
+		err("code_gen] undeclared offset variable: %s \n", s);
 		return offset;
 	}
 
@@ -224,12 +224,57 @@ void handle_postfix_expr(node *n) {
 			e("lw $t0, 0($t0)\n");
 		}
 	} 
-	else if (strcmp (n -> children[1] -> id, "dot")) //Handlers for struct 
+	else if (strcmp(n->children[1]->id, "dot") == 0)
 	{
+		/* access struct element */
+		//printf("  ** Handling dot in struct access on line %d\n", n->line);
 		
+		int i;
+		
+		// offsets of struct and member within struct
+		//int base_offset = o(n->children[0]);
+		int member_offset = 0;
+		
+		// struct name
+		char *struct_id = n->children[0]->id;
+		// struct type
+		char *struct_type = find_symbol(n->children[0]->t, struct_id)->type;
+		// member name
+		char *member_id = n->children[2]->id;
+		// struct symbol table
+		struct_table *curr = find_struct(struct_type);
+		
+		//printf("\t\tLooking for struct type: %s\n", struct_type);
+		
+		if(curr == NULL)
+		{
+			lerr(n->line, "[code_gen] could not find struct type: %s\n", struct_type);
+		}
+		
+		printf("\t\tFound Struct Type: %s\n", curr->name);
+		
+		// Determine member offset in struct
+		symbol *cur_sym = curr->s->s;
+		
+		printf("\t\t\tFirst Member: %s\n", cur_sym->value);
+		
+		while (strcmp(cur_sym->value, member_id) != 0) {
+			printf("\t\t\tCurrent Member: %s\n", cur_sym->value);
+			if (cur_sym == NULL)
+				lerr(n->line, "[code_gen] could not find member, %s, in struct: %s\n", member_id, struct_type);
+			cur_sym = cur_sym->up;
+			member_offset += 4;
+		}
+		
+		printf("\t\t\t\tFound Member: %s\n", member_id);
+		
+		e("addiu $t0, $t0, %d # offset of member: %s\n", member_offset, member_id);
+				
 	}
 	else
 	{
+		// Debug: display id of child that is not implemented
+		// printf("id not implemented: %s\n", n->children[1]->id);
 		lerr(n->line, "[code_gen] postfix expressions not fully implemented\n");
 	}	
 }
