@@ -280,7 +280,6 @@ void handle_postfix_expr(node *n) {
 		int i;
 		
 		// offsets of struct and member within struct
-		//int base_offset = o(n->children[0]);
 		int member_offset = 0;
 		
 		// struct name
@@ -292,32 +291,24 @@ void handle_postfix_expr(node *n) {
 		// struct symbol table
 		struct_table *curr = find_struct(struct_type);
 		
-		//printf("\t\tLooking for struct type: %s\n", struct_type);
-		
 		if(curr == NULL)
 		{
 			lerr(n->line, "[code_gen] could not find struct type: %s\n", struct_type);
 		}
 		
-		//printf("\t\tFound Struct Type: %s\n", curr->name);
-		
 		// Determine member offset in struct
 		symbol *cur_sym = curr->s->s;
 		
-		//printf("\t\t\tFirst Member: %s\n", cur_sym->value);
-		
 		while (strcmp(cur_sym->value, member_id) != 0) {
-			//printf("\t\t\tCurrent Member: %s\n", cur_sym->value);
 			if (cur_sym == NULL)
-				lerr(n->line, "[code_gen] could not find member, %s, in struct: %s\n", member_id, struct_type);
+				lerr(n->line, "[code_gen] could not find member, %s, in struct type: %s\n", member_id, struct_type);
 			cur_sym = cur_sym->up;
 			member_offset += 4;
 		}
 		
-		//printf("\t\t\t\tFound Member: %s\n", member_id);
-		
-		e("addiu $t0, $t0, %d # offset of member: %s\n", member_offset, member_id);
-				
+		e("addiu $t0, $t0, %d\t# offset of member: %s\n", member_offset, member_id);
+		e("lw $t0, 0($t0)\t# load value of %s->%s", struct_id, member_id);
+		pop("$t1");
 	}
 	else
 	{
