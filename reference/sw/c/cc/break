@@ -1,4 +1,3 @@
-b code_gen.c:32
-b handlers.c:175
+b code_gen.c:44
 b install_symbol
 r ../tests/struct_test.c -d 2

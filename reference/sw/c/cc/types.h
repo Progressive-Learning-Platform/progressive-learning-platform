@@ -55,6 +55,7 @@ typedef struct struct_table_t {
 	struct struct_table_t *next;
 	char *name;
 	int size;
+	int is_typedef;
 	symbol_table *s;
 } struct_table;
 
