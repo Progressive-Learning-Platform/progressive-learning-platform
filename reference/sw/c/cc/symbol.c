@@ -195,6 +195,7 @@ node* install_symbol(symbol_table *t, node *n) {
 								install_struct_symbol(n->children[0] -> children[0] -> children[2]); //Send the struct_declaration_list
 								temp = find_struct(types -> children [i] ->children[1] -> id);
 								temp -> s = struct_temp;
+								temp -> size = number_of_members(temp);
 								return n;
 							}
 							else //Found the struct and hence create an instance
@@ -256,6 +257,11 @@ node* install_symbol(symbol_table *t, node *n) {
 				{
 					s->attr |= ATTR_STRUCT;
 					s -> type = parent_struct;
+					temp = find_struct(parent_struct);
+					if (temp != NULL)
+						s -> size = temp -> size;
+					else
+						lerr(n->line, "Something is messed up"); 
 					parent_struct = NULL;
 				}
 				else
