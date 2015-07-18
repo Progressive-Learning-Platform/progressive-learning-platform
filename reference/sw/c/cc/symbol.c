@@ -144,7 +144,7 @@ node* install_symbol(symbol_table *t, node *n) {
 	s->type = NULL;
 	s->value = NULL;
 	
-	print_tree(n, stdout, 0); /* leave for debugging */
+	//print_tree(n, stdout, 0); /* leave for debugging */
 
 	/* get the id and all attributes for this symbol */
 	
@@ -208,7 +208,7 @@ node* install_symbol(symbol_table *t, node *n) {
 							else //Found the struct and hence create an instance
 							{
 								//Either this has to be a duplicate struct or create an instance
-								print_structs(stdout, 0);
+								//print_structs(stdout, 0);
 								if (decs != NULL)
 								{
 									parent_struct = types -> children[i] -> children[1] -> id;
