@@ -32,7 +32,7 @@
 #define ATTR_FUNCTION   0x00000400
 #define ATTR_POINTER    0x00000800
 #define ATTR_PARAM	0x00001000
-
+#define ATTR_UNION  	0x00002000
 /* symbol table types */
 typedef struct symbol_t {
         unsigned int            attr;

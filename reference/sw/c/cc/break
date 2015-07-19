@@ -1,4 +1,4 @@
 b code_gen.c:32
 b handlers.c:175
-b install_symbol
-r ../tests/struct_test.c -d 2
+b symbol.c:195
+r ../tests/union.c -d 2

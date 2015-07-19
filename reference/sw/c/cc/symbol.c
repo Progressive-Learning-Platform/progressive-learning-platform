@@ -144,7 +144,7 @@ node* install_symbol(symbol_table *t, node *n) {
 	s->type = NULL;
 	s->value = NULL;
 	
-	//print_tree(n, stdout, 0); /* leave for debugging */
+	print_tree(n, stdout, 0); /* leave for debugging */
 
 	/* get the id and all attributes for this symbol */
 	
@@ -186,29 +186,62 @@ node* install_symbol(symbol_table *t, node *n) {
 				{
 					//if (types ->children[i] -> children[0] -> type == type_type)
 					{
-						if(strcmp(types ->children[i] -> children[0] -> id,  "struct") == 0) /* Found structs */
+						if(strcmp(types ->children[i] -> children[0] -> id,  "struct") == 0 ||
+						   strcmp(types -> children[i] -> children[0] -> id, "union") == 0) /* Found structs */
 						{	
 							//Check if the struct ID is already in symbol table, if not proceed further, else create an instance
 							if (find_struct(types -> children[i] -> children [1] -> id) == NULL)
 							{	
-								install_struct(types -> children[i] -> children[1]); //Check this when typedef comes up	
+								install_struct(types -> children[i] -> children[1]); //Since this handles symbol table decs within the call, the struct handle has to return after this procedure. This makes typedef painful. 	
 								install_struct_symbol(n->children[0] -> children[0] -> children[2]); //Send the struct_declaration_list
 								
 								temp = find_struct(types -> children [i] ->children[1] -> id);
 								temp -> s = struct_temp;
-								if(types -> children[1]  == NULL)
-									temp -> is_typedef = 0;
-								else if (strcmp (types -> children[1] -> id, "typedef") == 0)
-									temp -> is_typedef = 1;
-								else
-									temp -> is_typedef = 0;
 								temp -> size = number_of_members(temp);
+								if(types -> children[1]  == NULL)
+								{
+									temp -> is_typedef = 0;
+								}
+								else if (strcmp (types -> children[1] -> id, "typedef") == 0)
+								{
+									temp -> is_typedef = 1;
+								/*
+									//Handle the decs here for typedef variables because the function returns here
+									//Below is just copy paste of decs handling.Why? Refer to the comments above
+									struct_table *typdef_id, *ptr;
+									id_chain *ids = get_ids(NULL, decs);
+									while (ids != NULL) 
+									{
+										id_chain *d = ids;
+										typdef_id = (struct_table *) malloc (sizeof(struct_table));
+										if (typdef_id == NULL)
+											lerr(n->line, "Malloc error\n");
+										memcpy(typdef_id, temp, sizeof(struct_table));
+										typdef_id -> name = d -> id;
+										ptr = temp;
+										while(ptr -> next != NULL)
+										{
+											ptr = ptr ->next;
+										}
+										typdef_id -> next = NULL;
+										typdef_id -> is_typedef = 0;
+										ptr -> next = typdef_id; //Forming the list of structs
+										vlog("[symbol] created struct: %s, size %d ", typdef_id->name, typdef_id->size);
+										ids = ids -> up;
+										free(d);
+									}
+								*/
+								}
+								else
+								{
+									temp -> is_typedef = 0;
+								}
 								return n;
 							}
 							else //Found the struct and hence create an instance
 							{
 								//Either this has to be a duplicate struct or create an instance
-								//print_structs(stdout, 0);
+								print_structs(stdout, 0);
 								if (decs != NULL)
 								{
 									parent_struct = types -> children[i] -> children[1] -> id;
@@ -266,9 +299,16 @@ node* install_symbol(symbol_table *t, node *n) {
 					s -> type = parent_struct;
 					temp = find_struct(parent_struct);
 					if (temp != NULL)
-						s -> size = temp -> size;
+					{	
+						if(strcmp(types -> children[0] -> children[0] -> id, "union") == 0)
+							s -> size = 1; //Hard code for union
+						else
+							s -> size = temp -> size;
+					}
 					else
+					{
 						lerr(n->line, "Something is messed up"); 
+					}
 					parent_struct = NULL;
 				}
 				else
@@ -303,8 +343,10 @@ node* install_symbol(symbol_table *t, node *n) {
 }
 symbol* find_symbol(symbol_table *t, char *v) {
 	symbol *curr;
+	symbol_table *st;
+	struct_table *temp;
 	if (t == NULL)
-		return NULL;
+		return NULL;	
 	curr = t->s;
 	/* search up from here, looking for the requested symbol */
 	while (curr != NULL) {
