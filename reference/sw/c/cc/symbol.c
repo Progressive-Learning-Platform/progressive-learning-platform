@@ -301,7 +301,11 @@ node* install_symbol(symbol_table *t, node *n) {
 					if (temp != NULL)
 					{	
 						if(strcmp(types -> children[0] -> children[0] -> id, "union") == 0)
+						{
 							s -> size = 1; //Hard code for union
+							s -> attr = 0;
+							s -> attr |= ATTR_UNION;
+						}
 						else
 							s -> size = temp -> size;
 					}
