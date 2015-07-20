@@ -328,13 +328,13 @@ void handle_postfix_expr(node *n) {
 				member_offset += 4;
 			}
 			e("addiu $t0, $t0, %d # offset of member: %s\n", member_offset, member_id);
-			e("lw $t0, 0($t0)\t# load value of %s->%s", struct_id, member_id);
-			pop("$t1");
+			e("lw $t0, 0($t0)\t# load value of %s->%s\n", struct_id, member_id);
+			//pop("$t1");
 		}
 		else if(sym->attr & ATTR_UNION)
 		{
 			// Mask only applicable bits of variable types that don't use full word (i.e. char, short, etc.)
-			e("lw $t0, 0($t0)\t# load value of %s->%s", struct_id, member_id);
+			e("lw $t0, 0($t0)\t# load value of %s->%s\n", struct_id, member_id);
 			cur_sym = find_symbol(struct_sym_tbl, member_id);
 			if( strcmp(cur_sym->type, "char") == 0 )
 			{
@@ -344,7 +344,7 @@ void handle_postfix_expr(node *n) {
 			{
 				e("andi $t0, $t0, 0xFF # Member is a short, Truncate value to 8 bits\n");
 			}
-			pop("$t1");
+			//pop("$t1");
 		}
 		else
 		{
