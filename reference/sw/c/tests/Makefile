@@ -5,9 +5,10 @@ TESTS=\
 	func\
 	array\
 	string\
-	define\
 	recursion\
-	struct\
+	struct_simple\
+	#struct\
+	#define\
 
 build.tests:	$(addsuffix .build, $(TESTS))
 clean.tests:	$(addsuffix .clean, $(TESTS))

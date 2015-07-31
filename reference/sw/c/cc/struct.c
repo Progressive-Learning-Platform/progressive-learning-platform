@@ -26,7 +26,7 @@
 
 symbol_table *struct_temp = NULL;
 extern struct_table *structs;
-
+int struct_size = 0; //Risky 
 /* install a symbol in (yet unnamed) struct. This just hijacks the install_symbol function
    pointing to our dummy struct table.
  */ 
@@ -71,5 +71,37 @@ void print_structs(FILE* f, int d) {
 	while (curr != NULL) {
 		fprintf(f, "struct: %s\n", curr->name);
 		print_symbols(curr->s, f, 1);
+		curr = curr -> next;
 	}
+}
+
+void call_recursive (symbol_table *t, int depth )
+{
+	symbol *curr = NULL;
+	int i,j;
+	if (t == NULL) 
+		return;
+	curr = t->s;
+	while (curr != NULL)
+	{
+		struct_size += 1;
+		/* print any symbol tables that are subordinate to this symbol */
+		for(j = 0; j < t -> num_children; j++)
+			if (t->children[j]->assoc == curr)
+				call_recursive(t->children[j], depth+1);
+		curr = curr->up;
+	}
+	for (i = 0; i < t->num_children; i++)
+		if (t -> children[i] -> assoc == NULL)
+			call_recursive(t -> children[i], depth + 1);
+}
+int number_of_members(struct_table *curr)
+{
+	int n;
+	symbol_table * i = curr -> s; //Extract the symbol table	
+	/* Count the symbols and then call my children to do the same */
+	call_recursive(i, 1);
+	n = struct_size; //Copying the global size to local size and then zeroing the global one.
+	struct_size = 0;
+	return n;
 }

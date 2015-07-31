@@ -35,7 +35,14 @@
 #define WORD 4
 
 #define e(...) { v(n); sprintf(buffer, __VA_ARGS__); program = emit(program, buffer); }
-#define v(x) { if (!is_visited(n->line) && ANNOTATE_SOURCE) { visit(n->line); sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line)); program = emit(program, buffer); }}
+#define v(x) {\
+		 if (!is_visited(n->line) && ANNOTATE_SOURCE)\
+		 {\
+			 visit(n->line);\
+			 sprintf(buffer, "#\n# LINE %d: %s#\n", n->line, get_line(n->line));\
+			 program = emit(program, buffer);\
+		 }\
+	     }
 #define o(x) (get_offset(x->t, x->id) + (adjust * WORD))
 #define g(x) (is_global(x->t, x->id))
 #define push(x) { e("push %s\n", x); adjust++; }
@@ -65,7 +72,7 @@ int is_global(symbol_table *t, char *s) {
 	symbol *curr;
 
 	if (t == NULL) {
-		err("[code_gen] %s undeclared\n", s);
+		err("[code_gen] undeclared variable: %s\n", s);
 		return 0;
 	}
 
@@ -91,7 +98,7 @@ int get_offset(symbol_table *t, char *s) {
 	symbol *curr;
 
 	if (t == NULL) {
-		err("code_gen] %s undeclared\n", s);
+		err("code_gen] undeclared offset variable: %s \n", s);
 		return offset;
 	}
 
@@ -216,7 +223,173 @@ void handle_postfix_expr(node *n) {
 		if (!LVALUE) { /* dereference it */
 			e("lw $t0, 0($t0)\n");
 		}
-	} else {
+	} 
+	else if (strcmp(n->children[1]->id, "dot") == 0)
+	{
+		/* puts address of struct member into $t0 */
+		
+		// offsets of struct and member within struct
+		int member_offset = 0;
+		
+		// struct name
+		char *struct_id = n->children[0]->id;
+		// member name
+		char *member_id = n->children[2]->id;
+		
+		// struct symbol table entry
+		symbol *sym = find_symbol(n->children[0]->t, struct_id);
+		// struct type
+		char *struct_type = sym->type;
+		// struct table entry
+		struct_table *curr = find_struct(struct_type);
+		if(curr == NULL)
+		{
+			lerr(n->line, "[code_gen] could not find struct type: %s\n", struct_type);
+		}
+		
+		// Struct symbol table
+		symbol_table *struct_sym_tbl = curr->s;
+		// Struct member symbol pointer
+		symbol *cur_sym;
+		
+		
+		/*
+		// DEBUG: Print struct identifier and member identifier
+		printf("\t* Struct Name: %s, Member Name: %s\n", struct_id, member_id);
+		
+		// DEBUG: Print member name and type
+		printf("\t\t* Attribute: %X, Type %s\n", sym->attr, sym->type);
+		*/
+		
+		
+		// if struct is a union (ATTR_UNION == 0x2000) then skip offset code
+		if(sym->attr & ATTR_STRUCT)
+		{
+			// Determine member offset in struct
+			cur_sym = struct_sym_tbl->s;
+			
+			while (strcmp(cur_sym->value, member_id) != 0) {
+				if (cur_sym == NULL)
+					lerr(n->line, "[code_gen] could not find member, %s, in struct: %s\n", member_id, struct_type);
+				cur_sym = cur_sym->up;
+				member_offset += 4;
+			}
+			e("addiu $t0, $t0, %d # offset of member: %s\n", member_offset, member_id);
+		}
+		else if(sym->attr & ATTR_UNION)
+		{
+			// No member offset is currently required for unions because all members are the same size and word aligned
+		}
+		else
+		{
+			lerr(n->line, "[code_gen] %s is not a struct or union so '.' cannot be used\n", struct_id);
+		}
+	}
+	else if (strcmp(n->children[1]->id, "ptr") == 0)
+	{
+		/* puts value located in address of struct member into $t0 */
+		
+		
+		// offsets of struct and member within struct
+		int member_offset = 0;
+		
+		// struct name
+		char *struct_id = n->children[0]->id;
+		// member name
+		char *member_id = n->children[2]->id;
+		
+		// struct symbol table entry
+		symbol *sym = find_symbol(n->children[0]->t, struct_id);
+		// struct type
+		char *struct_type = sym->type;
+		// struct table entry
+		struct_table *curr = find_struct(struct_type);
+		if(curr == NULL)
+		{
+			lerr(n->line, "[code_gen] could not find struct type: %s\n", struct_type);
+		}
+		
+		// Struct symbol table
+		symbol_table *struct_sym_tbl = curr->s;
+		// Struct member symbol pointer
+		symbol *cur_sym;
+		
+		
+		// if struct is a union (ATTR_UNION == 0x2000) then skip offset code
+		if(sym->attr & ATTR_STRUCT)
+		{
+			// Determine member offset in struct
+			cur_sym = struct_sym_tbl->s;
+			
+			while (strcmp(cur_sym->value, member_id) != 0) {
+				if (cur_sym == NULL)
+					lerr(n->line, "[code_gen] could not find member, %s, in struct: %s\n", member_id, struct_type);
+				cur_sym = cur_sym->up;
+				member_offset += 4;
+			}
+			e("addiu $t0, $t0, %d # offset of member: %s\n", member_offset, member_id);
+			e("lw $t0, 0($t0)\t# load value of %s->%s\n", struct_id, member_id);
+			//pop("$t1");
+		}
+		else if(sym->attr & ATTR_UNION)
+		{
+			// Mask only applicable bits of variable types that don't use full word (i.e. char, short, etc.)
+			e("lw $t0, 0($t0)\t# load value of %s->%s\n", struct_id, member_id);
+			cur_sym = find_symbol(struct_sym_tbl, member_id);
+			if( strcmp(cur_sym->type, "char") == 0 )
+			{
+				e("andi $t0, $t0, 0xFF # Member is a char, Truncate value to 8 bits\n");
+			}
+			else if( strcmp(cur_sym->type, "short") == 0 )
+			{
+				e("andi $t0, $t0, 0xFF # Member is a short, Truncate value to 8 bits\n");
+			}
+			//pop("$t1");
+		}
+		else
+		{
+			lerr(n->line, "[code_gen] %s is not a struct or union so '->' cannot be used\n", struct_id);
+		}
+		
+		
+		// Old implementation without union
+		/*
+		// offsets of struct and member within struct
+		int member_offset = 0;
+		
+		// struct name
+		char *struct_id = n->children[0]->id;
+		// struct type
+		char *struct_type = find_symbol(n->children[0]->t, struct_id)->type;
+		// member name
+		char *member_id = n->children[2]->id;
+		// struct symbol table
+		struct_table *curr = find_struct(struct_type);
+		
+		if(curr == NULL)
+		{
+			lerr(n->line, "[code_gen] could not find struct type: %s\n", struct_type);
+		}
+		
+		// Determine member offset in struct
+		symbol *cur_sym = curr->s->s;
+		
+		while (strcmp(cur_sym->value, member_id) != 0) {
+			if (cur_sym == NULL)
+				lerr(n->line, "[code_gen] could not find member, %s, in struct type: %s\n", member_id, struct_type);
+			cur_sym = cur_sym->up;
+			member_offset += 4;
+		}
+		
+		e("addiu $t0, $t0, %d\t# offset of member: %s\n", member_offset, member_id);
+		e("lw $t0, 0($t0)\t# load value of %s->%s", struct_id, member_id);
+		pop("$t1");
+		*/
+	}
+	else
+	{
+		// Debug: display id of child that is not implemented
+		// printf("id not implemented: %s\n", n->children[1]->id);
 		lerr(n->line, "[code_gen] postfix expressions not fully implemented\n");
 	}	
 }
