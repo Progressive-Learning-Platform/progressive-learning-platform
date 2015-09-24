@@ -215,7 +215,7 @@ public class SimCore extends PLPSimCore {
         branch = false;
         flushpipeline();
 
-        Msg.P("core: reset");
+        Msg.printPreformattedString("core: reset");
 
         return Constants.PLP_OK;
     }
@@ -234,7 +234,7 @@ public class SimCore extends PLPSimCore {
         ex_stall = false;
         if_stall = false;
 
-        Msg.P("core: soft reset");
+        Msg.printPreformattedString("core: soft reset");
 
         return Constants.PLP_OK;
     }

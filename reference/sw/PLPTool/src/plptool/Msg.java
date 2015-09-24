@@ -295,18 +295,18 @@ public class Msg {
     /**
      * Print pre-formatted string (HTML's <pre> tag)
      *
-     * @param printStr Preformatted string
+     * @param message Preformatted string
      */
-    public static void P(String printStr) {
+	public static void printPreformattedString(String message) {
         if(silent || LogOutStream == null) return;
 
         try {
 
         if(output == null)
-            LogOutStream.println(printStr);
+            LogOutStream.println(message);
         else {
             kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
-                        printStr + "</font></pre>", 0, 0, null);
+                        message + "</font></pre>", 0, 0, null);
             output.setCaretPosition(doc.getLength());
         }
 

@@ -168,7 +168,7 @@ public class ExportDOT extends javax.swing.JDialog {
         if(routineIndex > -1) {
             out = p.generateDOT(routineIndex, false);
             if(chkConsoleOut.isSelected())
-                Msg.P(out);
+                Msg.printPreformattedString(out);
             else
                 PLPToolbox.writeFile(out, txtFile.getText());
             this.dispose();

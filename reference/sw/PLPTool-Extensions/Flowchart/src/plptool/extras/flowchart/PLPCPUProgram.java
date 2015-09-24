@@ -67,13 +67,13 @@ public class PLPCPUProgram {
         NodeCollection collection = routines.get(routine);
         NodeCollection reachedNodes = new NodeCollection();
         Node next = collection.getHead();
-        Msg.P("\n\n*************************************************************");
-        Msg.P(    "   R O U T I N E");
-        Msg.P(next.getLabel() + " | #nodes: " + collection.size());
+        Msg.printPreformattedString("\n\n*************************************************************");
+        Msg.printPreformattedString(    "   R O U T I N E");
+        Msg.printPreformattedString(next.getLabel() + " | #nodes: " + collection.size());
         int i = 0;
         while(next != null) {
             reachedNodes.addNode(next);
-            Msg.P("*************************************");
+            Msg.printPreformattedString("*************************************");
             Msg.pn("node[" + i + "]: ");
             if(next.getLabel() != null)
                 Msg.pn(next.getLabel() + ":");
@@ -105,7 +105,7 @@ public class PLPCPUProgram {
                         PLPToolbox.format32Hex(cNode.getRoutineAddress()));
                 Msg.P();
             }
-            Msg.P("==CODE========\n" +
+            Msg.printPreformattedString("==CODE========\n" +
                    next.getCode() +
                   "==============\n");
             next = next.getNext();

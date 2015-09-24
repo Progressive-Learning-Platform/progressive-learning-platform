@@ -31,8 +31,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Msg.P("\n" + org.plp.web.Text.copyrightString + "\n");
-        Msg.P(plptool.Text.copyrightString + "\n");
+        Msg.printPreformattedString("\n" + org.plp.web.Text.copyrightString + "\n");
+        Msg.printPreformattedString(plptool.Text.copyrightString + "\n");
 
         int activeArgIndex = 0;
 
@@ -49,7 +49,7 @@ public class Main {
                 System.exit(plptool.Constants.PLP_OK);
             } else if(args[i].equals("--test")) {
                 int ret;
-                Msg.P("Loading PostgreSQL JDBC Driver...");
+                Msg.printPreformattedString("Loading PostgreSQL JDBC Driver...");
                 if((ret = DatabaseConnector.init()) != plptool.Constants.PLP_OK) {
                     System.exit(ret);
                 }
@@ -69,19 +69,19 @@ public class Main {
     }
 
     public static void printHelpMessage() {
-        Msg.P("PLP Web Service Usage:");
-        Msg.P("   --test                 Run test web service");
-        Msg.P("   --ide                  Run HTML5 PLPTool frontend ONLY");
-        Msg.P("   --backend              Run PLP Classroom Web Backend");
-        Msg.P("   --root <path>          Path to HTML root (default current directory)");
-        Msg.P("   --port <port>          Listen to <port> instead of the default 8080");
-        Msg.P("   --db <address> <port>  PostgreSQL backend server to use for persistent store");
-        Msg.P("   --dbconfig <file>      Load database configuration from <file>");
-        Msg.P("   --dbuser <user>        Use <user> to connect to the database");
-        Msg.P("   --dbpw <password>      Use <password> to connect to the database");
-        Msg.P("   --dbinit               (Re-)initialize the backend database");
-        Msg.P("   --dbdump <file>        Dump database contents to a zip <file>");
-        Msg.P("   --dbimport <file>      Import data from <file> to the database");        
-        Msg.P("");
+        Msg.printPreformattedString("PLP Web Service Usage:");
+        Msg.printPreformattedString("   --test                 Run test web service");
+        Msg.printPreformattedString("   --ide                  Run HTML5 PLPTool frontend ONLY");
+        Msg.printPreformattedString("   --backend              Run PLP Classroom Web Backend");
+        Msg.printPreformattedString("   --root <path>          Path to HTML root (default current directory)");
+        Msg.printPreformattedString("   --port <port>          Listen to <port> instead of the default 8080");
+        Msg.printPreformattedString("   --db <address> <port>  PostgreSQL backend server to use for persistent store");
+        Msg.printPreformattedString("   --dbconfig <file>      Load database configuration from <file>");
+        Msg.printPreformattedString("   --dbuser <user>        Use <user> to connect to the database");
+        Msg.printPreformattedString("   --dbpw <password>      Use <password> to connect to the database");
+        Msg.printPreformattedString("   --dbinit               (Re-)initialize the backend database");
+        Msg.printPreformattedString("   --dbdump <file>        Dump database contents to a zip <file>");
+        Msg.printPreformattedString("   --dbimport <file>      Import data from <file> to the database");        
+        Msg.printPreformattedString("");
     }
 }

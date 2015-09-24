@@ -37,7 +37,7 @@ public class Formatter {
 
     // Print to stdout, prettily.
     public static int prettyPrint(plptool.PLPAsm asm) {
-        Msg.P(prettyString(asm));
+        Msg.printPreformattedString(prettyString(asm));
 
         return Constants.PLP_OK;
     }

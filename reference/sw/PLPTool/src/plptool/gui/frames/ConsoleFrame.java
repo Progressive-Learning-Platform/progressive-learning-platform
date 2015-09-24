@@ -208,7 +208,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("dumpattributes")) {
                 java.util.HashMap<String, Object> attributes = plp.getProjectAttributeSet();
                 Object[] entrySet = attributes.entrySet().toArray();
-                Msg.P("Project attributes:");
+                Msg.printPreformattedString("Project attributes:");
                 for(int i = 0; i < entrySet.length; i++) {
                     @SuppressWarnings("unchecked")
                     java.util.Map.Entry<String, Object> entry =
@@ -219,7 +219,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("dumpappattributes")) {
                 java.util.HashMap<String, String> attributes = plptool.gui.PLPToolApp.getAttributes();
                 Object[] entrySet = attributes.entrySet().toArray();
-                Msg.P("Application attributes:");
+                Msg.printPreformattedString("Application attributes:");
                 for(int i = 0; i < entrySet.length; i++) {
                     @SuppressWarnings("unchecked")
                     java.util.Map.Entry<String, String> entry =
@@ -229,16 +229,16 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 Msg.P();
             } else if(command.equals("dumpbuilderrors")) {
                 java.util.ArrayList<PLPBuildError> errorList;
-                Msg.P("Errors from last build:");
+                Msg.printPreformattedString("Errors from last build:");
                 if((errorList = plp.getBuildErrorList()) != null) {
                     for (PLPBuildError e : errorList) {
-                        Msg.P(plp.getAsm(e.getSourceIndex()).getAsmFilePath() + ":" +
+                        Msg.printPreformattedString(plp.getAsm(e.getSourceIndex()).getAsmFilePath() + ":" +
                                 e.getLineNumber() + " " + e.getErrorMessage());
                     }
                 }
             } else if(command.equals("errordialog")) {
                 Config.cfgErrorDialog ^= true;
-                Msg.P("cfgErrorDialog=" + Config.cfgErrorDialog);
+                Msg.printPreformattedString("cfgErrorDialog=" + Config.cfgErrorDialog);
             } else if(command.equals("vismem")) {
                 if(plp.isSimulating()) {
                     plptool.mips.visualizer.MemoryVisualization memVis = new plptool.mips.visualizer.MemoryVisualization(plp);

@@ -60,7 +60,7 @@ public class PLPToolConnector implements ModuleInterface5 {
             if(processed) {
                 for(int i = 0; i < flowchart.getNumberOfRoutines(); i++) {
                     Msg.I("Flowchart for " + flowchart.getRoutine(i).getHead().getLabel(), this);
-                    Msg.P(flowchart.generateDOT(i, false));
+                    Msg.printPreformattedString(flowchart.generateDOT(i, false));
                 }
             }
         }

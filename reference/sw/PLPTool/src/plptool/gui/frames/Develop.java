@@ -142,7 +142,7 @@ public final class Develop extends javax.swing.JFrame {
         PLPToolbox.attachDebugConsoleMagicComboListener(this, plp, true);
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
-        Msg.P(Text.copyrightString);
+        Msg.printPreformattedString(Text.copyrightString);
         Msg.M("");
     }
 
