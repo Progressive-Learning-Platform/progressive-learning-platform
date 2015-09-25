@@ -16,43 +16,38 @@
 
  */
 
-import plptool.*;
-import plptool.gui.*;
-import plptool.testsuite.*;
+import java.awt.Robot;
+import java.util.HashMap;
 
-import java.io.*;
-import java.awt.*;
-import java.util.*;
+import plptool.PLPToolbox;
+import plptool.gui.ProjectDriver;
+import plptool.testsuite.AutoTest;
+import plptool.testsuite.Tester;
 
 /**
  *
  * @author wira
  */
-public class ConfigTester implements Tester {
-    private Robot r;
-
-    public void configure(Robot r) {
-        try {
-            this.r = r;
-        } catch(Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    }
-
-    public void run(ProjectDriver plp) { 
-        HashMap<String, String> config = new HashMap<String, String>();
-
-        config.put("config1", "7000");
-        config.put("config2", "true");
-        config.put("config3", "somestring");
-
-        PLPToolbox.writeConfig(config, PLPToolbox.getConfDir() + "/configtest");
-
-        HashMap<String, String> configRead = PLPToolbox.parseConfig(PLPToolbox.getConfDir() + "/configtest");
-
-        AutoTest.p("SUCCESS");
-        System.exit(0);
-    }
+public class ConfigTester implements Tester
+{
+	public void configure(Robot r)
+	{
+	}
+	
+	public void run(ProjectDriver plp)
+	{
+		HashMap<String, String> config = new HashMap<String, String>();
+		
+		config.put("config1", "7000");
+		config.put("config2", "true");
+		config.put("config3", "somestring");
+		
+		PLPToolbox.writeConfig(config, PLPToolbox.getConfDir() + "/configtest");
+		
+		HashMap<String, String> configRead = PLPToolbox.parseConfig(PLPToolbox
+				.getConfDir() + "/configtest");
+		
+		AutoTest.p("SUCCESS");
+		System.exit(0);
+	}
 }
-
