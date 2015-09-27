@@ -18,15 +18,19 @@
 
 package plptool.mips;
 
+import java.awt.Color;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
+
 import plptool.Config;
-import plptool.Msg;
 import plptool.PLPSyntaxHighlightSupport;
 import plptool.gui.ProjectDriver;
-import plptool.gui.frames.Develop;
-
-import java.awt.Color;
-import javax.swing.text.*;
-import java.util.regex.*;
 
 /**
  * Syntax highlighter support for the plpmips ISA implementation
@@ -34,6 +38,12 @@ import java.util.regex.*;
  * @author wira
  */
 public class SyntaxHighlightSupport implements PLPSyntaxHighlightSupport {
+	
+	public SyntaxHighlightSupport()
+	{
+		// TODO Auto-generated constructor stub
+	}
+	
     private SimpleAttributeSet[] styles;
 
     private final static int RTYPE = 0;
