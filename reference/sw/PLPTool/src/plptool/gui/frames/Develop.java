@@ -20,32 +20,51 @@ package plptool.gui.frames;
 
 import java.awt.Desktop;
 import java.awt.Point;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
-import javax.swing.event.HyperlinkEvent.EventType;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.HTMLDocument;
-import java.net.URI;
 import java.io.File;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.HashMap;
 
-import plptool.Msg;
-import plptool.Constants;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.Utilities;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
+
 import plptool.Config;
+import plptool.Constants;
+import plptool.Msg;
 import plptool.PLPSimBusModule;
-import plptool.dmf.DynamicModuleFramework;
 import plptool.PLPToolbox;
 import plptool.Text;
-import plptool.mods.*;
 import plptool.dmf.CallbackRegistry;
+import plptool.dmf.DynamicModuleFramework;
+import plptool.gui.NumberConverter;
 import plptool.gui.PLPToolApp;
 import plptool.gui.ProjectDriver;
-import plptool.gui.ProjectEvent;
 import plptool.gui.SerialTerminal;
-import plptool.gui.NumberConverter;
+import plptool.mods.GPIO;
+import plptool.mods.LEDArray;
+import plptool.mods.PLPID;
+import plptool.mods.SevenSegments;
+import plptool.mods.Switches;
+import plptool.mods.UART;
+import plptool.mods.VGA;
 
 /**
  *
@@ -68,9 +87,6 @@ public final class Develop extends javax.swing.JFrame {
     private double vPaneSavedProportion = -1;
     private DevEditorDocListener currentEditorListener;
     private boolean extraToolsItems;
-
-    private String previousOpenFile = null;
-    private int previousLineNumber;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -920,7 +936,7 @@ public final class Develop extends javax.swing.JFrame {
      *
      * @param line Line number to highlight
      */
-    public void syntaxHighlight(int line) {
+	public void syntaxHighlight(int line) {
         try {
             String currline = txtEditor.getText().split("\\r?\\n")[line];
             int currpos = 0;
