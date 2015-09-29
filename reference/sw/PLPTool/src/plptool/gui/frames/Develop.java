@@ -2878,7 +2878,7 @@ public final class Develop extends javax.swing.JFrame {
 
         menuSimGPIO.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_7, java.awt.event.InputEvent.CTRL_MASK));
         menuSimGPIO.setIcon(resourceMap.getIcon("menuSimGPIO.icon")); // NOI18N
-        menuSimGPIO.setLabel(resourceMap.getString("menuSimGPIO.label")); // NOI18N
+        menuSimGPIO.setText(resourceMap.getString("menuSimGPIO.label")); // NOI18N
         menuSimGPIO.setName("menuSimGPIO"); // NOI18N
         menuSimGPIO.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
