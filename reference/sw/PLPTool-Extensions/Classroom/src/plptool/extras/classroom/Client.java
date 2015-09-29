@@ -86,7 +86,7 @@ public class Client extends javax.swing.JFrame {
     }
 
     public void setState(boolean c, boolean v) {
-        Msg.D("Setting to " + c, 4, null);
+        Msg.debug("Setting to " + c, 4, null);
         tglConnect.setSelected(c);
         txtNickname.setEnabled(!c);
         btnME.setEnabled(c);

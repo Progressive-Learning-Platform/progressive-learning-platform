@@ -63,7 +63,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private static long PLP_ISA_EMU_G02 = 0x02000000L;
 
     public int connect(String portName) throws Exception {
-        Msg.D("Connecting to " + portName, 2, this);
+        Msg.debug("Connecting to " + portName, 2, this);
         
         try {
             portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
@@ -88,7 +88,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             if ( commPort instanceof SerialPort ) {
                 BAUDRATE = ((plptool.mips.Architecture)plp.getArch()).isUsingNexysBoard() ? 57600 : 115200;
-                Msg.D("Baudrate=" + BAUDRATE, 2, this);
+                Msg.debug("Baudrate=" + BAUDRATE, 2, this);
                 plp.p_port = (SerialPort) commPort;
                 plp.p_port.setSerialPortParams(BAUDRATE, SerialPort.DATABITS_8,
                                                SerialPort.STOPBITS_1,
@@ -98,7 +98,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 out = plp.p_port.getOutputStream();
                 this.portName = portName;
 
-                Msg.D("Port name: " + plp.p_port.getName(), 4, this);
+                Msg.debug("Port name: " + plp.p_port.getName(), 4, this);
             }
             else {
                 return Msg.E(portName + " is not a serial port.",
@@ -110,7 +110,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     }
 
     public int close() {
-        Msg.D("Closing " + portName, 2, this);
+        Msg.debug("Closing " + portName, 2, this);
 
         try {
             in.close();
@@ -142,7 +142,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             ret = Constants.PLP_OK;
 
-            Msg.D("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
+            Msg.debug("Writing out first address " + String.format("0x%08x", addrTable[0]), 2, this);
             buff[0] = (byte) 'a';
             buff[1] = (byte) (addrTable[0] >> 24);
             buff[2] = (byte) (addrTable[0] >> 16);
@@ -151,7 +151,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             out.write(buff, 0, 5);
             if(isProgramming()) inData = (byte) in.read();
             if(inData != 'f') {
-                Msg.D("Acknowledgement byte: " +
+                Msg.debug("Acknowledgement byte: " +
                          String.format("0x%x", inData), 2, this);
                 return Msg.E("Programming failed, no/invalid acknowledgement received. " +
                                 "Check if the board is in programming mode.",
@@ -180,7 +180,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     plp.g_prg.repaint();
                 }
 
-                Msg.D(progress + " out of " + (objCode.length - 1), 5, this);
+                Msg.debug(progress + " out of " + (objCode.length - 1), 5, this);
 
                 // non-chunk programming mode, send each word one-by-one
                 if(!Config.prgProgramInChunks) {
@@ -216,7 +216,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                             return ret;
                     }
 
-                    Msg.D(String.format("Address jump: %08x to %08x",
+                    Msg.debug(String.format("Address jump: %08x to %08x",
                                addrTable[i], addrTable[i + 1]), 3, this);
 
                     // and send new address
@@ -268,7 +268,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             if(done) {
                 // jump to entrypoint
                 long entry = plp.asm.getEntryPoint();
-                Msg.D("Jumping to " + String.format("%08x", entry), 3, this);
+                Msg.debug("Jumping to " + String.format("%08x", entry), 3, this);
                 buff[0] = (byte) 'a';
                 buff[1] = (byte) (entry >> 24);
                 buff[2] = (byte) (entry >> 16);
@@ -299,7 +299,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             } else {
                 Msg.I("interrupted.", this);
 
-                Msg.D("Jumping to " + String.format("%08x", 0), 3, this);
+                Msg.debug("Jumping to " + String.format("%08x", 0), 3, this);
                 buff[0] = (byte) 'a';
                 buff[1] = 0;
                 buff[2] = 0;
@@ -328,7 +328,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
     private int sendChunk(byte[] chunk, int size, int i) throws IOException {
         int len = size / 4; // per chunk protocol, len is in WORDS
         
-        Msg.D("Sending chunk of size " + size + " bytes.", 3, this);
+        Msg.debug("Sending chunk of size " + size + " bytes.", 3, this);
 
         if(plp.g())
             plp.g_prg.getStatusField().setText("Transmitting " +

@@ -120,7 +120,7 @@ public class CallbackRegistry {
         boolean ret = false;
         for(int i = 0; i < callbacks[callbackNum].size(); i++) {
             Callback c = callbacks[callbackNum].get(i);
-            Msg.D("callback[" + callbackNum + "]: " +
+            Msg.debug("callback[" + callbackNum + "]: " +
                     c.getClass().getCanonicalName(), 4, null);
             ret = c.callback(callbackNum, param) || ret;
         }

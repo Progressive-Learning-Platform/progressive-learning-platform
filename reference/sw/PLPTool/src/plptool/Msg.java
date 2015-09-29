@@ -51,7 +51,7 @@ public class Msg {
     /**
      * Preformatted String buffer
      */
-    private static String p = "";
+    private static String preformattedStringBuffer = "";
 
     /**
      * Last object that was responsible for invoking an Error messsage.
@@ -217,7 +217,7 @@ public class Msg {
      * @param requestedDebugLevel Debug level requested.
      * @param objIdentifier The object invoking this call.
      */
-    public static void D(String debugStr, int requestedDebugLevel, Object objIdentifier) {
+    public static void debug(String debugStr, int requestedDebugLevel, Object objIdentifier) {
         if(LogOutStream == null) return;
 
         if(requestedDebugLevel <= Constants.debugLevel) {
@@ -251,7 +251,7 @@ public class Msg {
      *
      * @param msgStr Message string
      */
-    public static void M(String msgStr) {
+    public static void println(String msgStr) {
         if(silent || LogOutStream == null) return;
 
         try {
@@ -274,7 +274,7 @@ public class Msg {
      *
      * @param msgStr Message string
      */
-    public static void m(String msgStr) {
+    public static void print(String msgStr) {
         if(silent || LogOutStream == null) return;
 
         try {
@@ -321,7 +321,7 @@ public class Msg {
      * @param appendStr String to append
      */
     public static void p(String appendStr) {
-        p += appendStr + "\n";
+        preformattedStringBuffer += appendStr + "\n";
     }
 
     /**
@@ -331,7 +331,7 @@ public class Msg {
      * @param appendStr String to append
      */
     public static void pn(String appendStr) {
-        p += appendStr;
+        preformattedStringBuffer += appendStr;
     }
 
     /**
@@ -343,16 +343,16 @@ public class Msg {
         try {
 
         if(output == null)
-            LogOutStream.print(p);
+            LogOutStream.print(preformattedStringBuffer);
         else {
             kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
-                        p + "</font></pre>", 0, 0, null);
+                        preformattedStringBuffer + "</font></pre>", 0, 0, null);
             output.setCaretPosition(doc.getLength());
         }
-        p = "";
+        preformattedStringBuffer = "";
 
         } catch(Exception e) {
-            p = "";
+            preformattedStringBuffer = "";
         }
     }
 
@@ -394,8 +394,10 @@ public class Msg {
      *
      * @param str String to print
      */
-    public static void S(String str) {
-        System.out.println(str);
+    public static void sysPrintln(String str) {
+    	// TODO: replace all instances of this call with either System.out.println or Msg.println(), or a Logger call
+    	// TODO: deprecate this method
+    	System.out.println(str);
     }
 
     /**
@@ -403,8 +405,10 @@ public class Msg {
      *
      * @param str String to print
      */
-    public static void s(String str) {
-        System.out.print(str);
+    public static void sysPrint(String str) {
+    	// TODO: replace all instances of this call with either System.out.print or Msg.print(), or a Logger call
+        // TODO: deprecate this method
+    	System.out.print(str);
     }
 
     /**

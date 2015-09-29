@@ -41,7 +41,7 @@ public class ProgrammerDialog extends javax.swing.JDialog {
             Enumeration portList = CommPortIdentifier.getPortIdentifiers();
             while (portList.hasMoreElements()) {
                 CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
-                Msg.D("rxtx portId name: " + portId.getName() + " type: " + portId.getPortType(), 2 , null);
+                Msg.debug("rxtx portId name: " + portId.getName() + " type: " + portId.getPortType(), 2 , null);
                 if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                     cmbPort.addItem(portId.getName());
                 }

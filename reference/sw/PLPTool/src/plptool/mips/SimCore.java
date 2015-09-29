@@ -405,7 +405,7 @@ public class SimCore extends PLPSimCore {
                 return fetch();
 
             } else if (int_state == 2) {
-                Msg.D("IRQ service, int_inject 2->1", 3, this);
+                Msg.debug("IRQ service, int_inject 2->1", 3, this);
                 id_stage.i_instruction = 0x0380f009L; // jalr $ir, $iv
                 id_stage.i_instrAddr = 0;
                 id_stage.i_ctl_pcplus4 = irq_ret - 4;
@@ -415,7 +415,7 @@ public class SimCore extends PLPSimCore {
                 return Constants.PLP_OK;
 
             } else if (int_state == 1) {
-                Msg.D("IRQ service, int_inject 1->0", 3, this);
+                Msg.debug("IRQ service, int_inject 1->0", 3, this);
                 id_stage.i_instruction = 0;
                 id_stage.i_instrAddr = -1;
                 id_stage.hot = true;
@@ -426,9 +426,9 @@ public class SimCore extends PLPSimCore {
 
             // Interrupt request
             } else if(int_state == 3) {
-                Msg.D("IRQ Triggered.", 3, this);
+                Msg.debug("IRQ Triggered.", 3, this);
                 long diff = pc.input() - ex_stage.i_instrAddr;
-                Msg.D("instrAddr diff: " + diff, 3, this);
+                Msg.debug("instrAddr diff: " + diff, 3, this);
                 sim_flags |= PLP_SIM_IRQ;
 
                 if(diff == 8) {
@@ -436,7 +436,7 @@ public class SimCore extends PLPSimCore {
                     irq_ret = mem_stage.i_instrAddr; // address to return to
                     int_state--;
                     IRQAck = 1;
-                    Msg.D("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret), 3, this);
+                    Msg.debug("IRQ service started, int_inject = 2, irq_ret = " + String.format("0x%02x", irq_ret), 3, this);
 
                     // flush 3 stages
                     id_stage.i_instruction = 0;
@@ -508,7 +508,7 @@ public class SimCore extends PLPSimCore {
         visibleAddr = addr;
         id_stage.if_count++;
 
-        Msg.D("fetch(): PC input side: "  + String.format("0x%08x", pc.input())
+        Msg.debug("fetch(): PC input side: "  + String.format("0x%08x", pc.input())
                   + " - PC output side: " + String.format("0x%08x", pc.eval()),
                      5, this);
 
@@ -548,7 +548,7 @@ public class SimCore extends PLPSimCore {
         
         // are we interrupted
         else if(!branch && int_state == 3) {
-            Msg.D("INT REQ - ret_addr(pcplus4-4) = " + plptool.PLPToolbox.format32Hex(pcplus4-4), 4, this);
+            Msg.debug("INT REQ - ret_addr(pcplus4-4) = " + plptool.PLPToolbox.format32Hex(pcplus4-4), 4, this);
             sim_flags |= PLP_SIM_IRQ;
             // rewrite instruction to jalr $iv, $ir
             instr = 0x0380f009L; 
@@ -559,7 +559,7 @@ public class SimCore extends PLPSimCore {
 
         // we are branching / jumping - simulate a brand delay slot
         else {
-            Msg.D("DELAY SLOT - branching to = " + plptool.PLPToolbox.format32Hex(branch_destination), 4, this);
+            Msg.debug("DELAY SLOT - branching to = " + plptool.PLPToolbox.format32Hex(branch_destination), 4, this);
             pc.write(branch_destination);
             branch = false;
         }
@@ -746,53 +746,53 @@ public class SimCore extends PLPSimCore {
         if(wb_i > -1) {
             int wb_index = asm.getFileMapper()[wb_i];
             int wb_line = asm.getLineNumMapper()[wb_i];
-            Msg.M(" wb:  " + asms.get(wb_index).getAsmFilePath() +
+            Msg.println(" wb:  " + asms.get(wb_index).getAsmFilePath() +
                        ":" + wb_line + " " + asms.get(wb_index).getAsmLine(wb_line));
         }
         else if(wb_i < 0)
-            Msg.M(" wb:  -- bubble --");
+            Msg.println(" wb:  -- bubble --");
 
 
         int mem_i = asm.lookupAddrIndex(mem_stage.instrAddr);
         if(mem_i > -1) {
             int mem_index = asm.getFileMapper()[mem_i];
             int mem_line = asm.getLineNumMapper()[mem_i];
-            Msg.M(" mem: " + asms.get(mem_index).getAsmFilePath() +
+            Msg.println(" mem: " + asms.get(mem_index).getAsmFilePath() +
                        ":" + mem_line + " " + asms.get(mem_index).getAsmLine(mem_line));
         }
         else if(mem_i < 0)
-            Msg.M(" mem: -- bubble --");
+            Msg.println(" mem: -- bubble --");
 
         int ex_i = asm.lookupAddrIndex(ex_stage.instrAddr);
         if(ex_i > -1) {
             int ex_index = asm.getFileMapper()[ex_i];
             int ex_line  = asm.getLineNumMapper()[ex_i];
-            Msg.M(" ex:  " + asms.get(ex_index).getAsmFilePath() +
+            Msg.println(" ex:  " + asms.get(ex_index).getAsmFilePath() +
                        ":" + ex_line + " " + asms.get(ex_index).getAsmLine(ex_line));
         }
         else if(ex_i < 0)
-            Msg.M(" ex:  -- bubble --");
+            Msg.println(" ex:  -- bubble --");
 
         int id_i = asm.lookupAddrIndex(id_stage.instrAddr);
         if(id_i > - 1) {
             int id_index = asm.getFileMapper()[id_i];
             int id_line  = asm.getLineNumMapper()[id_i];
-            Msg.M(" id:  " + asms.get(id_index).getAsmFilePath() +
+            Msg.println(" id:  " + asms.get(id_index).getAsmFilePath() +
                    ":" + id_line + " " + asms.get(id_index).getAsmLine(id_line));
         }
         else if(id_i < 0)
-            Msg.M(" id:  -- bubble --");
+            Msg.println(" id:  -- bubble --");
 
         int pc_i = asm.lookupAddrIndex(pc.eval());
         if(pc_i > -1) {
             int pc_index = asm.getFileMapper()[pc_i];
             int pc_line  = asm.getLineNumMapper()[pc_i];
 
-            Msg.M(" if:  " + asms.get(pc_index).getAsmFilePath() +
+            Msg.println(" if:  " + asms.get(pc_index).getAsmFilePath() +
                    ":" + pc_line + " " + asms.get(pc_index).getAsmLine(pc_line));
         }
         else if(pc_i < 0)
-            Msg.M(" if:  -- bubble --");
+            Msg.println(" if:  -- bubble --");
     }
 
     /**

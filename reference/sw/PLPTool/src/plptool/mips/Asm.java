@@ -293,7 +293,7 @@ public class Asm extends plptool.PLPAsm {
         if(index == 0)
             curRegion = 0;
 
-        Msg.D("preprocess: splitting...", 4, this);
+        Msg.debug("preprocess: splitting...", 4, this);
 
         String delimiters = "[ ,\t]+|[()]";
         String lineDelim  = "\\r?\\n";
@@ -315,8 +315,8 @@ public class Asm extends plptool.PLPAsm {
 
         try {
 
-        Msg.D("pp(" + asmIndex + ") begin loop...", 4, this);
-        Msg.D("lines: " + asmLines.length, 4, this);
+        Msg.debug("pp(" + asmIndex + ") begin loop...", 4, this);
+        Msg.debug("lines: " + asmLines.length, 4, this);
 
         // Begin our preprocess cases
         while(i < asmLines.length) {
@@ -327,9 +327,9 @@ public class Asm extends plptool.PLPAsm {
             if(commentSplit.length > 0) {
                 asmTokens = commentSplit[0].split(delimiters);
 
-                Msg.D(i + ": " + asmLines[i] + " tl: " +
+                Msg.debug(i + ": " + asmLines[i] + " tl: " +
                      asmTokens.length, 5, this);
-                Msg.D("<<<" + asmTokens[0] + ">>>", 5, this);
+                Msg.debug("<<<" + asmTokens[0] + ">>>", 5, this);
             } else
                 asmTokens = null;
 
@@ -402,7 +402,7 @@ public class Asm extends plptool.PLPAsm {
                     curAddr = sanitize32bits(asmTokens[1]);
                     if(entryPoint < 0)
                         entryPoint = curAddr;
-                    Msg.D("curAddr is now " + String.format("0x%08x", curAddr), 5, this);
+                    Msg.debug("curAddr is now " + String.format("0x%08x", curAddr), 5, this);
                 }
             }
 
@@ -438,7 +438,7 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_MEM_REGION_START_NOT_INIT, this);
                     }
 
-                    Msg.D("curAddr is now " + String.format("0x%08x", curAddr), 5, this);
+                    Msg.debug("curAddr is now " + String.format("0x%08x", curAddr), 5, this);
                 }
             }
 
@@ -473,7 +473,7 @@ public class Asm extends plptool.PLPAsm {
                                      Constants.PLP_ASM_MEM_REGION_START_NOT_INIT, this);
                     }
 
-                    Msg.D("curAddr is now " + String.format("0x%08x", curAddr), 5, this);
+                    Msg.debug("curAddr is now " + String.format("0x%08x", curAddr), 5, this);
                 }
             }
 
@@ -558,7 +558,7 @@ public class Asm extends plptool.PLPAsm {
                     boolean wordAligned = asmTokens[0].equals(".asciiw");
                     String tString[] = asmLines[i - 1].split("[ \t]+", 2);
 
-                    Msg.D("l: " + tString.length + " :" + tString[tString.length - 1], 6, this);
+                    Msg.debug("l: " + tString.length + " :" + tString[tString.length - 1], 6, this);
 
                     // strip quotes
                     if(tString[1].charAt(0) == '\"') {
@@ -574,7 +574,7 @@ public class Asm extends plptool.PLPAsm {
 
                         tString[1] = tString[1].substring(0, tString[1].length() - 1);
                     }
-                    Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 6, this);
+                    Msg.debug("pr: " + tString[1] + " l: " + tString[1].length(), 6, this);
 
                     // check for escaped characters
                     for(j = 0; j < tString[1].length(); j++) {
@@ -620,7 +620,7 @@ public class Asm extends plptool.PLPAsm {
                     if(strLen > tString[1].length())
                         tString[1] += '\0';
 
-                    Msg.D("pr: " + tString[1] + " l: " + tString[1].length(), 6, this);
+                    Msg.debug("pr: " + tString[1] + " l: " + tString[1].length(), 6, this);
 
                     // pad with zeroes if we the string length is not word-aligned
                     if(strLen % 4 != 0 && !wordAligned) {
@@ -651,7 +651,7 @@ public class Asm extends plptool.PLPAsm {
                         }
                     }
 
-                    Msg.D("pr: " + tString[1], 6, this);
+                    Msg.debug("pr: " + tString[1], 6, this);
                 }
             }
 
@@ -1012,13 +1012,13 @@ public class Asm extends plptool.PLPAsm {
                     Msg.E(errMsg, Constants.PLP_ASM_INVALID_TOKEN, this);
                     addBuildError(index, i, errMsg);
                 }
-                Msg.D("exit i: " + i, 6, this);
+                Msg.debug("exit i: " + i, 6, this);
                 regionMap.add(curRegion);
                 curAddr += 4;
                 appendPreprocessedAsm(asmLines[i - 1], i, true);
             }
 
-            Msg.D("pr:\n" + preprocessedAsm + ">>>", 30, this);
+            Msg.debug("pr:\n" + preprocessedAsm + ">>>", 30, this);
 
         }
 
@@ -1034,7 +1034,7 @@ public class Asm extends plptool.PLPAsm {
             Msg.E("preprocess: " +
                      error + " error(s).", Constants.PLP_ASM_PREPROCESS_FAILED, this);
         
-        Msg.D("preprocess(" + sourceList.get(index).getAsmFilePath() + "): First pass completed.", 2, this);
+        Msg.debug("preprocess(" + sourceList.get(index).getAsmFilePath() + "): First pass completed.", 2, this);
 
         int ret;
         // Now append the rest of the files in sourceFiles
@@ -1067,7 +1067,7 @@ public class Asm extends plptool.PLPAsm {
         String delimiters = "[ ,\t]+|[()]";
         String lineDelim  = "\\r?\\n";
 
-        Msg.D("assemble(): 1/2...", 2, this);
+        Msg.debug("assemble(): 1/2...", 2, this);
 
         preprocessedAsm = pass1Str.toString();
         String[] asmLines  = this.preprocessedAsm.split(lineDelim);
@@ -1089,7 +1089,7 @@ public class Asm extends plptool.PLPAsm {
 
         try {
 
-        Msg.D("assemble(): 2/2...", 2, this);
+        Msg.debug("assemble(): 2/2...", 2, this);
 
         while(i < asmLines.length) {
             fileIndex = asmFileMap[i];
@@ -1099,7 +1099,7 @@ public class Asm extends plptool.PLPAsm {
             stripComments[0] = stripComments[0].trim();
             asmTokens = stripComments[0].split(delimiters);
             skip = false;
-            Msg.D("assemble(file " + sourceList.get(asmFileMap[i]).getAsmFilePath() +
+            Msg.debug("assemble(file " + sourceList.get(asmFileMap[i]).getAsmFilePath() +
                      " line " + lineNumMap[i]  + "): " + asmLines[i], 4, this);
 
             // resolve symbols ($_hi and $_lo directives from 1st pass)
@@ -1108,11 +1108,11 @@ public class Asm extends plptool.PLPAsm {
 
             for(j = 0; j < asmTokens.length; j++) {
 
-                Msg.D(asmTokens[j] + " l:" + asmTokens[j].length(), 15, this);
+                Msg.debug(asmTokens[j] + " l:" + asmTokens[j].length(), 15, this);
                 
                 if(asmTokens[j].length() > 4)  {
 
-                    Msg.D(asmTokens[j].substring(0, 5), 15, this);
+                    Msg.debug(asmTokens[j].substring(0, 5), 15, this);
 
                     if(asmTokens[j].substring(0, 5).equals("$_hi:")) {
                         tSymbol = asmTokens[j].substring(5, asmTokens[j].length());
@@ -1131,7 +1131,7 @@ public class Asm extends plptool.PLPAsm {
                             tValue = (int) (sanitize32bits(tSymbol) & 0xFFFF);
                         asmTokens[j] = new Integer(tValue).toString();
                     }
-                    Msg.D("pr: " + Integer.toHexString(tValue), 15, this);
+                    Msg.debug("pr: " + Integer.toHexString(tValue), 15, this);
                 }
             }
 
@@ -1353,7 +1353,7 @@ public class Asm extends plptool.PLPAsm {
             i++;
         }
 
-        Msg.D("assemble(): Assembly completed.", 1, this);
+        Msg.debug("assemble(): Assembly completed.", 1, this);
       
         } catch(NumberFormatException e) {
             fileIndex = asmFileMap[i];

@@ -35,7 +35,7 @@ public class SocketInterface {
     private static ServerListenThread serverListenThread;
 
     public static void setPort(int port) {
-        Msg.M("SocketInterface: port to listen to = " + port);
+        Msg.println("SocketInterface: port to listen to = " + port);
         SocketInterface.port = port;
     }
 

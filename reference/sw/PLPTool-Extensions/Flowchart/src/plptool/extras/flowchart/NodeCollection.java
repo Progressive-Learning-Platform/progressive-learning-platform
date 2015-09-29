@@ -37,7 +37,7 @@ public class NodeCollection {
     public void addNode(Node node) {
         if(head == null) head = node;
         nodes.add(node);
-        Msg.D("Added " + node.getType() + ": " + node.getLabel() + ":" +
+        Msg.debug("Added " + node.getType() + ": " + node.getLabel() + ":" +
                 PLPToolbox.format32Hex(node.getAddress()), 3, this);
     }
 

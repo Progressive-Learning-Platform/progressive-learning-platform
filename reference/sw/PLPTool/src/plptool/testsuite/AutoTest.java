@@ -142,7 +142,7 @@ public class AutoTest {
 
     public static void p(String str) {
         long time = System.currentTimeMillis() - startTime;
-        Msg.S(String.format("%16d", time) + " autotest: " + str);
+        Msg.sysPrintln(String.format("%16d", time) + " autotest: " + str);
     }
 
     static class AutoTestCallback implements Callback {

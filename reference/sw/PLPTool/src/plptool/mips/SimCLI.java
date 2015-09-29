@@ -108,7 +108,7 @@ public class SimCLI {
         else if(input.equals("help misc"))          simCLHelp(5);
         else if(input.equals("help bp"))            simCLHelp(6);
         else if(input.toLowerCase().equals("wira sucks"))   Msg.printPreformattedString("No, he doesn't.");
-        else Msg.M("Unknown command: " + input);
+        else Msg.println("Unknown command: " + input);
         
         if(Msg.lastError != 0 && plp.g())
             plp.g_err.setError(Msg.lastError);        
@@ -659,7 +659,7 @@ public class SimCLI {
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         Msg.printPreformattedString("Welcome to PLP CPU Simulator Command Line Interface");
         Msg.printPreformattedString("Reset vector: " + String.format("0x%08x", plp.asm.getEntryPoint()));
-        Msg.m(String.format("\n%08x", plp.sim.getFlags()) +
+        Msg.print(String.format("\n%08x", plp.sim.getFlags()) +
                              " " + plp.sim.getInstrCount() +
                              " sim > ");
 
@@ -668,7 +668,7 @@ public class SimCLI {
            
             if(prompt) {
                 Msg.printPreformattedString("");
-                Msg.m(String.format("%08x", plp.sim.getFlags()) +
+                Msg.print(String.format("%08x", plp.sim.getFlags()) +
                                     " " + plp.sim.getInstrCount() +
                                     " sim > ");
             }

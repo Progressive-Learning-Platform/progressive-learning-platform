@@ -157,7 +157,7 @@ public class PLPSimBus {
     public synchronized int write(long addr, Object data, boolean isInstr) {
         Object[] params = {addr, data, isInstr};
         CallbackRegistry.callback(CallbackRegistry.BUS_WRITE, params);
-        Msg.D("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
+        Msg.debug("Writing " + String.format("0x%08x", ((Long) data)) + " to " + String.format("0x%08x", addr), 5, this);
         boolean noMapping = true;
         int ret = Constants.PLP_OK;
         PLPSimBusModule module;

@@ -192,7 +192,7 @@ public class PLPCPUProgram {
     }
 
     private boolean traverse(Node node, NodeCollection collection, int count) {
-        Msg.D("traverse[" + count + "]: starting with " + node.getLabel() +":" +
+        Msg.debug("traverse[" + count + "]: starting with " + node.getLabel() +":" +
                 PLPToolbox.format32Hex(node.getAddress()), 3, this);
         long pc, instr;
         int index, tempIndex;
@@ -211,7 +211,7 @@ public class PLPCPUProgram {
             collection.addNode(node);
         
         while(!done) {
-            Msg.D("pc=" + PLPToolbox.format32Hex(pc), 3, this);
+            Msg.debug("pc=" + PLPToolbox.format32Hex(pc), 3, this);
             index = asm.lookupAddrIndex(pc);
             if(index < 0) {
                 // clean up
@@ -222,7 +222,7 @@ public class PLPCPUProgram {
             if(!first && tempIndex >= 0) {
                 // branches merged, we're done
                 current.setNext(collection.getNode(tempIndex));
-                Msg.D("traverse[" + count +"]: Merged branches, we're done.", 3, this);
+                Msg.debug("traverse[" + count +"]: Merged branches, we're done.", 3, this);
                 return true;
             }
             instr = obj[index];
@@ -231,7 +231,7 @@ public class PLPCPUProgram {
 
             switch(opcode) {
                 case BEQ:
-                    Msg.D("BEQ", 3, this);
+                    Msg.debug("BEQ", 3, this);
                     imm = (short) MIPSInstr.imm(instr);
                     branch_destination = (pc+4 + (imm<<2)) & ((long) 0xfffffff << 4 | 0xf);
                     tempNode = new BranchNode(addrLabel, pc, null, true);
@@ -257,7 +257,7 @@ public class PLPCPUProgram {
                     pc+=8;
                     break;
                 case BNE:
-                    Msg.D("BNE", 3, this);
+                    Msg.debug("BNE", 3, this);
                     imm = (short) MIPSInstr.imm(instr);
                     branch_destination = (pc+4 + (imm<<2)) & ((long) 0xfffffff << 4 | 0xf);
                     tempNode = new BranchNode(addrLabel, pc, null, false);
@@ -283,7 +283,7 @@ public class PLPCPUProgram {
                     pc+=8;
                     break;
                 case J:
-                    Msg.D("J", 3, this);
+                    Msg.debug("J", 3, this);
                     jaddr = ((pc+8) & 0xff000000L) | (MIPSInstr.jaddr(instr)<<2);
                     tempNode = new JumpNode(addrLabel, pc, null);
                     current.setNext(tempNode);
@@ -295,16 +295,16 @@ public class PLPCPUProgram {
                     collection.addNode(current);
                     tempIndex = collection.hasNodeWithAddress(jaddr);
                     if(tempIndex < 0) {
-                        Msg.D("Jumping to unknown territory", 3, this);
+                        Msg.debug("Jumping to unknown territory", 3, this);
                     } else { // we're jumping back, set destination and quit
-                        Msg.D("traverse[" + count +"]: Jumping back, we're done", 3, this);
+                        Msg.debug("traverse[" + count +"]: Jumping back, we're done", 3, this);
                         ((JumpNode)current).setDestination(collection.getNode(tempIndex));
                         return true;
                     }
                     pc=jaddr;
                     break;
                 case JAL:
-                    Msg.D("JAL", 3, this);
+                    Msg.debug("JAL", 3, this);
                     jaddr = ((pc+8) & 0xff000000L) | (MIPSInstr.jaddr(instr)<<2);
                     tempNode = new CallNode(addrLabel, pc, asm.lookupLabel(jaddr), jaddr);
                     current.setNext(tempNode);
@@ -319,7 +319,7 @@ public class PLPCPUProgram {
                         // if we're calling a routine that we haven't traversed
                         // yet, create a new node collection for this routine
                         // and traverse down this path
-                        Msg.D("Brand new routine, recursing...", 3, this);
+                        Msg.debug("Brand new routine, recursing...", 3, this);
                         Node newRoutineHead = new Node(asm.lookupLabel(jaddr), jaddr);
                         routines.add(new NodeCollection());
                         traverseCount++;
@@ -334,7 +334,7 @@ public class PLPCPUProgram {
                     funct = MIPSInstr.funct(instr);
                     switch(funct) {
                         case JR:
-                            Msg.D("JR", 3, this);
+                            Msg.debug("JR", 3, this);
                             if(MIPSInstr.rs(instr) != 31) {
                                 // there is no way to figure out where we go
                                 // without actually executing the program, just
@@ -351,7 +351,7 @@ public class PLPCPUProgram {
                             appendCode(current, pc);
                             appendCode(current, pc+4);
                             collection.addNode(current);
-                            Msg.D("traverse[" + count +"]: Routine return, we're done", 3, this);
+                            Msg.debug("traverse[" + count +"]: Routine return, we're done", 3, this);
                             return true;
                            
                         case JALR:

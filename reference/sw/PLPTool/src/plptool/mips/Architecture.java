@@ -219,7 +219,7 @@ public class Architecture extends PLPArchitecture {
             // Restore saved timing diagram from project attributes, if it exists
             plptimingdiagram.TimingDiagram savedTD = (plptimingdiagram.TimingDiagram) plp.getProjectAttribute("plpmips_timingdiagram");
             if(savedTD != null) {
-                plptool.Msg.D("Attempting to load timing diagram from project attributes.", 3, null);
+                plptool.Msg.debug("Attempting to load timing diagram from project attributes.", 3, null);
                 busMonitor = new plptool.mods.BusMonitor(plp.sim);
                 busMonitor.setTimingDiagram(savedTD);
                 plp.sim.bus.add(busMonitor);
@@ -232,7 +232,7 @@ public class Architecture extends PLPArchitecture {
                     menuBusMonitor.setSelected(b);
                 }
                 busMonitorAttached = true;
-                plptool.Msg.D("Timing diagram loaded!", 3, null);
+                plptool.Msg.debug("Timing diagram loaded!", 3, null);
             }
 
             plp.g_dev.addSimToolSeparator();
@@ -319,7 +319,7 @@ public class Architecture extends PLPArchitecture {
             Object[][] attrSet = new Object[tokens.length][2];
             for(int j = 0; j < tokens.length; j++) {
                 String tempTokens[] = tokens[j].split("-");
-                plptool.Msg.D("plpmips_memory_visualizer load: " + tempTokens[0] + "-" + tempTokens[1], 4, null);
+                plptool.Msg.debug("plpmips_memory_visualizer load: " + tempTokens[0] + "-" + tempTokens[1], 4, null);
                 Long[] temp = new Long[2];
                 temp[0] = new Long(Long.parseLong(tempTokens[0]));
                 temp[1] = new Long(Long.parseLong(tempTokens[1]));
@@ -333,7 +333,7 @@ public class Architecture extends PLPArchitecture {
                 plptimingdiagram.signals.Bus busSignal = new plptimingdiagram.signals.Bus();
                 busSignal.setName(tokens[j]);
                 tD.addSignal(busSignal);
-                plptool.Msg.D("plpmips_timingdiagram load: " + tokens[j], 4, null);
+                plptool.Msg.debug("plpmips_timingdiagram load: " + tokens[j], 4, null);
             }
             plp.addProjectAttribute("plpmips_timingdiagram", tD);
         }

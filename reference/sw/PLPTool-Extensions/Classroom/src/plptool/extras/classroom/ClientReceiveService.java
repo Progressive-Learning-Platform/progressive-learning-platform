@@ -47,7 +47,7 @@ public class ClientReceiveService extends Thread {
             in = new BufferedReader(new InputStreamReader(s.getInputStream()));
             while(!disconnect) {
                 line = in.readLine();
-                Msg.D("Received: " + line, 3, this);
+                Msg.debug("Received: " + line, 3, this);
                 if(!online && line.equals("%%NICKNAME_OK"))
                     online = true;
                 else if (line.equals("%%DISCONNECT")) {

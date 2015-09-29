@@ -205,7 +205,7 @@ public class PLPToolbox {
         String osIdentifier = System.getProperty("os.name");
         String osArch = System.getProperty("os.arch");
 
-        if(print) Msg.M(osIdentifier + " " + osArch);
+        if(print) Msg.println(osIdentifier + " " + osArch);
 
         if(osIdentifier.equals("Linux")) {
             if(osArch.equals("x86") || osArch.equals("i386"))
@@ -624,7 +624,7 @@ public class PLPToolbox {
                         entryPath = files[i].getAbsolutePath().replace(root.getAbsolutePath(), "").substring(1);
                         if(File.separatorChar == '\\')
                             entryPath = entryPath.replace("\\", "/");
-                        Msg.M("- Adding '" + entryPath + "'...");
+                        Msg.println("- Adding '" + entryPath + "'...");
                         JarEntry entry = new JarEntry(entryPath);
                         entry.setSize(files[i].length());
                         out.putNextEntry(entry);
@@ -780,7 +780,7 @@ public class PLPToolbox {
      * @param program Command to be executed by the Runtime class
      */
     public static void execute(final String program) {
-        Msg.M("execute: '" + program + "'");
+        Msg.println("execute: '" + program + "'");
         Process p;
         try {
             p = Runtime.getRuntime().exec(program);
@@ -1159,10 +1159,10 @@ public class PLPToolbox {
             
             tokens = lines[i].split("::", 2);
             if(tokens.length == 2) {
-                Msg.D("config parse (" + file + "): " + tokens[0] + "::" + tokens[1], 3, null);
+                Msg.debug("config parse (" + file + "): " + tokens[0] + "::" + tokens[1], 3, null);
                 config.put(tokens[0], tokens[1]);
             } else {
-                Msg.D("config parse (" + file + "): " + tokens[0] + "::[null]", 3, null);
+                Msg.debug("config parse (" + file + "): " + tokens[0] + "::[null]", 3, null);
                 config.put(tokens[0], null);
             }
         }
@@ -1259,7 +1259,7 @@ public class PLPToolbox {
         String base = tokens.nextToken();        
         long addr = asm.resolveAddress(base);
         ret = (addr == -1) ? parseNum(base) : addr;
-        Msg.D("resolveBaseOffset: base=" + base + " asmresolved=" + format32Hex(ret) + " tokens=" + tokenCount, 4, null);
+        Msg.debug("resolveBaseOffset: base=" + base + " asmresolved=" + format32Hex(ret) + " tokens=" + tokenCount, 4, null);
         if(ret != -1 && tokenCount == 3) {
             String offsetOperator = tokens.nextToken();
             long offset = parseNum(tokens.nextToken());

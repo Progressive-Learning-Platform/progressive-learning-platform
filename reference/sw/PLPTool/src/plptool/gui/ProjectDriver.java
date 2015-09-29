@@ -500,7 +500,7 @@ public final class ProjectDriver {
         if(asm != null && asm.isAssembled()) {
             objCode = asm.getObjectCode();
             if(arch.getID() == ArchRegistry.ISA_PLPMIPS) {
-                Msg.D("Creating verilog hex code...", 2, this);
+                Msg.debug("Creating verilog hex code...", 2, this);
                 verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
             }
             if(objCode != null && objCode.length > 0)
@@ -528,7 +528,7 @@ public final class ProjectDriver {
         // Create plpfile (a tar archive)
         TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
 
-        Msg.D("Writing plp.metafile...", 2, this);
+        Msg.debug("Writing plp.metafile...", 2, this);
         TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
         entry.setSize(meta.length());
         tOut.putArchiveEntry(entry);
@@ -539,7 +539,7 @@ public final class ProjectDriver {
 
         for(i = 0; i < sourceList.size(); i++) {
             PLPAsmSource asmFile = sourceList.get(i);
-            Msg.D("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
+            Msg.debug("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
             entry = new TarArchiveEntry(asmFile.getAsmFilePath());
             
             // We are not expecting an .asm file with size greater than 4GiB
@@ -553,7 +553,7 @@ public final class ProjectDriver {
         }
 
         // Write simulation configuration
-        Msg.D("Writing out simulation configuration...", 2, this);
+        Msg.debug("Writing out simulation configuration...", 2, this);
         entry = new TarArchiveEntry("plp.simconfig");
         String str = "";
 
@@ -574,7 +574,7 @@ public final class ProjectDriver {
             str += "END\n";
         }
 
-        Msg.D("-- saving mods info...", 2, this);
+        Msg.debug("-- saving mods info...", 2, this);
 
         if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
             smods = ioreg.createPreset();
@@ -615,7 +615,7 @@ public final class ProjectDriver {
 
         if(asm != null && asm.isAssembled() && objCode != null) {
             // Write hex image
-            Msg.D("Writing out verilog hex code...", 2, this);
+            Msg.debug("Writing out verilog hex code...", 2, this);
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(verilogHex.length());
             tOut.putArchiveEntry(entry);
@@ -628,7 +628,7 @@ public final class ProjectDriver {
             tOut.closeArchiveEntry();
 
             // Write binary image, 4-byte big-endian packs
-            Msg.D("Writing out binary image...", 2, this);
+            Msg.debug("Writing out binary image...", 2, this);
             entry = new TarArchiveEntry("plp.image");
             entry.setSize(objCode.length * 4);
             tOut.putArchiveEntry(entry);
@@ -644,7 +644,7 @@ public final class ProjectDriver {
             tOut.closeArchiveEntry();
 
         } else if(binimage != null) {
-            Msg.D("Writing out old (dirty) verilog hex code...", 2, this);
+            Msg.debug("Writing out old (dirty) verilog hex code...", 2, this);
             entry = new TarArchiveEntry("plp.hex");
             entry.setSize(hexstring.length());
             tOut.putArchiveEntry(entry);
@@ -652,7 +652,7 @@ public final class ProjectDriver {
             tOut.flush();
             tOut.closeArchiveEntry();
             
-            Msg.D("Writing out old (dirty) binary image...", 2, this);
+            Msg.debug("Writing out old (dirty) binary image...", 2, this);
             entry = new TarArchiveEntry("plp.image");
             entry.setSize(binimage.length);
             tOut.putArchiveEntry(entry);
@@ -664,9 +664,9 @@ public final class ProjectDriver {
         // Hook for project save
         CallbackRegistry.callback(CallbackRegistry.PROJECT_SAVE, tOut);
 
-        Msg.D("Closing tar archive...", 2, this);
+        Msg.debug("Closing tar archive...", 2, this);
         tOut.close();
-        Msg.D("Project save completed", 2, this);
+        Msg.debug("Project save completed", 2, this);
 
         modified = false;
         if(g) refreshProjectView(false);
@@ -822,7 +822,7 @@ public final class ProjectDriver {
             
             // Restore bus modules states
             } else if (entry.getName().equals("plp.simconfig")) {
-                Msg.D("simconfig:\n" + metaStr + "\n", 4, this);
+                Msg.debug("simconfig:\n" + metaStr + "\n", 4, this);
                 String lines[] = metaStr.split("\\r?\\n");
                 int i;
 
@@ -957,7 +957,7 @@ public final class ProjectDriver {
         if(pAttrSet.containsKey(key))
             pAttrSet.remove(key);
 
-        Msg.D("add attr " + key + ":" + value, 3, this);
+        Msg.debug("add attr " + key + ":" + value, 3, this);
         pAttrSet.put(key, value);
     }
 
@@ -970,7 +970,7 @@ public final class ProjectDriver {
      */
     public boolean setProjectAttribute(String key, Object value) {
         if(pAttrSet.containsKey(key)) {
-            Msg.D("set attr " + key + ":" + value, 3, this);
+            Msg.debug("set attr " + key + ":" + value, 3, this);
             pAttrSet.remove(key);
             pAttrSet.put(key, value);
             return true;
@@ -986,7 +986,7 @@ public final class ProjectDriver {
      * @return Attribute value if attribute exists, null otherwise
      */
     public Object getProjectAttribute(String key) {
-        Msg.D("get attr " + key, 3, this);
+        Msg.debug("get attr " + key, 3, this);
         return pAttrSet.get(key);
     }
 
@@ -1026,7 +1026,7 @@ public final class ProjectDriver {
      * @return PLP_OK
      */
     public int refreshProjectView(boolean commitCurrentAsm) {
-        Msg.D("Project view refresh...", 3, this);
+        Msg.debug("Project view refresh...", 3, this);
 
         if(plpfile == null) {
             g_dev.disableBuildControls();
@@ -1078,7 +1078,7 @@ public final class ProjectDriver {
 
         CallbackRegistry.callback(CallbackRegistry.GUI_VIEW_REFRESH,
                 commitCurrentAsm);
-        Msg.D("Done.", 3, this);
+        Msg.debug("Done.", 3, this);
         return Constants.PLP_OK;
     }
 
@@ -1202,7 +1202,7 @@ public final class ProjectDriver {
         arch.simulatorInitialization();
         CallbackRegistry.callback(CallbackRegistry.EVENT_SIM_INIT, null);
 
-        Msg.D("I/O Modules: smods is " + (smods == null ? "null" : "not null")
+        Msg.debug("I/O Modules: smods is " + (smods == null ? "null" : "not null")
 	      + " and g is " + g, 3, this);
 
         // The ISA is responsible for providing a default set of modules.
@@ -1407,7 +1407,7 @@ public final class ProjectDriver {
 
             /*** RXTX Linux hack for the Nexys3 board ***/
             if(arch.equals("plpmips") && Config.prgNexys3ProgramWorkaround && PLPToolbox.isHostLinux()) {
-                Msg.D("program: Nexys 3 Linux RXTX workaround engaging...", 2, this);
+                Msg.debug("program: Nexys 3 Linux RXTX workaround engaging...", 2, this);
                 prg.close();
                 prg = arch.createProgrammer();
                 prg.connect(port);
@@ -1420,7 +1420,7 @@ public final class ProjectDriver {
             }
 
             CallbackRegistry.callback(CallbackRegistry.EVENT_PROGRAM_INIT, prg);
-            Msg.D("Starting PLPSerialProgrammer thread", 2, this);
+            Msg.debug("Starting PLPSerialProgrammer thread", 2, this);
             prg.start();
             return Constants.PLP_OK;
 
@@ -1440,14 +1440,14 @@ public final class ProjectDriver {
      * may need saving.
      */
     public void setModified() {
-        Msg.D("Project has been modified.", 5, this);
+        Msg.debug("Project has been modified.", 5, this);
         modified = true;
         if(g)
             this.updateWindowTitle();
     }
 
     public void setUnModified() {
-        Msg.D("Project has been unmodified.", 5, this);
+        Msg.debug("Project has been unmodified.", 5, this);
         modified = false;
         if(g)
             this.updateWindowTitle();
@@ -1707,14 +1707,14 @@ public final class ProjectDriver {
         setModified();
 
         if(index < open_asm) {
-            Msg.D("removeAsm: index < open_asm: " + index + "<" + open_asm, 4, this);
+            Msg.debug("removeAsm: index < open_asm: " + index + "<" + open_asm, 4, this);
             if(g) updateAsm(open_asm, g_dev.getEditorText());
             open_asm--;
         } else if(index == open_asm && open_asm != 0) {
-            Msg.D("removeAsm: index == open_asm: " + index + "==" + open_asm, 4, this);
+            Msg.debug("removeAsm: index == open_asm: " + index + "==" + open_asm, 4, this);
             open_asm--;
         } else {
-            Msg.D("removeAsm: index > open_asm: " + index + ">" + open_asm, 4, this);
+            Msg.debug("removeAsm: index > open_asm: " + index + ">" + open_asm, 4, this);
             if(g) updateAsm(open_asm, g_dev.getEditorText());
         }
             

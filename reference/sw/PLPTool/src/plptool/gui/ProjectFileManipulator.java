@@ -132,17 +132,17 @@ public class ProjectFileManipulator {
                 return Constants.PLP_GENERIC_ERROR;
             String asmStr = plp.getAsm(index).getAsmString();
             if(args.length == 4)
-                Msg.M(asmStr);
+                Msg.println(asmStr);
             else  {
                 String[] splitStr = asmStr.split("\\r?\\n");
                 int lineNum = Integer.parseInt(args[4]);
                 if(lineNum-1 < splitStr.length && lineNum > 0)
-                    Msg.M(lineNum + "\t: " + splitStr[lineNum - 1]);
+                    Msg.println(lineNum + "\t: " + splitStr[lineNum - 1]);
             }
 
         } else if(args[2].equals("-meta")) {
             Msg.I("Metafile contents:", null);
-            Msg.M(plp.meta);
+            Msg.println(plp.meta);
 
 	} else if((args[2].equals("-r"))) {
             if(!(args.length == 4)) {
@@ -199,12 +199,12 @@ public class ProjectFileManipulator {
             plp.assemble();
             if(plp.asm != null && plp.asm.isAssembled() && plp.getArch().getStringID().equals("plpmips")) {
                 plptool.mips.Formatter.symTablePrettyPrint(plp.asm.getSymTable());
-                Msg.M("");
+                Msg.println("");
                 plptool.mips.Formatter.prettyPrint((plptool.mips.Asm) plp.asm);
-                Msg.M("");
-                Msg.M("Build timestamp: " + timestamp);
-                Msg.M("Binary size: " + plp.asm.getObjectCode().length + " words");
-                Msg.M("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
+                Msg.println("");
+                Msg.println("Build timestamp: " + timestamp);
+                Msg.println("Binary size: " + plp.asm.getObjectCode().length + " words");
+                Msg.println("Starting address: " + String.format("0x%08x", plp.asm.getAddrTable()[0]));
                 plp.save();
             } else if(plp.asm != null && plp.asm.isAssembled()) {
                 plp.save();

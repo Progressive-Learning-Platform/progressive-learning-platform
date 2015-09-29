@@ -588,7 +588,7 @@ public class DynamicModuleManager extends javax.swing.JDialog {
             if(ret != Constants.PLP_OK)
                 PLPToolbox.showErrorDialog(null, "Failed to embed manifest!");
             else
-                Msg.M("Done!");
+                Msg.println("Done!");
         } else
             PLPToolbox.showErrorDialog(null, "Failed to generate manifest!");
         System.exit(0);

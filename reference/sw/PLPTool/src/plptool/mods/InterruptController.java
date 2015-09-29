@@ -53,7 +53,7 @@ public class InterruptController extends PLPSimBusModule {
 
         if(gie && ((stat & mask) != 0) && ((SimCore)sim).IRQAck == 0) {
 
-            Msg.D("IRQ: " + String.format("%02x", sim.getIRQ()) +
+            Msg.debug("IRQ: " + String.format("%02x", sim.getIRQ()) +
                   " stat: " + String.format("%02x", stat) +
                   " mask: " + String.format("%02x", mask), 3, this);
 
@@ -83,7 +83,7 @@ public class InterruptController extends PLPSimBusModule {
 
     @Override
     public int write(long addr, Object data, boolean isInstr) {
-        Msg.D("Writing " + ((Long) data) + " to " + String.format("0x%08x", addr), 1, this);
+        Msg.debug("Writing " + ((Long) data) + " to " + String.format("0x%08x", addr), 1, this);
         super.writeReg(addr, data, isInstr);
         
         return Constants.PLP_OK;

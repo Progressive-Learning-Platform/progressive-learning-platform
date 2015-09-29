@@ -36,7 +36,7 @@ public class FTracer extends PLPSimBusModule {
 
     public FTracer(long addr, long size) {
         super(addr, addr + size, true);
-        Msg.M("TRACER Registered - Core reset required");
+        Msg.println("TRACER Registered - Core reset required");
         recordStr = new StringBuilder();
         phantom = true;
     }
@@ -62,7 +62,7 @@ public class FTracer extends PLPSimBusModule {
         if (!isInstr)
             str = String.format("[TRACE] W %08x %08x", addr, data );
         if(stdout && !isInstr)
-            Msg.M(str);
+            Msg.println(str);
         if(record) {
             recordStr.append(str);
             recordStr.append("\n");
@@ -80,7 +80,7 @@ public class FTracer extends PLPSimBusModule {
         String str = String.format("[TRACE] %c %08x %08x", rType, addr, (Long)ret);
 
         if(stdout)
-            Msg.M(str);
+            Msg.println(str);
         if(record) {
             recordStr.append(str);
             recordStr.append("\n");

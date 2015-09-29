@@ -298,12 +298,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     plptool.dmf.DynamicModuleFramework.loadModuleClass(file.getAbsolutePath(), shortName.substring(0, shortName.length()-6));
                 }          
             } else if(command.equals("listdmodclasses")) {
-                Msg.M("Registered dynamic module classes:");
+                Msg.println("Registered dynamic module classes:");
                 for(int i = 0; i < plptool.dmf.DynamicModuleFramework.getNumberOfClasses(); i++) {
                     Class c = plptool.dmf.DynamicModuleFramework.getDynamicModuleClass(i);
                     Class sc = c.getSuperclass();
-                    Msg.m(i + ":\t" + c.getName());
-                    Msg.M((sc != null) ? " extends " + sc.getName() : "");
+                    Msg.print(i + ":\t" + c.getName());
+                    Msg.println((sc != null) ? " extends " + sc.getName() : "");
                 }
             } else if(command.equals("listdmods")) {
                 out.setText("");
@@ -399,7 +399,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 
             if (portIdentifier.isCurrentlyOwned()) {
-                Msg.D("Serial port " + portName + " is in use.", 2, this);
+                Msg.debug("Serial port " + portName + " is in use.", 2, this);
             } else {
                 commPort = portIdentifier.open(this.getClass().getName(), 2000);
 
@@ -414,11 +414,11 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     sOut = port.getOutputStream();
 
                 } else {
-                    Msg.D(portName + " is not a serial port.", 2, this);
+                    Msg.debug(portName + " is not a serial port.", 2, this);
                 }
             }
         } catch (Exception e) {
-            Msg.D("Error opening port.", 2, this);
+            Msg.debug("Error opening port.", 2, this);
             System.err.println(e);
         }
 
@@ -431,7 +431,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             Msg.I("Port closed.", this);
 
         } catch(Exception e) {
-            Msg.D("Error closing port.", 2, this);
+            Msg.debug("Error closing port.", 2, this);
         }
 
        System.out.println("Done");

@@ -95,7 +95,7 @@ public class ClientService extends Thread {
                 }
                 
                 if(line.startsWith("%%") && !(state != State.WAITING_ON_TEXT))
-                    Msg.D("Received command: " + line, 3, this);
+                    Msg.debug("Received command: " + line, 3, this);
                 
                 if(line.equals("%%ENDTEXT")) {
                     state = State.MUTED;
@@ -114,7 +114,7 @@ public class ClientService extends Thread {
                             server.deliverData(line + "\n");
                             break;
                         case WAITING_ON_NICK:
-                            Msg.D("Nickname request: " + line, 2, this);
+                            Msg.debug("Nickname request: " + line, 2, this);
                             if(!server.checkNickname(line)) {
                                 Msg.I("Nickname '" + line + "' is already taken", this);
                                 state = State.DISCONNECT;
@@ -145,7 +145,7 @@ public class ClientService extends Thread {
             Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
         }
         server.removeClient(ID);
-        Msg.D("service exiting.", 2, this);
+        Msg.debug("service exiting.", 2, this);
     }
 
     public void cmd(String cmd) {

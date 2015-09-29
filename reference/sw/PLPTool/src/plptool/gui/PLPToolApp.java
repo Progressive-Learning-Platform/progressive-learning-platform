@@ -92,7 +92,7 @@ public class PLPToolApp extends SingleFrameApplication {
             } else {
                 preserveConfig = false;
                 images.put("__NOT_FOUND__", ImageIO.read(PLPToolApp.class.getResource("resources/invalid.png")));
-                Msg.D("Creating temporary directory (" + PLPToolbox.getTmpDir() + ")...", 2, null);
+                Msg.debug("Creating temporary directory (" + PLPToolbox.getTmpDir() + ")...", 2, null);
                 PLPToolbox.checkCreateTempDirectory();
                 // Launch the ProjectDriver                
                 loadConfig();
@@ -142,17 +142,17 @@ public class PLPToolApp extends SingleFrameApplication {
         Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
             public void run() {
-                Msg.D("Shutdown hook", 2, null);
+                Msg.debug("Shutdown hook", 2, null);
                 if(!preserveConfig) {
                     saveConfig();
                 }
-                Msg.D("Exit callback", 2, null);
+                Msg.debug("Exit callback", 2, null);
                 CallbackRegistry.callback(CallbackRegistry.EXIT, null);
                 try {
-                    Msg.D("Removing temporary directory...", 2, null);
+                    Msg.debug("Removing temporary directory...", 2, null);
                     PLPToolbox.deleteRecursive(new File(PLPToolbox.getTmpDir()));
                 } catch(java.io.FileNotFoundException e) {
-		        	Msg.D("Failed to remove temporary directory: " + e, 2, null);
+		        	Msg.debug("Failed to remove temporary directory: " + e, 2, null);
                 }
             }
         });
@@ -166,13 +166,13 @@ public class PLPToolApp extends SingleFrameApplication {
         // command line argument
         if(args.length == 0
                 || (args.length > 0 && !args[0].equals("--suppress-copyright-notice")))
-            Msg.M("\n" + Text.copyrightString + "\n");
+            Msg.println("\n" + Text.copyrightString + "\n");
 
         // Save launching path
         Constants.launchPath = (new File(".")).getAbsolutePath();
         
         for(int i = 0; i < args.length; i++) {
-            Msg.D("args[" + i + "] parsing: " + args[i], 4, null);
+            Msg.debug("args[" + i + "] parsing: " + args[i], 4, null);
 
             if(i==0 && args[0].equals("--suppress-copyright-notice")) {
             
@@ -191,7 +191,7 @@ public class PLPToolApp extends SingleFrameApplication {
             // Debug level setting
             } else if (args.length >= activeArgIndex + 2 && args[i].equals("-d")) {
                 Constants.debugLevel = Integer.parseInt(args[i + 1]);
-                Msg.M("Debug level set to " + Constants.debugLevel);
+                Msg.println("Debug level set to " + Constants.debugLevel);
                 activeArgIndex += 2;
                 i++;
 
@@ -283,27 +283,27 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Instantiate project driver and exit. Used by autotest
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--debug-projectdriver")) {
-                Msg.M("Creating default ProjectDriver for debugging...");
+                Msg.println("Creating default ProjectDriver for debugging...");
                 AutoTest.plp = new ProjectDriver(Constants.PLP_DEFAULT);
                 CallbackRegistry.callback(CallbackRegistry.START, AutoTest.plp);
 		return; // do not exit, leave it to the autotest thread
 
             // Print GPL license text and quit
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
-                Msg.M("\n" + Text.GPL + "\n");
+                Msg.println("\n" + Text.GPL + "\n");
                 quit(Constants.PLP_OK);
 
             // Print third party licensing information and quit
             } else if (args.length >= activeArgIndex + 1 && args[i].equals("--about")) {
-                Msg.M(Text.licenseBanner + "\n");
-                Msg.M(Text.thirdPartyCopyrightString + "\n");
-                Msg.M(Text.contactString + "\n");
+                Msg.println(Text.licenseBanner + "\n");
+                Msg.println(Text.thirdPartyCopyrightString + "\n");
+                Msg.println(Text.contactString + "\n");
                 quit(Constants.PLP_OK);
 
             // Print buildinfo and quit
             } else if (args.length >= activeArgIndex + 1 && args[i].equals("--buildinfo")) {
-                Msg.M(plptool.Version.stamp);
-                Msg.M(getBuildInfo());
+                Msg.println(plptool.Version.stamp);
+                Msg.println(getBuildInfo());
                 quit(Constants.PLP_OK);
 
             // Download a JAR file for autoloading
@@ -313,7 +313,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Generate a plp.manifest file from a directory of Java classes
             } else if(args.length >= activeArgIndex + 3 && args[i].equals("--generate-manifest")) {
-                Msg.M("Generating manifest for '" + args[i+1] + "'...");
+                Msg.println("Generating manifest for '" + args[i+1] + "'...");
                 String manifest = DynamicModuleFramework.generateManifest(args[i+1],
                         "", "", "", "", "");
                 if(manifest != null)
@@ -322,17 +322,17 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Generate and embed a plp.manifest file for a JAR file
             } else if(args.length >= activeArgIndex + 7 && args[i].equals("--embed-manifest")) {
-                Msg.M("Generating manifest for '" + args[i+1] + "'...");
+                Msg.println("Generating manifest for '" + args[i+1] + "'...");
                 String manifest = DynamicModuleFramework.generateManifest(args[i+1],
                         args[i+2], args[i+3], args[i+4], args[i+5], args[i+6]);
                 if(manifest != null) {
                     if(PLPToolbox.addToJar(args[i+1], "plp.manifest", manifest.getBytes()) != Constants.PLP_OK) {
-                        Msg.M("\nMANIFEST GENERATION FAILED");
+                        Msg.println("\nMANIFEST GENERATION FAILED");
                     } else {
-                        Msg.M("\nplp.manifest has been embedded into the archive '" + args[i+1] + "'");
+                        Msg.println("\nplp.manifest has been embedded into the archive '" + args[i+1] + "'");
                     }
                 } else
-                    Msg.M("\nMANIFEST GENERATION FAILED, '" + args[i+1] + "' is unmodified.");
+                    Msg.println("\nMANIFEST GENERATION FAILED, '" + args[i+1] + "' is unmodified.");
                 quit(Constants.PLP_OK);
 
             // Bring up the embed manifest GUI
@@ -341,7 +341,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Pack a directory into a JAR file
             } else if(args.length >= activeArgIndex + 3 && args[i].equals("--pack")) {
-                Msg.M("Packing '" + args[i+1] + "' to '" + args[i+2] + "'...");
+                Msg.println("Packing '" + args[i+1] + "' to '" + args[i+2] + "'...");
                 PLPToolbox.createJar(args[i+2], args[i+1]);
                 quit(Constants.PLP_OK);
 
@@ -540,7 +540,7 @@ public class PLPToolApp extends SingleFrameApplication {
             while(moduleLoadDirs.size() > 0) {
                 dirPath = moduleLoadDirs.get(0);
                 moduleLoadDirs.remove(0);
-                Msg.D("Loading modules from " + dirPath + "...", 2, null);
+                Msg.debug("Loading modules from " + dirPath + "...", 2, null);
                 DynamicModuleFramework.autoloadModules(dirPath, plp, false);
             }
         }
@@ -550,7 +550,7 @@ public class PLPToolApp extends SingleFrameApplication {
             while(moduleLoadJars.size() > 0) {
                 jarPath = moduleLoadJars.get(0);
                 moduleLoadJars.remove(0);
-                Msg.D("Loading module from " + jarPath + "...", 2, null);
+                Msg.debug("Loading module from " + jarPath + "...", 2, null);
                 String[] manifest = DynamicModuleFramework.loadJarWithManifest(jarPath);
                 if(manifest == null)
                     quit(Constants.PLP_DMOD_GENERAL_ERROR);
@@ -694,7 +694,7 @@ public class PLPToolApp extends SingleFrameApplication {
 		if(exiting)
 			return;
 		exiting = true;
-        Msg.D("Exit(" + status + ")", 1, null);
+        Msg.debug("Exit(" + status + ")", 1, null);
         System.exit(status);
     }
 
@@ -720,7 +720,7 @@ public class PLPToolApp extends SingleFrameApplication {
         File config = new File(System.getProperty("user.home") + "/.plp/config");
 
         if(config.exists() && !config.isDirectory()) {
-            Msg.D("Loading config from " + config.getAbsolutePath(), 2, null);
+            Msg.debug("Loading config from " + config.getAbsolutePath(), 2, null);
             try {
                 FileInputStream in = new FileInputStream(config);
 
@@ -788,7 +788,7 @@ public class PLPToolApp extends SingleFrameApplication {
         File config = new File(System.getProperty("user.home") + "/.plp/config");
 
         if(config != null) {
-            Msg.D("Saving config to " + config.getAbsolutePath(), 2, null);
+            Msg.debug("Saving config to " + config.getAbsolutePath(), 2, null);
             try {
                 FileWriter out = new FileWriter(config);
                 out.write("devFont::" + Config.devFont + "\n");
@@ -807,16 +807,16 @@ public class PLPToolApp extends SingleFrameApplication {
                     if(PLPToolApp.getAttributes().containsKey(key))
                         out.write(key + "::" + PLPToolApp.getAttributes().get(key) + "\n");
                 }
-                Msg.D("Calling SAVE_CONFIG callback", 4, null);
+                Msg.debug("Calling SAVE_CONFIG callback", 4, null);
                 // see if any modules want to save out their configuration
                 // --- any configuration saved will be loaded by loadConfig to
                 //     the application attributes, so no hook on loading is
                 //     necessary. The converse is not true, the module will have
                 //     to use this hook to keep its configuration
                 CallbackRegistry.callback(CallbackRegistry.SAVE_CONFIG, out);
-                Msg.D("Closing config file", 4, null);
+                Msg.debug("Closing config file", 4, null);
                 out.close();
-                Msg.D("Save config done", 4, null);
+                Msg.debug("Save config done", 4, null);
 
             } catch(Exception e) {
                 Msg.E("Failed to save PLPTool configuration to disk.",
@@ -833,7 +833,7 @@ public class PLPToolApp extends SingleFrameApplication {
         File config = new File(System.getProperty("user.home") + "/.plp/config");
 
         if(config.exists()) {
-            Msg.M("Removing " + config.getAbsolutePath());
+            Msg.println("Removing " + config.getAbsolutePath());
             config.delete();
         }
     }

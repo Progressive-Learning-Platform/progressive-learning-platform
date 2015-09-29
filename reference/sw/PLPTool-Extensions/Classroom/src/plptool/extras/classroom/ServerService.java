@@ -101,7 +101,7 @@ public class ServerService extends Thread {
                             Constants.PLP_GENERIC_ERROR, null);
             }
         }
-        Msg.D("Collab server service exiting.", 2, null);
+        Msg.debug("Collab server service exiting.", 2, null);
     }
 
     public synchronized void removeClient(int ID) {

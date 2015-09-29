@@ -75,11 +75,11 @@ public class PLPToolConnector implements ModuleInterface5 {
 
         // Load config
         if(PLPToolbox.isFileReadable(PLPToolbox.getConfDir() + "/flowchart")) {
-            Msg.D("flowchart generator: loading from config", 3, null);
+            Msg.debug("flowchart generator: loading from config", 3, null);
             java.util.HashMap<String, String> config = PLPToolbox.parseConfig(PLPToolbox.getConfDir() + "/flowchart");
             if(config != null)
                 dotPath = config.get("flowchart_dotpath");
-            Msg.D("flowchart generator: saved dotpath is " + dotPath, 3, null);
+            Msg.debug("flowchart generator: saved dotpath is " + dotPath, 3, null);
         } else {
             dotPath = "";
         }
@@ -184,7 +184,7 @@ public class PLPToolConnector implements ModuleInterface5 {
 
     class Callback_Clear implements Callback {
         public boolean callback(int callbackNum, Object param) {
-            Msg.D("Callback: clear", 2, null);
+            Msg.debug("Callback: clear", 2, null);
 
             displayFrame.clearCanvas();
             return true;

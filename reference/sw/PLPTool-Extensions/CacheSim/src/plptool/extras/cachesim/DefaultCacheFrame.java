@@ -417,9 +417,9 @@ private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         
         cacheSize = numberOfLines * 8 * blockSize;
         indexBits = (int) (Math.log(numberOfLines / associativity) / Math.log(2));
-        plptool.Msg.M("CacheSim: word parameters: " + blockOffset + " bits of offset, " +
+        plptool.Msg.println("CacheSim: word parameters: " + blockOffset + " bits of offset, " +
                 indexBits + " bits of index");
-        plptool.Msg.M("CacheSim: Cacheable data size is " + cacheSize + " bytes");
+        plptool.Msg.println("CacheSim: Cacheable data size is " + cacheSize + " bytes");
         
     } catch(NumberFormatException e) {
         PLPToolbox.showErrorDialog(this, "Failed to parse cache parameters.");

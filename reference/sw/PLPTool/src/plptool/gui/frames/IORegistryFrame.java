@@ -493,7 +493,7 @@ public class IORegistryFrame extends javax.swing.JFrame {
                 refreshModulesTable();
             }
         } else {
-            plptool.Msg.M("ERROR");
+            plptool.Msg.println("ERROR");
         }
 
         plp.setModified();

@@ -96,7 +96,7 @@ public class PLPToolConnector implements ModuleInterface5 {
 
     class Callback_Project_Change_Handler implements Callback {
         public boolean callback(int callbackNum, Object param) {
-            Msg.D("Now we're talking.", 2, null);
+            Msg.debug("Now we're talking.", 2, null);
             setActive();
             return true;
         }

@@ -89,7 +89,7 @@ public class ArchRegistry {
      */
     public static int registerArchitecture(Class arch, int ID, String strID,
             String description) {
-        Msg.D("Registering ISA class " + arch.getCanonicalName() +
+        Msg.debug("Registering ISA class " + arch.getCanonicalName() +
                 " with ID=" + ID + " strID=" + strID, 2, null);
 
         if(!arch.getSuperclass().getCanonicalName().equals("plptool.PLPArchitecture"))
@@ -108,9 +108,9 @@ public class ArchRegistry {
         if(Constants.debugLevel >= 5) {
             java.util.Set IDs = archClasses.keySet();
             Object stuff[] = IDs.toArray();
-            Msg.D("Current list of registered ISA IDs:", 5, null);
+            Msg.debug("Current list of registered ISA IDs:", 5, null);
             for(int i = 0; i < stuff.length; i++) {
-                Msg.D("- " + (Integer) stuff[i], 5, null);
+                Msg.debug("- " + (Integer) stuff[i], 5, null);
             }
         }
 

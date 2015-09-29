@@ -66,7 +66,7 @@ public class VGA extends PLPSimBusModule {
             return Constants.PLP_SIM_MODULE_DISABLED;
 
         long framePointer = (Long) super.read(startAddr + 4);
-        Msg.D("Framepointer is at " + String.format("0x%08x", framePointer), 4, this);
+        Msg.debug("Framepointer is at " + String.format("0x%08x", framePointer), 4, this);
 
         frame.setLabelEnabled(((Long) super.read(startAddr) & 0x1) == 1);
         frame.setFramePointer(framePointer);
@@ -93,7 +93,7 @@ public class VGA extends PLPSimBusModule {
                      */
                     Object dataObj = bus.uncheckedRead(addr);
                     data = dataObj != null ? (Long) dataObj : 0;
-                    Msg.D("Initialized pixel at " + String.format("0x%08x", addr), 4, this);
+                    Msg.debug("Initialized pixel at " + String.format("0x%08x", addr), 4, this);
                 }
 
                 // unpack pixels from the word and populate the image array.
@@ -113,7 +113,7 @@ public class VGA extends PLPSimBusModule {
                     int blue = ((int) pixel & 0x03) << 6;
                     blue = (blue == 0xC0) ? 0xFF : blue;
 
-                    Msg.D("Colors: " + red + " " + green + " " + blue, 4, this);
+                    Msg.debug("Colors: " + red + " " + green + " " + blue, 4, this);
                     
                     // VGA module buffer is MSB, so we put the LSB last on the array
                     image[x_coord * 4 + (3 - i)][y_coord] = (red << 16) | (green << 8) | (blue);
@@ -136,7 +136,7 @@ public class VGA extends PLPSimBusModule {
             Thread.sleep(plptool.Config.threadedModRefreshRate);
         }
 
-        Msg.M("VGA module thread exiting.");
+        Msg.println("VGA module thread exiting.");
 
         } catch (Exception e) { }
     }

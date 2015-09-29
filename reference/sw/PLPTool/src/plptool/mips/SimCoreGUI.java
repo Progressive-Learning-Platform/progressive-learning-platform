@@ -113,10 +113,10 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         Object[][] attrSet = (Object[][]) plp.getProjectAttribute("plpmips_memory_visualizer");
         
         if(attrSet != null) {
-            plptool.Msg.D("we have " + attrSet.length + " memory visualizers saved in project driver.", 4, this);
+            plptool.Msg.debug("we have " + attrSet.length + " memory visualizers saved in project driver.", 4, this);
 
             for(int i = 0; i < attrSet.length; i++) {
-                plptool.Msg.D("attaching memory visualizer " + String.format("(%08x-%08x)", attrSet[i][0], attrSet[i][1]), 3, this);
+                plptool.Msg.debug("attaching memory visualizer " + String.format("(%08x-%08x)", attrSet[i][0], attrSet[i][1]), 3, this);
                 plptool.mips.visualizer.MemoryVisualization memvis = new plptool.mips.visualizer.MemoryVisualization(plp);
                 memvis.setAddresses((Long[]) attrSet[i]);
                 memvis.visualize();
@@ -784,7 +784,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
      * @param memVis Reference to the memory visualizer
      */
     public void attachMemoryVisualizer(MemoryVisualization memVis) {
-        plptool.Msg.D("Attaching a memory visualizer", 4, this);
+        plptool.Msg.debug("Attaching a memory visualizer", 4, this);
         memVis.setFrameID(memoryVisualizers.size());
         memoryVisualizers.add(memVis);
         updateAttributeForMemoryVisualizers();
@@ -792,7 +792,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
 
     public void disposeMemoryVisualizers() {
         for(int i = 0; i < memoryVisualizers.size(); i++) {
-            plptool.Msg.D("Disposing memory visualizer " + i, 4, this);
+            plptool.Msg.debug("Disposing memory visualizer " + i, 4, this);
             memoryVisualizers.get(i).dispose();
         }
 
@@ -812,7 +812,7 @@ public class SimCoreGUI extends plptool.PLPSimCoreGUI {
         Object[][] attrSet = new Object[memoryVisualizers.size()][];
         for(int i = 0; i < memoryVisualizers.size(); i++) {
             attrSet[i] = memoryVisualizers.get(i).getAddresses();
-            plptool.Msg.D("adding attribute " + String.format("(%08x-%08x)", attrSet[i][0], attrSet[i][1]), 3, this);
+            plptool.Msg.debug("adding attribute " + String.format("(%08x-%08x)", attrSet[i][0], attrSet[i][1]), 3, this);
         }
 
         if(memoryVisualizers.size() > 0)

@@ -112,15 +112,15 @@ public class UART extends PLPSimBusModule {
             } else if (d == 2) /* clear rdy */
                 ready = false;
             else
-                Msg.M(String.format("[UART] invalid write to command register: %d", d));
+                Msg.println(String.format("[UART] invalid write to command register: %d", d));
         } else if (addr == startAddr + 4) { /* status register */
-            Msg.M(String.format("[UART] invalid write to status register: %d ", d));
+            Msg.println(String.format("[UART] invalid write to status register: %d ", d));
         } else if (addr == startAddr + 8) { /* receive buffer */
-            Msg.M(String.format("[UART] invalid write to receive buffer: %d", d));
+            Msg.println(String.format("[UART] invalid write to receive buffer: %d", d));
         } else if (addr == startAddr + 12) { /* send buffer */
             sendB = d & 0x000000ff;
         } else {
-            Msg.M("[UART] invalid register");
+            Msg.println("[UART] invalid register");
         }
 
         return Constants.PLP_OK;

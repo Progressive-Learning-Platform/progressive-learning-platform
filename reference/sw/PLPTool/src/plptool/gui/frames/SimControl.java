@@ -249,7 +249,7 @@ public class SimControl extends javax.swing.JFrame {
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {            
             plp.sim.stepW();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
-                Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
+                Msg.println("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }

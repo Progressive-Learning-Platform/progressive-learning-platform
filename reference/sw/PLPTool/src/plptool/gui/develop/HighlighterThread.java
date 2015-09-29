@@ -24,11 +24,11 @@ public class HighlighterThread extends Thread {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        Msg.D("HighlighterThread: running schedule", 10, null);
+                        Msg.debug("HighlighterThread: running schedule", 10, null);
                         if(Config.devSyntaxHighlighting) {
                             g_dev.syntaxHighlight();
                         }
-                        Msg.D("HighlighterThread: done", 10, null);
+                        Msg.debug("HighlighterThread: done", 10, null);
                     }
                     });
                 setScheduleHighlight(false);

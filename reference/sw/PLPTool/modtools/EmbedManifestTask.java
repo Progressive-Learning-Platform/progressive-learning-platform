@@ -59,10 +59,10 @@ public class EmbedManifestTask extends Task {
 
     @Override
     public void execute() {
-        Msg.M("EmbedManifestTask: '" + jar + "'");
+        Msg.println("EmbedManifestTask: '" + jar + "'");
         String manifest = DynamicModuleFramework.generateManifest(jar, title, authors, license, descr, version);
         if(manifest != null) {
-            Msg.M("EmbedManifestTask: Embedding plp.manifest");
+            Msg.println("EmbedManifestTask: Embedding plp.manifest");
             PLPToolbox.addToJar(jar, "plp.manifest", manifest.getBytes());
         }
     }

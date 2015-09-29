@@ -83,7 +83,7 @@ public class DynamicModuleFramework {
             Msg.W("Make sure you only use trusted third party modules!", null);
             warned = true;
         }
-        Msg.D("[" + index + "] Loading module class " + className + " from " + path +
+        Msg.debug("[" + index + "] Loading module class " + className + " from " + path +
               " ... ", 2, null);
         if(loader == null) {
             ClassLoader parent = DynamicModuleFramework.class.getClassLoader();
@@ -246,7 +246,7 @@ public class DynamicModuleFramework {
      */
     public static void autoloadModules(String autoloadPath,
             plptool.gui.ProjectDriver plp, boolean prompt) {
-        Msg.D("dmf: Loading modules from " + autoloadPath + "...", 1, null);
+        Msg.debug("dmf: Loading modules from " + autoloadPath + "...", 1, null);
         File autoloadDir = new File(autoloadPath);
         if(autoloadDir.exists() && autoloadDir.isDirectory()) {
             File[] files = autoloadDir.listFiles();
@@ -453,7 +453,7 @@ public class DynamicModuleFramework {
         String ret = null;
 
         try {
-            Msg.D("Finding manifest entry with key '" + key + "' from '" + path
+            Msg.debug("Finding manifest entry with key '" + key + "' from '" + path
                   + "' ...", 3, null);
             JarFile jar = new JarFile(path);
             JarEntry entry;
@@ -516,8 +516,8 @@ public class DynamicModuleFramework {
         ArrayList<String> classNames = new ArrayList<String>();
         ArrayList<String> resources = new ArrayList<String>();
         File packageDir = new File(path);
-        Msg.M("*******************************************************************************");
-        Msg.M("Enumerating JAR entries...");
+        Msg.println("*******************************************************************************");
+        Msg.println("Enumerating JAR entries...");
         if(packageDir.getName().endsWith(".jar")) {
             try {
                 JarFile jar = new JarFile(path);
@@ -569,11 +569,11 @@ public class DynamicModuleFramework {
 
         // Write out miscellaneous resources
         for(String s : resources) {
-            Msg.M("- Adding resource: " + s);
+            Msg.println("- Adding resource: " + s);
             manifest += s + "\n";
         }
-        Msg.M("...done.");
-        Msg.M(resources.size() + " resource entries added.");
+        Msg.println("...done.");
+        Msg.println(resources.size() + " resource entries added.");
 
         // Resolve dependencies. We'll do it in the most naive way possible:
         // try to load all classes, if some of them failed due to interfaces
@@ -587,10 +587,10 @@ public class DynamicModuleFramework {
         int i;
         int iteration = 0;
         int iterationLimit = classes.size();
-        Msg.M(classNames.size() + " Java classes were enumerated.");
-        Msg.m("Determining loading order (disregard class warnings and ");
-        Msg.M("errors)...");
-        Msg.M("-------------------------------------------------------------------------------");
+        Msg.println(classNames.size() + " Java classes were enumerated.");
+        Msg.print("Determining loading order (disregard class warnings and ");
+        Msg.println("errors)...");
+        Msg.println("-------------------------------------------------------------------------------");
         do {
             done = true;
             if(ascending) {
@@ -621,7 +621,7 @@ public class DynamicModuleFramework {
         } while(!done && iteration < iterationLimit);
 
         if(!done) {
-            Msg.M("-------------------------------------------------------------------------------");
+            Msg.println("-------------------------------------------------------------------------------");
             Msg.E("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
                     null);
             return null;
@@ -634,7 +634,7 @@ public class DynamicModuleFramework {
             Class[] interfaces = dynamicModuleClasses.get(i).getInterfaces();
             for(int j = 0; j < interfaces.length; j++) {
                 if(interfaces[j].getCanonicalName().equals("plptool.dmf.ModuleInterface5")) {
-                    Msg.M("PLPTool 5 module interface found!");
+                    Msg.println("PLPTool 5 module interface found!");
                     manifest += "loadmodule5::" +
                             dynamicModuleClasses.get(i).getCanonicalName() + "\n";
                     found = true;
@@ -642,26 +642,26 @@ public class DynamicModuleFramework {
             }
 
             if(dynamicModuleClasses.get(i).getSuperclass().getCanonicalName().equals("plptool.PLPArchitecture")) {
-                Msg.M("PLP ISA implementation found!");
+                Msg.println("PLP ISA implementation found!");
                 manifest += "registerisa::" +
                         dynamicModuleClasses.get(i).getCanonicalName() + "::";
-                Msg.m("Please enter ISA string ID: ");
+                Msg.print("Please enter ISA string ID: ");
                 manifest += PLPToolbox.readLine() + "::";
-                Msg.m("Please enter ISA numerical ID: ");
+                Msg.print("Please enter ISA numerical ID: ");
                 manifest += PLPToolbox.readLine() + "::";
-                Msg.m("Please enter ISA description: ");
+                Msg.print("Please enter ISA description: ");
                 manifest += PLPToolbox.readLine() + "\n";
             }
         }
         
-        Msg.M("-------------------------------------------------------------------------------");
+        Msg.println("-------------------------------------------------------------------------------");
         if(!found)
             Msg.W("No connector module for this package was found.\n", null);
-        Msg.M("Manifest generation completed! You can include the plp.manifest file in the ");
-        Msg.M("package jar file to allow PLPTool to load the module into a PLPTool session. If");
-        Msg.M("no class implementing the connector interface was found, PLPTool will load the");
-        Msg.M("classes, but the module functionality will only be able to be accessed through");
-        Msg.M("the development module manager.");
+        Msg.println("Manifest generation completed! You can include the plp.manifest file in the ");
+        Msg.println("package jar file to allow PLPTool to load the module into a PLPTool session. If");
+        Msg.println("no class implementing the connector interface was found, PLPTool will load the");
+        Msg.println("classes, but the module functionality will only be able to be accessed through");
+        Msg.println("the development module manager.");
 
         return manifest;
     }
@@ -683,7 +683,7 @@ public class DynamicModuleFramework {
             if(list[i].isDirectory())
                 generateManifestTraverseDirectory(list[i], rootPath, classes, classNames, resources);
             else if(list[i].isFile() && list[i].getName().endsWith(".class")) {
-                Msg.D("- Enumerating " + list[i].getAbsolutePath(), 3, null);
+                Msg.debug("- Enumerating " + list[i].getAbsolutePath(), 3, null);
                 classes.add(list[i]);
                 className = list[i].getAbsolutePath().substring(rootPath.getAbsolutePath().length()+1);
                 className = className.replaceAll("/|\\\\", ".");
@@ -763,7 +763,7 @@ class ManifestHandlers {
         if(ret > -1)
             cIndex = DynamicModuleFramework.newModuleInstance(ret);
         if(cIndex > -1) {
-            Msg.D("Applying manifest entry: " + entry, 2, null);
+            Msg.debug("Applying manifest entry: " + entry, 2, null);
             ModuleInterface5 mod = (ModuleInterface5)DynamicModuleFramework.getModuleInstance(cIndex);
             int[] minVersion = mod.getMinimumPLPToolVersion();
             if(Text.version[0] < minVersion[0] ||
@@ -807,7 +807,7 @@ class ManifestHandlers {
         }
         int ret = DynamicModuleFramework.isModuleClassRegistered(tokens[1]);
         if(ret > -1) {
-            Msg.D("Registering ISA: " + tokens[2] + " ID: " + tokens[3], 2, null);
+            Msg.debug("Registering ISA: " + tokens[2] + " ID: " + tokens[3], 2, null);
             ArchRegistry.registerArchitecture(
                     DynamicModuleFramework.getDynamicModuleClass(ret),
                     Integer.parseInt(tokens[3]), tokens[2], tokens[4]);
@@ -818,7 +818,7 @@ class ManifestHandlers {
         String tokens[] = entry.split("::");
         if(tokens.length != 3)
             return;
-        Msg.D("Applying manifest entry: " + entry, 2, null);
+        Msg.debug("Applying manifest entry: " + entry, 2, null);
         PLPToolbox.checkCreateTempDirectory();
         PLPToolbox.copyFromJar(jar, tokens[1],
                 PLPToolbox.getTmpDir() + "/" + tokens[2]);
@@ -828,7 +828,7 @@ class ManifestHandlers {
         String tokens[] = entry.split("::");
         if(tokens.length != 2)
             return;
-        Msg.D("Applying manifest entry: " + entry, 2, null);
+        Msg.debug("Applying manifest entry: " + entry, 2, null);
         PLPToolbox.checkCreateTempDirectory();
         File f = new File(PLPToolbox.getTmpDir() + "/" + tokens[1].replace('/', '.'));
         if(f.exists())
@@ -840,7 +840,7 @@ class ManifestHandlers {
         String tokens[] = entry.split("::");
         if(tokens.length != 2)
             return;
-        Msg.D("Applying manifest entry: " + entry, 2, null);
+        Msg.debug("Applying manifest entry: " + entry, 2, null);
         PLPToolbox.checkCreateTempDirectory();
         File f = new File(PLPToolbox.getTmpDir() + "/" + tokens[1].replace('/', '.'));
         if(f.exists())

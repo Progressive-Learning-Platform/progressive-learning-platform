@@ -46,7 +46,7 @@ public class PLPToolConnector implements ModuleInterface5 {
         this.plp = plp;
 		if(!plp.g())
 			return Constants.PLP_OK;
-        Msg.D("Initializing autosaver...", 2, this);
+        Msg.debug("Initializing autosaver...", 2, this);
         temporaryProject = new ProjectDriver(Constants.PLP_DEFAULT);
         editorDocListener = new DevDocListener();
         String interval = PLPToolApp.getAttributes().get("autosaver_interval");
@@ -144,7 +144,7 @@ public class PLPToolConnector implements ModuleInterface5 {
             switch(num) {
                 case CallbackRegistry.PROJECT_OPEN_SUCCESSFUL:
                 case CallbackRegistry.PROJECT_NEW:
-                    Msg.D("Starting autosave thread...", 2, this);
+                    Msg.debug("Starting autosave thread...", 2, this);
                     if(num == CallbackRegistry.PROJECT_OPEN_SUCCESSFUL)
                         temporaryProject.plpfile =
                             new File(PLPToolbox.getConfDir() + "/plp.autosave." + ((File) param).getName());
@@ -191,7 +191,7 @@ public class PLPToolConnector implements ModuleInterface5 {
                     
                 }
                 if(needSave) {
-                    Msg.D("Autosaving...", 2, this);
+                    Msg.debug("Autosaving...", 2, this);
                     temp = Msg.silent;
                     temporaryProject.setAsms(plp.getAsms());
                     temporaryProject.getAsm(plp.getOpenAsm()).setAsmString(plp.g_dev.getEditorText());

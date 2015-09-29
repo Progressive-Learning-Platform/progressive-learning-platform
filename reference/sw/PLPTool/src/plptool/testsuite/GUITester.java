@@ -62,7 +62,7 @@ public class GUITester implements Tester {
         AutoTest.delay(500);
         Msg.W("Message test", plp);
         AutoTest.delay(500);
-        Msg.M("Message test");
+        Msg.println("Message test");
         Msg.p("<b>HTML message</b> test");
         AutoTest.delay(500);
         Msg.p("Preformatted buffer -");

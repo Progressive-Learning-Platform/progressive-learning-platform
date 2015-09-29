@@ -63,7 +63,7 @@ public class Log {
         f.setIconImage(new javax.swing.ImageIcon(PLPToolbox.getTmpDir() + "/plptool.extras.cachesim.icon.png").getImage());
         frames.add(f);
         f.setVisible(true);
-        Msg.M("CacheSim Log: Creating a cache simulator");
+        Msg.println("CacheSim Log: Creating a cache simulator");
     }
     
     public static void destroyCacheFrame(DefaultCacheFrame f) {        
@@ -72,7 +72,7 @@ public class Log {
             frame = frames.get(i);
             if(frame.equals(f)) {
                 frames.remove(f);
-                Msg.M("CacheSim Log: Destroying a cache simulator");
+                Msg.println("CacheSim Log: Destroying a cache simulator");
             }
         }
         
@@ -80,7 +80,7 @@ public class Log {
             for(int i = 0; i < Log.head.size(); i++) {
                 if(Log.head.get(i).equals(f.e)) {
                     Log.head.remove(i);
-                    Msg.M("CacheSim: Removing cache engine from the list...");
+                    Msg.println("CacheSim: Removing cache engine from the list...");
                 }
             }
         }

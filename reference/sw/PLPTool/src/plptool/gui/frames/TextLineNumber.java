@@ -567,7 +567,7 @@ public class TextLineNumber extends JPanel
                 end_y = y + component.getFontMetrics(component.getFont()).getHeight();
                 mouse_y = e.getY() + component.getFontMetrics(component.getFont()).getHeight();
 
-                Msg.D("mouse_y: " + e.getY() +
+                Msg.debug("mouse_y: " + e.getY() +
                       " - y: " + y +
                       " - end_y: " + end_y +
                       " - lineNumber: " + getLineNumber(rowStartOffset), 5, this);
@@ -578,13 +578,13 @@ public class TextLineNumber extends JPanel
 
                     if(addr != -1) {
                         if(!plp.sim.breakpoints.isBreakpoint(addr)) {
-                            plptool.Msg.M("New breakpoint set at: " + plp.getAsm(plp.getOpenAsm()).getAsmFilePath() + "(" + lineNumber + "): " +
+                            plptool.Msg.println("New breakpoint set at: " + plp.getAsm(plp.getOpenAsm()).getAsmFilePath() + "(" + lineNumber + "): " +
                                      String.format("0x%02x", addr));
                             plp.sim.breakpoints.add(addr, plp.getOpenAsm(), lineNumber);
                             Object[] eParams = {addr, plp.getOpenAsm(), lineNumber};
 
                         } else {
-                            plptool.Msg.M("Removing breakpoint.");
+                            plptool.Msg.println("Removing breakpoint.");
                             plp.sim.breakpoints.remove(addr);
                         }
                         this.repaint();

@@ -95,7 +95,7 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         txtEditor.setEditorKit(new HTMLEditorKit());
         txtEditor.setDocument(new HTMLDocument());
         Msg.setOutput(txtEditor);
-        Msg.M("PLPTool build: " + Version.stamp + "\n");
+        Msg.println("PLPTool build: " + Version.stamp + "\n");
 
         plp.getAsm("WebApplet").setAsmString(oldStr);
         plp.assemble();

@@ -54,7 +54,7 @@ public class VGAFrame extends javax.swing.JFrame {
         if(image[0].length == 0 || image[0].length > 480)
             return;
 
-        Msg.D("We're actually drawing!", 4, this);
+        Msg.debug("We're actually drawing!", 4, this);
 
         for(int x = 0; x < 640; x++)
             for(int y = 0; y < 480; y++)
@@ -165,7 +165,7 @@ public class VGAFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveToFileActionPerformed
-        Msg.M("Writing to " + System.getProperty("user.dir") + "/vgacapture.png ...");
+        Msg.println("Writing to " + System.getProperty("user.dir") + "/vgacapture.png ...");
 
         try {
             javax.imageio.ImageIO.write(I, "png", new java.io.File("./vgacapture.png"));

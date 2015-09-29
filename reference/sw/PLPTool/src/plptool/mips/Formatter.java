@@ -190,7 +190,7 @@ public class Formatter {
     public static int symTablePrettyPrint(HashMap symTable) {
         String key, value;
 
-        Msg.M("\nSymbol Table" +
+        Msg.println("\nSymbol Table" +
                            "\n============");
         Object[][] sortedTbl = PLPToolbox.getSortedStringByLongValue(symTable);
 
@@ -198,7 +198,7 @@ public class Formatter {
             key = (String) sortedTbl[i][0];
             value = String.format("0x%08x", (Long) sortedTbl[i][1]);
 
-            Msg.M(value + "\t:\t" + key);
+            Msg.println(value + "\t:\t" + key);
         }
 
         return 0;

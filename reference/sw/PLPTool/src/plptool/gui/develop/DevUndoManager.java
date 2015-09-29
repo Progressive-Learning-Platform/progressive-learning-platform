@@ -44,7 +44,7 @@ public class DevUndoManager extends UndoManager
 		
 		editTypeList.add(position, !g_dev.isHighlighting());
 		position++;
-		Msg.D("++++ undo <shl:" + g_dev.isHighlighting() + "> position: " + position, 6,
+		Msg.debug("++++ undo <shl:" + g_dev.isHighlighting() + "> position: " + position, 6,
 				null);
 		return super.addEdit(anEdit);
 	}
@@ -76,7 +76,7 @@ public class DevUndoManager extends UndoManager
 		
 		Config.devSyntaxHighlighting = oldSyntaxOption;
 		
-		Msg.D("<--- undo position: " + position, 6, null);
+		Msg.debug("<--- undo position: " + position, 6, null);
 		setBusy(false);
 	}
 	
@@ -117,7 +117,7 @@ public class DevUndoManager extends UndoManager
 		
 		Config.devSyntaxHighlighting = oldSyntaxOption;
 		
-		Msg.D("---> undo position: " + position, 6, null);
+		Msg.debug("---> undo position: " + position, 6, null);
 		setBusy(false);
 	}
 	

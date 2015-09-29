@@ -32,7 +32,7 @@ public class ServerListenThread extends Thread {
     @Override public void run() {
         while(run) {
             try {
-                Msg.M("SocketInterface: ServerListenThread: listening for connections.");
+                Msg.println("SocketInterface: ServerListenThread: listening for connections.");
                 Socket client = SocketInterface.getServerSocket().accept();
                 SocketInterface.addClient(client);
             } catch(IOException ioe) {
@@ -40,7 +40,7 @@ public class ServerListenThread extends Thread {
                         Constants.PLP_GENERAL_IO_ERROR, null);
             }
         }
-        Msg.M("SocketInterface: ServerListenThread: stopped.");
+        Msg.println("SocketInterface: ServerListenThread: stopped.");
     }
 
     public void stopListening() {

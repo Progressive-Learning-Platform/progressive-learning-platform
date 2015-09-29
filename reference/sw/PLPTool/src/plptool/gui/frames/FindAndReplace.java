@@ -206,12 +206,12 @@ public class FindAndReplace extends javax.swing.JFrame {
             if(caret > -1)
                 findAndReplaceString(caret);
             else {
-                Msg.M("String not found: \"" + txtFind.getText() + "\"");
+                Msg.println("String not found: \"" + txtFind.getText() + "\"");
                 haveTriedFromTop = true;
             }
         }
         else
-            Msg.M("String not found: \"" + txtFind.getText() + "\"");
+            Msg.println("String not found: \"" + txtFind.getText() + "\"");
     }//GEN-LAST:event_btnGoActionPerformed
 
     private void txtFindKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFindKeyPressed
@@ -240,7 +240,7 @@ public class FindAndReplace extends javax.swing.JFrame {
             }
         }
 
-        Msg.M(replaceCount + " instances of \"" + txtFind.getText() + "\" replaced.");
+        Msg.println(replaceCount + " instances of \"" + txtFind.getText() + "\" replaced.");
     }//GEN-LAST:event_btnReplaceAllActionPerformed
 
     private void txtReplaceFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtReplaceFocusGained

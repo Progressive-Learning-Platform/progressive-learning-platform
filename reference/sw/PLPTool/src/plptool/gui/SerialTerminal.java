@@ -121,7 +121,7 @@ public class SerialTerminal extends javax.swing.JFrame {
             Enumeration portList = CommPortIdentifier.getPortIdentifiers();
             while (portList.hasMoreElements()) {
                 CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
-                Msg.D("rxtx portId name: " + portId.getName() + " type: " + portId.getPortType(), 2 , null);
+                Msg.debug("rxtx portId name: " + portId.getName() + " type: " + portId.getPortType(), 2 , null);
                 if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                     cmbPort.addItem(portId.getName());
                 }
@@ -886,7 +886,7 @@ public class SerialTerminal extends javax.swing.JFrame {
 
                 while(!stop) {
                     bytes = in.read(buffer);
-                    Msg.D("term: " + bytes + " bytes read.", 6, this);
+                    Msg.debug("term: " + bytes + " bytes read.", 6, this);
                     if(bytes > 0)
                         try {
                             for(i = 0; i < bytes; i++) {

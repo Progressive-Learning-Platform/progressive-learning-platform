@@ -30,7 +30,7 @@ public class DebugCallback implements Callback {
     public boolean callback(int num, Object param) {
         String cmd = (String) param;
         if(cmd.equals("cachesim_about")) {
-            Msg.M("CacheSim by Wira for PLPTool 5.x");
+            Msg.println("CacheSim by Wira for PLPTool 5.x");
         }
 
         return true;

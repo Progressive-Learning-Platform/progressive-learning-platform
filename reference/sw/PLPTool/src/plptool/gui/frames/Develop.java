@@ -33,6 +33,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -178,7 +179,7 @@ public final class Develop extends JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
         Msg.printPreformattedString(Text.copyrightString);
-        Msg.M("");
+        Msg.println("");
     }
 
     /*
@@ -683,14 +684,14 @@ public final class Develop extends JFrame {
             default:
                 Msg.setOutput(txtOutput);
 
-                final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+                final JFileChooser fc = new JFileChooser();
                 fc.setFileFilter(new PlpFilter());
                 fc.setAcceptAllFileFilterUsed(false);
                 fc.setCurrentDirectory(new File(plp.curdir));
 
                 int retVal = fc.showOpenDialog(null);
 
-                if(retVal == javax.swing.JFileChooser.APPROVE_OPTION)
+                if(retVal == JFileChooser.APPROVE_OPTION)
                     open(fc.getSelectedFile());
         }
     }
@@ -721,14 +722,14 @@ public final class Develop extends JFrame {
     public int savePLPFileAs() {
         Msg.setOutput(txtOutput);
 
-        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        final JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new PlpFilter());
         fc.setAcceptAllFileFilterUsed(false);
         fc.setCurrentDirectory(new File(plp.curdir));
 
         int retVal = fc.showSaveDialog(null);
 
-        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+        if(retVal == JFileChooser.APPROVE_OPTION) {
             File fOut = new File(fc.getSelectedFile().getAbsolutePath());
 
             if(fOut.exists()) {
@@ -768,7 +769,7 @@ public final class Develop extends JFrame {
      * necessary, 0 if user saved the file, 1 if the user did not save
      */
     public int askSaveFirst(String action, String capAction) {
-        int ret = javax.swing.JFileChooser.APPROVE_OPTION;
+        int ret = JFileChooser.APPROVE_OPTION;
 
         if(plp.isModified()) {
             Object[] options = {"Save and " + action,
@@ -794,7 +795,7 @@ public final class Develop extends JFrame {
             else if(n == javax.swing.JOptionPane.CLOSED_OPTION)
                 return 2;
 
-            if(ret == javax.swing.JFileChooser.APPROVE_OPTION)
+            if(ret == JFileChooser.APPROVE_OPTION)
                 return n;
             else
                 return 2;
@@ -844,14 +845,14 @@ public final class Develop extends JFrame {
     public int importASM() {
         Msg.setOutput(txtOutput);
 
-        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        final JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new AsmFilter());
         fc.setAcceptAllFileFilterUsed(false);
         fc.setCurrentDirectory(new File(plp.curdir));
 
         int retVal = fc.showOpenDialog(null);
 
-        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+        if(retVal == JFileChooser.APPROVE_OPTION) {
             plp.importAsm(fc.getSelectedFile().getAbsolutePath());
         }
 
@@ -881,14 +882,14 @@ public final class Develop extends JFrame {
         }
 
         if(indexToExport >= 0) {
-            final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+            final JFileChooser fc = new JFileChooser();
             fc.setFileFilter(new AsmFilter());
             fc.setAcceptAllFileFilterUsed(false);
             fc.setCurrentDirectory(new File(plp.curdir));
 
             int retVal = fc.showSaveDialog(null);
 
-            if(retVal == javax.swing.JFileChooser.APPROVE_OPTION)
+            if(retVal == JFileChooser.APPROVE_OPTION)
                 plp.exportAsm(indexToExport, fc.getSelectedFile().getAbsolutePath());
         }
 
@@ -906,7 +907,7 @@ public final class Develop extends JFrame {
      * Redo routine
      */
     private void redo() {
-        Msg.D("redo()", 10, this);
+        Msg.debug("redo()", 10, this);
 
         if(undoManager.canRedo()) {
             plp.setModified();
@@ -933,12 +934,12 @@ public final class Develop extends JFrame {
         if(undoManager.isBusy() || isHighlighting())
             return;
 
-        Msg.D("Syntax highlight CALL", 10, null);
+        Msg.debug("Syntax highlight CALL", 10, null);
         setHighlighting(true);
         int currpos = 0;
         String lines[] = txtEditor.getText().split("\\r?\\n");
         int doclength = lines.length;
-        Msg.D("doclength: " + doclength, 10, null);
+        Msg.debug("doclength: " + doclength, 10, null);
 
         for(int i=0;i<doclength;i++) {
             String currline = lines[i];
@@ -947,7 +948,7 @@ public final class Develop extends JFrame {
         }
         //syntaxHighlight(txtEditor.getText(), 0, styles);
         setHighlighting(false);
-        Msg.D("Syntax highlight EXIT", 10, null);
+        Msg.debug("Syntax highlight EXIT", 10, null);
     }
 
     /**
@@ -1086,7 +1087,7 @@ public final class Develop extends JFrame {
      * ProjectDriver's desimulate method.
      */
     public void simEnd() {
-        Msg.D("Develop: simEnd started", 4, null);
+        Msg.debug("Develop: simEnd started", 4, null);
         txtEditor.setEditable(true);
         txtEditor.getCaret().setVisible(true);
         menuSimulate.setSelected(false);
@@ -1125,7 +1126,7 @@ public final class Develop extends JFrame {
         btnSimGPIO.setVisible(false);
         separatorSimControl.setVisible(false);
         lblSimStat.setText("Editor Mode");
-        Msg.D("Develop: simEnd finished", 4, null);
+        Msg.debug("Develop: simEnd finished", 4, null);
     }
 
     /**
@@ -1448,7 +1449,7 @@ public final class Develop extends JFrame {
         for(int i = 0; i < Config.simCyclesPerStep && !breakpoint; i++) {
             plp.sim.stepW();
             if(plp.sim.breakpoints.hasBreakpoint() && plp.sim.breakpoints.isBreakpoint(plp.sim.visibleAddr)) {
-                Msg.M("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
+                Msg.println("--- breakpoint encountered: " + String.format("0x%02x", plp.sim.visibleAddr));
                 breakpoint = true;
             }
         }
@@ -1488,7 +1489,7 @@ public final class Develop extends JFrame {
     }
 
     public void removeLastButton() {
-        Msg.D("Removing toolbar button.", 4, this);
+        Msg.debug("Removing toolbar button.", 4, this);
 
         toolbar.remove(toolbar.getComponentCount() - 1);
 
@@ -1544,7 +1545,7 @@ public final class Develop extends JFrame {
     }
 
     public void removeLastSimToolItem() {
-        Msg.D("Removing simulation tools menu item.", 4, this);
+        Msg.debug("Removing simulation tools menu item.", 4, this);
 
         menuSimTools.remove(menuSimTools.getMenuComponentCount() - 1);
 
@@ -3183,7 +3184,7 @@ public final class Develop extends JFrame {
             return;
 
         if(evt.isControlDown() && evt.getKeyChar() == 'y' ) {
-            Msg.D("redo.", 10, this);
+            Msg.debug("redo.", 10, this);
         } else if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             modified = true;
@@ -3211,7 +3212,7 @@ public final class Develop extends JFrame {
         }
 
         if(modified && plp.plpfile != null) {
-            Msg.D("Text has been modified.", 9, this);
+            Msg.debug("Text has been modified.", 9, this);
             plp.setModified();
 
             if(txtEditor.isEditable()) {
@@ -3603,13 +3604,13 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuDynamicModuleManagerActionPerformed
 
     private void menuLoadModuleJarActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuLoadModuleJarActionPerformed
-        final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+        final JFileChooser fc = new JFileChooser();
         fc.setAcceptAllFileFilterUsed(true);
         fc.setCurrentDirectory(new File(plp.curdir));
 
         int retVal = fc.showOpenDialog(null);
 
-        if(retVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+        if(retVal == JFileChooser.APPROVE_OPTION) {
             String jar = fc.getSelectedFile().getAbsolutePath();
             String[] manifest = DynamicModuleFramework.loadJarWithManifest(jar);
             if(manifest != null) {

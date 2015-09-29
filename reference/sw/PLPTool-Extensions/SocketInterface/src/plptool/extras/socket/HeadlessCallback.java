@@ -27,7 +27,7 @@ import plptool.dmf.Callback;
  */
 public class HeadlessCallback implements Callback {
     public boolean callback(int num, Object param) {
-        Msg.M("SocketInterface: initializing...");
+        Msg.println("SocketInterface: initializing...");
         SocketInterface.init();
         return true;
     }

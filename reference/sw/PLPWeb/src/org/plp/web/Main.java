@@ -42,7 +42,7 @@ public class Main {
         }
 
         for(int i = 0; i < args.length; i++) {
-            Msg.D("args[" + i + "] parsing: " + args[i], 4, null);
+            Msg.debug("args[" + i + "] parsing: " + args[i], 4, null);
 
             if(args[i].equals("--help") || args[i].equals("-h")) {
                 printHelpMessage();
@@ -56,9 +56,9 @@ public class Main {
                 org.plp.web.services.HTTPTest.start();
                 activeArgIndex++;
             } else if(args[i].equals("--about")) {
-                Msg.M(plptool.Text.licenseBanner + "\n");
-                Msg.M(plptool.Text.thirdPartyCopyrightString + "\n");
-                Msg.M(plptool.Text.contactString + "\n");
+                Msg.println(plptool.Text.licenseBanner + "\n");
+                Msg.println(plptool.Text.thirdPartyCopyrightString + "\n");
+                Msg.println(plptool.Text.contactString + "\n");
                 System.exit(plptool.Constants.PLP_OK);
             } else if(args.length >= activeArgIndex + 2 && args[i].equals("--root")) {
                 Handlers.root = args[i+1];
