@@ -1032,6 +1032,7 @@ public final class ProjectDriver {
         Scanner metaScanner = new Scanner(meta);
         metaScanner.findWithinHorizon("DIRTY=", 0);
         int meta_dirty =  metaScanner.nextInt();
+        metaScanner.close();
         metaRoot.add(new DefaultMutableTreeNode("meta.DIRTY=" + meta_dirty));
         metaRoot.add(new DefaultMutableTreeNode("ISA=" + ArchRegistry.getStringID(arch.getID())));
 
