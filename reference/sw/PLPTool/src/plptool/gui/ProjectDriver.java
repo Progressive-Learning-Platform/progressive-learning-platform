@@ -693,6 +693,7 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int open(String path, boolean assemble) {
+    	// TODO: modularize and simplify this method
         File plpFile = new File(path);
         CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN, plpFile);
         
@@ -780,14 +781,19 @@ public final class ProjectDriver {
                         asms.add(null);
                     }
                 }
+                
+                metaScanner.close();
             }
         }
 
         if(!metafileFound)
-            return Msg.error("No PLP metadata found.",
-                    Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
+        {
+        	tIn.close();
+            return Msg.error("No PLP metadata found.", Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
+        }
 
         // reset the tar input stream
+        tIn.close();
         tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
 
         while((entry = tIn.getNextTarEntry()) != null) {
