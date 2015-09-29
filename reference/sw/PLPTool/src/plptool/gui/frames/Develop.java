@@ -2419,7 +2419,7 @@ public final class Develop extends javax.swing.JFrame {
         menuAssemble.setName("menuAssemble"); // NOI18N
         menuAssemble.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuAssembleActionPerformed1(evt);
+                menuAssembleActionPerformed(evt);
             }
         });
         rootmenuProject.add(menuAssemble);
@@ -3004,16 +3004,7 @@ public final class Develop extends javax.swing.JFrame {
             savePLPFileAs();
     }//GEN-LAST:event_menuSaveActionPerformed
 
-    private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed
-        Msg.setOutput(txtOutput);
-
-        if(plp.plpfile != null)
-            plp.assemble();
-
-        syntaxHighlight();
-}//GEN-LAST:event_menuAssembleActionPerformed
-
-    private void menuAssembleActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
+    private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
         assemble();
     }//GEN-LAST:event_menuAssembleActionPerformed1
 
