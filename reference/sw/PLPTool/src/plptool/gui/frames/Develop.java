@@ -23,16 +23,30 @@ import static java.awt.event.KeyEvent.VK_DELETE;
 
 import java.awt.Desktop;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 
+import javax.swing.AbstractButton;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
@@ -75,12 +89,12 @@ import plptool.mods.VGA;
  *
  * @author wira
  */
-public final class Develop extends javax.swing.JFrame {
+public final class Develop extends JFrame {
     boolean trackChanges = false;
     private ProjectDriver plp;
     private DevUndoManager undoManager;
     private HighlighterThread highlighterThread;
-    private javax.swing.JPopupMenu popupProject;
+    private JPopupMenu popupProject;
 
     private TextLineNumber tln;
     private TextLineHighlighter tlh;
@@ -144,7 +158,7 @@ public final class Develop extends javax.swing.JFrame {
             }
         });
 
-        this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         undoManager = new DevUndoManager(this);
         undoManager.setLimit(Config.devMaxUndoEntries);
@@ -184,8 +198,8 @@ public final class Develop extends javax.swing.JFrame {
                 if(attributes.containsKey(key)) {
                     JMenuItem recentItem = new JMenuItem((i+1) + " " + attributes.get("develop_recent_" + i));
                     recentItem.setMnemonic(String.valueOf(i+1).charAt(0));
-                    recentItem.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    recentItem.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
                             switch(askSaveFirst("open a project", "Open a project")) {
                                 case 2:
                                     return;
@@ -431,7 +445,7 @@ public final class Develop extends javax.swing.JFrame {
      *
      * @return Reference to the output pane
      */
-    public javax.swing.JTextPane getOutput() {
+    public JTextPane getOutput() {
         return txtOutput;
     }
 
@@ -440,7 +454,7 @@ public final class Develop extends javax.swing.JFrame {
      *
      * @return Reference to the editor pane scroller
      */
-    public javax.swing.JScrollPane getScroller() {
+    public JScrollPane getScroller() {
         return scroller;
     }
 
@@ -449,7 +463,7 @@ public final class Develop extends javax.swing.JFrame {
      *
      * @return Reference to the main editor pane
      */
-    public javax.swing.JTextPane getEditor() {
+    public JTextPane getEditor() {
         return txtEditor;
     }
 
@@ -1129,7 +1143,7 @@ public final class Develop extends javax.swing.JFrame {
      * @param index Index of the check box menu
      * @return The reference to the menu item
      */
-    public javax.swing.JCheckBoxMenuItem getToolCheckboxMenu(int index) {
+    public JCheckBoxMenuItem getToolCheckboxMenu(int index) {
         switch(index) {
             case Constants.PLP_TOOLFRAME_IOREGISTRY:
                 return menuSimIO;
@@ -1179,7 +1193,7 @@ public final class Develop extends javax.swing.JFrame {
      * @param index Index of the toggle button
      * @return The reference to the toggle button
      */
-    public javax.swing.JToggleButton getToolToggleButton(int index) {
+    public JToggleButton getToolToggleButton(int index) {
         switch(index) {
             case Constants.PLP_TOOLFRAME_IOREGISTRY:
                 return null;
@@ -1229,7 +1243,7 @@ public final class Develop extends javax.swing.JFrame {
      * @param x Module frame to attach the listener to
      * @param int Menu type requested
      */
-    public void attachModuleFrameListeners(final javax.swing.JFrame x, final int menu) {
+    public void attachModuleFrameListeners(final JFrame x, final int menu) {
         x.addWindowListener(new java.awt.event.WindowListener() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -1469,7 +1483,7 @@ public final class Develop extends javax.swing.JFrame {
         repaintLater();
     }
 
-    public void addButton(javax.swing.AbstractButton btn) {
+    public void addButton(AbstractButton btn) {
         toolbar.add(btn);
     }
 
@@ -1495,11 +1509,11 @@ public final class Develop extends javax.swing.JFrame {
         //this.setComponentZOrder(overlay, 0);
     }
 
-    public javax.swing.JMenuItem addSimToolItem(javax.swing.JMenuItem item) {
+    public JMenuItem addSimToolItem(JMenuItem item) {
         return menuSimTools.add(item);
     }
 
-    public javax.swing.JMenuItem addToolsItem(javax.swing.JMenuItem item) {
+    public JMenuItem addToolsItem(JMenuItem item) {
         if(!extraToolsItems) {
             extraToolsItems = true;
             rootmenuTools.addSeparator();
@@ -1511,7 +1525,7 @@ public final class Develop extends javax.swing.JFrame {
         return rootmenuTools.add(item);
     }
 
-    public void removeToolsItem(javax.swing.JMenuItem item) {
+    public void removeToolsItem(JMenuItem item) {
         rootmenuTools.remove(item);
     }
 
@@ -1621,131 +1635,131 @@ public final class Develop extends javax.swing.JFrame {
     private void initComponents() {
 
         grpSteps = new javax.swing.ButtonGroup();
-        devMainPane = new javax.swing.JPanel();
-        splitterV = new javax.swing.JSplitPane();
-        splitterH = new javax.swing.JSplitPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        devMainPane = new JPanel();
+        splitterV = new JSplitPane();
+        splitterH = new JSplitPane();
+        jScrollPane2 = new JScrollPane();
         treeProject = new javax.swing.JTree();
-        jPanel1 = new javax.swing.JPanel();
+        jPanel1 = new JPanel();
         txtCurFile = new javax.swing.JLabel();
-        scroller = new javax.swing.JScrollPane();
-        txtEditor = new javax.swing.JTextPane();
+        scroller = new JScrollPane();
+        txtEditor = new JTextPane();
         lblPosition = new javax.swing.JLabel();
         lblSimStat = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtOutput = new javax.swing.JTextPane();
-        toolbar = new javax.swing.JToolBar();
-        btnNew = new javax.swing.JButton();
-        btnOpen = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
-        jSeparator4 = new javax.swing.JToolBar.Separator();
-        btnAssemble = new javax.swing.JButton();
-        btnSimulate = new javax.swing.JToggleButton();
-        btnProgram = new javax.swing.JButton();
-        separatorSim = new javax.swing.JToolBar.Separator();
-        btnSimStep = new javax.swing.JButton();
-        btnSimRun = new javax.swing.JToggleButton();
-        btnSimReset = new javax.swing.JButton();
-        btnSimControl = new javax.swing.JToggleButton();
-        separatorSimControl = new javax.swing.JToolBar.Separator();
-        btnCPU = new javax.swing.JToggleButton();
-        btnWatcher = new javax.swing.JToggleButton();
-        btnSimLEDs = new javax.swing.JToggleButton();
-        btnSimSwitches = new javax.swing.JToggleButton();
-        btnSimSevenSegments = new javax.swing.JToggleButton();
-        btnSimUART = new javax.swing.JToggleButton();
-        btnSimVGA = new javax.swing.JToggleButton();
-        btnSimPLPID = new javax.swing.JToggleButton();
-        btnSimGPIO = new javax.swing.JToggleButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        rootmenuFile = new javax.swing.JMenu();
-        menuNew = new javax.swing.JMenuItem();
-        menuSeparator1 = new javax.swing.JPopupMenu.Separator();
-        menuOpen = new javax.swing.JMenuItem();
-        menuOpenRecentProject = new javax.swing.JMenu();
-        jSeparator3 = new javax.swing.JPopupMenu.Separator();
-        menuSave = new javax.swing.JMenuItem();
-        menuSaveAs = new javax.swing.JMenuItem();
-        jSeparator8 = new javax.swing.JPopupMenu.Separator();
-        menuPrint = new javax.swing.JMenuItem();
-        menuSeparator3 = new javax.swing.JPopupMenu.Separator();
-        menuExit = new javax.swing.JMenuItem();
-        rootmenuEdit = new javax.swing.JMenu();
-        menuCopy = new javax.swing.JMenuItem();
-        menuCut = new javax.swing.JMenuItem();
-        menuPaste = new javax.swing.JMenuItem();
-        menuSeparator4 = new javax.swing.JPopupMenu.Separator();
-        menuFindAndReplace = new javax.swing.JMenuItem();
-        menuSeparator5 = new javax.swing.JPopupMenu.Separator();
-        menuUndo = new javax.swing.JMenuItem();
-        menuRedo = new javax.swing.JMenuItem();
-        rootmenuView = new javax.swing.JMenu();
-        menuToolbar = new javax.swing.JCheckBoxMenuItem();
-        menuProjectPane = new javax.swing.JCheckBoxMenuItem();
-        menuOutputPane = new javax.swing.JCheckBoxMenuItem();
-        menuClearOutputPane = new javax.swing.JMenuItem();
-        rootmenuProject = new javax.swing.JMenu();
-        menuAssemble = new javax.swing.JMenuItem();
-        menuSimulate = new javax.swing.JCheckBoxMenuItem();
-        menuProgram = new javax.swing.JMenuItem();
-        menuQuickProgram = new javax.swing.JMenuItem();
-        jSeparator12 = new javax.swing.JPopupMenu.Separator();
-        menuSimAsmView = new javax.swing.JMenuItem();
-        menuSetNewProjectISA = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        menuNewASM = new javax.swing.JMenuItem();
-        menuImportASM = new javax.swing.JMenuItem();
-        menuExportASM = new javax.swing.JMenuItem();
-        menuDeleteASM = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        menuSetMainProgram = new javax.swing.JMenuItem();
-        rootmenuTools = new javax.swing.JMenu();
-        menuOptions = new javax.swing.JMenuItem();
-        menuModules = new javax.swing.JMenu();
-        menuModuleManager = new javax.swing.JMenuItem();
-        menuLoadModuleJar = new javax.swing.JMenuItem();
-        menuRemoveAutoloadDir = new javax.swing.JMenuItem();
-        menuDynamicModuleManager = new javax.swing.JMenuItem();
-        jSeparator7 = new javax.swing.JPopupMenu.Separator();
-        menuSerialTerminal = new javax.swing.JMenuItem();
-        menuNumberConverter = new javax.swing.JMenuItem();
-        rootmenuSim = new javax.swing.JMenu();
-        menuSimStep = new javax.swing.JMenuItem();
-        menuSimReset = new javax.swing.JMenuItem();
-        jSeparator11 = new javax.swing.JPopupMenu.Separator();
-        menuSimRun = new javax.swing.JCheckBoxMenuItem();
-        menuStepSize = new javax.swing.JMenu();
-        menuStep1 = new javax.swing.JRadioButtonMenuItem();
-        menuStep2 = new javax.swing.JRadioButtonMenuItem();
-        menuStep3 = new javax.swing.JRadioButtonMenuItem();
-        menuStep4 = new javax.swing.JRadioButtonMenuItem();
-        menuStep5 = new javax.swing.JRadioButtonMenuItem();
-        menuClearBreakpoints = new javax.swing.JMenuItem();
-        jSeparator9 = new javax.swing.JPopupMenu.Separator();
-        jMenu1 = new javax.swing.JMenu();
-        menuSimView = new javax.swing.JCheckBoxMenuItem();
-        menuSimWatcher = new javax.swing.JCheckBoxMenuItem();
-        menuSimControl = new javax.swing.JCheckBoxMenuItem();
-        menuSimTools = new javax.swing.JMenu();
-        menuSimIO = new javax.swing.JCheckBoxMenuItem();
-        menuIOReg = new javax.swing.JMenu();
-        menuSimLEDs = new javax.swing.JCheckBoxMenuItem();
-        menuSimSwitches = new javax.swing.JCheckBoxMenuItem();
-        menuSimSevenSegments = new javax.swing.JCheckBoxMenuItem();
-        menuSimUART = new javax.swing.JCheckBoxMenuItem();
-        menuSimVGA = new javax.swing.JCheckBoxMenuItem();
-        menuSimPLPID = new javax.swing.JCheckBoxMenuItem();
-        menuSimGPIO = new javax.swing.JCheckBoxMenuItem();
-        jSeparator10 = new javax.swing.JPopupMenu.Separator();
-        menuExitSim = new javax.swing.JMenuItem();
-        rootmenuHelp = new javax.swing.JMenu();
-        menuQuickRef = new javax.swing.JMenuItem();
-        menuManual = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JPopupMenu.Separator();
-        menuIssues = new javax.swing.JMenuItem();
-        menuIssuesPage = new javax.swing.JMenuItem();
-        jSeparator6 = new javax.swing.JPopupMenu.Separator();
-        menuAbout = new javax.swing.JMenuItem();
+        jScrollPane1 = new JScrollPane();
+        txtOutput = new JTextPane();
+        toolbar = new JToolBar();
+        btnNew = new JButton();
+        btnOpen = new JButton();
+        btnSave = new JButton();
+        jSeparator4 = new JToolBar.Separator();
+        btnAssemble = new JButton();
+        btnSimulate = new JToggleButton();
+        btnProgram = new JButton();
+        separatorSim = new JToolBar.Separator();
+        btnSimStep = new JButton();
+        btnSimRun = new JToggleButton();
+        btnSimReset = new JButton();
+        btnSimControl = new JToggleButton();
+        separatorSimControl = new JToolBar.Separator();
+        btnCPU = new JToggleButton();
+        btnWatcher = new JToggleButton();
+        btnSimLEDs = new JToggleButton();
+        btnSimSwitches = new JToggleButton();
+        btnSimSevenSegments = new JToggleButton();
+        btnSimUART = new JToggleButton();
+        btnSimVGA = new JToggleButton();
+        btnSimPLPID = new JToggleButton();
+        btnSimGPIO = new JToggleButton();
+        jMenuBar1 = new JMenuBar();
+        rootmenuFile = new JMenu();
+        menuNew = new JMenuItem();
+        menuSeparator1 = new JPopupMenu.Separator();
+        menuOpen = new JMenuItem();
+        menuOpenRecentProject = new JMenu();
+        jSeparator3 = new JPopupMenu.Separator();
+        menuSave = new JMenuItem();
+        menuSaveAs = new JMenuItem();
+        jSeparator8 = new JPopupMenu.Separator();
+        menuPrint = new JMenuItem();
+        menuSeparator3 = new JPopupMenu.Separator();
+        menuExit = new JMenuItem();
+        rootmenuEdit = new JMenu();
+        menuCopy = new JMenuItem();
+        menuCut = new JMenuItem();
+        menuPaste = new JMenuItem();
+        menuSeparator4 = new JPopupMenu.Separator();
+        menuFindAndReplace = new JMenuItem();
+        menuSeparator5 = new JPopupMenu.Separator();
+        menuUndo = new JMenuItem();
+        menuRedo = new JMenuItem();
+        rootmenuView = new JMenu();
+        menuToolbar = new JCheckBoxMenuItem();
+        menuProjectPane = new JCheckBoxMenuItem();
+        menuOutputPane = new JCheckBoxMenuItem();
+        menuClearOutputPane = new JMenuItem();
+        rootmenuProject = new JMenu();
+        menuAssemble = new JMenuItem();
+        menuSimulate = new JCheckBoxMenuItem();
+        menuProgram = new JMenuItem();
+        menuQuickProgram = new JMenuItem();
+        jSeparator12 = new JPopupMenu.Separator();
+        menuSimAsmView = new JMenuItem();
+        menuSetNewProjectISA = new JMenuItem();
+        jSeparator1 = new JPopupMenu.Separator();
+        menuNewASM = new JMenuItem();
+        menuImportASM = new JMenuItem();
+        menuExportASM = new JMenuItem();
+        menuDeleteASM = new JMenuItem();
+        jSeparator2 = new JPopupMenu.Separator();
+        menuSetMainProgram = new JMenuItem();
+        rootmenuTools = new JMenu();
+        menuOptions = new JMenuItem();
+        menuModules = new JMenu();
+        menuModuleManager = new JMenuItem();
+        menuLoadModuleJar = new JMenuItem();
+        menuRemoveAutoloadDir = new JMenuItem();
+        menuDynamicModuleManager = new JMenuItem();
+        jSeparator7 = new JPopupMenu.Separator();
+        menuSerialTerminal = new JMenuItem();
+        menuNumberConverter = new JMenuItem();
+        rootmenuSim = new JMenu();
+        menuSimStep = new JMenuItem();
+        menuSimReset = new JMenuItem();
+        jSeparator11 = new JPopupMenu.Separator();
+        menuSimRun = new JCheckBoxMenuItem();
+        menuStepSize = new JMenu();
+        menuStep1 = new JRadioButtonMenuItem();
+        menuStep2 = new JRadioButtonMenuItem();
+        menuStep3 = new JRadioButtonMenuItem();
+        menuStep4 = new JRadioButtonMenuItem();
+        menuStep5 = new JRadioButtonMenuItem();
+        menuClearBreakpoints = new JMenuItem();
+        jSeparator9 = new JPopupMenu.Separator();
+        jMenu1 = new JMenu();
+        menuSimView = new JCheckBoxMenuItem();
+        menuSimWatcher = new JCheckBoxMenuItem();
+        menuSimControl = new JCheckBoxMenuItem();
+        menuSimTools = new JMenu();
+        menuSimIO = new JCheckBoxMenuItem();
+        menuIOReg = new JMenu();
+        menuSimLEDs = new JCheckBoxMenuItem();
+        menuSimSwitches = new JCheckBoxMenuItem();
+        menuSimSevenSegments = new JCheckBoxMenuItem();
+        menuSimUART = new JCheckBoxMenuItem();
+        menuSimVGA = new JCheckBoxMenuItem();
+        menuSimPLPID = new JCheckBoxMenuItem();
+        menuSimGPIO = new JCheckBoxMenuItem();
+        jSeparator10 = new JPopupMenu.Separator();
+        menuExitSim = new JMenuItem();
+        rootmenuHelp = new JMenu();
+        menuQuickRef = new JMenuItem();
+        menuManual = new JMenuItem();
+        jSeparator5 = new JPopupMenu.Separator();
+        menuIssues = new JMenuItem();
+        menuIssuesPage = new JMenuItem();
+        jSeparator6 = new JPopupMenu.Separator();
+        menuAbout = new JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(plptool.gui.PLPToolApp.class).getContext().getResourceMap(Develop.class);
@@ -1764,7 +1778,7 @@ public final class Develop extends javax.swing.JFrame {
         devMainPane.setName("devMainPane"); // NOI18N
 
         splitterV.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        splitterV.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        splitterV.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitterV.setResizeWeight(0.7);
         splitterV.setName("splitterV"); // NOI18N
 
@@ -1892,8 +1906,8 @@ public final class Develop extends javax.swing.JFrame {
         btnNew.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnNew.setName("btnNew"); // NOI18N
         btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnNew.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnNewActionPerformed(evt);
             }
         });
@@ -1907,8 +1921,8 @@ public final class Develop extends javax.swing.JFrame {
         btnOpen.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnOpen.setName("btnOpen"); // NOI18N
         btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnOpen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnOpen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnOpenActionPerformed(evt);
             }
         });
@@ -1922,8 +1936,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSave.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSave.setName("btnSave"); // NOI18N
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSaveActionPerformed(evt);
             }
         });
@@ -1940,8 +1954,8 @@ public final class Develop extends javax.swing.JFrame {
         btnAssemble.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnAssemble.setName("btnAssemble"); // NOI18N
         btnAssemble.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnAssemble.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnAssemble.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnAssembleActionPerformed(evt);
             }
         });
@@ -1955,8 +1969,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimulate.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimulate.setName("btnSimulate"); // NOI18N
         btnSimulate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimulate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimulate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimulateActionPerformed(evt);
             }
         });
@@ -1970,8 +1984,8 @@ public final class Develop extends javax.swing.JFrame {
         btnProgram.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnProgram.setName("btnProgram"); // NOI18N
         btnProgram.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnProgram.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnProgram.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnProgramActionPerformed(evt);
             }
         });
@@ -1988,8 +2002,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimStep.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimStep.setName("btnSimStep"); // NOI18N
         btnSimStep.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimStep.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimStep.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimStepActionPerformed(evt);
             }
         });
@@ -2003,8 +2017,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimRun.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimRun.setName("btnSimRun"); // NOI18N
         btnSimRun.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimRun.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimRun.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimRunActionPerformed(evt);
             }
         });
@@ -2018,8 +2032,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimReset.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimReset.setName("btnSimReset"); // NOI18N
         btnSimReset.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimReset.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimResetActionPerformed(evt);
             }
         });
@@ -2033,8 +2047,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimControl.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimControl.setName("btnSimControl"); // NOI18N
         btnSimControl.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimControl.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimControl.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimControlActionPerformed(evt);
             }
         });
@@ -2051,8 +2065,8 @@ public final class Develop extends javax.swing.JFrame {
         btnCPU.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnCPU.setName("btnCPU"); // NOI18N
         btnCPU.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnCPU.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnCPU.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnCPUActionPerformed(evt);
             }
         });
@@ -2066,8 +2080,8 @@ public final class Develop extends javax.swing.JFrame {
         btnWatcher.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnWatcher.setName("btnWatcher"); // NOI18N
         btnWatcher.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnWatcher.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnWatcher.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnWatcherActionPerformed(evt);
             }
         });
@@ -2081,8 +2095,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimLEDs.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimLEDs.setName("btnSimLEDs"); // NOI18N
         btnSimLEDs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimLEDs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimLEDs.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimLEDsActionPerformed(evt);
             }
         });
@@ -2096,8 +2110,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimSwitches.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimSwitches.setName("btnSimSwitches"); // NOI18N
         btnSimSwitches.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimSwitches.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimSwitches.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimSwitchesActionPerformed(evt);
             }
         });
@@ -2111,8 +2125,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimSevenSegments.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimSevenSegments.setName("btnSimSevenSegments"); // NOI18N
         btnSimSevenSegments.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimSevenSegments.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimSevenSegments.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimSevenSegmentsActionPerformed(evt);
             }
         });
@@ -2126,8 +2140,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimUART.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimUART.setName("btnSimUART"); // NOI18N
         btnSimUART.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimUART.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimUART.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimUARTActionPerformed(evt);
             }
         });
@@ -2141,8 +2155,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimVGA.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimVGA.setName("btnSimVGA"); // NOI18N
         btnSimVGA.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimVGA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimVGA.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimVGAActionPerformed(evt);
             }
         });
@@ -2156,8 +2170,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimPLPID.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimPLPID.setName("btnSimPLPID"); // NOI18N
         btnSimPLPID.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimPLPID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimPLPID.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimPLPIDActionPerformed(evt);
             }
         });
@@ -2171,8 +2185,8 @@ public final class Develop extends javax.swing.JFrame {
         btnSimGPIO.setMargin(new java.awt.Insets(2, 0, 2, 0));
         btnSimGPIO.setName("btnSimGPIO"); // NOI18N
         btnSimGPIO.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSimGPIO.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnSimGPIO.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 btnSimGPIOActionPerformed(evt);
             }
         });
@@ -2190,8 +2204,8 @@ public final class Develop extends javax.swing.JFrame {
         menuNew.setMnemonic('N');
         menuNew.setText(resourceMap.getString("menuNew.text")); // NOI18N
         menuNew.setName("menuNew"); // NOI18N
-        menuNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuNew.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuNewActionPerformed(evt);
             }
         });
@@ -2205,8 +2219,8 @@ public final class Develop extends javax.swing.JFrame {
         menuOpen.setMnemonic('O');
         menuOpen.setText(resourceMap.getString("menuOpen.text")); // NOI18N
         menuOpen.setName("menuOpen"); // NOI18N
-        menuOpen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuOpen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuOpenActionPerformed(evt);
             }
         });
@@ -2225,8 +2239,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSave.setMnemonic('S');
         menuSave.setText(resourceMap.getString("menuSave.text")); // NOI18N
         menuSave.setName("menuSave"); // NOI18N
-        menuSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSaveActionPerformed(evt);
             }
         });
@@ -2236,8 +2250,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSaveAs.setMnemonic('A');
         menuSaveAs.setText(resourceMap.getString("menuSaveAs.text")); // NOI18N
         menuSaveAs.setName("menuSaveAs"); // NOI18N
-        menuSaveAs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSaveAs.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSaveAsActionPerformed(evt);
             }
         });
@@ -2250,8 +2264,8 @@ public final class Develop extends javax.swing.JFrame {
         menuPrint.setMnemonic('P');
         menuPrint.setText(resourceMap.getString("menuPrint.text")); // NOI18N
         menuPrint.setName("menuPrint"); // NOI18N
-        menuPrint.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuPrint.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuPrintActionPerformed(evt);
             }
         });
@@ -2264,8 +2278,8 @@ public final class Develop extends javax.swing.JFrame {
         menuExit.setMnemonic('X');
         menuExit.setText(resourceMap.getString("menuExit.text")); // NOI18N
         menuExit.setName("menuExit"); // NOI18N
-        menuExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuExit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuExitActionPerformed(evt);
             }
         });
@@ -2280,8 +2294,8 @@ public final class Develop extends javax.swing.JFrame {
         menuCopy.setMnemonic('C');
         menuCopy.setText(resourceMap.getString("menuCopy.text")); // NOI18N
         menuCopy.setName("menuCopy"); // NOI18N
-        menuCopy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuCopy.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuCopyActionPerformed(evt);
             }
         });
@@ -2291,8 +2305,8 @@ public final class Develop extends javax.swing.JFrame {
         menuCut.setMnemonic('t');
         menuCut.setText(resourceMap.getString("menuCut.text")); // NOI18N
         menuCut.setName("menuCut"); // NOI18N
-        menuCut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuCut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuCutActionPerformed(evt);
             }
         });
@@ -2302,8 +2316,8 @@ public final class Develop extends javax.swing.JFrame {
         menuPaste.setMnemonic('P');
         menuPaste.setText(resourceMap.getString("menuPaste.text")); // NOI18N
         menuPaste.setName("menuPaste"); // NOI18N
-        menuPaste.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuPaste.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuPasteActionPerformed(evt);
             }
         });
@@ -2316,8 +2330,8 @@ public final class Develop extends javax.swing.JFrame {
         menuFindAndReplace.setMnemonic('F');
         menuFindAndReplace.setText(resourceMap.getString("menuFindAndReplace.text")); // NOI18N
         menuFindAndReplace.setName("menuFindAndReplace"); // NOI18N
-        menuFindAndReplace.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuFindAndReplace.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuFindAndReplaceActionPerformed(evt);
             }
         });
@@ -2330,8 +2344,8 @@ public final class Develop extends javax.swing.JFrame {
         menuUndo.setMnemonic('U');
         menuUndo.setText(resourceMap.getString("menuUndo.text")); // NOI18N
         menuUndo.setName("menuUndo"); // NOI18N
-        menuUndo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuUndo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuUndoActionPerformed(evt);
             }
         });
@@ -2341,8 +2355,8 @@ public final class Develop extends javax.swing.JFrame {
         menuRedo.setMnemonic('R');
         menuRedo.setText(resourceMap.getString("menuRedo.text")); // NOI18N
         menuRedo.setName("menuRedo"); // NOI18N
-        menuRedo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuRedo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuRedoActionPerformed(evt);
             }
         });
@@ -2359,8 +2373,8 @@ public final class Develop extends javax.swing.JFrame {
         menuToolbar.setSelected(true);
         menuToolbar.setText(resourceMap.getString("menuToolbar.text")); // NOI18N
         menuToolbar.setName("menuToolbar"); // NOI18N
-        menuToolbar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuToolbar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuToolbarActionPerformed(evt);
             }
         });
@@ -2370,8 +2384,8 @@ public final class Develop extends javax.swing.JFrame {
         menuProjectPane.setSelected(true);
         menuProjectPane.setText(resourceMap.getString("menuProjectPane.text")); // NOI18N
         menuProjectPane.setName("menuProjectPane"); // NOI18N
-        menuProjectPane.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuProjectPane.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuProjectPaneActionPerformed(evt);
             }
         });
@@ -2381,8 +2395,8 @@ public final class Develop extends javax.swing.JFrame {
         menuOutputPane.setSelected(true);
         menuOutputPane.setText(resourceMap.getString("menuOutputPane.text")); // NOI18N
         menuOutputPane.setName("menuOutputPane"); // NOI18N
-        menuOutputPane.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuOutputPane.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuOutputPaneActionPerformed(evt);
             }
         });
@@ -2392,8 +2406,8 @@ public final class Develop extends javax.swing.JFrame {
         menuClearOutputPane.setMnemonic('C');
         menuClearOutputPane.setText(resourceMap.getString("menuClearOutputPane.text")); // NOI18N
         menuClearOutputPane.setName("menuClearOutputPane"); // NOI18N
-        menuClearOutputPane.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuClearOutputPane.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuClearOutputPaneActionPerformed(evt);
             }
         });
@@ -2409,8 +2423,8 @@ public final class Develop extends javax.swing.JFrame {
                 rootmenuProjectMouseClicked(evt);
             }
         });
-        rootmenuProject.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rootmenuProject.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 rootmenuProjectActionPerformed(evt);
             }
         });
@@ -2420,8 +2434,8 @@ public final class Develop extends javax.swing.JFrame {
         menuAssemble.setMnemonic('A');
         menuAssemble.setText(resourceMap.getString("menuAssemble.text")); // NOI18N
         menuAssemble.setName("menuAssemble"); // NOI18N
-        menuAssemble.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuAssemble.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuAssembleActionPerformed(evt);
             }
         });
@@ -2432,8 +2446,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimulate.setText(resourceMap.getString("menuSimulate.text")); // NOI18N
         menuSimulate.setIcon(resourceMap.getIcon("menuSimulate.icon")); // NOI18N
         menuSimulate.setName("menuSimulate"); // NOI18N
-        menuSimulate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimulate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimulateActionPerformed(evt);
             }
         });
@@ -2444,8 +2458,8 @@ public final class Develop extends javax.swing.JFrame {
         menuProgram.setMnemonic('P');
         menuProgram.setText(resourceMap.getString("menuProgram.text")); // NOI18N
         menuProgram.setName("menuProgram"); // NOI18N
-        menuProgram.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuProgram.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuProgramActionPerformed(evt);
             }
         });
@@ -2455,8 +2469,8 @@ public final class Develop extends javax.swing.JFrame {
         menuQuickProgram.setMnemonic('Q');
         menuQuickProgram.setText(resourceMap.getString("menuQuickProgram.text")); // NOI18N
         menuQuickProgram.setName("menuQuickProgram"); // NOI18N
-        menuQuickProgram.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuQuickProgram.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuQuickProgramActionPerformed(evt);
             }
         });
@@ -2467,8 +2481,8 @@ public final class Develop extends javax.swing.JFrame {
 
         menuSimAsmView.setText(resourceMap.getString("menuSimAsmView.text")); // NOI18N
         menuSimAsmView.setName("menuSimAsmView"); // NOI18N
-        menuSimAsmView.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimAsmView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimAsmViewActionPerformed(evt);
             }
         });
@@ -2477,8 +2491,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSetNewProjectISA.setMnemonic('E');
         menuSetNewProjectISA.setText(resourceMap.getString("menuSetNewProjectISA.text")); // NOI18N
         menuSetNewProjectISA.setName("menuSetNewProjectISA"); // NOI18N
-        menuSetNewProjectISA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSetNewProjectISA.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSetNewProjectISAActionPerformed(evt);
             }
         });
@@ -2490,8 +2504,8 @@ public final class Develop extends javax.swing.JFrame {
         menuNewASM.setMnemonic('N');
         menuNewASM.setText(resourceMap.getString("menuNewASM.text")); // NOI18N
         menuNewASM.setName("menuNewASM"); // NOI18N
-        menuNewASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuNewASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuNewASMActionPerformed(evt);
             }
         });
@@ -2500,8 +2514,8 @@ public final class Develop extends javax.swing.JFrame {
         menuImportASM.setMnemonic('I');
         menuImportASM.setText(resourceMap.getString("menuImportASM.text")); // NOI18N
         menuImportASM.setName("menuImportASM"); // NOI18N
-        menuImportASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuImportASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuImportASMActionPerformed(evt);
             }
         });
@@ -2510,8 +2524,8 @@ public final class Develop extends javax.swing.JFrame {
         menuExportASM.setMnemonic('X');
         menuExportASM.setText(resourceMap.getString("menuExportASM.text")); // NOI18N
         menuExportASM.setName("menuExportASM"); // NOI18N
-        menuExportASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuExportASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuExportASMActionPerformed(evt);
             }
         });
@@ -2521,8 +2535,8 @@ public final class Develop extends javax.swing.JFrame {
         menuDeleteASM.setMnemonic('R');
         menuDeleteASM.setText(resourceMap.getString("menuDeleteASM.text")); // NOI18N
         menuDeleteASM.setName("menuDeleteASM"); // NOI18N
-        menuDeleteASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuDeleteASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuDeleteASMActionPerformed(evt);
             }
         });
@@ -2534,8 +2548,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSetMainProgram.setMnemonic('C');
         menuSetMainProgram.setText(resourceMap.getString("menuSetMainProgram.text")); // NOI18N
         menuSetMainProgram.setName("menuSetMainProgram"); // NOI18N
-        menuSetMainProgram.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSetMainProgram.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSetMainProgramActionPerformed(evt);
             }
         });
@@ -2550,8 +2564,8 @@ public final class Develop extends javax.swing.JFrame {
         menuOptions.setMnemonic('O');
         menuOptions.setText(resourceMap.getString("menuOptions.text")); // NOI18N
         menuOptions.setName("menuOptions"); // NOI18N
-        menuOptions.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuOptions.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuOptionsActionPerformed(evt);
             }
         });
@@ -2562,8 +2576,8 @@ public final class Develop extends javax.swing.JFrame {
 
         menuModuleManager.setText(resourceMap.getString("menuModuleManager.text")); // NOI18N
         menuModuleManager.setName("menuModuleManager"); // NOI18N
-        menuModuleManager.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuModuleManager.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuModuleManagerActionPerformed(evt);
             }
         });
@@ -2571,8 +2585,8 @@ public final class Develop extends javax.swing.JFrame {
 
         menuLoadModuleJar.setText(resourceMap.getString("menuLoadModuleJar.text")); // NOI18N
         menuLoadModuleJar.setName("menuLoadModuleJar"); // NOI18N
-        menuLoadModuleJar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuLoadModuleJar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuLoadModuleJarActionPerformed(evt);
             }
         });
@@ -2580,8 +2594,8 @@ public final class Develop extends javax.swing.JFrame {
 
         menuRemoveAutoloadDir.setText(resourceMap.getString("menuRemoveAutoloadDir.text")); // NOI18N
         menuRemoveAutoloadDir.setName("menuRemoveAutoloadDir"); // NOI18N
-        menuRemoveAutoloadDir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuRemoveAutoloadDir.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuRemoveAutoloadDirActionPerformed(evt);
             }
         });
@@ -2589,8 +2603,8 @@ public final class Develop extends javax.swing.JFrame {
 
         menuDynamicModuleManager.setText(resourceMap.getString("menuDynamicModuleManager.text")); // NOI18N
         menuDynamicModuleManager.setName("menuDynamicModuleManager"); // NOI18N
-        menuDynamicModuleManager.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuDynamicModuleManager.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuDynamicModuleManagerActionPerformed(evt);
             }
         });
@@ -2603,8 +2617,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSerialTerminal.setMnemonic('S');
         menuSerialTerminal.setText(resourceMap.getString("menuSerialTerminal.text")); // NOI18N
         menuSerialTerminal.setName("menuSerialTerminal"); // NOI18N
-        menuSerialTerminal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSerialTerminal.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSerialTerminalActionPerformed(evt);
             }
         });
@@ -2614,8 +2628,8 @@ public final class Develop extends javax.swing.JFrame {
         menuNumberConverter.setMnemonic('C');
         menuNumberConverter.setText(resourceMap.getString("menuNumberConverter.text")); // NOI18N
         menuNumberConverter.setName("menuNumberConverter"); // NOI18N
-        menuNumberConverter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuNumberConverter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuNumberConverterActionPerformed(evt);
             }
         });
@@ -2632,8 +2646,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimStep.setMnemonic('S');
         menuSimStep.setText(resourceMap.getString("menuSimStep.text")); // NOI18N
         menuSimStep.setName("menuSimStep"); // NOI18N
-        menuSimStep.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimStep.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimStepActionPerformed(evt);
             }
         });
@@ -2644,8 +2658,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimReset.setMnemonic('E');
         menuSimReset.setText(resourceMap.getString("menuSimReset.text")); // NOI18N
         menuSimReset.setName("menuSimReset"); // NOI18N
-        menuSimReset.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimResetActionPerformed(evt);
             }
         });
@@ -2658,8 +2672,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimRun.setMnemonic('R');
         menuSimRun.setText(resourceMap.getString("menuSimRun.text")); // NOI18N
         menuSimRun.setName("menuSimRun"); // NOI18N
-        menuSimRun.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimRun.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimRunActionPerformed(evt);
             }
         });
@@ -2674,8 +2688,8 @@ public final class Develop extends javax.swing.JFrame {
         menuStep1.setSelected(true);
         menuStep1.setText(resourceMap.getString("menuStep1.text")); // NOI18N
         menuStep1.setName("menuStep1"); // NOI18N
-        menuStep1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuStep1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuStep1ActionPerformed(evt);
             }
         });
@@ -2686,8 +2700,8 @@ public final class Develop extends javax.swing.JFrame {
         menuStep2.setMnemonic('5');
         menuStep2.setText(resourceMap.getString("menuStep2.text")); // NOI18N
         menuStep2.setName("menuStep2"); // NOI18N
-        menuStep2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuStep2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuStep2ActionPerformed(evt);
             }
         });
@@ -2698,8 +2712,8 @@ public final class Develop extends javax.swing.JFrame {
         menuStep3.setMnemonic('2');
         menuStep3.setText(resourceMap.getString("menuStep3.text")); // NOI18N
         menuStep3.setName("menuStep3"); // NOI18N
-        menuStep3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuStep3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuStep3ActionPerformed(evt);
             }
         });
@@ -2710,8 +2724,8 @@ public final class Develop extends javax.swing.JFrame {
         menuStep4.setMnemonic('0');
         menuStep4.setText(resourceMap.getString("menuStep4.text")); // NOI18N
         menuStep4.setName("menuStep4"); // NOI18N
-        menuStep4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuStep4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuStep4ActionPerformed(evt);
             }
         });
@@ -2722,8 +2736,8 @@ public final class Develop extends javax.swing.JFrame {
         menuStep5.setMnemonic('5');
         menuStep5.setText(resourceMap.getString("menuStep5.text")); // NOI18N
         menuStep5.setName("menuStep5"); // NOI18N
-        menuStep5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuStep5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuStep5ActionPerformed(evt);
             }
         });
@@ -2735,8 +2749,8 @@ public final class Develop extends javax.swing.JFrame {
         menuClearBreakpoints.setMnemonic('B');
         menuClearBreakpoints.setText(resourceMap.getString("menuClearBreakpoints.text")); // NOI18N
         menuClearBreakpoints.setName("menuClearBreakpoints"); // NOI18N
-        menuClearBreakpoints.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuClearBreakpoints.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuClearBreakpointsActionPerformed(evt);
             }
         });
@@ -2754,8 +2768,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimView.setText(resourceMap.getString("menuSimView.text")); // NOI18N
         menuSimView.setIcon(resourceMap.getIcon("menuSimView.icon")); // NOI18N
         menuSimView.setName("menuSimView"); // NOI18N
-        menuSimView.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimViewActionPerformed(evt);
             }
         });
@@ -2766,8 +2780,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimWatcher.setText(resourceMap.getString("menuSimWatcher.text")); // NOI18N
         menuSimWatcher.setIcon(resourceMap.getIcon("menuSimWatcher.icon")); // NOI18N
         menuSimWatcher.setName("menuSimWatcher"); // NOI18N
-        menuSimWatcher.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimWatcher.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimWatcherActionPerformed(evt);
             }
         });
@@ -2777,8 +2791,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimControl.setText(resourceMap.getString("menuSimControl.text")); // NOI18N
         menuSimControl.setIcon(resourceMap.getIcon("menuSimControl.icon")); // NOI18N
         menuSimControl.setName("menuSimControl"); // NOI18N
-        menuSimControl.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimControl.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimControlActionPerformed(evt);
             }
         });
@@ -2794,8 +2808,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimIO.setMnemonic('R');
         menuSimIO.setText(resourceMap.getString("menuSimIO.text")); // NOI18N
         menuSimIO.setName("menuSimIO"); // NOI18N
-        menuSimIO.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimIO.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimIOActionPerformed(evt);
             }
         });
@@ -2812,8 +2826,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimLEDs.setText(resourceMap.getString("menuSimLEDs.text")); // NOI18N
         menuSimLEDs.setIcon(resourceMap.getIcon("menuSimLEDs.icon")); // NOI18N
         menuSimLEDs.setName("menuSimLEDs"); // NOI18N
-        menuSimLEDs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimLEDs.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimLEDsActionPerformed(evt);
             }
         });
@@ -2824,8 +2838,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimSwitches.setText(resourceMap.getString("menuSimSwitches.text")); // NOI18N
         menuSimSwitches.setIcon(resourceMap.getIcon("menuSimSwitches.icon")); // NOI18N
         menuSimSwitches.setName("menuSimSwitches"); // NOI18N
-        menuSimSwitches.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimSwitches.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimSwitchesActionPerformed(evt);
             }
         });
@@ -2836,8 +2850,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimSevenSegments.setText(resourceMap.getString("menuSimSevenSegments.text")); // NOI18N
         menuSimSevenSegments.setIcon(resourceMap.getIcon("menuSimSevenSegments.icon")); // NOI18N
         menuSimSevenSegments.setName("menuSimSevenSegments"); // NOI18N
-        menuSimSevenSegments.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimSevenSegments.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimSevenSegmentsActionPerformed(evt);
             }
         });
@@ -2848,8 +2862,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimUART.setText(resourceMap.getString("menuSimUART.text")); // NOI18N
         menuSimUART.setIcon(resourceMap.getIcon("menuSimUART.icon")); // NOI18N
         menuSimUART.setName("menuSimUART"); // NOI18N
-        menuSimUART.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimUART.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimUARTActionPerformed(evt);
             }
         });
@@ -2860,8 +2874,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimVGA.setText(resourceMap.getString("menuSimVGA.text")); // NOI18N
         menuSimVGA.setIcon(resourceMap.getIcon("menuSimVGA.icon")); // NOI18N
         menuSimVGA.setName("menuSimVGA"); // NOI18N
-        menuSimVGA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimVGA.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimVGAActionPerformed(evt);
             }
         });
@@ -2872,8 +2886,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimPLPID.setText(resourceMap.getString("menuSimPLPID.text")); // NOI18N
         menuSimPLPID.setIcon(resourceMap.getIcon("menuSimPLPID.icon")); // NOI18N
         menuSimPLPID.setName("menuSimPLPID"); // NOI18N
-        menuSimPLPID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimPLPID.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimPLPIDActionPerformed(evt);
             }
         });
@@ -2883,8 +2897,8 @@ public final class Develop extends javax.swing.JFrame {
         menuSimGPIO.setIcon(resourceMap.getIcon("menuSimGPIO.icon")); // NOI18N
         menuSimGPIO.setText(resourceMap.getString("menuSimGPIO.label")); // NOI18N
         menuSimGPIO.setName("menuSimGPIO"); // NOI18N
-        menuSimGPIO.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSimGPIO.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSimGPIOActionPerformed(evt);
             }
         });
@@ -2897,8 +2911,8 @@ public final class Develop extends javax.swing.JFrame {
 
         menuExitSim.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
         menuExitSim.setText(resourceMap.getString("menuExitSim.text")); // NOI18N
-        menuExitSim.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuExitSim.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuExitSimActionPerformed(evt);
             }
         });
@@ -2909,8 +2923,8 @@ public final class Develop extends javax.swing.JFrame {
         rootmenuHelp.setMnemonic('H');
         rootmenuHelp.setText(resourceMap.getString("rootmenuHelp.text")); // NOI18N
         rootmenuHelp.setName("rootmenuHelp"); // NOI18N
-        rootmenuHelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        rootmenuHelp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 rootmenuHelpActionPerformed(evt);
             }
         });
@@ -2919,8 +2933,8 @@ public final class Develop extends javax.swing.JFrame {
         menuQuickRef.setMnemonic('Q');
         menuQuickRef.setText(resourceMap.getString("menuQuickRef.text")); // NOI18N
         menuQuickRef.setName("menuQuickRef"); // NOI18N
-        menuQuickRef.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuQuickRef.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuQuickRefActionPerformed(evt);
             }
         });
@@ -2929,8 +2943,8 @@ public final class Develop extends javax.swing.JFrame {
         menuManual.setMnemonic('M');
         menuManual.setText(resourceMap.getString("menuManual.text")); // NOI18N
         menuManual.setName("menuManual"); // NOI18N
-        menuManual.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuManual.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuManualActionPerformed(evt);
             }
         });
@@ -2942,8 +2956,8 @@ public final class Develop extends javax.swing.JFrame {
         menuIssues.setMnemonic('R');
         menuIssues.setText(resourceMap.getString("menuIssues.text")); // NOI18N
         menuIssues.setName("menuIssues"); // NOI18N
-        menuIssues.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuIssues.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuIssuesActionPerformed(evt);
             }
         });
@@ -2952,8 +2966,8 @@ public final class Develop extends javax.swing.JFrame {
         menuIssuesPage.setMnemonic('I');
         menuIssuesPage.setText(resourceMap.getString("menuIssuesPage.text")); // NOI18N
         menuIssuesPage.setName("menuIssuesPage"); // NOI18N
-        menuIssuesPage.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuIssuesPage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuIssuesPageActionPerformed(evt);
             }
         });
@@ -2966,8 +2980,8 @@ public final class Develop extends javax.swing.JFrame {
         menuAbout.setMnemonic('A');
         menuAbout.setText(resourceMap.getString("menuAbout.text")); // NOI18N
         menuAbout.setName("menuAbout"); // NOI18N
-        menuAbout.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuAbout.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuAboutActionPerformed(evt);
             }
         });
@@ -2980,62 +2994,62 @@ public final class Develop extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
+    private void menuExitActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
         exit();
     }//GEN-LAST:event_menuExitActionPerformed
 
-    private void rootmenuHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuHelpActionPerformed
+    private void rootmenuHelpActionPerformed(ActionEvent evt) {//GEN-FIRST:event_rootmenuHelpActionPerformed
 
     }//GEN-LAST:event_rootmenuHelpActionPerformed
 
-    private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
+    private void menuOpenActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         openPLPFile();
     }//GEN-LAST:event_menuOpenActionPerformed
 
-    private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
+    private void menuNewActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
         newPLPFile();
         if(Config.devSyntaxHighlighting)
             syntaxHighlight();
     }//GEN-LAST:event_menuNewActionPerformed
 
-    private void menuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
+    private void menuAboutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
         about();
     }//GEN-LAST:event_menuAboutActionPerformed
 
-    private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
+    private void menuSaveActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
         if(plp.save() == Constants.PLP_FILE_USE_SAVE_AS)
             savePLPFileAs();
     }//GEN-LAST:event_menuSaveActionPerformed
 
-    private void menuAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
+    private void menuAssembleActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuAssembleActionPerformed1
         assemble();
     }//GEN-LAST:event_menuAssembleActionPerformed1
 
-    private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
+    private void menuSaveAsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
         savePLPFileAs();
     }//GEN-LAST:event_menuSaveAsActionPerformed
 
-    private void menuImportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuImportASMActionPerformed
+    private void menuImportASMActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuImportASMActionPerformed
         importASM();
     }//GEN-LAST:event_menuImportASMActionPerformed
 
-    private void menuDeleteASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteASMActionPerformed
+    private void menuDeleteASMActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuDeleteASMActionPerformed
         deleteASM();
     }//GEN-LAST:event_menuDeleteASMActionPerformed
 
-    private void rootmenuProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rootmenuProjectActionPerformed
+    private void rootmenuProjectActionPerformed(ActionEvent evt) {//GEN-FIRST:event_rootmenuProjectActionPerformed
     }//GEN-LAST:event_rootmenuProjectActionPerformed
 
-    private void menuSetMainProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
+    private void menuSetMainProgramActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSetMainProgramActionPerformed
         if(plp.getOpenAsm() != 0)
             plp.setMainAsm(plp.getOpenAsm());
     }//GEN-LAST:event_menuSetMainProgramActionPerformed
 
-    private void btnAssembleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
+    private void btnAssembleActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAssembleActionPerformed
         assemble();
     }//GEN-LAST:event_btnAssembleActionPerformed
 
-    private void menuExportASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExportASMActionPerformed
+    private void menuExportASMActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuExportASMActionPerformed
         exportASM();
     }//GEN-LAST:event_menuExportASMActionPerformed
 
@@ -3043,34 +3057,34 @@ public final class Develop extends javax.swing.JFrame {
         Msg.setOutput(txtOutput);
     }//GEN-LAST:event_formWindowGainedFocus
 
-    private void menuProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
+    private void menuProgramActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
         plp.g_prg.setVisible(true);
     }//GEN-LAST:event_menuProgramActionPerformed
 
-    private void menuNewASMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewASMActionPerformed
+    private void menuNewASMActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuNewASMActionPerformed
         plp.g_fname.setMode(false);
         plp.g_fname.setVisible(true);
     }//GEN-LAST:event_menuNewASMActionPerformed
 
-    private void menuCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCopyActionPerformed
+    private void menuCopyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuCopyActionPerformed
         txtEditor.copy();
     }//GEN-LAST:event_menuCopyActionPerformed
 
-    private void menuCutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCutActionPerformed
+    private void menuCutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuCutActionPerformed
         //undoManager.modify("delete", "", txtEditor.getSelectionStart(), txtEditor.getSelectionEnd(), txtEditor.getSelectionStart(), txtEditor.getText().length());
         txtEditor.cut();
     }//GEN-LAST:event_menuCutActionPerformed
 
-    private void menuPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPasteActionPerformed
+    private void menuPasteActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuPasteActionPerformed
         txtEditor.paste();
         Config.devSyntaxHighlightOnAssemble = true;
     }//GEN-LAST:event_menuPasteActionPerformed
 
-    private void menuUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUndoActionPerformed
+    private void menuUndoActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuUndoActionPerformed
         undo();
     }//GEN-LAST:event_menuUndoActionPerformed
 
-    private void menuRedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRedoActionPerformed
+    private void menuRedoActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuRedoActionPerformed
         redo();
     }//GEN-LAST:event_menuRedoActionPerformed
 
@@ -3146,15 +3160,15 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtEditorMousePressed
 
-    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+    private void btnNewActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         menuNewActionPerformed(evt);
     }//GEN-LAST:event_btnNewActionPerformed
 
-    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+    private void btnOpenActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
         menuOpenActionPerformed(evt);
     }//GEN-LAST:event_btnOpenActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+    private void btnSaveActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         menuSaveActionPerformed(evt);
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -3173,7 +3187,7 @@ public final class Develop extends javax.swing.JFrame {
         } else if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             modified = true;
-        } else if (evt.getKeyCode() == VK_DELETE || evt.getKeyCode() == VK_BACK_SPACE) {
+        } else if (evt.getKeyCode() == VK_DELETE || evt.getKeyCode() == VK_BACK_SPACE) { 
             modified = true;
         } else if ((int)evt.getKeyChar() == 127) {
             //deleteOccured = true;
@@ -3218,20 +3232,20 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtEditorKeyTyped
 
-    private void menuQuickProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuickProgramActionPerformed
+    private void menuQuickProgramActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuQuickProgramActionPerformed
         plp.g_prg.program();
         plp.g_prg.setVisible(true);
     }//GEN-LAST:event_menuQuickProgramActionPerformed
 
-    private void btnProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProgramActionPerformed
+    private void btnProgramActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnProgramActionPerformed
         menuProgramActionPerformed(null);
     }//GEN-LAST:event_btnProgramActionPerformed
 
-    private void menuQuickRefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuickRefActionPerformed
+    private void menuQuickRefActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuQuickRefActionPerformed
         plp.showQuickRef();
     }//GEN-LAST:event_menuQuickRefActionPerformed
 
-    private void menuManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuManualActionPerformed
+    private void menuManualActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuManualActionPerformed
         Desktop desktop = Desktop.getDesktop();
         if(desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
@@ -3241,7 +3255,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuManualActionPerformed
 
-    private void menuIssuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuIssuesActionPerformed
+    private void menuIssuesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuIssuesActionPerformed
         Desktop desktop = Desktop.getDesktop();
         if(desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
@@ -3251,7 +3265,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuIssuesActionPerformed
 
-    private void menuIssuesPageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuIssuesPageActionPerformed
+    private void menuIssuesPageActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuIssuesPageActionPerformed
         Desktop desktop = Desktop.getDesktop();
         if(desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
@@ -3261,13 +3275,13 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuIssuesPageActionPerformed
 
-    private void menuFindAndReplaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFindAndReplaceActionPerformed
+    private void menuFindAndReplaceActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuFindAndReplaceActionPerformed
         plp.g_find.setCurIndex(this.txtEditor.getCaretPosition());
         plp.g_find.setVisible(false);
         plp.g_find.setVisible(true);
     }//GEN-LAST:event_menuFindAndReplaceActionPerformed
 
-    private void menuOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOptionsActionPerformed
+    private void menuOptionsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuOptionsActionPerformed
         if(!plp.isSimulating())
             plp.g_opts.getTabs().setSelectedIndex(0);
         else
@@ -3277,7 +3291,7 @@ public final class Develop extends javax.swing.JFrame {
         plp.g_opts.setVisible(true);
     }//GEN-LAST:event_menuOptionsActionPerformed
 
-    private void menuSerialTerminalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSerialTerminalActionPerformed
+    private void menuSerialTerminalActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSerialTerminalActionPerformed
         if(plp.term == null)
             plp.term = new SerialTerminal(false);
 
@@ -3285,7 +3299,7 @@ public final class Develop extends javax.swing.JFrame {
         plp.term.setVisible(true);
     }//GEN-LAST:event_menuSerialTerminalActionPerformed
 
-    private void menuPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPrintActionPerformed
+    private void menuPrintActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuPrintActionPerformed
         try {
             txtEditor.print();
         } catch(Exception e) {
@@ -3293,17 +3307,17 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuPrintActionPerformed
 
-    private void menuSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimStepActionPerformed
+    private void menuSimStepActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimStepActionPerformed
         simStep();
     }//GEN-LAST:event_menuSimStepActionPerformed
 
-    private void menuExitSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitSimActionPerformed
+    private void menuExitSimActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuExitSimActionPerformed
         simEnd();
         //plp.refreshProjectView(false);
         safeRefresh(false);
     }//GEN-LAST:event_menuExitSimActionPerformed
 
-    private void menuSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimRunActionPerformed
+    private void menuSimRunActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimRunActionPerformed
         if(menuSimRun.isSelected()) {
             plp.runSimulation();
         } else {
@@ -3311,7 +3325,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimRunActionPerformed
 
-    private void menuSimIOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimIOActionPerformed
+    private void menuSimIOActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimIOActionPerformed
         if(menuSimIO.isSelected()) {
             if(plp.g_ioreg == null) {
                 plp.g_ioreg = new IORegistryFrame(plp);
@@ -3325,7 +3339,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimIOActionPerformed
 
-    private void menuSimWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimWatcherActionPerformed
+    private void menuSimWatcherActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimWatcherActionPerformed
         btnWatcher.setSelected(menuSimWatcher.isSelected());
 
         if(menuSimWatcher.isSelected()) {
@@ -3343,7 +3357,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimWatcherActionPerformed
 
-    private void menuSimViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimViewActionPerformed
+    private void menuSimViewActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimViewActionPerformed
         btnCPU.setSelected(menuSimView.isSelected());
 
         if(!plp.getArch().hasSimCoreGUI())
@@ -3356,35 +3370,35 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimViewActionPerformed
 
-    private void menuSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimResetActionPerformed
+    private void menuSimResetActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimResetActionPerformed
         simReset();
     }//GEN-LAST:event_menuSimResetActionPerformed
 
-    private void menuSimLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimLEDsActionPerformed
+    private void menuSimLEDsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimLEDsActionPerformed
         setLEDsFrame(menuSimLEDs.isSelected());
     }//GEN-LAST:event_menuSimLEDsActionPerformed
 
-    private void menuSimSwitchesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimSwitchesActionPerformed
+    private void menuSimSwitchesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimSwitchesActionPerformed
         setSwitchesFrame(menuSimSwitches.isSelected());
     }//GEN-LAST:event_menuSimSwitchesActionPerformed
 
-    private void menuSimSevenSegmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimSevenSegmentsActionPerformed
+    private void menuSimSevenSegmentsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimSevenSegmentsActionPerformed
         setSevenSegmentsFrame(menuSimSevenSegments.isSelected());
     }//GEN-LAST:event_menuSimSevenSegmentsActionPerformed
 
-    private void menuSimUARTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimUARTActionPerformed
+    private void menuSimUARTActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimUARTActionPerformed
         setUARTFrame(menuSimUART.isSelected());
     }//GEN-LAST:event_menuSimUARTActionPerformed
 
-    private void menuSimVGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimVGAActionPerformed
+    private void menuSimVGAActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimVGAActionPerformed
         setVGAFrame(menuSimVGA.isSelected());
     }//GEN-LAST:event_menuSimVGAActionPerformed
 
-    private void menuSimPLPIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimPLPIDActionPerformed
+    private void menuSimPLPIDActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimPLPIDActionPerformed
         setPLPIDFrame(menuSimPLPID.isSelected());
     }//GEN-LAST:event_menuSimPLPIDActionPerformed
 
-    private void btnSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
+    private void btnSimulateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimulateActionPerformed
         if(btnSimulate.isSelected()) {
             simBegin();
         } else {
@@ -3394,7 +3408,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSimulateActionPerformed
 
-    private void btnSimRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimRunActionPerformed
+    private void btnSimRunActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimRunActionPerformed
         if(btnSimRun.isSelected()) {
             plp.runSimulation();
         } else {
@@ -3402,36 +3416,36 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSimRunActionPerformed
 
-    private void btnSimStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimStepActionPerformed
+    private void btnSimStepActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimStepActionPerformed
         simStep();
     }//GEN-LAST:event_btnSimStepActionPerformed
 
-    private void btnSimResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimResetActionPerformed
+    private void btnSimResetActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimResetActionPerformed
         simReset();
     }//GEN-LAST:event_btnSimResetActionPerformed
 
-    private void menuStep1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep1ActionPerformed
+    private void menuStep1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuStep1ActionPerformed
         if(menuStep1.isSelected()) {
             Config.simCyclesPerStep = 1;
             updateComponents();
         }
     }//GEN-LAST:event_menuStep1ActionPerformed
 
-    private void menuStep2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep2ActionPerformed
+    private void menuStep2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuStep2ActionPerformed
         if(menuStep2.isSelected()) {
             Config.simCyclesPerStep = 5;
             updateComponents();
         }
     }//GEN-LAST:event_menuStep2ActionPerformed
 
-    private void menuStep3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep3ActionPerformed
+    private void menuStep3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuStep3ActionPerformed
         if(menuStep3.isSelected()) {
             Config.simCyclesPerStep = 20;
             updateComponents();
         }
     }//GEN-LAST:event_menuStep3ActionPerformed
 
-    private void menuStep4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep4ActionPerformed
+    private void menuStep4ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuStep4ActionPerformed
         if(menuStep4.isSelected()) {
             Config.simCyclesPerStep = 100;
             updateComponents();
@@ -3439,51 +3453,51 @@ public final class Develop extends javax.swing.JFrame {
 
     }//GEN-LAST:event_menuStep4ActionPerformed
 
-    private void menuStep5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStep5ActionPerformed
+    private void menuStep5ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuStep5ActionPerformed
         if(menuStep5.isSelected()) {
             Config.simCyclesPerStep = 5000;
             updateComponents();
         }
     }//GEN-LAST:event_menuStep5ActionPerformed
 
-    private void menuClearBreakpointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClearBreakpointsActionPerformed
+    private void menuClearBreakpointsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuClearBreakpointsActionPerformed
         clearBreakpoints();
     }//GEN-LAST:event_menuClearBreakpointsActionPerformed
 
-    private void menuToolbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuToolbarActionPerformed
+    private void menuToolbarActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuToolbarActionPerformed
         toolbar.setVisible(menuToolbar.isSelected());
     }//GEN-LAST:event_menuToolbarActionPerformed
 
-    private void btnSimLEDsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimLEDsActionPerformed
+    private void btnSimLEDsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimLEDsActionPerformed
         setLEDsFrame(btnSimLEDs.isSelected());
     }//GEN-LAST:event_btnSimLEDsActionPerformed
 
-    private void btnSimSwitchesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimSwitchesActionPerformed
+    private void btnSimSwitchesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimSwitchesActionPerformed
         setSwitchesFrame(btnSimSwitches.isSelected());
     }//GEN-LAST:event_btnSimSwitchesActionPerformed
 
-    private void btnSimSevenSegmentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimSevenSegmentsActionPerformed
+    private void btnSimSevenSegmentsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimSevenSegmentsActionPerformed
         setSevenSegmentsFrame(btnSimSevenSegments.isSelected());
     }//GEN-LAST:event_btnSimSevenSegmentsActionPerformed
 
-    private void btnSimUARTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimUARTActionPerformed
+    private void btnSimUARTActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimUARTActionPerformed
         setUARTFrame(btnSimUART.isSelected());
     }//GEN-LAST:event_btnSimUARTActionPerformed
 
-    private void btnSimVGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimVGAActionPerformed
+    private void btnSimVGAActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimVGAActionPerformed
         setVGAFrame(btnSimVGA.isSelected());
     }//GEN-LAST:event_btnSimVGAActionPerformed
 
-    private void btnSimPLPIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimPLPIDActionPerformed
+    private void btnSimPLPIDActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimPLPIDActionPerformed
         setPLPIDFrame(btnSimPLPID.isSelected());
     }//GEN-LAST:event_btnSimPLPIDActionPerformed
 
-    private void menuSimControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimControlActionPerformed
+    private void menuSimControlActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimControlActionPerformed
         plp.g_simctrl.setVisible(menuSimControl.isSelected());
         btnSimControl.setSelected(menuSimControl.isSelected());
     }//GEN-LAST:event_menuSimControlActionPerformed
 
-    private void btnWatcherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWatcherActionPerformed
+    private void btnWatcherActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnWatcherActionPerformed
         menuSimWatcher.setSelected(btnWatcher.isSelected());
 
         if(btnWatcher.isSelected()) {
@@ -3501,7 +3515,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnWatcherActionPerformed
 
-    private void btnCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCPUActionPerformed
+    private void btnCPUActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCPUActionPerformed
         menuSimView.setSelected(btnCPU.isSelected());
 
         if(!plp.getArch().hasSimCoreGUI())
@@ -3514,7 +3528,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnCPUActionPerformed
 
-    private void menuSimAsmViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimAsmViewActionPerformed
+    private void menuSimAsmViewActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimAsmViewActionPerformed
         if(plp.getArch().getID() != 0)
             plp.getArch().listing();
         else {
@@ -3529,7 +3543,7 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimAsmViewActionPerformed
 
-    private void menuProjectPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProjectPaneActionPerformed
+    private void menuProjectPaneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuProjectPaneActionPerformed
         boolean v;
         
         if(v = menuProjectPane.isSelected()) {
@@ -3543,7 +3557,7 @@ public final class Develop extends javax.swing.JFrame {
         splitterH.setEnabled(v);
     }//GEN-LAST:event_menuProjectPaneActionPerformed
 
-    private void menuOutputPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOutputPaneActionPerformed
+    private void menuOutputPaneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuOutputPaneActionPerformed
         boolean v;
 
         if(v = menuOutputPane.isSelected()) {
@@ -3557,7 +3571,7 @@ public final class Develop extends javax.swing.JFrame {
         splitterV.setEnabled(v);
     }//GEN-LAST:event_menuOutputPaneActionPerformed
 
-    private void menuNumberConverterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNumberConverterActionPerformed
+    private void menuNumberConverterActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuNumberConverterActionPerformed
         if(plp.nconv == null)
                 plp.nconv = new NumberConverter(false);
 
@@ -3565,7 +3579,7 @@ public final class Develop extends javax.swing.JFrame {
         plp.nconv.setVisible(true);
     }//GEN-LAST:event_menuNumberConverterActionPerformed
 
-    private void menuSimulateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
+    private void menuSimulateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
         if(menuSimulate.isSelected()) {
             simBegin();
         } else {
@@ -3575,20 +3589,20 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSimulateActionPerformed
 
-    private void menuClearOutputPaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClearOutputPaneActionPerformed
+    private void menuClearOutputPaneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuClearOutputPaneActionPerformed
         txtOutput.setText("");
     }//GEN-LAST:event_menuClearOutputPaneActionPerformed
 
-    private void btnSimControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimControlActionPerformed
+    private void btnSimControlActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimControlActionPerformed
         plp.g_simctrl.setVisible(btnSimControl.isSelected());
         menuSimControl.setSelected(btnSimControl.isSelected());
     }//GEN-LAST:event_btnSimControlActionPerformed
 
-    private void menuDynamicModuleManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDynamicModuleManagerActionPerformed
+    private void menuDynamicModuleManagerActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuDynamicModuleManagerActionPerformed
         (new DynamicModuleManager(this, true, plp)).setVisible(true);
     }//GEN-LAST:event_menuDynamicModuleManagerActionPerformed
 
-    private void menuLoadModuleJarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLoadModuleJarActionPerformed
+    private void menuLoadModuleJarActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuLoadModuleJarActionPerformed
         final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
         fc.setAcceptAllFileFilterUsed(true);
         fc.setCurrentDirectory(new File(plp.curdir));
@@ -3609,15 +3623,15 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuLoadModuleJarActionPerformed
 
-    private void btnSimGPIOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimGPIOActionPerformed
+    private void btnSimGPIOActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSimGPIOActionPerformed
         setGPIOFrame(btnSimGPIO.isSelected());
     }//GEN-LAST:event_btnSimGPIOActionPerformed
 
-    private void menuSimGPIOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSimGPIOActionPerformed
+    private void menuSimGPIOActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimGPIOActionPerformed
         setGPIOFrame(menuSimGPIO.isSelected());
     }//GEN-LAST:event_menuSimGPIOActionPerformed
 
-    private void menuRemoveAutoloadDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRemoveAutoloadDirActionPerformed
+    private void menuRemoveAutoloadDirActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuRemoveAutoloadDirActionPerformed
         int ret = JOptionPane.showConfirmDialog(this, "WARNING! This will remove all saved modules. Are you sure?",
                 "Clear Module Auto-load Cache", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if(ret == JOptionPane.YES_OPTION) {
@@ -3625,226 +3639,226 @@ public final class Develop extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuRemoveAutoloadDirActionPerformed
 
-    private void menuModuleManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuModuleManagerActionPerformed
+    private void menuModuleManagerActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuModuleManagerActionPerformed
         (new ModuleManager(this, true, plp)).setVisible(true);
     }//GEN-LAST:event_menuModuleManagerActionPerformed
 
-    private void menuSetNewProjectISAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetNewProjectISAActionPerformed
+    private void menuSetNewProjectISAActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSetNewProjectISAActionPerformed
         plp.g_isaselect.setLocationRelativeTo(this);
         plp.g_isaselect.populateISASelector();
         plp.g_isaselect.setVisible(true);
     }//GEN-LAST:event_menuSetNewProjectISAActionPerformed
 
     private void initPopupMenus() {
-        popupmenuNewASM = new javax.swing.JMenuItem();
+        popupmenuNewASM = new JMenuItem();
         popupmenuNewASM.setText("New ASM file..."); // NOI18N
-        popupmenuNewASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        popupmenuNewASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuNewASMActionPerformed(evt);
             }
         });
 
-        popupmenuImportASM = new javax.swing.JMenuItem();
+        popupmenuImportASM = new JMenuItem();
         popupmenuImportASM.setText("Import ASM file..."); // NOI18N
-        popupmenuImportASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        popupmenuImportASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuImportASMActionPerformed(evt);
             }
         });
 
-        popupmenuExportASM = new javax.swing.JMenuItem();
+        popupmenuExportASM = new JMenuItem();
         popupmenuExportASM.setText("Export selected ASM file..."); // NOI18N
-        popupmenuExportASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        popupmenuExportASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuExportASMActionPerformed(evt);
             }
         });
 
-        popupmenuDeleteASM = new javax.swing.JMenuItem();
+        popupmenuDeleteASM = new JMenuItem();
         popupmenuDeleteASM.setText("Remove selected ASM file"); // NOI18N
-        popupmenuDeleteASM.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        popupmenuDeleteASM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuDeleteASMActionPerformed(evt);
             }
         });
 
-        popupProject = new javax.swing.JPopupMenu();
+        popupProject = new JPopupMenu();
         popupProject.add(popupmenuNewASM);
         popupProject.add(popupmenuImportASM);
         popupProject.add(popupmenuExportASM);
         popupProject.add(popupmenuDeleteASM);
 
 
-        popupmenuCopy = new javax.swing.JMenuItem();
+        popupmenuCopy = new JMenuItem();
         popupmenuCopy.setText("Copy"); // NOI18N
-        popupmenuCopy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        popupmenuCopy.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuCopyActionPerformed(evt);
             }
         });
 
-        popupmenuCut = new javax.swing.JMenuItem();
+        popupmenuCut = new JMenuItem();
         popupmenuCut.setText("Cut"); // NOI18N
-        popupmenuCut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        popupmenuCut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuCutActionPerformed(evt);
             }
         });
 
-        popupmenuPaste = new javax.swing.JMenuItem();
+        popupmenuPaste = new JMenuItem();
         popupmenuPaste.setText("Paste"); // NOI18N
-        popupmenuPaste.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        popupmenuPaste.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuPasteActionPerformed(evt);
             }
         });
 
-        popupEdit = new javax.swing.JPopupMenu();
+        popupEdit = new JPopupMenu();
         popupEdit.add(popupmenuCopy);
         popupEdit.add(popupmenuCut);
         popupEdit.add(popupmenuPaste);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAssemble;
-    private javax.swing.JToggleButton btnCPU;
-    private javax.swing.JButton btnNew;
-    private javax.swing.JButton btnOpen;
-    private javax.swing.JButton btnProgram;
-    private javax.swing.JButton btnSave;
-    private javax.swing.JToggleButton btnSimControl;
-    private javax.swing.JToggleButton btnSimGPIO;
-    private javax.swing.JToggleButton btnSimLEDs;
-    private javax.swing.JToggleButton btnSimPLPID;
-    private javax.swing.JButton btnSimReset;
-    private javax.swing.JToggleButton btnSimRun;
-    private javax.swing.JToggleButton btnSimSevenSegments;
-    private javax.swing.JButton btnSimStep;
-    private javax.swing.JToggleButton btnSimSwitches;
-    private javax.swing.JToggleButton btnSimUART;
-    private javax.swing.JToggleButton btnSimVGA;
-    private javax.swing.JToggleButton btnSimulate;
-    private javax.swing.JToggleButton btnWatcher;
-    private javax.swing.JPanel devMainPane;
+    private JButton btnAssemble;
+    private JToggleButton btnCPU;
+    private JButton btnNew;
+    private JButton btnOpen;
+    private JButton btnProgram;
+    private JButton btnSave;
+    private JToggleButton btnSimControl;
+    private JToggleButton btnSimGPIO;
+    private JToggleButton btnSimLEDs;
+    private JToggleButton btnSimPLPID;
+    private JButton btnSimReset;
+    private JToggleButton btnSimRun;
+    private JToggleButton btnSimSevenSegments;
+    private JButton btnSimStep;
+    private JToggleButton btnSimSwitches;
+    private JToggleButton btnSimUART;
+    private JToggleButton btnSimVGA;
+    private JToggleButton btnSimulate;
+    private JToggleButton btnWatcher;
+    private JPanel devMainPane;
     private javax.swing.ButtonGroup grpSteps;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator10;
-    private javax.swing.JPopupMenu.Separator jSeparator11;
-    private javax.swing.JPopupMenu.Separator jSeparator12;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JPopupMenu.Separator jSeparator3;
-    private javax.swing.JToolBar.Separator jSeparator4;
-    private javax.swing.JPopupMenu.Separator jSeparator5;
-    private javax.swing.JPopupMenu.Separator jSeparator6;
-    private javax.swing.JPopupMenu.Separator jSeparator7;
-    private javax.swing.JPopupMenu.Separator jSeparator8;
-    private javax.swing.JPopupMenu.Separator jSeparator9;
+    private JMenu jMenu1;
+    private JMenuBar jMenuBar1;
+    private JPanel jPanel1;
+    private JScrollPane jScrollPane1;
+    private JScrollPane jScrollPane2;
+    private JPopupMenu.Separator jSeparator1;
+    private JPopupMenu.Separator jSeparator10;
+    private JPopupMenu.Separator jSeparator11;
+    private JPopupMenu.Separator jSeparator12;
+    private JPopupMenu.Separator jSeparator2;
+    private JPopupMenu.Separator jSeparator3;
+    private JToolBar.Separator jSeparator4;
+    private JPopupMenu.Separator jSeparator5;
+    private JPopupMenu.Separator jSeparator6;
+    private JPopupMenu.Separator jSeparator7;
+    private JPopupMenu.Separator jSeparator8;
+    private JPopupMenu.Separator jSeparator9;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JLabel lblSimStat;
-    private javax.swing.JMenuItem menuAbout;
-    private javax.swing.JMenuItem menuAssemble;
-    private javax.swing.JMenuItem menuClearBreakpoints;
-    private javax.swing.JMenuItem menuClearOutputPane;
-    private javax.swing.JMenuItem menuCopy;
-    private javax.swing.JMenuItem menuCut;
-    private javax.swing.JMenuItem menuDeleteASM;
-    private javax.swing.JMenuItem menuDynamicModuleManager;
-    private javax.swing.JMenuItem menuExit;
-    private javax.swing.JMenuItem menuExitSim;
-    private javax.swing.JMenuItem menuExportASM;
-    private javax.swing.JMenuItem menuFindAndReplace;
-    private javax.swing.JMenu menuIOReg;
-    private javax.swing.JMenuItem menuImportASM;
-    private javax.swing.JMenuItem menuIssues;
-    private javax.swing.JMenuItem menuIssuesPage;
-    private javax.swing.JMenuItem menuLoadModuleJar;
-    private javax.swing.JMenuItem menuManual;
-    private javax.swing.JMenuItem menuModuleManager;
-    private javax.swing.JMenu menuModules;
-    private javax.swing.JMenuItem menuNew;
-    private javax.swing.JMenuItem menuNewASM;
-    private javax.swing.JMenuItem menuNumberConverter;
-    private javax.swing.JMenuItem menuOpen;
-    private javax.swing.JMenu menuOpenRecentProject;
-    private javax.swing.JMenuItem menuOptions;
-    private javax.swing.JCheckBoxMenuItem menuOutputPane;
-    private javax.swing.JMenuItem menuPaste;
-    private javax.swing.JMenuItem menuPrint;
-    private javax.swing.JMenuItem menuProgram;
-    private javax.swing.JCheckBoxMenuItem menuProjectPane;
-    private javax.swing.JMenuItem menuQuickProgram;
-    private javax.swing.JMenuItem menuQuickRef;
-    private javax.swing.JMenuItem menuRedo;
-    private javax.swing.JMenuItem menuRemoveAutoloadDir;
-    private javax.swing.JMenuItem menuSave;
-    private javax.swing.JMenuItem menuSaveAs;
-    private javax.swing.JPopupMenu.Separator menuSeparator1;
-    private javax.swing.JPopupMenu.Separator menuSeparator3;
-    private javax.swing.JPopupMenu.Separator menuSeparator4;
-    private javax.swing.JPopupMenu.Separator menuSeparator5;
-    private javax.swing.JMenuItem menuSerialTerminal;
-    private javax.swing.JMenuItem menuSetMainProgram;
-    private javax.swing.JMenuItem menuSetNewProjectISA;
-    private javax.swing.JMenuItem menuSimAsmView;
-    private javax.swing.JCheckBoxMenuItem menuSimControl;
-    private javax.swing.JCheckBoxMenuItem menuSimGPIO;
-    private javax.swing.JCheckBoxMenuItem menuSimIO;
-    private javax.swing.JCheckBoxMenuItem menuSimLEDs;
-    private javax.swing.JCheckBoxMenuItem menuSimPLPID;
-    private javax.swing.JMenuItem menuSimReset;
-    private javax.swing.JCheckBoxMenuItem menuSimRun;
-    private javax.swing.JCheckBoxMenuItem menuSimSevenSegments;
-    private javax.swing.JMenuItem menuSimStep;
-    private javax.swing.JCheckBoxMenuItem menuSimSwitches;
-    private javax.swing.JMenu menuSimTools;
-    private javax.swing.JCheckBoxMenuItem menuSimUART;
-    private javax.swing.JCheckBoxMenuItem menuSimVGA;
-    private javax.swing.JCheckBoxMenuItem menuSimView;
-    private javax.swing.JCheckBoxMenuItem menuSimWatcher;
-    private javax.swing.JCheckBoxMenuItem menuSimulate;
-    private javax.swing.JRadioButtonMenuItem menuStep1;
-    private javax.swing.JRadioButtonMenuItem menuStep2;
-    private javax.swing.JRadioButtonMenuItem menuStep3;
-    private javax.swing.JRadioButtonMenuItem menuStep4;
-    private javax.swing.JRadioButtonMenuItem menuStep5;
-    private javax.swing.JMenu menuStepSize;
-    private javax.swing.JCheckBoxMenuItem menuToolbar;
-    private javax.swing.JMenuItem menuUndo;
-    private javax.swing.JMenu rootmenuEdit;
-    private javax.swing.JMenu rootmenuFile;
-    private javax.swing.JMenu rootmenuHelp;
-    private javax.swing.JMenu rootmenuProject;
-    private javax.swing.JMenu rootmenuSim;
-    private javax.swing.JMenu rootmenuTools;
-    private javax.swing.JMenu rootmenuView;
-    private javax.swing.JScrollPane scroller;
-    private javax.swing.JToolBar.Separator separatorSim;
-    private javax.swing.JToolBar.Separator separatorSimControl;
-    private javax.swing.JSplitPane splitterH;
-    private javax.swing.JSplitPane splitterV;
-    private javax.swing.JToolBar toolbar;
+    private JMenuItem menuAbout;
+    private JMenuItem menuAssemble;
+    private JMenuItem menuClearBreakpoints;
+    private JMenuItem menuClearOutputPane;
+    private JMenuItem menuCopy;
+    private JMenuItem menuCut;
+    private JMenuItem menuDeleteASM;
+    private JMenuItem menuDynamicModuleManager;
+    private JMenuItem menuExit;
+    private JMenuItem menuExitSim;
+    private JMenuItem menuExportASM;
+    private JMenuItem menuFindAndReplace;
+    private JMenu menuIOReg;
+    private JMenuItem menuImportASM;
+    private JMenuItem menuIssues;
+    private JMenuItem menuIssuesPage;
+    private JMenuItem menuLoadModuleJar;
+    private JMenuItem menuManual;
+    private JMenuItem menuModuleManager;
+    private JMenu menuModules;
+    private JMenuItem menuNew;
+    private JMenuItem menuNewASM;
+    private JMenuItem menuNumberConverter;
+    private JMenuItem menuOpen;
+    private JMenu menuOpenRecentProject;
+    private JMenuItem menuOptions;
+    private JCheckBoxMenuItem menuOutputPane;
+    private JMenuItem menuPaste;
+    private JMenuItem menuPrint;
+    private JMenuItem menuProgram;
+    private JCheckBoxMenuItem menuProjectPane;
+    private JMenuItem menuQuickProgram;
+    private JMenuItem menuQuickRef;
+    private JMenuItem menuRedo;
+    private JMenuItem menuRemoveAutoloadDir;
+    private JMenuItem menuSave;
+    private JMenuItem menuSaveAs;
+    private JPopupMenu.Separator menuSeparator1;
+    private JPopupMenu.Separator menuSeparator3;
+    private JPopupMenu.Separator menuSeparator4;
+    private JPopupMenu.Separator menuSeparator5;
+    private JMenuItem menuSerialTerminal;
+    private JMenuItem menuSetMainProgram;
+    private JMenuItem menuSetNewProjectISA;
+    private JMenuItem menuSimAsmView;
+    private JCheckBoxMenuItem menuSimControl;
+    private JCheckBoxMenuItem menuSimGPIO;
+    private JCheckBoxMenuItem menuSimIO;
+    private JCheckBoxMenuItem menuSimLEDs;
+    private JCheckBoxMenuItem menuSimPLPID;
+    private JMenuItem menuSimReset;
+    private JCheckBoxMenuItem menuSimRun;
+    private JCheckBoxMenuItem menuSimSevenSegments;
+    private JMenuItem menuSimStep;
+    private JCheckBoxMenuItem menuSimSwitches;
+    private JMenu menuSimTools;
+    private JCheckBoxMenuItem menuSimUART;
+    private JCheckBoxMenuItem menuSimVGA;
+    private JCheckBoxMenuItem menuSimView;
+    private JCheckBoxMenuItem menuSimWatcher;
+    private JCheckBoxMenuItem menuSimulate;
+    private JRadioButtonMenuItem menuStep1;
+    private JRadioButtonMenuItem menuStep2;
+    private JRadioButtonMenuItem menuStep3;
+    private JRadioButtonMenuItem menuStep4;
+    private JRadioButtonMenuItem menuStep5;
+    private JMenu menuStepSize;
+    private JCheckBoxMenuItem menuToolbar;
+    private JMenuItem menuUndo;
+    private JMenu rootmenuEdit;
+    private JMenu rootmenuFile;
+    private JMenu rootmenuHelp;
+    private JMenu rootmenuProject;
+    private JMenu rootmenuSim;
+    private JMenu rootmenuTools;
+    private JMenu rootmenuView;
+    private JScrollPane scroller;
+    private JToolBar.Separator separatorSim;
+    private JToolBar.Separator separatorSimControl;
+    private JSplitPane splitterH;
+    private JSplitPane splitterV;
+    private JToolBar toolbar;
     private javax.swing.JTree treeProject;
     private javax.swing.JLabel txtCurFile;
-    private javax.swing.JTextPane txtEditor;
-    private javax.swing.JTextPane txtOutput;
+    private JTextPane txtEditor;
+    private JTextPane txtOutput;
     // End of variables declaration//GEN-END:variables
 
     //popup menu items
-    private javax.swing.JMenuItem popupmenuDeleteASM;
-    private javax.swing.JMenuItem popupmenuExportASM;
-    private javax.swing.JMenuItem popupmenuImportASM;
-    private javax.swing.JMenuItem popupmenuNewASM;
+    private JMenuItem popupmenuDeleteASM;
+    private JMenuItem popupmenuExportASM;
+    private JMenuItem popupmenuImportASM;
+    private JMenuItem popupmenuNewASM;
 
-    private javax.swing.JMenuItem popupmenuCopy;
-    private javax.swing.JMenuItem popupmenuCut;
-    private javax.swing.JMenuItem popupmenuPaste;
+    private JMenuItem popupmenuCopy;
+    private JMenuItem popupmenuCut;
+    private JMenuItem popupmenuPaste;
 
-    private javax.swing.JPopupMenu popupEdit;
+    private JPopupMenu popupEdit;
 
     @Override
     public String toString() {
