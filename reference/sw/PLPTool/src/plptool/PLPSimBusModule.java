@@ -123,13 +123,13 @@ public abstract class PLPSimBusModule extends Thread {
      */
     public synchronized final int writeReg(long addr, Object data, boolean isInstr) {
         if(addr > endAddr || addr < startAddr)
-            return Msg.E("write(" + String.format("0x%08x", addr) + "): Address is out of range.",
+            return Msg.error("write(" + String.format("0x%08x", addr) + "): Address is out of range.",
                             Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
         else if(wordAligned && addr % 4 != 0)
-            return Msg.E("write(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
+            return Msg.error("write(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             Constants.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
         else if(!enabled)
-            return Msg.E("write(" + String.format("0x%08x", addr) + "): Module is disabled.",
+            return Msg.error("write(" + String.format("0x%08x", addr) + "): Module is disabled.",
                             Constants.PLP_SIM_MODULE_DISABLED, this);
         else {
             if(values.containsKey(addr)) {
@@ -151,12 +151,12 @@ public abstract class PLPSimBusModule extends Thread {
      */
     public synchronized final Object readReg(long addr) {
         if(addr > endAddr || addr < startAddr) {
-            Msg.E("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
+            Msg.error("read(" + String.format("0x%08x", addr) + "): Address is out of range.",
                      Constants.PLP_SIM_OUT_ADDRESS_OUT_OF_RANGE, this);
             return null;
         }
         else if (wordAligned && addr % 4 != 0) {
-            Msg.E("read(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
+            Msg.error("read(" + String.format("0x%08x", addr) + "): Requested address is unaligned.",
                             Constants.PLP_SIM_OUT_UNALIGNED_MEMORY, this);
             return null;
         }
@@ -164,7 +164,7 @@ public abstract class PLPSimBusModule extends Thread {
             if(Config.simBusReturnsZeroForUninitRegs) {
                 return 0L;
             }
-            Msg.E("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
+            Msg.error("read(" + String.format("0x%08x", addr) + "): Address is not initialized.",
                              Constants.PLP_SIM_UNINITIALIZED_MEMORY, this);
             return null;
         }

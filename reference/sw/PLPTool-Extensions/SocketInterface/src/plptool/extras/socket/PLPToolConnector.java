@@ -54,7 +54,7 @@ public class PLPToolConnector implements ModuleInterface5 {
             try {
                 port = Integer.parseInt(attr);
             } catch (NumberFormatException nfe) {
-                Msg.W("SocketInterface: Failed to parse port '" + attr + "', reverting to default port 12800", null);
+                Msg.warning("SocketInterface: Failed to parse port '" + attr + "', reverting to default port 12800", null);
                 port = 12800;
             }
         }

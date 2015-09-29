@@ -47,7 +47,7 @@ public class SocketInterface {
         try {
             serverSocket = new ServerSocket(port);
         } catch(IOException ioe) {
-            Msg.E("SocketInterface: failed to open socket for port " + port,
+            Msg.error("SocketInterface: failed to open socket for port " + port,
                     Constants.PLP_GENERAL_IO_ERROR, null);
         }
 

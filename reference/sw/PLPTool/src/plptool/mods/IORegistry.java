@@ -407,7 +407,7 @@ public class IORegistry {
             /** DO NOT EDIT ANYTHING BELOW THIS **/
 
             default:
-                return Msg.E("attachModuleToBus(): invalid module ID.",
+                return Msg.error("attachModuleToBus(): invalid module ID.",
                                 Constants.PLP_SIM_INVALID_MODULE, this);
         }
 
@@ -479,7 +479,7 @@ public class IORegistry {
      */
     public PLPSimBusModule getModule(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getModule: invalid index:" + index,
+            Msg.error("getModule: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return null;
         }
@@ -493,7 +493,7 @@ public class IORegistry {
      */
     public int getPositionInBus(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getPositionInBus: invalid index: " + index,
+            Msg.error("getPositionInBus: invalid index: " + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return -1;
         }
@@ -507,7 +507,7 @@ public class IORegistry {
      */
     public Object getModuleFrame(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getModuleFrame: invalid index:" + index,
+            Msg.error("getModuleFrame: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return null;
         }
@@ -521,7 +521,7 @@ public class IORegistry {
      */
     public Object getRegSize(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getRegSize: invalid index:" + index,
+            Msg.error("getRegSize: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return null;
         }
@@ -531,7 +531,7 @@ public class IORegistry {
 
     public long getStartAddr(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getStartAddr: invalid index:" + index,
+            Msg.error("getStartAddr: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return -1;
         }
@@ -546,7 +546,7 @@ public class IORegistry {
      */
     public long getType(int index) {
         if(index >= modules.size() || index < 0) {
-            Msg.E("getType: invalid index:" + index,
+            Msg.error("getType: invalid index:" + index,
                      Constants.PLP_GENERIC_ERROR, null);
             return -1;
         }
@@ -587,7 +587,7 @@ public class IORegistry {
      */
     public int removeModule(int index) {
         if(index >= modules.size() || index < 0) {
-            return Msg.E("removeModule: invalid index:" + index,
+            return Msg.error("removeModule: invalid index:" + index,
                        Constants.PLP_GENERIC_ERROR, null);
         }
 
@@ -676,7 +676,7 @@ public class IORegistry {
      */
     public int loadPredefinedPreset(int index) {
         if(index >= Preset.presets.length || index < 0)
-            return Msg.E("loadPredefinedPreset: invalid index: " + index,
+            return Msg.error("loadPredefinedPreset: invalid index: " + index,
                             Constants.PLP_GENERIC_ERROR, null);
 
         Integer[] modsType = (Integer[]) Preset.presets[index][1];

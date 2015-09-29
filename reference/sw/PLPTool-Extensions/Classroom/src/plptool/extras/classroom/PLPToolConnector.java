@@ -48,7 +48,7 @@ public class PLPToolConnector implements ModuleInterface5 {
     public int initialize(ProjectDriver plp) {
         this.plp = plp;
         active = plp.plpfile != null;
-        Msg.I("enabled", this);
+        Msg.info("enabled", this);
         serverControl = new ServerControl(plp);
         client = new Client();
         JMenuItem menuServerControl = new JMenuItem("Classroom Server Controls...");

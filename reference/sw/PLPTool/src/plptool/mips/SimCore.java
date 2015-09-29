@@ -260,7 +260,7 @@ public class SimCore extends PLPSimCore {
         }
 
         if(ret != Constants.PLP_OK)
-            return Msg.E("Unable to write program to memory",
+            return Msg.error("Unable to write program to memory",
                             Constants.PLP_SIM_UNABLE_TO_LOAD_PROGRAM, this);
 
         return ret;
@@ -324,7 +324,7 @@ public class SimCore extends PLPSimCore {
             ret += bus.eval(0);
 
             if(ret != 0) {
-                Msg.E("Evaluation failed. This simulation is stale.",
+                Msg.error("Evaluation failed. This simulation is stale.",
                       Constants.PLP_SIM_EVALUATION_FAILED, this);
 
                 if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
@@ -480,7 +480,7 @@ public class SimCore extends PLPSimCore {
         // fetch instruction / frontend stage
         if(!bus.isMapped(addr) || addr < 0) {
             if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
-            return Msg.E("fetch(): PC points to unmapped address. Halt."
+            return Msg.error("fetch(): PC points to unmapped address. Halt."
                          + " pc=" + String.format("0x%08x", addr),
                          Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
         }
@@ -489,13 +489,13 @@ public class SimCore extends PLPSimCore {
 
         if(ret == null) {
             if(Config.simDumpTraceOnFailedEvaluation) this.registersDump();
-            return Msg.E("fetch(): Unable to fetch next instruction from the bus."
+            return Msg.error("fetch(): Unable to fetch next instruction from the bus."
                          + " pc=" + String.format("0x%08x", addr),
                          Constants.PLP_SIM_INSTRUCTION_FETCH_FAILED, this);
         }
 
         if(!bus.isInstr(addr) && !Config.simAllowExecutionOfArbitraryMem)
-            return Msg.E("fetch(): Attempted to fetch non-executable memory: " +
+            return Msg.error("fetch(): Attempted to fetch non-executable memory: " +
                             "pc=" + String.format("%08x", addr),
                             Constants.PLP_SIM_NO_EXECUTE_VIOLATION, this);
 
@@ -605,13 +605,13 @@ public class SimCore extends PLPSimCore {
         } else if (opcode == 0x23) {                    // lw
             Long data = (Long) bus.read((s + s_imm) & 0xffffffffL);
             if(data == null)
-                return Msg.E("Bus read error.", Constants.PLP_SIM_BUS_ERROR, this);
+                return Msg.error("Bus read error.", Constants.PLP_SIM_BUS_ERROR, this);
             regfile.write(rt, data, false);
 
         } else if (opcode == 0x2B) {                    // sw
             ret = bus.write((s + s_imm) & 0xffffffffL, regfile.read(rt), false);
             if(ret > 0) {
-                return Msg.E("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
+                return Msg.error("Bus write error.", Constants.PLP_SIM_BUS_ERROR, this);
             }
         } else if (opcode == 0x02 || opcode == 0x03) {  // j
             branch = true;
@@ -627,7 +627,7 @@ public class SimCore extends PLPSimCore {
         } else {                                        // other i-type
             alu_result = ex_stage.exAlu.eval(s, s_imm, instr);
             if(alu_result == -1) {
-                return Msg.E("Unhandled instruction: invalid op-code",
+                return Msg.error("Unhandled instruction: invalid op-code",
                         Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE, this);
             }
             alu_result &= 0xffffffffL;
@@ -711,13 +711,13 @@ public class SimCore extends PLPSimCore {
      */
     public void printProgram(int memoryPosition, long highlight) {
         if(memoryPosition < 0 || memoryPosition >= bus.getNumOfMods()) {
-            Msg.E("Invalid index", Constants.PLP_SIM_WRONG_MODULE_TYPE, this);
+            Msg.error("Invalid index", Constants.PLP_SIM_WRONG_MODULE_TYPE, this);
             return;
         }
 
 
         if(!(bus.getRefMod(memoryPosition) instanceof MemModule)) {
-            Msg.E("The specified module is not a memory module.",
+            Msg.error("The specified module is not a memory module.",
                   Constants.PLP_SIM_WRONG_MODULE_TYPE, this);
             return;
         }
@@ -739,7 +739,7 @@ public class SimCore extends PLPSimCore {
      * Print out registers contents, mapped back to the source files
      */
     public void registersDump() {
-        Msg.I("Pipeline registers dump:", this);
+        Msg.info("Pipeline registers dump:", this);
         java.util.ArrayList<plptool.PLPAsmSource> asms = asm.getAsmList();
 
         int wb_i = asm.lookupAddrIndex(wb_stage.instrAddr);
@@ -957,7 +957,7 @@ public class SimCore extends PLPSimCore {
                         break;
 
                     default:
-                        return Msg.E("Unhandled instruction type.",
+                        return Msg.error("Unhandled instruction type.",
                                         Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
                                         this);
                 }
@@ -983,7 +983,7 @@ public class SimCore extends PLPSimCore {
                         break;
 
                     default:
-                        return Msg.E("Unhandled instruction type.",
+                        return Msg.error("Unhandled instruction type.",
                                         Constants.PLP_SIM_UNHANDLED_INSTRUCTION_TYPE,
                                         this);
                 }
@@ -995,7 +995,7 @@ public class SimCore extends PLPSimCore {
             return Constants.PLP_OK;
 
             } catch(Exception e) {
-                return Msg.E("I screwed up: " + e,
+                return Msg.error("I screwed up: " + e,
                                 Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }
@@ -1259,7 +1259,7 @@ public class SimCore extends PLPSimCore {
             return Constants.PLP_OK;
 
             } catch(Exception e) {
-                return Msg.E("I screwed up: " + e,
+                return Msg.error("I screwed up: " + e,
                                 Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }
@@ -1441,19 +1441,19 @@ public class SimCore extends PLPSimCore {
 
             data_mem_load = (ctl_memread == 1) ? (Long) bus.read(fwd_data_alu_result) : 0;
             if(data_mem_load == null)
-                return Msg.E("The bus returned no data, check previous error.",
+                return Msg.error("The bus returned no data, check previous error.",
                                 Constants.PLP_SIM_BUS_ERROR, this);
             wb_reg.i_data_memreaddata = data_mem_load;
 
             if(ctl_memwrite == 1)
                 if(bus.write(fwd_data_alu_result, data_mem_store, false) != Constants.PLP_OK)
-                    return Msg.E("Write failed, check previous error.",
+                    return Msg.error("Write failed, check previous error.",
                                     Constants.PLP_SIM_BUS_ERROR, this);
 
             return Constants.PLP_OK;
 
             } catch(Exception e) {
-                return Msg.E("I screwed up: " + e,
+                return Msg.error("I screwed up: " + e,
                                 Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }
@@ -1588,7 +1588,7 @@ public class SimCore extends PLPSimCore {
             return Constants.PLP_OK;
 
             } catch(Exception e) {
-                return Msg.E("I screwed up: " + e,
+                return Msg.error("I screwed up: " + e,
                                 Constants.PLP_SIM_EVALUATION_FAILED, this);
             }
         }

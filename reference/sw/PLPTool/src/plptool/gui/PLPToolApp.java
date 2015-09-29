@@ -76,7 +76,7 @@ public class PLPToolApp extends SingleFrameApplication {
     @Override protected void startup() {
 
         if(java.awt.GraphicsEnvironment.isHeadless()) {
-            Msg.E("Can not launch GUI in a headless environment!",
+            Msg.error("Can not launch GUI in a headless environment!",
                   Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV, null);
             quit(Constants.PLP_BACKEND_GUI_ON_HEADLESS_ENV);
         }
@@ -398,7 +398,7 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Invalid option catcher
             } else if(args[i].startsWith("-")) {
-                Msg.E("Invalid argument: '" + args[i] + "'"
+                Msg.error("Invalid argument: '" + args[i] + "'"
                         , Constants.PLP_TOOLAPP_ERROR, null);
                 System.out.println("\nRun with '--full-help' for a complete listing of options.");
                 quit(Constants.PLP_TOOLAPP_ERROR);
@@ -576,17 +576,17 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     private static void headless() {
         if(!loadModules) {
-            Msg.E("'-N' can not be used with '--headless'", Constants.PLP_TOOLAPP_ERROR, null);
+            Msg.error("'-N' can not be used with '--headless'", Constants.PLP_TOOLAPP_ERROR, null);
             quit(Constants.PLP_TOOLAPP_ERROR);
         }
         loadConfig();
         ProjectDriver plp = new ProjectDriver(Constants.PLP_DEFAULT);
         loadDynamicModules(plp);
         if(CallbackRegistry.getCallbacks(CallbackRegistry.EVENT_HEADLESS_START).length > 0) {
-            Msg.I("Running in headless mode.", null);
+            Msg.info("Running in headless mode.", null);
             CallbackRegistry.callback(CallbackRegistry.EVENT_HEADLESS_START, plp);
         } else if(headless) {
-            Msg.I("No headless callbacks are registered, exiting.", null);
+            Msg.info("No headless callbacks are registered, exiting.", null);
         }
     }
 
@@ -649,7 +649,7 @@ public class PLPToolApp extends SingleFrameApplication {
         try {
             prop.load(PLPToolApp.class.getResourceAsStream("resources/build.properties"));
         } catch(Exception e) {
-            Msg.E("Unable to retrieve build information.",
+            Msg.error("Unable to retrieve build information.",
                     Constants.PLP_GENERIC_ERROR, null);
             return ret;
         }
@@ -670,7 +670,7 @@ public class PLPToolApp extends SingleFrameApplication {
     public static BufferedImage getImage(String key) {
         BufferedImage ret = images.get(key);
         if(ret == null) {
-            Msg.W("PLPToolApp.getImage: '" + key + "' was not found.", null);
+            Msg.warning("PLPToolApp.getImage: '" + key + "' was not found.", null);
             return images.get("__NOT_FOUND__");
         }
         else
@@ -705,14 +705,14 @@ public class PLPToolApp extends SingleFrameApplication {
     public static void loadConfig() {
         File confDir = new File(PLPToolbox.getConfDir());
         if(!confDir.exists() && !confDir.mkdir()) {
-            Msg.W("Unable to create configuration directory. User settings " +
+            Msg.warning("Unable to create configuration directory. User settings " +
                   "will not be saved and module functionality will fail!",
                   null);
         }
 
         if(confDir.exists() &&
                 (!confDir.isDirectory() || !confDir.canWrite())) {
-            Msg.W("Configuration directory is either a file or is not " +
+            Msg.warning("Configuration directory is either a file or is not " +
                   "writable. User settings will not be saved and module " +
                   "functionality will fail!", null);
         }
@@ -760,7 +760,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 }
 
             } catch(Exception e) {
-                Msg.E("Failed to load PLPTool configuration from disk.",
+                Msg.error("Failed to load PLPTool configuration from disk.",
                       Constants.PLP_BACKEND_LOAD_CONFIG_FAILED, null);
             }
         }
@@ -775,11 +775,11 @@ public class PLPToolApp extends SingleFrameApplication {
         if(!configDir.exists()) {
             try {
                 if(!configDir.mkdir()) {
-                    Msg.W("Failed to save PLPTool configuration: " +
+                    Msg.warning("Failed to save PLPTool configuration: " +
                           "Unable to create directory $[USER]/.plp", null);
                 }
             } catch(Exception e) {
-                Msg.E("Failed to save PLPTool configuration to disk.",
+                Msg.error("Failed to save PLPTool configuration to disk.",
                       Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
                 Msg.trace(e);
             }
@@ -819,7 +819,7 @@ public class PLPToolApp extends SingleFrameApplication {
                 Msg.debug("Save config done", 4, null);
 
             } catch(Exception e) {
-                Msg.E("Failed to save PLPTool configuration to disk.",
+                Msg.error("Failed to save PLPTool configuration to disk.",
                       Constants.PLP_BACKEND_SAVE_CONFIG_FAILED, null);
                 Msg.trace(e);
             }

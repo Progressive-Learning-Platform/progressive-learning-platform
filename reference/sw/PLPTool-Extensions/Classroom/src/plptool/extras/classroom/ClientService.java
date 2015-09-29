@@ -116,7 +116,7 @@ public class ClientService extends Thread {
                         case WAITING_ON_NICK:
                             Msg.debug("Nickname request: " + line, 2, this);
                             if(!server.checkNickname(line)) {
-                                Msg.I("Nickname '" + line + "' is already taken", this);
+                                Msg.info("Nickname '" + line + "' is already taken", this);
                                 state = State.DISCONNECT;
                             } else {
                                 cmd("NICKNAME_OK");
@@ -134,7 +134,7 @@ public class ClientService extends Thread {
                 }
             }
         } catch(IOException e) {
-            Msg.E("I/O error.",
+            Msg.error("I/O error.",
                     Constants.PLP_GENERAL_IO_ERROR, this);
         }
         try {
@@ -142,7 +142,7 @@ public class ClientService extends Thread {
             in.close();
             socket.close();
         } catch(IOException e) {
-            Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
+            Msg.error("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
         }
         server.removeClient(ID);
         Msg.debug("service exiting.", 2, this);

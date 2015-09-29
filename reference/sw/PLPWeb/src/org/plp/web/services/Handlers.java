@@ -46,12 +46,12 @@ public class Handlers {
                 String command;
                 Map<String, String> data = parser.parseJson(Utils.getQueryFromExchange(t));
                 if(!data.containsKey("command")) {
-                    Msg.E("No command field in JSON request", org.plp.web.Constants.PLPWEB_MISSING_COMMAND_FIELD, null);
+                    Msg.error("No command field in JSON request", org.plp.web.Constants.PLPWEB_MISSING_COMMAND_FIELD, null);
                 }
                 command = data.get("command");
 
             } catch(IOException ioe) {
-                Msg.E("No data from exchange", org.plp.web.Constants.PLPWEB_INVALID_POST_REQUEST, null);
+                Msg.error("No data from exchange", org.plp.web.Constants.PLPWEB_INVALID_POST_REQUEST, null);
             }
         }
     }

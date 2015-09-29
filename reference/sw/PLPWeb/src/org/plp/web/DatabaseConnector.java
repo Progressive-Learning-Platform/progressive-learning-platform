@@ -30,7 +30,7 @@ public class DatabaseConnector {
         try {
             Class.forName("org.postgresql.Driver");
         } catch(ClassNotFoundException e) {
-            return Msg.E("Unable to load PostgreSQL JDBC Driver",
+            return Msg.error("Unable to load PostgreSQL JDBC Driver",
                     org.plp.web.Constants.PLPWEB_UNABLE_TO_LOAD_JDBC_DRIVER, null);
         }
 

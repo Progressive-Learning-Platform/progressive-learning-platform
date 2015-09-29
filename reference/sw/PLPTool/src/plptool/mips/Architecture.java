@@ -68,9 +68,9 @@ public class Architecture extends PLPArchitecture {
                     String hex;
                     File path;
                     if(!plp.isAssembled()) {
-                        Msg.E("Project needs to be assembled.", Constants.PLP_GENERIC_ERROR, null);
+                        Msg.error("Project needs to be assembled.", Constants.PLP_GENERIC_ERROR, null);
                     } else {
-                        Msg.I("Generating Verilog hex-format...", null);
+                        Msg.info("Generating Verilog hex-format...", null);
                         hex = plptool.mips.Formatter.writeVerilogHex(plp.asm.getObjectCode());
                         lines = hex.split("\n");
                         for(int i = 0; i < lines.length; i++) {
@@ -80,7 +80,7 @@ public class Architecture extends PLPArchitecture {
                         path = PLPToolbox.saveFileDialog(Constants.launchPath);
                         if(path != null) {
                             if(PLPToolbox.writeFile(out, path.getAbsolutePath()) == Constants.PLP_OK) {
-                                Msg.I(path + " written.", null);
+                                Msg.info(path + " written.", null);
                             }
                         }
                     }

@@ -56,7 +56,7 @@ public abstract class PLPSerialProgrammer extends Thread {
                 if(plp.g())
                     plp.g_prg.getStatusField().setText("Failed!");
                 else
-                    Msg.I("Failed!", this);
+                    Msg.info("Failed!", this);
             }
         }
         

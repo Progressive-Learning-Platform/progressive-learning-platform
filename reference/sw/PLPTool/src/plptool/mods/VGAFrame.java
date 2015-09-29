@@ -170,7 +170,7 @@ public class VGAFrame extends javax.swing.JFrame {
         try {
             javax.imageio.ImageIO.write(I, "png", new java.io.File("./vgacapture.png"));
         } catch(Exception e) {
-            Msg.E("Failed to write vgacapture.png", plptool.Constants.PLP_FILE_SAVE_ERROR, null);
+            Msg.error("Failed to write vgacapture.png", plptool.Constants.PLP_FILE_SAVE_ERROR, null);
         }
     }//GEN-LAST:event_btnSaveToFileActionPerformed
 

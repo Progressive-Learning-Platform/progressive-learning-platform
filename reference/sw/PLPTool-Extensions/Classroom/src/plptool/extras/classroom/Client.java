@@ -48,17 +48,17 @@ public class Client extends javax.swing.JFrame {
             writer.flush();
             setState(true, false);
         } catch(UnknownHostException uhe) {
-            Msg.E("Client.connect: Unable to connect to " + txtHost.getText() + ":" +
+            Msg.error("Client.connect: Unable to connect to " + txtHost.getText() + ":" +
                    txtHost.getText(), Constants.PLP_GENERAL_IO_ERROR, null);
             tglConnect.setSelected(false);
             setState(false, false);
         } catch(IOException ioe) {
-            Msg.E("Client.connect: I/O error", Constants.PLP_GENERAL_IO_ERROR,
+            Msg.error("Client.connect: I/O error", Constants.PLP_GENERAL_IO_ERROR,
                     null);
             tglConnect.setSelected(false);
             setState(false, false);
         } catch(Exception e) {
-            Msg.E("Client.connect: Unknown error", Constants.PLP_GENERIC_ERROR,
+            Msg.error("Client.connect: Unknown error", Constants.PLP_GENERIC_ERROR,
                     null);
             if(Constants.debugLevel >= 2)
                 e.printStackTrace();
@@ -79,7 +79,7 @@ public class Client extends javax.swing.JFrame {
             writer.close();
             s.close();
         } catch(IOException e) {
-            Msg.E("Cleanup error.", Constants.PLP_GENERAL_IO_ERROR, this);
+            Msg.error("Cleanup error.", Constants.PLP_GENERAL_IO_ERROR, this);
         }
 
         setState(false, false);
@@ -113,7 +113,7 @@ public class Client extends javax.swing.JFrame {
             cmd("ENDTEXT");
             txtCapture.setText("");
         } catch(Exception ioe) {
-            Msg.E("Send data failed.", Constants.PLP_GENERAL_IO_ERROR, this);
+            Msg.error("Send data failed.", Constants.PLP_GENERAL_IO_ERROR, this);
         }
     }
 

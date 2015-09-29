@@ -53,7 +53,7 @@ public class PLPToolConnector implements ModuleInterface5 {
         if(interval != null) {
             try {
                 autoSaveRateMilliseconds = Integer.parseInt(interval);
-                Msg.I("Autosave interval is set to " + interval + "ms", this);
+                Msg.info("Autosave interval is set to " + interval + "ms", this);
             } catch(Exception e) {}
         }
 
@@ -82,10 +82,10 @@ public class PLPToolConnector implements ModuleInterface5 {
                                 if(PLPToolbox.copyFile(list[i].getAbsolutePath(),
                                         fc.getSelectedFile().getAbsolutePath()) == Constants.PLP_OK) {
                                     keepTrying = false;
-                                    Msg.I("'" + temp + "' is saved to " +
+                                    Msg.info("'" + temp + "' is saved to " +
                                             fc.getSelectedFile().getAbsolutePath(), this);
                                 } else {
-                                    Msg.E("Failed to save to " +
+                                    Msg.error("Failed to save to " +
                                             fc.getSelectedFile().getAbsolutePath() +
                                             ". Try a different file, or cancel rescue.",
                                             Constants.PLP_GENERIC_ERROR, this);
@@ -161,7 +161,7 @@ public class PLPToolConnector implements ModuleInterface5 {
                     plp.g_dev.getEditor().getDocument().addDocumentListener(editorDocListener);
                     break;
                 case CallbackRegistry.EXIT:
-                    Msg.I("Cleaning up.", this);
+                    Msg.info("Cleaning up.", this);
                     try {
                         File confDir = new File(PLPToolbox.getConfDir());
                         File[] list = confDir.listFiles();

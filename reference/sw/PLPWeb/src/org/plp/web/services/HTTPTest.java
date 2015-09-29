@@ -70,7 +70,7 @@ public class HTTPTest {
             srv.setExecutor(null);
             srv.start();
         } catch(IOException e) {
-            Msg.E("WebService HTTP Test: I/O Exception",
+            Msg.error("WebService HTTP Test: I/O Exception",
                     plptool.Constants.PLP_GENERAL_IO_ERROR, null);
             Msg.trace(e);
         }

@@ -36,7 +36,7 @@ public class ServerListenThread extends Thread {
                 Socket client = SocketInterface.getServerSocket().accept();
                 SocketInterface.addClient(client);
             } catch(IOException ioe) {
-                Msg.E("SocketInterface: ServerListenThread: failed to accept connection",
+                Msg.error("SocketInterface: ServerListenThread: failed to accept connection",
                         Constants.PLP_GENERAL_IO_ERROR, null);
             }
         }

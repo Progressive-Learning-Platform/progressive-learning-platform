@@ -59,7 +59,7 @@ public class PLPToolConnector implements ModuleInterface5 {
         } else if(cmd.equals("flowchart dot")) {
             if(processed) {
                 for(int i = 0; i < flowchart.getNumberOfRoutines(); i++) {
-                    Msg.I("Flowchart for " + flowchart.getRoutine(i).getHead().getLabel(), this);
+                    Msg.info("Flowchart for " + flowchart.getRoutine(i).getHead().getLabel(), this);
                     Msg.printPreformattedString(flowchart.generateDOT(i, false));
                 }
             }
@@ -69,7 +69,7 @@ public class PLPToolConnector implements ModuleInterface5 {
     private int init() {
 		if(!plp.g())
 			return Constants.PLP_OK;
-        Msg.I("<em>Flowchart Generator</em> is ready &mdash; This module can be accessed through the <b>Tools" +
+        Msg.info("<em>Flowchart Generator</em> is ready &mdash; This module can be accessed through the <b>Tools" +
                 "</b>&rarr;<b>Flowchart Generator</b> menu",
                 null);
 
@@ -99,7 +99,7 @@ public class PLPToolConnector implements ModuleInterface5 {
                     displayFrame.update(flowchart);
                     displayFrame.setVisible(true);
                 } else
-                    Msg.I("The project needs to be assembled first.", null);
+                    Msg.info("The project needs to be assembled first.", null);
             }
         });
         JMenuItem menuFlowchartSetupDOT = new JMenuItem("Setup DOT for flowchart generation in PLPTool...");
@@ -116,7 +116,7 @@ public class PLPToolConnector implements ModuleInterface5 {
                     exportFrame.update(flowchart);
                     exportFrame.setVisible(true);
                 } else
-                    Msg.I("The project needs to be assembled first.", null);
+                    Msg.info("The project needs to be assembled first.", null);
             }
         });
         menuFlowchart.add(menuFlowchartDisplay);
@@ -168,7 +168,7 @@ public class PLPToolConnector implements ModuleInterface5 {
 
     class Callback_Save_Config implements Callback {
         public boolean callback(int callbackNum, Object param) {
-            Msg.I("Saving configuration.", null);
+            Msg.info("Saving configuration.", null);
             PLPToolbox.writeFile("flowchart_dotpath::" + dotPath + "\n",
                     PLPToolbox.getConfDir() + "/flowchart");
             return true;

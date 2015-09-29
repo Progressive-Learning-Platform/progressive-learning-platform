@@ -115,10 +115,10 @@ public class NumberConverter extends javax.swing.JFrame {
             txtOctal.setText(String.format("%o", number));
             txtHex.setText(String.format("%h", number));
         } else
-            Msg.E("Can not convert the number '" + txtInput.getText() + "'", Constants.PLP_GENERIC_ERROR, null);
+            Msg.error("Can not convert the number '" + txtInput.getText() + "'", Constants.PLP_GENERIC_ERROR, null);
 
         } catch(Exception e) {
-            Msg.E("Can not convert the number '" + txtInput.getText() + "'", Constants.PLP_GENERIC_ERROR, null);
+            Msg.error("Can not convert the number '" + txtInput.getText() + "'", Constants.PLP_GENERIC_ERROR, null);
         }
     }
 

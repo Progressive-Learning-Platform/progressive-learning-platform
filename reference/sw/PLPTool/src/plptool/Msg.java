@@ -110,7 +110,7 @@ public class Msg {
      * @param objIdentifier A reference to the offending object.
      * @return The error code for further handling.
      */
-    public static int E(String errStr, int errorCode, Object objIdentifier) {
+    public static int error(String errStr, int errorCode, Object objIdentifier) {
         if(LogErrStream == null) return errorCode;
 
         try {   
@@ -150,7 +150,7 @@ public class Msg {
      * @param warningStr Error string to print.
      * @param objIdentifier A reference to the offending object.
      */
-    public static void W(String warningStr, Object objIdentifier) {
+    public static void warning(String warningStr, Object objIdentifier) {
         if(suppressWarnings || LogOutStream == null) return;
 
         try {
@@ -182,7 +182,7 @@ public class Msg {
      * @param infoStr Information string to print out.
      * @param objIdentifier The object invoking this call.
      */
-    public static void I(String infoStr, Object objIdentifier) {
+    public static void info(String infoStr, Object objIdentifier) {
         if(silent || LogOutStream == null) return;
 
         try {
@@ -341,6 +341,7 @@ public class Msg {
      * and {@link #appendLine(String)}
      */
     public static void printBuffer() {
+    	// TODO: can combine with printPreformattedString()?
         if(silent || LogOutStream == null) return;
 
         try {
@@ -363,6 +364,7 @@ public class Msg {
      * Debug marking.
      */
     public static void mark() {
+    	// TODO: improve documentation. What is this for? What does it do?
         if(LogOutStream == null) return;
         
         try {
@@ -388,6 +390,7 @@ public class Msg {
      * @param e
      */
     public static void printStackTrace(Exception e) {
+    	// TODO: integrate with Logger
         if(Constants.debugLevel >= 10)
             e.printStackTrace();
     }

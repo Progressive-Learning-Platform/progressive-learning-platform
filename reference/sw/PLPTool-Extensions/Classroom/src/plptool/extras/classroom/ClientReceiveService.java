@@ -52,9 +52,9 @@ public class ClientReceiveService extends Thread {
                     online = true;
                 else if (line.equals("%%DISCONNECT")) {
                     if(!online)
-                        Msg.W("Server refused connection. Nickname is probably" +
+                        Msg.warning("Server refused connection. Nickname is probably" +
                                 " already taken", this);
-                    Msg.I("Closing connection", this);
+                    Msg.info("Closing connection", this);
                     online = false;
                 } else if(line.equals("%%MUTE"))
                     c.setState(true, false);
@@ -68,7 +68,7 @@ public class ClientReceiveService extends Thread {
                 }
             }
         } catch(IOException e) {
-            Msg.E("I/O error.", Constants.PLP_GENERAL_IO_ERROR, this);
+            Msg.error("I/O error.", Constants.PLP_GENERAL_IO_ERROR, this);
         }
     }
 

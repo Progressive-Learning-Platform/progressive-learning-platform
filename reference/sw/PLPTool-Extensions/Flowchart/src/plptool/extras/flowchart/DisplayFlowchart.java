@@ -234,7 +234,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
             try {
                 ImageIO.write(img, "png", f);
             } catch(IOException e) {
-                Msg.E("Failed to write '" + f.getAbsolutePath() + "'",
+                Msg.error("Failed to write '" + f.getAbsolutePath() + "'",
                         Constants.PLP_GENERAL_IO_ERROR, null);
             }
         }
@@ -271,7 +271,7 @@ public class DisplayFlowchart extends javax.swing.JFrame {
                                 zoomFactor = 1;
                                 fLabel.setIcon(new ImageIcon(i));
                             } catch(IOException e) {
-                                Msg.E("Unable to read DOT output.", Constants.PLP_GENERAL_IO_ERROR,
+                                Msg.error("Unable to read DOT output.", Constants.PLP_GENERAL_IO_ERROR,
                                         null);
                             }
                         }

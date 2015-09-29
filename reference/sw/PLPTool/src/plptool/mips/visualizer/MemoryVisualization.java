@@ -66,7 +66,7 @@ public class MemoryVisualization extends javax.swing.JFrame {
             img = ImageIO.read(u);
 
         } catch(Exception e) {
-            Msg.E("Unable to fetch background image.", Constants.PLP_OK, null);
+            Msg.error("Unable to fetch background image.", Constants.PLP_OK, null);
         }
     }
     

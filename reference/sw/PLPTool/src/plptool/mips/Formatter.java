@@ -89,7 +89,7 @@ public class Formatter {
             out.close();
 
         } catch(Exception e) {
-            return Msg.E("writeBin(): Unable to write to " + outputFileName,
+            return Msg.error("writeBin(): Unable to write to " + outputFileName,
                      Constants.PLP_OUT_CAN_NOT_WRITE_TO_FILE, null);
         }
 
@@ -146,7 +146,7 @@ public class Formatter {
         return ret;
 
         } catch(Exception e) {
-            Msg.E("intBinpadder(): can't convert " + number,
+            Msg.error("intBinpadder(): can't convert " + number,
                      Constants.PLP_OUT_UNHANDLED_ERROR, null);
             return null;
         }

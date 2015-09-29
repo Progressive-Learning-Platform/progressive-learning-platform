@@ -821,7 +821,7 @@ public final class Develop extends JFrame {
             if(nodeStr.endsWith("asm")) {
 
                 if(plp.getAsms().size() <= 1) {
-                    Msg.E("Can not delete last source file.",
+                    Msg.error("Can not delete last source file.",
                              Constants.PLP_GENERIC_ERROR, null);
 
                     return Constants.PLP_GENERIC_ERROR;
@@ -1567,7 +1567,7 @@ public final class Develop extends JFrame {
     public void gotoLocation(String file, int line) {
         int index = plp.getAsmIndex(file);
         if(index < 0) {
-            Msg.E("Invalid source file index. Has the file been removed?",
+            Msg.error("Invalid source file index. Has the file been removed?",
                     Constants.PLP_DEV_INVALID_FILE_INDEX, this);
             return;
         }
@@ -1585,7 +1585,7 @@ public final class Develop extends JFrame {
     public void gotoLine(int line) {
         String lines[] = plp.getAsm(plp.getOpenAsm()).getAsmString().split("\\r?\\n");
         if(line-1 > lines.length) {
-            Msg.E("Unable to go to the specified location. Has the file been" +
+            Msg.error("Unable to go to the specified location. Has the file been" +
                     " modified?", Constants.PLP_DEV_INVALID_GOTO_LOCATION, this);
             return;
         }
@@ -1598,7 +1598,7 @@ public final class Develop extends JFrame {
 
         if(lengthSum > txtEditor.getDocument().getLength() ||
            lengthSum+lines[i].length() > txtEditor.getDocument().getLength()) {
-            Msg.E("Unable to go to the specified location. Has the file been" +
+            Msg.error("Unable to go to the specified location. Has the file been" +
                     " modified?", Constants.PLP_DEV_INVALID_GOTO_LOCATION, this);
             return;
         }
@@ -3107,7 +3107,7 @@ public final class Develop extends JFrame {
 
                     String[] tokens = nodeStr.split(": ");
 
-                    Msg.I("Opening " + nodeStr, null);
+                    Msg.info("Opening " + nodeStr, null);
                     plp.getAsm(plp.getOpenAsm()).setLastLine(getCurrentLineNumber());
                     plp.updateAsm(plp.getOpenAsm(), txtEditor.getText());
                     plp.setOpenAsm(Integer.parseInt(tokens[0]));
@@ -3304,7 +3304,7 @@ public final class Develop extends JFrame {
         try {
             txtEditor.print();
         } catch(Exception e) {
-            Msg.E("Failed to print currently open file.", Constants.PLP_PRINT_ERROR, this);
+            Msg.error("Failed to print currently open file.", Constants.PLP_PRINT_ERROR, this);
         }
     }//GEN-LAST:event_menuPrintActionPerformed
 
@@ -3540,7 +3540,7 @@ public final class Develop extends JFrame {
                 plp.g_asmview.updateTable();
                 plp.g_asmview.setVisible(true);
             } else
-                Msg.E("The project must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.error("The project must be assembled first.", Constants.PLP_GENERIC_ERROR, null);
         }
     }//GEN-LAST:event_menuSimAsmViewActionPerformed
 

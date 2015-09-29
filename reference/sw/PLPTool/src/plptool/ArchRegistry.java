@@ -62,7 +62,7 @@ public class ArchRegistry {
         try {
             archClass = getRegisteredArchitectureClass(ID);
             if(archClass == null) {
-                Msg.E("Invalid ISA ID: " + ID,
+                Msg.error("Invalid ISA ID: " + ID,
                         Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, null);
                 return null;
             }
@@ -71,7 +71,7 @@ public class ArchRegistry {
             arch.setProjectDriver(plp);
             return arch;
         } catch(Exception e) {
-            Msg.E("Instantiation error for " +
+            Msg.error("Instantiation error for " +
                   getRegisteredArchitectureClass(ID).getCanonicalName(),
                   Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
             Msg.trace(e);
@@ -93,12 +93,12 @@ public class ArchRegistry {
                 " with ID=" + ID + " strID=" + strID, 2, null);
 
         if(!arch.getSuperclass().getCanonicalName().equals("plptool.PLPArchitecture"))
-            return Msg.E("Specified class does not extend the PLP " +
+            return Msg.error("Specified class does not extend the PLP " +
                     "architecture superclass.",
                     Constants.PLP_ISA_INVALID_METACLASS, null);
 
         if(ID == 0 || archClasses.containsKey(ID))
-            return Msg.E("ISA with ID '" + ID + "' is already defined.",
+            return Msg.error("ISA with ID '" + ID + "' is already defined.",
                     Constants.PLP_ISA_ALREADY_DEFINED, null);
         
         archClasses.put(ID, arch);

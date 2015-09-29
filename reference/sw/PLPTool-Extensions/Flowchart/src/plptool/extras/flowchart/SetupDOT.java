@@ -173,7 +173,7 @@ public class SetupDOT extends javax.swing.JDialog {
             connector.setDotPath(path);
             this.dispose();
         } else
-            Msg.E(path + " does not exist", Constants.PLP_GENERAL_IO_ERROR,
+            Msg.error(path + " does not exist", Constants.PLP_GENERAL_IO_ERROR,
                     null);
     }//GEN-LAST:event_btnApplyActionPerformed
 

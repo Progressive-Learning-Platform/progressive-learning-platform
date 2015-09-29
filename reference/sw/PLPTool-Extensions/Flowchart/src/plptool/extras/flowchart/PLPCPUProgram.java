@@ -58,9 +58,9 @@ public class PLPCPUProgram {
     }
 
     public final void process() {
-        Msg.I("Processing PLP program...", this);
+        Msg.info("Processing PLP program...", this);
         traverse(head, routines.get(0), traverseCount);
-        Msg.I("Done!", this);
+        Msg.info("Done!", this);
     }
 
     public void printProgram(int routine) {
@@ -114,12 +114,12 @@ public class PLPCPUProgram {
         int r = reachedNodes.size();
         int c = collection.size();
         if(r != c) {
-            Msg.I("There were " + (c-r) + " non-merging branches.", this);
+            Msg.info("There were " + (c-r) + " non-merging branches.", this);
         }
     }
 
     public String generateDOT(int routine, boolean useColors) {
-        Msg.I("Generating DOT output", this);
+        Msg.info("Generating DOT output", this);
         NodeCollection c = routines.get(routine);
         String ret = "digraph G {\n";
         String code;
@@ -215,7 +215,7 @@ public class PLPCPUProgram {
             index = asm.lookupAddrIndex(pc);
             if(index < 0) {
                 // clean up
-                Msg.W("traverse[" + count + "]: Looks like we fell off the program!", this);
+                Msg.warning("traverse[" + count + "]: Looks like we fell off the program!", this);
                 return true;
             }
             tempIndex = collection.hasNodeWithAddress(pc);
@@ -339,7 +339,7 @@ public class PLPCPUProgram {
                                 // there is no way to figure out where we go
                                 // without actually executing the program, just
                                 // give a warning and return
-                                Msg.W("jr using other than $ra is NOT supported" +
+                                Msg.warning("jr using other than $ra is NOT supported" +
                                         ". Assuming exit node.", this);
                             }
                             // this routine is done
@@ -355,7 +355,7 @@ public class PLPCPUProgram {
                             return true;
                            
                         case JALR:
-                            Msg.W("jalr instruction is not supported", this);
+                            Msg.warning("jalr instruction is not supported", this);
                             return false;
                         default:
                             if(postBranch || addrLabel != null) {

@@ -665,7 +665,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     private void simFunctionalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simFunctionalActionPerformed
         triggerChange();
         if(plp.isSimulating())
-            Msg.W("The simulation may need to be restarted.", null);
+            Msg.warning("The simulation may need to be restarted.", null);
     }//GEN-LAST:event_simFunctionalActionPerformed
 
     private void cmbFontNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFontNameActionPerformed

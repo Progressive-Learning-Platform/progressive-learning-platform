@@ -238,15 +238,15 @@ public final class ProjectDriver {
         try {
             if(!applet) gnu.io.RXTXVersion.getVersion();
         } catch(UnsatisfiedLinkError e) {
-            Msg.W("Failed to detect native RXTX library. " +
+            Msg.warning("Failed to detect native RXTX library. " +
                   "Functionality requiring serial communication will fail.", null);
-            Msg.W(" - If you are running Linux, make sure that RXTX library is installed.", null);
-            Msg.W(" - If you are running Windows, make sure that the .dll files are in the " +
+            Msg.warning(" - If you are running Linux, make sure that RXTX library is installed.", null);
+            Msg.warning(" - If you are running Windows, make sure that the .dll files are in the " +
                   "same directory and you run the batch file associated with " +
                   "your version of Windows (32- or 64-bit)", null);
             serial_support = false;
         } catch(NoClassDefFoundError e) {
-            Msg.W("Unsatisfied RXTX link.", null);
+            Msg.warning("Unsatisfied RXTX link.", null);
             serial_support = false;
         }
 
@@ -304,7 +304,7 @@ public final class ProjectDriver {
 
         if((major == Constants.minimumJREMajorVersion && minor < Constants.minimumJREMinorVersion) ||
             major  < Constants.minimumJREMajorVersion) {
-            Msg.W("You are running an older Java Runtime Environment version." +
+            Msg.warning("You are running an older Java Runtime Environment version." +
                   " Some functionalities may not work as intended. " +
                   "Please upgrade to at least JRE version 1.5", null);
         }
@@ -327,7 +327,7 @@ public final class ProjectDriver {
         if(arch == null) {
             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
             arch.init();
-            return Msg.E("Invalid ISA ID: " + archID + ". Defaulting to " +
+            return Msg.error("Invalid ISA ID: " + archID + ". Defaulting to " +
                          "plpmips (id 0).",
                          Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, this);
         } else {        
@@ -361,13 +361,13 @@ public final class ProjectDriver {
             this.arch = ArchRegistry.getArchitecture(this, archID);
             arch.init();
             if(arch == null) {
-                Msg.W("Invalid architecture ID is specified, reverting to " +
+                Msg.warning("Invalid architecture ID is specified, reverting to " +
                       "default (PLPCPU).", this);
                 this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                 arch.init();
             }
         } catch(Exception e) {
-            Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
+            Msg.error("FATAL ERROR: invalid arch ID during ProjectDriver" +
                   "create routine (archID: " + archID + ")",
                   Constants.PLP_FATAL_ERROR, null);
             System.exit(-1);
@@ -386,7 +386,7 @@ public final class ProjectDriver {
         asms.add(new PLPAsmSource("", "main.asm", 0));
         open_asm = 0;
         arch.newProject(this);    
-        Msg.I("New project initialized.", null);
+        Msg.info("New project initialized.", null);
 
         if(g) {
             refreshProjectView(false);
@@ -421,13 +421,13 @@ public final class ProjectDriver {
             this.arch = ArchRegistry.getArchitecture(this, archID);
             arch.init();
             if(arch == null) {
-                Msg.W("Invalid architecture ID is specified, reverting to " +
+                Msg.warning("Invalid architecture ID is specified, reverting to " +
                       "default (plpmips).", this);
                 this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                 arch.init();
             }
         } catch(Exception e) {
-            Msg.E("FATAL ERROR: invalid arch ID during ProjectDriver" +
+            Msg.error("FATAL ERROR: invalid arch ID during ProjectDriver" +
                   "create routine (archID: " + archID + ")",
                   Constants.PLP_FATAL_ERROR, null);
             System.exit(-1);
@@ -449,7 +449,7 @@ public final class ProjectDriver {
         dirty = true;
 
         open_asm = 0;
-        Msg.I("New project initialized.", null);
+        Msg.info("New project initialized.", null);
 
         if(g) {
             refreshProjectView(false);
@@ -482,7 +482,7 @@ public final class ProjectDriver {
         //assemble();
 
         if(plpfile == null || plpfile.getName().equals("Unsaved Project"))
-            return Msg.E("No PLP project file is open. Use Save As.",
+            return Msg.error("No PLP project file is open. Use Save As.",
                             Constants.PLP_FILE_USE_SAVE_AS, null);
 
         ArrayList<PLPAsmSource> sourceList;
@@ -670,11 +670,11 @@ public final class ProjectDriver {
 
         modified = false;
         if(g) refreshProjectView(false);
-        Msg.I(plpfile.getAbsolutePath() + " written", null);
+        Msg.info(plpfile.getAbsolutePath() + " written", null);
 
         } catch(Exception e) {
             Msg.trace(e);
-            Msg.E("save: Unable to write to " +
+            Msg.error("save: Unable to write to " +
                     plpfile.getAbsolutePath() + ". " +
                     "Do you have access to the specified location?",
                     Constants.PLP_FILE_SAVE_ERROR, this);
@@ -697,13 +697,13 @@ public final class ProjectDriver {
         CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN, plpFile);
         
         if(!plpFile.exists())
-            return Msg.E("open(" + path + "): File not found.",
+            return Msg.error("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
         boolean metafileFound = false;
         dirty = true;
 
-        Msg.I("Opening " + path, null);
+        Msg.info("Opening " + path, null);
 
         if(arch != null) {
             arch.cleanup();
@@ -738,7 +738,7 @@ public final class ProjectDriver {
                 if(lines[0].equals(Text.projectFileVersionString))  {
 
                 } else {
-                    Msg.W("This is not a " + Text.projectFileVersionString +
+                    Msg.warning("This is not a " + Text.projectFileVersionString +
                             " project file. Opening anyways.", this);
                 }
 
@@ -752,7 +752,7 @@ public final class ProjectDriver {
                         arch = ArchRegistry.getArchitecture(this, Config.cfgOverrideISA);
                         arch.init();
                     } else if (temp.equals("plpmips")) {
-                        Msg.W("This project file was created by PLPTool version 3 or earlier. " +
+                        Msg.warning("This project file was created by PLPTool version 3 or earlier. " +
                               "Meta data for this project will be updated " +
                               "with the default ISA (plpmips) when the project " +
                               "file is saved.", this);
@@ -761,7 +761,7 @@ public final class ProjectDriver {
                     } else {
                         arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
                         if(arch == null) {
-                            Msg.W("Invalid ISA ID is specified in the project file: '" + temp +
+                            Msg.warning("Invalid ISA ID is specified in the project file: '" + temp +
                                   "'. Assuming PLPCPU.", this);
                             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                         }
@@ -784,7 +784,7 @@ public final class ProjectDriver {
         }
 
         if(!metafileFound)
-            return Msg.E("No PLP metadata found.",
+            return Msg.error("No PLP metadata found.",
                     Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
 
         // reset the tar input stream
@@ -803,7 +803,7 @@ public final class ProjectDriver {
             if(entry.getName().endsWith("asm") && !entry.getName().startsWith("plp.")) {
                 Integer order = (Integer) asmFileOrder.get(entry.getName());
                 if(order == null)
-                    Msg.W("The file '" + entry.getName() + "' is not listed in " +
+                    Msg.warning("The file '" + entry.getName() + "' is not listed in " +
                           "the meta file. This file will be removed when the project " +
                           "is saved.", this);
                 else {
@@ -878,7 +878,7 @@ public final class ProjectDriver {
             } else if(handled) {
 
             } else {
-                Msg.W("open(" + path + "): unable to process entry: " +
+                Msg.warning("open(" + path + "): unable to process entry: " +
                         entry.getName() + ". This file will be removed when"
                         + " you save the project.", this);
             }
@@ -887,19 +887,19 @@ public final class ProjectDriver {
         tIn.close();
         
         if(asmFileOrder.isEmpty()) {
-            return Msg.E("open(" + path + "): no .asm files found.",
+            return Msg.error("open(" + path + "): no .asm files found.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
         }
         catch(Exception e) {
             Msg.trace(e);
-            return Msg.E("open(" + path + "): Invalid PLP archive.",
+            return Msg.error("open(" + path + "): Invalid PLP archive.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
         if(arch == null) {
-            Msg.W("No ISA information specified in the archive, assuming plpmips", this);
+            Msg.warning("No ISA information specified in the archive, assuming plpmips", this);
             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
             arch.init();
         }
@@ -909,7 +909,7 @@ public final class ProjectDriver {
         open_asm = 0;
 
         for(int i = 0; i < asms.size(); i++)
-            Msg.I(i + ": " + asms.get(i).getAsmFilePath(), null);
+            Msg.info(i + ": " + asms.get(i).getAsmFilePath(), null);
 
         if(g) refreshProjectView(false);
         if(!dirty && assemble) {
@@ -1101,10 +1101,10 @@ public final class ProjectDriver {
     public int assemble() {
         CallbackRegistry.callback(CallbackRegistry.EVENT_ASSEMBLE, null);
         if(!arch.hasAssembler())
-            return Msg.E("This ISA does not implement an assembler.",
+            return Msg.error("This ISA does not implement an assembler.",
                          Constants.PLP_ISA_NO_ASSEMBLER, this);
 
-        Msg.I("Assembling...", null);
+        Msg.info("Assembling...", null);
         Msg.errorCounter = 0;
         buildErrorList = null;
 
@@ -1123,7 +1123,7 @@ public final class ProjectDriver {
         }
 
         if(asms == null || asms.isEmpty())
-            return Msg.E("assemble(): No source files are open.",
+            return Msg.error("assemble(): No source files are open.",
                             Constants.PLP_BACKEND_EMPTY_ASM_LIST, this);
 
         // ...assemble asm objects... //
@@ -1138,7 +1138,7 @@ public final class ProjectDriver {
         if(asm != null && asm.isAssembled() && ret == 0) {
             if(!wasAssembled)
                 modified = true;
-            Msg.I("Done.", null);
+            Msg.info("Done.", null);
             if(g) g_dev.enableSimControls();
             asm_req = false;
         }
@@ -1174,7 +1174,7 @@ public final class ProjectDriver {
     public int simulate() {
         CallbackRegistry.callback(CallbackRegistry.EVENT_SIMULATE, null);
         if(!arch.hasSimCore())
-            return Msg.E("simulate: This ISA does not implement a simulation" +
+            return Msg.error("simulate: This ISA does not implement a simulation" +
                          " core.", Constants.PLP_ISA_NO_SIMCORE, this);
 
         if(asm_req) {
@@ -1182,12 +1182,12 @@ public final class ProjectDriver {
             if(ret != Constants.PLP_OK) return Constants.PLP_ASM_ASSEMBLE_FAILED;
         }
 
-        Msg.I("Starting simulation...", null);
+        Msg.info("Starting simulation...", null);
 
         if(g) this.updateAsm(open_asm, g_dev.getEditor().getText());
 
         if(asm == null || !asm.isAssembled())
-            return Msg.E("simulate: The project is not assembled.",
+            return Msg.error("simulate: The project is not assembled.",
                             Constants.PLP_BACKEND_NO_ASSEMBLED_OBJECT, this);
 
         int checkRet = asm.preSimulationCheck();
@@ -1371,11 +1371,11 @@ public final class ProjectDriver {
     public int program(String port) {
         CallbackRegistry.callback(CallbackRegistry.EVENT_PROGRAM, port);
         if(!arch.hasProgrammer())
-                return Msg.E("This ISA does not implement a board programmer.",
+                return Msg.error("This ISA does not implement a board programmer.",
                              Constants.PLP_ISA_NO_PROGRAMMER, this);
 
         if(!serial_support)
-            return Msg.E("No native serial libraries available.",
+            return Msg.error("No native serial libraries available.",
                          Constants.PLP_BACKEND_NO_NATIVE_SERIAL_LIBS, this);
 
         if(asm_req) {
@@ -1383,20 +1383,20 @@ public final class ProjectDriver {
             if(ret != Constants.PLP_OK) return Constants.PLP_ASM_ASSEMBLE_FAILED;
         }
      
-        Msg.I("Programming to " + port, this);
+        Msg.info("Programming to " + port, this);
 
         try {
 
         if(asm != null && asm.isAssembled()) {
 
             if(asm.getObjectCode().length < 1)
-                return Msg.E("Empty program.",
+                return Msg.error("Empty program.",
                              Constants.PLP_PRG_EMPTY_PROGRAM, this);
             
             prg = arch.createProgrammer();
 
             if(prg == null)
-                return Msg.E("The specified ISA does not have the serial " +
+                return Msg.error("The specified ISA does not have the serial " +
                              "programmer implemented.",
                              Constants.PLP_ISA_NO_PROGRAMMER, this);
 
@@ -1425,12 +1425,12 @@ public final class ProjectDriver {
             return Constants.PLP_OK;
 
         } else
-            return Msg.E("No assembled sources.",
+            return Msg.error("No assembled sources.",
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
 
         } catch(Exception e) {
             Msg.trace(e);
-            return Msg.E("Programming failed.\n" + e,
+            return Msg.error("Programming failed.\n" + e,
                             Constants.PLP_GENERIC_ERROR, this);
         }
     }
@@ -1523,7 +1523,7 @@ public final class ProjectDriver {
      */
     public PLPAsmSource getAsm(int index) {
         if(asms == null || index < 0 || index >= asms.size()) {
-            Msg.E("getAsm: Invalid index: " + index,
+            Msg.error("getAsm: Invalid index: " + index,
                      Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
             return null;
         }
@@ -1570,7 +1570,7 @@ public final class ProjectDriver {
      */
     public int updateAsm(int index, String newStr) {
         if(asms == null || index < 0 || index >= asms.size())
-            return Msg.E("updateAsm: Invalid index: " + index,
+            return Msg.error("updateAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         //if(!asms.get(index).getAsmString().equals(newStr))
@@ -1590,7 +1590,7 @@ public final class ProjectDriver {
     public int newAsm(String name) {
         for(int i = 0; i < asms.size(); i++) {
             if(asms.get(i).getAsmFilePath().equals(name))
-                return Msg.E("The file '" + name + "' already exists in " +
+                return Msg.error("The file '" + name + "' already exists in " +
                              "the project.", Constants.PLP_BACKEND_IMPORT_CONFLICT, this);
         }
 
@@ -1613,14 +1613,14 @@ public final class ProjectDriver {
     public int importAsm(String path) {
         File asmFile = new File(path);
 
-        Msg.I("Importing " + path, null);
+        Msg.info("Importing " + path, null);
 
         if(!asmFile.exists())
-            return Msg.E("importAsm(" + path + "): file not found.",
+            return Msg.error("importAsm(" + path + "): file not found.",
                             Constants.PLP_BACKEND_ASM_IMPORT_ERROR, this);
 
         if(!asmFile.getName().endsWith(".asm")) {
-            return Msg.E("importAsm(" + path + "): imported source files " +
+            return Msg.error("importAsm(" + path + "): imported source files " +
                          "must have a .asm extension.",
                          Constants.PLP_BACKEND_ASM_IMPORT_ERROR, this);
         }
@@ -1631,7 +1631,7 @@ public final class ProjectDriver {
 
             if(existingPath.equals(path) ||
                existingPath.equals(asmFile.getName())) {
-                return Msg.E("importAsm(" + path + "): File with the same name already exists.",
+                return Msg.error("importAsm(" + path + "): File with the same name already exists.",
                                 Constants.PLP_BACKEND_IMPORT_CONFLICT, this);
             }
         }
@@ -1659,15 +1659,15 @@ public final class ProjectDriver {
     public int exportAsm(int index, String path) {
         File asmFile = new File(path);
 
-        Msg.I("Exporting " + asms.get(index).getAsmFilePath() +
+        Msg.info("Exporting " + asms.get(index).getAsmFilePath() +
                  " to " + path, null);
 
         if(asms == null || index < 0 || index >= asms.size())
-            return Msg.E("exportAsm: Invalid index: " + index,
+            return Msg.error("exportAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(asmFile.exists()) {
-            return Msg.E("exportAsm: " + path + " exists.",
+            return Msg.error("exportAsm: " + path + " exists.",
                             Constants.PLP_FILE_SAVE_ERROR, this);
         }
 
@@ -1680,7 +1680,7 @@ public final class ProjectDriver {
 
         } catch(Exception e) {
             Msg.trace(e);
-            return Msg.E("exportAsm(" + asms.get(index).getAsmFilePath() +
+            return Msg.error("exportAsm(" + asms.get(index).getAsmFilePath() +
                             "): Unable to write to " + path + "\n",
                             Constants.PLP_FILE_SAVE_ERROR, this);
         }
@@ -1696,12 +1696,12 @@ public final class ProjectDriver {
      */
     public int removeAsm(int index) {
         if(asms.size() <= 1) {
-            return  Msg.E("removeAsm: Can not delete last source file.",
+            return  Msg.error("removeAsm: Can not delete last source file.",
                             Constants.PLP_BACKEND_DELETING_LAST_ASM_ERROR, this);
         }
 
         if(asms == null || index < 0 || index >= asms.size())
-            return  Msg.E("removeAsm: Invalid index: " + index,
+            return  Msg.error("removeAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         setModified();
@@ -1718,7 +1718,7 @@ public final class ProjectDriver {
             if(g) updateAsm(open_asm, g_dev.getEditorText());
         }
             
-        Msg.I("Removing " + asms.get(index).getAsmFilePath(), null);
+        Msg.info("Removing " + asms.get(index).getAsmFilePath(), null);
         Object[] cParams = {asms.get(index), index};
         CallbackRegistry.callback(CallbackRegistry.PROJECT_REMOVE_ASM, cParams);
         asms.remove(index);
@@ -1738,7 +1738,7 @@ public final class ProjectDriver {
                 return removeAsm(i);
         }
 
-        return Msg.E("removeAsm: Can not find source file with the name \"" +
+        return Msg.error("removeAsm: Can not find source file with the name \"" +
                      asmFileName + "\" within the project.",
                      Constants.PLP_BACKEND_ASM_DOES_NOT_EXIST, this);
     }
@@ -1752,7 +1752,7 @@ public final class ProjectDriver {
      */
     public int setMainAsm(int index) {
         if(asms == null || index <= 0 || index >= asms.size())
-            return Msg.E("setMainAsm: Invalid index: " + index,
+            return Msg.error("setMainAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         asms.add(0, asms.get(index));
@@ -1777,11 +1777,11 @@ public final class ProjectDriver {
      */
     public int setAsmPosition(int index, int newIndex) {
         if(asms == null || index < 0 || index >= asms.size())
-            return Msg.E("setAsmPosition: Invalid index: " + index,
+            return Msg.error("setAsmPosition: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(asms == null || newIndex < 0 || newIndex >= asms.size())
-            return Msg.E("setAsmPosition: Invalid new index: " + newIndex,
+            return Msg.error("setAsmPosition: Invalid new index: " + newIndex,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         if(newIndex <= index) {

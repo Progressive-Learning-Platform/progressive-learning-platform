@@ -181,7 +181,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             } else if(command.equals("showoutput")) {
 
             } else if(command.equals("open_asm")) {
-                plptool.Msg.I("open_asm:" + plp.getOpenAsm(), null);
+                plptool.Msg.info("open_asm:" + plp.getOpenAsm(), null);
             } else if(command.equals("assemble")) {
                 plp.g_dev.assemble();
             } else if(command.equals("simulate")) {
@@ -319,7 +319,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     int id = (Integer) archs[i][0];
                     Class c = (Class) archs[i][1];
                     String strID = (String) archs[i][2];
-                    Msg.I(id + ": " + c.getCanonicalName() + " \"" + strID + "\"", null);
+                    Msg.info(id + ": " + c.getCanonicalName() + " \"" + strID + "\"", null);
                 }
 
             } else if(command.startsWith("cmd ")) {
@@ -428,7 +428,7 @@ public class ConsoleFrame extends javax.swing.JFrame {
             port.close();
             commPort.close();
 
-            Msg.I("Port closed.", this);
+            Msg.info("Port closed.", this);
 
         } catch(Exception e) {
             Msg.debug("Error closing port.", 2, this);

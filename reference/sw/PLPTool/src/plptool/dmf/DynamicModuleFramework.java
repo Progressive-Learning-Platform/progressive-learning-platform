@@ -79,8 +79,8 @@ public class DynamicModuleFramework {
      */
     public static boolean loadModuleClass(String path, String className) {
         if(!warned) {
-            Msg.W("YOU ARE LOADING A DYNAMIC MODULE, THIS COULD POTENTIALLY BE DANGEROUS", null);
-            Msg.W("Make sure you only use trusted third party modules!", null);
+            Msg.warning("YOU ARE LOADING A DYNAMIC MODULE, THIS COULD POTENTIALLY BE DANGEROUS", null);
+            Msg.warning("Make sure you only use trusted third party modules!", null);
             warned = true;
         }
         Msg.debug("[" + index + "] Loading module class " + className + " from " + path +
@@ -99,11 +99,11 @@ public class DynamicModuleFramework {
             dynamicModuleClassPath.add(path);
             index++;
         } catch(ClassNotFoundException e) {
-            Msg.E("The class " + className + " is not found in " + path,
+            Msg.error("The class " + className + " is not found in " + path,
                   Constants.PLP_DMOD_CLASS_NOT_FOUND_ERROR, null);
             return false;
         } catch(Exception e) {
-            Msg.E("Unable to load module. Set debug level to 2 or higher for" +
+            Msg.error("Unable to load module. Set debug level to 2 or higher for" +
                   " stack trace.", Constants.PLP_DMOD_GENERAL_ERROR, null);
             if(Constants.debugLevel >= 2)
                 e.printStackTrace();
@@ -120,7 +120,7 @@ public class DynamicModuleFramework {
      */
     public static Class getDynamicModuleClass(int index) {
         if(index < 0 || index >= dynamicModuleClasses.size()) {
-            Msg.E("Invalid index.", Constants.PLP_DMOD_INVALID_CLASS_INDEX, null);
+            Msg.error("Invalid index.", Constants.PLP_DMOD_INVALID_CLASS_INDEX, null);
             return null;
         }
         
@@ -167,12 +167,12 @@ public class DynamicModuleFramework {
             return dynamicInstances.size() - 1;
 
         } catch (InstantiationException e) {
-            Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
+            Msg.error("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
                   "Generic modules have to extend plptool.PLPGenericModule class.",
                   Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
             return Constants.PLP_GENERIC_ERROR;
         } catch(IllegalAccessException e) {
-            Msg.E("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
+            Msg.error("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
                   Constants.PLP_DMOD_ILLEGAL_ACCESS, null);
             return Constants.PLP_GENERIC_ERROR;
         }
@@ -195,7 +195,7 @@ public class DynamicModuleFramework {
      */
     public static Object getModuleInstance(int index) {
         if(index < 0 || index >= dynamicInstances.size()) {
-            Msg.E("Invalid index.",
+            Msg.error("Invalid index.",
                   Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
             return null;
         }
@@ -227,7 +227,7 @@ public class DynamicModuleFramework {
      */
     public static Object removeModuleInstance(int index) {
         if(index < 0 || index >= dynamicInstances.size()) {
-            Msg.E("Invalid index.",
+            Msg.error("Invalid index.",
                   Constants.PLP_DMOD_INVALID_MODULE_INDEX, null);
             return null;
         }
@@ -286,7 +286,7 @@ public class DynamicModuleFramework {
      * Delete ~/.plp/autoload directory
      */
     public static void removeAutoloadModules() {
-        Msg.I("Removing " + PLPToolbox.getConfDir() + "/autoload...", null);
+        Msg.info("Removing " + PLPToolbox.getConfDir() + "/autoload...", null);
         File autoloadDir = new File(PLPToolbox.getConfDir() + "/autoload");
         if(autoloadDir.exists() && autoloadDir.isDirectory()) {
             File[] files = autoloadDir.listFiles();
@@ -295,7 +295,7 @@ public class DynamicModuleFramework {
             autoloadDir.delete();
 
             if(autoloadDir.exists())
-                Msg.E("Failed to remove autoload directory. " +
+                Msg.error("Failed to remove autoload directory. " +
                       "Are the modules loaded? Try '--delete-autoload-dir' " +
                       "option from the command line.",
                       Constants.PLP_GENERIC_ERROR, null);
@@ -316,12 +316,12 @@ public class DynamicModuleFramework {
             return moduleClass == null ? null : (PLPSimBusModule) moduleClass.newInstance();
 
         } catch (InstantiationException e) {
-            Msg.E("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
+            Msg.error("Instantiation exception for module " + getDynamicModuleClass(index).getName() + ". " +
                   "Dynamic bus modules have to extend plptool.PLPSimBusModule class.",
                   Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
             return null;
         } catch(IllegalAccessException e) {
-            Msg.E("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
+            Msg.error("Illegal access exception for module " + getDynamicModuleClass(index).getName(),
                   Constants.PLP_DMOD_ILLEGAL_ACCESS, null);
             return null;
         }
@@ -353,7 +353,7 @@ public class DynamicModuleFramework {
             return true;
 
         } catch(IOException e) {
-            Msg.E("Failed to load classes from '" + path + "'",
+            Msg.error("Failed to load classes from '" + path + "'",
                   Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
             return false;
         }
@@ -368,7 +368,7 @@ public class DynamicModuleFramework {
      */
     public static String[] loadJarWithManifest(String path) {
         try {
-            Msg.I("Loading " + path + "...", null);
+            Msg.info("Loading " + path + "...", null);
             JarFile jar = new JarFile(path);
             JarEntry entry = jar.getJarEntry("plp.manifest");
             boolean manifestFound = false;
@@ -395,14 +395,14 @@ public class DynamicModuleFramework {
             }
 
             if(!manifestFound) {
-                Msg.E("No plp.manifest file found in the JAR archive",
+                Msg.error("No plp.manifest file found in the JAR archive",
                         Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
                 jar.close();
                 return null;
             }
 
         } catch(IOException e) {
-            Msg.E("Failed to load classes from '" + path + "'",
+            Msg.error("Failed to load classes from '" + path + "'",
                   Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
             return null;
         }
@@ -483,14 +483,14 @@ public class DynamicModuleFramework {
             }
 
             if(!manifestFound) {
-                Msg.E("No plp.manifest file found in the JAR archive",
+                Msg.error("No plp.manifest file found in the JAR archive",
                         Constants.PLP_DMOD_NO_MANIFEST_FOUND, null);
                 jar.close();
                 return null;
             }
 
         } catch(IOException e) {
-            Msg.E("Failed to load '" + path + "'",
+            Msg.error("Failed to load '" + path + "'",
                   Constants.PLP_DMOD_FAILED_TO_LOAD_ALL_JAR, null);
             return null;
         }
@@ -543,17 +543,17 @@ public class DynamicModuleFramework {
 
                 jar.close();
             } catch(IOException e) {
-                Msg.E("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
+                Msg.error("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
                     null);
                 Msg.trace(e);
                 return null;
             }
         } else if(!packageDir.exists()) {
-            Msg.E("'" + path + "' does not exist.",
+            Msg.error("'" + path + "' does not exist.",
                     Constants.PLP_GENERIC_ERROR, null);
             return null;
         } else if(!packageDir.isDirectory()) {
-            Msg.E("'" + path + "' is not a directory or a jar file.",
+            Msg.error("'" + path + "' is not a directory or a jar file.",
                     Constants.PLP_GENERIC_ERROR, null);
             return null;
         } else
@@ -622,7 +622,7 @@ public class DynamicModuleFramework {
 
         if(!done) {
             Msg.println("-------------------------------------------------------------------------------");
-            Msg.E("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
+            Msg.error("Manifest generation failed.", Constants.PLP_GENERIC_ERROR,
                     null);
             return null;
         }
@@ -656,7 +656,7 @@ public class DynamicModuleFramework {
         
         Msg.println("-------------------------------------------------------------------------------");
         if(!found)
-            Msg.W("No connector module for this package was found.\n", null);
+            Msg.warning("No connector module for this package was found.\n", null);
         Msg.println("Manifest generation completed! You can include the plp.manifest file in the ");
         Msg.println("package jar file to allow PLPTool to load the module into a PLPTool session. If");
         Msg.println("no class implementing the connector interface was found, PLPTool will load the");
@@ -768,20 +768,20 @@ class ManifestHandlers {
             int[] minVersion = mod.getMinimumPLPToolVersion();
             if(Text.version[0] < minVersion[0] ||
                     ((Text.version[0] == minVersion[0]) && Text.version[1] < minVersion[1])) {
-                Msg.E("This module requires a newer version of PLPTool",
+                Msg.error("This module requires a newer version of PLPTool",
                         Constants.PLP_DMOD_INSTANTIATION_ERROR, mod.getName());
                 DynamicModuleFramework.removeModuleInstance(cIndex);
             } else {
                 try {
                     retLoad = mod.initialize(plp);
                 } catch(Exception e) {
-                    retLoad = Msg.E("Module did not initialize cleanly."
+                    retLoad = Msg.error("Module did not initialize cleanly."
                             + " Set debug level to at least 2 for stack trace.",
                             Constants.PLP_DMOD_INSTANTIATION_ERROR, mod);
                     if(Constants.debugLevel >= 2)
                         e.printStackTrace();
                 } catch(java.lang.NoClassDefFoundError e) {
-                    retLoad = Msg.E("Class dependency error occured during init."
+                    retLoad = Msg.error("Class dependency error occured during init."
                             + " Requested class not found: " + e.getMessage()
                             + " - Is the module packaged correctly?",
                             Constants.PLP_DMOD_INSTANTIATION_ERROR, mod);
@@ -790,7 +790,7 @@ class ManifestHandlers {
                     if(plp.g())
                         PLPToolbox.showErrorDialog(plp.g_dev, "Module initialization failed."
                                 + " PLPTool may need to be restarted.");
-                    Msg.E("Module initialization failed. PLPTool may need to be restarted.",
+                    Msg.error("Module initialization failed. PLPTool may need to be restarted.",
                             Constants.PLP_DMOD_INSTANTIATION_ERROR, null);
                     DynamicModuleFramework.removeModuleInstance(cIndex);
                 }
@@ -801,7 +801,7 @@ class ManifestHandlers {
     public static void m_registerisa() {
         String tokens[] = entry.split("::");
         if(tokens.length != 5) {
-            Msg.E("Invalid 'registerisa' manifest entry usage",
+            Msg.error("Invalid 'registerisa' manifest entry usage",
                     Constants.PLP_DMOD_INVALID_MANIFEST_ENTRY, null);
             return;
         }
@@ -850,7 +850,7 @@ class ManifestHandlers {
             BufferedImage img = ImageIO.read(f.getAbsoluteFile());
             plptool.gui.PLPToolApp.putImage(f.getName(), img);
         } catch(IOException e) {
-            Msg.E("Failed to load image from archive: " + tokens[1],
+            Msg.error("Failed to load image from archive: " + tokens[1],
                     Constants.PLP_GENERAL_IO_ERROR, null);
         }
     }
@@ -897,7 +897,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
     @Override
     public Class loadClass(String name) throws ClassNotFoundException, NoClassDefFoundError {
         if(findLoadedClass(name) != null) {
-            Msg.E("Class " + name + " is already loaded.",
+            Msg.error("Class " + name + " is already loaded.",
                   Constants.PLP_DMOD_MODULE_IS_ALREADY_LOADED, null);
             return null;
         }
@@ -924,7 +924,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                 try {
                     ret = defineClass(name, out.toByteArray(), 0, out.size());
                 } catch(NoClassDefFoundError e) {
-                    Msg.E("defineClass: " + name + " FAILED.", Constants.PLP_GENERIC_ERROR, null);
+                    Msg.error("defineClass: " + name + " FAILED.", Constants.PLP_GENERIC_ERROR, null);
                     return null;
                 }
                 
@@ -949,7 +949,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
                 try {
                     ret = defineClass(name, out.toByteArray(), 0, out.size());
                 } catch(NoClassDefFoundError e) {
-                    Msg.E("defineClass: " + name + " FAILED: " + e, Constants.PLP_GENERIC_ERROR, null);
+                    Msg.error("defineClass: " + name + " FAILED: " + e, Constants.PLP_GENERIC_ERROR, null);
                     jar.close();
                     return null;
                 }
@@ -957,7 +957,7 @@ class PLPDynamicModuleClassLoader extends ClassLoader {
             return ret;
             
         } catch(Exception e) {
-            Msg.E("Unable to load dynamic module " + name + " from the file " + path,
+            Msg.error("Unable to load dynamic module " + name + " from the file " + path,
                   Constants.PLP_DMOD_PATH_ERROR, null);
             if(Constants.debugLevel >= 2)
                 e.printStackTrace();

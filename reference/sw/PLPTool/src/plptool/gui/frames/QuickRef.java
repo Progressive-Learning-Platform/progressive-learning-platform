@@ -168,7 +168,7 @@ public class QuickRef extends javax.swing.JFrame {
         try {
             txtHTML.print();
         } catch(java.awt.print.PrinterException e) {
-            plptool.Msg.E("Failed to print.", plptool.Constants.PLP_GENERIC_ERROR, null);
+            plptool.Msg.error("Failed to print.", plptool.Constants.PLP_GENERIC_ERROR, null);
         }
     }//GEN-LAST:event_btnPrintActionPerformed
 

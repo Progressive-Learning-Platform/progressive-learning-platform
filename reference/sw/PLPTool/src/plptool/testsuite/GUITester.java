@@ -58,9 +58,9 @@ public class GUITester implements Tester {
         AutoTest.delay(1000);
         plp.g_dev.toFront();
         AutoTest.delay(500);
-        Msg.E("Message test", Constants.PLP_ASM_GENERAL_SYNTAX_ERROR, plp);
+        Msg.error("Message test", Constants.PLP_ASM_GENERAL_SYNTAX_ERROR, plp);
         AutoTest.delay(500);
-        Msg.W("Message test", plp);
+        Msg.warning("Message test", plp);
         AutoTest.delay(500);
         Msg.println("Message test");
         Msg.appendLine("<b>HTML message</b> test");

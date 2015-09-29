@@ -53,7 +53,7 @@ public class PLPToolbox {
 
         } catch(Exception e) {
             Msg.lastError = -1;
-            return Msg.E("Number error: '" + number + "' is not a valid number",
+            return Msg.error("Number error: '" + number + "' is not a valid number",
                             Constants.PLP_NUMBER_ERROR, null);
         }
     }
@@ -107,7 +107,7 @@ public class PLPToolbox {
 
         } catch(Exception e) {
             Msg.lastError = -1;
-            return Msg.E("Number error: '" + number + "' is not a valid number",
+            return Msg.error("Number error: '" + number + "' is not a valid number",
                             Constants.PLP_NUMBER_ERROR, null);
         }
     }
@@ -325,7 +325,7 @@ public class PLPToolbox {
                 ret == javax.swing.JOptionPane.YES_OPTION) {
             String fileName = "";
             try {
-                Msg.I("Downloading " + URL + "...", null);
+                Msg.info("Downloading " + URL + "...", null);
                 java.net.URL jar = new java.net.URL(URL);
                 java.nio.channels.ReadableByteChannel rbc = java.nio.channels.Channels.newChannel(jar.openStream());
                 String[] tokens = jar.getFile().split("/");
@@ -336,13 +336,13 @@ public class PLPToolbox {
                 fos.close();
                 if(!DynamicModuleFramework.checkForManifest(
                         PLPToolbox.getConfDir() + "/autoload/" + fileName)) {
-                    Msg.E("Downloaded JAR file does not contain plp.manifest",
+                    Msg.error("Downloaded JAR file does not contain plp.manifest",
                           Constants.PLP_DMOD_NO_MANIFEST_FOUND, null);
                     (new File(PLPToolbox.getConfDir() + "/autoload/" + fileName)).delete();
                     return false;
                 }
             } catch(Exception e) {
-                Msg.E("Failed to fetch " + URL + ".",
+                Msg.error("Failed to fetch " + URL + ".",
                         Constants.PLP_GENERIC_ERROR, null);
                 if(Constants.debugLevel >= 2)
                     e.printStackTrace();
@@ -400,7 +400,7 @@ public class PLPToolbox {
             in.close();
             
         } catch(IOException e) {
-            return Msg.E("File copy error: '" + src + "' to '" + dest +
+            return Msg.error("File copy error: '" + src + "' to '" + dest +
                     "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
                     , Constants.PLP_GENERAL_IO_ERROR, null);
         }
@@ -423,7 +423,7 @@ public class PLPToolbox {
             out.write(data);
             out.close();
         } catch(IOException e) {
-            return Msg.E("File write error: '" + file +
+            return Msg.error("File write error: '" + file +
                     "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
                     , Constants.PLP_IO_WRITE_ERROR, null);
         }
@@ -447,7 +447,7 @@ public class PLPToolbox {
             out.close();
 
         } catch(IOException e) {
-            return Msg.E("File write error: '" + file +
+            return Msg.error("File write error: '" + file +
                     "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
                     , Constants.PLP_IO_WRITE_ERROR, null);
         }
@@ -478,7 +478,7 @@ public class PLPToolbox {
             in.close();
 
         } catch(Exception e) {
-            Msg.E("File open error: '" + path +
+            Msg.error("File open error: '" + path +
                     "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
                     , Constants.PLP_GENERAL_IO_ERROR, null);
             return null;
@@ -511,7 +511,7 @@ public class PLPToolbox {
             in.close();
 
         } catch(Exception e) {
-            Msg.E("File open error: '" + path +
+            Msg.error("File open error: '" + path +
                     "'." + (Constants.debugLevel >= 2 ? "Exception: " + e : "")
                     , Constants.PLP_GENERAL_IO_ERROR, null);
             return null;
@@ -532,13 +532,13 @@ public class PLPToolbox {
             JarFile jarFile = new JarFile(jar);
             JarEntry jarEntry = jarFile.getJarEntry(entry);
             if(jarEntry == null)
-                return Msg.E("copyFromJar: " +
+                return Msg.error("copyFromJar: " +
                         "Can not find entry: '" + entry +
                         "' in '" + jar + "'.",
                     Constants.PLP_GENERAL_IO_ERROR, null);
             File destFile = new File(dest);
             if(destFile.exists())
-                return Msg.E("copyFromJar: " + "'" + dest + "' exists.",
+                return Msg.error("copyFromJar: " + "'" + dest + "' exists.",
                         Constants.PLP_GENERAL_IO_ERROR, null);
             InputStream in = jarFile.getInputStream(jarEntry);
             FileOutputStream out = new FileOutputStream(dest);
@@ -549,7 +549,7 @@ public class PLPToolbox {
             jarFile.close();
 
         } catch(IOException e) {
-            return Msg.E("copyFromJar: " +
+            return Msg.error("copyFromJar: " +
                     "Jar extract error: '" + entry + "' to '" + dest +
                     "' from '" + jar + "'." +
                     (Constants.debugLevel >= 2 ? "Exception: " + e : "")
@@ -570,10 +570,10 @@ public class PLPToolbox {
         File dir = new File(dirPath);
         int ret;
         if(!dir.exists())
-            return Msg.E("'" + dir.getAbsolutePath() + "' does not exist",
+            return Msg.error("'" + dir.getAbsolutePath() + "' does not exist",
                     Constants.PLP_IO_FILE_DOES_NOT_EXIST, null);
         else if(!dir.isDirectory())
-            return Msg.E("'" + dir.getAbsolutePath() + "' is not a directory",
+            return Msg.error("'" + dir.getAbsolutePath() + "' is not a directory",
                     Constants.PLP_IO_IS_NOT_A_DIRECTORY, null);
 
         try {
@@ -587,7 +587,7 @@ public class PLPToolbox {
             if(ret != Constants.PLP_OK)
                 return ret;
         } catch(IOException e) {
-            return Msg.E("I/O error while trying to archive '" +
+            return Msg.error("I/O error while trying to archive '" +
                     dir.getAbsolutePath() + "' into '" + jar + "'",
                     Constants.PLP_GENERAL_IO_ERROR, null);
         }
@@ -633,7 +633,7 @@ public class PLPToolbox {
                         out.flush();
                         out.closeEntry();
                     } catch(IOException e) {
-                        return Msg.E("I/O error while adding '" +
+                        return Msg.error("I/O error while adding '" +
                                 files[i].getAbsolutePath() + "' to JAR archive.",
                                 Constants.PLP_GENERAL_IO_ERROR, null);
                     }
@@ -673,11 +673,11 @@ public class PLPToolbox {
 				}
             } catch(IOException e) {
                 Msg.trace(e);
-                return Msg.E("Failed to open input stream (I/O error)",
+                return Msg.error("Failed to open input stream (I/O error)",
                                     Constants.PLP_GENERAL_IO_ERROR, null);
             } catch(Exception e) {
                 Msg.trace(e);
-                return Msg.E("Failed to open input stream (general exception)",
+                return Msg.error("Failed to open input stream (general exception)",
                                     Constants.PLP_GENERAL_IO_ERROR, null);
             }
 
@@ -697,7 +697,7 @@ public class PLPToolbox {
                 in.close();
             } catch(IOException e) {
                 Msg.trace(e);
-                return Msg.E("Failed to open output stream (I/O error)",
+                return Msg.error("Failed to open output stream (I/O error)",
                                     Constants.PLP_GENERAL_IO_ERROR, null);
             }                        
         } else {
@@ -705,7 +705,7 @@ public class PLPToolbox {
                 out = new JarOutputStream(new FileOutputStream(fJar));
             } catch(IOException e) {
                 Msg.trace(e);
-                return Msg.E("Failed to open output stream (I/O error)",
+                return Msg.error("Failed to open output stream (I/O error)",
                                     Constants.PLP_GENERAL_IO_ERROR, null);
             }
         }
@@ -725,10 +725,10 @@ public class PLPToolbox {
             }
         } catch(java.util.zip.ZipException e) {
             Msg.trace(e);
-            return Msg.E("Zip Exception: " + e.getMessage(), Constants.PLP_GENERAL_IO_ERROR, null);
+            return Msg.error("Zip Exception: " + e.getMessage(), Constants.PLP_GENERAL_IO_ERROR, null);
         } catch(IOException e) {
             Msg.trace(e);
-            return Msg.E("Failed to add \"" + entryPath + "\" (I/O error)",
+            return Msg.error("Failed to add \"" + entryPath + "\" (I/O error)",
                                 Constants.PLP_GENERAL_IO_ERROR, null);
         }
 
@@ -736,7 +736,7 @@ public class PLPToolbox {
             (new File(getTmpDir() + "/tmp.jar")).delete();
         } catch(Exception e) {
             Msg.trace(e);
-            return Msg.E("Failed to delete temporary JAR file",
+            return Msg.error("Failed to delete temporary JAR file",
                                 Constants.PLP_GENERAL_IO_ERROR, null);
         }
         
@@ -751,7 +751,7 @@ public class PLPToolbox {
         if(!temp.exists()) {
             temp.mkdir();
         } else if(temp.exists() && !temp.isDirectory()) {
-            Msg.E("Temporary directory creation failed.",
+            Msg.error("Temporary directory creation failed.",
                     Constants.PLP_GENERAL_IO_ERROR, null);
         }
     }
@@ -786,7 +786,7 @@ public class PLPToolbox {
             p = Runtime.getRuntime().exec(program);
             p.waitFor();
         } catch(IOException ioe) {
-            Msg.E("I/O error while attempting to execute '" + program + "'",
+            Msg.error("I/O error while attempting to execute '" + program + "'",
                     Constants.PLP_GENERAL_IO_ERROR, null);
         } catch(InterruptedException ie) {
 
@@ -1019,7 +1019,7 @@ public class PLPToolbox {
             java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                     new java.awt.datatransfer.StringSelection(str), null);
         } catch(Exception e) {
-            Msg.W("clipboard copy failed.", null);
+            Msg.warning("clipboard copy failed.", null);
         }
     }
 
@@ -1254,7 +1254,7 @@ public class PLPToolbox {
         StringTokenizer tokens = new StringTokenizer(location.replaceAll("\\s",""), "+-", true);
         int tokenCount = tokens.countTokens();
         if(!tokens.hasMoreTokens()) {
-            return Msg.E("resolveBaseOffset: empty expression", Constants.PLP_NUMBER_ERROR, null);
+            return Msg.error("resolveBaseOffset: empty expression", Constants.PLP_NUMBER_ERROR, null);
         }
         String base = tokens.nextToken();        
         long addr = asm.resolveAddress(base);
@@ -1272,7 +1272,7 @@ public class PLPToolbox {
                 ret = ret - offset;
             }
         } else if(ret == -1 || tokenCount != 1) {
-            return Msg.E("resolveBaseOffset: invalid address expression", Constants.PLP_NUMBER_ERROR, null);
+            return Msg.error("resolveBaseOffset: invalid address expression", Constants.PLP_NUMBER_ERROR, null);
         }
         return ret;
     }

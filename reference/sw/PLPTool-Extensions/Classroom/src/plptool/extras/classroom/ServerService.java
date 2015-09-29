@@ -47,7 +47,7 @@ public class ServerService extends Thread {
         try {
             socket = new ServerSocket(port);
         } catch(IOException e) {
-            Msg.E("Unable to open port " + port, Constants.PLP_GENERAL_IO_ERROR,
+            Msg.error("Unable to open port " + port, Constants.PLP_GENERAL_IO_ERROR,
                     null);
             if(Constants.debugLevel >= 2) e.printStackTrace();
         }
@@ -60,7 +60,7 @@ public class ServerService extends Thread {
             doc.insertString(offset, text, null);
             plp.g_dev.getEditor().setCaretPosition(offset+text.length());
         } catch(BadLocationException ble) {
-            Msg.E("Collab: Text insert error", Constants.PLP_GENERIC_ERROR,
+            Msg.error("Collab: Text insert error", Constants.PLP_GENERIC_ERROR,
                     null);
         }
     }
@@ -74,7 +74,7 @@ public class ServerService extends Thread {
             }
             socket.close();
         } catch(IOException e) {
-            Msg.E("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
+            Msg.error("Unable to close port", Constants.PLP_GENERAL_IO_ERROR, this);
             if(Constants.debugLevel >= 2) e.printStackTrace();
         }
     }
@@ -85,19 +85,19 @@ public class ServerService extends Thread {
 
     @Override
     public void run() {
-        Msg.I("Listening on port " + socket.getLocalPort(), this);
+        Msg.info("Listening on port " + socket.getLocalPort(), this);
         while(control.getServerState() == ServerControl.State.LISTENING) {
             try {
                 Socket client = socket.accept();
                 ClientService c = new ClientService(clientIndex, this, client, null);
                 clientServices.put(clientIndex, c);
-                Msg.I("Client[" + clientIndex + "] connected", this);
+                Msg.info("Client[" + clientIndex + "] connected", this);
                 clientIndex++;
                 c.start();
                 control.update();
             } catch(IOException e) {
                 if(control.getServerState() == ServerControl.State.LISTENING)
-                    Msg.E("Unable to open connection",
+                    Msg.error("Unable to open connection",
                             Constants.PLP_GENERIC_ERROR, null);
             }
         }

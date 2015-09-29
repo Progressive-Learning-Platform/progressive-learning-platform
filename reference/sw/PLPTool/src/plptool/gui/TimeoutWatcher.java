@@ -53,18 +53,18 @@ public class TimeoutWatcher extends Thread {
         }
 
         if(timeoutCounter == 20) {
-            Msg.E("Programming timed out, killing programmer thread.",
+            Msg.error("Programming timed out, killing programmer thread.",
                      Constants.PLP_PRG_TIMEOUT, this);
             //plp.p_port.getInputStream().close();
             //plp.prg.interrupt();
             //plp.p_port.close();
             plp.prg.cancelProgramming();
             plp.prg.stop();
-            Msg.I("Watchdog quitting.", this);
+            Msg.info("Watchdog quitting.", this);
         }
 
         } catch(Exception e) {
-            Msg.E("Uh oh I crashed.", Constants.PLP_OOPS, this);
+            Msg.error("Uh oh I crashed.", Constants.PLP_OOPS, this);
         }
     }
 

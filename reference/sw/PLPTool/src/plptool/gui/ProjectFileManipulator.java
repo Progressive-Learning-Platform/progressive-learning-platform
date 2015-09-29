@@ -59,7 +59,7 @@ public class ProjectFileManipulator {
 
         if(args[2].equals("-importasm") || args[2].equals("-i")) {
             if((args.length < 4)) {
-                return Msg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("No file specified.", Constants.PLP_GENERIC_ERROR, null);
             }
 
             String temp = plp.plpfile.getAbsolutePath();
@@ -88,7 +88,7 @@ public class ProjectFileManipulator {
 
         } else if(args[2].equals("-c")) {
             if(args.length < 4) {
-                return Msg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("No file specified.", Constants.PLP_GENERIC_ERROR, null);
             }
             plp.create(args[3], archID);
 
@@ -100,7 +100,7 @@ public class ProjectFileManipulator {
 
         } else if(args[2].equals("-importdir") || args[2].equals("-d")) {
             if(!(args.length == 4)) {
-                return Msg.E("No file specified.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("No file specified.", Constants.PLP_GENERIC_ERROR, null);
             }
 
             File dir = new File(args[3]);
@@ -113,7 +113,7 @@ public class ProjectFileManipulator {
 
         } else if((args[2].equals("-setmain") || args[2].equals("-s"))) {
             if(!(args.length == 4)) {
-                return Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
             }
 
             int main_index = Integer.parseInt(args[3]);
@@ -124,7 +124,7 @@ public class ProjectFileManipulator {
 
         } else if(args[2].equals("-v")) {
             if(!(args.length == 4 || args.length == 5)) {
-                return Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
             }
 
             int index = Integer.parseInt(args[3]);
@@ -141,12 +141,12 @@ public class ProjectFileManipulator {
             }
 
         } else if(args[2].equals("-meta")) {
-            Msg.I("Metafile contents:", null);
+            Msg.info("Metafile contents:", null);
             Msg.println(plp.meta);
 
 	} else if((args[2].equals("-r"))) {
             if(!(args.length == 4)) {
-                return Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
             }
 
             int index = Integer.parseInt(args[3]);
@@ -155,7 +155,7 @@ public class ProjectFileManipulator {
 
         } else if((args[2].equals("-e"))) {
             if(!(args.length == 5)) {
-                return Msg.E("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
             }
 
             int index = Integer.parseInt(args[3]);
@@ -163,7 +163,7 @@ public class ProjectFileManipulator {
 
         } else if((args[2].equals("-m"))) {
             if(!(args.length == 5)) {
-                return Msg.E("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("Missing argument(s).", Constants.PLP_GENERIC_ERROR, null);
             }
 
             int index = Integer.parseInt(args[3]);
@@ -173,7 +173,7 @@ public class ProjectFileManipulator {
 
         } else if((args[2].equals("-edit"))) {
             if(!(args.length == 4)) {
-                return Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
             }
  
             try {
@@ -209,21 +209,21 @@ public class ProjectFileManipulator {
             } else if(plp.asm != null && plp.asm.isAssembled()) {
                 plp.save();
             } else
-                Msg.E("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
+                Msg.error("BUILD FAILED", Constants.PLP_GENERIC_ERROR, plp);
 
         } else if(args[2].equals("-p")) {
             if(!(args.length == 4)) {
-                return Msg.E("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
+                return Msg.error("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
             }
 
             if(!plp.isDirty()) {
                 ret = plp.assemble();
                 ret = plp.program(args[3]);
             } else
-                return Msg.E("Binary files are not up to date!", Constants.PLP_GENERIC_ERROR, plp);
+                return Msg.error("Binary files are not up to date!", Constants.PLP_GENERIC_ERROR, plp);
 
         } else {
-            Msg.I("Invalid option: " + args[2], null);
+            Msg.info("Invalid option: " + args[2], null);
             return Constants.PLP_GENERIC_ERROR;
         }
 

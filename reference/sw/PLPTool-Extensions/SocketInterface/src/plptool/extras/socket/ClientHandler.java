@@ -36,7 +36,7 @@ public class ClientHandler {
             in = new InputStreamReader(socket.getInputStream());
             out = new OutputStreamWriter(socket.getOutputStream());
         } catch(IOException ioe) {
-            Msg.E("SocketInterface: ClientHandler: failed to open streams",
+            Msg.error("SocketInterface: ClientHandler: failed to open streams",
                     Constants.PLP_GENERAL_IO_ERROR, null);
         }
     }

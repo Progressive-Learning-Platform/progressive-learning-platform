@@ -116,7 +116,7 @@ public class SimCLI {
 
     public static void cmd_s() {
         if(core.stepW() != Constants.PLP_OK)
-             Msg.E("Simulation is stale. Please reset.",
+             Msg.error("Simulation is stale. Please reset.",
                       Constants.PLP_SIM_STALE, null);
         else if(!silent) {
             Msg.printPreformattedString("");
@@ -150,7 +150,7 @@ public class SimCLI {
             }
             for(int i = 0; i < steps && Msg.lastError == 0 && !breakpoint; i++) {
                 if(core.stepW() != Constants.PLP_OK)
-                    Msg.E("Simulation is stale. Please reset.",
+                    Msg.error("Simulation is stale. Please reset.",
                              Constants.PLP_SIM_STALE, null);
                 else if(!silent) {
                     Msg.printPreformattedString("");
@@ -373,7 +373,7 @@ public class SimCLI {
             if(addr > -1)
                 core.bus.write(addr, PLPToolbox.parseNum(tokens[2]), false);
             else
-                Msg.E("Invalid address.", Constants.PLP_NUMBER_ERROR, null);
+                Msg.error("Invalid address.", Constants.PLP_NUMBER_ERROR, null);
         }
     }
 
@@ -390,7 +390,7 @@ public class SimCLI {
                                        String.format("0x%08x", value));
                 }
             } else
-                Msg.E("Invalid address.", Constants.PLP_NUMBER_ERROR, null);
+                Msg.error("Invalid address.", Constants.PLP_NUMBER_ERROR, null);
         }
     }
 
@@ -550,7 +550,7 @@ public class SimCLI {
                                        "  " + MIPSInstr.format(inlineAsm.getObjectCode()[j]));
                 }
             } else
-                Msg.E("Code injection failed.", Constants.PLP_GENERIC_ERROR, null);
+                Msg.error("Code injection failed.", Constants.PLP_GENERIC_ERROR, null);
         }
     }
 
@@ -627,7 +627,7 @@ public class SimCLI {
                 core.breakpoints.add(addr, asm.getFileIndex(addr), asm.getLineNum(addr));
                 Msg.printPreformattedString("Breakpoint set at " + PLPToolbox.format32Hex(addr) + (addrLabel != -1 ? " (" + tokens[2] + ")" : ""));
             } else
-                Msg.E("'" + tokens[2] + "' is not a valid number or label.",
+                Msg.error("'" + tokens[2] + "' is not a valid number or label.",
                         Constants.PLP_GENERIC_ERROR, null);
         } else if(tokens[1].equals("list")) {
             Msg.printPreformattedString("Breakpoints:");

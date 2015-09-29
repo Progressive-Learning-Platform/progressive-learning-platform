@@ -68,19 +68,19 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         try {
             portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         } catch(NoClassDefFoundError e) {
-            return Msg.E("Failed to link with native RXTX library.",
+            return Msg.error("Failed to link with native RXTX library.",
                             Constants.PLP_GENERIC_ERROR, this);
         } catch(UnsatisfiedLinkError e) {
-            return Msg.E("Failed to link with native RXTX library.",
+            return Msg.error("Failed to link with native RXTX library.",
                             Constants.PLP_GENERIC_ERROR, this);
         } catch(NoSuchPortException e) {
-            return Msg.E(portName + " is not found.",
+            return Msg.error(portName + " is not found.",
                             Constants.PLP_GENERIC_ERROR, this);
         }
 
         if ( portIdentifier.isCurrentlyOwned() )
         {
-            return Msg.E("Serial port " + portName + " is in use.",
+            return Msg.error("Serial port " + portName + " is in use.",
                                     Constants.PLP_PRG_PORT_IN_USE, this);
         }
         else {
@@ -101,7 +101,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 Msg.debug("Port name: " + plp.p_port.getName(), 4, this);
             }
             else {
-                return Msg.E(portName + " is not a serial port.",
+                return Msg.error(portName + " is not a serial port.",
                                     Constants.PLP_PRG_NOT_A_SERIAL_PORT, this);
             }
         }
@@ -120,7 +120,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
 
             return Constants.PLP_OK;
         } catch(Exception e) {
-            return Msg.E("Can not close serial port.",
+            return Msg.error("Can not close serial port.",
                     Constants.PLP_PRG_UNABLE_TO_CLOSE_PORT, null);
         }
     }
@@ -153,7 +153,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
             if(inData != 'f') {
                 Msg.debug("Acknowledgement byte: " +
                          String.format("0x%x", inData), 2, this);
-                return Msg.E("Programming failed, no/invalid acknowledgement received. " +
+                return Msg.error("Programming failed, no/invalid acknowledgement received. " +
                                 "Check if the board is in programming mode.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
             }
@@ -192,7 +192,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     out.write(buff, 0, 5);
                     if(isProgramming()) inData = (byte) in.read();
                     if(inData != 'f')
-                        return Msg.E("Programming failed, no acknowledgement received.",
+                        return Msg.error("Programming failed, no acknowledgement received.",
                                         Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
                 // chunk mode, buffer object until next address is not addr+4
@@ -228,7 +228,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     out.write(buff, 0, 5);
                     if(isProgramming()) inData = (byte) in.read();
                     if(inData != 'f')
-                        return Msg.E("Programming failed, no acknowledgement received.",
+                        return Msg.error("Programming failed, no acknowledgement received.",
                                         Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
                     
                 // if we buffered up to maximum chunk size, send data
@@ -236,7 +236,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                           chunkIndex == Config.prgMaxChunkSize &&
                           (i < objCode.length - 1)) {
                     if(!plp.g())
-                        Msg.I("Buffered " +
+                        Msg.info("Buffered " +
                                progress + " of " + objCode.length + " words", this);
                     
                     ret = sendChunk(chunk, chunkIndex, i);
@@ -277,13 +277,13 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 out.write(buff, 0, 5);
                 if(isProgramming()) inData = (byte) in.read();
                 if(inData != 'f')
-                    return Msg.E("Programming failed, no acknowledgement received.",
+                    return Msg.error("Programming failed, no acknowledgement received.",
                                     Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
                 out.write('j');
                 if(isProgramming()) inData = (byte) in.read();
                 if(inData != 'f')
-                    return Msg.E("Programming failed, no acknowledgement received.",
+                    return Msg.error("Programming failed, no acknowledgement received.",
                                     Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
                 double timeSecs = (System.currentTimeMillis()- startTime) / 1000.0;
@@ -292,12 +292,12 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     plp.g_prg.getStatusField().setText("Done. " + objCode.length +
                             " words in " + timeSecs + " seconds.");
                 }
-                Msg.I("done. " + objCode.length +
+                Msg.info("done. " + objCode.length +
                             " words in " + timeSecs + " seconds.", this);
 
             // we were interrupted, try to reset board
             } else {
-                Msg.I("interrupted.", this);
+                Msg.info("interrupted.", this);
 
                 Msg.debug("Jumping to " + String.format("%08x", 0), 3, this);
                 buff[0] = (byte) 'a';
@@ -308,17 +308,17 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                 out.write(buff, 0, 5);
                 if(isProgramming()) inData = (byte) in.read();
                 if(inData != 'f')
-                    return Msg.E("Programming failed, no acknowledgement received.",
+                    return Msg.error("Programming failed, no acknowledgement received.",
                                     Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
                 out.write('j');
                 if(isProgramming()) inData = (byte) in.read();
                 if(inData != 'f')
-                    return Msg.E("Programming failed, no acknowledgement received.",
+                    return Msg.error("Programming failed, no acknowledgement received.",
                                     Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
             }
         } else {
-            return Msg.E("Source is not assembled.",
+            return Msg.error("Source is not assembled.",
                             Constants.PLP_PRG_SOURCES_NOT_ASSEMBLED, this);
         }
 
@@ -336,7 +336,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
                     String.format("0x%08x", addrTable[i]) +
                     " (" + chunkIndex +" bytes)");
         else
-            Msg.I("Transmitting " +
+            Msg.info("Transmitting " +
                     String.format("0x%08x", chunkStartAddr) + " to " +
                     String.format("0x%08x", addrTable[i]) +
                     " (" + chunkIndex +" bytes)", this);
@@ -352,7 +352,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         byte inData = '\0';
         if(isProgramming()) inData = (byte) in.read();
             if(inData != 'f')
-                return Msg.E("Programming failed, no acknowledgement received.",
+                return Msg.error("Programming failed, no acknowledgement received.",
                                 Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, this);
 
         return Constants.PLP_OK;
@@ -376,7 +376,7 @@ public class SerialProgrammer extends plptool.PLPSerialProgrammer {
         out.write(buff, 0, 5);
         if(isProgramming()) inData = (byte) in.read();
         if(inData != 'f')
-            return Msg.E("Failed to send preamble, no acknowledgement received.",
+            return Msg.error("Failed to send preamble, no acknowledgement received.",
                             Constants.PLP_PRG_SERIAL_TRANSMISSION_ERROR, null);
 
         return Constants.PLP_OK;

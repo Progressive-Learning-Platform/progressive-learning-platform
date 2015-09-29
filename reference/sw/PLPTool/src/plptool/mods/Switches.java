@@ -48,7 +48,7 @@ public class Switches extends PLPSimBusModule {
 
     @Override
     public int write(long addr, Object data, boolean isInstr) {
-        return Msg.E("write(): Write to read only register.",
+        return Msg.error("write(): Write to read only register.",
                         Constants.PLP_SIM_WRITE_TO_READONLY_MODULE, this);
     }
 
