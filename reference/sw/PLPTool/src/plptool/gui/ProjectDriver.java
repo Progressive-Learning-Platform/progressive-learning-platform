@@ -26,27 +26,52 @@
 
 package plptool.gui;
 
-import plptool.dmf.DynamicModuleFramework;
-import plptool.dmf.CallbackRegistry;
-import plptool.*;
-import plptool.gui.frames.*;
-import plptool.mods.Preset;
-import plptool.mods.IORegistry;
-
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
-import javax.swing.tree.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+
+import plptool.ArchRegistry;
+import plptool.Config;
+import plptool.Constants;
+import plptool.Msg;
+import plptool.PLPArchitecture;
+import plptool.PLPAsm;
+import plptool.PLPAsmSource;
+import plptool.PLPBuildError;
+import plptool.PLPLinker;
+import plptool.PLPSerialProgrammer;
+import plptool.PLPSimCore;
+import plptool.PLPSimCoreGUI;
+import plptool.PLPToolbox;
+import plptool.Text;
+import plptool.dmf.CallbackRegistry;
+import plptool.gui.frames.ASMSimView;
+import plptool.gui.frames.AboutBoxDialog;
+import plptool.gui.frames.AsmNameDialog;
+import plptool.gui.frames.Develop;
+import plptool.gui.frames.FindAndReplace;
+import plptool.gui.frames.IDE;
+import plptool.gui.frames.IORegistryFrame;
+import plptool.gui.frames.ISASelector;
+import plptool.gui.frames.OptionsFrame;
+import plptool.gui.frames.ProgrammerDialog;
+import plptool.gui.frames.QuickRef;
+import plptool.gui.frames.SimControl;
+import plptool.gui.frames.SimErrorFrame;
+import plptool.gui.frames.Watcher;
+import plptool.mods.IORegistry;
+import plptool.mods.Preset;
 
 /**
  * This is the PLPTool application project backend. This class handles
@@ -82,10 +107,8 @@ public final class ProjectDriver {
     private int                    open_asm;
     private PLPArchitecture        arch;
     private boolean                sim_mode;
-    private boolean                replay;
     private boolean                asm_req;
     private ArrayList<PLPAsmSource> asms;       // Assembly files
-    private boolean                halt;       // critical error
 
     /**
      * Current PLP file that the project driver is working on
@@ -207,9 +230,7 @@ public final class ProjectDriver {
         arch = null;
         modified = false;
         plpfile = null;
-        halt = false;
         sim_mode = false;
-        replay = false;
         asm_req = false;
 
         // check for rxtx native libaries
@@ -1844,7 +1865,7 @@ public final class ProjectDriver {
      * Use this method for some unforeseen bug!
      */
     public void triggerCriticalError() {
-        halt = true;
+        // XXX: removed "hault = true"; ensure processes are stopped
         System.err.println("[CRITICAL ERROR] " +
                     "This really, really, really, should not have happened.");
         System.err.println("[CRITICAL ERROR] " +
