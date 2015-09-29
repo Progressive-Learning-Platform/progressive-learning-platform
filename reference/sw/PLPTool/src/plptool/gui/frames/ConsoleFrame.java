@@ -213,9 +213,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     @SuppressWarnings("unchecked")
                     java.util.Map.Entry<String, Object> entry =
                             (java.util.Map.Entry<String, Object>) entrySet[i];
-                    Msg.p(entry.getKey() + "::" + entry.getValue());
+                    Msg.appendLine(entry.getKey() + "::" + entry.getValue());
                 }
-                Msg.P();
+                Msg.printBuffer();
             } else if(command.equals("dumpappattributes")) {
                 java.util.HashMap<String, String> attributes = plptool.gui.PLPToolApp.getAttributes();
                 Object[] entrySet = attributes.entrySet().toArray();
@@ -224,9 +224,9 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     @SuppressWarnings("unchecked")
                     java.util.Map.Entry<String, String> entry =
                             (java.util.Map.Entry<String, String>) entrySet[i];
-                    Msg.p(entry.getKey() + "::" + entry.getValue());
+                    Msg.appendLine(entry.getKey() + "::" + entry.getValue());
                 }
-                Msg.P();
+                Msg.printBuffer();
             } else if(command.equals("dumpbuilderrors")) {
                 java.util.ArrayList<PLPBuildError> errorList;
                 Msg.printPreformattedString("Errors from last build:");

@@ -127,26 +127,26 @@ public class PLPMIPSWebSim extends javax.swing.JApplet {
         ret = plp.sim.stepW();
         SimCore sc = (SimCore) plp.sim;
 
-        Msg.p("Register File Contents");
-        Msg.p("======================");
+        Msg.appendLine("Register File Contents");
+        Msg.appendLine("======================");
 
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 4; j++)
-                Msg.pn((i+8*j) + ((i+8*j < 10) ? "  " : " ") + String.format("%08x", sc.regfile.read(i+8*j)) + "  ");
+                Msg.append((i+8*j) + ((i+8*j < 10) ? "  " : " ") + String.format("%08x", sc.regfile.read(i+8*j)) + "  ");
 
-            Msg.p("");
+            Msg.appendLine("");
         }
 
-        Msg.p("");
-        Msg.p("Instructions in-flight");
-        Msg.p("======================");
+        Msg.appendLine("");
+        Msg.appendLine("Instructions in-flight");
+        Msg.appendLine("======================");
 
-        Msg.p(sc.wb_stage.printinstr());
-        Msg.p(sc.mem_stage.printinstr());
-        Msg.p(sc.ex_stage.printinstr());
-        Msg.p(sc.id_stage.printinstr());
+        Msg.appendLine(sc.wb_stage.printinstr());
+        Msg.appendLine(sc.mem_stage.printinstr());
+        Msg.appendLine(sc.ex_stage.printinstr());
+        Msg.appendLine(sc.id_stage.printinstr());
         sc.printfrontend();
-        Msg.P();
+        Msg.printBuffer();
 
         return ret;
     }

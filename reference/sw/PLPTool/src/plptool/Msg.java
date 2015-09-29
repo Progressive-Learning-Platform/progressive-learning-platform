@@ -320,7 +320,7 @@ public class Msg {
      *
      * @param appendStr String to append
      */
-    public static void p(String appendStr) {
+    public static void appendLine(String appendStr) {
         preformattedStringBuffer += appendStr + "\n";
     }
 
@@ -330,14 +330,17 @@ public class Msg {
      *
      * @param appendStr String to append
      */
-    public static void pn(String appendStr) {
+    public static void append(String appendStr) {
         preformattedStringBuffer += appendStr;
     }
 
     /**
-     * Print out buffered preformatted string
+     * Print contents of {@link #preformattedStringBuffer}
+     * <p>
+     * The {@link #preformattedStringBuffer} can be built using {@link #append(String)} 
+     * and {@link #appendLine(String)}
      */
-    public static void P() {
+    public static void printBuffer() {
         if(silent || LogOutStream == null) return;
 
         try {

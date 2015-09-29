@@ -120,12 +120,12 @@ public class SimCLI {
                       Constants.PLP_SIM_STALE, null);
         else if(!silent) {
             Msg.printPreformattedString("");
-            Msg.p(core.wb_stage.printinstr());
-            Msg.p(core.mem_stage.printinstr());
-            Msg.p(core.ex_stage.printinstr());
-            Msg.p(core.id_stage.printinstr());
+            Msg.appendLine(core.wb_stage.printinstr());
+            Msg.appendLine(core.mem_stage.printinstr());
+            Msg.appendLine(core.ex_stage.printinstr());
+            Msg.appendLine(core.id_stage.printinstr());
             core.printfrontend();
-            Msg.P();
+            Msg.printBuffer();
             Msg.printPreformattedString("-------------------------------------");
         }
     }
@@ -154,12 +154,12 @@ public class SimCLI {
                              Constants.PLP_SIM_STALE, null);
                 else if(!silent) {
                     Msg.printPreformattedString("");
-                    Msg.p(core.wb_stage.printinstr());
-                    Msg.p(core.mem_stage.printinstr());
-                    Msg.p(core.ex_stage.printinstr());
-                    Msg.p(core.id_stage.printinstr());
+                    Msg.appendLine(core.wb_stage.printinstr());
+                    Msg.appendLine(core.mem_stage.printinstr());
+                    Msg.appendLine(core.ex_stage.printinstr());
+                    Msg.appendLine(core.id_stage.printinstr());
                     core.printfrontend();
-                    Msg.P();
+                    Msg.printBuffer();
                     Msg.printPreformattedString("-------------------------------------");
                 }
                 breakpoint = core.breakpoints.isBreakpoint(core.visibleAddr);
@@ -177,7 +177,7 @@ public class SimCLI {
     public static void cmd_r() {
         core.reset();
         core.printfrontend();
-        Msg.P();
+        Msg.printBuffer();
     }
 
     public static void cmd_wpc() {
@@ -187,7 +187,7 @@ public class SimCLI {
             core.softreset();
             core.pc.write(PLPToolbox.parseNum(tokens[1]));
             core.printfrontend();
-            Msg.P();
+            Msg.printBuffer();
         }
     }
 
@@ -198,7 +198,7 @@ public class SimCLI {
         else {
             core.pc.write(PLPToolbox.parseNum(tokens[1]));
             core.printfrontend();
-            Msg.P();
+            Msg.printBuffer();
         }
     }
 
@@ -272,12 +272,12 @@ public class SimCLI {
     public static void cmd_pinstr() {
         Msg.printPreformattedString("\nIn-flight instructions");
         Msg.printPreformattedString("======================");
-        Msg.p(core.wb_stage.printinstr());
-        Msg.p(core.mem_stage.printinstr());
-        Msg.p(core.ex_stage.printinstr());
-        Msg.p(core.id_stage.printinstr());
+        Msg.appendLine(core.wb_stage.printinstr());
+        Msg.appendLine(core.mem_stage.printinstr());
+        Msg.appendLine(core.ex_stage.printinstr());
+        Msg.appendLine(core.id_stage.printinstr());
         core.printfrontend();
-        Msg.P();
+        Msg.printBuffer();
     }
 
     public static void cmd_pvars() {
@@ -324,15 +324,15 @@ public class SimCLI {
 
     public static void cmd_preg() {
         long data;
-        Msg.p("\nRegisters listing");
-        Msg.p("=================");
+        Msg.appendLine("\nRegisters listing");
+        Msg.appendLine("=================");
         for(int j = 0; j < 32; j++) {
             data = (Long) core.regfile.read(j);
-            Msg.p(j + "\t" +
+            Msg.appendLine(j + "\t" +
                                String.format("%08x", data) + "\t" +
                                PLPToolbox.asciiWord(data));
         }
-        Msg.P();
+        Msg.printBuffer();
     }
 
     public static void cmd_preg_arg() {
@@ -362,7 +362,7 @@ public class SimCLI {
         Msg.printPreformattedString("\nFrontend / fetch stage state");
         Msg.printPreformattedString("============================");
         core.printfrontend();
-        Msg.P();
+        Msg.printBuffer();
     }
 
     public static void cmd_wbus() {

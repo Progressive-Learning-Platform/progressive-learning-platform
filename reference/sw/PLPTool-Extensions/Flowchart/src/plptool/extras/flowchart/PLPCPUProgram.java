@@ -74,36 +74,36 @@ public class PLPCPUProgram {
         while(next != null) {
             reachedNodes.addNode(next);
             Msg.printPreformattedString("*************************************");
-            Msg.pn("node[" + i + "]: ");
+            Msg.append("node[" + i + "]: ");
             if(next.getLabel() != null)
-                Msg.pn(next.getLabel() + ":");
-            Msg.pn(PLPToolbox.format32Hex(next.getAddress()));
-            Msg.P();
+                Msg.append(next.getLabel() + ":");
+            Msg.append(PLPToolbox.format32Hex(next.getAddress()));
+            Msg.printBuffer();
             if(next instanceof ExitNode) {
-                Msg.pn("**Exit node");
-                Msg.P();
+                Msg.append("**Exit node");
+                Msg.printBuffer();
             } else if(next instanceof BranchNode) {
                 BranchNode bNode = (BranchNode) next;
-                Msg.pn("**Branch node | ");
-                Msg.pn("branch on true: " + bNode.isBranchOnTrue() + " ");
-                Msg.pn("destination: " +
+                Msg.append("**Branch node | ");
+                Msg.append("branch on true: " + bNode.isBranchOnTrue() + " ");
+                Msg.append("destination: " +
                         bNode.getBranchDestination().getLabel() + ":" +
                         PLPToolbox.format32Hex(bNode.getBranchDestination().getAddress()));
-                Msg.P();
+                Msg.printBuffer();
             } else if(next instanceof JumpNode) {
                 JumpNode jNode = (JumpNode) next;
-                Msg.pn("**Jump node | ");
-                Msg.pn("destination: " +
+                Msg.append("**Jump node | ");
+                Msg.append("destination: " +
                         jNode.getDestination().getLabel() + ":" +
                         PLPToolbox.format32Hex(jNode.getDestination().getAddress()));
-                Msg.P();
+                Msg.printBuffer();
             } else if(next instanceof CallNode) {
                 CallNode cNode = (CallNode) next;
-                Msg.pn("**Call node | ");
-                Msg.pn("destination: " +
+                Msg.append("**Call node | ");
+                Msg.append("destination: " +
                         cNode.getRoutineLabel() + ":" +
                         PLPToolbox.format32Hex(cNode.getRoutineAddress()));
-                Msg.P();
+                Msg.printBuffer();
             }
             Msg.printPreformattedString("==CODE========\n" +
                    next.getCode() +
