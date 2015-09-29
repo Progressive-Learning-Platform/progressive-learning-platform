@@ -18,6 +18,9 @@
 
 package plptool.gui.frames;
 
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
+import static java.awt.event.KeyEvent.VK_DELETE;
+
 import java.awt.Desktop;
 import java.awt.Point;
 import java.io.File;
@@ -3170,7 +3173,7 @@ public final class Develop extends javax.swing.JFrame {
         } else if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
             deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
             modified = true;
-        } else if (evt.getKeyCode() == evt.VK_DELETE || evt.getKeyCode() == evt.VK_BACK_SPACE) {
+        } else if (evt.getKeyCode() == VK_DELETE || evt.getKeyCode() == VK_BACK_SPACE) {
             modified = true;
         } else if ((int)evt.getKeyChar() == 127) {
             //deleteOccured = true;
