@@ -16,7 +16,7 @@
 
  */
 
-package plptool.gui.develop;
+package plptool.gui.frames;
 
 import java.awt.Desktop;
 import java.awt.Point;
@@ -54,15 +54,12 @@ import plptool.gui.NumberConverter;
 import plptool.gui.PLPToolApp;
 import plptool.gui.ProjectDriver;
 import plptool.gui.SerialTerminal;
+import plptool.gui.develop.DevEditorDocListener;
+import plptool.gui.develop.DevUndoManager;
+import plptool.gui.develop.HighlighterThread;
+import plptool.gui.develop.OutputHyperlinkListener;
 import plptool.gui.develop.filefilters.AsmFilter;
 import plptool.gui.develop.filefilters.PlpFilter;
-import plptool.gui.frames.ASMSimView;
-import plptool.gui.frames.DynamicModuleManager;
-import plptool.gui.frames.IORegistryFrame;
-import plptool.gui.frames.ModuleManager;
-import plptool.gui.frames.TextLineHighlighter;
-import plptool.gui.frames.TextLineNumber;
-import plptool.gui.frames.Watcher;
 import plptool.mods.GPIO;
 import plptool.mods.LEDArray;
 import plptool.mods.PLPID;

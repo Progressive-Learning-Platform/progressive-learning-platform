@@ -29,7 +29,6 @@ package plptool.gui;
 import plptool.dmf.DynamicModuleFramework;
 import plptool.dmf.CallbackRegistry;
 import plptool.*;
-import plptool.gui.develop.Develop;
 import plptool.gui.frames.*;
 import plptool.mods.Preset;
 import plptool.mods.IORegistry;

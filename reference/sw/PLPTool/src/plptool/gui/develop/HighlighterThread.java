@@ -4,6 +4,7 @@ import javax.swing.SwingUtilities;
 
 import plptool.Config;
 import plptool.Msg;
+import plptool.gui.frames.Develop;
 
 public class HighlighterThread extends Thread {
     private Develop g_dev;

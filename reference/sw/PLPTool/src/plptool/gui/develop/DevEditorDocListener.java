@@ -3,6 +3,7 @@ package plptool.gui.develop;
 import javax.swing.event.DocumentListener;
 
 import plptool.gui.ProjectDriver;
+import plptool.gui.frames.Develop;
 
 public class DevEditorDocListener implements DocumentListener {
     private Develop g_dev;

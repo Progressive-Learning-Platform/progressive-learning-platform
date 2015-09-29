@@ -6,6 +6,7 @@ import javax.swing.undo.UndoManager;
 
 import plptool.Config;
 import plptool.Msg;
+import plptool.gui.frames.Develop;
 
 public class DevUndoManager extends UndoManager
 {
