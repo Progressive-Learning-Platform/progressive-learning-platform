@@ -87,28 +87,30 @@ public final class ProjectDriver {
     /**
      * Reference to the application handle
      */
-    public PLPToolApp              app;        // App
+	private PLPToolApp              app;        // App
 
-    /*
-     * These variables hold project status and data for this driver
-     * modified     - denotes whether the plpfile is modified since opening
-     * open_asm     - current open ASM file in the gui
-     * arch         - active ISA for this project
-     * sim_mode	    - denotes whether the project is in simulation mode
-     * replay       - denotes whether the project is in replay mode
-     * asm_req      - denotes whether the project needs to be assembled for
-     *                other functions such as simulation or programming
-     * asms         - list of source files
-     * halt         - --unused for now--
-     */
+    // These variables hold project status and data for this driver
 
+    /** denotes whether the plpfile has been modified since opening */
     private boolean                modified;
+
+    /**  */
     private boolean                dirty;
+
+    /** current open ASM file in the gui */
     private int                    open_asm;
+
+    /** active ISA for this project */
     private PLPArchitecture        arch;
+
+    /** denotes whether the project is in simulation mode */
     private boolean                sim_mode;
+
+    /** denotes whether the project needs to be assembled for other functions such as simulation or programming */
     private boolean                asm_req;
-    private ArrayList<PLPAsmSource> asms;       // Assembly files
+
+    /** list of source assembly files */
+    private ArrayList<PLPAsmSource> asms;
 
     /**
      * Current PLP file that the project driver is working on
@@ -129,12 +131,12 @@ public final class ProjectDriver {
     /**
      * Binary image of the assembled program (if used)
      */
-    public byte[]                  binimage;
+    private byte[]                  binimage;
 
     /**
      * String of hex image of the assembled program (if used)
      */
-    public String                  hexstring;
+    private String                  hexstring;
 
     /**
      * Meta information string of the project
@@ -149,7 +151,7 @@ public final class ProjectDriver {
     /**
      * A table model handler for the watcher window entries
      */
-    public DefaultTableModel       watcher;
+    private DefaultTableModel       watcher;
 
     /**
      * The assembler attached to the project. This assembler will most likely
@@ -478,7 +480,8 @@ public final class ProjectDriver {
         }
 
         // commit changes of currently open source file
-        if(g) updateAsm(open_asm, g_dev.getEditorText());
+        if(g) 
+        	updateAsm(open_asm, g_dev.getEditorText());
         //assemble();
 
         if(plpfile == null || plpfile.getName().equals("Unsaved Project"))
