@@ -485,11 +485,8 @@ public final class ProjectDriver {
             return Msg.error("No PLP project file is open. Use Save As.",
                             Constants.PLP_FILE_USE_SAVE_AS, null);
 
-        ArrayList<PLPAsmSource> sourceList;
         String verilogHex = "";
         long[] objCode = null;
-        PLPAsmSource temp;
-        int i;
 
         try {
 
@@ -515,15 +512,10 @@ public final class ProjectDriver {
         }
 
         meta += "ARCH=" + arch.getID() + "\n";
-
         meta += "\n";
 
-        sourceList = asms;
-
-        for(i = 0; i < sourceList.size(); i++) {
-            temp = (PLPAsmSource) sourceList.get(i);
-            meta += temp.getAsmFilePath() + "\n";
-        }
+        for(PLPAsmSource asmFile : asms)
+            meta += asmFile.getAsmFilePath() + "\n";
 
         // Create plpfile (a tar archive)
         TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
@@ -537,11 +529,11 @@ public final class ProjectDriver {
         tOut.flush();
         tOut.closeArchiveEntry();
 
-        for(i = 0; i < sourceList.size(); i++) {
-            PLPAsmSource asmFile = sourceList.get(i);
+        for(PLPAsmSource asmFile : asms) {
             Msg.debug("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
             entry = new TarArchiveEntry(asmFile.getAsmFilePath());
             
+            // XXX: add to external documentation
             // We are not expecting an .asm file with size greater than 4GiB
             // ... I hope...
             byte[] fileStr = asmFile.getAsmString().getBytes();
@@ -566,7 +558,7 @@ public final class ProjectDriver {
         if(watcher != null) {
             str += "WATCHER\n";
 
-            for(i = 0; i < watcher.getRowCount(); i++) {
+            for(int i = 0; i < watcher.getRowCount(); i++) {
                 str += watcher.getValueAt(i, 0) + "::";
                 str += watcher.getValueAt(i, 1) + "\n";
             }
@@ -582,7 +574,7 @@ public final class ProjectDriver {
         if(smods != null && smods.size() > 0) {
             str += "MODS\n";
 
-            for(i = 0; i < smods.size(); i++) {
+            for(int i = 0; i < smods.size(); i++) {
                 str += smods.getType(i) + "::";     //0
                 str +="RESERVED_FIELD::";       //1
                 str += smods.getAddress(i) + "::";      //2
@@ -620,7 +612,7 @@ public final class ProjectDriver {
             entry.setSize(verilogHex.length());
             tOut.putArchiveEntry(entry);
             data = new byte[verilogHex.length()];
-            for(i = 0; i < verilogHex.length(); i++) {
+            for(int i = 0; i < verilogHex.length(); i++) {
                 data[i] = (byte) verilogHex.charAt(i);
             }
             tOut.write(data);
@@ -633,7 +625,7 @@ public final class ProjectDriver {
             entry.setSize(objCode.length * 4);
             tOut.putArchiveEntry(entry);
             data = new byte[objCode.length * 4];
-            for(i = 0; i < objCode.length; i++) {
+            for(int i = 0; i < objCode.length; i++) {
                 data[4*i] = (byte) (objCode[i] >> 24);
                 data[4*i+1] = (byte) (objCode[i] >> 16);
                 data[4*i+2] = (byte) (objCode[i] >> 8);
