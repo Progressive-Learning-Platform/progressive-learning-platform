@@ -83,18 +83,11 @@ import plptool.mods.Preset;
  * @author wira
  */
 public final class ProjectDriver {
-
-    /**
-     * Reference to the application handle
-     */
-	private PLPToolApp              app;        // App
-
     // These variables hold project status and data for this driver
 
     /** denotes whether the plpfile has been modified since opening */
     private boolean                modified;
 
-    /**  */
     private boolean                dirty;
 
     /** current open ASM file in the gui */
