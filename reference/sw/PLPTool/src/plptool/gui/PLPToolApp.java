@@ -27,7 +27,6 @@ import plptool.ArchRegistry;
 import plptool.Text;
 import plptool.dmf.DynamicModuleFramework;
 import plptool.dmf.CallbackRegistry;
-import plptool.testsuite.AutoTest;
 import plptool.PLPToolbox;
 import plptool.Config;
 
@@ -136,7 +135,6 @@ public class PLPToolApp extends SingleFrameApplication {
         images = new HashMap<String, BufferedImage>();
         args = ArchRegistry.setup(args);                   // Setup ISA registry
         args = CallbackRegistry.setup(args);               // Setup callback registry
-        args = AutoTest.setup(args);                       // Run unit tests
         commandLineArgs = args;
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -283,10 +281,8 @@ public class PLPToolApp extends SingleFrameApplication {
 
             // Instantiate project driver and exit. Used by autotest
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--debug-projectdriver")) {
-                Msg.println("Creating default ProjectDriver for debugging...");
-                AutoTest.plp = new ProjectDriver(Constants.PLP_DEFAULT);
-                CallbackRegistry.callback(CallbackRegistry.START, AutoTest.plp);
-		return; // do not exit, leave it to the autotest thread
+                Msg.println("Automated testing moved to JUnit. Run with ant instead");
+                quit(Constants.PLP_OK);
 
             // Print GPL license text and quit
             } else if(args.length >= activeArgIndex + 1 && args[i].equals("--gpl")) {
