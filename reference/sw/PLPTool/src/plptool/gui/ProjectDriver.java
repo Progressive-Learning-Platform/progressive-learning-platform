@@ -31,6 +31,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.table.DefaultTableModel;
@@ -86,6 +88,8 @@ public final class ProjectDriver {
     private boolean                g;          // are we driving a GUI?
     private boolean                applet;     // are we driving an applet?
     
+    private List<TarEntryNode> tarEntryStash;
+    
     // These variables hold project status and data for this driver
     /** denotes whether the plpfile has been modified since opening */
     private boolean                modified;
@@ -116,22 +120,6 @@ public final class ProjectDriver {
      * Current working directory for the project
      */
     public String                  curdir;
-    
-
-    /*
-     * These variables hold data and information loaded from
-     * the plp project file.
-     */ // --
-
-    /**
-     * Binary image of the assembled program (if used)
-     */
-    private byte[]                  binimage;
-
-    /**
-     * String of hex image of the assembled program (if used)
-     */
-    private String                  hexstring;
 
     /**
      * A table model handler for the watcher window entries
@@ -220,6 +208,7 @@ public final class ProjectDriver {
     public ProjectDriver(int modes) {
         this.g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
         this.applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
+        this.tarEntryStash = new LinkedList<>();
         
         arch = null;
         modified = false;
@@ -630,20 +619,14 @@ public final class ProjectDriver {
             tOut.flush();
             tOut.closeArchiveEntry();
 
-        } else if(binimage != null) {
-            Msg.debug("Writing out old (dirty) verilog hex code...", 2, this);
-            entry = new TarArchiveEntry("plp.hex");
-            entry.setSize(hexstring.length());
-            tOut.putArchiveEntry(entry);
-            tOut.write(hexstring.getBytes());
-            tOut.flush();
-            tOut.closeArchiveEntry();
-            
-            Msg.debug("Writing out old (dirty) binary image...", 2, this);
-            entry = new TarArchiveEntry("plp.image");
-            entry.setSize(binimage.length);
-            tOut.putArchiveEntry(entry);
-            tOut.write(binimage);
+        } 
+        
+        // write entries that appear in the save but are not used by PLPTool
+        for (TarEntryNode node : tarEntryStash) {
+        	// TODO: verify this error code
+            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", 2, this);
+            tOut.putArchiveEntry(node.entry);
+            tOut.write(node.data);
             tOut.flush();
             tOut.closeArchiveEntry();
         }
@@ -698,7 +681,7 @@ public final class ProjectDriver {
             arch = null;
         }
         asm = null;
-        asms = new ArrayList<PLPAsmSource>();
+        asms = new ArrayList<>();
         smods = null;
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
@@ -805,14 +788,6 @@ public final class ProjectDriver {
 
             } else if(entry.getName().equals("plp.metafile")) {
                 // we've done reading the metafile
-
-            } else if (entry.getName().equals("plp.image")) {
-                binimage = new byte[(int) entry.getSize()];
-                binimage = image;
-
-            } else if(entry.getName().equals("plp.hex")) {
-                hexstring = new String(image);
-            
             // Restore bus modules states
             } else if (entry.getName().equals("plp.simconfig")) {
                 Msg.debug("simconfig:\n" + metaStr + "\n", 4, this);
@@ -871,9 +846,9 @@ public final class ProjectDriver {
             } else if(handled) {
 
             } else {
-                Msg.warning("open(" + path + "): unable to process entry: " +
-                        entry.getName() + ". This file will be removed when"
-                        + " you save the project.", this);
+            	TarEntryNode entryNode = new TarEntryNode(entry, image);
+            	tarEntryStash.add(entryNode);
+                Msg.info("open(" + path + "): found misc tarball entry: " + entry.getName(), this);
             }
         }
 
