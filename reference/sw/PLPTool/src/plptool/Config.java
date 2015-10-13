@@ -64,7 +64,6 @@ public class Config {
     public static boolean prgNexys3ProgramWorkaround       = true;
     public static boolean prgAutoDetectPorts               = true;
 
-    public static boolean devNewSyntaxHighlightStrategy    = true;
     public static long    devHighlighterThreadRefreshMsecs = 1000;
     public static boolean devSyntaxHighlighting            = true;
     public static boolean devSyntaxHighlightOnAssemble     = false;
@@ -125,8 +124,7 @@ public class Config {
         prgReadTimeout                   = 500;
         prgNexys3ProgramWorkaround       = true;
         prgAutoDetectPorts               = true;
-
-        devNewSyntaxHighlightStrategy    = true;
+        
         devHighlighterThreadRefreshMsecs = 1000;
         devSyntaxHighlighting            = true;
         devSyntaxHighlightOnAssemble     = false;
