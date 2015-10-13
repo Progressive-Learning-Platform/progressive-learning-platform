@@ -1,4 +1,4 @@
-package junit;
+package junit.plpToolBox;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,7 @@ import org.junit.Test;
 import plptool.PLPAsm;
 import plptool.PLPToolbox;
 
-public class PLPToolboxTest
+public class PLPToolboxParseTesting
 {
 	private static String numInt;
 	private static String numHexWithXSuffix;
@@ -131,15 +131,6 @@ public class PLPToolboxTest
 		assertEquals("Parsing 0xf = 15", 15, PLPToolbox.parseNum("0xf"));
 		
 		assertEquals("parseNum -5 == -5", -5, PLPToolbox.parseNum("-5"));
-	}
-	
-	// tryResolveLabel
-	@Test
-	public void tryResolveLabelResolveOrParseAddress()
-	{
-		String label = "";
-		PLPAsm asm = null;
-		// fail("Not implemented");
 	}
 	
 	// format32Hex
