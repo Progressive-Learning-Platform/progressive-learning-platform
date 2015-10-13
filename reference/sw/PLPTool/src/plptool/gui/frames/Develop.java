@@ -495,12 +495,10 @@ public final class Develop extends JFrame {
             }
         });
         
-        if(Config.devNewSyntaxHighlightStrategy) {
-            highlighterThread = new HighlighterThread(this);
-            currentEditorListener = new DevEditorDocListener(plp, highlighterThread);
-            txtEditor.getDocument().addDocumentListener(currentEditorListener);
-            highlighterThread.start();
-        }
+        highlighterThread = new HighlighterThread(this);
+        currentEditorListener = new DevEditorDocListener(plp, highlighterThread);
+        txtEditor.getDocument().addDocumentListener(currentEditorListener);
+        highlighterThread.start();
 
         forceRevalidate();
     }
