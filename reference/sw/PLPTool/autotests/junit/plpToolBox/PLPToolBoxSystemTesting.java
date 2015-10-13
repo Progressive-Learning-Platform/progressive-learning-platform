@@ -1,7 +1,10 @@
 package junit.plpToolBox;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -13,6 +16,8 @@ import org.junit.Test;
 
 import plptool.Constants;
 import plptool.PLPToolbox;
+
+import com.sun.javafx.tk.Toolkit;
 
 public class PLPToolBoxSystemTesting
 {
@@ -27,6 +32,8 @@ public class PLPToolBoxSystemTesting
 	{
 		osName = System.getProperty("os.name");
 		osArchitecture = System.getProperty("os.arch");
+		
+		System.out.println(PLPToolbox.asciiWord(65));
 	}
 	
 	@Before
@@ -95,15 +102,38 @@ public class PLPToolBoxSystemTesting
 				assertEquals("No known constant returned", false, true);
 				break;
 		}
-
+		
 		assertEquals("Test OS Printing", osName + " " + osArchitecture,
 				standardOutStream.toString().trim());
 		
 		standardOutStream.reset();
 		
-		//Make sure nothing is printed
+		// Make sure nothing is printed
 		PLPToolbox.getOS(false);
 		assertEquals("", new String(), standardOutStream.toString().trim());
+	}
+	
+	// Testing PLPToolBox.copy
+	@Test
+	public void testClipboardActions() throws UnsupportedFlavorException,
+			IOException
+	{
+		String thisWillBeInTheClipboard = "Am I in the clipboard?";
+		
+		PLPToolbox.copy(thisWillBeInTheClipboard);
+		
+		java.awt.Toolkit toolKit = java.awt.Toolkit.getDefaultToolkit();
+		Clipboard clipboard = (Clipboard) toolKit.getSystemClipboard();
+		
+		assertEquals("Can we retrieve set clipboard data",
+				thisWillBeInTheClipboard,
+				clipboard.getData(DataFlavor.stringFlavor));
+	}
+	
+	@Test
+	public void testConfigurationTesting()
+	{
+		
 	}
 	
 }
