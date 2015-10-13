@@ -18,27 +18,29 @@
 
 package plptool.gui;
 
-import plptool.gui.frames.ConsoleFrame;
-import plptool.gui.frames.DynamicModuleManager;
-import org.jdesktop.application.SingleFrameApplication;
-import plptool.Msg;
-import plptool.Constants;
-import plptool.ArchRegistry;
-import plptool.Text;
-import plptool.dmf.DynamicModuleFramework;
-import plptool.dmf.CallbackRegistry;
-import plptool.PLPToolbox;
-import plptool.Config;
-
-import java.io.FileInputStream;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-import java.awt.image.BufferedImage;
+import java.util.Scanner;
+
 import javax.imageio.ImageIO;
+
+import org.jdesktop.application.SingleFrameApplication;
+
+import plptool.ArchRegistry;
+import plptool.Config;
+import plptool.Constants;
+import plptool.Msg;
+import plptool.PLPToolbox;
+import plptool.Text;
+import plptool.dmf.CallbackRegistry;
+import plptool.dmf.DynamicModuleFramework;
+import plptool.gui.frames.ConsoleFrame;
+import plptool.gui.frames.DynamicModuleManager;
 
 /**
  * This is the main class of PLPTool. This class handles command line arguments
