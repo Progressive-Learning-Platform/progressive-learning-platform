@@ -83,8 +83,10 @@ import plptool.mods.Preset;
  * @author wira
  */
 public final class ProjectDriver {
+    private boolean                g;          // are we driving a GUI?
+    private boolean                applet;     // are we driving an applet?
+    
     // These variables hold project status and data for this driver
-
     /** denotes whether the plpfile has been modified since opening */
     private boolean                modified;
 
@@ -132,19 +134,14 @@ public final class ProjectDriver {
     private String                  hexstring;
 
     /**
-     * Meta information string of the project
-     */
-    public String                  meta;
-
-    /**
-     * Saved module set for the project
-     */
-    public Preset                  smods;
-
-    /**
      * A table model handler for the watcher window entries
      */
     private DefaultTableModel       watcher;
+
+    /**
+     * Build error list from the previous failed build process
+     */
+    private ArrayList<PLPBuildError> buildErrorList;
 
     /**
      * The assembler attached to the project. This assembler will most likely
@@ -174,9 +171,14 @@ public final class ProjectDriver {
     public PLPSimCoreGUI           g_sim;
 
     /**
-     * Build error list from the previous failed build process
+     * Meta information string of the project
      */
-    private ArrayList<PLPBuildError> buildErrorList;
+    public String                  meta;
+
+    /**
+     * Saved module set for the project
+     */
+    public Preset                  smods;
 
     /*
      * PLP GUI Windows
@@ -195,9 +197,6 @@ public final class ProjectDriver {
     public QuickRef                g_qref;     
     public ISASelector             g_isaselect;
     public FindAndReplace          g_find;
-
-    private boolean                g;          // are we driving a GUI?
-    private boolean                applet;     // are we driving an applet?
 
     // Programmer
     private boolean                serial_support;
