@@ -91,7 +91,6 @@ import plptool.mods.VGA;
  * @author wira
  */
 public final class Develop extends JFrame {
-    boolean trackChanges = false;
     private ProjectDriver plp;
     private DevUndoManager undoManager;
     private HighlighterThread highlighterThread;
@@ -475,22 +474,18 @@ public final class Develop extends JFrame {
      */
     public void setEditorText(String str) {
         txtEditor.setContentType("text");
-        trackChanges = false;
 
         if(!str.equals(txtEditor.getText())) {
-            if(highlighterThread != null) {
+            if(highlighterThread != null)
                 highlighterThread.stopThread();
-            }
-            
-            if(currentEditorListener != null) {
+            if(currentEditorListener != null)
                 txtEditor.getDocument().removeDocumentListener(currentEditorListener);
-            }
 
             txtEditor.setText(str);
+            // FIXME: if file is too large to highlight, user should be notified
             if(Config.devSyntaxHighlighting && str.length() <= Config.filetoolarge)
                 syntaxHighlight();
         }
-        trackChanges = true;
         undoManager = new DevUndoManager(this);
         undoManager.setLimit(Config.devMaxUndoEntries);
 
