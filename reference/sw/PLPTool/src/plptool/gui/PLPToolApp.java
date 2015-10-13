@@ -624,6 +624,8 @@ public class PLPToolApp extends SingleFrameApplication {
                 Msg.silent = false;
                 while(sIn.hasNext())
                     plp.getArch().simCLICommand(sIn.nextLine());
+                
+                sIn.close();
             } catch(Exception e) {
                 System.out.print("Unable to open/run the script '" + scriptFileToRun + "'. ");
                 System.out.println("Set debug level to 2 or greater for stack trace.");
