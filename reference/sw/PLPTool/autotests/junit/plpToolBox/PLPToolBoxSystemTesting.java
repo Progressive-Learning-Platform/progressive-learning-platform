@@ -17,8 +17,6 @@ import org.junit.Test;
 import plptool.Constants;
 import plptool.PLPToolbox;
 
-import com.sun.javafx.tk.Toolkit;
-
 public class PLPToolBoxSystemTesting
 {
 	private static String osName;
