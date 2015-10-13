@@ -63,15 +63,7 @@ public class Preset {
     }
 
     public void addModuleDefinition(int type, long startAddr, long size, boolean frame, boolean visible) {
-        types.add(type);
-        addresses.add(startAddr);
-        sizes.add(size);
-        hasFrame.add(frame);
-        frameVisible.add(visible);
-        frX.add(0);
-        frY.add(0);
-        frW.add(0);
-        frH.add(0);
+        this.addModuleDefinition(type, startAddr, size, frame, visible, 0, 0, 0, 0);
     }
 
     public int getType(int index) {
