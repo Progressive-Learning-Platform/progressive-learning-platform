@@ -18,9 +18,6 @@
 
 package plptool.gui.frames;
 
-import static java.awt.event.KeyEvent.VK_BACK_SPACE;
-import static java.awt.event.KeyEvent.VK_DELETE;
-
 import java.awt.Desktop;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -1825,11 +1822,6 @@ public final class Develop extends JFrame {
                 txtEditorCaretPositionChanged(evt);
             }
         });
-        txtEditor.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtEditorKeyTyped(evt);
-            }
-        });
         scroller.setViewportView(txtEditor);
 
         lblPosition.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -3167,66 +3159,6 @@ public final class Develop extends JFrame {
     private void btnSaveActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         menuSaveActionPerformed(evt);
     }//GEN-LAST:event_btnSaveActionPerformed
-
-    private boolean deleteOccured;
-
-    private void txtEditorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEditorKeyTyped
-        if(Config.devNewSyntaxHighlightStrategy) return;
-        deleteOccured = false;
-        boolean modified = false;
-
-        if(evt.isAltDown())
-            return;
-
-        if(evt.isControlDown() && evt.getKeyChar() == 'y' ) {
-            Msg.debug("redo.", 10, this);
-        } else if((int)evt.getKeyChar() == 10 || (int)evt.getKeyChar() > 31 && (int)evt.getKeyChar() < 127) {
-            deleteOccured = (txtEditor.getSelectedText() != null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
-            modified = true;
-        } else if (evt.getKeyCode() == VK_DELETE || evt.getKeyCode() == VK_BACK_SPACE) { 
-            modified = true;
-        } else if ((int)evt.getKeyChar() == 127) {
-            //deleteOccured = true;
-            modified = true;
-        } else if ((int)evt.getKeyChar() == 8) {
-            //deleteOccured = true;
-            modified = true;
-        } else if ((int)evt.getKeyChar() == 24) {
-            deleteOccured = true;
-            modified = true;
-        } else if ((int)evt.getKeyChar() == 22) {
-            deleteOccured = (txtEditor.getSelectedText() == null) || (txtEditor.getSelectedText() != null && !txtEditor.getSelectedText().equals(""));
-            Config.devSyntaxHighlightOnAssemble = true;
-            
-            /*** highlight now ***/
-            syntaxHighlight();
-            Config.devSyntaxHighlightOnAssemble = false;
-            /*********************/
-            
-            modified = true;
-        }
-
-        if(modified && plp.plpfile != null) {
-            Msg.debug("Text has been modified.", 9, this);
-            plp.setModified();
-
-            if(txtEditor.isEditable()) {
-                disableSimControls();
-            }
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if(Config.devSyntaxHighlighting && !deleteOccured && !undoManager.isBusy()) {
-                        int caretPos = txtEditor.getCaretPosition();
-                        setHighlighting(true);
-                        syntaxHighlight(txtEditor.getText().substring(0, caretPos).split("\\r?\\n").length-1);
-                        setHighlighting(false);
-                        txtEditor.setCaretPosition(caretPos);
-                    }
-                }
-            });
-        }
-    }//GEN-LAST:event_txtEditorKeyTyped
 
     private void menuQuickProgramActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuQuickProgramActionPerformed
         plp.g_prg.program();
