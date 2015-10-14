@@ -6,8 +6,14 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,8 +36,6 @@ public class PLPToolBoxSystemTesting
 	{
 		osName = System.getProperty("os.name");
 		osArchitecture = System.getProperty("os.arch");
-		
-		System.out.println(PLPToolbox.asciiWord(65));
 	}
 	
 	@Before
@@ -113,8 +117,7 @@ public class PLPToolBoxSystemTesting
 	
 	// Testing PLPToolBox.copy
 	@Test
-	public void testClipboardActions() throws UnsupportedFlavorException,
-			IOException
+	public void testClipboardActions()
 	{
 		String thisWillBeInTheClipboard = "Am I in the clipboard?";
 		
@@ -123,15 +126,96 @@ public class PLPToolBoxSystemTesting
 		java.awt.Toolkit toolKit = java.awt.Toolkit.getDefaultToolkit();
 		Clipboard clipboard = (Clipboard) toolKit.getSystemClipboard();
 		
-		assertEquals("Can we retrieve set clipboard data",
-				thisWillBeInTheClipboard,
-				clipboard.getData(DataFlavor.stringFlavor));
+		try
+		{
+			assertEquals("Can we retrieve set clipboard data",
+					thisWillBeInTheClipboard,
+					clipboard.getData(DataFlavor.stringFlavor));
+		}
+		catch (UnsupportedFlavorException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
-	public void testConfigurationTesting()
+	public void writeFileTesting()
 	{
+		String dataToBeWritten = "Am I in the clipboard?";
+		String oldData = "Hope I'm not here when it comes around";
+		String filePath = "autotests/junit/plpToolBox/testFileWrite.txt";
+		String pathWithoutFileName = "autotests/junit/plpToolBox/";
+		String fileContents;
 		
+		File file = new File(filePath);
+		
+		if (file.exists())
+		{
+			PrintWriter writer;
+			try
+			{
+				writer = new PrintWriter(file);
+				writer.write(oldData);
+				writer.close();
+				
+				assertEquals("PLP write returns success when file does exist?",
+						Constants.PLP_OK,
+						PLPToolbox.writeFile(dataToBeWritten, filePath));
+				assertEquals("Was file created", true, file.exists());
+				List<String> lines = Files.readAllLines(file.toPath());
+				
+				StringBuilder builder = new StringBuilder();
+				lines.forEach(line -> builder.append(line));
+				fileContents = builder.toString();
+				
+				assertEquals("Are file contents written over?",
+						dataToBeWritten, fileContents);
+			}
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		if (file.exists())
+			file.delete();
+		
+		assertEquals("PLP write returns success when file does not exist?",
+				Constants.PLP_OK,
+				PLPToolbox.writeFile(dataToBeWritten, filePath));
+		assertEquals("Was file created", true, file.exists());
+		
+		try
+		{
+			List<String> lines = Files.readAllLines(file.toPath());
+			
+			StringBuilder builder = new StringBuilder();
+			lines.forEach(line -> builder.append(line));
+			fileContents = builder.toString();
+			
+			assertEquals("Are file contents the same on new file?",
+					dataToBeWritten, fileContents);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (file.exists())
+			file.delete();
+		
+		assertEquals("PLP write fails when an actual file is not provided",
+				Constants.PLP_IO_WRITE_ERROR,
+				PLPToolbox.writeFile(dataToBeWritten, pathWithoutFileName));
 	}
 	
 }
