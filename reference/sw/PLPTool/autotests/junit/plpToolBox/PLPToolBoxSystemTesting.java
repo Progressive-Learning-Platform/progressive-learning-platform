@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +61,7 @@ public class PLPToolBoxSystemTesting
 		standardOutStream.reset();
 		System.setOut(null);
 		System.setErr(null);
+		System.setIn(null);
 	}
 	
 	// Get host OS ID
@@ -246,9 +248,34 @@ public class PLPToolBoxSystemTesting
 	@Test
 	public void readLineTest()
 	{
+		String customMultiLineMessage = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n"
+				+ "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s\r.";
+		String longOneLineMessage = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
+				+ "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an "
+				+ "unknown printer took a galley of type and scrambled it to make a type specimen book. "
+				+ "It has survived not only five centuries, but also the leap into electronic typesetting, "
+				+ "remaining essentially unchanged. It was popularised in the 1960s with the release of "
+				+ "Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing "
+				+ "software like Aldus PageMaker including versions of Lorem Ipsum.";
+		String hasNullHalfway = "00000000 null \0 00000000";
+		String onlyNewLines = "\n\n\n\n\n\n\n";
+		String newLinesWithOneOtherCharacter = "\n\n\n\n\n\n\n'";
 		
+		provideUserInput(hasNullHalfway);
+		assertEquals("Reads in string that contains different types of nulls throughout. ", hasNullHalfway, PLPToolbox.readLine());
+		
+		provideUserInput(longOneLineMessage);
+		assertEquals("Reads in a long (one line) message succesfully.", longOneLineMessage, PLPToolbox.readLine());
+		
+		provideUserInput(customMultiLineMessage);
+		assertEquals("Reads in only a single line of a multi line message successfully.", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.", PLPToolbox.readLine());
+		
+		provideUserInput(onlyNewLines);
+		assertEquals("Reads in a string of newlines as an empty string", "", PLPToolbox.readLine());
+		
+		provideUserInput(newLinesWithOneOtherCharacter);
+		assertEquals("Reads in a string of newlines + one character at the end as an empty string", "", PLPToolbox.readLine());
 	}
-	
 	
 	private void deleteFile()
 	{
@@ -277,6 +304,11 @@ public class PLPToolBoxSystemTesting
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private void provideUserInput(String input)
+	{
+		System.setIn(new ByteArrayInputStream(input.getBytes()));
 	}
 	
 }
