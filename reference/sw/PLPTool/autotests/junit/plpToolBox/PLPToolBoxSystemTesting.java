@@ -62,7 +62,7 @@ public class PLPToolBoxSystemTesting
 		System.setErr(null);
 	}
 	
-	//Get host OS ID
+	// Get host OS ID
 	@Test
 	public void getOSIDTest()
 	{
@@ -152,7 +152,7 @@ public class PLPToolBoxSystemTesting
 		}
 	}
 	
-	//Write a new file filled with the provided data in string
+	// Write a new file filled with the provided data in string
 	@Test
 	public void writeFileTesting()
 	{
@@ -166,8 +166,7 @@ public class PLPToolBoxSystemTesting
 			createFileFromData(oldData);
 			
 			assertEquals("PLP write returns success when file does exist?",
-					Constants.PLP_OK,
-					PLPToolbox.writeFile(newData, filePath));
+					Constants.PLP_OK, PLPToolbox.writeFile(newData, filePath));
 			assertEquals("Was file created", true, file.exists());
 			List<String> lines = Files.readAllLines(file.toPath());
 			
@@ -175,8 +174,8 @@ public class PLPToolBoxSystemTesting
 			lines.forEach(line -> builder.append(line));
 			fileContents = builder.toString();
 			
-			assertEquals("Are file contents written over?",
-					newData, fileContents);
+			assertEquals("Are file contents written over?", newData,
+					fileContents);
 		}
 		catch (FileNotFoundException e)
 		{
@@ -190,8 +189,7 @@ public class PLPToolBoxSystemTesting
 		deleteFile();
 		
 		assertEquals("PLP write returns success when file does not exist?",
-				Constants.PLP_OK,
-				PLPToolbox.writeFile(newData, filePath));
+				Constants.PLP_OK, PLPToolbox.writeFile(newData, filePath));
 		assertEquals("Was file created", true, file.exists());
 		
 		try
@@ -202,8 +200,8 @@ public class PLPToolBoxSystemTesting
 			lines.forEach(line -> builder.append(line));
 			fileContents = builder.toString();
 			
-			assertEquals("Are file contents the same on new file?",
-					newData, fileContents);
+			assertEquals("Are file contents the same on new file?", newData,
+					fileContents);
 		}
 		catch (IOException e)
 		{
@@ -218,35 +216,48 @@ public class PLPToolBoxSystemTesting
 				PLPToolbox.writeFile(newData, pathWithoutFileName));
 	}
 	
-	//Read a file and return the contents as string.
+	// Read a file and return the contents as string.
 	@Test
 	public void readFileAsStringTest()
 	{
 		createFileFromData(multiLineData);
-		assertEquals("PLPToolBox return multi line data as one string", multiLineData, PLPToolbox.readFileAsString(filePath));
+		assertEquals("PLPToolBox return multi line data as one string",
+				multiLineData, PLPToolbox.readFileAsString(filePath));
 		
 		String featuresHex = "0xffb89a";
 		createFileFromData(featuresHex);
-		assertEquals("PLPToolBox return multi line data as one string", featuresHex, PLPToolbox.readFileAsString(filePath));
+		assertEquals("PLPToolBox return multi line data as one string",
+				featuresHex, PLPToolbox.readFileAsString(filePath));
 		
 		String featuresDifferentNullTypes = "00000000 null \0 ooo";
 		createFileFromData(featuresDifferentNullTypes);
-		assertEquals("PLPToolBox return multi line data as one string", featuresDifferentNullTypes, PLPToolbox.readFileAsString(filePath));
-
+		assertEquals("PLPToolBox return multi line data as one string",
+				featuresDifferentNullTypes,
+				PLPToolbox.readFileAsString(filePath));
+		
 		createFileFromData(oldData);
-		assertEquals("PLPToolBox return single line data as one string", oldData, PLPToolbox.readFileAsString(filePath));
+		assertEquals("PLPToolBox return single line data as one string",
+				oldData, PLPToolbox.readFileAsString(filePath));
 		
 		deleteFile();
 	}
-
+	
+	// Read a line of string from standard input
+	@Test
+	public void readLineTest()
+	{
+		
+	}
+	
+	
 	private void deleteFile()
 	{
 		File file = new File(filePath);
 		
-		if(file.exists())
+		if (file.exists())
 			file.delete();
 	}
-
+	
 	private void createFileFromData(String data)
 	{
 		File file = new File(filePath);
