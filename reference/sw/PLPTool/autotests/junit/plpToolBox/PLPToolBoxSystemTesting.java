@@ -27,6 +27,10 @@ public class PLPToolBoxSystemTesting
 {
 	private static String osName;
 	private static String osArchitecture;
+	private static String filePath;
+	private static String newData;
+	private static String oldData;
+	private static String multiLineData;
 	
 	private static ByteArrayOutputStream errorOutStream = new ByteArrayOutputStream();
 	private static ByteArrayOutputStream standardOutStream = new ByteArrayOutputStream();
@@ -36,6 +40,10 @@ public class PLPToolBoxSystemTesting
 	{
 		osName = System.getProperty("os.name");
 		osArchitecture = System.getProperty("os.arch");
+		filePath = "autotests/junit/plpToolBox/testFile.txt";
+		newData = "Am I in the clipboard?";
+		oldData = "Hope I'm not here when it comes around";
+		multiLineData = "hello, am i testing?\nWaffles are delicious.\n";
 	}
 	
 	@Before
@@ -54,6 +62,7 @@ public class PLPToolBoxSystemTesting
 		System.setErr(null);
 	}
 	
+	//Get host OS ID
 	@Test
 	public void getOSIDTest()
 	{
@@ -116,6 +125,7 @@ public class PLPToolBoxSystemTesting
 	}
 	
 	// Testing PLPToolBox.copy
+	// Copy a string to the system clipboard
 	@Test
 	public void testClipboardActions()
 	{
@@ -142,55 +152,46 @@ public class PLPToolBoxSystemTesting
 		}
 	}
 	
+	//Write a new file filled with the provided data in string
 	@Test
 	public void writeFileTesting()
 	{
-		String dataToBeWritten = "Am I in the clipboard?";
-		String oldData = "Hope I'm not here when it comes around";
-		String filePath = "autotests/junit/plpToolBox/testFileWrite.txt";
 		String pathWithoutFileName = "autotests/junit/plpToolBox/";
 		String fileContents;
 		
 		File file = new File(filePath);
 		
-		if (file.exists())
+		try
 		{
-			PrintWriter writer;
-			try
-			{
-				writer = new PrintWriter(file);
-				writer.write(oldData);
-				writer.close();
-				
-				assertEquals("PLP write returns success when file does exist?",
-						Constants.PLP_OK,
-						PLPToolbox.writeFile(dataToBeWritten, filePath));
-				assertEquals("Was file created", true, file.exists());
-				List<String> lines = Files.readAllLines(file.toPath());
-				
-				StringBuilder builder = new StringBuilder();
-				lines.forEach(line -> builder.append(line));
-				fileContents = builder.toString();
-				
-				assertEquals("Are file contents written over?",
-						dataToBeWritten, fileContents);
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			createFileFromData(oldData);
+			
+			assertEquals("PLP write returns success when file does exist?",
+					Constants.PLP_OK,
+					PLPToolbox.writeFile(newData, filePath));
+			assertEquals("Was file created", true, file.exists());
+			List<String> lines = Files.readAllLines(file.toPath());
+			
+			StringBuilder builder = new StringBuilder();
+			lines.forEach(line -> builder.append(line));
+			fileContents = builder.toString();
+			
+			assertEquals("Are file contents written over?",
+					newData, fileContents);
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 		
-		if (file.exists())
-			file.delete();
+		deleteFile();
 		
 		assertEquals("PLP write returns success when file does not exist?",
 				Constants.PLP_OK,
-				PLPToolbox.writeFile(dataToBeWritten, filePath));
+				PLPToolbox.writeFile(newData, filePath));
 		assertEquals("Was file created", true, file.exists());
 		
 		try
@@ -202,7 +203,7 @@ public class PLPToolBoxSystemTesting
 			fileContents = builder.toString();
 			
 			assertEquals("Are file contents the same on new file?",
-					dataToBeWritten, fileContents);
+					newData, fileContents);
 		}
 		catch (IOException e)
 		{
@@ -210,12 +211,61 @@ public class PLPToolBoxSystemTesting
 			e.printStackTrace();
 		}
 		
-		if (file.exists())
-			file.delete();
+		deleteFile();
 		
 		assertEquals("PLP write fails when an actual file is not provided",
 				Constants.PLP_IO_WRITE_ERROR,
-				PLPToolbox.writeFile(dataToBeWritten, pathWithoutFileName));
+				PLPToolbox.writeFile(newData, pathWithoutFileName));
+	}
+	
+	//Read a file and return the contents as string.
+	@Test
+	public void readFileAsStringTest()
+	{
+		createFileFromData(multiLineData);
+		assertEquals("PLPToolBox return multi line data as one string", multiLineData, PLPToolbox.readFileAsString(filePath));
+		
+		String featuresHex = "0xffb89a";
+		createFileFromData(featuresHex);
+		assertEquals("PLPToolBox return multi line data as one string", featuresHex, PLPToolbox.readFileAsString(filePath));
+		
+		String featuresDifferentNullTypes = "00000000 null \0 ooo";
+		createFileFromData(featuresDifferentNullTypes);
+		assertEquals("PLPToolBox return multi line data as one string", featuresDifferentNullTypes, PLPToolbox.readFileAsString(filePath));
+
+		createFileFromData(oldData);
+		assertEquals("PLPToolBox return single line data as one string", oldData, PLPToolbox.readFileAsString(filePath));
+		
+		deleteFile();
+	}
+
+	private void deleteFile()
+	{
+		File file = new File(filePath);
+		
+		if(file.exists())
+			file.delete();
+	}
+
+	private void createFileFromData(String data)
+	{
+		File file = new File(filePath);
+		
+		PrintWriter writer;
+		try
+		{
+			writer = new PrintWriter(file);
+			writer.write(data);
+			writer.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 }
