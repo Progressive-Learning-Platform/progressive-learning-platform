@@ -1,6 +1,8 @@
 package junit.plpToolBox;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotSame;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -9,7 +11,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -57,6 +61,7 @@ public class PLPToolBoxSystemTesting
 	@After
 	public void tearDown() throws IOException
 	{
+		deleteFile();
 		errorOutStream.reset();
 		standardOutStream.reset();
 		System.setOut(null);
@@ -165,7 +170,7 @@ public class PLPToolBoxSystemTesting
 		
 		try
 		{
-			createFileFromData(oldData);
+			createFileFromStringData(oldData);
 			
 			assertEquals("PLP write returns success when file does exist?",
 					Constants.PLP_OK, PLPToolbox.writeFile(newData, filePath));
@@ -222,26 +227,24 @@ public class PLPToolBoxSystemTesting
 	@Test
 	public void readFileAsStringTest()
 	{
-		createFileFromData(multiLineData);
+		createFileFromStringData(multiLineData);
 		assertEquals("PLPToolBox return multi line data as one string",
 				multiLineData, PLPToolbox.readFileAsString(filePath));
 		
 		String featuresHex = "0xffb89a";
-		createFileFromData(featuresHex);
+		createFileFromStringData(featuresHex);
 		assertEquals("PLPToolBox return multi line data as one string",
 				featuresHex, PLPToolbox.readFileAsString(filePath));
 		
 		String featuresDifferentNullTypes = "00000000 null \0 ooo";
-		createFileFromData(featuresDifferentNullTypes);
+		createFileFromStringData(featuresDifferentNullTypes);
 		assertEquals("PLPToolBox return multi line data as one string",
 				featuresDifferentNullTypes,
 				PLPToolbox.readFileAsString(filePath));
 		
-		createFileFromData(oldData);
+		createFileFromStringData(oldData);
 		assertEquals("PLPToolBox return single line data as one string",
 				oldData, PLPToolbox.readFileAsString(filePath));
-		
-		deleteFile();
 	}
 	
 	// Read a line of string from standard input
@@ -262,19 +265,82 @@ public class PLPToolBoxSystemTesting
 		String newLinesWithOneOtherCharacter = "\n\n\n\n\n\n\n'";
 		
 		provideUserInput(hasNullHalfway);
-		assertEquals("Reads in string that contains different types of nulls throughout. ", hasNullHalfway, PLPToolbox.readLine());
+		assertEquals(
+				"Reads in string that contains different types of nulls throughout. ",
+				hasNullHalfway, PLPToolbox.readLine());
 		
 		provideUserInput(longOneLineMessage);
-		assertEquals("Reads in a long (one line) message succesfully.", longOneLineMessage, PLPToolbox.readLine());
+		assertEquals("Reads in a long (one line) message succesfully.",
+				longOneLineMessage, PLPToolbox.readLine());
 		
 		provideUserInput(customMultiLineMessage);
-		assertEquals("Reads in only a single line of a multi line message successfully.", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.", PLPToolbox.readLine());
+		assertEquals(
+				"Reads in only a single line of a multi line message successfully.",
+				"Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+				PLPToolbox.readLine());
 		
 		provideUserInput(onlyNewLines);
-		assertEquals("Reads in a string of newlines as an empty string", "", PLPToolbox.readLine());
+		assertEquals("Reads in a string of newlines as an empty string", "",
+				PLPToolbox.readLine());
 		
 		provideUserInput(newLinesWithOneOtherCharacter);
-		assertEquals("Reads in a string of newlines + one character at the end as an empty string", "", PLPToolbox.readLine());
+		assertEquals(
+				"Reads in a string of newlines + one character at the end as an empty string",
+				"", PLPToolbox.readLine());
+	}
+	
+	// Read a file and return it as a byte array
+	@Test
+	public void readFileTest()
+	{
+		String customMultiLineMessage = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n"
+				+ "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s\r.";
+		String longOneLineMessage = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
+				+ "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an "
+				+ "unknown printer took a galley of type and scrambled it to make a type specimen book. "
+				+ "It has survived not only five centuries, but also the leap into electronic typesetting, "
+				+ "remaining essentially unchanged. It was popularised in the 1960s with the release of "
+				+ "Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing "
+				+ "software like Aldus PageMaker including versions of Lorem Ipsum.";
+		String hasNullHalfway = "00000000 null \0 00000000";
+		String onlyNewLines = "\n\n\n\n\n\n\n";
+		String newLinesWithOneOtherCharacter = "\n\n\n\n\n\n\n'";
+		
+		createFileFromStringData(hasNullHalfway);
+		assertArrayEquals(
+				"Reads in string that contains different types of nulls throughout. ",
+				hasNullHalfway.getBytes(), PLPToolbox.readFile(filePath));
+		
+		createFileFromStringData(longOneLineMessage);
+		assertArrayEquals("Reads in a long (one line) message succesfully.",
+				longOneLineMessage.getBytes(), PLPToolbox.readFile(filePath));
+		
+		createFileFromStringData(customMultiLineMessage);
+		assertArrayEquals(
+				"Reads in only a single line of a multi line message successfully.",
+				customMultiLineMessage.getBytes(),
+				PLPToolbox.readFile(filePath));
+		
+		createFileFromStringData(onlyNewLines);
+		assertArrayEquals("Reads in a string of newlines as an empty string",
+				onlyNewLines.getBytes(), PLPToolbox.readFile(filePath));
+		
+		createFileFromStringData(newLinesWithOneOtherCharacter);
+		assertArrayEquals(
+				"Reads in a string of newlines + one character at the end as an empty string",
+				newLinesWithOneOtherCharacter.getBytes(),
+				PLPToolbox.readFile(filePath));
+		
+		createFileFromObjectData(customMultiLineMessage);
+		assertArrayEquals(
+				"Is one string serialized, the same when it is serialized a serparate time.",
+				serialize(customMultiLineMessage),
+				PLPToolbox.readFile(filePath));
+		
+		createFileFromObjectData(new PLPToolBoxSystemTesting());
+		assertNotSame("Two instances of an object do not match up",
+				serialize(new PLPToolBoxSystemTesting()),
+				PLPToolbox.readFile(filePath));
 	}
 	
 	private void deleteFile()
@@ -285,16 +351,52 @@ public class PLPToolBoxSystemTesting
 			file.delete();
 	}
 	
-	private void createFileFromData(String data)
+	private void createFileFromObjectData(Object data)
 	{
 		File file = new File(filePath);
 		
-		PrintWriter writer;
-		try
+		try (ObjectOutputStream outputStream = new ObjectOutputStream(
+				new FileOutputStream(file)))
 		{
-			writer = new PrintWriter(file);
+			outputStream.writeObject(data);
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private byte[] serialize(Object objectToByteArray)
+	{
+		try (ByteArrayOutputStream serialized = new ByteArrayOutputStream();
+				ObjectOutputStream outputStream = new ObjectOutputStream(
+						serialized);)
+		{
+			outputStream.writeObject(objectToByteArray);
+			return serialized.toByteArray();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private void createFileFromStringData(String data)
+	{
+		File file = new File(filePath);
+		
+		try (PrintWriter writer = new PrintWriter(file))
+		{
 			writer.write(data);
-			writer.close();
 		}
 		catch (FileNotFoundException e)
 		{
