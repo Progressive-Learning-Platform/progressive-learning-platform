@@ -403,6 +403,75 @@ public class PLPToolBoxSystemTesting
 		}
 	}
 	
+	/*
+	 * By default File#delete fails for non-empty directories, it works like "rm".
+     * We need something a little more brutual - this does the equivalent of "rm -r"
+	 */
+	@Test
+	public void deleteRecursiveTest()
+	{
+		File directory1 = new File("autotests/junit/plpToolBox/recurse1");
+		File directory2 = new File("autotests/junit/plpToolBox/recurse2");
+		File directory3 = new File("autotests/junit/plpToolBox/recurse2/recurse3");
+		
+		File normalFile = new File("autotests/junit/plpToolBox/normalFile.txt");
+		File normalFile2 = new File("autotests/junit/plpToolBox/recurse1/normalFile.txt");
+		File normalFile3 = new File("autotests/junit/plpToolBox/recurse1/normalFile1.txt");
+		File normalFile4 = new File("autotests/junit/plpToolBox/recurse1/normalFile2.txt");
+		
+		File normalFile5 = new File("autotests/junit/plpToolBox/recurse2/normalFile3.txt");
+		File normalFile6 = new File("autotests/junit/plpToolBox/recurse2/normalFile4.txt");
+		File normalFile7 = new File("autotests/junit/plpToolBox/recurse2/recurse3/normalFile5.txt");
+		
+		try
+		{
+			directory1.mkdir();
+			directory3.mkdirs();
+			
+			createFileFromStringData(normalFile.getAbsolutePath(), oldData);
+			createFileFromStringData(normalFile2.getAbsolutePath(), oldData);
+			createFileFromStringData(normalFile3.getAbsolutePath(), oldData);
+			createFileFromStringData(normalFile4.getAbsolutePath(), oldData);
+			createFileFromStringData(normalFile5.getAbsolutePath(), oldData);
+			createFileFromStringData(normalFile6.getAbsolutePath(), oldData);
+			createFileFromStringData(normalFile7.getAbsolutePath(), oldData);
+			
+			assertEquals("Created firstDirectory exists", true, directory1.isDirectory() && directory1.exists());
+			assertEquals("Created second directory exists", true, directory2.isDirectory() && directory2.exists());
+			assertEquals("Created nested directory exists", true, directory3.isDirectory() && directory3.exists());
+			
+			assertEquals("Created normal file exists", true, normalFile.exists());
+			assertEquals("Created normal file2 exists", true, normalFile2.exists());
+			assertEquals("Created normal file3 exists", true, normalFile3.exists());
+			assertEquals("Created normal file4 exists", true, normalFile4.exists());
+			assertEquals("Created normal file5 exists", true, normalFile5.exists());
+			assertEquals("Created normal file6 exists", true, normalFile6.exists());
+			assertEquals("Created normal file7 (nested) exists", true, normalFile7.exists());
+			
+			assertEquals("normal file has been removed, and deleteRecursive returns this", true, PLPToolbox.deleteRecursive(normalFile));
+			assertEquals("normal file has been removed", false, normalFile.exists());
+			
+			assertEquals("first directory and files deleted, and deleteRecursive returns this", true, PLPToolbox.deleteRecursive(directory1));
+			assertEquals("first directory has been removed", false, directory1.exists());
+			
+			assertEquals("normal file2 from directory1 has been removed", false, normalFile2.exists());
+			assertEquals("normal file3 from directory1 has been removed", false, normalFile3.exists());
+			assertEquals("normal file4 from directory1 has been removed", false, normalFile4.exists());
+			
+			assertEquals("second/third directory and files deleted, and deleteRecursive returns this", true, PLPToolbox.deleteRecursive(directory2));
+			assertEquals("seconds directory has been removed", false, directory2.exists());
+			assertEquals("third directory (nested) has been removed", false, directory3.exists());
+			
+			assertEquals("normal file5 from directory2 has been removed", false, normalFile5.exists());
+			assertEquals("normal file6 from directory2 has been removed", false, normalFile6.exists());
+			assertEquals("normal file7 from directory3 has been removed", false, normalFile7.exists());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	private void deleteFile()
 	{
 		File file = new File(filePath);
@@ -450,9 +519,9 @@ public class PLPToolBoxSystemTesting
 		return null;
 	}
 	
-	private void createFileFromStringData(String data)
+	private void createFileFromStringData(String path, String data)
 	{
-		File file = new File(filePath);
+		File file = new File(path);
 		
 		try (PrintWriter writer = new PrintWriter(file))
 		{
@@ -466,6 +535,11 @@ public class PLPToolBoxSystemTesting
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private void createFileFromStringData(String data)
+	{
+		createFileFromStringData(filePath, data);
 	}
 	
 	private void provideUserInput(String input)

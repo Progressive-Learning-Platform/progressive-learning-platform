@@ -2,8 +2,7 @@ Methods that are used
 1) int copyFromJar(String jar, String entry, String dest)
 2) int createJar(String jar, String dirPath)
 3) boolean deleteRecursive(File path)
-4) boolean downloadJARForAutoload(
-            String URL, plptool.gui.ProjectDriver plp, boolean load)
+4) boolean downloadJARForAutoload(String URL, plptool.gui.ProjectDriver plp, boolean load)
 5) String formatHyperLink(String fileName, int lineNumber)
 6) Object[][] getSortedStringByLongValue(HashMap<String, Long> map)
 7) String getTmpDir()
