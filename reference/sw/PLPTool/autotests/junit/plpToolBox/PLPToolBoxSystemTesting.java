@@ -343,6 +343,66 @@ public class PLPToolBoxSystemTesting
 				PLPToolbox.readFile(filePath));
 	}
 	
+	// Check whether the host OS is GNU/Linux
+	@Test
+	public void isHostLinuxTest()
+	{
+		if (osName.equals("Linux"))
+		{
+			assertEquals("Confirms host is linux, success.", true,
+					PLPToolbox.isHostLinux());
+		}
+	}
+	
+	/*
+	 * Takes a string representing a character enclosed by single quotes and
+	 * checks for escaped characters. If escaped character is detected, the
+	 * function will return the actual character code. It will only strip the
+	 * single quotes otherwise. For example, 'A' will be returned as A as long,
+	 * and '\n' will be returned as the newline character.
+	 */
+	@Test
+	public void parseEscapeCharacterTest()
+	{
+		try
+		{
+			String alphaToASCII = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			for (int byteNumber = 0; byteNumber < alphaToASCII.length(); byteNumber++)
+			{
+				char character = alphaToASCII.charAt(byteNumber);
+				int decimalValue = character;
+				String characterToPass = "'" + character + "'";
+				assertEquals(
+						"Correctly converts printable keys to decimal value?",
+						decimalValue,
+						PLPToolbox.parseEscapeCharacter(characterToPass));
+			}
+			
+			String newLine = "'\n'";
+			assertEquals("Can parse newline character", '\n',
+					PLPToolbox.parseEscapeCharacter(newLine));
+			
+			String quoteMark = "'\"'";
+			assertEquals("Escaped quotation mark converts to decimal value?",
+					'\"', PLPToolbox.parseEscapeCharacter(quoteMark));
+			
+			String tab = "'\t'";
+			assertEquals("Escaped tab mark", '\t',
+					PLPToolbox.parseEscapeCharacter(tab));
+			assertNotSame("Fails on string non enclosed in single quotes",
+					'\t', PLPToolbox.parseEscapeCharacter("\t"));
+			
+			String carriageReturn = "'\r'";
+			assertEquals("Parses carriage return", '\r',
+					PLPToolbox.parseEscapeCharacter(carriageReturn));
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private void deleteFile()
 	{
 		File file = new File(filePath);
