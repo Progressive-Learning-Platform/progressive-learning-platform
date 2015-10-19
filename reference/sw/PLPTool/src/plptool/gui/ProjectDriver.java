@@ -706,9 +706,7 @@ public final class ProjectDriver {
                 Scanner metaScanner;
 
                 String lines[] = meta.split("\\r?\\n");
-                if(lines[0].equals(Text.projectFileVersionString))  {
-
-                } else {
+                if(!lines[0].equals(Text.projectFileVersionString)) {
                     Msg.warning("This is not a " + Text.projectFileVersionString +
                             " project file. Opening anyways.", this);
                 }
