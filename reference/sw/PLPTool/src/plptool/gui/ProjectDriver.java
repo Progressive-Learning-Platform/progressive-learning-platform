@@ -345,7 +345,7 @@ public final class ProjectDriver {
             arch.init();
             if(arch == null) {
                 Msg.warning("Invalid architecture ID is specified, reverting to " +
-                      "default (PLPCPU).", this);
+                      "default (plpmips).", this);
                 this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
                 arch.init();
             }
