@@ -334,55 +334,7 @@ public final class ProjectDriver {
      * @return PLP_OK
      */
     public int create(int archID) {
-        modified = true;
-        asm_req = true;
-        plpfile = new File("Unsaved Project");
-        if(arch != null)
-            arch.cleanup();
-
-        try {
-            this.arch = ArchRegistry.getArchitecture(this, archID);
-            arch.init();
-            if(arch == null) {
-                Msg.warning("Invalid architecture ID is specified, reverting to " +
-                      "default (plpmips).", this);
-                this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
-                arch.init();
-            }
-        } catch(Exception e) {
-            Msg.error("FATAL ERROR: invalid arch ID during ProjectDriver" +
-                  "create routine (archID: " + archID + ")",
-                  Constants.PLP_FATAL_ERROR, null);
-            System.exit(-1);
-        }
-
-        asm = null;
-        asms = new ArrayList<PLPAsmSource>();   
-        smods = null;
-        watcher = null;
-        pAttrSet = new HashMap<String, Object>();
-
-        meta =  "PLP-5.0\n";
-        meta += "START=0x0\n";
-        meta += "DIRTY=1\n\n";
-        dirty = true;
-        asms.add(new PLPAsmSource("", "main.asm", 0));
-        open_asm = 0;
-        arch.newProject(this);    
-        Msg.info("New project initialized.", null);
-
-        if(g) {
-            refreshProjectView(false);
-            desimulate();
-            g_dev.disableSimControls();
-            g_dev.enableBuildControls();
-
-            if(g_asmview != null)
-                g_asmview.dispose();
-        }
-
-        CallbackRegistry.callback(CallbackRegistry.PROJECT_NEW, null);
-        return Constants.PLP_OK;
+        return create(null, archID);
     }
 
     /**
@@ -432,6 +384,7 @@ public final class ProjectDriver {
         dirty = true;
 
         open_asm = 0;
+        arch.newProject(this);
         Msg.info("New project initialized.", null);
 
         if(g) {
@@ -1577,6 +1530,9 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int importAsm(String path) {
+    	if (path == null)
+    		return Constants.PLP_ERROR_RETURN;
+    	
         File asmFile = new File(path);
 
         Msg.info("Importing " + path, null);
