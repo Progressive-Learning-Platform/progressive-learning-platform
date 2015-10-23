@@ -27,6 +27,7 @@
 package plptool.gui;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -225,51 +226,11 @@ public final class ProjectDriver {
         else {
         	serial_support = isRXTXAvailable();
         	curdir = (new File(".")).getAbsolutePath();
-        }
-
-        
-        if(g && !applet) {
-            g_err = new SimErrorFrame();
-            g_dev = new Develop(this);
-            g_ioreg = new IORegistryFrame(this);
-            g_about = new AboutBoxDialog(this.g_dev);
-            g_opts = new OptionsFrame(this);
-            g_opts.setBuiltInISAOptions(false);
-            g_prg = new ProgrammerDialog(this, this.g_dev, true);
-            g_fname = new AsmNameDialog(this, this.g_dev, true);
-            g_find = new FindAndReplace(this);
-            g_isaselect = new ISASelector(this.g_dev, this);
-            Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-            int X = Config.devWindowPositionX;
-            int Y = Config.devWindowPositionY;
-            int W = Config.devWindowWidth;
-            int H = Config.devWindowHeight;
-            if(X < 0 || Y < 0 || W < 0 || H < 0) {
-                g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
-                              (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-                g_dev.setLocationRelativeTo(null);
-            } else if (X+W <= screenResolution.width && Y+H <= screenResolution.height) {
-                g_dev.setSize(W, H);
-                g_dev.setLocation(X, Y);
-            } else {
-                g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
-                              (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-                g_dev.setLocationRelativeTo(null);
-            }
-
-            g_find.setLocationRelativeTo(null);
-
-            g_dev.setTitle("PLP Software Tool " + Text.versionString);
-            if(PLPToolApp.getAttributes().containsKey("new_ide")) {
-                IDE ide = new IDE(this);
-                ide.setVisible(true);
-            } else {
-                g_dev.setVisible(true);
-            }
+        	if(g) 
+        		initializeGraphicalComponents();
         }
 
         // check for JRE version
-
         String tokens[] = System.getProperty("java.version").split("\\.");
         int major = Integer.parseInt(tokens[0]);
         int minor = Integer.parseInt(tokens[1]);
@@ -285,7 +246,48 @@ public final class ProjectDriver {
             CallbackRegistry.setup(null);
     }
 
-    private boolean isRXTXAvailable()
+    private void initializeGraphicalComponents()
+	{
+    	g_err = new SimErrorFrame();
+        g_dev = new Develop(this);
+        g_ioreg = new IORegistryFrame(this);
+        g_about = new AboutBoxDialog(this.g_dev);
+        g_opts = new OptionsFrame(this);
+        g_opts.setBuiltInISAOptions(false);
+        g_prg = new ProgrammerDialog(this, this.g_dev, true);
+        g_fname = new AsmNameDialog(this, this.g_dev, true);
+        g_find = new FindAndReplace(this);
+        g_isaselect = new ISASelector(this.g_dev, this);
+        Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
+        int X = Config.devWindowPositionX;
+        int Y = Config.devWindowPositionY;
+        int W = Config.devWindowWidth;
+        int H = Config.devWindowHeight;
+        if(X < 0 || Y < 0 || W < 0 || H < 0) {
+            g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                          (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
+            g_dev.setLocationRelativeTo(null);
+        } else if (X+W <= screenResolution.width && Y+H <= screenResolution.height) {
+            g_dev.setSize(W, H);
+            g_dev.setLocation(X, Y);
+        } else {
+            g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                          (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
+            g_dev.setLocationRelativeTo(null);
+        }
+
+        g_find.setLocationRelativeTo(null);
+
+        g_dev.setTitle("PLP Software Tool " + Text.versionString);
+        if(PLPToolApp.getAttributes().containsKey("new_ide")) {
+            IDE ide = new IDE(this);
+            ide.setVisible(true);
+        } else {
+            g_dev.setVisible(true);
+        }
+	}
+
+	private boolean isRXTXAvailable()
 	{
         // check for rxtx native libaries
     	try {
