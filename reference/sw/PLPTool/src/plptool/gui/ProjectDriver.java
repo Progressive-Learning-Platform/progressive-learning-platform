@@ -216,22 +216,8 @@ public final class ProjectDriver {
         sim_mode = false;
         asm_req = false;
 
-        // check for rxtx native libaries
-        serial_support = true;
-        try {
-            if(!applet) gnu.io.RXTXVersion.getVersion();
-        } catch(UnsatisfiedLinkError e) {
-            Msg.warning("Failed to detect native RXTX library. " +
-                  "Functionality requiring serial communication will fail.", null);
-            Msg.warning(" - If you are running Linux, make sure that RXTX library is installed.", null);
-            Msg.warning(" - If you are running Windows, make sure that the .dll files are in the " +
-                  "same directory and you run the batch file associated with " +
-                  "your version of Windows (32- or 64-bit)", null);
-            serial_support = false;
-        } catch(NoClassDefFoundError e) {
-            Msg.warning("Unsatisfied RXTX link.", null);
-            serial_support = false;
-        }
+        if(!applet)
+        	serial_support = isRXTXAvailable();
 
         if(applet) asms = new ArrayList<PLPAsmSource>();
         pAttrSet = new HashMap<String, Object>();
@@ -296,7 +282,27 @@ public final class ProjectDriver {
             CallbackRegistry.setup(null);
     }
 
-    /**
+    private boolean isRXTXAvailable()
+	{
+        // check for rxtx native libaries
+    	try {
+            gnu.io.RXTXVersion.getVersion();
+            return true;
+        } catch(UnsatisfiedLinkError e) {
+            Msg.warning("Failed to detect native RXTX library. " +
+                  "Functionality requiring serial communication will fail.", null);
+            Msg.warning(" - If you are running Linux, make sure that RXTX library is installed.", null);
+            Msg.warning(" - If you are running Windows, make sure that the .dll files are in the " +
+                  "same directory and you run the batch file associated with " +
+                  "your version of Windows (32- or 64-bit)", null);
+        } catch(NoClassDefFoundError e) {
+            Msg.warning("Unsatisfied RXTX link.", null);
+        }
+    	
+    	return false;
+	}
+
+	/**
      * Set a new architecture for the project
      *
      * @param arch
