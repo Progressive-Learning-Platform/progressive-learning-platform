@@ -244,9 +244,10 @@ public final class ProjectDriver {
 
         if((major == Constants.minimumJREMajorVersion && minor < Constants.minimumJREMinorVersion) ||
             major  < Constants.minimumJREMajorVersion) {
+        	String requiredVersion = Constants.minimumJREMajorVersion + "." + Constants.minimumJREMinorVersion;
             Msg.warning("You are running an older Java Runtime Environment version." +
                   " Some functionalities may not work as intended. " +
-                  "Please upgrade to at least JRE version 1.5", null);
+                  "Please upgrade to at least JRE version " + requiredVersion, null);
         }
 	}
 
