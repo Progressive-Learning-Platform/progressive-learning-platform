@@ -256,13 +256,14 @@ public final class ProjectDriver {
     	g_err = new SimErrorFrame();
         g_dev = new Develop(this);
         g_ioreg = new IORegistryFrame(this);
-        g_about = new AboutBoxDialog(this.g_dev);
+        g_about = new AboutBoxDialog(g_dev);
         g_opts = new OptionsFrame(this);
         g_opts.setBuiltInISAOptions(false);
-        g_prg = new ProgrammerDialog(this, this.g_dev, true);
-        g_fname = new AsmNameDialog(this, this.g_dev, true);
+        g_prg = new ProgrammerDialog(this, g_dev, true);
+        g_fname = new AsmNameDialog(this, g_dev, true);
         g_find = new FindAndReplace(this);
-        g_isaselect = new ISASelector(this.g_dev, this);
+        g_isaselect = new ISASelector(g_dev, this);
+        
         Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
         int X = Config.devWindowPositionX;
         int Y = Config.devWindowPositionY;
