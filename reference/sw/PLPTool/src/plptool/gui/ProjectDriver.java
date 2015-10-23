@@ -26,6 +26,7 @@
 
 package plptool.gui;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -206,9 +207,9 @@ public final class ProjectDriver {
      * @param archID The ISA to use for this project
      */
     public ProjectDriver(int modes) {
-        this.g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
-        this.applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
-        this.tarEntryStash = new LinkedList<>();
+        g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
+        applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
+        tarEntryStash = new LinkedList<>();
         
         arch = null;
         modified = false;
@@ -228,42 +229,42 @@ public final class ProjectDriver {
 
         
         if(g && !applet) {
-            this.g_err = new SimErrorFrame();
-            this.g_dev = new Develop(this);
-            this.g_ioreg = new IORegistryFrame(this);
-            this.g_about = new AboutBoxDialog(this.g_dev);
-            this.g_opts = new OptionsFrame(this);
+            g_err = new SimErrorFrame();
+            g_dev = new Develop(this);
+            g_ioreg = new IORegistryFrame(this);
+            g_about = new AboutBoxDialog(this.g_dev);
+            g_opts = new OptionsFrame(this);
             g_opts.setBuiltInISAOptions(false);
-            this.g_prg = new ProgrammerDialog(this, this.g_dev, true);
-            this.g_fname = new AsmNameDialog(this, this.g_dev, true);
-            this.g_find = new FindAndReplace(this);
-            this.g_isaselect = new ISASelector(this.g_dev, this);
-            java.awt.Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+            g_prg = new ProgrammerDialog(this, this.g_dev, true);
+            g_fname = new AsmNameDialog(this, this.g_dev, true);
+            g_find = new FindAndReplace(this);
+            g_isaselect = new ISASelector(this.g_dev, this);
+            Dimension screenResolution = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
             int X = Config.devWindowPositionX;
             int Y = Config.devWindowPositionY;
             int W = Config.devWindowWidth;
             int H = Config.devWindowHeight;
             if(X < 0 || Y < 0 || W < 0 || H < 0) {
-                this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
                               (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-                this.g_dev.setLocationRelativeTo(null);
+                g_dev.setLocationRelativeTo(null);
             } else if (X+W <= screenResolution.width && Y+H <= screenResolution.height) {
-                this.g_dev.setSize(W, H);
-                this.g_dev.setLocation(X, Y);
+                g_dev.setSize(W, H);
+                g_dev.setLocation(X, Y);
             } else {
-                this.g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
+                g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
                               (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-                this.g_dev.setLocationRelativeTo(null);
+                g_dev.setLocationRelativeTo(null);
             }
 
-            this.g_find.setLocationRelativeTo(null);
+            g_find.setLocationRelativeTo(null);
 
-            this.g_dev.setTitle("PLP Software Tool " + Text.versionString);
+            g_dev.setTitle("PLP Software Tool " + Text.versionString);
             if(PLPToolApp.getAttributes().containsKey("new_ide")) {
                 IDE ide = new IDE(this);
                 ide.setVisible(true);
             } else {
-                this.g_dev.setVisible(true);
+                g_dev.setVisible(true);
             }
         }
 
