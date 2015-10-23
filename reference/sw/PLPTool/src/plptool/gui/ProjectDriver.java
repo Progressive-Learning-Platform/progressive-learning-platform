@@ -208,6 +208,8 @@ public final class ProjectDriver {
      * @param archID The ISA to use for this project
      */
     public ProjectDriver(int modes) {
+    	validateJavaVersion();
+    	
         g = (modes & Constants.PLP_GUI_START_IDE) == Constants.PLP_GUI_START_IDE;
         applet = (modes & Constants.PLP_GUI_APPLET) == Constants.PLP_GUI_APPLET;
         tarEntryStash = new LinkedList<>();
@@ -230,8 +232,13 @@ public final class ProjectDriver {
         		initializeGraphicalComponents();
         }
 
-        // check for JRE version
-        String tokens[] = System.getProperty("java.version").split("\\.");
+        if(!CallbackRegistry.INITIALIZED)
+            CallbackRegistry.setup(null);
+    }
+
+    private void validateJavaVersion()
+	{
+    	String tokens[] = System.getProperty("java.version").split("\\.");
         int major = Integer.parseInt(tokens[0]);
         int minor = Integer.parseInt(tokens[1]);
 
@@ -241,12 +248,9 @@ public final class ProjectDriver {
                   " Some functionalities may not work as intended. " +
                   "Please upgrade to at least JRE version 1.5", null);
         }
+	}
 
-        if(!CallbackRegistry.INITIALIZED)
-            CallbackRegistry.setup(null);
-    }
-
-    private void initializeGraphicalComponents()
+	private void initializeGraphicalComponents()
 	{
     	g_err = new SimErrorFrame();
         g_dev = new Develop(this);
