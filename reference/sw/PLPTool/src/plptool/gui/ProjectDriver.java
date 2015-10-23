@@ -215,15 +215,17 @@ public final class ProjectDriver {
         plpfile = null;
         sim_mode = false;
         asm_req = false;
+        pAttrSet = new HashMap<>();
+        ioreg = new IORegistry(this);
 
-        if(!applet)
+        if(applet) {
+        	asms = new ArrayList<>();
+        }
+        else {
         	serial_support = isRXTXAvailable();
+        	curdir = (new File(".")).getAbsolutePath();
+        }
 
-        if(applet) asms = new ArrayList<PLPAsmSource>();
-        pAttrSet = new HashMap<String, Object>();
-
-        this.ioreg = new IORegistry(this);
-        if(!applet) this.curdir = (new java.io.File(".")).getAbsolutePath();
         
         if(g && !applet) {
             this.g_err = new SimErrorFrame();
