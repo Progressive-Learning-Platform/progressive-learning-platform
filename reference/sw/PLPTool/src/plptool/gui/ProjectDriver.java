@@ -289,6 +289,8 @@ public final class ProjectDriver {
             gnu.io.RXTXVersion.getVersion();
             return true;
         } catch(UnsatisfiedLinkError e) {
+        	// TODO: extract warning messages
+        	// TODO: replace with Java Logging API
             Msg.warning("Failed to detect native RXTX library. " +
                   "Functionality requiring serial communication will fail.", null);
             Msg.warning(" - If you are running Linux, make sure that RXTX library is installed.", null);
