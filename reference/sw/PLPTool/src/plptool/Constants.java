@@ -25,6 +25,7 @@ package plptool;
 public class Constants {
     public static String launchPath = ".";
 
+    // TODO: conform to Java naming conventions
     public static final int minimumJREMajorVersion               = 1;
     public static final int minimumJREMinorVersion               = 5;
     public static final int DEFAULT_IO_BUFFER_SIZE               = 1024;
@@ -34,6 +35,7 @@ public class Constants {
     public static final int PLP_BAUDRATE                         = 57600;
     public static final int PLP_MAX_STEPS                        = 1000000;
 
+    // TODO: Switch to enumerations
     // Assembler 1st Pass Errors
     public static final int PLP_ASM_INVALID_TOKEN                = 16;
     public static final int PLP_ASM_INVALID_REFSOURCE            = 17;
