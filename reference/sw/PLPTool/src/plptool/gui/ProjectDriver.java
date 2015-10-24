@@ -313,14 +313,14 @@ public final class ProjectDriver {
         if(arch != null)
             arch.cleanup();
         arch = ArchRegistry.getArchitecture(this, archID);
-        arch.init();
         if(arch == null) {
             arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
             arch.init();
             return Msg.error("Invalid ISA ID: " + archID + ". Defaulting to " +
                          "plpmips (id 0).",
                          Constants.PLP_ISA_INVALID_ARCHITECTURE_ID, this);
-        } else {        
+        } else {
+            arch.init();    
             return Constants.PLP_OK;
         }
     }
@@ -361,13 +361,12 @@ public final class ProjectDriver {
 
         try {
             this.arch = ArchRegistry.getArchitecture(this, archID);
-            arch.init();
             if(arch == null) {
                 Msg.warning("Invalid architecture ID is specified, reverting to " +
                       "default (plpmips).", this);
                 this.arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
-                arch.init();
             }
+            arch.init();
         } catch(Exception e) {
             Msg.error("FATAL ERROR: invalid arch ID during ProjectDriver" +
                   "create routine (archID: " + archID + ")",
