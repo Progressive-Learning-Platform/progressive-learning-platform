@@ -1056,7 +1056,7 @@ public final class ProjectDriver {
 
         int ret = 0;
 
-        if(asm.preprocess(0) == Constants.PLP_OK)
+        if(asm != null && asm.preprocess(0) == Constants.PLP_OK)
             ret = asm.assemble();
 
         if(asm != null && asm.isAssembled() && ret == 0) {
@@ -1586,12 +1586,12 @@ public final class ProjectDriver {
     public int exportAsm(int index, String path) {
         File asmFile = new File(path);
 
-        Msg.info("Exporting " + asms.get(index).getAsmFilePath() +
-                 " to " + path, null);
-
         if(asms == null || index < 0 || index >= asms.size())
             return Msg.error("exportAsm: Invalid index: " + index,
                             Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+
+        Msg.info("Exporting " + asms.get(index).getAsmFilePath() +
+                 " to " + path, null);
 
         if(asmFile.exists()) {
             return Msg.error("exportAsm: " + path + " exists.",
@@ -1622,14 +1622,14 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int removeAsm(int index) {
+        if(asms == null || index < 0 || index >= asms.size())
+            return  Msg.error("removeAsm: Invalid index: " + index,
+                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
+        
         if(asms.size() <= 1) {
             return  Msg.error("removeAsm: Can not delete last source file.",
                             Constants.PLP_BACKEND_DELETING_LAST_ASM_ERROR, this);
         }
-
-        if(asms == null || index < 0 || index >= asms.size())
-            return  Msg.error("removeAsm: Invalid index: " + index,
-                            Constants.PLP_BACKEND_BOUND_CHECK_FAILED, this);
 
         setModified();
 
