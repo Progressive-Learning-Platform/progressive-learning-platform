@@ -37,40 +37,24 @@ public class PLPAsmSource
 	private String asmFilePath;
 	private int lastLineOpen;
 	
+	/**
+	 * Unused variable
+	 */
 	int recursionLevel;
 	
 	public PLPAsmSource(String strAsm, String strFilePath, int intLevel)
 	{
-		asmFilePath = strFilePath;
 		lastLineOpen = 0;
+		recursionLevel = intLevel;
 		
 		if (strAsm == null)
 		{
-			File asmFile = new File(asmFilePath);
-			if (asmFile.exists())
-			{
-				try
-				{
-					asmString = new String(Files.readAllBytes(asmFile.toPath()));
-					asmLines = asmString.split("\\r?\\n");
-					
-					recursionLevel = intLevel;
-				}
-				catch (IOException exception)
-				{
-					Msg.printStackTrace(exception);
-				}
-			}
-			else
-			{
-				Msg.error("ASM file does not exist!",
-						Constants.PLP_IO_FILE_DOES_NOT_EXIST, this);
-			}
-			
+			setAsmFilePath(strFilePath, true);
 		}
 		else
 		{
-			asmString = strAsm;
+			setAsmFilePath(strFilePath);
+			setAsmString(strAsm);
 		}
 	}
 	
@@ -102,11 +86,58 @@ public class PLPAsmSource
 		asmLines = asmString.split("\\r?\\n");
 	}
 	
+	/**
+	 * Sets the file path and does not attempt to immediately 
+	 * load contents from the new file path. 
+	 * Call loadFromFile() if you want to update the contents to what is in the file.
+	 * @param newPath
+	 */
 	public void setAsmFilePath(String newPath)
 	{
-		asmFilePath = newPath;
+		setAsmFilePath(newPath, false);
 	}
 	
+	public void setAsmFilePath(String newPath, boolean loadFromPath)
+	{
+		asmFilePath = newPath;
+		
+		if(loadFromPath)
+			loadFromFile();
+	}
+	
+	/**
+	 * Load full asm file contents into the source
+	 * @return Returns false on file not existing or failing to open. True if it opens properly.
+	 */
+	public boolean loadFromFile()
+	{
+		File asmFile = new File(asmFilePath);
+		
+		if (new File(asmFilePath).exists())
+		{
+			try
+			{
+				setAsmString(new String(Files.readAllBytes(new File(asmFilePath).toPath())));
+				return true;
+			}
+			catch (IOException exception)
+			{
+				Msg.printStackTrace(exception);
+			}
+		}
+		else
+		{
+			Msg.error("ASM file does not exist!",
+					Constants.PLP_IO_FILE_DOES_NOT_EXIST, this);
+		}
+		return false;
+	}
+	
+	/**
+	 * Get the string contents of the asm file at the specified line number.
+	 * @param lineNum Line numbers are the actual line numbers. They start at 1.
+	 * @return String if the line number is valid, null otherwise
+	 */
 	public String getAsmLine(int lineNum)
 	{
 		if (lineNum > asmLines.length || lineNum <= 0)
