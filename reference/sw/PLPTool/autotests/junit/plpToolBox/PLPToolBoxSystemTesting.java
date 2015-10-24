@@ -28,6 +28,7 @@ import org.junit.Test;
 import plptool.Constants;
 import plptool.PLPToolbox;
 
+//TODO: Save old state of clipboard and resume it after this test has completed
 public class PLPToolBoxSystemTesting
 {
 	private static String osName;
@@ -233,12 +234,12 @@ public class PLPToolBoxSystemTesting
 		
 		String featuresHex = "0xffb89a";
 		createFileFromStringData(featuresHex);
-		assertEquals("PLPToolBox return multi line data as one string",
+		assertEquals("PLPToolbox can read hex from file",
 				featuresHex, PLPToolbox.readFileAsString(filePath));
 		
 		String featuresDifferentNullTypes = "00000000 null \0 ooo";
 		createFileFromStringData(featuresDifferentNullTypes);
-		assertEquals("PLPToolBox return multi line data as one string",
+		assertEquals("PLPToolBox can read nulls in strings",
 				featuresDifferentNullTypes,
 				PLPToolbox.readFileAsString(filePath));
 		
