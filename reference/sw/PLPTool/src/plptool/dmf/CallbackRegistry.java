@@ -84,6 +84,7 @@ public class CallbackRegistry {
 
     public static boolean INITIALIZED                   = false;
 
+    // FIXME: get rid of generic array of array lists
     @SuppressWarnings("unchecked")
     private static final ArrayList<Callback>[] callbacks = new ArrayList[CALLBACKS];
 
