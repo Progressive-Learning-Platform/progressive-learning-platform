@@ -18,10 +18,11 @@
 
 package plptool;
 
-import plptool.gui.ProjectDriver;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import plptool.gui.ProjectDriver;
 
 /**
  * This class associates an ISA implementation to its member classes.
@@ -32,8 +33,8 @@ import java.util.Map;
  */
 public class ArchRegistry {
 
-    private static HashMap<Integer, Class> archClasses =
-            new HashMap<Integer, Class>();
+    private static HashMap<Integer, Class<?>> archClasses =
+            new HashMap<Integer, Class<?>>();
     private static HashMap<Integer, String> archIdentifiers =
             new HashMap<Integer, String>();
     private static HashMap<Integer, String> archDescriptions =
@@ -52,7 +53,7 @@ public class ArchRegistry {
     public static PLPArchitecture getArchitecture(ProjectDriver plp,
             int ID) {
         PLPArchitecture arch = null;
-        Class archClass = null;
+        Class<?> archClass = null;
 
         // default ISA is PLP CPU (arch ID 0)
         if(ID == 0)
@@ -87,7 +88,7 @@ public class ArchRegistry {
      * @return PLP_OK if the class is successfully registered, error code
      * otherwise
      */
-    public static int registerArchitecture(Class arch, int ID, String strID,
+    public static int registerArchitecture(Class<?> arch, int ID, String strID,
             String description) {
         Msg.debug("Registering ISA class " + arch.getCanonicalName() +
                 " with ID=" + ID + " strID=" + strID, 2, null);
@@ -106,7 +107,7 @@ public class ArchRegistry {
         archDescriptions.put(ID, description);
 
         if(Constants.debugLevel >= 5) {
-            java.util.Set IDs = archClasses.keySet();
+            Set<?> IDs = archClasses.keySet();
             Object stuff[] = IDs.toArray();
             Msg.debug("Current list of registered ISA IDs:", 5, null);
             for(int i = 0; i < stuff.length; i++) {
@@ -123,7 +124,7 @@ public class ArchRegistry {
      * @param ID ID of the ISA meta class
      * @return Reference to the ISA class, or null if it is not registered
      */
-    public static Class getRegisteredArchitectureClass(int ID) {
+    public static Class<?> getRegisteredArchitectureClass(int ID) {
         return archClasses.get(ID);
     }
 
@@ -164,12 +165,13 @@ public class ArchRegistry {
      * Information fields are: 0: ISA numerical ID, 1: reference to the ISA
      * meta-class, 2: ISA string identifier.
      */
+    // FIXME: make returns concrete and encapsulate data. Get rid of generic array
     public static Object[][] getArchList() {
         Object[][] archs = new Object[archClasses.size()][4];
         Object[] classes = archClasses.entrySet().toArray();
         for(int i = 0; i < archs.length; i++) {
             @SuppressWarnings("unchecked")
-            Map.Entry<Integer, Class> entry = (Map.Entry<Integer, Class>) classes[i];
+            Map.Entry<Integer, Class<?>> entry = (Map.Entry<Integer, Class<?>>) classes[i];
             archs[i][0] = entry.getKey();
             archs[i][1] = entry.getValue();
             archs[i][2] = archIdentifiers.get(entry.getKey());
