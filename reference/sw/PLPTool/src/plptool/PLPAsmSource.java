@@ -42,6 +42,12 @@ public class PLPAsmSource
 	 */
 	int recursionLevel;
 	
+	/**
+	 * 
+	 * @param strAsm String that represents the whole ASM file.
+	 * @param strFilePath If strAsm is null, it will attempt to load file contents from the provided path
+	 * @param intLevel Currently not used
+	 */
 	public PLPAsmSource(String strAsm, String strFilePath, int intLevel)
 	{
 		lastLineOpen = 0;
@@ -97,12 +103,21 @@ public class PLPAsmSource
 		setAsmFilePath(newPath, false);
 	}
 	
-	public void setAsmFilePath(String newPath, boolean loadFromPath)
+	/**
+	 * 
+	 * @param newPath new Path to be set to.
+	 * @param loadFromPath If true, it will call loadFromFile.
+	 * @return If loadFromPath is false, this method will return false.
+	 * Else this method will return whatever loadFromFile returns.
+	 */
+	public boolean setAsmFilePath(String newPath, boolean loadFromPath)
 	{
 		asmFilePath = newPath;
 		
 		if(loadFromPath)
-			loadFromFile();
+			return loadFromFile();
+		
+		return false;
 	}
 	
 	/**
