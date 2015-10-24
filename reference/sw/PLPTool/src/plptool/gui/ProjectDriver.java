@@ -26,7 +26,11 @@
 
 package plptool.gui;
 
+import static plptool.Config.*;
+
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
@@ -264,23 +268,9 @@ public final class ProjectDriver {
         g_find = new FindAndReplace(this);
         g_isaselect = new ISASelector(g_dev, this);
         
-        Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
-        int X = Config.devWindowPositionX;
-        int Y = Config.devWindowPositionY;
-        int W = Config.devWindowWidth;
-        int H = Config.devWindowHeight;
-        if(X < 0 || Y < 0 || W < 0 || H < 0) {
-            g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
-                          (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-            g_dev.setLocationRelativeTo(null);
-        } else if (X+W <= screenResolution.width && Y+H <= screenResolution.height) {
-            g_dev.setSize(W, H);
-            g_dev.setLocation(X, Y);
-        } else {
-            g_dev.setSize((int) (Config.relativeDefaultWindowWidth * screenResolution.width),
-                          (int) (Config.relativeDefaultWindowHeight * screenResolution.height));
-            g_dev.setLocationRelativeTo(null);
-        }
+        Rectangle windowParameters = getWindowParameters();
+        g_dev.setSize(windowParameters.getSize());
+        g_dev.setLocation(windowParameters.getLocation());
 
         g_find.setLocationRelativeTo(null);
 
