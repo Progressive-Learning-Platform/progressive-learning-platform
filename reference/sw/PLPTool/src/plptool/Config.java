@@ -19,6 +19,9 @@
 package plptool;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 
 /**
  * PLPTool configuration 
@@ -88,6 +91,37 @@ public class Config {
     public static int     serialTerminalReadDelayMs        = 10;
     public static int     serialTerminalBufferSize         = 64;
     public static boolean serialTerminalAutoDetectPorts    = true;
+    
+    public static Rectangle getWindowParameters() {
+    	Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
+    	Rectangle windowParameters = new Rectangle();
+    	windowParameters.setSize(devWindowWidth, devWindowHeight);
+    	windowParameters.setLocation(devWindowPositionX, devWindowPositionY);
+    	
+    	if(!areWindowParametersValid(windowParameters)) {
+    		int width = (int) (relativeDefaultWindowWidth * screenResolution.width);
+            int height = (int) (relativeDefaultWindowHeight * screenResolution.height);
+            int x = (screenResolution.width - width) / 2;
+            int y = (screenResolution.height - height) / 2;
+            
+            windowParameters.setBounds(x, y, width, height);
+        }
+    	
+    	return windowParameters;
+    }
+    
+    public static boolean areWindowParametersValid(Rectangle windowParameters) {
+    	Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
+    	int rightX = windowParameters.x + windowParameters.width;
+    	int bottomY = windowParameters.y + windowParameters.height;
+    	
+    	boolean invalid = windowParameters.x < 0 || windowParameters.y < 0;
+    	invalid = invalid || windowParameters.width < 0 || windowParameters.height < 0;
+    	invalid = invalid || rightX > screenResolution.width;
+    	invalid = invalid || bottomY > screenResolution.height;
+    	
+    	return !invalid;
+    }
    
     public static void resetConfig() {
         cfgInstrPretty                   = true;
