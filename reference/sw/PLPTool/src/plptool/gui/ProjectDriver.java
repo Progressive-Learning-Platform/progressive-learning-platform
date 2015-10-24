@@ -225,11 +225,9 @@ public final class ProjectDriver {
         asm_req = false;
         pAttrSet = new HashMap<>();
         ioreg = new IORegistry(this);
-
-        if(applet) {
-        	asms = new ArrayList<>();
-        }
-        else {
+        asms = new ArrayList<>();
+        
+        if (!applet) {
         	serial_support = isRXTXAvailable();
         	curdir = (new File(".")).getAbsolutePath();
         	if(g) 
@@ -271,6 +269,7 @@ public final class ProjectDriver {
         Rectangle windowParameters = getWindowParameters();
         g_dev.setSize(windowParameters.getSize());
         g_dev.setLocation(windowParameters.getLocation());
+        g_dev.setLocationRelativeTo(null);
 
         g_find.setLocationRelativeTo(null);
 
