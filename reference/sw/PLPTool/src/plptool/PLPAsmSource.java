@@ -18,8 +18,8 @@
 
 package plptool;
 
-import java.util.Scanner;
 import java.io.File;
+import java.io.FileReader;
 
 /**
  * This class implements an assembly source and its data structures used by
@@ -43,8 +43,8 @@ public class PLPAsmSource {
 
         try {
         if(strAsm == null) {
-            java.io.File fHandler = new java.io.File(strFilePath);
-            java.io.FileReader fReader = new java.io.FileReader(fHandler);
+            File fHandler = new File(strFilePath);
+            FileReader fReader = new FileReader(fHandler);
             char[] readBuffer = new char[(int) fHandler.length()];
             fReader.read(readBuffer, 0, readBuffer.length);
             asmString = String.copyValueOf(readBuffer);
