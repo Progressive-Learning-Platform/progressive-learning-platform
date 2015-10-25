@@ -29,5 +29,24 @@ public class PLPSimBusTest {
         assertEquals(index,0);
         assertNotNull(index);
     }
+    /** Checks to see if remove() and getNumOfMods() is working or not */
+    @Test
+    public void testRemove(){
+        int indx = plpSimBus.add(memModule);
+        
+        int res = plpSimBus.remove(indx);
+        
+        assertEquals(res, Constants.PLP_OK);
+        assertEquals(plpSimBus.getNumOfMods(), 0);
+    }
+    
+    @Test
+    public void testRead(){
+        int indx = plpSimBus.add(memModule);
+        plpSimBus.enableMod(indx);
+        plpSimBus.write(120L, 1234L, true);
+        Object value = plpSimBus.read(120L);
+        assertNotNull(value);
+    }
 
 }
