@@ -154,5 +154,21 @@ public class PLPSimBusTest {
         assertTrue(plpSimBus.getEnabled(indx2));
         assertFalse(plpSimBus.getEnabled(indx1));
     }
+    @Test
+    public void testGetStartValues(){
+        plpSimBus.add(new MemModule(500L,50L,true));
+        plpSimBus.add(new MemModule(600L,50L,true));
+        
+        assertEquals(plpSimBus.getModStartAddress(0),500L);
+        assertEquals(plpSimBus.getModStartAddress(1),600L);
+    }
+    
+    @Test
+    public void testGetEndValues(){
+        plpSimBus.add(new MemModule(500L,50L,true));
+        
+        assertEquals(plpSimBus.getModEndAddress(0),546L);
+    }
+
 
 }
