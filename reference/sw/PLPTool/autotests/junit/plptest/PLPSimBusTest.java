@@ -169,6 +169,21 @@ public class PLPSimBusTest {
         
         assertEquals(plpSimBus.getModEndAddress(0),546L);
     }
+    @Test
+    public void testGetNoMods(){
+        plpSimBus.add(new MemModule(500L,50L,true));
+        plpSimBus.add(new MemModule(600L,50L,true));
+        
+        assertEquals(2,plpSimBus.getNumOfMods());
+    }
+    
+    @Test
+    public void testgetRefMods(){
+        MemModule mod= new MemModule(500L,50L,true);
+        plpSimBus.add(mod);
+        
+        assertEquals(mod,plpSimBus.getRefMod(0));
+    }
 
 
 }
