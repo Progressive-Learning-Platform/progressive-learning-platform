@@ -141,6 +141,18 @@ public class PLPSimBusTest {
         assertFalse(plpSimBus.getEnabled(indx2));
     }
     
-
+    @Test
+    public void testDisableMod(){
+        int indx1 = plpSimBus.add(new MemModule(500L,50L,true));
+        int indx2 = plpSimBus.add(new MemModule(600L,50L,true));
+        
+        plpSimBus.enableMod(indx1);
+        plpSimBus.enableMod(indx2);
+        
+        plpSimBus.disableMod(indx1);
+        
+        assertTrue(plpSimBus.getEnabled(indx2));
+        assertFalse(plpSimBus.getEnabled(indx1));
+    }
 
 }
