@@ -656,7 +656,9 @@ public final class ProjectDriver {
 	        // Find meta file first
 	        while((entry = tIn.getNextTarEntry()) != null) {
 	            if(entry.getName().equals("plp.metafile")) {
-	            	asmFileOrder = loadMetafileEntry(entry, tIn);
+	            	image = new byte[(int) entry.getSize()];
+	                tIn.read(image, 0, (int) entry.getSize());
+	            	asmFileOrder = loadMetafileEntry(image);
 	            }
 	        }
 	        
@@ -811,10 +813,8 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private HashMap<String, Integer> loadMetafileEntry(TarArchiveEntry entry, TarArchiveInputStream tIn) throws IOException
+    private HashMap<String, Integer> loadMetafileEntry(byte[] image)
 	{
-    	byte[] image = new byte[(int) entry.getSize()];
-        tIn.read(image, 0, (int) entry.getSize());
         String metaStr = new String(image);
         
         meta = metaStr;
