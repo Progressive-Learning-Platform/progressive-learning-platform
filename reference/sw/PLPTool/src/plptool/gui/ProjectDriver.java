@@ -34,6 +34,7 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -644,7 +645,7 @@ public final class ProjectDriver {
         smods = null;
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
-        HashMap<String, Integer> asmFileOrder = new HashMap<String, Integer>();
+        HashMap<String, Integer> asmFileOrder = null;
 
         try {
 	        TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
@@ -655,62 +656,11 @@ public final class ProjectDriver {
 	        // Find meta file first
 	        while((entry = tIn.getNextTarEntry()) != null) {
 	            if(entry.getName().equals("plp.metafile")) {
-	                image = new byte[(int) entry.getSize()];
-	                tIn.read(image, 0, (int) entry.getSize());
-	                metaStr = new String(image);
-	
-	                metafileFound = true;
-	                meta = metaStr;
-	                Scanner metaScanner;
-	
-	                String lines[] = meta.split("\\r?\\n");
-	                if(!lines[0].equals(Text.projectFileVersionString)) {
-	                    Msg.warning("This is not a " + Text.projectFileVersionString +
-	                            " project file. Opening anyways.", this);
-	                }
-	
-	                metaScanner = new Scanner(meta);
-	                metaScanner.findWithinHorizon("DIRTY=", 0);
-	                if(metaScanner.nextInt() == 0)
-	                    dirty = false;
-	                if(metaScanner.findWithinHorizon("ARCH=", 0) != null) {
-	                    String temp = metaScanner.nextLine();
-	                    if(Config.cfgOverrideISA >= 0) { // ISA ID override, ignore the metafile
-	                        arch = ArchRegistry.getArchitecture(this, Config.cfgOverrideISA);
-	                        arch.init();
-	                    } else if (temp.equals("plpmips")) {
-	                        Msg.warning("This project file was created by PLPTool version 3 or earlier. " +
-	                              "Meta data for this project will be updated " +
-	                              "with the default ISA (plpmips) when the project " +
-	                              "file is saved.", this);
-	                        arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
-	                        arch.init();
-	                    } else {
-	                        arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
-	                        if(arch == null) {
-	                            Msg.warning("Invalid ISA ID is specified in the project file: '" + temp +
-	                                  "'. Assuming PLPCPU.", this);
-	                            arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
-	                        }
-	                        arch.init();
-	                    }
-	                    arch.hook(this);
-	                }
-	
-	                // get asm files order
-	                int asmOrder = 0;
-	                while(metaScanner.hasNext()) {
-	                    String asmName = metaScanner.nextLine();
-	                    if(asmName.endsWith(".asm")) {
-	                        asmFileOrder.put(asmName, new Integer(asmOrder));
-	                        asmOrder++;
-	                        asms.add(null);
-	                    }
-	                }
-	                
-	                metaScanner.close();
+	            	asmFileOrder = loadMetafileEntry(entry, tIn);
 	            }
 	        }
+	        
+	        metafileFound = asmFileOrder != null;
 	
 	        if(!metafileFound)
 	        {
@@ -723,14 +673,13 @@ public final class ProjectDriver {
 	        tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
 	
 	        while((entry = tIn.getNextTarEntry()) != null) {
-	            boolean handled = false;
 	            image = new byte[(int) entry.getSize()];
 	            tIn.read(image, 0, (int) entry.getSize());
 	            metaStr = new String(image);
 	
 	            // Hook for project open for each entry
 	            Object[] eParams = {entry.getName(), image, plpFile};
-	            handled = CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_ENTRY, eParams) || handled;
+	            boolean handled = CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_ENTRY, eParams);
 	
 	            if(entry.getName().endsWith("asm") && !entry.getName().startsWith("plp.")) {
 	                Integer order = (Integer) asmFileOrder.get(entry.getName());
@@ -862,7 +811,66 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    /**
+    private HashMap<String, Integer> loadMetafileEntry(TarArchiveEntry entry, TarArchiveInputStream tIn) throws IOException
+	{
+    	byte[] image = new byte[(int) entry.getSize()];
+        tIn.read(image, 0, (int) entry.getSize());
+        String metaStr = new String(image);
+        
+        meta = metaStr;
+        Scanner metaScanner;
+
+        String lines[] = meta.split("\\r?\\n");
+        if(!lines[0].equals(Text.projectFileVersionString)) {
+            Msg.warning("This is not a " + Text.projectFileVersionString +
+                    " project file. Opening anyways.", this);
+        }
+
+        metaScanner = new Scanner(meta);
+        metaScanner.findWithinHorizon("DIRTY=", 0);
+        if(metaScanner.nextInt() == 0)
+            dirty = false;
+        if(metaScanner.findWithinHorizon("ARCH=", 0) != null) {
+            String temp = metaScanner.nextLine();
+            if(Config.cfgOverrideISA >= 0) { // ISA ID override, ignore the metafile
+                arch = ArchRegistry.getArchitecture(this, Config.cfgOverrideISA);
+                arch.init();
+            } else if (temp.equals("plpmips")) {
+                Msg.warning("This project file was created by PLPTool version 3 or earlier. " +
+                      "Meta data for this project will be updated " +
+                      "with the default ISA (plpmips) when the project " +
+                      "file is saved.", this);
+                arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+                arch.init();
+            } else {
+                arch = ArchRegistry.getArchitecture(this, Integer.parseInt(temp));
+                if(arch == null) {
+                    Msg.warning("Invalid ISA ID is specified in the project file: '" + temp +
+                          "'. Assuming PLPCPU.", this);
+                    arch = ArchRegistry.getArchitecture(this, ArchRegistry.ISA_PLPMIPS);
+                }
+                arch.init();
+            }
+            arch.hook(this);
+        }
+
+        // get asm files order
+        int asmOrder = 0;
+        HashMap<String, Integer> asmFileOrder = new HashMap<String, Integer>();
+        while(metaScanner.hasNext()) {
+            String asmName = metaScanner.nextLine();
+            if(asmName.endsWith(".asm")) {
+                asmFileOrder.put(asmName, new Integer(asmOrder));
+                asmOrder++;
+                asms.add(null);
+            }
+        }
+        
+        metaScanner.close();
+        return asmFileOrder;
+	}
+
+	/**
      * Get the project attributes set hashmap
      *
      * @return Project attributes hashmap
@@ -1066,7 +1074,7 @@ public final class ProjectDriver {
             if(g) g_dev.enableSimControls();
             asm_req = false;
         }
-        else {
+        else if (asm != null) {
             buildErrorList = asm.getErrorList();
             asm = null;
         }
