@@ -48,5 +48,20 @@ public class PLPSimBusTest {
         Object value = plpSimBus.read(120L);
         assertNotNull(value);
     }
+    
+    @Test
+    
+    public void testWrite(){
+        Long data = 1234L;
+        plpSimBus.add(memModule);
+        plpSimBus.enableMod(0);
+        
+        int res = plpSimBus.write(120L,data,true);
+        assertEquals(res,Constants.PLP_OK);
+        
+        Object value = plpSimBus.read(120L);
+        assertEquals((Long)value, data);
+        
+    }
 
 }
