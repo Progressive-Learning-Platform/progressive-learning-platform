@@ -33,6 +33,7 @@ import static plptool.Constants.minimumJREMinorVersion;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -631,7 +632,6 @@ public final class ProjectDriver {
             return Msg.error("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
-        boolean metafileFound = false;
         dirty = true;
 
         Msg.info("Opening " + path, null);
@@ -645,113 +645,22 @@ public final class ProjectDriver {
         smods = null;
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
-        HashMap<String, Integer> asmFileOrder = null;
 
         try {
 	        TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
 
 	        // Find meta file first
 	        byte[] image = extractMetafileImage(tIn);
-	        metafileFound = image != null;
+	        tIn.close();
 	
-	        if(!metafileFound)
+	        if(image == null)
 	        {
 	        	tIn.close();
 	            return Msg.error("No PLP metadata found.", Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
 	        }
 	
-	        asmFileOrder = loadMetafileEntry(image);
-	        // reset the tar input stream
-	        tIn.close();
-	        tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
-	
-	        TarArchiveEntry entry;
-	        while((entry = tIn.getNextTarEntry()) != null) {
-	        	image = new byte[(int) entry.getSize()];
-	            tIn.read(image, 0, (int) entry.getSize());
-	            String metaStr = new String(image);
-	
-	            // Hook for project open for each entry
-	            Object[] eParams = {entry.getName(), image, plpFile};
-	            boolean handled = CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_ENTRY, eParams);
-	
-	            if(entry.getName().endsWith("asm") && !entry.getName().startsWith("plp.")) {
-	                Integer order = (Integer) asmFileOrder.get(entry.getName());
-	                if(order == null)
-	                    Msg.warning("The file '" + entry.getName() + "' is not listed in " +
-	                          "the meta file. This file will be removed when the project " +
-	                          "is saved.", this);
-	                else {
-	                    asms.set(order, new PLPAsmSource(metaStr, entry.getName(), order));
-	                }
-	
-	            } else if(entry.getName().equals("plp.metafile")) {
-	                // we've done reading the metafile
-	            // Restore bus modules states
-	            } else if (entry.getName().equals("plp.simconfig")) {
-	                Msg.debug("simconfig:\n" + metaStr + "\n", 4, this);
-	                String lines[] = metaStr.split("\\r?\\n");
-	                int i;
-	
-	                for(i = 0; i < lines.length; i++) {
-	                    String tokens[] = lines[i].split("::");
-	
-	                    if(lines[i].startsWith("simRunnerDelay")) {
-	                        Config.simRunnerDelay = Integer.parseInt(tokens[1]);
-	                    }
-	
-	                    if(lines[i].equals("MODS")) {
-	                        i++;
-	                        this.smods = new Preset();
-	
-	                        while(i < lines.length && !lines[i].equals("END")) {
-	                            tokens = lines[i].split("::");
-	                            if(tokens.length > 4 && tokens[4].equals("noframe"))
-	                                smods.addModuleDefinition(Integer.parseInt(tokens[0]),
-	                                        Long.parseLong(tokens[2]),
-	                                        Long.parseLong(tokens[3]), false, false);
-	                            else if(tokens.length > 4)
-	                                smods.addModuleDefinition(Integer.parseInt(tokens[0]),
-	                                        Long.parseLong(tokens[2]),
-	                                        Long.parseLong(tokens[3]), true,
-	                                        Boolean.parseBoolean(tokens[5]));
-	
-	                            i++;
-	                        }
-	                    }
-	
-	                    if(lines[i].equals("WATCHER")) {
-	                        i++;
-	                        this.watcher = Watcher.getTableInitialModel();
-	
-	                        while(i < lines.length && !lines[i].equals("END")) {
-	                            tokens = lines[i].split("::");
-	                            Object row[] = {tokens[0], tokens[1], null, null};
-	                            watcher.addRow(row);
-	                            i++;
-	                        }
-	                    }
-	
-	                    if(lines[i].equals("ISASPECIFIC")) {
-	                        i++;
-	
-	                        while(i < lines.length && !lines[i].equals("END")) {
-	                            tokens = lines[i].split("::");
-	                            arch.restoreArchSpecificSimStates(tokens);
-	                            i++;
-	                        }
-	                    }
-	                }
-	            } else if(handled) {
-	
-	            } else {
-	            	TarEntryNode entryNode = new TarEntryNode(entry, image);
-	            	tarEntryStash.add(entryNode);
-	                Msg.info("open(" + path + "): found misc tarball entry: " + entry.getName(), this);
-	            }
-	        }
-	
-	        tIn.close();
+	        HashMap<String, Integer> asmFileOrder = loadMetafileEntry(image);
+	        parsePLPArchive(plpFile, asmFileOrder);
 	        
 	        if(asmFileOrder.isEmpty()) {
 	            return Msg.error("open(" + path + "): no .asm files found.",
@@ -805,7 +714,100 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private byte[] extractMetafileImage(TarArchiveInputStream tIn) throws IOException
+    private void parsePLPArchive(File plpFile, HashMap<String, Integer> asmFileOrder) 
+    		throws NumberFormatException, IOException
+	{
+        TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
+    	TarArchiveEntry entry;
+        while((entry = tIn.getNextTarEntry()) != null) {
+        	byte[] image = new byte[(int) entry.getSize()];
+            tIn.read(image, 0, (int) entry.getSize());
+            String metaStr = new String(image);
+
+            // Hook for project open for each entry
+            Object[] eParams = {entry.getName(), image, plpFile};
+            boolean handled = CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_ENTRY, eParams);
+
+            if(entry.getName().endsWith("asm") && !entry.getName().startsWith("plp.")) {
+                Integer order = (Integer) asmFileOrder.get(entry.getName());
+                if(order == null)
+                    Msg.warning("The file '" + entry.getName() + "' is not listed in " +
+                          "the meta file. This file will be removed when the project " +
+                          "is saved.", this);
+                else {
+                    asms.set(order, new PLPAsmSource(metaStr, entry.getName(), order));
+                }
+
+            } else if(entry.getName().equals("plp.metafile")) {
+                // we've done reading the metafile
+            // Restore bus modules states
+            } else if (entry.getName().equals("plp.simconfig")) {
+                Msg.debug("simconfig:\n" + metaStr + "\n", 4, this);
+                String lines[] = metaStr.split("\\r?\\n");
+                int i;
+
+                for(i = 0; i < lines.length; i++) {
+                    String tokens[] = lines[i].split("::");
+
+                    if(lines[i].startsWith("simRunnerDelay")) {
+                        Config.simRunnerDelay = Integer.parseInt(tokens[1]);
+                    }
+
+                    if(lines[i].equals("MODS")) {
+                        i++;
+                        this.smods = new Preset();
+
+                        while(i < lines.length && !lines[i].equals("END")) {
+                            tokens = lines[i].split("::");
+                            if(tokens.length > 4 && tokens[4].equals("noframe"))
+                                smods.addModuleDefinition(Integer.parseInt(tokens[0]),
+                                        Long.parseLong(tokens[2]),
+                                        Long.parseLong(tokens[3]), false, false);
+                            else if(tokens.length > 4)
+                                smods.addModuleDefinition(Integer.parseInt(tokens[0]),
+                                        Long.parseLong(tokens[2]),
+                                        Long.parseLong(tokens[3]), true,
+                                        Boolean.parseBoolean(tokens[5]));
+
+                            i++;
+                        }
+                    }
+
+                    if(lines[i].equals("WATCHER")) {
+                        i++;
+                        this.watcher = Watcher.getTableInitialModel();
+
+                        while(i < lines.length && !lines[i].equals("END")) {
+                            tokens = lines[i].split("::");
+                            Object row[] = {tokens[0], tokens[1], null, null};
+                            watcher.addRow(row);
+                            i++;
+                        }
+                    }
+
+                    if(lines[i].equals("ISASPECIFIC")) {
+                        i++;
+
+                        while(i < lines.length && !lines[i].equals("END")) {
+                            tokens = lines[i].split("::");
+                            arch.restoreArchSpecificSimStates(tokens);
+                            i++;
+                        }
+                    }
+                }
+            } else if(handled) {
+
+            } else {
+            	TarEntryNode entryNode = new TarEntryNode(entry, image);
+            	tarEntryStash.add(entryNode);
+                Msg.info("open(): found misc tarball entry: " + entry.getName(), this);
+            }
+        }
+        
+        tIn.close();
+	}
+
+	private byte[] extractMetafileImage(TarArchiveInputStream tIn) throws IOException
 	{
     	TarArchiveEntry entry;
         while((entry = tIn.getNextTarEntry()) != null) {
