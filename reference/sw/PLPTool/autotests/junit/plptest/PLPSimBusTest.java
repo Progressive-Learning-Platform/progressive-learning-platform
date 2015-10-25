@@ -116,6 +116,31 @@ public class PLPSimBusTest {
         assertEquals(plpSimBus.enableAllModules(),Constants.PLP_OK);
         assertEquals(plpSimBus.disableAllModules(),Constants.PLP_OK);
     }
+    
+    @Test
+    public void testGetEnabled(){
+        plpSimBus.add(new MemModule(500L,50L,true));
+        plpSimBus.add(new MemModule(600L,50L,true));
+        
+        assertFalse(plpSimBus.getEnabled(0));
+        plpSimBus.enableAllModules();
+        
+        assertTrue(plpSimBus.getEnabled(0));
+        assertTrue(plpSimBus.getEnabled(1));
+        
+    }
+    
+    @Test
+    public void testEnableMod(){
+        int indx1 = plpSimBus.add(new MemModule(500L,50L,true));
+        int indx2 = plpSimBus.add(new MemModule(600L,50L,true));
+        
+        plpSimBus.enableMod(indx1);
+        
+        assertTrue(plpSimBus.getEnabled(indx1));
+        assertFalse(plpSimBus.getEnabled(indx2));
+    }
+    
 
 
 }
