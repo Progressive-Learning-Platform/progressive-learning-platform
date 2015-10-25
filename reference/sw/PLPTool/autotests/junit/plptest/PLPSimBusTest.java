@@ -194,6 +194,23 @@ public class PLPSimBusTest {
         assertNotNull(value);
     }
     
+    @Test
+    public void testEval(){
+        int indx = plpSimBus.add(memModule);
+        plpSimBus.enableMod(indx);
+        
+        assertEquals(Constants.PLP_OK, plpSimBus.eval(indx));
+    }
+    
+    
+    @Test
+    public void testEvalAll(){
+        plpSimBus.add(memModule);
+        plpSimBus.enableAllModules();
+        
+        assertEquals(Constants.PLP_OK, plpSimBus.eval());
+    }
+
 
 
 }
