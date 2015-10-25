@@ -649,14 +649,12 @@ public final class ProjectDriver {
 
         try {
 	        TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
-	        TarArchiveEntry entry;
-	        byte[] image;
-	        String metaStr;
 	
 	        // Find meta file first
+	        TarArchiveEntry entry;
 	        while((entry = tIn.getNextTarEntry()) != null) {
 	            if(entry.getName().equals("plp.metafile")) {
-	            	image = new byte[(int) entry.getSize()];
+	            	byte[] image = new byte[(int) entry.getSize()];
 	                tIn.read(image, 0, (int) entry.getSize());
 	            	asmFileOrder = loadMetafileEntry(image);
 	            }
@@ -675,9 +673,9 @@ public final class ProjectDriver {
 	        tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
 	
 	        while((entry = tIn.getNextTarEntry()) != null) {
-	            image = new byte[(int) entry.getSize()];
+	        	byte[] image = new byte[(int) entry.getSize()];
 	            tIn.read(image, 0, (int) entry.getSize());
-	            metaStr = new String(image);
+	            String metaStr = new String(image);
 	
 	            // Hook for project open for each entry
 	            Object[] eParams = {entry.getName(), image, plpFile};
