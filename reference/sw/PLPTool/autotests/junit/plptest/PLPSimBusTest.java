@@ -99,6 +99,23 @@ public class PLPSimBusTest {
         assertTrue(plpSimBus.isInstr(120L));
         
     }
+    
+    @Test
+    public void testEnableMods(){
+        plpSimBus.add(new MemModule(500L,50L,true));
+        plpSimBus.add(new MemModule(600L,50L,true));
+        
+        assertEquals(plpSimBus.enableAllModules(), Constants.PLP_OK);
+    }
+    
+    @Test
+    public void testDisableMods(){
+        plpSimBus.add(new MemModule(500L,50L,true));
+        plpSimBus.add(new MemModule(600L,50L,true));
+        
+        assertEquals(plpSimBus.enableAllModules(),Constants.PLP_OK);
+        assertEquals(plpSimBus.disableAllModules(),Constants.PLP_OK);
+    }
 
 
 }
