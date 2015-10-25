@@ -63,5 +63,30 @@ public class PLPSimBusTest {
         assertEquals((Long)value, data);
         
     }
+    
+    @Test
+    public void testIsInitialized(){
+        
+        int index = plpSimBus.add(memModule);
+        assertFalse(plpSimBus.isInitialized(120L));
+        plpSimBus.enableMod(index);
+        
+        plpSimBus.write(120L, 1234L, false);
+        assertTrue(plpSimBus.isInitialized(120L));
+        
+    }
+    
+    @Test
+    public void testIsMapped(){
+        
+        assertFalse(plpSimBus.isMapped(120L));
+        
+        int index = plpSimBus.add(memModule);
+        plpSimBus.enableMod(index);
+        
+        plpSimBus.write(120L, 1234L, true);
+        assertTrue(plpSimBus.isMapped(120L));
+        
+    }
 
 }
