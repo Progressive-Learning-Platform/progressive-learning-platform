@@ -649,18 +649,10 @@ public final class ProjectDriver {
 
         try {
 	        TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
-	
+
 	        // Find meta file first
-	        TarArchiveEntry entry;
-	        while((entry = tIn.getNextTarEntry()) != null) {
-	            if(entry.getName().equals("plp.metafile")) {
-	            	byte[] image = new byte[(int) entry.getSize()];
-	                tIn.read(image, 0, (int) entry.getSize());
-	            	asmFileOrder = loadMetafileEntry(image);
-	            }
-	        }
-	        
-	        metafileFound = asmFileOrder != null;
+	        byte[] image = extractMetafileImage(tIn);
+	        metafileFound = image != null;
 	
 	        if(!metafileFound)
 	        {
@@ -668,12 +660,14 @@ public final class ProjectDriver {
 	            return Msg.error("No PLP metadata found.", Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
 	        }
 	
+	        asmFileOrder = loadMetafileEntry(image);
 	        // reset the tar input stream
 	        tIn.close();
 	        tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
 	
+	        TarArchiveEntry entry;
 	        while((entry = tIn.getNextTarEntry()) != null) {
-	        	byte[] image = new byte[(int) entry.getSize()];
+	        	image = new byte[(int) entry.getSize()];
 	            tIn.read(image, 0, (int) entry.getSize());
 	            String metaStr = new String(image);
 	
@@ -811,7 +805,21 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private HashMap<String, Integer> loadMetafileEntry(byte[] image)
+    private byte[] extractMetafileImage(TarArchiveInputStream tIn) throws IOException
+	{
+    	TarArchiveEntry entry;
+        while((entry = tIn.getNextTarEntry()) != null) {
+            if(entry.getName().equals("plp.metafile")) {
+            	byte[] image = new byte[(int) entry.getSize()];
+                tIn.read(image, 0, (int) entry.getSize());
+                return image;
+            }
+        }
+        
+        return null;
+	}
+
+	private HashMap<String, Integer> loadMetafileEntry(byte[] image)
 	{
         String metaStr = new String(image);
         
