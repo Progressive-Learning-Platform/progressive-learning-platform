@@ -184,6 +184,16 @@ public class PLPSimBusTest {
         
         assertEquals(mod,plpSimBus.getRefMod(0));
     }
+    @Test
+    public void testUncheckedRead(){
+        
+        int indx = plpSimBus.add(memModule);
+        plpSimBus.enableMod(indx);
+        plpSimBus.write(120L,1234L,true);
+        Object value = plpSimBus.uncheckedRead(120L);
+        assertNotNull(value);
+    }
+    
 
 
 }
