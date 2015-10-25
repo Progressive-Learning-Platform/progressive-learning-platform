@@ -88,5 +88,17 @@ public class PLPSimBusTest {
         assertTrue(plpSimBus.isMapped(120L));
         
     }
+    @Test
+    public void testIsInstr(){
+        
+        int index = plpSimBus.add(memModule);
+        plpSimBus.enableMod(index);
+        
+        plpSimBus.write(120L, 1234L, true);
+        
+        assertTrue(plpSimBus.isInstr(120L));
+        
+    }
+
 
 }
