@@ -211,6 +211,19 @@ public class PLPSimBusTest {
         assertEquals(Constants.PLP_OK, plpSimBus.eval());
     }
 
+    @Test
+    public void testClearModRegisters(){
+        int indx1 = plpSimBus.add(new MemModule(500L,50L,true));
+        int indx2 = plpSimBus.add(new MemModule(600L,50L,true));
+        plpSimBus.enableAllModules();
+        
+        plpSimBus.write(500L, 1234L, true);
+        
+        assertEquals(Constants.PLP_OK, plpSimBus.clearModRegisters(indx1));
+        assertEquals(Constants.PLP_OK, plpSimBus.clearModRegisters(indx2));
+        assertEquals(0L, plpSimBus.read(500L));
+    }
+
 
 
 }
