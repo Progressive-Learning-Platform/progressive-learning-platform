@@ -1,4 +1,4 @@
-package junit.plptest
+package junit.plptest;
 
 import org.junit.Before;
 import org.junit.Test;
