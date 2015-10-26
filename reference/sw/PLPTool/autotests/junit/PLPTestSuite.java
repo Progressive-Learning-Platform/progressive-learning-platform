@@ -1,7 +1,7 @@
 package junit;
 
 import junit.plp.core.PLPASMSourceTest;
-import junit.plp.core.projectdriver.ProjectDriverTest;
+import junit.plp.core.projectdriver.ProjectDriverOpenTest;
 import junit.plpToolBox.PLPToolBoxSystemTesting;
 import junit.plpToolBox.PLPToolboxParseTesting;
 
@@ -11,7 +11,7 @@ import org.junit.runners.Suite;
 //@formatter:off
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	ProjectDriverTest.class,
+	ProjectDriverOpenTest.class,
 	PLPToolboxParseTesting.class,
 	PLPToolBoxSystemTesting.class,
 	PLPASMSourceTest.class
