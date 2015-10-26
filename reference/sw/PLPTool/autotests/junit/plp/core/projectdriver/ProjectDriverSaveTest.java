@@ -2,6 +2,7 @@ package junit.plp.core.projectdriver;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import plptool.gui.ProjectDriver;
 
@@ -24,5 +25,11 @@ public class ProjectDriverSaveTest
 	public void tearDown()
 	{
 		projectDriver = null;
+	}
+	
+	@Test
+	public void saveTest()
+	{
+		
 	}
 }
