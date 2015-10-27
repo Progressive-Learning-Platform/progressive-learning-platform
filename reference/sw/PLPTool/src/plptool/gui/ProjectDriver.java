@@ -647,26 +647,16 @@ public final class ProjectDriver {
         pAttrSet = new HashMap<String, Object>();
 
         try {
-	        TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
-
-	        // Find meta file first
-	        byte[] image = extractMetafileImage(tIn);
-	        tIn.close();
+	        byte[] image = extractMetafileImage(plpFile);
 	
 	        if(image == null)
-	        {
-	        	tIn.close();
 	            return Msg.error("No PLP metadata found.", Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
-	        }
 	
 	        HashMap<String, Integer> asmFileOrder = loadMetafileEntry(image);
 	        parsePLPArchive(plpFile, asmFileOrder);
 	        
-	        if(asmFileOrder.isEmpty()) {
-	            return Msg.error("open(): no .asm files found.",
-	                            Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
-	        }
-
+	        if(asmFileOrder.isEmpty())
+	            return Msg.error("open(): no .asm files found.", Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
         catch(Exception e) {
             Msg.trace(e);
@@ -680,14 +670,13 @@ public final class ProjectDriver {
             arch.init();
         }
 
-        plpfile = new File(path);
+        plpfile = plpFile;
         modified = false;
         open_asm = 0;
 
         for(int i = 0; i < asms.size(); i++)
             Msg.info(i + ": " + asms.get(i).getAsmFilePath(), null);
-
-        if(g) refreshProjectView(false);
+        
         if(!dirty && assemble) {
             assemble();
             asm_req = false;
@@ -695,6 +684,7 @@ public final class ProjectDriver {
             asm_req = true;
 
         if(g) {
+        	refreshProjectView(false);
             g_opts.restoreSavedOpts();
             desimulate();
 
@@ -714,7 +704,16 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private void parsePLPArchive(File plpFile, HashMap<String, Integer> asmFileOrder) 
+    private byte[] extractMetafileImage(File plpFile) throws IOException
+	{
+    	TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
+        byte[] image = extractMetafileImage(tIn);
+        tIn.close();
+        
+        return image;
+	}
+
+	private void parsePLPArchive(File plpFile, HashMap<String, Integer> asmFileOrder) 
     		throws NumberFormatException, IOException
 	{
         TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
