@@ -28,7 +28,6 @@ import org.junit.Test;
 import plptool.Constants;
 import plptool.PLPToolbox;
 
-//TODO: Save old state of clipboard and resume it after this test has completed
 public class PLPToolBoxSystemTesting
 {
 	private static String osName;
@@ -137,12 +136,25 @@ public class PLPToolBoxSystemTesting
 	@Test
 	public void testClipboardActions()
 	{
+		java.awt.Toolkit toolKit = java.awt.Toolkit.getDefaultToolkit();
+		Clipboard clipboard = (Clipboard) toolKit.getSystemClipboard();
+		String originalClipboardContent = null;
+		try
+		{
+			originalClipboardContent = (String) clipboard.getData(DataFlavor.stringFlavor);
+		}
+		catch (UnsupportedFlavorException e1)
+		{
+			e1.printStackTrace();
+		}
+		catch (IOException e1)
+		{
+			e1.printStackTrace();
+		}
+		
 		String thisWillBeInTheClipboard = "Am I in the clipboard?";
 		
 		PLPToolbox.copy(thisWillBeInTheClipboard);
-		
-		java.awt.Toolkit toolKit = java.awt.Toolkit.getDefaultToolkit();
-		Clipboard clipboard = (Clipboard) toolKit.getSystemClipboard();
 		
 		try
 		{
@@ -158,6 +170,8 @@ public class PLPToolBoxSystemTesting
 		{
 			e.printStackTrace();
 		}
+		
+		PLPToolbox.copy(originalClipboardContent);
 	}
 	
 	// Write a new file filled with the provided data in string
