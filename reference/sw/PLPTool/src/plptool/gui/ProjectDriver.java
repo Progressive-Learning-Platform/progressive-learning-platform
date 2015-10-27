@@ -33,7 +33,6 @@ import static plptool.Constants.minimumJREMinorVersion;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -646,7 +645,6 @@ public final class ProjectDriver {
 
         try {
 	        byte[] image = extractMetafileImage(plpFile);
-	
 	        if(image == null)
 	            return Msg.error("No PLP metadata found.", Constants.PLP_BACKEND_INVALID_PLP_FILE, this);
 	
