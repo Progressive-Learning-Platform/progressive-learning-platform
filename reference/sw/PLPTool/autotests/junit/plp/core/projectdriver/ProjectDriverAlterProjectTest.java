@@ -20,9 +20,11 @@ public class ProjectDriverAlterProjectTest
 	// projects with files with same names.
 	ProjectDriver projectDriver;
 	String sampleProjectPath;
+	String secondProjectPath = "autotests/junit/plp/core/projectdriver/fsteptest.plp";
 	String separateAsmFilePath = "autotests/junit/plp/core/long_file.asm";
 	String separateAsmWithSameNameFilePath = "autotests/junit/plp/core/main.asm";
 	List<String> sampleProjectAsms;
+	int expectedFilesCount = 0;
 	
 	@Before
 	public void startUp()
@@ -32,6 +34,7 @@ public class ProjectDriverAlterProjectTest
 		sampleProjectAsms = new ArrayList<>();
 		sampleProjectAsms.add("main.asm");
 		sampleProjectAsms.add("libplp_uart.asm");
+		expectedFilesCount = sampleProjectAsms.size();
 	}
 	
 	@After
@@ -87,8 +90,6 @@ public class ProjectDriverAlterProjectTest
 	@Test
 	public void openDifferentProjectAfterOpeningOne()
 	{
-		String secondProjectPath = "autotests/junit/plp/core/projectdriver/fsteptest.plp";
-		
 		// open over an unmodified project
 		assertEquals("First project opens, returns success", Constants.PLP_OK,
 				projectDriver.open(sampleProjectPath, false));
@@ -97,7 +98,7 @@ public class ProjectDriverAlterProjectTest
 		
 		projectDriver = new ProjectDriver(0);
 		
-		//Second project cant open over modified first project
+		// Second project cant open over modified first project
 		assertEquals("First project opens, returns success", Constants.PLP_OK,
 				projectDriver.open(sampleProjectPath, false));
 		projectDriver.importAsm(separateAsmFilePath);
@@ -154,8 +155,9 @@ public class ProjectDriverAlterProjectTest
 		projectDriver.open(sampleProjectPath, false);
 		assertEquals("Import asm returns success", Constants.PLP_OK,
 				projectDriver.importAsm(separateAsmFilePath));
+		expectedFilesCount++;
 		assertEquals("Asm count reflects newly added asms.",
-				sampleProjectAsms.size() + 1, projectDriver.getAsms().size());
+				expectedFilesCount, projectDriver.getAsms().size());
 		assertEquals("Project shows it's modified after adding file", true,
 				projectDriver.isModified());
 		assertEquals(
@@ -171,5 +173,17 @@ public class ProjectDriverAlterProjectTest
 				assertEquals("New asm file has new relative path?", fileName,
 						asmFile.getAsmFilePath());
 		}
+		
+		assertNotSame("Can't import project as a ASM file", Constants.PLP_OK,
+				projectDriver.importAsm(secondProjectPath));
+		
+		assertNotSame("Directory path does not return success",
+				Constants.PLP_OK,
+				projectDriver.importAsm("autotests/junit/plp/core"));
+		assertNotSame("Importing a text file does not return success",
+				Constants.PLP_OK, projectDriver.importAsm("autotests/junit/plp/core/projectdriver/long_file.txt"));
+		assertEquals("Asm count does not show new files.",
+				expectedFilesCount, projectDriver.getAsms().size());
 	}
+	
 }
