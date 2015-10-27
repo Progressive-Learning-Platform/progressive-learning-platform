@@ -624,7 +624,6 @@ public final class ProjectDriver {
      * @return PLP_OK on successful operation, error code otherwise
      */
     public int open(String path, boolean assemble) {
-    	// TODO: modularize and simplify this method
         File plpFile = new File(path);
         CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN, plpFile);
         
@@ -632,14 +631,13 @@ public final class ProjectDriver {
             return Msg.error("open(" + path + "): File not found.",
                             Constants.PLP_BACKEND_PLP_OPEN_ERROR, null);
 
-        dirty = true;
-
         Msg.info("Opening " + path, null);
 
-        if(arch != null) {
+        if(arch != null)
             arch.cleanup();
-            arch = null;
-        }
+
+        dirty = true;
+        arch = null;
         asm = null;
         asms = new ArrayList<>();
         smods = null;
@@ -683,34 +681,30 @@ public final class ProjectDriver {
         } else
             asm_req = true;
 
-        if(g) {
-        	refreshProjectView(false);
-            g_opts.restoreSavedOpts();
-            desimulate();
-
-            if(asm != null && asm.isAssembled())
-                g_dev.enableSimControls();
-            else
-                g_dev.disableSimControls();
-            
-            this.setUnModified();
-            updateWindowTitle();
-            g_dev.updateDevelopRecentProjectList(plpFile.getAbsolutePath());
-            if(g_asmview != null)
-                g_asmview.dispose();
-        }
+        if(g)
+        	refreshGUI(plpFile);
 
         CallbackRegistry.callback(CallbackRegistry.PROJECT_OPEN_SUCCESSFUL, plpFile);
         return Constants.PLP_OK;
     }
 
-    private byte[] extractMetafileImage(File plpFile) throws IOException
+    private void refreshGUI(File plpFile)
 	{
-    	TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
-        byte[] image = extractMetafileImage(tIn);
-        tIn.close();
+    	refreshProjectView(false);
+        g_opts.restoreSavedOpts();
+        desimulate();
+
+        if(asm != null && asm.isAssembled())
+            g_dev.enableSimControls();
+        else
+            g_dev.disableSimControls();
         
-        return image;
+        this.setUnModified();
+        updateWindowTitle();
+        // TODO: move this to the open method, and remove dependency on g_dev
+        g_dev.updateDevelopRecentProjectList(plpFile.getAbsolutePath());
+        if(g_asmview != null)
+            g_asmview.dispose();
 	}
 
 	private void parsePLPArchive(File plpFile, HashMap<String, Integer> asmFileOrder) 
@@ -804,6 +798,15 @@ public final class ProjectDriver {
         }
         
         tIn.close();
+	}
+
+	private byte[] extractMetafileImage(File plpFile) throws IOException
+	{
+    	TarArchiveInputStream tIn = new TarArchiveInputStream(new FileInputStream(plpFile));
+        byte[] image = extractMetafileImage(tIn);
+        tIn.close();
+        
+        return image;
 	}
 
 	private byte[] extractMetafileImage(TarArchiveInputStream tIn) throws IOException
