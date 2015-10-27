@@ -149,6 +149,13 @@ public class ProjectDriverAlterProjectTest
 				projectDriver.importAsm(separateAsmWithSameNameFilePath));
 	}
 	
+	/**
+	 * Import specified source file into the project
+	 *
+	 * @param path
+	 *            The path to the source file to import
+	 * @return PLP_OK on successful operation, error code otherwise
+	 */
 	@Test
 	public void addFilesToProject()
 	{
@@ -180,10 +187,59 @@ public class ProjectDriverAlterProjectTest
 		assertNotSame("Directory path does not return success",
 				Constants.PLP_OK,
 				projectDriver.importAsm("autotests/junit/plp/core"));
-		assertNotSame("Importing a text file does not return success",
-				Constants.PLP_OK, projectDriver.importAsm("autotests/junit/plp/core/projectdriver/long_file.txt"));
-		assertEquals("Asm count does not show new files.",
-				expectedFilesCount, projectDriver.getAsms().size());
+		assertNotSame(
+				"Importing a text file does not return success",
+				Constants.PLP_OK,
+				projectDriver
+						.importAsm("autotests/junit/plp/core/projectdriver/long_file.txt"));
+		assertEquals("Asm count does not show new files.", expectedFilesCount,
+				projectDriver.getAsms().size());
 	}
 	
+	/**
+	 * Remove the source file specified by index from the project.
+	 *
+	 * @param index
+	 *            Index of the source file to remove
+	 * @return PLP_OK on successful operation, error code otherwise
+	 */
+	@Test
+	public void removeFilesFromProject()
+	{
+		int indexRemovingFromList = 0;
+		// Remove file, check size, check names.
+		projectDriver.open(sampleProjectPath, false);
+		assertEquals("Expected file count matches returned file count.",
+				expectedFilesCount, projectDriver.getAsms().size());
+		int givenIndex = projectDriver.getAsmIndex(sampleProjectAsms
+				.get(indexRemovingFromList));
+		assertEquals("Given index is within correct bounds", true,
+				givenIndex >= 0 && givenIndex <= expectedFilesCount);
+		assertEquals("Removal of file return success.", Constants.PLP_OK,
+				projectDriver.removeAsm(givenIndex));
+		expectedFilesCount--;
+		assertEquals("Expected file count matches returned file count.",
+				expectedFilesCount, projectDriver.getAsms().size());
+		
+		sampleProjectAsms.remove(indexRemovingFromList);
+		
+		indexRemovingFromList = 0;
+		// Remove last file
+		givenIndex = projectDriver.getAsmIndex(sampleProjectAsms
+				.get(indexRemovingFromList));
+		assertEquals("Given index is within correct bounds", true,
+				givenIndex >= 0 && givenIndex <= expectedFilesCount);
+		assertEquals("Removal of file return success.", Constants.PLP_OK,
+				projectDriver.removeAsm(givenIndex));
+		expectedFilesCount--;
+		assertEquals("Expected file count matches returned file count.",
+				expectedFilesCount, projectDriver.getAsms().size());
+		
+		sampleProjectAsms.remove(0);
+		
+		//Try removing from an empty project
+		assertNotSame("Can't remove from a project with no more files",
+				Constants.PLP_OK, projectDriver.removeAsm(0));
+		
+	}
 }
