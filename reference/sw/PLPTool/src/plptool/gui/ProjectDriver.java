@@ -663,14 +663,14 @@ public final class ProjectDriver {
 	        parsePLPArchive(plpFile, asmFileOrder);
 	        
 	        if(asmFileOrder.isEmpty()) {
-	            return Msg.error("open(" + path + "): no .asm files found.",
+	            return Msg.error("open(): no .asm files found.",
 	                            Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
 	        }
 
         }
         catch(Exception e) {
             Msg.trace(e);
-            return Msg.error("open(" + path + "): Invalid PLP archive.",
+            return Msg.error("open(): Invalid PLP archive.",
                             Constants.PLP_BACKEND_INVALID_PLP_FILE, null);
         }
 
