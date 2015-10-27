@@ -43,34 +43,69 @@ public class ProjectDriverAlterProjectTest
 	@Test
 	public void createProjectThenOpen()
 	{
+		// Can override empty project
+		assertEquals("Can create new project?", Constants.PLP_OK,
+				projectDriver.create(ArchRegistry.ISA_PLPMIPS));
+		assertEquals(
+				"Project opens returns success on overriding empty project",
+				Constants.PLP_OK, projectDriver.open(sampleProjectPath, false));
 		
+		projectDriver = new ProjectDriver(0);
+		// Open a project on a modified empty project
+		assertEquals("Can create new project?", Constants.PLP_OK,
+				projectDriver.create(ArchRegistry.ISA_PLPMIPS));
+		projectDriver.importAsm(separateAsmFilePath);
+		assertEquals("Project is modified after import", true,
+				projectDriver.isModified());
+		
+		assertNotSame("Project opens, cant open project when it has changes",
+				Constants.PLP_OK, projectDriver.open(sampleProjectPath, false));
 	}
 	
 	@Test
 	public void openSameProjectTwice()
 	{
-		//Open same project twice, with no modifications on first instance
+		// Open same project twice, with no modifications on first instance
 		assertEquals("Project opens, returns success", Constants.PLP_OK,
 				projectDriver.open(sampleProjectPath, false));
 		assertEquals("Project opens, returns success", Constants.PLP_OK,
 				projectDriver.open(sampleProjectPath, false));
 		
-		//Open project again, but original is modified
+		// Open project again, but original is modified
 		projectDriver = new ProjectDriver(0);
 		assertEquals("Project opens, returns success", Constants.PLP_OK,
 				projectDriver.open(sampleProjectPath, false));
 		
 		projectDriver.importAsm(separateAsmFilePath);
-		assertEquals("Project is modified after import", true, projectDriver.isModified());
+		assertEquals("Project is modified after import", true,
+				projectDriver.isModified());
 		
-		assertNotSame("Project opens, cant open project when it has changes", Constants.PLP_OK,
-				projectDriver.open(sampleProjectPath, false));
+		assertNotSame("Project opens, cant open project when it has changes",
+				Constants.PLP_OK, projectDriver.open(sampleProjectPath, false));
 	}
 	
 	@Test
 	public void openDifferentProjectAfterOpeningOne()
 	{
+		String secondProjectPath = "autotests/junit/plp/core/projectdriver/fsteptest.plp";
 		
+		// open over an unmodified project
+		assertEquals("First project opens, returns success", Constants.PLP_OK,
+				projectDriver.open(sampleProjectPath, false));
+		assertEquals("second project opens over unmodified first one",
+				Constants.PLP_OK, projectDriver.open(secondProjectPath, false));
+		
+		projectDriver = new ProjectDriver(0);
+		
+		//Second project cant open over modified first project
+		assertEquals("First project opens, returns success", Constants.PLP_OK,
+				projectDriver.open(sampleProjectPath, false));
+		projectDriver.importAsm(separateAsmFilePath);
+		assertEquals("Project is modified after import", true,
+				projectDriver.isModified());
+		
+		assertNotSame("Second project opens over unmodified first project?",
+				Constants.PLP_OK, projectDriver.open(secondProjectPath, false));
 	}
 	
 	@Test
@@ -109,7 +144,8 @@ public class ProjectDriverAlterProjectTest
 		projectDriver.open(sampleProjectPath, false);
 		assertNotSame(
 				"Can you import a file, with a name that already exists in the project.",
-				Constants.PLP_OK, projectDriver.importAsm(separateAsmWithSameNameFilePath));
+				Constants.PLP_OK,
+				projectDriver.importAsm(separateAsmWithSameNameFilePath));
 	}
 	
 	@Test
