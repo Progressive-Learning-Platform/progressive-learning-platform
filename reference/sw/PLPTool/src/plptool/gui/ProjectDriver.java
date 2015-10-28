@@ -384,10 +384,6 @@ public final class ProjectDriver {
         smods = null;
         watcher = null;
         pAttrSet = new HashMap<String, Object>();
-
-        meta =  "PLP-5.0\n";
-        meta += "START=0x0\n";
-        meta += "DIRTY=1\n\n";
         dirty = true;
 
         open_asm = 0;
