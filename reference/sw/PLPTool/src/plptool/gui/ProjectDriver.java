@@ -414,26 +414,24 @@ public final class ProjectDriver {
      * @return PLP_OK on successful save, error code otherwise
      */
     public int save() {
-
         if(sim_mode) {
             smods = ioreg.createPreset();
             watcher = g_watcher.getEntries();
         }
 
         // commit changes of currently open source file
-        if(g) 
+        if(g)
         	updateAsm(open_asm, g_dev.getEditorText());
-        //assemble();
 
         if(plpfile == null || plpfile.getName().equals("Unsaved Project"))
             return Msg.error("No PLP project file is open. Use Save As.",
                             Constants.PLP_FILE_USE_SAVE_AS, null);
 
-        String verilogHex = "";
-        long[] objCode = null;
 
         try {
+        	String verilogHex = "";
 	        File outFile = plpfile;
+	        long[] objCode = null;
 	
 	        meta = "PLP-5.0\n";
 	
