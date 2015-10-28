@@ -431,6 +431,8 @@ public final class ProjectDriver {
         	String verilogHex = "";
 	        File outFile = plpfile;
 	        long[] objCode = null;
+	        TarArchiveOutputStream tOut = 
+	        		new TarArchiveOutputStream(new FileOutputStream(outFile));
 	        
 	        if(asm != null && asm.isAssembled()) {
 	            objCode = asm.getObjectCode();
@@ -439,12 +441,8 @@ public final class ProjectDriver {
 	                verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
 	            }
 	        }
-	        
+
 	        updateMetaString(objCode);
-	
-	        // Create plpfile (a tar archive)
-	        TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
-	
 	        writeMetaFile(tOut);
 	
 	        for(PLPAsmSource asmFile : asms) {
@@ -460,8 +458,6 @@ public final class ProjectDriver {
 	            tOut.flush();
 	            tOut.closeArchiveEntry();
 	        }
-	
-	        // Write simulation configuration
 	        writeSimulationConfigurationData(tOut);
 	
 	        if(asm != null && asm.isAssembled() && objCode != null) {
