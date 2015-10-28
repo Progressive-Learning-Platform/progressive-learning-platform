@@ -432,14 +432,17 @@ public final class ProjectDriver {
 	        File outFile = plpfile;
 	        long[] objCode = null;
 	        
-	        meta = "PLP-5.0\n";
-	
 	        if(asm != null && asm.isAssembled()) {
 	            objCode = asm.getObjectCode();
 	            if(arch.getID() == ArchRegistry.ISA_PLPMIPS) {
 	                Msg.debug("Creating verilog hex code...", 2, this);
 	                verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
 	            }
+	        }
+	        
+	        meta = "PLP-5.0\n";
+	
+	        if(asm != null && asm.isAssembled()) {
 	            if(objCode != null && objCode.length > 0)
 	                meta += "START=" + asm.getAddrTable()[0] + "\n";
 	            else
