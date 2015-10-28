@@ -140,11 +140,7 @@ public class ProjectFileManipulator {
                     Msg.println(lineNum + "\t: " + splitStr[lineNum - 1]);
             }
 
-        } else if(args[2].equals("-meta")) {
-            Msg.info("Metafile contents:", null);
-            Msg.println(plp.meta);
-
-	} else if((args[2].equals("-r"))) {
+        } else if((args[2].equals("-r"))) {
             if(!(args.length == 4)) {
                 return Msg.error("Missing argument.", Constants.PLP_GENERIC_ERROR, null);
             }
