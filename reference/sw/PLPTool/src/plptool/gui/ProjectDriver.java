@@ -444,7 +444,6 @@ public final class ProjectDriver {
 
 	        updateMetaString(objCode);
 	        writeMetaFile(tOut);
-	
 	        writePLPSourceFiles(tOut);
 	        writeSimulationConfigurationData(tOut);
 	
@@ -477,7 +476,6 @@ public final class ProjectDriver {
 	            tOut.write(data);
 	            tOut.flush();
 	            tOut.closeArchiveEntry();
-	
 	        } 
 	        
 	        // write entries that appear in the save but are not used by PLPTool
