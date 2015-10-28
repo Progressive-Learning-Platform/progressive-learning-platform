@@ -1006,10 +1006,7 @@ public final class ProjectDriver {
         for(int i = 0; i < asms.size(); i++)
             srcRoot.add(new DefaultMutableTreeNode(i + ": " + asms.get(i).getAsmFilePath()));
 
-        Scanner metaScanner = new Scanner(meta);
-        metaScanner.findWithinHorizon("DIRTY=", 0);
-        int meta_dirty =  metaScanner.nextInt();
-        metaScanner.close();
+        int meta_dirty =  dirty ? 1 : 0;
         metaRoot.add(new DefaultMutableTreeNode("meta.DIRTY=" + meta_dirty));
         metaRoot.add(new DefaultMutableTreeNode("ISA=" + ArchRegistry.getStringID(arch.getID())));
 
