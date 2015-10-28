@@ -433,175 +433,173 @@ public final class ProjectDriver {
         long[] objCode = null;
 
         try {
-
-        File outFile = plpfile;
-
-        meta = "PLP-5.0\n";
-
-        if(asm != null && asm.isAssembled()) {
-            objCode = asm.getObjectCode();
-            if(arch.getID() == ArchRegistry.ISA_PLPMIPS) {
-                Msg.debug("Creating verilog hex code...", 2, this);
-                verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
-            }
-            if(objCode != null && objCode.length > 0)
-                meta += "START=" + asm.getAddrTable()[0] + "\n";
-            else
-                meta += "START=0\n";
-            meta += "DIRTY=0\n";
-            dirty = false;
-        } else {
-            meta += "DIRTY=1\n";
-            dirty = true;
-        }
-
-        meta += "ARCH=" + arch.getID() + "\n";
-        meta += "\n";
-
-        for(PLPAsmSource asmFile : asms)
-            meta += asmFile.getAsmFilePath() + "\n";
-
-        // Create plpfile (a tar archive)
-        TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
-
-        Msg.debug("Writing plp.metafile...", 2, this);
-        TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
-        entry.setSize(meta.length());
-        tOut.putArchiveEntry(entry);
-        byte[] data = meta.getBytes();
-        tOut.write(data);
-        tOut.flush();
-        tOut.closeArchiveEntry();
-
-        for(PLPAsmSource asmFile : asms) {
-            Msg.debug("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
-            entry = new TarArchiveEntry(asmFile.getAsmFilePath());
-            
-            // XXX: add to external documentation
-            // We are not expecting an .asm file with size greater than 4GiB
-            // ... I hope...
-            byte[] fileStr = asmFile.getAsmString().getBytes();
-            entry.setSize(fileStr.length);
-            tOut.putArchiveEntry(entry);
-            tOut.write(fileStr);
-            tOut.flush();
-            tOut.closeArchiveEntry();
-        }
-
-        // Write simulation configuration
-        Msg.debug("Writing out simulation configuration...", 2, this);
-        entry = new TarArchiveEntry("plp.simconfig");
-        String str = "";
-
-        str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
-        str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
-        str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
-        str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
-
-
-        if(watcher != null) {
-            str += "WATCHER\n";
-
-            for(int i = 0; i < watcher.getRowCount(); i++) {
-                str += watcher.getValueAt(i, 0) + "::";
-                str += watcher.getValueAt(i, 1) + "\n";
-            }
-
-            str += "END\n";
-        }
-
-        Msg.debug("-- saving mods info...", 2, this);
-
-        if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
-            smods = ioreg.createPreset();
-
-        if(smods != null && smods.size() > 0) {
-            str += "MODS\n";
-
-            for(int i = 0; i < smods.size(); i++) {
-                str += smods.getType(i) + "::";     //0
-                str +="RESERVED_FIELD::";       //1
-                str += smods.getAddress(i) + "::";      //2
-                str += smods.getSize(i) + "::";  //3
-
-                if(smods.getHasFrame(i)) {
-                    str += "frame::" ;              //4
-                    str += smods.getVisible(i) + "::"; //5
-                    str += smods.getX(i) + "::";      //6
-                    str += smods.getY(i) + "::";      //7
-                    str += smods.getW(i) + "::";  //8
-                    str += smods.getH(i);        //9
-                } else {
-                    str += "noframe";
-                }
-                str += "\n";
-            }
-            str += "END\n";
-        }
-
-        str += "ISASPECIFIC\n";
-        str += arch.saveArchSpecificSimStates();
-        str += "END\n";
-
-        entry.setSize(str.getBytes().length);
-        tOut.putArchiveEntry(entry);
-        tOut.write(str.getBytes());
-        tOut.flush();
-        tOut.closeArchiveEntry();
-
-        if(asm != null && asm.isAssembled() && objCode != null) {
-            // Write hex image
-            Msg.debug("Writing out verilog hex code...", 2, this);
-            entry = new TarArchiveEntry("plp.hex");
-            entry.setSize(verilogHex.length());
-            tOut.putArchiveEntry(entry);
-            data = new byte[verilogHex.length()];
-            for(int i = 0; i < verilogHex.length(); i++) {
-                data[i] = (byte) verilogHex.charAt(i);
-            }
-            tOut.write(data);
-            tOut.flush();
-            tOut.closeArchiveEntry();
-
-            // Write binary image, 4-byte big-endian packs
-            Msg.debug("Writing out binary image...", 2, this);
-            entry = new TarArchiveEntry("plp.image");
-            entry.setSize(objCode.length * 4);
-            tOut.putArchiveEntry(entry);
-            data = new byte[objCode.length * 4];
-            for(int i = 0; i < objCode.length; i++) {
-                data[4*i] = (byte) (objCode[i] >> 24);
-                data[4*i+1] = (byte) (objCode[i] >> 16);
-                data[4*i+2] = (byte) (objCode[i] >> 8);
-                data[4*i+3] = (byte) (objCode[i]);
-            }
-            tOut.write(data);
-            tOut.flush();
-            tOut.closeArchiveEntry();
-
-        } 
-        
-        // write entries that appear in the save but are not used by PLPTool
-        for (TarEntryNode node : tarEntryStash) {
-        	// TODO: verify this error code
-            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", 2, this);
-            tOut.putArchiveEntry(node.entry);
-            tOut.write(node.data);
-            tOut.flush();
-            tOut.closeArchiveEntry();
-        }
-
-        // Hook for project save
-        CallbackRegistry.callback(CallbackRegistry.PROJECT_SAVE, tOut);
-
-        Msg.debug("Closing tar archive...", 2, this);
-        tOut.close();
-        Msg.debug("Project save completed", 2, this);
-
-        modified = false;
-        if(g) refreshProjectView(false);
-        Msg.info(plpfile.getAbsolutePath() + " written", null);
-
+	        File outFile = plpfile;
+	
+	        meta = "PLP-5.0\n";
+	
+	        if(asm != null && asm.isAssembled()) {
+	            objCode = asm.getObjectCode();
+	            if(arch.getID() == ArchRegistry.ISA_PLPMIPS) {
+	                Msg.debug("Creating verilog hex code...", 2, this);
+	                verilogHex = plptool.mips.Formatter.writeVerilogHex(objCode);
+	            }
+	            if(objCode != null && objCode.length > 0)
+	                meta += "START=" + asm.getAddrTable()[0] + "\n";
+	            else
+	                meta += "START=0\n";
+	            meta += "DIRTY=0\n";
+	            dirty = false;
+	        } else {
+	            meta += "DIRTY=1\n";
+	            dirty = true;
+	        }
+	
+	        meta += "ARCH=" + arch.getID() + "\n";
+	        meta += "\n";
+	
+	        for(PLPAsmSource asmFile : asms)
+	            meta += asmFile.getAsmFilePath() + "\n";
+	
+	        // Create plpfile (a tar archive)
+	        TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
+	
+	        Msg.debug("Writing plp.metafile...", 2, this);
+	        TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
+	        entry.setSize(meta.length());
+	        tOut.putArchiveEntry(entry);
+	        byte[] data = meta.getBytes();
+	        tOut.write(data);
+	        tOut.flush();
+	        tOut.closeArchiveEntry();
+	
+	        for(PLPAsmSource asmFile : asms) {
+	            Msg.debug("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
+	            entry = new TarArchiveEntry(asmFile.getAsmFilePath());
+	            
+	            // XXX: add to external documentation
+	            // We are not expecting an .asm file with size greater than 4GiB
+	            // ... I hope...
+	            byte[] fileStr = asmFile.getAsmString().getBytes();
+	            entry.setSize(fileStr.length);
+	            tOut.putArchiveEntry(entry);
+	            tOut.write(fileStr);
+	            tOut.flush();
+	            tOut.closeArchiveEntry();
+	        }
+	
+	        // Write simulation configuration
+	        Msg.debug("Writing out simulation configuration...", 2, this);
+	        entry = new TarArchiveEntry("plp.simconfig");
+	        String str = "";
+	
+	        str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
+	        str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
+	        str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
+	        str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
+	
+	
+	        if(watcher != null) {
+	            str += "WATCHER\n";
+	
+	            for(int i = 0; i < watcher.getRowCount(); i++) {
+	                str += watcher.getValueAt(i, 0) + "::";
+	                str += watcher.getValueAt(i, 1) + "\n";
+	            }
+	
+	            str += "END\n";
+	        }
+	
+	        Msg.debug("-- saving mods info...", 2, this);
+	
+	        if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
+	            smods = ioreg.createPreset();
+	
+	        if(smods != null && smods.size() > 0) {
+	            str += "MODS\n";
+	
+	            for(int i = 0; i < smods.size(); i++) {
+	                str += smods.getType(i) + "::";     //0
+	                str +="RESERVED_FIELD::";       //1
+	                str += smods.getAddress(i) + "::";      //2
+	                str += smods.getSize(i) + "::";  //3
+	
+	                if(smods.getHasFrame(i)) {
+	                    str += "frame::" ;              //4
+	                    str += smods.getVisible(i) + "::"; //5
+	                    str += smods.getX(i) + "::";      //6
+	                    str += smods.getY(i) + "::";      //7
+	                    str += smods.getW(i) + "::";  //8
+	                    str += smods.getH(i);        //9
+	                } else {
+	                    str += "noframe";
+	                }
+	                str += "\n";
+	            }
+	            str += "END\n";
+	        }
+	
+	        str += "ISASPECIFIC\n";
+	        str += arch.saveArchSpecificSimStates();
+	        str += "END\n";
+	
+	        entry.setSize(str.getBytes().length);
+	        tOut.putArchiveEntry(entry);
+	        tOut.write(str.getBytes());
+	        tOut.flush();
+	        tOut.closeArchiveEntry();
+	
+	        if(asm != null && asm.isAssembled() && objCode != null) {
+	            // Write hex image
+	            Msg.debug("Writing out verilog hex code...", 2, this);
+	            entry = new TarArchiveEntry("plp.hex");
+	            entry.setSize(verilogHex.length());
+	            tOut.putArchiveEntry(entry);
+	            data = new byte[verilogHex.length()];
+	            for(int i = 0; i < verilogHex.length(); i++) {
+	                data[i] = (byte) verilogHex.charAt(i);
+	            }
+	            tOut.write(data);
+	            tOut.flush();
+	            tOut.closeArchiveEntry();
+	
+	            // Write binary image, 4-byte big-endian packs
+	            Msg.debug("Writing out binary image...", 2, this);
+	            entry = new TarArchiveEntry("plp.image");
+	            entry.setSize(objCode.length * 4);
+	            tOut.putArchiveEntry(entry);
+	            data = new byte[objCode.length * 4];
+	            for(int i = 0; i < objCode.length; i++) {
+	                data[4*i] = (byte) (objCode[i] >> 24);
+	                data[4*i+1] = (byte) (objCode[i] >> 16);
+	                data[4*i+2] = (byte) (objCode[i] >> 8);
+	                data[4*i+3] = (byte) (objCode[i]);
+	            }
+	            tOut.write(data);
+	            tOut.flush();
+	            tOut.closeArchiveEntry();
+	
+	        } 
+	        
+	        // write entries that appear in the save but are not used by PLPTool
+	        for (TarEntryNode node : tarEntryStash) {
+	        	// TODO: verify this error code
+	            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", 2, this);
+	            tOut.putArchiveEntry(node.entry);
+	            tOut.write(node.data);
+	            tOut.flush();
+	            tOut.closeArchiveEntry();
+	        }
+	
+	        // Hook for project save
+	        CallbackRegistry.callback(CallbackRegistry.PROJECT_SAVE, tOut);
+	
+	        Msg.debug("Closing tar archive...", 2, this);
+	        tOut.close();
+	        Msg.debug("Project save completed", 2, this);
+	
+	        modified = false;
+	        if(g) refreshProjectView(false);
+	        Msg.info(plpfile.getAbsolutePath() + " written", null);
         } catch(Exception e) {
             Msg.trace(e);
             Msg.error("save: Unable to write to " +
@@ -610,7 +608,6 @@ public final class ProjectDriver {
                     Constants.PLP_FILE_SAVE_ERROR, this);
             return Constants.PLP_FILE_SAVE_ERROR;
         }
-
 
         return Constants.PLP_OK;
     }
