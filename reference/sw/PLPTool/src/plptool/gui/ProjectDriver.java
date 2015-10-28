@@ -445,19 +445,7 @@ public final class ProjectDriver {
 	        updateMetaString(objCode);
 	        writeMetaFile(tOut);
 	
-	        for(PLPAsmSource asmFile : asms) {
-	            Msg.debug("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
-	            TarArchiveEntry entry = new TarArchiveEntry(asmFile.getAsmFilePath());
-	            
-	            // XXX: add to external documentation
-	            // We are not expecting an .asm file with size greater than 4GB
-	            byte[] fileStr = asmFile.getAsmString().getBytes();
-	            entry.setSize(fileStr.length);
-	            tOut.putArchiveEntry(entry);
-	            tOut.write(fileStr);
-	            tOut.flush();
-	            tOut.closeArchiveEntry();
-	        }
+	        writePLPSourceFiles(tOut);
 	        writeSimulationConfigurationData(tOut);
 	
 	        if(asm != null && asm.isAssembled() && objCode != null) {
@@ -517,7 +505,24 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private void updateMetaString(long[] objCode)
+    private void writePLPSourceFiles(TarArchiveOutputStream tOut) throws IOException
+	{
+    	for(PLPAsmSource asmFile : asms) {
+            Msg.debug("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
+            TarArchiveEntry entry = new TarArchiveEntry(asmFile.getAsmFilePath());
+            
+            // XXX: add to external documentation
+            // We are not expecting an .asm file with size greater than 4GB
+            byte[] fileStr = asmFile.getAsmString().getBytes();
+            entry.setSize(fileStr.length);
+            tOut.putArchiveEntry(entry);
+            tOut.write(fileStr);
+            tOut.flush();
+            tOut.closeArchiveEntry();
+        }
+	}
+
+	private void updateMetaString(long[] objCode)
 	{
     	// TODO: reduce scope of meta from global to local
     	// TODO: write proper PLP Version
