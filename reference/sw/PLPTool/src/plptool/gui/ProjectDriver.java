@@ -165,11 +165,6 @@ public final class ProjectDriver {
     public PLPSimCoreGUI           g_sim;
 
     /**
-     * Meta information string of the project
-     */
-    public String                  meta;
-
-    /**
      * Saved module set for the project
      */
     public Preset                  smods;
