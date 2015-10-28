@@ -440,25 +440,7 @@ public final class ProjectDriver {
 	            }
 	        }
 	        
-	        meta = "PLP-5.0\n";
-	
-	        if(asm != null && asm.isAssembled()) {
-	            if(objCode != null && objCode.length > 0)
-	                meta += "START=" + asm.getAddrTable()[0] + "\n";
-	            else
-	                meta += "START=0\n";
-	            meta += "DIRTY=0\n";
-	            dirty = false;
-	        } else {
-	            meta += "DIRTY=1\n";
-	            dirty = true;
-	        }
-	
-	        meta += "ARCH=" + arch.getID() + "\n";
-	        meta += "\n";
-	
-	        for(PLPAsmSource asmFile : asms)
-	            meta += asmFile.getAsmFilePath() + "\n";
+	        updateMetaString(objCode);
 	
 	        // Create plpfile (a tar archive)
 	        TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
@@ -539,7 +521,32 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private void writeMetaFile(TarArchiveOutputStream tOut) throws IOException
+    private void updateMetaString(long[] objCode)
+	{
+    	// TODO: reduce scope of meta from global to local
+    	// TODO: write proper PLP Version
+    	meta = "PLP-5.0\n";
+    	
+        if(asm != null && asm.isAssembled()) {
+            if(objCode != null && objCode.length > 0)
+                meta += "START=" + asm.getAddrTable()[0] + "\n";
+            else
+                meta += "START=0\n";
+            meta += "DIRTY=0\n";
+            dirty = false;
+        } else {
+            meta += "DIRTY=1\n";
+            dirty = true;
+        }
+
+        meta += "ARCH=" + arch.getID() + "\n";
+        meta += "\n";
+
+        for(PLPAsmSource asmFile : asms)
+            meta += asmFile.getAsmFilePath() + "\n";
+	}
+
+	private void writeMetaFile(TarArchiveOutputStream tOut) throws IOException
 	{
     	Msg.debug("Writing plp.metafile...", 2, this);
         TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
