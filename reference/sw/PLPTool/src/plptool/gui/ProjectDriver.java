@@ -488,65 +488,7 @@ public final class ProjectDriver {
 	        }
 	
 	        // Write simulation configuration
-	        Msg.debug("Writing out simulation configuration...", 2, this);
-	        entry = new TarArchiveEntry("plp.simconfig");
-	        String str = "";
-	
-	        str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
-	        str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
-	        str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
-	        str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
-	
-	
-	        if(watcher != null) {
-	            str += "WATCHER\n";
-	
-	            for(int i = 0; i < watcher.getRowCount(); i++) {
-	                str += watcher.getValueAt(i, 0) + "::";
-	                str += watcher.getValueAt(i, 1) + "\n";
-	            }
-	
-	            str += "END\n";
-	        }
-	
-	        Msg.debug("-- saving mods info...", 2, this);
-	
-	        if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
-	            smods = ioreg.createPreset();
-	
-	        if(smods != null && smods.size() > 0) {
-	            str += "MODS\n";
-	
-	            for(int i = 0; i < smods.size(); i++) {
-	                str += smods.getType(i) + "::";     //0
-	                str +="RESERVED_FIELD::";       //1
-	                str += smods.getAddress(i) + "::";      //2
-	                str += smods.getSize(i) + "::";  //3
-	
-	                if(smods.getHasFrame(i)) {
-	                    str += "frame::" ;              //4
-	                    str += smods.getVisible(i) + "::"; //5
-	                    str += smods.getX(i) + "::";      //6
-	                    str += smods.getY(i) + "::";      //7
-	                    str += smods.getW(i) + "::";  //8
-	                    str += smods.getH(i);        //9
-	                } else {
-	                    str += "noframe";
-	                }
-	                str += "\n";
-	            }
-	            str += "END\n";
-	        }
-	
-	        str += "ISASPECIFIC\n";
-	        str += arch.saveArchSpecificSimStates();
-	        str += "END\n";
-	
-	        entry.setSize(str.getBytes().length);
-	        tOut.putArchiveEntry(entry);
-	        tOut.write(str.getBytes());
-	        tOut.flush();
-	        tOut.closeArchiveEntry();
+	        writeSimulationConfigurationData(tOut);
 	
 	        if(asm != null && asm.isAssembled() && objCode != null) {
 	            // Write hex image
@@ -612,7 +554,69 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    /**
+    private void writeSimulationConfigurationData(TarArchiveOutputStream tOut) throws IOException
+	{
+    	Msg.debug("Writing out simulation configuration...", 2, this);
+    	TarArchiveEntry entry = new TarArchiveEntry("plp.simconfig");
+        String str = "";
+        str += "simRunnerDelay::" + Config.simRunnerDelay + "\n";
+        str += "simAllowExecutionOfArbitraryMem::" + Config.simAllowExecutionOfArbitraryMem + "\n";
+        str += "simBusReturnsZeroForUninitRegs::" + Config.simBusReturnsZeroForUninitRegs + "\n";
+        str += "simDumpTraceOnFailedEvaluation::" + Config.simDumpTraceOnFailedEvaluation + "\n";
+
+
+        if(watcher != null) {
+            str += "WATCHER\n";
+
+            for(int i = 0; i < watcher.getRowCount(); i++) {
+                str += watcher.getValueAt(i, 0) + "::";
+                str += watcher.getValueAt(i, 1) + "\n";
+            }
+
+            str += "END\n";
+        }
+
+        Msg.debug("-- saving mods info...", 2, this);
+
+        if(ioreg != null && ioreg.getNumOfModsAttached() > 0)
+            smods = ioreg.createPreset();
+
+        if(smods != null && smods.size() > 0) {
+            str += "MODS\n";
+
+            for(int i = 0; i < smods.size(); i++) {
+                str += smods.getType(i) + "::";     //0
+                str +="RESERVED_FIELD::";       //1
+                str += smods.getAddress(i) + "::";      //2
+                str += smods.getSize(i) + "::";  //3
+
+                if(smods.getHasFrame(i)) {
+                    str += "frame::" ;              //4
+                    str += smods.getVisible(i) + "::"; //5
+                    str += smods.getX(i) + "::";      //6
+                    str += smods.getY(i) + "::";      //7
+                    str += smods.getW(i) + "::";  //8
+                    str += smods.getH(i);        //9
+                } else {
+                    str += "noframe";
+                }
+                str += "\n";
+            }
+            str += "END\n";
+        }
+
+        str += "ISASPECIFIC\n";
+        str += arch.saveArchSpecificSimStates();
+        str += "END\n";
+
+        entry.setSize(str.getBytes().length);
+        tOut.putArchiveEntry(entry);
+        tOut.write(str.getBytes());
+        tOut.flush();
+        tOut.closeArchiveEntry();
+	}
+
+	/**
      * Open plp file specified by path.
      *
      * @param path Path to project file to load.
