@@ -438,8 +438,8 @@ public final class ProjectDriver {
 	            }
 	        }
 
-	        updateMetaString(objCode);
-	        writeMetaFile(tOut);
+	        meta = createMetaString(objCode);
+	        writeMetaFile(tOut, meta);
 	        writePLPSourceFiles(tOut);
 	        writeSimulationConfigurationData(tOut);
 	
@@ -516,11 +516,12 @@ public final class ProjectDriver {
         }
 	}
 
-	private void updateMetaString(long[] objCode)
+	private String createMetaString(long[] objCode)
 	{
     	// TODO: reduce scope of meta from global to local
+		// TODO: remove dependencies on asm and dirty
     	// TODO: write proper PLP Version
-    	meta = "PLP-5.0\n";
+    	String meta = "PLP-5.0\n";
     	
         if(asm != null && asm.isAssembled()) {
             if(objCode != null && objCode.length > 0)
@@ -539,9 +540,11 @@ public final class ProjectDriver {
 
         for(PLPAsmSource asmFile : asms)
             meta += asmFile.getAsmFilePath() + "\n";
+        
+        return meta;
 	}
 
-	private void writeMetaFile(TarArchiveOutputStream tOut) throws IOException
+	private void writeMetaFile(TarArchiveOutputStream tOut, String meta) throws IOException
 	{
     	Msg.debug("Writing plp.metafile...", 2, this);
         TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
