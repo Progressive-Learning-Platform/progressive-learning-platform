@@ -196,8 +196,6 @@ public class ConsoleFrame extends javax.swing.JFrame {
                     if(plp.g_watcher != null)
                         plp.g_watcher.updateFontSize();
                 }
-            } else if(command.equals("triggercriterror")) {
-                plp.triggerCriticalError();
             } else if(command.equals("closeproject")) {
                 if(plp.g_dev != null) {
                     plp.g_dev.closeProject();
