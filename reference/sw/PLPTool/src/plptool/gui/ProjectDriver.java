@@ -523,14 +523,7 @@ public final class ProjectDriver {
 	        } 
 	        
 	        // write entries that appear in the save but are not used by PLPTool
-	        for (TarEntryNode node : tarEntryStash) {
-	        	// TODO: verify this error code
-	            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", 2, this);
-	            tOut.putArchiveEntry(node.entry);
-	            tOut.write(node.data);
-	            tOut.flush();
-	            tOut.closeArchiveEntry();
-	        }
+	        writeStashedEntries(tOut);
 	
 	        // Hook for project save
 	        CallbackRegistry.callback(CallbackRegistry.PROJECT_SAVE, tOut);
@@ -554,7 +547,19 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private void writeSimulationConfigurationData(TarArchiveOutputStream tOut) throws IOException
+    private void writeStashedEntries(TarArchiveOutputStream tOut) throws IOException
+	{
+    	for (TarEntryNode node : tarEntryStash) {
+        	// TODO: verify this error code
+            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", 2, this);
+            tOut.putArchiveEntry(node.entry);
+            tOut.write(node.data);
+            tOut.flush();
+            tOut.closeArchiveEntry();
+        }
+	}
+
+	private void writeSimulationConfigurationData(TarArchiveOutputStream tOut) throws IOException
 	{
     	Msg.debug("Writing out simulation configuration...", 2, this);
     	TarArchiveEntry entry = new TarArchiveEntry("plp.simconfig");
