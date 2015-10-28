@@ -7,6 +7,8 @@ import plptool.PLPSimBus;
 import plptool.mods.MemModule;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 
@@ -24,10 +26,20 @@ public class PLPSimBusTest {
     }
     
     @Test
-    public void testAdd(){
+    public void testAddSuccessfully(){
         int index = plpSimBus.add(memModule);
         assertEquals(index,0);
         assertNotNull(index);
+    }
+    
+ // using require getNumOfMods
+    @Test
+    public void testAddNull(){
+    	memModule = null;
+    	assertEquals(plpSimBus.getNumOfMods(),0);
+    	int index = plpSimBus.add(memModule);
+    	assertEquals(plpSimBus.getNumOfMods(),0);
+    	
     }
     /** Checks to see if remove() and getNumOfMods() is working or not */
     @Test
@@ -40,8 +52,14 @@ public class PLPSimBusTest {
         assertEquals(plpSimBus.getNumOfMods(), 0);
     }
     
+    // removing a module not already in simbus
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testRemoveForException(){
+        plpSimBus.remove(1);
+    }
+    
     @Test
-    public void testRead(){
+    public void testReadSuccessfully(){
         int indx = plpSimBus.add(memModule);
         plpSimBus.enableMod(indx);
         plpSimBus.write(120L, 1234L, true);
@@ -50,8 +68,28 @@ public class PLPSimBusTest {
     }
     
     @Test
+    public void testReadWithoutWrite(){
+        int indx = plpSimBus.add(memModule);
+        plpSimBus.enableMod(indx);
+        assertEquals(0L, plpSimBus.read(120L));
+        assertNull(plpSimBus.read(20L));
+    }
+
+    @Test
+    public void testReadWithoutModule(){
+        assertNull(plpSimBus.read(25L));
+    }
+
+    @Test
+    public void testReadOutOfBounds(){
+        int indx = plpSimBus.add(memModule);
+        plpSimBus.enableMod(indx);
+        assertNull(plpSimBus.read(20L));
+    }
+
+    @Test
     
-    public void testWrite(){
+    public void testWriteSuccessfully(){
         Long data = 1234L;
         plpSimBus.add(memModule);
         plpSimBus.enableMod(0);
@@ -63,6 +101,30 @@ public class PLPSimBusTest {
         assertEquals((Long)value, data);
         
     }
+    
+    @Test
+    public void testWriteWithoutEnableModule(){
+        plpSimBus.add(memModule);
+        plpSimBus.write(120L,1234L,true);
+
+        assertEquals(0L,plpSimBus.read(120L));
+    }
+
+    @Test
+    public void testWriteWithoutModule(){
+        plpSimBus.write(120L,12L,true);
+        assertNull(plpSimBus.read(120L));
+    }
+
+    @Test
+    public void testWriteOutofbounds(){
+        plpSimBus.add(memModule);
+        plpSimBus.write(20L,1234L,true);
+
+        assertEquals(0L,plpSimBus.read(120L));
+        assertNull(plpSimBus.read(20L));
+    }
+
     
     @Test
     public void testIsInitialized(){
@@ -95,26 +157,33 @@ public class PLPSimBusTest {
         plpSimBus.enableMod(index);
         
         plpSimBus.write(120L, 1234L, true);
-        
         assertTrue(plpSimBus.isInstr(120L));
+        
+        plpSimBus.write(132L,12L,false);
+        assertFalse(plpSimBus.isInstr(132L));
         
     }
     
     @Test
     public void testEnableMods(){
-        plpSimBus.add(new MemModule(500L,50L,true));
-        plpSimBus.add(new MemModule(600L,50L,true));
-        
-        assertEquals(plpSimBus.enableAllModules(), Constants.PLP_OK);
+    	   int indx1 =plpSimBus.add(new MemModule(500L,50L,true));
+           int indx2 = plpSimBus.add(new MemModule(600L,50L,true));
+
+           assertEquals(plpSimBus.enableAllModules(), Constants.PLP_OK);
+           assertTrue(plpSimBus.getEnabled(indx1));
+           assertTrue(plpSimBus.getEnabled(indx2));
     }
     
     @Test
     public void testDisableMods(){
-        plpSimBus.add(new MemModule(500L,50L,true));
-        plpSimBus.add(new MemModule(600L,50L,true));
-        
+    	int indx1 = plpSimBus.add(new MemModule(500L,50L,true));
+    	int indx2 = plpSimBus.add(new MemModule(600L,50L,true));
+    	 plpSimBus.add(new MemModule(600L,50L,true));
+    	 
         assertEquals(plpSimBus.enableAllModules(),Constants.PLP_OK);
         assertEquals(plpSimBus.disableAllModules(),Constants.PLP_OK);
+        assertFalse(plpSimBus.getEnabled(indx1));
+        assertFalse(plpSimBus.getEnabled(indx2));
     }
     
     @Test
