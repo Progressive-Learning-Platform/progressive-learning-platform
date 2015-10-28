@@ -427,12 +427,11 @@ public final class ProjectDriver {
             return Msg.error("No PLP project file is open. Use Save As.",
                             Constants.PLP_FILE_USE_SAVE_AS, null);
 
-
         try {
         	String verilogHex = "";
 	        File outFile = plpfile;
 	        long[] objCode = null;
-	
+	        
 	        meta = "PLP-5.0\n";
 	
 	        if(asm != null && asm.isAssembled()) {
@@ -461,22 +460,14 @@ public final class ProjectDriver {
 	        // Create plpfile (a tar archive)
 	        TarArchiveOutputStream tOut = new TarArchiveOutputStream(new FileOutputStream(outFile));
 	
-	        Msg.debug("Writing plp.metafile...", 2, this);
-	        TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
-	        entry.setSize(meta.length());
-	        tOut.putArchiveEntry(entry);
-	        byte[] data = meta.getBytes();
-	        tOut.write(data);
-	        tOut.flush();
-	        tOut.closeArchiveEntry();
+	        writeMetaFile(tOut);
 	
 	        for(PLPAsmSource asmFile : asms) {
 	            Msg.debug("Writing " + asmFile.getAsmFilePath() + "...", 2, this);
-	            entry = new TarArchiveEntry(asmFile.getAsmFilePath());
+	            TarArchiveEntry entry = new TarArchiveEntry(asmFile.getAsmFilePath());
 	            
 	            // XXX: add to external documentation
-	            // We are not expecting an .asm file with size greater than 4GiB
-	            // ... I hope...
+	            // We are not expecting an .asm file with size greater than 4GB
 	            byte[] fileStr = asmFile.getAsmString().getBytes();
 	            entry.setSize(fileStr.length);
 	            tOut.putArchiveEntry(entry);
@@ -491,10 +482,10 @@ public final class ProjectDriver {
 	        if(asm != null && asm.isAssembled() && objCode != null) {
 	            // Write hex image
 	            Msg.debug("Writing out verilog hex code...", 2, this);
-	            entry = new TarArchiveEntry("plp.hex");
+	            TarArchiveEntry entry = new TarArchiveEntry("plp.hex");
 	            entry.setSize(verilogHex.length());
 	            tOut.putArchiveEntry(entry);
-	            data = new byte[verilogHex.length()];
+	            byte[] data = new byte[verilogHex.length()];
 	            for(int i = 0; i < verilogHex.length(); i++) {
 	                data[i] = (byte) verilogHex.charAt(i);
 	            }
@@ -545,7 +536,19 @@ public final class ProjectDriver {
         return Constants.PLP_OK;
     }
 
-    private void writeStashedEntries(TarArchiveOutputStream tOut) throws IOException
+    private void writeMetaFile(TarArchiveOutputStream tOut) throws IOException
+	{
+    	Msg.debug("Writing plp.metafile...", 2, this);
+        TarArchiveEntry entry = new TarArchiveEntry("plp.metafile");
+        entry.setSize(meta.length());
+        tOut.putArchiveEntry(entry);
+        byte[] data = meta.getBytes();
+        tOut.write(data);
+        tOut.flush();
+        tOut.closeArchiveEntry();
+	}
+
+	private void writeStashedEntries(TarArchiveOutputStream tOut) throws IOException
 	{
     	for (TarEntryNode node : tarEntryStash) {
         	// TODO: verify this error code
