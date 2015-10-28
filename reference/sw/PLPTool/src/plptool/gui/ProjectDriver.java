@@ -438,7 +438,7 @@ public final class ProjectDriver {
 	            }
 	        }
 
-	        meta = createMetaString(objCode);
+	        String meta = createMetaString(objCode);
 	        writeMetaFile(tOut, meta);
 	        writePLPSourceFiles(tOut);
 	        writeSimulationConfigurationData(tOut);
@@ -838,9 +838,7 @@ public final class ProjectDriver {
 
 	private HashMap<String, Integer> loadMetafileEntry(byte[] image)
 	{
-        String metaStr = new String(image);
-        
-        meta = metaStr;
+        String meta = new String(image);
         Scanner metaScanner;
 
         String lines[] = meta.split("\\r?\\n");
