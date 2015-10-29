@@ -104,8 +104,8 @@ public final class Develop extends JFrame {
     private DevEditorDocListener currentEditorListener;
     private boolean extraToolsItems;
     
-    private SerialTerminal term;
-    private NumberConverter nconv;
+    private SerialTerminal serialTerminalWindow;
+    private NumberConverter numberConversionWindow;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -3221,11 +3221,11 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuOptionsActionPerformed
 
     private void menuSerialTerminalActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSerialTerminalActionPerformed
-        if(term == null)
-            term = new SerialTerminal(false);
+        if(serialTerminalWindow == null)
+            serialTerminalWindow = new SerialTerminal(false);
 
-        term.setVisible(false);
-        term.setVisible(true);
+        serialTerminalWindow.setVisible(false);
+        serialTerminalWindow.setVisible(true);
     }//GEN-LAST:event_menuSerialTerminalActionPerformed
 
     private void menuPrintActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuPrintActionPerformed
@@ -3501,11 +3501,11 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuOutputPaneActionPerformed
 
     private void menuNumberConverterActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuNumberConverterActionPerformed
-        if(nconv == null)
-                nconv = new NumberConverter(false);
+        if(numberConversionWindow == null)
+                numberConversionWindow = new NumberConverter(false);
 
-        nconv.setVisible(false);
-        nconv.setVisible(true);
+        numberConversionWindow.setVisible(false);
+        numberConversionWindow.setVisible(true);
     }//GEN-LAST:event_menuNumberConverterActionPerformed
 
     private void menuSimulateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
