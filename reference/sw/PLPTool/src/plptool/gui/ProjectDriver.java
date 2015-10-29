@@ -193,10 +193,6 @@ public final class ProjectDriver {
     public int                     p_progress;
     public TimeoutWatcher          p_watchdog;
 
-    // Others
-    public SerialTerminal          term;        // Serial terminal
-    public NumberConverter         nconv;       // Number converter
-
     // Miscellaneous project attributes persistence support
     private HashMap<String, Object> pAttrSet;
 
