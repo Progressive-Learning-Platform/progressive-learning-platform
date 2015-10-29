@@ -513,7 +513,6 @@ public final class ProjectDriver {
 
 	private String createMetaString(long[] objCode)
 	{
-    	// TODO: reduce scope of meta from global to local
 		// TODO: remove dependencies on asm and dirty
     	// TODO: write proper PLP Version
     	String meta = "PLP-5.0\n";
