@@ -1810,32 +1810,6 @@ public final class ProjectDriver {
     }
 
     /**
-     * Use this method for some unforeseen bug!
-     */
-    public void triggerCriticalError() {
-        // XXX: removed "hault = true"; ensure processes are stopped
-        System.err.println("[CRITICAL ERROR] " +
-                    "This really, really, really, should not have happened.");
-        System.err.println("[CRITICAL ERROR] " +
-                    "PLPTool is now exiting. Please report this issue. Thanks!");
-        if(g) {
-            javax.swing.JOptionPane.showMessageDialog(g_dev,
-                    "This really, really, really, should not have happened. " +
-                    "PLPTool is now exiting. Please report this issue. Thanks!",
-                    "CRITICAL ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-        
-        if(plpfile != null) {
-            System.err.println("Saving current open project as ./dump.plp...");
-            plpfile = new File("dump.plp");
-            this.save();
-        }
-
-        CallbackRegistry.callback(CallbackRegistry.CRITICAL_ERROR, null);
-        System.exit(-1);
-    }
-
-    /**
      * Denotes whether the project driver is driving GUI or not
      *
      * @return true if a GUI is active, false otherwise
