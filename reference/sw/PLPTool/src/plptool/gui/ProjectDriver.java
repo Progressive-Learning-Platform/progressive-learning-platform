@@ -553,8 +553,9 @@ public final class ProjectDriver {
 	private void writeStashedEntries(TarArchiveOutputStream tOut) throws IOException
 	{
     	for (TarEntryNode node : tarEntryStash) {
-        	// TODO: verify this error code
-            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", 2, this);
+        	// TODO: replace with constant
+    		int logLevel = 2;
+            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", logLevel, this);
             tOut.putArchiveEntry(node.entry);
             tOut.write(node.data);
             tOut.flush();
