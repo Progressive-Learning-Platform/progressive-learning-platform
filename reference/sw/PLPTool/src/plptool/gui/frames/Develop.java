@@ -105,10 +105,22 @@ public final class Develop extends JFrame {
     private boolean extraToolsItems;
     
     private SerialTerminal serialTerminalWindow;
-    private NumberConverter numberConversionWindow;
+    private NumberConverter numberConversionWindow;  
+    public QuickRef g_qref;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
+
+    /**
+     * Display the Quick Reference window
+     */
+    private void showQuickRef() {
+        if(g_qref != null)
+            g_qref.dispose();
+
+        g_qref = new QuickRef(plp);
+        g_qref.setVisible(true);
+    }
 
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
@@ -3171,7 +3183,7 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_btnProgramActionPerformed
 
     private void menuQuickRefActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuQuickRefActionPerformed
-        plp.showQuickRef();
+        showQuickRef();
     }//GEN-LAST:event_menuQuickRefActionPerformed
 
     private void menuManualActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuManualActionPerformed

@@ -74,7 +74,6 @@ import plptool.gui.frames.IORegistryFrame;
 import plptool.gui.frames.ISASelector;
 import plptool.gui.frames.OptionsFrame;
 import plptool.gui.frames.ProgrammerDialog;
-import plptool.gui.frames.QuickRef;
 import plptool.gui.frames.SimControl;
 import plptool.gui.frames.SimErrorFrame;
 import plptool.gui.frames.Watcher;
@@ -182,8 +181,7 @@ public final class ProjectDriver {
     public SimRunner               g_simrun;   
     public Watcher                 g_watcher;  
     public SimControl              g_simctrl;  
-    public ASMSimView              g_asmview;  
-    public QuickRef                g_qref;     
+    public ASMSimView              g_asmview;     
     public ISASelector             g_isaselect;
     public FindAndReplace          g_find;
 
@@ -1747,17 +1745,6 @@ public final class ProjectDriver {
      */
     public ArrayList<PLPBuildError> getBuildErrorList() {
         return buildErrorList;
-    }
-
-    /**
-     * Display the Quick Reference window
-     */
-    public void showQuickRef() {
-        if(g_qref != null)
-            g_qref.dispose();
-
-        g_qref = new QuickRef(this);
-        g_qref.setVisible(true);
     }
 
     /**
