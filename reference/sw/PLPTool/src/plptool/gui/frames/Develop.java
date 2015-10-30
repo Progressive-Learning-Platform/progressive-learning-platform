@@ -106,7 +106,8 @@ public final class Develop extends JFrame {
     
     private SerialTerminal serialTerminalWindow;
     private NumberConverter numberConversionWindow;  
-    public QuickRef g_qref;
+    private QuickRef g_qref;
+    private FindAndReplace g_find;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -127,6 +128,9 @@ public final class Develop extends JFrame {
         this.plp = plp;
         initComponents();
         line = 0;
+        
+        g_find = new FindAndReplace(plp);
+        g_find.setLocationRelativeTo(null);
 
         DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("No PLP Project Open");
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
@@ -3217,9 +3221,9 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuIssuesPageActionPerformed
 
     private void menuFindAndReplaceActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuFindAndReplaceActionPerformed
-        plp.g_find.setCurIndex(this.txtEditor.getCaretPosition());
-        plp.g_find.setVisible(false);
-        plp.g_find.setVisible(true);
+        g_find.setCurIndex(this.txtEditor.getCaretPosition());
+        g_find.setVisible(false);
+        g_find.setVisible(true);
     }//GEN-LAST:event_menuFindAndReplaceActionPerformed
 
     private void menuOptionsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuOptionsActionPerformed

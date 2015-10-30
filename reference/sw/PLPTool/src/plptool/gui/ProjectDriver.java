@@ -68,7 +68,6 @@ import plptool.gui.frames.ASMSimView;
 import plptool.gui.frames.AboutBoxDialog;
 import plptool.gui.frames.AsmNameDialog;
 import plptool.gui.frames.Develop;
-import plptool.gui.frames.FindAndReplace;
 import plptool.gui.frames.IDE;
 import plptool.gui.frames.IORegistryFrame;
 import plptool.gui.frames.ISASelector;
@@ -183,7 +182,6 @@ public final class ProjectDriver {
     public SimControl              g_simctrl;  
     public ASMSimView              g_asmview;     
     public ISASelector             g_isaselect;
-    public FindAndReplace          g_find;
 
     // Programmer
     private boolean                serial_support;
@@ -252,15 +250,12 @@ public final class ProjectDriver {
         g_opts.setBuiltInISAOptions(false);
         g_prg = new ProgrammerDialog(this, g_dev, true);
         g_fname = new AsmNameDialog(this, g_dev, true);
-        g_find = new FindAndReplace(this);
         g_isaselect = new ISASelector(g_dev, this);
         
         Rectangle windowParameters = getWindowParameters();
         g_dev.setSize(windowParameters.getSize());
         g_dev.setLocation(windowParameters.getLocation());
         g_dev.setLocationRelativeTo(null);
-
-        g_find.setLocationRelativeTo(null);
 
         g_dev.setTitle("PLP Software Tool " + Text.versionString);
         if(PLPToolApp.getAttributes().containsKey("new_ide")) {
