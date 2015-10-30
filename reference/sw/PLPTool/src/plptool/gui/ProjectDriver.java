@@ -70,7 +70,6 @@ import plptool.gui.frames.AsmNameDialog;
 import plptool.gui.frames.Develop;
 import plptool.gui.frames.IDE;
 import plptool.gui.frames.IORegistryFrame;
-import plptool.gui.frames.ISASelector;
 import plptool.gui.frames.OptionsFrame;
 import plptool.gui.frames.ProgrammerDialog;
 import plptool.gui.frames.SimControl;
@@ -180,8 +179,7 @@ public final class ProjectDriver {
     public SimRunner               g_simrun;   
     public Watcher                 g_watcher;  
     public SimControl              g_simctrl;  
-    public ASMSimView              g_asmview;     
-    public ISASelector             g_isaselect;
+    public ASMSimView              g_asmview;
 
     // Programmer
     private boolean                serial_support;
@@ -250,7 +248,6 @@ public final class ProjectDriver {
         g_opts.setBuiltInISAOptions(false);
         g_prg = new ProgrammerDialog(this, g_dev, true);
         g_fname = new AsmNameDialog(this, g_dev, true);
-        g_isaselect = new ISASelector(g_dev, this);
         
         Rectangle windowParameters = getWindowParameters();
         g_dev.setSize(windowParameters.getSize());

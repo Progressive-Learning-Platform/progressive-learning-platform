@@ -108,30 +108,18 @@ public final class Develop extends JFrame {
     private NumberConverter numberConversionWindow;  
     private QuickRef g_qref;
     private FindAndReplace g_find;
+    private ISASelector g_isaselect;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
-
-    /**
-     * Display the Quick Reference window
-     */
-    private void showQuickRef() {
-        if(g_qref != null)
-            g_qref.dispose();
-
-        g_qref = new QuickRef(plp);
-        g_qref.setVisible(true);
-    }
 
     /** Creates new form PLPDevelop */
     public Develop(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
+        initFrames();
         line = 0;
         
-        g_find = new FindAndReplace(plp);
-        g_find.setLocationRelativeTo(null);
-
         DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("No PLP Project Open");
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
         treeProject.setModel(treeModel);
@@ -195,6 +183,25 @@ public final class Develop extends JFrame {
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
         Msg.printPreformattedString(Text.copyrightString);
         Msg.println("");
+    }
+
+    private void initFrames()
+	{
+        g_find = new FindAndReplace(plp);
+        g_find.setLocationRelativeTo(null);
+
+        g_isaselect = new ISASelector(this, plp);
+	}
+
+	/**
+     * Display the Quick Reference window
+     */
+    private void showQuickRef() {
+        if(g_qref != null)
+            g_qref.dispose();
+
+        g_qref = new QuickRef(plp);
+        g_qref.setVisible(true);
     }
 
     /*
@@ -676,9 +683,9 @@ public final class Develop extends JFrame {
                     changeFormatting();
                 if(Config.cfgAskForISAForNewProjects &&
                         plptool.ArchRegistry.getArchList().length > 1) {
-                    plp.g_isaselect.setLocationRelativeTo(this);
-                    plp.g_isaselect.populateISASelector();
-                    plp.g_isaselect.setVisible(true);
+                    g_isaselect.setLocationRelativeTo(this);
+                    g_isaselect.populateISASelector();
+                    g_isaselect.setVisible(true);
                 }
         }
     }
@@ -3589,9 +3596,9 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuModuleManagerActionPerformed
 
     private void menuSetNewProjectISAActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSetNewProjectISAActionPerformed
-        plp.g_isaselect.setLocationRelativeTo(this);
-        plp.g_isaselect.populateISASelector();
-        plp.g_isaselect.setVisible(true);
+        g_isaselect.setLocationRelativeTo(this);
+        g_isaselect.populateISASelector();
+        g_isaselect.setVisible(true);
     }//GEN-LAST:event_menuSetNewProjectISAActionPerformed
 
     private void initPopupMenus() {
