@@ -65,16 +65,11 @@ import plptool.PLPToolbox;
 import plptool.Text;
 import plptool.dmf.CallbackRegistry;
 import plptool.gui.frames.ASMSimView;
-import plptool.gui.frames.AboutBoxDialog;
-import plptool.gui.frames.AsmNameDialog;
 import plptool.gui.frames.Develop;
-import plptool.gui.frames.FindAndReplace;
 import plptool.gui.frames.IDE;
 import plptool.gui.frames.IORegistryFrame;
-import plptool.gui.frames.ISASelector;
 import plptool.gui.frames.OptionsFrame;
 import plptool.gui.frames.ProgrammerDialog;
-import plptool.gui.frames.QuickRef;
 import plptool.gui.frames.SimControl;
 import plptool.gui.frames.SimErrorFrame;
 import plptool.gui.frames.Watcher;
@@ -172,30 +167,21 @@ public final class ProjectDriver {
     /*
      * PLP GUI Windows
      */ // --
-    public IORegistryFrame         g_ioreg;    
-    public Develop                 g_dev;      
-    public SimErrorFrame           g_err;      
-    public AboutBoxDialog          g_about;    
-    public OptionsFrame            g_opts;     
-    public ProgrammerDialog        g_prg;      
-    public AsmNameDialog           g_fname;    
-    public SimRunner               g_simrun;   
-    public Watcher                 g_watcher;  
-    public SimControl              g_simctrl;  
-    public ASMSimView              g_asmview;  
-    public QuickRef                g_qref;     
-    public ISASelector             g_isaselect;
-    public FindAndReplace          g_find;
+    public IORegistryFrame         g_ioreg;
+    public Develop                 g_dev;
+    public SimErrorFrame           g_err;
+    public OptionsFrame            g_opts;
+    public ProgrammerDialog        g_prg;
+    public SimRunner               g_simrun;
+    public Watcher                 g_watcher;
+    public SimControl              g_simctrl;
+    public ASMSimView              g_asmview;
 
     // Programmer
     private boolean                serial_support;
     public gnu.io.SerialPort       p_port;
     public int                     p_progress;
     public TimeoutWatcher          p_watchdog;
-
-    // Others
-    public SerialTerminal          term;        // Serial terminal
-    public NumberConverter         nconv;       // Number converter
 
     // Miscellaneous project attributes persistence support
     private HashMap<String, Object> pAttrSet;
@@ -253,20 +239,14 @@ public final class ProjectDriver {
     	g_err = new SimErrorFrame();
         g_dev = new Develop(this);
         g_ioreg = new IORegistryFrame(this);
-        g_about = new AboutBoxDialog(g_dev);
         g_opts = new OptionsFrame(this);
         g_opts.setBuiltInISAOptions(false);
         g_prg = new ProgrammerDialog(this, g_dev, true);
-        g_fname = new AsmNameDialog(this, g_dev, true);
-        g_find = new FindAndReplace(this);
-        g_isaselect = new ISASelector(g_dev, this);
         
         Rectangle windowParameters = getWindowParameters();
         g_dev.setSize(windowParameters.getSize());
         g_dev.setLocation(windowParameters.getLocation());
         g_dev.setLocationRelativeTo(null);
-
-        g_find.setLocationRelativeTo(null);
 
         g_dev.setTitle("PLP Software Tool " + Text.versionString);
         if(PLPToolApp.getAttributes().containsKey("new_ide")) {
@@ -513,7 +493,6 @@ public final class ProjectDriver {
 
 	private String createMetaString(long[] objCode)
 	{
-    	// TODO: reduce scope of meta from global to local
 		// TODO: remove dependencies on asm and dirty
     	// TODO: write proper PLP Version
     	String meta = "PLP-5.0\n";
@@ -554,8 +533,9 @@ public final class ProjectDriver {
 	private void writeStashedEntries(TarArchiveOutputStream tOut) throws IOException
 	{
     	for (TarEntryNode node : tarEntryStash) {
-        	// TODO: verify this error code
-            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", 2, this);
+        	// TODO: replace with constant
+    		int logLevel = 2;
+            Msg.debug("Writing out old tar entry (" + node.entry.getName() + ")", logLevel, this);
             tOut.putArchiveEntry(node.entry);
             tOut.write(node.data);
             tOut.flush();
@@ -1754,17 +1734,6 @@ public final class ProjectDriver {
     }
 
     /**
-     * Display the Quick Reference window
-     */
-    public void showQuickRef() {
-        if(g_qref != null)
-            g_qref.dispose();
-
-        g_qref = new QuickRef(this);
-        g_qref.setVisible(true);
-    }
-
-    /**
      * Is the binary files up to date.
      *
      * @return boolean that denotes whether the binary files are up to date
@@ -1807,32 +1776,6 @@ public final class ProjectDriver {
             System.out.println("GUI error has occured. Switch to debug level 2 or above to print stack trace.");
             Msg.trace(e);
         }
-    }
-
-    /**
-     * Use this method for some unforeseen bug!
-     */
-    public void triggerCriticalError() {
-        // XXX: removed "hault = true"; ensure processes are stopped
-        System.err.println("[CRITICAL ERROR] " +
-                    "This really, really, really, should not have happened.");
-        System.err.println("[CRITICAL ERROR] " +
-                    "PLPTool is now exiting. Please report this issue. Thanks!");
-        if(g) {
-            javax.swing.JOptionPane.showMessageDialog(g_dev,
-                    "This really, really, really, should not have happened. " +
-                    "PLPTool is now exiting. Please report this issue. Thanks!",
-                    "CRITICAL ERROR", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-        
-        if(plpfile != null) {
-            System.err.println("Saving current open project as ./dump.plp...");
-            plpfile = new File("dump.plp");
-            this.save();
-        }
-
-        CallbackRegistry.callback(CallbackRegistry.CRITICAL_ERROR, null);
-        System.exit(-1);
     }
 
     /**
