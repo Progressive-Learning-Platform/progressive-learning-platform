@@ -169,17 +169,17 @@ public final class ProjectDriver {
     /*
      * PLP GUI Windows
      */ // --
-    public IORegistryFrame         g_ioreg;    
-    public Develop                 g_dev;      
-    public SimErrorFrame           g_err;      
-    public AboutBoxDialog          g_about;    
+    public IORegistryFrame         g_ioreg;
+    public Develop                 g_dev;
+    public SimErrorFrame           g_err;
     public OptionsFrame            g_opts;     
-    public ProgrammerDialog        g_prg;      
-    public AsmNameDialog           g_fname;    
-    public SimRunner               g_simrun;   
-    public Watcher                 g_watcher;  
-    public SimControl              g_simctrl;  
+    public ProgrammerDialog        g_prg;
+    public SimRunner               g_simrun;
+    public Watcher                 g_watcher;
+    public SimControl              g_simctrl;
     public ASMSimView              g_asmview;
+    public AboutBoxDialog          g_about;
+    public AsmNameDialog           g_fname;
 
     // Programmer
     private boolean                serial_support;
