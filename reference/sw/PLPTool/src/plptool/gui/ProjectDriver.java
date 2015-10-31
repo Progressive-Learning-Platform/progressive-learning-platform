@@ -65,8 +65,6 @@ import plptool.PLPToolbox;
 import plptool.Text;
 import plptool.dmf.CallbackRegistry;
 import plptool.gui.frames.ASMSimView;
-import plptool.gui.frames.AboutBoxDialog;
-import plptool.gui.frames.AsmNameDialog;
 import plptool.gui.frames.Develop;
 import plptool.gui.frames.IDE;
 import plptool.gui.frames.IORegistryFrame;
@@ -172,14 +170,12 @@ public final class ProjectDriver {
     public IORegistryFrame         g_ioreg;
     public Develop                 g_dev;
     public SimErrorFrame           g_err;
-    public OptionsFrame            g_opts;     
+    public OptionsFrame            g_opts;
     public ProgrammerDialog        g_prg;
     public SimRunner               g_simrun;
     public Watcher                 g_watcher;
     public SimControl              g_simctrl;
     public ASMSimView              g_asmview;
-    public AboutBoxDialog          g_about;
-    public AsmNameDialog           g_fname;
 
     // Programmer
     private boolean                serial_support;
@@ -243,11 +239,9 @@ public final class ProjectDriver {
     	g_err = new SimErrorFrame();
         g_dev = new Develop(this);
         g_ioreg = new IORegistryFrame(this);
-        g_about = new AboutBoxDialog(g_dev);
         g_opts = new OptionsFrame(this);
         g_opts.setBuiltInISAOptions(false);
         g_prg = new ProgrammerDialog(this, g_dev, true);
-        g_fname = new AsmNameDialog(this, g_dev, true);
         
         Rectangle windowParameters = getWindowParameters();
         g_dev.setSize(windowParameters.getSize());

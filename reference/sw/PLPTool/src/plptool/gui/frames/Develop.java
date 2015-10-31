@@ -109,6 +109,8 @@ public final class Develop extends JFrame {
     private QuickRef g_qref;
     private FindAndReplace g_find;
     private ISASelector g_isaselect;
+    private AboutBoxDialog g_about;
+    private AsmNameDialog g_fname;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -189,8 +191,9 @@ public final class Develop extends JFrame {
 	{
         g_find = new FindAndReplace(plp);
         g_find.setLocationRelativeTo(null);
-
         g_isaselect = new ISASelector(this, plp);
+        g_about = new AboutBoxDialog(this);
+        g_fname = new AsmNameDialog(plp, this, true);
 	}
 
 	/**
@@ -916,7 +919,7 @@ public final class Develop extends JFrame {
      * Show about dialog
      */
     public void about() {
-        plp.g_about.setVisible(true);
+        g_about.setVisible(true);
     }
     
     /**
@@ -3074,8 +3077,8 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuProgramActionPerformed
 
     private void menuNewASMActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuNewASMActionPerformed
-        plp.g_fname.setMode(false);
-        plp.g_fname.setVisible(true);
+        g_fname.setMode(false);
+        g_fname.setVisible(true);
     }//GEN-LAST:event_menuNewASMActionPerformed
 
     private void menuCopyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuCopyActionPerformed
