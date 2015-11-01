@@ -35,15 +35,15 @@ import plptool.mips.Architecture;
  * @author wira
  */
 public class ArchRegistry {
-    private static HashMap<Integer, Class<?>> archClasses = new HashMap<>();
-    private static HashMap<Integer, String> archIdentifiers = new HashMap<>();
-    private static HashMap<Integer, String> archDescriptions = new HashMap<>();
+    private static Map<Integer, ArchitectureInformation> architectures;
 
     public static final int ISA_PLPMIPS = 0;
 
     // ... Add your ISA ID here ... //
     
     static {
+    	architectures = new HashMap<>();
+    	
 		// Register default ISA
 		registerArchitecture(Architecture.class, ISA_PLPMIPS, 
         		"PLPCPU", "PLP CPU ISA Implementation for PLPTool. "
@@ -103,18 +103,19 @@ public class ArchRegistry {
                     "architecture superclass.",
                     Constants.PLP_ISA_INVALID_METACLASS, null);
 
-        if(archClasses.containsKey(ID)) {
+        if(architectures.containsKey(ID)) {
         	new Exception().printStackTrace();
             return Msg.error("ISA with ID '" + ID + "' is already defined.",
                     Constants.PLP_ISA_ALREADY_DEFINED, null);
         }
         
-        archClasses.put(ID, arch);
-        archIdentifiers.put(ID, strID);
-        archDescriptions.put(ID, description);
+        ArchitectureInformation architecture = 
+        		new ArchitectureInformation(ID, arch, strID, description);
+        architectures.put(ID, architecture);
 
         if(Constants.debugLevel >= 5) {
-            Set<?> IDs = archClasses.keySet();
+        	// TODO: cleanup
+            Set<?> IDs = architectures.keySet();
             Object stuff[] = IDs.toArray();
             Msg.debug("Current list of registered ISA IDs:", 5, null);
             for(int i = 0; i < stuff.length; i++) {
@@ -132,7 +133,12 @@ public class ArchRegistry {
      * @return Reference to the ISA class, or null if it is not registered
      */
     public static Class<?> getRegisteredArchitectureClass(int ID) {
-        return archClasses.get(ID);
+    	ArchitectureInformation architecture = architectures.get(ID);
+    	
+    	if (architecture == null)
+    		return null;
+    	else
+    		return architecture.getType();
     }
 
     /**
@@ -142,7 +148,12 @@ public class ArchRegistry {
      * @return the string identifier of the ISA
      */
     public static String getStringID(int ID) {
-        return archIdentifiers.get(ID);
+ArchitectureInformation architecture = architectures.get(ID);
+    	
+    	if (architecture == null)
+    		return null;
+    	else
+    		return architecture.getIdentifier();
     }
 
     /**
@@ -151,7 +162,12 @@ public class ArchRegistry {
      * @return
      */
     public static String getDescription(int ID) {
-        return archDescriptions.get(ID);
+    	ArchitectureInformation architecture = architectures.get(ID);
+    	
+    	if (architecture == null)
+    		return null;
+    	else
+    		return architecture.getDescription();
     }
 
     /**
@@ -164,15 +180,7 @@ public class ArchRegistry {
 	public static List<ArchitectureInformation> getArchList()
 	{
 		List<ArchitectureInformation> architectureList = new ArrayList<>();
-		
-		for (Map.Entry<Integer, Class<?>> entry : archClasses.entrySet())
-		{
-			ArchitectureInformation info = new ArchitectureInformation();
-			info.id = entry.getKey();
-			info.type = entry.getValue();
-			info.identifier = archIdentifiers.get(entry.getKey());
-			info.description = archDescriptions.get(entry.getKey());
-		}
+		architectureList.addAll(architectures.values());
 		
 		return architectureList;
 	}
