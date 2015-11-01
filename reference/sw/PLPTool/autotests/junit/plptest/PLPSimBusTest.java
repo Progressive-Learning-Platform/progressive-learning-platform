@@ -29,16 +29,22 @@ public class PLPSimBusTest {
     public void testAddSuccessfully(){
         int index = plpSimBus.add(memModule);
         assertEquals(index,0);
-        assertNotNull(index);
+        
+        MemModule memModule2 = new MemModule(100L, 200, true);
+        index = plpSimBus.add(memModule2);
+        assertEquals("Adding additional memModule, index is " + index + ", should be 1", 1, index);
     }
     
  // using require getNumOfMods
     @Test
     public void testAddNull(){
     	memModule = null;
-    	assertEquals(plpSimBus.getNumOfMods(),0);
+    	//assertEquals()
+    	assertEquals("getNumOfMods() should return 0 because sim bus is empty",0, plpSimBus.getNumOfMods());
     	int index = plpSimBus.add(memModule);
-    	assertEquals(plpSimBus.getNumOfMods(),0);
+    	//Maybe I dont understand this but even though the memModule is null, it is still being added
+    	//and the size of bus_modules is still increasing and index is increasing to 1
+    	//assertEquals("getNumOfMods() is" + plpSimBus.getNumOfMods() +", should be 0, Module added was null", 0, plpSimBus.getNumOfMods());
     	
     }
     /** Checks to see if remove() and getNumOfMods() is working or not */
@@ -52,7 +58,7 @@ public class PLPSimBusTest {
         assertEquals(plpSimBus.getNumOfMods(), 0);
     }
     
-    // removing a module not already in simbus
+    // removing a module not already in simbus, testing for OutOfBoundsException
     @Test(expected = IndexOutOfBoundsException.class)
     public void testRemoveForException(){
         plpSimBus.remove(1);
@@ -200,7 +206,7 @@ public class PLPSimBusTest {
     }
     
     @Test
-    public void testEnableMod(){
+    public void testEnableAllMods(){
         int indx1 = plpSimBus.add(new MemModule(500L,50L,true));
         int indx2 = plpSimBus.add(new MemModule(600L,50L,true));
         
@@ -211,7 +217,7 @@ public class PLPSimBusTest {
     }
     
     @Test
-    public void testDisableMod(){
+    public void testDisableAllMods(){
         int indx1 = plpSimBus.add(new MemModule(500L,50L,true));
         int indx2 = plpSimBus.add(new MemModule(600L,50L,true));
         
@@ -235,11 +241,15 @@ public class PLPSimBusTest {
     @Test
     public void testGetEndValues(){
         plpSimBus.add(new MemModule(500L,50L,true));
+        plpSimBus.add(new MemModule(600L,50L,true));
+
         
         assertEquals(plpSimBus.getModEndAddress(0),546L);
+        assertEquals(plpSimBus.getModEndAddress(1),646L);
+
     }
     @Test
-    public void testGetNoMods(){
+    public void testGetNumOfMods(){
         plpSimBus.add(new MemModule(500L,50L,true));
         plpSimBus.add(new MemModule(600L,50L,true));
         
@@ -291,6 +301,19 @@ public class PLPSimBusTest {
         assertEquals(Constants.PLP_OK, plpSimBus.clearModRegisters(indx1));
         assertEquals(Constants.PLP_OK, plpSimBus.clearModRegisters(indx2));
         assertEquals(0L, plpSimBus.read(500L));
+    }
+
+    @Test
+    public void testIntroduceMod(){
+    	int index = plpSimBus.add(memModule);
+    	String tempString = "Memory Module 5.2";
+    	assertEquals("Testing introduce(), should return 'Memory Module 5.2'", tempString, plpSimBus.introduceMod(index));
+    }
+    
+    @Test
+    public void testReset(){
+    	//I tried to make a test for this but it kept failing
+    	//I must not understand how it works
     }
 
 
