@@ -111,15 +111,10 @@ public class ArchRegistry {
         		new ArchitectureInformation(ID, arch, strID, description);
         architectures.put(ID, architecture);
 
-        if(Constants.debugLevel >= 5) {
-        	// TODO: cleanup
-            Set<?> IDs = architectures.keySet();
-            Object stuff[] = IDs.toArray();
-            Msg.debug("Current list of registered ISA IDs:", 5, null);
-            for(int i = 0; i < stuff.length; i++) {
-                Msg.debug("- " + (Integer) stuff[i], 5, null);
-            }
-        }
+        int debugLevel = 5;
+        Msg.debug("Current list of registered ISA IDs:", debugLevel, null);
+        for(int id : architectures.keySet())
+            Msg.debug("- " + id, debugLevel, null);
         
         return Constants.PLP_OK;
     }
@@ -146,7 +141,7 @@ public class ArchRegistry {
      * @return the string identifier of the ISA
      */
     public static String getStringID(int ID) {
-ArchitectureInformation architecture = architectures.get(ID);
+    	ArchitectureInformation architecture = architectures.get(ID);
     	
     	if (architecture == null)
     		return null;
