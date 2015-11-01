@@ -34,15 +34,11 @@ import plptool.gui.ProjectDriver;
  * @author wira
  */
 public class ArchRegistry {
+    private static HashMap<Integer, Class<?>> archClasses = new HashMap<>();
+    private static HashMap<Integer, String> archIdentifiers = new HashMap<>();
+    private static HashMap<Integer, String> archDescriptions = new HashMap<>();
 
-    private static HashMap<Integer, Class<?>> archClasses =
-            new HashMap<Integer, Class<?>>();
-    private static HashMap<Integer, String> archIdentifiers =
-            new HashMap<Integer, String>();
-    private static HashMap<Integer, String> archDescriptions =
-            new HashMap<Integer, String>();
-
-    public static final int        ISA_PLPMIPS         =           0;
+    public static final int ISA_PLPMIPS = 0;
 
         // ... Add your ISA ID here ... //
 
