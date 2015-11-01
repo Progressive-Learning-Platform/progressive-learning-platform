@@ -103,6 +103,14 @@ public final class Develop extends JFrame {
     private double vPaneSavedProportion = -1;
     private DevEditorDocListener currentEditorListener;
     private boolean extraToolsItems;
+    
+    private SerialTerminal serialTerminalWindow;
+    private NumberConverter numberConversionWindow;  
+    private QuickRef g_qref;
+    private FindAndReplace g_find;
+    private ISASelector g_isaselect;
+    private AboutBoxDialog g_about;
+    private AsmNameDialog g_fname;
 
     /** Records number of non character keys pressed */
     int nonTextKeyPressed = 0;
@@ -111,8 +119,9 @@ public final class Develop extends JFrame {
     public Develop(ProjectDriver plp) {
         this.plp = plp;
         initComponents();
+        initFrames();
         line = 0;
-
+        
         DefaultMutableTreeNode projectRoot = new DefaultMutableTreeNode("No PLP Project Open");
         DefaultTreeModel treeModel = new DefaultTreeModel(projectRoot);
         treeProject.setModel(treeModel);
@@ -176,6 +185,26 @@ public final class Develop extends JFrame {
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("resources/appicon.png")));
         Msg.printPreformattedString(Text.copyrightString);
         Msg.println("");
+    }
+
+    private void initFrames()
+	{
+        g_find = new FindAndReplace(plp);
+        g_find.setLocationRelativeTo(null);
+        g_isaselect = new ISASelector(this, plp);
+        g_about = new AboutBoxDialog(this);
+        g_fname = new AsmNameDialog(plp, this, true);
+	}
+
+	/**
+     * Display the Quick Reference window
+     */
+    private void showQuickRef() {
+        if(g_qref != null)
+            g_qref.dispose();
+
+        g_qref = new QuickRef(plp);
+        g_qref.setVisible(true);
     }
 
     /*
@@ -657,9 +686,9 @@ public final class Develop extends JFrame {
                     changeFormatting();
                 if(Config.cfgAskForISAForNewProjects &&
                         plptool.ArchRegistry.getArchList().length > 1) {
-                    plp.g_isaselect.setLocationRelativeTo(this);
-                    plp.g_isaselect.populateISASelector();
-                    plp.g_isaselect.setVisible(true);
+                    g_isaselect.setLocationRelativeTo(this);
+                    g_isaselect.populateISASelector();
+                    g_isaselect.setVisible(true);
                 }
         }
     }
@@ -890,7 +919,7 @@ public final class Develop extends JFrame {
      * Show about dialog
      */
     public void about() {
-        plp.g_about.setVisible(true);
+        g_about.setVisible(true);
     }
     
     /**
@@ -3048,8 +3077,8 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuProgramActionPerformed
 
     private void menuNewASMActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuNewASMActionPerformed
-        plp.g_fname.setMode(false);
-        plp.g_fname.setVisible(true);
+        g_fname.setMode(false);
+        g_fname.setVisible(true);
     }//GEN-LAST:event_menuNewASMActionPerformed
 
     private void menuCopyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuCopyActionPerformed
@@ -3168,7 +3197,7 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_btnProgramActionPerformed
 
     private void menuQuickRefActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuQuickRefActionPerformed
-        plp.showQuickRef();
+        showQuickRef();
     }//GEN-LAST:event_menuQuickRefActionPerformed
 
     private void menuManualActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuManualActionPerformed
@@ -3202,9 +3231,9 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuIssuesPageActionPerformed
 
     private void menuFindAndReplaceActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuFindAndReplaceActionPerformed
-        plp.g_find.setCurIndex(this.txtEditor.getCaretPosition());
-        plp.g_find.setVisible(false);
-        plp.g_find.setVisible(true);
+        g_find.setCurIndex(this.txtEditor.getCaretPosition());
+        g_find.setVisible(false);
+        g_find.setVisible(true);
     }//GEN-LAST:event_menuFindAndReplaceActionPerformed
 
     private void menuOptionsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuOptionsActionPerformed
@@ -3218,11 +3247,11 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuOptionsActionPerformed
 
     private void menuSerialTerminalActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSerialTerminalActionPerformed
-        if(plp.term == null)
-            plp.term = new SerialTerminal(false);
+        if(serialTerminalWindow == null)
+            serialTerminalWindow = new SerialTerminal(false);
 
-        plp.term.setVisible(false);
-        plp.term.setVisible(true);
+        serialTerminalWindow.setVisible(false);
+        serialTerminalWindow.setVisible(true);
     }//GEN-LAST:event_menuSerialTerminalActionPerformed
 
     private void menuPrintActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuPrintActionPerformed
@@ -3498,11 +3527,11 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuOutputPaneActionPerformed
 
     private void menuNumberConverterActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuNumberConverterActionPerformed
-        if(plp.nconv == null)
-                plp.nconv = new NumberConverter(false);
+        if(numberConversionWindow == null)
+                numberConversionWindow = new NumberConverter(false);
 
-        plp.nconv.setVisible(false);
-        plp.nconv.setVisible(true);
+        numberConversionWindow.setVisible(false);
+        numberConversionWindow.setVisible(true);
     }//GEN-LAST:event_menuNumberConverterActionPerformed
 
     private void menuSimulateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSimulateActionPerformed
@@ -3570,9 +3599,9 @@ public final class Develop extends JFrame {
     }//GEN-LAST:event_menuModuleManagerActionPerformed
 
     private void menuSetNewProjectISAActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSetNewProjectISAActionPerformed
-        plp.g_isaselect.setLocationRelativeTo(this);
-        plp.g_isaselect.populateISASelector();
-        plp.g_isaselect.setVisible(true);
+        g_isaselect.setLocationRelativeTo(this);
+        g_isaselect.populateISASelector();
+        g_isaselect.setVisible(true);
     }//GEN-LAST:event_menuSetNewProjectISAActionPerformed
 
     private void initPopupMenus() {
