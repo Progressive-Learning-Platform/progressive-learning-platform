@@ -61,8 +61,7 @@ public class ArchRegistry {
         PLPArchitecture arch = null;
         Class<?> archClass = null;
 
-        // default ISA is PLP CPU (arch ID 0)
-        if(ID == 0)
+        if(ID == ISA_PLPMIPS)
             return (new plptool.mips.Architecture(ID, plp));
 
         // Try to load dynamic ISA module
