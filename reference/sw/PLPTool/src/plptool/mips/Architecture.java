@@ -346,6 +346,7 @@ public class Architecture extends PLPArchitecture {
 
     @Override
     public String getQuickReferenceString() {
+        //@formatter:off
         String str = "";
 
         str += "<a name=\"top\" /><h1>PLP-5 Quick Reference Card</h1>";
@@ -533,6 +534,7 @@ public class Architecture extends PLPArchitecture {
         str += "</table>";
 
         return str;
+      //@formatter:on
     }
 
     public boolean isUsingNexysBoard() {
