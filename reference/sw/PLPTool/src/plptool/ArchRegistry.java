@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import plptool.gui.ProjectDriver;
+import plptool.mips.Architecture;
 
 /**
  * This class associates an ISA implementation to its member classes.
@@ -40,7 +41,14 @@ public class ArchRegistry {
 
     public static final int ISA_PLPMIPS = 0;
 
-        // ... Add your ISA ID here ... //
+    // ... Add your ISA ID here ... //
+    
+    static {
+		// Register default ISA
+		registerArchitecture(Architecture.class, ISA_PLPMIPS, 
+        		"PLPCPU", "PLP CPU ISA Implementation for PLPTool. "
+        				+ "This is the default built-in ISA for the PLP project.");
+	}
 
     /**
      * Return the specified architecture meta class. Register your ISA
@@ -96,9 +104,11 @@ public class ArchRegistry {
                     "architecture superclass.",
                     Constants.PLP_ISA_INVALID_METACLASS, null);
 
-        if(ID == 0 || archClasses.containsKey(ID))
+        if(archClasses.containsKey(ID)) {
+        	new Exception().printStackTrace();
             return Msg.error("ISA with ID '" + ID + "' is already defined.",
                     Constants.PLP_ISA_ALREADY_DEFINED, null);
+        }
         
         archClasses.put(ID, arch);
         archIdentifiers.put(ID, strID);
@@ -112,7 +122,7 @@ public class ArchRegistry {
                 Msg.debug("- " + (Integer) stuff[i], 5, null);
             }
         }
-
+        
         return Constants.PLP_OK;
     }
 
@@ -143,17 +153,6 @@ public class ArchRegistry {
      */
     public static String getDescription(int ID) {
         return archDescriptions.get(ID);
-    }
-
-    /**
-     * PLPToolApp calls this method during initialization
-     */
-    public static String[] setup(String[] args) {
-        archClasses.put(0, plptool.mips.Architecture.class);
-        archIdentifiers.put(0, "PLPCPU");
-        archDescriptions.put(0, "PLP CPU ISA Implementation for PLPTool. " +
-                "This is the default built-in ISA for the PLP project.");
-        return args;
     }
 
     /**

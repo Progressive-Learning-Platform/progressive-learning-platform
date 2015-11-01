@@ -135,8 +135,8 @@ public class PLPToolApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {        
         images = new HashMap<String, BufferedImage>();
-        args = ArchRegistry.setup(args);                   // Setup ISA registry
-        args = CallbackRegistry.setup(args);               // Setup callback registry
+        // Setup callback registry
+        args = CallbackRegistry.setup(args);
         commandLineArgs = args;
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
