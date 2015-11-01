@@ -35,11 +35,9 @@ import plptool.mips.Architecture;
  * @author wira
  */
 public class ArchRegistry {
-    private static Map<Integer, ArchitectureInformation> architectures;
-
     public static final int ISA_PLPMIPS = 0;
-
-    // ... Add your ISA ID here ... //
+    
+    private static Map<Integer, ArchitectureInformation> architectures;
     
     static {
     	architectures = new HashMap<>();
