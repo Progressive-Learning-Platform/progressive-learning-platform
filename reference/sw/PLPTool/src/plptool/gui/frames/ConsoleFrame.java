@@ -25,6 +25,7 @@ import gnu.io.SerialPort;
 import java.awt.Color;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import plptool.ArchRegistry;
 import plptool.Config;
@@ -32,6 +33,7 @@ import plptool.Constants;
 import plptool.Msg;
 import plptool.PLPBuildError;
 import plptool.PLPToolbox;
+import plptool.ArchRegistry.ArchitectureInformation;
 import plptool.gui.ProjectDriver;
 
 /**
@@ -313,12 +315,12 @@ public class ConsoleFrame extends javax.swing.JFrame {
                 }
             } else if(command.equals("getarchlist")) {
                 out.setText("");
-                Object[][] archs = ArchRegistry.getArchList();
-                for(int i = 0; i < archs.length; i++) {
-                    int id = (Integer) archs[i][0];
-                    Class<?> c = (Class<?>) archs[i][1];
-                    String strID = (String) archs[i][2];
-                    Msg.info(id + ": " + c.getCanonicalName() + " \"" + strID + "\"", null);
+                List<ArchitectureInformation> archs = ArchRegistry.getArchList();
+                for(ArchitectureInformation arch : archs) {
+                    int id = arch.getId();
+                    Class<?> type = arch.getType();
+                    String strID = arch.getIdentifier();
+                    Msg.info(id + ": " + type.getCanonicalName() + " \"" + strID + "\"", null);
                 }
 
             } else if(command.startsWith("cmd ")) {

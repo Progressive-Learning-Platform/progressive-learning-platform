@@ -18,7 +18,9 @@
 
 package plptool;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -159,24 +161,68 @@ public class ArchRegistry {
     }
 
     /**
-     * Return a list of the ISAs currently registered in the PLPTool session.
-     *
-     * @return A two-dimensional object array of registered ISA classes.
-     * Information fields are: 0: ISA numerical ID, 1: reference to the ISA
-     * meta-class, 2: ISA string identifier.
-     */
-    // FIXME: make returns concrete and encapsulate data. Get rid of generic array
-    public static Object[][] getArchList() {
-        Object[][] archs = new Object[archClasses.size()][4];
-        Object[] classes = archClasses.entrySet().toArray();
-        for(int i = 0; i < archs.length; i++) {
-            @SuppressWarnings("unchecked")
-            Map.Entry<Integer, Class<?>> entry = (Map.Entry<Integer, Class<?>>) classes[i];
-            archs[i][0] = entry.getKey();
-            archs[i][1] = entry.getValue();
-            archs[i][2] = archIdentifiers.get(entry.getKey());
-            archs[i][3] = archDescriptions.get(entry.getKey());
-        }
-        return archs;
-    }
+	 * Return a list of the ISAs currently registered in the PLPTool session.
+	 *
+	 * @return A two-dimensional object array of registered ISA classes. Information
+	 *         fields are: 0: ISA numerical ID, 1: reference to the ISA meta-class, 2: ISA
+	 *         string identifier.
+	 */
+	public static List<ArchitectureInformation> getArchList()
+	{
+		List<ArchitectureInformation> architectureList = new ArrayList<>();
+		
+		for (Map.Entry<Integer, Class<?>> entry : archClasses.entrySet())
+		{
+			ArchitectureInformation info = new ArchitectureInformation();
+			info.id = entry.getKey();
+			info.type = entry.getValue();
+			info.identifier = archIdentifiers.get(entry.getKey());
+			info.description = archDescriptions.get(entry.getKey());
+		}
+		
+		return architectureList;
+	}
+	
+	public static class ArchitectureInformation
+	{
+		private int id;
+		private Class<?> type;
+		private String identifier;
+		private String description;
+		
+		public ArchitectureInformation()
+		{
+			
+		}
+		
+		public ArchitectureInformation(int id, Class<?> type, String identifier,
+				String description)
+		{
+			super();
+			this.id = id;
+			this.type = type;
+			this.identifier = identifier;
+			this.description = description;
+		}
+		
+		public int getId()
+		{
+			return id;
+		}
+		
+		public Class<?> getType()
+		{
+			return type;
+		}
+		
+		public String getIdentifier()
+		{
+			return identifier;
+		}
+		
+		public String getDescription()
+		{
+			return description;
+		}
+	}
 }

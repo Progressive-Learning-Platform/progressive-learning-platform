@@ -19,11 +19,14 @@
 package plptool.gui.frames;
 
 import plptool.*;
+import plptool.ArchRegistry.ArchitectureInformation;
 import plptool.dmf.*;
 import plptool.PLPToolbox;
 import plptool.gui.ProjectDriver;
 
 import java.io.File;
+import java.util.List;
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
@@ -88,9 +91,9 @@ public class ModuleManager extends javax.swing.JDialog {
         while(tblISAsModel.getRowCount() > 0)
             tblISAsModel.removeRow(0);
 
-        Object[][] archs = ArchRegistry.getArchList();
-        for(int i = 0; i < archs.length; i++) {
-            int id = (Integer) archs[i][0];
+        List<ArchitectureInformation> archs = ArchRegistry.getArchList();
+        for(ArchitectureInformation arch : archs) {
+            int id = arch.getId();
             row[0] = ArchRegistry.getStringID(id);
             row[1] = Integer.toString(id);
             //row[2] = ArchRegistry.getDescription(id);

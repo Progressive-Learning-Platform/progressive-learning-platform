@@ -685,7 +685,7 @@ public final class Develop extends JFrame {
                 else
                     changeFormatting();
                 if(Config.cfgAskForISAForNewProjects &&
-                        plptool.ArchRegistry.getArchList().length > 1) {
+                        plptool.ArchRegistry.getArchList().size() > 1) {
                     g_isaselect.setLocationRelativeTo(this);
                     g_isaselect.populateISASelector();
                     g_isaselect.setVisible(true);
