@@ -93,10 +93,27 @@ public class PLPSimBusModuleTest
 		int emptyModuleIndex = simBus.add(emptyModule);
 		
 		assertNotSame("Error occured on adding module", -1, returnedIndex);
+		assertNotSame("Error occured on adding module", -1, emptyModuleIndex);
 		
 		assertEquals(mockModule.introduce(), simBus.introduceMod(returnedIndex));
 		
 		assertNull(simBus.introduceMod(emptyModuleIndex));
+	}
+	
+	@Test
+	public void resetTest()
+	{
+		int returnedIndex = simBus.add(mockModule);
+		
+		assertNotSame("Error occured on adding module", -1, returnedIndex);
+		
+		simBus.eval();
+		
+		assertTrue(mockModule.isAlive());
+		
+		simBus.reset();
+		
+		assertTrue(mockModule.isInterrupted());
 	}
 	
 }
