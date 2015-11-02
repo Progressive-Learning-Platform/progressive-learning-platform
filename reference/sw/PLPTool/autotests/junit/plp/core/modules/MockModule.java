@@ -33,13 +33,9 @@ public class MockModule extends PLPSimBusModule
 	@Override
 	public int eval()
 	{
-		if(enabled)
-		{
-			start();
-			return Constants.PLP_OK;
-		}
-		else
-			return Constants.PLP_SIM_MODULE_DISABLED;
+		start();
+		
+		return Constants.PLP_OK;
 	}
 	
 	@Override
@@ -58,8 +54,7 @@ public class MockModule extends PLPSimBusModule
 	@Override
 	public String introduce()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "The Best Mock Module in the world";
 	}
 	
 }
