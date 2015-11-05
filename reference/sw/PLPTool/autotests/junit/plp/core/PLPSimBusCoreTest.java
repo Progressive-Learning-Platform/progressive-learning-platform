@@ -42,16 +42,14 @@ public class PLPSimBusCoreTest
 			simBus.issueZeroes(belowZeroIndex);
 			simBus.issueZeroes(Integer.MIN_VALUE / 2);
 			simBus.issueZeroes(Integer.MIN_VALUE);
-			
-			assertTrue("Issue zero index bounds work", true);
 		}
 		catch (IndexOutOfBoundsException exception)
 		{
-			assertTrue(exception.getMessage(), false);
+			fail("index should be checked if its valid.");
 		}
 		catch (Exception exception)
 		{
-			assertTrue(exception.getMessage(), false);
+			fail(exception.getMessage());
 		}
 	}
 	
