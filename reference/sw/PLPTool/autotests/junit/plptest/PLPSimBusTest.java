@@ -1,11 +1,14 @@
 package junit.plptest;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
 import plptool.Constants;
 import plptool.PLPSimBus;
+import plptool.dmf.Callback;
+import plptool.dmf.CallbackRegistry;
 import plptool.mods.MemModule;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -13,22 +16,49 @@ import static org.junit.Assert.*;
 
 public class PLPSimBusTest
 {
+	private static class CallbackTracker implements Callback
+	{
+		public boolean wasCalled = false;
+		
+		@Override
+		public boolean callback(int callbackNum, Object param)
+		{
+			wasCalled = true;
+			return true;
+		}
+	}
+
+	private static CallbackTracker addCallbackTracker;
 	private MemModule memModule;
 	private PLPSimBus plpSimBus;
+	
+	@BeforeClass
+	public static void setupClass()
+	{
+		addCallbackTracker = new CallbackTracker();
+		CallbackRegistry.register(addCallbackTracker, CallbackRegistry.BUS_ADD);
+	}
 	
 	@Before
 	public void setup()
 	{
 		memModule = new MemModule(100L, 200, true);
+		addCallbackTracker.wasCalled = false;
 		plpSimBus = new PLPSimBus();
 	}
 	
 	@Test
 	public void testAddSuccessfully()
 	{
+		int numberOfModulesPrior = plpSimBus.getNumOfMods();
+		int expectedNumberOfModules = numberOfModulesPrior + 1;
 		int index = plpSimBus.add(memModule);
-		assertEquals(index, 0);
-		assertNotNull(index);
+		boolean errorOccurred = (index == -1);
+		int numberOfModulesAfter = plpSimBus.getNumOfMods();
+		
+		assertFalse(errorOccurred);
+		assertEquals(expectedNumberOfModules, numberOfModulesAfter);
+		assertTrue(addCallbackTracker.wasCalled);
 	}
 	
 	/**
