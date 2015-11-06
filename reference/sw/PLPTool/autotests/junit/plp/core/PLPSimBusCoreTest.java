@@ -15,11 +15,25 @@ import plptool.mods.MemModule;
 public class PLPSimBusCoreTest
 {
 	PLPSimBus simBus;
+	PLPSimBusModule memoryModule;
+	long wordBitSize;
+	long endAddress;
+	long startAddress;
+	int moduleIndex;
 	
 	@Before
 	public void startUp()
 	{
 		simBus = new PLPSimBus();
+		
+		wordBitSize = 32;
+		endAddress = 32;
+		startAddress = 0;
+		
+		memoryModule = new MemModule(startAddress, wordBitSize
+				* endAddress, true);
+		
+		moduleIndex = simBus.add(memoryModule);
 	}
 	
 	@After
@@ -56,15 +70,7 @@ public class PLPSimBusCoreTest
 	@Test
 	public void issueZeroes()
 	{
-		int wordBitSize = 32;
-		int endAddress = 32;
-		int startAddress = 0;
-		
-		PLPSimBusModule memoryModule = new MemModule(startAddress, wordBitSize
-				* endAddress, true);
-		
-		int returnedIndex = simBus.add(memoryModule);
-		simBus.enableMod(returnedIndex);
+		simBus.enableMod(moduleIndex);
 		
 		for (int index = 0; index < endAddress; index++)
 		{
@@ -89,7 +95,7 @@ public class PLPSimBusCoreTest
 				"Memory at specified address is not the same as the written data",
 				writtenMemory, memoryModule.readReg(address));
 
-		simBus.issueZeroes(returnedIndex);
+		simBus.issueZeroes(moduleIndex);
 		
 		for (int index = 0; index < endAddress; index++)
 		{
