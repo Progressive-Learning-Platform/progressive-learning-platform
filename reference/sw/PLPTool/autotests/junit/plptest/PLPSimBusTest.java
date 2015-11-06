@@ -1,13 +1,19 @@
 package junit.plptest;
 
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Map;
+
 import junit.plp.core.modules.MockModule;
 
+import org.apache.commons.collections15.map.HashedMap;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import plptool.Constants;
 import plptool.PLPSimBus;
+import plptool.PLPSimBusModule;
 import plptool.dmf.Callback;
 import plptool.dmf.CallbackRegistry;
 import plptool.mods.MemModule;
@@ -142,12 +148,32 @@ public class PLPSimBusTest
 		
 		boolean errorOccurredOn1 = (index1 == -1);
 		boolean errorOccurredOn2 = (index2 == -1);
-
+		
 		assertFalse(errorOccurredOn1);
 		assertTrue(errorOccurredOn2);
 		assertEquals(expectedOfModules, numberOfModulesAfter);
 		assertEquals(1, addCallbackTracker.callCount);
 		assertSame(memModule, plpSimBus.getRefMod(index1));
+	}
+	
+	/** 
+	 * Validate that the given indexes remain consistent even after removing modules
+	 */
+	@Test
+	public void testIndexUniquenessOnAdd()
+	{
+		final int AMOUNT = 5;
+		LinkedList<Integer> indexes = new LinkedList<>();
+		
+		for (int i = 0; i < AMOUNT; i++)
+		{
+			MockModule module = new MockModule();
+			int index = plpSimBus.add(module);
+			boolean errorOccurred = (index == -1);
+			assertFalse(errorOccurred);
+			assertFalse(indexes.contains(indexes));
+			indexes.add(index);
+		}
 	}
 	
 	/** Checks to see if remove() and getNumOfMods() is working or not */
@@ -160,6 +186,95 @@ public class PLPSimBusTest
 		
 		assertEquals(result, Constants.PLP_OK);
 		assertEquals(numberOfModulesPrior, plpSimBus.getNumOfMods());
+	}
+	
+	/** 
+	 * Validate that the given indexes remain consistent even after removing modules
+	 */
+	@Test
+	public void testIndexConsistencyOnRemoveEnd()
+	{
+		final int AMOUNT = 5;
+		Deque<Integer> indexes = new LinkedList<>();
+		Map<Integer, PLPSimBusModule> modules = new HashedMap<>();
+		int expectedOfModules = AMOUNT - 1;
+		
+		for (int i = 0; i < AMOUNT; i++)
+		{
+			MockModule module = new MockModule();
+			int index = plpSimBus.add(module);
+			modules.put(index, module);
+			indexes.add(index);
+		}
+		
+		int lastIndex = indexes.pollLast();
+		int result = plpSimBus.remove(lastIndex);
+		
+		assertEquals(result, Constants.PLP_OK);
+		assertEquals(expectedOfModules, plpSimBus.getNumOfMods());
+		
+		for (int index : indexes)
+			assertSame(modules.get(index), plpSimBus.getRefMod(index));
+	}
+	
+	/** 
+	 * Validate that the given indexes remain consistent even after removing modules
+	 */
+	@Test
+	public void testIndexConsistencyOnRemoveFirst()
+	{
+		final int AMOUNT = 5;
+		Deque<Integer> indexes = new LinkedList<>();
+		Map<Integer, PLPSimBusModule> modules = new HashedMap<>();
+		int expectedOfModules = AMOUNT - 1;
+		
+		for (int i = 0; i < AMOUNT; i++)
+		{
+			MockModule module = new MockModule();
+			int index = plpSimBus.add(module);
+			modules.put(index, module);
+			indexes.add(index);
+		}
+		
+		int firstIndex = indexes.pollFirst();
+		int result = plpSimBus.remove(firstIndex);
+		
+		assertEquals(result, Constants.PLP_OK);
+		assertEquals(expectedOfModules, plpSimBus.getNumOfMods());
+		
+		for (int index : indexes)
+			assertSame(modules.get(index), plpSimBus.getRefMod(index));
+	}
+	
+	/** 
+	 * Validate that the given indexes remain consistent even after removing modules
+	 */
+	@Test
+	public void testIndexConsistencyOnRemoveMiddle()
+	{
+		final int AMOUNT = 5;
+		LinkedList<Integer> indexes = new LinkedList<>();
+		Map<Integer, PLPSimBusModule> modules = new HashedMap<>();
+		int expectedOfModules = AMOUNT - 1;
+		
+		for (int i = 0; i < AMOUNT; i++)
+		{
+			MockModule module = new MockModule();
+			int index = plpSimBus.add(module);
+			modules.put(index, module);
+			indexes.add(index);
+		}
+		
+		int targetIndex = AMOUNT / 2;
+		int middleIndex = indexes.get(targetIndex);
+		indexes.remove(targetIndex);
+		int result = plpSimBus.remove(middleIndex);
+		
+		assertEquals(result, Constants.PLP_OK);
+		assertEquals(expectedOfModules, plpSimBus.getNumOfMods());
+		
+		for (int index : indexes)
+			assertSame(modules.get(index), plpSimBus.getRefMod(index));
 	}
 	
 	// removing a module not already in simbus
