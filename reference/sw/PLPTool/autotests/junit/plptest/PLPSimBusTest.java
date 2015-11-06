@@ -1,5 +1,7 @@
 package junit.plptest;
 
+import junit.plp.core.modules.MockModule;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,18 +20,29 @@ public class PLPSimBusTest
 {
 	private static class CallbackTracker implements Callback
 	{
-		public boolean wasCalled = false;
+		public int callCount = 0;
 		
 		@Override
 		public boolean callback(int callbackNum, Object param)
 		{
-			wasCalled = true;
+			callCount++;
 			return true;
 		}
+		
+		public boolean wasCalled()
+		{
+			return callCount > 0;
+		}
+		
+		public void reset()
+		{
+			callCount = 0;
+		}
 	}
-
+	
 	private static CallbackTracker addCallbackTracker;
 	private MemModule memModule;
+	private MockModule mockModule;
 	private PLPSimBus plpSimBus;
 	
 	@BeforeClass
@@ -43,7 +56,8 @@ public class PLPSimBusTest
 	public void setup()
 	{
 		memModule = new MemModule(100L, 200, true);
-		addCallbackTracker.wasCalled = false;
+		mockModule = new MockModule();
+		addCallbackTracker.reset();
 		plpSimBus = new PLPSimBus();
 	}
 	
@@ -58,7 +72,7 @@ public class PLPSimBusTest
 		
 		assertFalse(errorOccurred);
 		assertEquals(expectedNumberOfModules, numberOfModulesAfter);
-		assertTrue(addCallbackTracker.wasCalled);
+		assertTrue(addCallbackTracker.wasCalled());
 		assertSame(memModule, plpSimBus.getRefMod(index));
 	}
 	
@@ -80,7 +94,60 @@ public class PLPSimBusTest
 		
 		assertTrue(errorOccurred);
 		assertEquals(numberOfModulesPrior, numberOfModulesAfter);
-		assertFalse(addCallbackTracker.wasCalled);
+		assertFalse(addCallbackTracker.wasCalled());
+	}
+	
+	@Test
+	public void testAddMultipleValidModules()
+	{
+		int numberOfModulesPrior = plpSimBus.getNumOfMods();
+		int index1 = plpSimBus.add(memModule);
+		int index2 = plpSimBus.add(mockModule);
+		int expectedOfModules = numberOfModulesPrior + 2;
+		int numberOfModulesAfter = plpSimBus.getNumOfMods();
+		
+		boolean errorOccurred = (index1 == -1) || (index2 == -1);
+		
+		assertFalse(errorOccurred);
+		assertEquals(expectedOfModules, numberOfModulesAfter);
+		assertEquals(2, addCallbackTracker.callCount);
+	}
+	
+	@Test
+	public void testAddMultipleEquivalentModules()
+	{
+		int numberOfModulesPrior = plpSimBus.getNumOfMods();
+		MemModule memModule1 = new MemModule(0, 512, true);
+		MemModule memModule2 = new MemModule(0, 512, true);
+		int index1 = plpSimBus.add(memModule1);
+		int index2 = plpSimBus.add(memModule2);
+		int expectedOfModules = numberOfModulesPrior + 2;
+		int numberOfModulesAfter = plpSimBus.getNumOfMods();
+		
+		boolean errorOccurred = (index1 == -1) || (index2 == -1);
+		
+		assertFalse(errorOccurred);
+		assertEquals(expectedOfModules, numberOfModulesAfter);
+		assertEquals(2, addCallbackTracker.callCount);
+	}
+	
+	@Test
+	public void testAddMultipleInstances()
+	{
+		int numberOfModulesPrior = plpSimBus.getNumOfMods();
+		int index1 = plpSimBus.add(memModule);
+		int index2 = plpSimBus.add(memModule);
+		int expectedOfModules = numberOfModulesPrior + 1;
+		int numberOfModulesAfter = plpSimBus.getNumOfMods();
+		
+		boolean errorOccurredOn1 = (index1 == -1);
+		boolean errorOccurredOn2 = (index2 == -1);
+
+		assertFalse(errorOccurredOn1);
+		assertTrue(errorOccurredOn2);
+		assertEquals(expectedOfModules, numberOfModulesAfter);
+		assertEquals(1, addCallbackTracker.callCount);
+		assertSame(memModule, plpSimBus.getRefMod(index1));
 	}
 	
 	/** Checks to see if remove() and getNumOfMods() is working or not */
