@@ -441,6 +441,31 @@ public class PLPSimBusTest
 	}
 	
 	@Test
+	public void testWriteToEnabledModuleInRangeVaryValue()
+	{
+		int addedIndex = plpSimBus.add(memModule);
+		plpSimBus.enableMod(addedIndex);
+		
+		//100L to 200
+		long inclusiveLowerBound = 100L;
+		long inclusiveUpperBound = 200L;
+		long mediumBound = 150L;
+		
+		String stringObject = new String();
+		Double doubleObject = new Double(50);
+		Boolean booleanObject= Boolean.TRUE;
+		
+		assertEquals(Constants.PLP_OK, plpSimBus.write(inclusiveLowerBound, stringObject, false));
+		assertEquals(Constants.PLP_OK, plpSimBus.write(mediumBound, doubleObject, false));
+		assertEquals(Constants.PLP_OK, plpSimBus.write(inclusiveUpperBound, booleanObject, false));
+		
+		//Should read correct value
+		assertEquals(stringObject, plpSimBus.read(inclusiveUpperBound));
+		assertEquals(doubleObject, plpSimBus.read(mediumBound));
+		assertEquals(booleanObject, plpSimBus.read(inclusiveUpperBound));
+	}
+	
+	@Test
 	public void testIsInitialized()
 	{
 		int index = plpSimBus.add(memModule);
