@@ -31,7 +31,11 @@ public class PLPSimBusTest
 		assertNotNull(index);
 	}
 	
-	// using require getNumOfMods
+	/**
+	 * This test relies on {@link PLPSimBus#getNumOfMods()}. If
+	 * {@link PLPSimBus#getNumOfMods()} fails in conjunction with this test, it is
+	 * possible that the problem resides there rather than in this method.
+	 */
 	@Test
 	public void testAddNull()
 	{
