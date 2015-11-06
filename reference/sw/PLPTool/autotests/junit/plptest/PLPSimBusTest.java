@@ -59,32 +59,40 @@ public class PLPSimBusTest
 		assertFalse(errorOccurred);
 		assertEquals(expectedNumberOfModules, numberOfModulesAfter);
 		assertTrue(addCallbackTracker.wasCalled);
+		assertSame(memModule, plpSimBus.getRefMod(index));
 	}
 	
 	/**
 	 * This test relies on {@link PLPSimBus#getNumOfMods()}. If
 	 * {@link PLPSimBus#getNumOfMods()} fails in conjunction with this test, it is
 	 * possible that the problem resides there rather than in this method.
+	 * 
+	 * Null is an invalid value for a module, and should not be added
 	 */
 	@Test
 	public void testAddNull()
 	{
-		memModule = null;
-		assertEquals(plpSimBus.getNumOfMods(), 0);
-		int index = plpSimBus.add(memModule);
-		assertEquals(plpSimBus.getNumOfMods(), 0);
+		int numberOfModulesPrior = plpSimBus.getNumOfMods();
+		int index = plpSimBus.add(null);
+		int numberOfModulesAfter = plpSimBus.getNumOfMods();
+		
+		boolean errorOccurred = (index == -1);
+		
+		assertTrue(errorOccurred);
+		assertEquals(numberOfModulesPrior, numberOfModulesAfter);
+		assertFalse(addCallbackTracker.wasCalled);
 	}
 	
 	/** Checks to see if remove() and getNumOfMods() is working or not */
 	@Test
 	public void testRemove()
 	{
-		int indx = plpSimBus.add(memModule);
+		int numberOfModulesPrior = plpSimBus.getNumOfMods();
+		int index = plpSimBus.add(memModule);
+		int result = plpSimBus.remove(index);
 		
-		int res = plpSimBus.remove(indx);
-		
-		assertEquals(res, Constants.PLP_OK);
-		assertEquals(plpSimBus.getNumOfMods(), 0);
+		assertEquals(result, Constants.PLP_OK);
+		assertEquals(numberOfModulesPrior, plpSimBus.getNumOfMods());
 	}
 	
 	// removing a module not already in simbus
