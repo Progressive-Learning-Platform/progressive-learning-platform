@@ -214,9 +214,6 @@ public final class ProjectDriver {
         	if(g) 
         		initializeGraphicalComponents();
         }
-
-        if(!CallbackRegistry.INITIALIZED)
-            CallbackRegistry.setup(null);
     }
 
     private void validateJavaVersion()
