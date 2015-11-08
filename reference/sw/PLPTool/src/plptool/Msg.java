@@ -198,23 +198,21 @@ public class Msg
 	 */
 	public static void warning(String warningStr, Object objIdentifier)
 	{
-		if (suppressWarnings)
-			return;
-		
-		for (PrintStream stream : logStreams)
-			logWarning(stream, warningStr, objIdentifier);
+		if (!suppressWarnings)
+		{
+			for (PrintStream stream : logStreams)
+				logWarning(stream, warningStr, objIdentifier);
+		}
 	}
 	
 	private static void logWarning(PrintStream stream, String warningStr,
 			Object objIdentifier)
 	{
-		if (stream == null)
-			return;
-		
 		try
 		{
-			
-			if (objIdentifier != null)
+			if (stream == null)
+				return;
+			else if (objIdentifier != null)
 				if (output == null)
 					stream.println("[WARNING] " + objIdentifier.toString() + ": "
 							+ warningStr.replaceAll("<[^>]*>", ""));
@@ -254,22 +252,21 @@ public class Msg
 	 */
 	public static void info(String infoStr, Object objIdentifier)
 	{
-		if (silent)
-			return;
-		
-		for (PrintStream stream : logStreams)
-			logInfo(stream, infoStr, objIdentifier);
+		if (!silent)
+		{
+			for (PrintStream stream : logStreams)
+				logInfo(stream, infoStr, objIdentifier);
+		}
 	}
 	
 	private static void logInfo(PrintStream stream, String infoStr, Object objIdentifier)
 	{
-		if (stream == null)
-			return;
 		
 		try
 		{
-			
-			if (objIdentifier != null)
+			if (stream == null)
+				return;
+			else if (objIdentifier != null)
 				if (output == null)
 					stream.println(objIdentifier.toString() + ": "
 							+ infoStr.replaceAll("<[^>]*>", ""));
@@ -290,7 +287,6 @@ public class Msg
 								+ infoStr + "</font><br />", 0, 0, null);
 				output.setCaretPosition(doc.getLength());
 			}
-			
 		}
 		catch (Exception e)
 		{
