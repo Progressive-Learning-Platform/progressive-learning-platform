@@ -361,30 +361,6 @@ public class Msg {
     }
 
     /**
-     * Debug marking.
-     */
-    public static void mark() {
-    	// TODO: improve documentation. What is this for? What does it do?
-        if(LogOutStream == null) return;
-        
-        try {
-
-        if(output == null)
-            LogOutStream.println("[DEBUG] " + markCounter + " We're here!");
-        else {
-            kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
-                        + ": <font color=darkgray>mark: " + markCounter + "</font><br />", 0, 0, null);
-                    output.setCaretPosition(doc.getLength());
-        }
-
-        } catch(Exception e) {
-            
-        }
-
-        markCounter++;
-    }
-
-    /**
      * Print the stack trace if debug level is >= 10
      *
      * @param e
@@ -393,28 +369,6 @@ public class Msg {
     	// TODO: integrate with Logger
         if(Constants.debugLevel >= 10)
             e.printStackTrace();
-    }
-
-    /**
-     * Shorthand for System.out.println
-     *
-     * @param str String to print
-     */
-    public static void sysPrintln(String str) {
-    	// TODO: replace all instances of this call with either System.out.println or Msg.println(), or a Logger call
-    	// TODO: deprecate this method
-    	System.out.println(str);
-    }
-
-    /**
-     * Shorthand for System.out.print
-     *
-     * @param str String to print
-     */
-    public static void sysPrint(String str) {
-    	// TODO: replace all instances of this call with either System.out.print or Msg.print(), or a Logger call
-        // TODO: deprecate this method
-    	System.out.print(str);
     }
 
     /**
@@ -448,7 +402,7 @@ public class Msg {
      *
      * @param path Path to output file
      */
-    public static void setLogErrStreamFile(String path) {
+	public static void setLogErrStreamFile(String path) {
         File f = new File(path);
         try {
             LogErrStream = new PrintStream(new FileOutputStream(f));
@@ -457,32 +411,6 @@ public class Msg {
                     "' for writing, reverting to standard err.");
             LogErrStream = System.err;
         }
-    }
-
-    /**
-     * Redirect output stream to an alternative print stream
-     *
-     * @param str
-     */
-    public static void setLogOutStream(PrintStream str) {
-        LogOutStream = str;
-    }
-
-    /**
-     * Redirect error stream to an alternative print stream
-     *
-     * @param str
-     */
-    public static void setLogErrStream(PrintStream str) {
-        LogErrStream = str;
-    }
-
-    /**
-     * Reset output streams to standard output and error streams
-     */
-    public static void resetStreams() {
-        LogOutStream = System.out;
-        LogErrStream = System.err;
     }
 }
 
