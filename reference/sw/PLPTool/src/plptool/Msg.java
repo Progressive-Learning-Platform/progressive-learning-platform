@@ -19,6 +19,8 @@
 package plptool;
 
 import java.awt.Font;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -95,6 +97,17 @@ public class Msg {
     	
     	errorStreams = new HashSet<>();
     	errorStreams.add(System.err);
+    	
+    	try
+		{
+			PrintStream persistantLog = new PrintStream(new FileOutputStream("log.txt", true));
+	    	logStreams.add(persistantLog);
+	    	errorStreams.add(persistantLog);
+		}
+		catch (FileNotFoundException e)
+		{
+			System.err.println("Unable to open log file log.txt");
+		}
     }
 
     public static void setOutput(JTextPane newOutput) {
