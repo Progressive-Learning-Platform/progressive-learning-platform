@@ -32,6 +32,30 @@ import java.io.FileOutputStream;
  * @author wira
  */
 public class Msg {
+    /**
+     * Last object that was responsible for invoking an Error messsage.
+     */
+    public static Object lastPartyResponsible;
+
+    /**
+     * The error code of the last error.
+     */
+    public static int lastError = 0;
+
+    /**
+     * Error counter.
+     */
+    public static int errorCounter = 0;
+
+    /**
+     * Silent mode.
+     */
+    public static boolean silent = false;
+
+    /**
+     * Suppress warnings.
+     */
+    public static boolean suppressWarnings = false;
 
     /**
      * JTextPane Msg should print its output to.
@@ -54,26 +78,6 @@ public class Msg {
     private static String preformattedStringBuffer = "";
 
     /**
-     * Last object that was responsible for invoking an Error messsage.
-     */
-    public static Object lastPartyResponsible;
-
-    /**
-     * The error code of the last error.
-     */
-    public static int lastError = 0;
-
-    /**
-     * Error counter.
-     */
-    public static int errorCounter = 0;
-
-    /**
-     * Silent mode.
-     */
-    public static boolean silent = false;
-
-    /**
      * Log output stream
      */
     private static PrintStream LogOutStream = System.out;
@@ -82,11 +86,6 @@ public class Msg {
      * Log error stream
      */
     private static PrintStream LogErrStream = System.err;
-
-    /**
-     * Suppress warnings.
-     */
-    public static boolean suppressWarnings = false;
 
     public static void setOutput(JTextPane newOutput) {
         output = newOutput;
