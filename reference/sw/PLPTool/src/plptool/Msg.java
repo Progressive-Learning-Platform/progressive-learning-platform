@@ -64,11 +64,6 @@ public class Msg {
     public static int lastError = 0;
 
     /**
-     * Mark counter. Debug purposes only.
-     */
-    public static int markCounter = 0;
-
-    /**
      * Error counter.
      */
     public static int errorCounter = 0;
@@ -320,7 +315,7 @@ public class Msg {
      *
      * @param appendStr String to append
      */
-    public static void appendLine(String appendStr) {
+	public static void appendLine(String appendStr) {
         preformattedStringBuffer += appendStr + "\n";
     }
 
