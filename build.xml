@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <project basedir="." default="build" name="plpTool">
+    <property environment="env"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="plpTool.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="reference/sw/PLPTool/lib/commons-compress-1.1/commons-compress-1.1.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/RXTXcomm.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/swingx-0.9.2.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/PLPThirdParty/collections-generic-4.01.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/PLPThirdParty/jung-algorithms-2.0.1.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/PLPThirdParty/jung-api-2.0.1.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/PLPThirdParty/jung-graph-impl-2.0.1.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/PLPThirdParty/jung-visualization-2.0.1.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/PLPThirdParty/JXTextPane.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/PLPThirdParty/PLPTimingDiagram.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/absolutelayout/AbsoluteLayout.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/CopyLibs/org-netbeans-modules-java-j2seproject-copylibstask.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/junit/junit-3.8.2.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/junit_4/hamcrest-core.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/junit_4/junit-4.6.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/swing-app-framework/appframework-1.0.3.jar"/>
+        <pathelement location="reference/sw/PLPTool/lib/swing-app-framework/swing-worker-1.1.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="reference/sw/PLPTool/src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="reference/sw/PLPTool/autotests">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="reference/sw/PLPTool/src"/>
+            <src path="reference/sw/PLPTool/autotests"/>
+            <classpath refid="plpTool.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target name="ArchRegistryTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.plptest.ArchRegistryTest" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="Main (23)">
+        <java classname="org.plp.web.Main" failonerror="true" fork="yes">
+            <classpath refid="plpTool.classpath"/>
+        </java>
+    </target>
+    <target name="PLPSimBusTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.plptest.PLPSimBusTest" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="PLPSimBusTest.setup">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.plptest.PLPSimBusTest" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="PLPTestSuite">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.PLPTestSuite" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="run" depends="build">
+        <java classname="plptool.gui.PLPToolApp" failonerror="true" fork="yes">
+            <classpath refid="plpTool.classpath"/>
+        </java>
+    </target>
+    <target name="PLPToolBoxSystemTesting">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.plpToolBox.PLPToolBoxSystemTesting" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="PLPToolBoxSystemTesting.readLineTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.plpToolBox.PLPToolBoxSystemTesting" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="ProjectDriverAlterProjectTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.plp.core.projectdriver.ProjectDriverAlterProjectTest" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="RegisterArchitectureTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="junit.plp.architecture.registry.RegisterArchitectureTest" todir="${junit.output.dir}"/>
+            <classpath refid="plpTool.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
