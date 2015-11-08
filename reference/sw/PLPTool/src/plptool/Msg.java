@@ -18,13 +18,14 @@
 
 package plptool;
 
-import javax.swing.JTextPane;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.HTMLDocument;
 import java.awt.Font;
 import java.io.PrintStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.swing.JTextPane;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 /**
  * PLPTool messaging utility class.
@@ -80,12 +81,21 @@ public class Msg {
     /**
      * Log output stream
      */
-    private static PrintStream LogOutStream = System.out;
+    private static Set<PrintStream> logStreams;
 
     /**
      * Log error stream
      */
-    private static PrintStream LogErrStream = System.err;
+    private static Set<PrintStream> errorStreams;
+    
+    static
+    {
+    	logStreams = new HashSet<>();
+    	logStreams.add(System.out);
+    	
+    	errorStreams = new HashSet<>();
+    	errorStreams.add(System.err);
+    }
 
     public static void setOutput(JTextPane newOutput) {
         output = newOutput;
@@ -105,12 +115,19 @@ public class Msg {
      * @return The error code for further handling.
      */
     public static int error(String errStr, int errorCode, Object objIdentifier) {
-        if(LogErrStream == null) return errorCode;
+        for (PrintStream stream : errorStreams)
+        	logError(stream, errStr, errorCode, objIdentifier);
 
+        lastError = errorCode;
+        lastPartyResponsible = objIdentifier;
+        return errorCode;
+    }
+    
+    private static void logError(PrintStream stream, String errStr, int errorCode, Object objIdentifier) {
         try {   
             if(objIdentifier != null) {
                 if(output == null || errorCode >= 1024)
-                    LogErrStream.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr.replaceAll("<[^>]*>", ""));
+                	stream.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr.replaceAll("<[^>]*>", ""));
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
                             (errorCode == -1 ? "" : " #"+errorCode) + " " + objIdentifier.toString() + ": " + errStr + "\n"
@@ -119,7 +136,7 @@ public class Msg {
                 }
             } else {
                 if(output == null || errorCode >= 1024)
-                    LogErrStream.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr.replaceAll("<[^>]*>", ""));
+                	stream.println("[ERROR]" + (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr.replaceAll("<[^>]*>", ""));
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[ERROR]</font></b> " +
                             (errorCode == -1 ? "" : " #"+errorCode) + " " + errStr + "\n"
@@ -130,11 +147,8 @@ public class Msg {
             if(Config.cfgErrorDialog)
                 PLPToolbox.showErrorDialog(null, "#" + errorCode + ": " + errStr);
         } catch(Exception e) {
+        	// TODO: handle error and/or log it - do not suppress
         }
-
-        lastError = errorCode;
-        lastPartyResponsible = objIdentifier;
-        return errorCode;
     }
 
     /**
@@ -145,13 +159,20 @@ public class Msg {
      * @param objIdentifier A reference to the offending object.
      */
     public static void warning(String warningStr, Object objIdentifier) {
-        if(suppressWarnings || LogOutStream == null) return;
+        if(suppressWarnings) return;
+
+        for (PrintStream stream : logStreams)
+        	logWarning(stream, warningStr, objIdentifier);
+    }
+    
+    private static void logWarning(PrintStream stream, String warningStr, Object objIdentifier) {
+        if(stream == null) return;
 
         try {
 
         if(objIdentifier != null)
             if(output == null)
-                LogOutStream.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr.replaceAll("<[^>]*>", ""));
+            	stream.println("[WARNING] " + objIdentifier.toString() + ": " + warningStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
                         + objIdentifier.toString() + ": " + warningStr + "<br />", 0, 0, null);
@@ -159,14 +180,14 @@ public class Msg {
             }
         else
             if(output == null)
-                LogOutStream.println("[WARNING] " + warningStr.replaceAll("<[^>]*>", ""));
+            	stream.println("[WARNING] " + warningStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(), "<b><font color=red>[WARNING]</font></b> "
                         + warningStr + "<br />", 0, 0, null);
                 output.setCaretPosition(doc.getLength());
             }
         } catch(Exception e) {
-            
+        	// TODO: handle error and/or log it - do not suppress
         }
     }
 
@@ -177,13 +198,20 @@ public class Msg {
      * @param objIdentifier The object invoking this call.
      */
     public static void info(String infoStr, Object objIdentifier) {
-        if(silent || LogOutStream == null) return;
+        if(silent) return;
+
+        for (PrintStream stream : logStreams)
+        	logInfo(stream, infoStr, objIdentifier);
+    }
+    
+    private static void logInfo(PrintStream stream, String infoStr, Object objIdentifier) {
+        if(stream == null) return;
 
         try {
 
         if(objIdentifier != null)
             if(output == null)
-                LogOutStream.println(objIdentifier.toString() + ": " + infoStr.replaceAll("<[^>]*>", ""));
+            	stream.println(objIdentifier.toString() + ": " + infoStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(),
                         "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + objIdentifier.toString() + ": " + infoStr + "</font><br />", 0, 0, null);
@@ -191,7 +219,7 @@ public class Msg {
             }
         else
             if(output == null)
-                LogOutStream.println(infoStr.replaceAll("<[^>]*>", ""));
+            	stream.println(infoStr.replaceAll("<[^>]*>", ""));
             else {
                 kit.insertHTML(doc, doc.getLength(),
                         "<font face=\"sans-serif\"><font color=gray>&bull;</font> " + infoStr + "</font><br />", 0, 0, null);
@@ -199,7 +227,7 @@ public class Msg {
             }
 
         } catch(Exception e) {
-            
+        	// TODO: handle error and/or log it - do not suppress
         }
     }
 
@@ -212,13 +240,16 @@ public class Msg {
      * @param objIdentifier The object invoking this call.
      */
     public static void debug(String debugStr, int requestedDebugLevel, Object objIdentifier) {
-        if(LogOutStream == null) return;
-
-        if(requestedDebugLevel <= Constants.debugLevel) {
+        for (PrintStream stream : logStreams)
+        	logDebug(stream, debugStr, requestedDebugLevel, objIdentifier);
+    }
+    
+    private static void logDebug(PrintStream stream, String debugStr, int requestedDebugLevel, Object objIdentifier) {
+        if(stream != null && requestedDebugLevel <= Constants.debugLevel) {
             try {
 
             if(objIdentifier != null) {
-                LogOutStream.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
+            	stream.println("[DEBUG] " + objIdentifier.toString() + ": " + debugStr);
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
                         + objIdentifier.toString() + ": <font color=\"#444444\">" + debugStr + "</font><br />", 0, 0, null);
@@ -226,7 +257,7 @@ public class Msg {
                 }
             }
             else {
-                LogOutStream.println("[DEBUG] " + debugStr);
+            	stream.println("[DEBUG] " + debugStr);
                 if(output != null) {
                     kit.insertHTML(doc, doc.getLength(), "<b><font color=gray>[DEBUG]</font></b> "
                         + "<font color=\"#444444\">" + debugStr + "</font><br />", 0, 0, null);
@@ -235,7 +266,7 @@ public class Msg {
             }
 
             } catch (Exception e) {
-                
+            	// TODO: handle error and/or log it - do not suppress
             }
         }
     }
@@ -246,20 +277,24 @@ public class Msg {
      * @param msgStr Message string
      */
     public static void println(String msgStr) {
-        if(silent || LogOutStream == null) return;
-
         try {
+        	if(!silent)
+            {
+        		if(output == null)
+        		{
+        			String message = msgStr.replaceAll("<[^>]*>", "");
+        			for (PrintStream stream : logStreams)
+        				stream.println(message);
+        		}
+                else {
+                    kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
+                                msgStr.replace(" ", "&nbsp;") + "</font><br />", 0, 0, null);
+                    output.setCaretPosition(doc.getLength());
+                }
 
-        if(output == null)
-            LogOutStream.println(msgStr.replaceAll("<[^>]*>", ""));
-        else {
-            kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
-                        msgStr.replace(" ", "&nbsp;") + "</font><br />", 0, 0, null);
-            output.setCaretPosition(doc.getLength());
-        }
-
+             }
         } catch(Exception e) {
-
+        	// TODO: handle error and/or log it - do not suppress
         }
     }
 
@@ -269,20 +304,24 @@ public class Msg {
      * @param msgStr Message string
      */
     public static void print(String msgStr) {
-        if(silent || LogOutStream == null) return;
-
         try {
+        	if(!silent)
+            {
+        		if(output == null)
+        		{
+        			String message = msgStr.replaceAll("<[^>]*>", "");
+        			for (PrintStream stream : logStreams)
+        				stream.print(message);
+        		}
+                else {
+                	kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
+                            msgStr.replace(" ", "&nbsp;") + "</font>", 0, 0, null);
+                	output.setCaretPosition(doc.getLength());
+                }
 
-        if(output == null)
-            LogOutStream.print(msgStr.replaceAll("<[^>]*>", ""));
-        else {
-            kit.insertHTML(doc, doc.getLength(), "<font face=monospaced size=12pt>" +
-                        msgStr.replace(" ", "&nbsp;") + "</font>", 0, 0, null);
-            output.setCaretPosition(doc.getLength());
-        }
-
+             }
         } catch(Exception e) {
-
+        	// TODO: handle error and/or log it - do not suppress
         }
     }
 
@@ -292,20 +331,23 @@ public class Msg {
      * @param message Preformatted string
      */
 	public static void printPreformattedString(String message) {
-        if(silent || LogOutStream == null) return;
-
         try {
+        	if(!silent)
+            {
+        		if(output == null)
+        		{
+        			for (PrintStream stream : logStreams)
+        				stream.println(message);
+        		}
+                else {
+                	kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
+                            message + "</font></pre>", 0, 0, null);
+                	output.setCaretPosition(doc.getLength());
+                }
 
-        if(output == null)
-            LogOutStream.println(message);
-        else {
-            kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
-                        message + "</font></pre>", 0, 0, null);
-            output.setCaretPosition(doc.getLength());
-        }
-
+             }
         } catch(Exception e) {
-
+        	// TODO: handle error and/or log it - do not suppress
         }
     }
 
@@ -336,21 +378,24 @@ public class Msg {
      */
     public static void printBuffer() {
     	// TODO: can combine with printPreformattedString()?
-        if(silent || LogOutStream == null) return;
-
         try {
-
-        if(output == null)
-            LogOutStream.print(preformattedStringBuffer);
-        else {
-            kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
-                        preformattedStringBuffer + "</font></pre>", 0, 0, null);
-            output.setCaretPosition(doc.getLength());
-        }
-        preformattedStringBuffer = "";
-
+        	if(!silent)
+            {
+        		if(output == null)
+        		{
+        			for (PrintStream stream : logStreams)
+        				stream.print(preformattedStringBuffer);
+        		}
+                else {
+                	kit.insertHTML(doc, doc.getLength(), "<pre><font face=monospaced size=10pt>" +
+	                        preformattedStringBuffer + "</font></pre>", 0, 0, null);
+                	output.setCaretPosition(doc.getLength());
+                }
+        		
+        		preformattedStringBuffer = "";
+             }
         } catch(Exception e) {
-            preformattedStringBuffer = "";
+        	preformattedStringBuffer = "";
         }
     }
 
@@ -373,38 +418,6 @@ public class Msg {
     public static void trace(Exception e) {
         if(Constants.debugLevel >= 2)
             e.printStackTrace();
-    }
-
-    /**
-     * Redirect output stream to a file
-     *
-     * @param path Path to output file
-     */
-    public static void setLogOutStreamFile(String path) {
-        File f = new File(path);
-        try {
-            LogOutStream = new PrintStream(new FileOutputStream(f));
-        } catch(Exception e) {
-            System.err.println("Failed to open '" + f.getAbsolutePath() +
-                    "' for writing, reverting to standard out.");
-            LogOutStream = System.out;
-        }
-    }
-
-    /**
-     * Redirect error stream to a file
-     *
-     * @param path Path to output file
-     */
-	public static void setLogErrStreamFile(String path) {
-        File f = new File(path);
-        try {
-            LogErrStream = new PrintStream(new FileOutputStream(f));
-        } catch(Exception e) {
-            System.err.println("Failed to open '" + f.getAbsolutePath() +
-                    "' for writing, reverting to standard err.");
-            LogErrStream = System.err;
-        }
     }
 }
 
