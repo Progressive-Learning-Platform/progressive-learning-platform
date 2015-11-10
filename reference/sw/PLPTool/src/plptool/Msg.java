@@ -135,8 +135,16 @@ public class Msg
 	 */
 	public static int error(String errStr, int errorCode, Object objIdentifier)
 	{
+		String pre = "<b><font color=red>[ERROR]</font></b> "
+				+ (errorCode == -1 ? "" : " #" + errorCode) + " ";
+		String post = errStr + "\n";
+		printMessageToGUI(pre, objIdentifier, post);
+		
 		for (PrintStream stream : errorStreams)
 			logError(stream, errStr, errorCode, objIdentifier);
+		
+		if (Config.cfgErrorDialog)
+			PLPToolbox.showErrorDialog(null, "#" + errorCode + ": " + errStr);
 		
 		lastError = errorCode;
 		lastPartyResponsible = objIdentifier;
@@ -149,37 +157,12 @@ public class Msg
 		try
 		{
 			if (objIdentifier != null)
-			{
-				if (output == null || errorCode >= 1024)
-					stream.println("[ERROR]" + (errorCode == -1 ? "" : " #" + errorCode)
-							+ " " + objIdentifier.toString() + ": "
-							+ errStr.replaceAll("<[^>]*>", ""));
-				if (output != null)
-				{
-					kit.insertHTML(doc, doc.getLength(),
-							"<b><font color=red>[ERROR]</font></b> "
-									+ (errorCode == -1 ? "" : " #" + errorCode) + " "
-									+ objIdentifier.toString() + ": " + errStr + "\n", 0,
-							0, null);
-					output.setCaretPosition(doc.getLength());
-				}
-			}
+				stream.println("[ERROR]" + (errorCode == -1 ? "" : " #" + errorCode)
+						+ " " + objIdentifier.toString() + ": "
+						+ errStr.replaceAll("<[^>]*>", ""));
 			else
-			{
-				if (output == null || errorCode >= 1024)
-					stream.println("[ERROR]" + (errorCode == -1 ? "" : " #" + errorCode)
-							+ " " + errStr.replaceAll("<[^>]*>", ""));
-				if (output != null)
-				{
-					kit.insertHTML(doc, doc.getLength(),
-							"<b><font color=red>[ERROR]</font></b> "
-									+ (errorCode == -1 ? "" : " #" + errorCode) + " "
-									+ errStr + "\n", 0, 0, null);
-					output.setCaretPosition(doc.getLength());
-				}
-			}
-			if (Config.cfgErrorDialog)
-				PLPToolbox.showErrorDialog(null, "#" + errorCode + ": " + errStr);
+				stream.println("[ERROR]" + (errorCode == -1 ? "" : " #" + errorCode)
+						+ " " + errStr.replaceAll("<[^>]*>", ""));
 		}
 		catch (Exception e)
 		{
@@ -200,8 +183,29 @@ public class Msg
 	{
 		if (!suppressWarnings)
 		{
+			String pre = "<b><font color=red>[WARNING]</font></b> ";
+			String post = warningStr + "<br />";
+			printMessageToGUI(pre, objIdentifier, post);
+			
 			for (PrintStream stream : logStreams)
 				logWarning(stream, warningStr, objIdentifier);
+		}
+	}
+	
+	private static void printMessageToGUI(String pre, Object id, String post)
+	{
+		try
+		{
+			if (output != null)
+			{
+				String center = (id != null) ? id.toString() + ": " : "";
+				kit.insertHTML(doc, doc.getLength(), pre + center + post, 0, 0, null);
+				output.setCaretPosition(doc.getLength());
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO: handle error and/or log it - do not suppress
 		}
 	}
 	
@@ -213,28 +217,10 @@ public class Msg
 			if (stream == null)
 				return;
 			else if (objIdentifier != null)
-				if (output == null)
-					stream.println("[WARNING] " + objIdentifier.toString() + ": "
-							+ warningStr.replaceAll("<[^>]*>", ""));
-				else
-				{
-					kit.insertHTML(
-							doc,
-							doc.getLength(),
-							"<b><font color=red>[WARNING]</font></b> "
-									+ objIdentifier.toString() + ": " + warningStr
-									+ "<br />", 0, 0, null);
-					output.setCaretPosition(doc.getLength());
-				}
-			else if (output == null)
-				stream.println("[WARNING] " + warningStr.replaceAll("<[^>]*>", ""));
+				stream.println("[WARNING] " + objIdentifier.toString() + ": "
+						+ warningStr.replaceAll("<[^>]*>", ""));
 			else
-			{
-				kit.insertHTML(doc, doc.getLength(),
-						"<b><font color=red>[WARNING]</font></b> " + warningStr
-								+ "<br />", 0, 0, null);
-				output.setCaretPosition(doc.getLength());
-			}
+				stream.println("[WARNING] " + warningStr.replaceAll("<[^>]*>", ""));
 		}
 		catch (Exception e)
 		{
@@ -254,6 +240,10 @@ public class Msg
 	{
 		if (!silent)
 		{
+			String pre = "<font face=\"sans-serif\"><font color=gray>&bull;</font> ";
+			String post = infoStr + "</font><br />";
+			printMessageToGUI(pre, objIdentifier, post);
+			
 			for (PrintStream stream : logStreams)
 				logInfo(stream, infoStr, objIdentifier);
 		}
@@ -261,32 +251,16 @@ public class Msg
 	
 	private static void logInfo(PrintStream stream, String infoStr, Object objIdentifier)
 	{
-		
 		try
 		{
 			if (stream == null)
 				return;
 			else if (objIdentifier != null)
-				if (output == null)
-					stream.println(objIdentifier.toString() + ": "
-							+ infoStr.replaceAll("<[^>]*>", ""));
-				else
-				{
-					kit.insertHTML(doc, doc.getLength(),
-							"<font face=\"sans-serif\"><font color=gray>&bull;</font> "
-									+ objIdentifier.toString() + ": " + infoStr
-									+ "</font><br />", 0, 0, null);
-					output.setCaretPosition(doc.getLength());
-				}
-			else if (output == null)
-				stream.println(infoStr.replaceAll("<[^>]*>", ""));
+				stream.println(objIdentifier.toString() + ": "
+						+ infoStr.replaceAll("<[^>]*>", ""));
 			else
-			{
-				kit.insertHTML(doc, doc.getLength(),
-						"<font face=\"sans-serif\"><font color=gray>&bull;</font> "
-								+ infoStr + "</font><br />", 0, 0, null);
-				output.setCaretPosition(doc.getLength());
-			}
+				stream.println(infoStr.replaceAll("<[^>]*>", ""));
+			
 		}
 		catch (Exception e)
 		{
@@ -308,47 +282,28 @@ public class Msg
 	public static void debug(String debugStr, int requestedDebugLevel,
 			Object objIdentifier)
 	{
-		for (PrintStream stream : logStreams)
-			logDebug(stream, debugStr, requestedDebugLevel, objIdentifier);
+		if (requestedDebugLevel <= Constants.debugLevel)
+		{
+			String pre = "<b><font color=gray>[DEBUG]</font></b> ";
+			String post = "<font color=\"#444444\">" + debugStr + "</font><br />";
+			printMessageToGUI(pre, objIdentifier, post);
+			
+			for (PrintStream stream : logStreams)
+				logDebug(stream, debugStr, objIdentifier);
+		}
 	}
 	
-	private static void logDebug(PrintStream stream, String debugStr,
-			int requestedDebugLevel, Object objIdentifier)
+	private static void logDebug(PrintStream stream, String debugStr, Object objIdentifier)
 	{
-		if (stream != null && requestedDebugLevel <= Constants.debugLevel)
+		if (stream != null)
 		{
 			try
 			{
-				
 				if (objIdentifier != null)
-				{
 					stream.println("[DEBUG] " + objIdentifier.toString() + ": "
 							+ debugStr);
-					if (output != null)
-					{
-						kit.insertHTML(
-								doc,
-								doc.getLength(),
-								"<b><font color=gray>[DEBUG]</font></b> "
-										+ objIdentifier.toString()
-										+ ": <font color=\"#444444\">" + debugStr
-										+ "</font><br />", 0, 0, null);
-						output.setCaretPosition(doc.getLength());
-					}
-				}
 				else
-				{
 					stream.println("[DEBUG] " + debugStr);
-					if (output != null)
-					{
-						kit.insertHTML(doc, doc.getLength(),
-								"<b><font color=gray>[DEBUG]</font></b> "
-										+ "<font color=\"#444444\">" + debugStr
-										+ "</font><br />", 0, 0, null);
-						output.setCaretPosition(doc.getLength());
-					}
-				}
-				
 			}
 			catch (Exception e)
 			{
@@ -369,13 +324,11 @@ public class Msg
 		{
 			if (!silent)
 			{
-				if (output == null)
-				{
-					String message = msgStr.replaceAll("<[^>]*>", "");
-					for (PrintStream stream : logStreams)
-						stream.println(message);
-				}
-				else
+				String message = msgStr.replaceAll("<[^>]*>", "");
+				for (PrintStream stream : logStreams)
+					stream.println(message);
+				
+				if (output != null)
 				{
 					kit.insertHTML(
 							doc,
@@ -406,13 +359,11 @@ public class Msg
 		{
 			if (!silent)
 			{
-				if (output == null)
-				{
-					String message = msgStr.replaceAll("<[^>]*>", "");
-					for (PrintStream stream : logStreams)
-						stream.print(message);
-				}
-				else
+				String message = msgStr.replaceAll("<[^>]*>", "");
+				for (PrintStream stream : logStreams)
+					stream.print(message);
+				
+				if (output != null)
 				{
 					kit.insertHTML(
 							doc,
@@ -445,12 +396,10 @@ public class Msg
 		{
 			if (!silent)
 			{
-				if (output == null)
-				{
-					for (PrintStream stream : logStreams)
-						stream.println(message);
-				}
-				else
+				for (PrintStream stream : logStreams)
+					stream.println(message);
+				
+				if (output != null)
 				{
 					kit.insertHTML(doc, doc.getLength(),
 							"<pre><font face=monospaced size=10pt>" + message
@@ -501,12 +450,10 @@ public class Msg
 		{
 			if (!silent)
 			{
-				if (output == null)
-				{
-					for (PrintStream stream : logStreams)
-						stream.print(preformattedStringBuffer);
-				}
-				else
+				for (PrintStream stream : logStreams)
+					stream.print(preformattedStringBuffer);
+				
+				if (output != null)
 				{
 					kit.insertHTML(doc, doc.getLength(),
 							"<pre><font face=monospaced size=10pt>"
