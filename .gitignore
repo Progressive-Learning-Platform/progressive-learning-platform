@@ -1,2 +1,9 @@
 reference/sw/PLPTool/build/
 reference/sw/PLPTool/dist/
+
+build/
+bin/
+dist/
+
+reference/sw/PLPTool/modtools/
+reference/sw/PLPTool/store/
