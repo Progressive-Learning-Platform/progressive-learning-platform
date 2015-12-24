@@ -68,7 +68,7 @@ public class Text {
             "information of this software." +
             "";
 
-    public static final String manualURI = "http://code.google.com/p/progressive-learning-platform/wiki/UserManual";
+    public static final String manualURI = "http://progressive-learning-platform.github.io/home.html";
     public static final String issueEntryURI = "http://code.google.com/p/progressive-learning-platform/issues/entry";
     public static final String issueTrackerURI = "http://code.google.com/p/progressive-learning-platform/issues/list";
 
