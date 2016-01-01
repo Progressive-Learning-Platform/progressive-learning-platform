@@ -88,7 +88,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         appHomepageLabel.setFont(resourceMap.getFont("appHomepageLabel.font")); // NOI18N
         appHomepageLabel.setForeground(resourceMap.getColor("appHomepageLabel.foreground")); // NOI18N
         appHomepageLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        appHomepageLabel.setText(resourceMap.getString("Application.homepage")); // NOI18N
+        appHomepageLabel.setText("plp.asu.edu"); // NOI18N
         appHomepageLabel.setName("appHomepageLabel"); // NOI18N
         appHomepageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
