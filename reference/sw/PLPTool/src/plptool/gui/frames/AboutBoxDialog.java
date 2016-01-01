@@ -318,7 +318,7 @@ public class AboutBoxDialog extends javax.swing.JDialog {
         Desktop desktop = Desktop.getDesktop();
         if(desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
-                URI uri = new URI("http://plp.okstate.edu");
+                URI uri = new URI("http://plp.asu.edu");
                 desktop.browse(uri);
             } catch(Exception e) {}
         }
