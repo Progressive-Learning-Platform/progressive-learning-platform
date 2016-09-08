@@ -1,0 +1,243 @@
+@font-face {
+  src: url("../../../fonts/Open_Sans/OpenSans-Regular.ttf");
+}
+
+/* Base Settings */
+/*
+  Note: You can't style all text nodes via css, you have to use custom css.
+  Please set the id of the text node with UIConstants.TEXT_COLOR and insert
+  #text css into your stylesheets.
+ */
+.root
+{
+  -fx-background-color: #101112 !important;
+  -fx-font-size: 12px !important;
+  -fx-border-color: rgba(0, 0, 0, 0.5) !important;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+}
+
+.parent, .control, .region, .scroll-pane, .scroll-pane .content, .pane, .border-pane
+{
+  -fx-background-color: #101112 !important;
+  -fx-border-color: rgba(0, 0, 0, 0.5);
+}
+
+.separator .line
+{
+  -fx-background-color: rgba(0, 0, 0, 0.5);
+  -fx-border-color: rgba(0, 0, 0, 0.5);
+  -fx-border-width: 0.083333em;
+}
+
+/*
+  Error settings
+*/
+.text-input.error, .combo-box.error .text-field {
+    -fx-focus-color: #d35244;
+    -fx-faint-focus-color: #d3524422;
+
+    -fx-highlight-fill: -fx-accent;
+    -fx-highlight-text-fill: white;
+    -fx-background-color:
+        -fx-focus-color,
+        -fx-control-inner-background,
+        -fx-faint-focus-color,
+        linear-gradient(from 0px 0px to 0px 5px, derive(#101112, -9%), #101112);
+    -fx-background-insets: -0.2, 1, -1.4, 3;
+    -fx-background-radius: 3, 2, 4, 0;
+    -fx-prompt-text-fill: transparent;
+}
+
+/* Menu: Options Menu */
+#text
+{
+  -fx-fill: #FFFFFF;
+}
+
+.button
+{
+    -fx-background-color: #101112;
+    -fx-text-fill: #FFF;
+    -fx-focus-color: #56B5DB;
+}
+
+.button:hover
+{
+  -fx-background-color: #151718;
+  -fx-text-fill: #56B5DB;
+}
+
+.check-box
+{
+  -fx-text-fill: #FFF;
+}
+
+.check-box .box
+{
+  -fx-background-color: #151718;
+}
+
+.check-box:selected .box
+{
+  -fx-background-color: #56B5DB;
+}
+
+.check-box:selected .mark
+{
+  -fx-background-color: #FFF;
+}
+
+.combo-box, .combo-box .text-input, .combo-box .list-cell
+{
+  -fx-font-weight: bold;
+  -fx-background-color: #151718;
+  -fx-text-fill: #FFF;
+}
+
+.text-input
+{
+  -fx-font-weight: bold;
+  -fx-background-color: #151718;
+  -fx-text-fill: #FFF;
+}
+
+/* Menu Bar */
+.hbox, .vbox, .grid, .flow-tile
+{
+  -fx-background-color: #151718;
+  -fx-border-color: rgba(0, 0, 0, 0.5);
+}
+
+.split-pane
+{
+  -fx-border-color: rgba(0, 0, 0, 0.5);
+  -fx-background-color: #101112;
+}
+
+.split-pane .split-pane-divider
+{
+  -fx-background-color: rgba(0, 0, 0, 0.5);
+  -fx-border-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Tree View */
+.tree-view
+{
+  -fx-background-color: #101112;
+}
+
+.tree-view .tree-cell
+{
+  -fx-background-color: #101112;
+  -fx-text-fill: #FFFFFF;
+}
+
+.tree-view:focused .tree-cell:selected
+{
+  -fx-font-weight: bold;
+  -fx-background-color: #56B5DB !important;
+}
+
+.tree-cell:selected
+{
+  -fx-font-weight: bold;
+  -fx-background-color: #282828 !important;
+}
+
+/* Outline */
+.text-area, .text-area .content
+{
+  -fx-background-color: #101112;
+  -fx-border-color: rgba(0, 0, 0, 0.5);
+}
+
+/*
+  Code Editor (Tab-Pane)
+  The actual editor styling is handled via ace themes
+*/
+.tab-pane *.tab-header-area
+{
+  -fx-border-style: hidden hidden solid hidden;
+  -fx-border-color: rgb(16,17,18);
+}
+
+.tab-pane:top *.tab-header-area, .tab-pane:right *.tab-header-area, .tab-pane:bottom *.tab-header-area, .tab-pane:left *.tab-header-area
+{
+  -fx-background-insets: 0.08em, 0 0 0 0;
+  -fx-padding: 0.08em 0 0 0;
+}
+
+.tab-pane .tab-header-area .tab-header-background
+{
+  -fx-opacity: 0;
+}
+
+.tab-pane
+{
+  -fx-tab-min-width:90px;
+}
+
+.tab-pane .tab
+{
+  -fx-background-color: rgb(30,35,38);
+  -fx-border-width: 2;
+  -fx-border-style: hidden hidden solid hidden;
+  -fx-border-color: rgb(0,0,0);
+}
+
+.tab-pane .tab:selected
+{
+  -fx-background-color: rgb(16,17,18);
+  -fx-border-style: hidden hidden solid hidden;
+  -fx-border-color: rgb(79,153,211);
+}
+
+.tab .tab-label
+{
+  -fx-text-fill: #aaa;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label
+{
+  -fx-text-fill: #fff;
+}
+
+.scroll-bar
+{
+  -fx-background-color: #151718;
+}
+
+.scroll-bar .thumb
+{
+  -fx-background-color: #666;
+}
+
+/* Console */
+body
+{
+  color: #FFFFFF;
+  background-color: #101112;
+}
+
+.message
+{
+	white-space: pre-wrap;
+	color: #FFFFFF;
+	font-size: 16;
+	line-height: 100%;
+}
+
+.warning
+{
+	color: #FFAA00;
+	font-weight: bold;
+}
+
+.error
+{
+	color: #FF0000;
+	font-weight: bold;
+}

@@ -1,0 +1,32 @@
+/*
+Stylesheet by Narayan G. Maharjan
+Retreived from http://blog.ngopal.com.np/2012/09/25/how-to-bind-vertical-scroll-in-multi-tableview/
+*/
+.table-view .scroll-bar .track{
+    -fx-padding:0px;
+    -fx-background-color:transparent;
+    -fx-border-color:transparent;
+    -fx-background-radius: 0em;
+    -fx-border-radius:2em;
+}
+
+.table-view .scroll-bar .increment-button ,
+.table-view .scroll-bar .decrement-button {
+    -fx-background-color:transparent;
+    -fx-background-radius: 0em;
+    -fx-padding:0 0 0 0;
+}
+
+.table-view  .scroll-bar .increment-arrow,
+.table-view  .scroll-bar .decrement-arrow
+{
+    -fx-shape: " ";
+    -fx-padding:0;
+}
+
+.table-view .scroll-bar .thumb {
+    -fx-background-color:transparent;
+    -fx-background-insets: 0, 0, 0;
+    -fx-background-radius: 2em;
+    -fx-padding:0px;
+}

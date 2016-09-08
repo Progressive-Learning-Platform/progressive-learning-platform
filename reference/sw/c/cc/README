@@ -1,5 +1,0 @@
-Use the below command within the cc folder
-gcc -g -o output code_gen.c handlers.c line.c main.c lex.yy.c parser.tab.c parse_tree.c symbol.c struct.c
-
-This produces binary named output.
-Execute either using gdb or using the command ./output/..tests/file.c

@@ -1,0 +1,31 @@
+{
+  "Resources Path" : "resources/",
+  "Ace Path" : "lib/ace/",
+  "Languages" : {
+    "base path" : "resources/languages/",
+    "modes path" : "modes",
+    "default path" : "plp/"
+  },
+  "Application" : {
+    "theme base path" : "resources/application/styling/",
+    "theme" : "light"
+  },
+  "Editor" : {
+    "font" : "inconsolata",
+    "font size" : "14",
+    "mode" :"plp",
+    "theme" :"tomorrow"
+  },
+  "Programmer" : {
+    "program in chunks" : "true",
+    "maximum chunk size" : "2048",
+    "timeout milliseconds" : "500",
+    "auto detect serial ports" : "true"
+  },
+  "Simulator" : {
+    "speed" : "100",
+    "allow execution of non instruction memory" : "true",
+    "assume zero on reads from uninitialized memory" : "true"
+  }
+
+}

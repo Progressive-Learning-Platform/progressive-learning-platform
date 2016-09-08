@@ -1,6 +1,0 @@
-silent
-loadpreset 2
-bp set _halt
-s 1000000
-assert 3 result 25
-rbus result

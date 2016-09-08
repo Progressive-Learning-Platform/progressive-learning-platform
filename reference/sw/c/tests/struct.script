@@ -1,9 +1,0 @@
-silent
-loadpreset 2
-bp set _halt
-s 1000000
-assert 3 result0 42
-assert 3 result1 0x66
-assert 3 result2 0xdeadbeef
-assert 3 result3 43
-rbus result
