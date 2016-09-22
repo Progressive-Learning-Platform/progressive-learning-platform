@@ -5,6 +5,7 @@ import static edu.asu.plp.tool.prototype.util.Dialogues.showInfoDialogue;
 
 import java.awt.Desktop;
 import java.awt.GraphicsEnvironment;
+import java.awt.Robot;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -66,6 +67,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Pair;
 //edited
 import javafx.scene.control.TextArea;
+
+import com.sun.glass.events.KeyEvent;
 import com.sun.javafx.scene.control.behavior.TextInputControlBehavior;
 import com.sun.javafx.scene.control.skin.BehaviorSkinBase;
 //
@@ -1739,7 +1742,18 @@ public class Main extends Application implements Controller
 	@Override
 	public void editFandR() {
 		// TODO Auto-generated method stub
-		
+		try {
+			Robot robot = new Robot();
+			robot.keyPress(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyPress(java.awt.event.KeyEvent.VK_H);
+			
+			robot.keyRelease(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyRelease(java.awt.event.KeyEvent.VK_H);
+			
+		} catch (Exception e) {
+			//TODO: Put proper error messaging in place
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -1747,15 +1761,56 @@ public class Main extends Application implements Controller
 	public void editUndo() {
 		// TODO Auto-generated method stub
 				
-		Tab tab = openProjectsPanel.getSelectionModel().getSelectedItem();				
+		/*Tab tab = openProjectsPanel.getSelectionModel().getSelectedItem();				
 		CodeEditor ed = (CodeEditor)tab.getContent();				
-		ed.undoSelectionToClipboard();
+		ed.undoSelectionToClipboard();*/
+		try {
+			Robot robot = new Robot();
+			robot.keyPress(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyPress(java.awt.event.KeyEvent.VK_Z);
+			
+			robot.keyRelease(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyRelease(java.awt.event.KeyEvent.VK_Z);
+			
+		} catch (Exception e) {
+			//TODO: Put proper error messaging in place
+			e.printStackTrace();
+		}
+		
 		
 	}
 
 	@Override
 	public void editRedo() {
 		// TODO Auto-generated method stub
+		try {
+			Robot robot = new Robot();
+			robot.keyPress(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyPress(java.awt.event.KeyEvent.VK_Y);
+			
+			robot.keyRelease(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyRelease(java.awt.event.KeyEvent.VK_Y);
+			
+		} catch (Exception e) {
+			//TODO: Put proper error messaging in place
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void editF() {
+		try {
+			Robot robot = new Robot();
+			robot.keyPress(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyPress(java.awt.event.KeyEvent.VK_F);
+			
+			robot.keyRelease(java.awt.event.KeyEvent.VK_CONTROL);
+			robot.keyRelease(java.awt.event.KeyEvent.VK_F);
+			
+		} catch (Exception e) {
+			//TODO: Put proper error messaging in place
+			e.printStackTrace();
+		}
 		
 	}
 }

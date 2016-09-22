@@ -277,8 +277,13 @@ public class PLPToolMenuBarPanel extends BorderPane
 				KeyCombination.CONTROL_DOWN));
 		itemPaste.setOnAction((e) -> controller.editPaste());
 		
+		MenuItem itemF = new MenuItem("Find");
+		itemF.setAccelerator(new KeyCodeCombination(KeyCode.F,
+				KeyCombination.CONTROL_DOWN));
+		itemF.setOnAction((e) -> controller.editF());
+		
 		MenuItem itemFandR = new MenuItem("Find and Replace");
-		itemFandR.setAccelerator(new KeyCodeCombination(KeyCode.F,
+		itemFandR.setAccelerator(new KeyCodeCombination(KeyCode.H,
 				KeyCombination.CONTROL_DOWN));
 		itemFandR.setOnAction((e) -> controller.editFandR());
 		
@@ -293,7 +298,7 @@ public class PLPToolMenuBarPanel extends BorderPane
 		itemRedo.setOnAction((e) -> controller.editRedo());
 		
 		editMenu.getItems().addAll(itemCopy, itemCut, itemPaste, new SeparatorMenuItem(),
-				itemFandR, new SeparatorMenuItem(), itemUndo, itemRedo);
+				itemF, itemFandR, new SeparatorMenuItem(), itemUndo, itemRedo);
 		
 		return editMenu;
 	}

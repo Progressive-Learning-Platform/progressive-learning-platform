@@ -94,6 +94,8 @@ public interface Controller
   
 	void editUndo();
 	
-	void editRedo();	
+	void editRedo();
+
+	void editF();	
 	
 }
